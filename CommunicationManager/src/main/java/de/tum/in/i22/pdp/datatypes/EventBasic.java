@@ -66,4 +66,9 @@ public class EventBasic implements IEvent {
 		return event.build();
 	}
 
+	@Override
+	public String toString() {
+		return "EventBasic [_name=" + _name + "]";
+	}
+
 }

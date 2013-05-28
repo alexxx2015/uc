@@ -9,11 +9,14 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pdp.EventHandler;
+import de.tum.in.i22.pdp.IResponder;
+import de.tum.in.i22.pdp.datatypes.EventBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.Event;
 import de.tum.in.i22.pdp.gpb.PdpProtos.Status;
 import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
 
-public class ClientConnectionHandler {
+public class ClientConnectionHandler implements Runnable, IResponder {
 	private static Logger _logger = Logger.getRootLogger();
 	private Socket _socket;
 	private InputStream _input;
@@ -21,13 +24,15 @@ public class ClientConnectionHandler {
 	
 	private boolean _isOpen;
 	
+	private EStatus _status = null;
+	
 	public ClientConnectionHandler(Socket socket) {
 		super();
 		_socket = socket;
 		_isOpen = true;
 	}
 	
-	public void start() {
+	public void run() {
 		ObjectInputStream _objInp = null;
 		try {
 			_input = _socket.getInputStream();
@@ -50,9 +55,21 @@ public class ClientConnectionHandler {
 						//TODO process event
 						_logger.debug("Received event: " + event);
 						
+						EventHandler eventHandler = EventHandler.getInstance();
+						eventHandler.addEvent(new EventBasic(event), this);
+						
+						synchronized(this) {
+							while (_status == null) {
+								_logger.debug("Wait for the event to be processed.");
+								wait();
+							}
+						}
+						
+						_logger.debug("Status to return: " + _status);
+						
 						Status.Builder status = Status.newBuilder();
-						//TODO return status
-						status.setValue(EStatus.ALLOW);
+						status.setValue(_status);
+						_status = null;
 						status.build().writeDelimitedTo(_output);
 						_output.flush();
 					} else {
@@ -60,19 +77,23 @@ public class ClientConnectionHandler {
 					}
 				}
 			}
-			
+			catch (InterruptedException e) {
+				_logger.error("Thread interrupted. Cannot server the client request.", e);
+				return;
+			}
 			catch (EOFException eof) {
 				_logger.error("End of stream reached.");
 				_isOpen = false;
-			}
+			}	
 			/* connection either terminated by the client or lost due to 
-			 * network problems*/	
+			 * network problems*/
 			catch (IOException ex) {
 				_logger.error("Connectio lost.");
 				_isOpen = false;
 			}
 			
-		} catch (IOException ioe) {
+		}
+		catch (IOException ioe) {
 			_logger.error("Connection could not be established!", ioe);
 		} finally {
 			try {
@@ -87,5 +108,19 @@ public class ClientConnectionHandler {
 			}
 		}
 	}
+
+	public void forwardResponse(EStatus status) {
+		_logger.debug("Wake up the thread.");
+		synchronized(this) {
+			_status = status;
+			notifyAll();
+		}
+	}
 	
+	@Override
+	public String toString() {
+		String string = _socket.getInetAddress().getHostName()
+				+ " on port " + _socket.getPort();
+		return string;
+	}
 }

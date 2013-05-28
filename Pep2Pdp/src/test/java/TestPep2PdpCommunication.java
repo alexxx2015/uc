@@ -6,7 +6,7 @@ import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import de.tum.in.i22.pdp.cm.FastServiceHandler;
+import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
@@ -20,13 +20,11 @@ public class TestPep2PdpCommunication {
 	
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPep2PdpFast pdp;
+	private static IPep2PdpFast _pdpProxy;
 	
 	static {
-		FastServiceHandler pdpServer = new FastServiceHandler(50001);
-		
-		Thread thread = new Thread(pdpServer);
-		thread.start();
+		PdpController pdp = new PdpController();
+		pdp.start(50001);
 		
 		try {
 			_logger.debug("Pause the main thread for 1s (PDP starting).");
@@ -35,7 +33,7 @@ public class TestPep2PdpCommunication {
 			_logger.error("Main thread interrupted.", e);
 		}
 		
-		pdp = new Pep2PdpFastImp("localhost", 50001);
+		_pdpProxy = new Pep2PdpFastImp("localhost", 50001);
 	}
 	
 	@Test
@@ -49,15 +47,15 @@ public class TestPep2PdpCommunication {
 		IEvent event2 = mf.createEvent(eventName2, map);
 		
 		// connect to pdp
-		pdp.connect();
+		_pdpProxy.connect();
 		// notify event1
-		EStatus status1 = pdp.notifyEvent(event1);
+		EStatus status1 = _pdpProxy.notifyEvent(event1);
 		_logger.debug("Received status as reply to event 1: " + status1);
 		
-		EStatus status2 = pdp.notifyEvent(event2);
+		EStatus status2 = _pdpProxy.notifyEvent(event2);
 		_logger.debug("Received status as reply to event 2: " + status2);
 		// disconnect from pdp
-		pdp.disconnect();
+		_pdpProxy.disconnect();
 		
 		try {
 			_logger.debug("Pause the main thread for 1s (PDP stopping).");
