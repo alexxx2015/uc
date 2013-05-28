@@ -7,8 +7,12 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IMechanism;
+import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
 
-public class PdpServer implements Runnable {
+
+public class FastServiceHandler extends CommunicationHandler implements Runnable {
 	
 	private static Logger logger = Logger.getRootLogger();
 	
@@ -24,7 +28,7 @@ public class PdpServer implements Runnable {
      * 		establish a socket connection to a client. The port number should 
      * 		reside in the range of dynamic ports, i.e 49152 � 65535.
      */
-    public PdpServer(int port){
+    public FastServiceHandler(int port){
         this.port = port;
     }
 
@@ -90,11 +94,31 @@ public class PdpServer implements Runnable {
         }
     }
     
+	public EStatus deployMechanism(IMechanism mechanism) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public EStatus exportMechanism(String par) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public EStatus revokeMechanism(String par) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public EStatus notifyEvent(IEvent event) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
     /**
-     * Main entry point to the pdp server application. 
+     * Main entry point to the FastServiceHanlder (server) application. 
      */
     public static void main(String[] args) {
-    	Thread thread = new Thread(new PdpServer(50001));
+    	Thread thread = new Thread(new FastServiceHandler(50001));
     	thread.start();
     }
 }

@@ -29,7 +29,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 	}
  	
 	public EStatus notifyEvent(IEvent event) {
-		_logger.debug("Creating Google Protocol Buffer");
+		_logger.debug("Create Google Protocol Buffer");
 		Event e = EventBasic.createGpbEvent(event);
 		
 		try {
@@ -48,11 +48,11 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 	}
 
 	public void connect() throws Exception {
-		_logger.debug("Establishing connection to " + _address + ":" + _port + " .>");
+		_logger.debug("Establish connection to " + _address + ":" + _port + " .>");
 		_clientSocket = new Socket(_address, _port);
 		
 		try {
-			_logger.debug("Getting i/o streams .>");
+			_logger.debug("Get i/o streams .>");
 			_output = _clientSocket.getOutputStream();
 			_input = _clientSocket.getInputStream();
 			_logger.debug("Connection established.");
@@ -63,7 +63,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 	}
 
 	public void disconnect() {
-		_logger.info("Tearing down the connection .>s");
+		_logger.info("Tear down the connection .>s");
 		if (_clientSocket != null) {
 			try {
 				_input.close();

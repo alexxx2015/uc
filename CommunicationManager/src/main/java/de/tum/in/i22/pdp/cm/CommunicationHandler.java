@@ -11,7 +11,6 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
 public abstract class CommunicationHandler
 		implements IIncoming, ICommunication {
 	private InputParser _parser = null;
-	private CommunicationManager _commManager = null;
 	
 	public boolean evaluatePredicate(String par) {
 		// TODO Auto-generated method stub
