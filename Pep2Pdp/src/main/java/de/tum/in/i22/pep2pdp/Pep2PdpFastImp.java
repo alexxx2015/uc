@@ -2,6 +2,7 @@ package de.tum.in.i22.pep2pdp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -21,6 +22,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 	private int _port;
 	private Socket _clientSocket;
 	private OutputStream _output;
+	private ObjectOutputStream _objOutput;
  	private InputStream _input;
 
  	public Pep2PdpFastImp(String address, int port) {
@@ -33,8 +35,14 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 		Event e = EventBasic.createGpbEvent(event);
 		
 		try {
-			e.writeDelimitedTo(_output);
-			_output.flush();
+			int messageSize = e.getSerializedSize();
+			_logger.debug("GPB message size: " + messageSize);
+			if (messageSize > 1024) {
+				throw new RuntimeException("Message too big! Message size: " + messageSize);
+			}
+			_objOutput.writeInt(messageSize);
+			_objOutput.write(e.toByteArray());
+			_objOutput.flush();
 			
 			_logger.debug("Event written to OutputStream.");
 			
@@ -54,6 +62,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 		try {
 			_logger.debug("Get i/o streams .>");
 			_output = _clientSocket.getOutputStream();
+			_objOutput = new ObjectOutputStream(_output);
 			_input = _clientSocket.getInputStream();
 			_logger.debug("Connection established.");
 		} catch(Exception e) {
@@ -68,6 +77,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 			try {
 				_input.close();
 				_output.close();
+				_objOutput.close();
 				_clientSocket.close();
 				_clientSocket = null;
 				_logger.info("Connection closed!");

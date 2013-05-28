@@ -1,5 +1,6 @@
 package de.tum.in.i22.pdp.cm;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -27,16 +28,24 @@ public class ClientConnectionHandler {
 	}
 	
 	public void start() {
+		ObjectInputStream _objInp = null;
 		try {
 			_input = _socket.getInputStream();
 			_output = _socket.getOutputStream();
 			
+			_objInp = new ObjectInputStream(_input);
 			try {
-				//FIXME this code works but it is not efficient (wastes CPU time)
 				while (_isOpen) {
-					//parse message
-					Event event = Event.parseDelimitedFrom(_input);
+					int messageSize = _objInp.readInt();
+					if (messageSize > 1024) {
+						_logger.debug("Message size to big: " + messageSize);
+						throw new RuntimeException("Message too big! Message size: " + messageSize);
+					}
 					
+					byte[] bytes = new byte[messageSize];
+					_objInp.readFully(bytes);
+					//parse message
+					Event event = Event.parseFrom(bytes);					
 					if (event != null) {
 						//TODO process event
 						_logger.debug("Received event: " + event);
@@ -51,10 +60,15 @@ public class ClientConnectionHandler {
 					}
 				}
 			}
+			
+			catch (EOFException eof) {
+				_logger.error("End of stream reached.");
+				_isOpen = false;
+			}
 			/* connection either terminated by the client or lost due to 
 			 * network problems*/	
 			catch (IOException ex) {
-				_logger.error("IOException in ClientConnectionHandler.", ex);
+				_logger.error("Connectio lost.");
 				_isOpen = false;
 			}
 			
@@ -64,6 +78,7 @@ public class ClientConnectionHandler {
 			try {
 				if (_socket != null) {
 					_input.close();
+					_objInp.close();
 					_output.close();
 					_socket.close();
 				}
