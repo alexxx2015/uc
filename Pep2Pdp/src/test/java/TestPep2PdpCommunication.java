@@ -10,7 +10,7 @@ import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
 

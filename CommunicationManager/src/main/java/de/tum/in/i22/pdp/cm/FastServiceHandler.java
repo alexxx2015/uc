@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class FastServiceHandler extends CommunicationHandler implements
 		Runnable {
@@ -82,7 +82,7 @@ public class FastServiceHandler extends CommunicationHandler implements
 	}
 
 	private boolean initializeServer() {
-		logger.info("Initialize server ...");
+		logger.info("Initialize server");
 		try {
 			serverSocket = new ServerSocket(port);
 			logger.info("Server listening on port: "

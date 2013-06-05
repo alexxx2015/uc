@@ -3,7 +3,7 @@ package pdp;
 option java_package = "de.tum.in.i22.pdp.gpb";
 option java_outer_classname = "PdpProtos";
 
-message Event {
+message GpEvent {
 	optional string name = 1;
 	
 	message MapEntry {
@@ -15,7 +15,7 @@ message Event {
 }
 
 
-message Status {
+message GpStatus {
 	enum EStatus {
 		ERROR1 = 1;
 		OKAY = 2;

@@ -21,14 +21,14 @@ public class PdpController {
 			return;
 		_isStarted = true;
 		
-		_logger.info("Start pdp.");
+		_logger.info("Start pdp");
 		
-		_logger.info("Start EventHandler.");
+		_logger.info("Start EventHandler");
 		EventHandler eventHandler = EventHandler.getInstance();
 		Thread thread = new Thread(eventHandler);
 		thread.start();
 		
-		_logger.info("Start FastServiceHandler.");
+		_logger.info("Start FastServiceHandler");
 		FastServiceHandler fastServiceHandler = new FastServiceHandler(portNum);
 		Thread threadFastServiceHandler = new Thread(fastServiceHandler);
 		threadFastServiceHandler.start();

@@ -6,11 +6,11 @@ import de.tum.in.i22.pdp.cm.in.IIncoming;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public abstract class CommunicationHandler
 		implements IIncoming, ICommunication {
-	private InputParser _parser = null;
+//	private InputParser _parser = null;
 	
 	public boolean evaluatePredicate(String par) {
 		// TODO Auto-generated method stub

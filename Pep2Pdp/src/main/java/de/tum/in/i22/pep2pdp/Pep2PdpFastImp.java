@@ -10,9 +10,9 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.datatypes.EventBasic;
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Event;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class Pep2PdpFastImp implements IPep2PdpFast {
 	
@@ -32,7 +32,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
  	
 	public EStatus notifyEvent(IEvent event) {
 		_logger.debug("Create Google Protocol Buffer event instance.");
-		Event e = EventBasic.createGpbEvent(event);
+		GpEvent e = EventBasic.createGpbEvent(event);
 		
 		try {
 			int messageSize = e.getSerializedSize();
@@ -46,7 +46,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 			
 			_logger.debug("Event written to OutputStream.");
 			
-			Status status = Status.parseDelimitedFrom(_input);
+			GpStatus status = GpStatus.parseDelimitedFrom(_input);
 			return status.getValue();
 		} catch (IOException ex) {
 			_logger.error("Failed to notify event.", ex);
@@ -72,7 +72,7 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 	}
 
 	public void disconnect() {
-		_logger.info("Tear down the connection.");
+		_logger.info("Tear down the connection");
 		if (_clientSocket != null) {
 			try {
 				_input.close();

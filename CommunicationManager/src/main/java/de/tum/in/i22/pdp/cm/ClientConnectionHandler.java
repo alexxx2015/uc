@@ -11,10 +11,12 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.EventHandler;
 import de.tum.in.i22.pdp.IResponder;
-import de.tum.in.i22.pdp.datatypes.EventBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Event;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.cm.in.IMessageFactory;
+import de.tum.in.i22.pdp.cm.in.MessageFactory;
+import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class ClientConnectionHandler implements Runnable, IResponder {
 	private static Logger _logger = Logger.getRootLogger();
@@ -50,13 +52,16 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 					byte[] bytes = new byte[messageSize];
 					_objInp.readFully(bytes);
 					//parse message
-					Event event = Event.parseFrom(bytes);					
-					if (event != null) {
+					GpEvent gpEvent = GpEvent.parseFrom(bytes);					
+					if (gpEvent != null) {
 						//TODO process event
-						_logger.debug("Received event: " + event);
+						_logger.trace("Received event: " + gpEvent);
 						
 						EventHandler eventHandler = EventHandler.getInstance();
-						eventHandler.addEvent(new EventBasic(event), this);
+						
+						IMessageFactory mf = MessageFactory.getInstance();
+						IEvent event = mf.createEvent(gpEvent, System.currentTimeMillis());
+						eventHandler.addEvent(event, this);
 						
 						synchronized(this) {
 							while (_status == null) {
@@ -67,7 +72,7 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 						
 						_logger.debug("Status to return: " + _status);
 						
-						Status.Builder status = Status.newBuilder();
+						GpStatus.Builder status = GpStatus.newBuilder();
 						status.setValue(_status);
 						_status = null;
 						status.build().writeDelimitedTo(_output);
@@ -82,7 +87,7 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 				return;
 			}
 			catch (EOFException eof) {
-				_logger.error("End of stream reached.");
+				_logger.warn("End of stream reached");
 				_isOpen = false;
 			}	
 			/* connection either terminated by the client or lost due to 

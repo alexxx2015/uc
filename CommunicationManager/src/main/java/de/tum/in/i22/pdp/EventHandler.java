@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class EventHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();

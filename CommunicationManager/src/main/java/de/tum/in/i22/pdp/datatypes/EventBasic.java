@@ -6,19 +6,20 @@ import java.util.Map;
 import java.util.Set;
 
 import de.tum.in.i22.pdp.gpb.PdpProtos;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Event;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Event.MapEntry;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.MapEntry;
 
 public class EventBasic implements IEvent {
 	private String _name = null;
 	private Map<String, String> _map = null;
+	private long _timestamp;
 
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
 		_map = map;
 	}
 	
-	public EventBasic(Event event) {
+	public EventBasic(GpEvent event) {
 		_name = event.getName();
 		
 		//number of elements in the map
@@ -32,13 +33,24 @@ public class EventBasic implements IEvent {
 			}
 		}
 	}
+	
+	@Override
+	public long getTimestamp() {
+		return _timestamp;
+	}
 
+	@Override
 	public String getName() {
 		return _name;
 	}
 
+	@Override
 	public Map<String, String> getParameters() {
 		return _map;
+	}
+	
+	public void setTimestamp(long timestamp) {
+		_timestamp = timestamp;
 	}
 	
 	/**
@@ -46,24 +58,24 @@ public class EventBasic implements IEvent {
 	 * @param e
 	 * @return Google Protocol Buffer equivalent to IEvent
 	 */
-	public static Event createGpbEvent(IEvent e) {
-		PdpProtos.Event.Builder event = PdpProtos.Event.newBuilder();
-		event.setName(e.getName());
+	public static GpEvent createGpbEvent(IEvent e) {
+		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
+		gpEvent.setName(e.getName());
 		Map<String, String> map = e.getParameters();
 		
 		if (map != null && !map.isEmpty()) {
 			Set<String> keys = map.keySet();
 			for (String key:keys) {
 				String value = map.get(key);
-				PdpProtos.Event.MapEntry.Builder entry = PdpProtos.Event.MapEntry.newBuilder();
+				PdpProtos.GpEvent.MapEntry.Builder entry = PdpProtos.GpEvent.MapEntry.newBuilder();
 				entry.setKey(key);
 				entry.setValue(value);
 				
-				event.addMapEntry(entry);
+				gpEvent.addMapEntry(entry);
 			}
 		}
 		
-		return event.build();
+		return gpEvent.build();
 	}
 
 	@Override

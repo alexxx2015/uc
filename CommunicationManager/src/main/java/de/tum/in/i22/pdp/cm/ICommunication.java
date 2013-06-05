@@ -5,7 +5,7 @@ import java.util.List;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.Status.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public interface ICommunication {
 	public boolean evaluatePredicate(String par);

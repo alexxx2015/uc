@@ -15,4 +15,9 @@ public interface IEvent {
 	 * @return empty or non-empty map
 	 */
 	public Map<String, String> getParameters();
+	
+	/**
+	 * Timestamp, inserted when the event is received
+	 */
+	public long getTimestamp();
 }
