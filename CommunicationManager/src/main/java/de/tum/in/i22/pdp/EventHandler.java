@@ -13,13 +13,15 @@ import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.ResponseBasic;
+import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class EventHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
 	private static EventHandler _instance = null;
 	private BlockingQueue<EventHandlerWrapper> _eventQueue = null;
+	private boolean _pause = false;
+	private Object _pauseLock = new Object();
 	
 	private static IMessageFactory _factory = MessageFactory.getInstance();
 	
@@ -33,6 +35,25 @@ public class EventHandler implements Runnable {
 	private EventHandler() {
 		// maximum size of the queue 100
 		_eventQueue = new ArrayBlockingQueue<EventHandlerWrapper>(100, true);
+	}
+	
+	/**
+	 * Causes the thread to stop processing the events in the queue.
+	 */
+	public void pause() {
+		_logger.info("Pause Event Handler");
+		_pause = true;
+	}
+	
+	/**
+	 * Resumes 
+	 */
+	public void resume() {
+		_logger.info("Resume Event Handler");
+		synchronized (_pauseLock) {
+			_pause = false;
+			_pauseLock.notifyAll();
+		}
 	}
 	
 	public void addEvent(IEvent event, IForwarder responder) throws InterruptedException {
@@ -59,11 +80,29 @@ public class EventHandler implements Runnable {
 			
 			IForwarder responder = obj.getResponder();
 			responder.forwardResponse(response);
+			
+			// now check if there is a request to pause the thread
+			checkForPaused();
 		}
 		
 		// the thread is interrupted, stop processing the events
 	}
 	
+	private void checkForPaused() {
+		synchronized(_pauseLock) {
+			while (_pause) {
+				try {
+					_logger.info("Invoke wait");
+					_pauseLock.wait();
+					_logger.info("After wait");
+				} catch (InterruptedException e) {
+					_logger.error("Event handler interrupted.", e);
+					return;
+				}
+			}
+		}
+	}
+
 	private synchronized IResponse processEvent(IEvent event) {
 		_logger.debug("Process event " + event.getName());
 		EStatus status = EStatus.ALLOW;

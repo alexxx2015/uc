@@ -8,7 +8,7 @@ message GpEvent {
 	
 	message GpMapEntry {
 		required string key = 1;
-		optional string value = 2;
+		required string value = 2;
 	}
 	
 	repeated GpMapEntry mapEntry = 2;
@@ -34,6 +34,56 @@ message GpResponse {
 	optional GpStatus authorizationAction = 1;
 	repeated GpEvent executeAction = 2;
 	optional GpEvent modifiedEvent = 3;
+}
+
+
+message GpData {
+	optional string id = 1;
+}
+
+message GpOslFormula {
+	optional string formula = 1;
+}
+
+message GpDataEventMap {
+	message GpDataEventMapEntry {
+		required GpData key = 1;
+		required GpEvent value = 2;	
+	}
+	
+	repeated GpDataEventMapEntry mapEntry = 1;
+}
+
+message GpStateEventMap {
+	message GpStateEventMapEntry {
+		required string key = 1;
+		required GpEvent value = 2;
+	}
+	
+	repeated GpStateEventMapEntry mapEntry = 1;
+}
+
+message GpSimplifiedTemporalLogic {
+	optional GpDataEventMap dataEventMap = 1;
+	optional GpOslFormula formula = 2;
+	optional GpStateEventMap stateEventMap = 3;
+}
+
+message GpCondition {
+	optional GpOslFormula condition = 1;
+	optional GpSimplifiedTemporalLogic conditionSimp = 2;
+}
+
+message GpHistory {
+	repeated GpEvent trace = 1;
+}
+
+message GpMechanism {
+	optional GpCondition condition = 1;
+	optional string mechanismName = 2;
+	optional GpResponse response = 3;
+	optional GpHistory state = 4;
+	optional GpEvent triggerEvent = 5;
 }
 	
 	

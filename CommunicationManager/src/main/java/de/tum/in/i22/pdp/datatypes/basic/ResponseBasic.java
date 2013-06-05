@@ -1,10 +1,12 @@
-package de.tum.in.i22.pdp.datatypes;
+package de.tum.in.i22.pdp.datatypes.basic;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
+import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.gpb.PdpProtos;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;

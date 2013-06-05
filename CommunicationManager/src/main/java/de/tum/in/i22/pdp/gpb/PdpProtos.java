@@ -195,17 +195,17 @@ public final class PdpProtos {
       com.google.protobuf.ByteString
           getKeyBytes();
 
-      // optional string value = 2;
+      // required string value = 2;
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       boolean hasValue();
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       java.lang.String getValue();
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       com.google.protobuf.ByteString
           getValueBytes();
@@ -354,17 +354,17 @@ public final class PdpProtos {
         }
       }
 
-      // optional string value = 2;
+      // required string value = 2;
       public static final int VALUE_FIELD_NUMBER = 2;
       private java.lang.Object value_;
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       public boolean hasValue() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       public java.lang.String getValue() {
         java.lang.Object ref = value_;
@@ -381,7 +381,7 @@ public final class PdpProtos {
         }
       }
       /**
-       * <code>optional string value = 2;</code>
+       * <code>required string value = 2;</code>
        */
       public com.google.protobuf.ByteString
           getValueBytes() {
@@ -407,6 +407,10 @@ public final class PdpProtos {
         if (isInitialized != -1) return isInitialized == 1;
 
         if (!hasKey()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasValue()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -631,6 +635,10 @@ public final class PdpProtos {
             
             return false;
           }
+          if (!hasValue()) {
+            
+            return false;
+          }
           return true;
         }
 
@@ -727,16 +735,16 @@ public final class PdpProtos {
           return this;
         }
 
-        // optional string value = 2;
+        // required string value = 2;
         private java.lang.Object value_ = "";
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public boolean hasValue() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public java.lang.String getValue() {
           java.lang.Object ref = value_;
@@ -750,7 +758,7 @@ public final class PdpProtos {
           }
         }
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public com.google.protobuf.ByteString
             getValueBytes() {
@@ -766,7 +774,7 @@ public final class PdpProtos {
           }
         }
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public Builder setValue(
             java.lang.String value) {
@@ -779,7 +787,7 @@ public final class PdpProtos {
           return this;
         }
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public Builder clearValue() {
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -788,7 +796,7 @@ public final class PdpProtos {
           return this;
         }
         /**
-         * <code>optional string value = 2;</code>
+         * <code>required string value = 2;</code>
          */
         public Builder setValueBytes(
             com.google.protobuf.ByteString value) {
@@ -3272,6 +3280,7329 @@ public final class PdpProtos {
     // @@protoc_insertion_point(class_scope:pdp.GpResponse)
   }
 
+  public interface GpDataOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional string id = 1;
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    boolean hasId();
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    java.lang.String getId();
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
+  }
+  /**
+   * Protobuf type {@code pdp.GpData}
+   */
+  public static final class GpData extends
+      com.google.protobuf.GeneratedMessage
+      implements GpDataOrBuilder {
+    // Use GpData.newBuilder() to construct.
+    private GpData(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpData(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpData defaultInstance;
+    public static GpData getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpData getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpData(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              id_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpData_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpData_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpData.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpData> PARSER =
+        new com.google.protobuf.AbstractParser<GpData>() {
+      public GpData parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpData(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpData> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional string id = 1;
+    public static final int ID_FIELD_NUMBER = 1;
+    private java.lang.Object id_;
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public boolean hasId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          id_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string id = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private void initFields() {
+      id_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getIdBytes());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getIdBytes());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpData parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpData prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpData}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpData_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpData_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpData.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpData.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        id_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpData_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpData getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpData build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpData result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpData buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpData result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpData(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.id_ = id_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpData) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpData)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpData other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance()) return this;
+        if (other.hasId()) {
+          bitField0_ |= 0x00000001;
+          id_ = other.id_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpData parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpData) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional string id = 1;
+      private java.lang.Object id_ = "";
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder setId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string id = 1;</code>
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        id_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpData)
+    }
+
+    static {
+      defaultInstance = new GpData(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpData)
+  }
+
+  public interface GpOslFormulaOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional string formula = 1;
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    boolean hasFormula();
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    java.lang.String getFormula();
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getFormulaBytes();
+  }
+  /**
+   * Protobuf type {@code pdp.GpOslFormula}
+   */
+  public static final class GpOslFormula extends
+      com.google.protobuf.GeneratedMessage
+      implements GpOslFormulaOrBuilder {
+    // Use GpOslFormula.newBuilder() to construct.
+    private GpOslFormula(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpOslFormula(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpOslFormula defaultInstance;
+    public static GpOslFormula getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpOslFormula getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpOslFormula(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              formula_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpOslFormula_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpOslFormula_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpOslFormula> PARSER =
+        new com.google.protobuf.AbstractParser<GpOslFormula>() {
+      public GpOslFormula parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpOslFormula(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpOslFormula> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional string formula = 1;
+    public static final int FORMULA_FIELD_NUMBER = 1;
+    private java.lang.Object formula_;
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    public boolean hasFormula() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    public java.lang.String getFormula() {
+      java.lang.Object ref = formula_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          formula_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string formula = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFormulaBytes() {
+      java.lang.Object ref = formula_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        formula_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private void initFields() {
+      formula_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getFormulaBytes());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getFormulaBytes());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpOslFormula}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpOslFormula_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpOslFormula_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        formula_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpOslFormula_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.formula_ = formula_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance()) return this;
+        if (other.hasFormula()) {
+          bitField0_ |= 0x00000001;
+          formula_ = other.formula_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional string formula = 1;
+      private java.lang.Object formula_ = "";
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public boolean hasFormula() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public java.lang.String getFormula() {
+        java.lang.Object ref = formula_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          formula_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFormulaBytes() {
+        java.lang.Object ref = formula_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          formula_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public Builder setFormula(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        formula_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public Builder clearFormula() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        formula_ = getDefaultInstance().getFormula();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string formula = 1;</code>
+       */
+      public Builder setFormulaBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        formula_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpOslFormula)
+    }
+
+    static {
+      defaultInstance = new GpOslFormula(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpOslFormula)
+  }
+
+  public interface GpDataEventMapOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> 
+        getMapEntryList();
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry getMapEntry(int index);
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    int getMapEntryCount();
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder> 
+        getMapEntryOrBuilderList();
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder getMapEntryOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code pdp.GpDataEventMap}
+   */
+  public static final class GpDataEventMap extends
+      com.google.protobuf.GeneratedMessage
+      implements GpDataEventMapOrBuilder {
+    // Use GpDataEventMap.newBuilder() to construct.
+    private GpDataEventMap(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpDataEventMap(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpDataEventMap defaultInstance;
+    public static GpDataEventMap getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpDataEventMap getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpDataEventMap(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                mapEntry_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              mapEntry_.add(input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          mapEntry_ = java.util.Collections.unmodifiableList(mapEntry_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpDataEventMap> PARSER =
+        new com.google.protobuf.AbstractParser<GpDataEventMap>() {
+      public GpDataEventMap parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpDataEventMap(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpDataEventMap> getParserForType() {
+      return PARSER;
+    }
+
+    public interface GpDataEventMapEntryOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required .pdp.GpData key = 1;
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      boolean hasKey();
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpData getKey();
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder getKeyOrBuilder();
+
+      // required .pdp.GpEvent value = 2;
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      boolean hasValue();
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue();
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder();
+    }
+    /**
+     * Protobuf type {@code pdp.GpDataEventMap.GpDataEventMapEntry}
+     */
+    public static final class GpDataEventMapEntry extends
+        com.google.protobuf.GeneratedMessage
+        implements GpDataEventMapEntryOrBuilder {
+      // Use GpDataEventMapEntry.newBuilder() to construct.
+      private GpDataEventMapEntry(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private GpDataEventMapEntry(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final GpDataEventMapEntry defaultInstance;
+      public static GpDataEventMapEntry getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public GpDataEventMapEntry getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private GpDataEventMapEntry(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder subBuilder = null;
+                if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                  subBuilder = key_.toBuilder();
+                }
+                key_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpData.PARSER, extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(key_);
+                  key_ = subBuilder.buildPartial();
+                }
+                bitField0_ |= 0x00000001;
+                break;
+              }
+              case 18: {
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder subBuilder = null;
+                if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                  subBuilder = value_.toBuilder();
+                }
+                value_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.PARSER, extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(value_);
+                  value_ = subBuilder.buildPartial();
+                }
+                bitField0_ |= 0x00000002;
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<GpDataEventMapEntry> PARSER =
+          new com.google.protobuf.AbstractParser<GpDataEventMapEntry>() {
+        public GpDataEventMapEntry parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new GpDataEventMapEntry(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<GpDataEventMapEntry> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required .pdp.GpData key = 1;
+      public static final int KEY_FIELD_NUMBER = 1;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpData key_;
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpData getKey() {
+        return key_;
+      }
+      /**
+       * <code>required .pdp.GpData key = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder getKeyOrBuilder() {
+        return key_;
+      }
+
+      // required .pdp.GpEvent value = 2;
+      public static final int VALUE_FIELD_NUMBER = 2;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value_;
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public boolean hasValue() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue() {
+        return value_;
+      }
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder() {
+        return value_;
+      }
+
+      private void initFields() {
+        key_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance();
+        value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasKey()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasValue()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!getValue().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeMessage(1, key_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeMessage(2, value_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(1, key_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, value_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code pdp.GpDataEventMap.GpDataEventMapEntry}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder.class);
+        }
+
+        // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getKeyFieldBuilder();
+            getValueFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          if (keyBuilder_ == null) {
+            key_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance();
+          } else {
+            keyBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (valueBuilder_ == null) {
+            value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+          } else {
+            valueBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor;
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry getDefaultInstanceForType() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.getDefaultInstance();
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry build() {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry buildPartial() {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          if (keyBuilder_ == null) {
+            result.key_ = key_;
+          } else {
+            result.key_ = keyBuilder_.build();
+          }
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          if (valueBuilder_ == null) {
+            result.value_ = value_;
+          } else {
+            result.value_ = valueBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry) {
+            return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry other) {
+          if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.getDefaultInstance()) return this;
+          if (other.hasKey()) {
+            mergeKey(other.getKey());
+          }
+          if (other.hasValue()) {
+            mergeValue(other.getValue());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasKey()) {
+            
+            return false;
+          }
+          if (!hasValue()) {
+            
+            return false;
+          }
+          if (!getValue().isInitialized()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required .pdp.GpData key = 1;
+        private de.tum.in.i22.pdp.gpb.PdpProtos.GpData key_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpData, de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder> keyBuilder_;
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public boolean hasKey() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpData getKey() {
+          if (keyBuilder_ == null) {
+            return key_;
+          } else {
+            return keyBuilder_.getMessage();
+          }
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public Builder setKey(de.tum.in.i22.pdp.gpb.PdpProtos.GpData value) {
+          if (keyBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            key_ = value;
+            onChanged();
+          } else {
+            keyBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000001;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public Builder setKey(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder builderForValue) {
+          if (keyBuilder_ == null) {
+            key_ = builderForValue.build();
+            onChanged();
+          } else {
+            keyBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000001;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public Builder mergeKey(de.tum.in.i22.pdp.gpb.PdpProtos.GpData value) {
+          if (keyBuilder_ == null) {
+            if (((bitField0_ & 0x00000001) == 0x00000001) &&
+                key_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance()) {
+              key_ =
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpData.newBuilder(key_).mergeFrom(value).buildPartial();
+            } else {
+              key_ = value;
+            }
+            onChanged();
+          } else {
+            keyBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000001;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public Builder clearKey() {
+          if (keyBuilder_ == null) {
+            key_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpData.getDefaultInstance();
+            onChanged();
+          } else {
+            keyBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000001);
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder getKeyBuilder() {
+          bitField0_ |= 0x00000001;
+          onChanged();
+          return getKeyFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder getKeyOrBuilder() {
+          if (keyBuilder_ != null) {
+            return keyBuilder_.getMessageOrBuilder();
+          } else {
+            return key_;
+          }
+        }
+        /**
+         * <code>required .pdp.GpData key = 1;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpData, de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder> 
+            getKeyFieldBuilder() {
+          if (keyBuilder_ == null) {
+            keyBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpData, de.tum.in.i22.pdp.gpb.PdpProtos.GpData.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataOrBuilder>(
+                    key_,
+                    getParentForChildren(),
+                    isClean());
+            key_ = null;
+          }
+          return keyBuilder_;
+        }
+
+        // required .pdp.GpEvent value = 2;
+        private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> valueBuilder_;
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public boolean hasValue() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue() {
+          if (valueBuilder_ == null) {
+            return value_;
+          } else {
+            return valueBuilder_.getMessage();
+          }
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder setValue(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+          if (valueBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            value_ = value;
+            onChanged();
+          } else {
+            valueBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder setValue(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+          if (valueBuilder_ == null) {
+            value_ = builderForValue.build();
+            onChanged();
+          } else {
+            valueBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder mergeValue(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+          if (valueBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002) &&
+                value_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance()) {
+              value_ =
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.newBuilder(value_).mergeFrom(value).buildPartial();
+            } else {
+              value_ = value;
+            }
+            onChanged();
+          } else {
+            valueBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder clearValue() {
+          if (valueBuilder_ == null) {
+            value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+            onChanged();
+          } else {
+            valueBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder getValueBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getValueFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder() {
+          if (valueBuilder_ != null) {
+            return valueBuilder_.getMessageOrBuilder();
+          } else {
+            return value_;
+          }
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+            getValueFieldBuilder() {
+          if (valueBuilder_ == null) {
+            valueBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder>(
+                    value_,
+                    getParentForChildren(),
+                    isClean());
+            value_ = null;
+          }
+          return valueBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:pdp.GpDataEventMap.GpDataEventMapEntry)
+      }
+
+      static {
+        defaultInstance = new GpDataEventMapEntry(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:pdp.GpDataEventMap.GpDataEventMapEntry)
+    }
+
+    // repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;
+    public static final int MAPENTRY_FIELD_NUMBER = 1;
+    private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> mapEntry_;
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> getMapEntryList() {
+      return mapEntry_;
+    }
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder> 
+        getMapEntryOrBuilderList() {
+      return mapEntry_;
+    }
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    public int getMapEntryCount() {
+      return mapEntry_.size();
+    }
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry getMapEntry(int index) {
+      return mapEntry_.get(index);
+    }
+    /**
+     * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder getMapEntryOrBuilder(
+        int index) {
+      return mapEntry_.get(index);
+    }
+
+    private void initFields() {
+      mapEntry_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      for (int i = 0; i < getMapEntryCount(); i++) {
+        if (!getMapEntry(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < mapEntry_.size(); i++) {
+        output.writeMessage(1, mapEntry_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < mapEntry_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, mapEntry_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpDataEventMap}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getMapEntryFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (mapEntryBuilder_ == null) {
+          mapEntry_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          mapEntryBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpDataEventMap_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap(this);
+        int from_bitField0_ = bitField0_;
+        if (mapEntryBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            mapEntry_ = java.util.Collections.unmodifiableList(mapEntry_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.mapEntry_ = mapEntry_;
+        } else {
+          result.mapEntry_ = mapEntryBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance()) return this;
+        if (mapEntryBuilder_ == null) {
+          if (!other.mapEntry_.isEmpty()) {
+            if (mapEntry_.isEmpty()) {
+              mapEntry_ = other.mapEntry_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureMapEntryIsMutable();
+              mapEntry_.addAll(other.mapEntry_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.mapEntry_.isEmpty()) {
+            if (mapEntryBuilder_.isEmpty()) {
+              mapEntryBuilder_.dispose();
+              mapEntryBuilder_ = null;
+              mapEntry_ = other.mapEntry_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              mapEntryBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getMapEntryFieldBuilder() : null;
+            } else {
+              mapEntryBuilder_.addAllMessages(other.mapEntry_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getMapEntryCount(); i++) {
+          if (!getMapEntry(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;
+      private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> mapEntry_ =
+        java.util.Collections.emptyList();
+      private void ensureMapEntryIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          mapEntry_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry>(mapEntry_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder> mapEntryBuilder_;
+
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> getMapEntryList() {
+        if (mapEntryBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(mapEntry_);
+        } else {
+          return mapEntryBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public int getMapEntryCount() {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.size();
+        } else {
+          return mapEntryBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry getMapEntry(int index) {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.get(index);
+        } else {
+          return mapEntryBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder setMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.set(index, value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder setMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.add(value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.add(index, value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.add(builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addAllMapEntry(
+          java.lang.Iterable<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry> values) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          super.addAll(values, mapEntry_);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder clearMapEntry() {
+        if (mapEntryBuilder_ == null) {
+          mapEntry_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          mapEntryBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder removeMapEntry(int index) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.remove(index);
+          onChanged();
+        } else {
+          mapEntryBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder getMapEntryBuilder(
+          int index) {
+        return getMapEntryFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder getMapEntryOrBuilder(
+          int index) {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.get(index);  } else {
+          return mapEntryBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder> 
+           getMapEntryOrBuilderList() {
+        if (mapEntryBuilder_ != null) {
+          return mapEntryBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(mapEntry_);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder addMapEntryBuilder() {
+        return getMapEntryFieldBuilder().addBuilder(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder addMapEntryBuilder(
+          int index) {
+        return getMapEntryFieldBuilder().addBuilder(
+            index, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpDataEventMap.GpDataEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder> 
+           getMapEntryBuilderList() {
+        return getMapEntryFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder> 
+          getMapEntryFieldBuilder() {
+        if (mapEntryBuilder_ == null) {
+          mapEntryBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntryOrBuilder>(
+                  mapEntry_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          mapEntry_ = null;
+        }
+        return mapEntryBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpDataEventMap)
+    }
+
+    static {
+      defaultInstance = new GpDataEventMap(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpDataEventMap)
+  }
+
+  public interface GpStateEventMapOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> 
+        getMapEntryList();
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry getMapEntry(int index);
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    int getMapEntryCount();
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder> 
+        getMapEntryOrBuilderList();
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder getMapEntryOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code pdp.GpStateEventMap}
+   */
+  public static final class GpStateEventMap extends
+      com.google.protobuf.GeneratedMessage
+      implements GpStateEventMapOrBuilder {
+    // Use GpStateEventMap.newBuilder() to construct.
+    private GpStateEventMap(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpStateEventMap(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpStateEventMap defaultInstance;
+    public static GpStateEventMap getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpStateEventMap getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpStateEventMap(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                mapEntry_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              mapEntry_.add(input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          mapEntry_ = java.util.Collections.unmodifiableList(mapEntry_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpStateEventMap> PARSER =
+        new com.google.protobuf.AbstractParser<GpStateEventMap>() {
+      public GpStateEventMap parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpStateEventMap(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpStateEventMap> getParserForType() {
+      return PARSER;
+    }
+
+    public interface GpStateEventMapEntryOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required string key = 1;
+      /**
+       * <code>required string key = 1;</code>
+       */
+      boolean hasKey();
+      /**
+       * <code>required string key = 1;</code>
+       */
+      java.lang.String getKey();
+      /**
+       * <code>required string key = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getKeyBytes();
+
+      // required .pdp.GpEvent value = 2;
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      boolean hasValue();
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue();
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder();
+    }
+    /**
+     * Protobuf type {@code pdp.GpStateEventMap.GpStateEventMapEntry}
+     */
+    public static final class GpStateEventMapEntry extends
+        com.google.protobuf.GeneratedMessage
+        implements GpStateEventMapEntryOrBuilder {
+      // Use GpStateEventMapEntry.newBuilder() to construct.
+      private GpStateEventMapEntry(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private GpStateEventMapEntry(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final GpStateEventMapEntry defaultInstance;
+      public static GpStateEventMapEntry getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public GpStateEventMapEntry getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private GpStateEventMapEntry(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                bitField0_ |= 0x00000001;
+                key_ = input.readBytes();
+                break;
+              }
+              case 18: {
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder subBuilder = null;
+                if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                  subBuilder = value_.toBuilder();
+                }
+                value_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.PARSER, extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(value_);
+                  value_ = subBuilder.buildPartial();
+                }
+                bitField0_ |= 0x00000002;
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<GpStateEventMapEntry> PARSER =
+          new com.google.protobuf.AbstractParser<GpStateEventMapEntry>() {
+        public GpStateEventMapEntry parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new GpStateEventMapEntry(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<GpStateEventMapEntry> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required string key = 1;
+      public static final int KEY_FIELD_NUMBER = 1;
+      private java.lang.Object key_;
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public java.lang.String getKey() {
+        java.lang.Object ref = key_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            key_ = s;
+          }
+          return s;
+        }
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getKeyBytes() {
+        java.lang.Object ref = key_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          key_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      // required .pdp.GpEvent value = 2;
+      public static final int VALUE_FIELD_NUMBER = 2;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value_;
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public boolean hasValue() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue() {
+        return value_;
+      }
+      /**
+       * <code>required .pdp.GpEvent value = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder() {
+        return value_;
+      }
+
+      private void initFields() {
+        key_ = "";
+        value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasKey()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasValue()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!getValue().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeBytes(1, getKeyBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeMessage(2, value_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(1, getKeyBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, value_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code pdp.GpStateEventMap.GpStateEventMapEntry}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder.class);
+        }
+
+        // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getValueFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          key_ = "";
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (valueBuilder_ == null) {
+            value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+          } else {
+            valueBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor;
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry getDefaultInstanceForType() {
+          return de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.getDefaultInstance();
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry build() {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry buildPartial() {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.key_ = key_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          if (valueBuilder_ == null) {
+            result.value_ = value_;
+          } else {
+            result.value_ = valueBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry) {
+            return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry other) {
+          if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.getDefaultInstance()) return this;
+          if (other.hasKey()) {
+            bitField0_ |= 0x00000001;
+            key_ = other.key_;
+            onChanged();
+          }
+          if (other.hasValue()) {
+            mergeValue(other.getValue());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasKey()) {
+            
+            return false;
+          }
+          if (!hasValue()) {
+            
+            return false;
+          }
+          if (!getValue().isInitialized()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required string key = 1;
+        private java.lang.Object key_ = "";
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public boolean hasKey() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public java.lang.String getKey() {
+          java.lang.Object ref = key_;
+          if (!(ref instanceof java.lang.String)) {
+            java.lang.String s = ((com.google.protobuf.ByteString) ref)
+                .toStringUtf8();
+            key_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getKeyBytes() {
+          java.lang.Object ref = key_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            key_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public Builder setKey(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          key_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public Builder clearKey() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          key_ = getDefaultInstance().getKey();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required string key = 1;</code>
+         */
+        public Builder setKeyBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          key_ = value;
+          onChanged();
+          return this;
+        }
+
+        // required .pdp.GpEvent value = 2;
+        private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> valueBuilder_;
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public boolean hasValue() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getValue() {
+          if (valueBuilder_ == null) {
+            return value_;
+          } else {
+            return valueBuilder_.getMessage();
+          }
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder setValue(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+          if (valueBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            value_ = value;
+            onChanged();
+          } else {
+            valueBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder setValue(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+          if (valueBuilder_ == null) {
+            value_ = builderForValue.build();
+            onChanged();
+          } else {
+            valueBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder mergeValue(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+          if (valueBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002) &&
+                value_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance()) {
+              value_ =
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.newBuilder(value_).mergeFrom(value).buildPartial();
+            } else {
+              value_ = value;
+            }
+            onChanged();
+          } else {
+            valueBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public Builder clearValue() {
+          if (valueBuilder_ == null) {
+            value_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+            onChanged();
+          } else {
+            valueBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder getValueBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getValueFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getValueOrBuilder() {
+          if (valueBuilder_ != null) {
+            return valueBuilder_.getMessageOrBuilder();
+          } else {
+            return value_;
+          }
+        }
+        /**
+         * <code>required .pdp.GpEvent value = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilder<
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+            getValueFieldBuilder() {
+          if (valueBuilder_ == null) {
+            valueBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder>(
+                    value_,
+                    getParentForChildren(),
+                    isClean());
+            value_ = null;
+          }
+          return valueBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:pdp.GpStateEventMap.GpStateEventMapEntry)
+      }
+
+      static {
+        defaultInstance = new GpStateEventMapEntry(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:pdp.GpStateEventMap.GpStateEventMapEntry)
+    }
+
+    // repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;
+    public static final int MAPENTRY_FIELD_NUMBER = 1;
+    private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> mapEntry_;
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> getMapEntryList() {
+      return mapEntry_;
+    }
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder> 
+        getMapEntryOrBuilderList() {
+      return mapEntry_;
+    }
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    public int getMapEntryCount() {
+      return mapEntry_.size();
+    }
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry getMapEntry(int index) {
+      return mapEntry_.get(index);
+    }
+    /**
+     * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder getMapEntryOrBuilder(
+        int index) {
+      return mapEntry_.get(index);
+    }
+
+    private void initFields() {
+      mapEntry_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      for (int i = 0; i < getMapEntryCount(); i++) {
+        if (!getMapEntry(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < mapEntry_.size(); i++) {
+        output.writeMessage(1, mapEntry_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < mapEntry_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, mapEntry_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpStateEventMap}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getMapEntryFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (mapEntryBuilder_ == null) {
+          mapEntry_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          mapEntryBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpStateEventMap_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap(this);
+        int from_bitField0_ = bitField0_;
+        if (mapEntryBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            mapEntry_ = java.util.Collections.unmodifiableList(mapEntry_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.mapEntry_ = mapEntry_;
+        } else {
+          result.mapEntry_ = mapEntryBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance()) return this;
+        if (mapEntryBuilder_ == null) {
+          if (!other.mapEntry_.isEmpty()) {
+            if (mapEntry_.isEmpty()) {
+              mapEntry_ = other.mapEntry_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureMapEntryIsMutable();
+              mapEntry_.addAll(other.mapEntry_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.mapEntry_.isEmpty()) {
+            if (mapEntryBuilder_.isEmpty()) {
+              mapEntryBuilder_.dispose();
+              mapEntryBuilder_ = null;
+              mapEntry_ = other.mapEntry_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              mapEntryBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getMapEntryFieldBuilder() : null;
+            } else {
+              mapEntryBuilder_.addAllMessages(other.mapEntry_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getMapEntryCount(); i++) {
+          if (!getMapEntry(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;
+      private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> mapEntry_ =
+        java.util.Collections.emptyList();
+      private void ensureMapEntryIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          mapEntry_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry>(mapEntry_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder> mapEntryBuilder_;
+
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> getMapEntryList() {
+        if (mapEntryBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(mapEntry_);
+        } else {
+          return mapEntryBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public int getMapEntryCount() {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.size();
+        } else {
+          return mapEntryBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry getMapEntry(int index) {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.get(index);
+        } else {
+          return mapEntryBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder setMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.set(index, value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder setMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.add(value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry value) {
+        if (mapEntryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMapEntryIsMutable();
+          mapEntry_.add(index, value);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.add(builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addMapEntry(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder builderForValue) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          mapEntryBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder addAllMapEntry(
+          java.lang.Iterable<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry> values) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          super.addAll(values, mapEntry_);
+          onChanged();
+        } else {
+          mapEntryBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder clearMapEntry() {
+        if (mapEntryBuilder_ == null) {
+          mapEntry_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          mapEntryBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public Builder removeMapEntry(int index) {
+        if (mapEntryBuilder_ == null) {
+          ensureMapEntryIsMutable();
+          mapEntry_.remove(index);
+          onChanged();
+        } else {
+          mapEntryBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder getMapEntryBuilder(
+          int index) {
+        return getMapEntryFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder getMapEntryOrBuilder(
+          int index) {
+        if (mapEntryBuilder_ == null) {
+          return mapEntry_.get(index);  } else {
+          return mapEntryBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder> 
+           getMapEntryOrBuilderList() {
+        if (mapEntryBuilder_ != null) {
+          return mapEntryBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(mapEntry_);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder addMapEntryBuilder() {
+        return getMapEntryFieldBuilder().addBuilder(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder addMapEntryBuilder(
+          int index) {
+        return getMapEntryFieldBuilder().addBuilder(
+            index, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpStateEventMap.GpStateEventMapEntry mapEntry = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder> 
+           getMapEntryBuilderList() {
+        return getMapEntryFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder> 
+          getMapEntryFieldBuilder() {
+        if (mapEntryBuilder_ == null) {
+          mapEntryBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntryOrBuilder>(
+                  mapEntry_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          mapEntry_ = null;
+        }
+        return mapEntryBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpStateEventMap)
+    }
+
+    static {
+      defaultInstance = new GpStateEventMap(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpStateEventMap)
+  }
+
+  public interface GpSimplifiedTemporalLogicOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional .pdp.GpDataEventMap dataEventMap = 1;
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    boolean hasDataEventMap();
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap getDataEventMap();
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder getDataEventMapOrBuilder();
+
+    // optional .pdp.GpOslFormula formula = 2;
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    boolean hasFormula();
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getFormula();
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getFormulaOrBuilder();
+
+    // optional .pdp.GpStateEventMap stateEventMap = 3;
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    boolean hasStateEventMap();
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap getStateEventMap();
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder getStateEventMapOrBuilder();
+  }
+  /**
+   * Protobuf type {@code pdp.GpSimplifiedTemporalLogic}
+   */
+  public static final class GpSimplifiedTemporalLogic extends
+      com.google.protobuf.GeneratedMessage
+      implements GpSimplifiedTemporalLogicOrBuilder {
+    // Use GpSimplifiedTemporalLogic.newBuilder() to construct.
+    private GpSimplifiedTemporalLogic(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpSimplifiedTemporalLogic(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpSimplifiedTemporalLogic defaultInstance;
+    public static GpSimplifiedTemporalLogic getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpSimplifiedTemporalLogic getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpSimplifiedTemporalLogic(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = dataEventMap_.toBuilder();
+              }
+              dataEventMap_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(dataEventMap_);
+                dataEventMap_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = formula_.toBuilder();
+              }
+              formula_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(formula_);
+                formula_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 26: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = stateEventMap_.toBuilder();
+              }
+              stateEventMap_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stateEventMap_);
+                stateEventMap_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpSimplifiedTemporalLogic_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpSimplifiedTemporalLogic_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpSimplifiedTemporalLogic> PARSER =
+        new com.google.protobuf.AbstractParser<GpSimplifiedTemporalLogic>() {
+      public GpSimplifiedTemporalLogic parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpSimplifiedTemporalLogic(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpSimplifiedTemporalLogic> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional .pdp.GpDataEventMap dataEventMap = 1;
+    public static final int DATAEVENTMAP_FIELD_NUMBER = 1;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap dataEventMap_;
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    public boolean hasDataEventMap() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap getDataEventMap() {
+      return dataEventMap_;
+    }
+    /**
+     * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder getDataEventMapOrBuilder() {
+      return dataEventMap_;
+    }
+
+    // optional .pdp.GpOslFormula formula = 2;
+    public static final int FORMULA_FIELD_NUMBER = 2;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula formula_;
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    public boolean hasFormula() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getFormula() {
+      return formula_;
+    }
+    /**
+     * <code>optional .pdp.GpOslFormula formula = 2;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getFormulaOrBuilder() {
+      return formula_;
+    }
+
+    // optional .pdp.GpStateEventMap stateEventMap = 3;
+    public static final int STATEEVENTMAP_FIELD_NUMBER = 3;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap stateEventMap_;
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    public boolean hasStateEventMap() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap getStateEventMap() {
+      return stateEventMap_;
+    }
+    /**
+     * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder getStateEventMapOrBuilder() {
+      return stateEventMap_;
+    }
+
+    private void initFields() {
+      dataEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance();
+      formula_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+      stateEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (hasDataEventMap()) {
+        if (!getDataEventMap().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasStateEventMap()) {
+        if (!getStateEventMap().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, dataEventMap_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, formula_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, stateEventMap_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, dataEventMap_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, formula_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, stateEventMap_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpSimplifiedTemporalLogic}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpSimplifiedTemporalLogic_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpSimplifiedTemporalLogic_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getDataEventMapFieldBuilder();
+          getFormulaFieldBuilder();
+          getStateEventMapFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (dataEventMapBuilder_ == null) {
+          dataEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance();
+        } else {
+          dataEventMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (formulaBuilder_ == null) {
+          formula_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+        } else {
+          formulaBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (stateEventMapBuilder_ == null) {
+          stateEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance();
+        } else {
+          stateEventMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpSimplifiedTemporalLogic_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        if (dataEventMapBuilder_ == null) {
+          result.dataEventMap_ = dataEventMap_;
+        } else {
+          result.dataEventMap_ = dataEventMapBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (formulaBuilder_ == null) {
+          result.formula_ = formula_;
+        } else {
+          result.formula_ = formulaBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        if (stateEventMapBuilder_ == null) {
+          result.stateEventMap_ = stateEventMap_;
+        } else {
+          result.stateEventMap_ = stateEventMapBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance()) return this;
+        if (other.hasDataEventMap()) {
+          mergeDataEventMap(other.getDataEventMap());
+        }
+        if (other.hasFormula()) {
+          mergeFormula(other.getFormula());
+        }
+        if (other.hasStateEventMap()) {
+          mergeStateEventMap(other.getStateEventMap());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasDataEventMap()) {
+          if (!getDataEventMap().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasStateEventMap()) {
+          if (!getStateEventMap().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional .pdp.GpDataEventMap dataEventMap = 1;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap dataEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder> dataEventMapBuilder_;
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public boolean hasDataEventMap() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap getDataEventMap() {
+        if (dataEventMapBuilder_ == null) {
+          return dataEventMap_;
+        } else {
+          return dataEventMapBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public Builder setDataEventMap(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap value) {
+        if (dataEventMapBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          dataEventMap_ = value;
+          onChanged();
+        } else {
+          dataEventMapBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public Builder setDataEventMap(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder builderForValue) {
+        if (dataEventMapBuilder_ == null) {
+          dataEventMap_ = builderForValue.build();
+          onChanged();
+        } else {
+          dataEventMapBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public Builder mergeDataEventMap(de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap value) {
+        if (dataEventMapBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001) &&
+              dataEventMap_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance()) {
+            dataEventMap_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.newBuilder(dataEventMap_).mergeFrom(value).buildPartial();
+          } else {
+            dataEventMap_ = value;
+          }
+          onChanged();
+        } else {
+          dataEventMapBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public Builder clearDataEventMap() {
+        if (dataEventMapBuilder_ == null) {
+          dataEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.getDefaultInstance();
+          onChanged();
+        } else {
+          dataEventMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder getDataEventMapBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return getDataEventMapFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder getDataEventMapOrBuilder() {
+        if (dataEventMapBuilder_ != null) {
+          return dataEventMapBuilder_.getMessageOrBuilder();
+        } else {
+          return dataEventMap_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpDataEventMap dataEventMap = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder> 
+          getDataEventMapFieldBuilder() {
+        if (dataEventMapBuilder_ == null) {
+          dataEventMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMapOrBuilder>(
+                  dataEventMap_,
+                  getParentForChildren(),
+                  isClean());
+          dataEventMap_ = null;
+        }
+        return dataEventMapBuilder_;
+      }
+
+      // optional .pdp.GpOslFormula formula = 2;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula formula_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder> formulaBuilder_;
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public boolean hasFormula() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getFormula() {
+        if (formulaBuilder_ == null) {
+          return formula_;
+        } else {
+          return formulaBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public Builder setFormula(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula value) {
+        if (formulaBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          formula_ = value;
+          onChanged();
+        } else {
+          formulaBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public Builder setFormula(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder builderForValue) {
+        if (formulaBuilder_ == null) {
+          formula_ = builderForValue.build();
+          onChanged();
+        } else {
+          formulaBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public Builder mergeFormula(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula value) {
+        if (formulaBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              formula_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance()) {
+            formula_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.newBuilder(formula_).mergeFrom(value).buildPartial();
+          } else {
+            formula_ = value;
+          }
+          onChanged();
+        } else {
+          formulaBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public Builder clearFormula() {
+        if (formulaBuilder_ == null) {
+          formula_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+          onChanged();
+        } else {
+          formulaBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder getFormulaBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getFormulaFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getFormulaOrBuilder() {
+        if (formulaBuilder_ != null) {
+          return formulaBuilder_.getMessageOrBuilder();
+        } else {
+          return formula_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula formula = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder> 
+          getFormulaFieldBuilder() {
+        if (formulaBuilder_ == null) {
+          formulaBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder>(
+                  formula_,
+                  getParentForChildren(),
+                  isClean());
+          formula_ = null;
+        }
+        return formulaBuilder_;
+      }
+
+      // optional .pdp.GpStateEventMap stateEventMap = 3;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap stateEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder> stateEventMapBuilder_;
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public boolean hasStateEventMap() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap getStateEventMap() {
+        if (stateEventMapBuilder_ == null) {
+          return stateEventMap_;
+        } else {
+          return stateEventMapBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public Builder setStateEventMap(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap value) {
+        if (stateEventMapBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stateEventMap_ = value;
+          onChanged();
+        } else {
+          stateEventMapBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public Builder setStateEventMap(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder builderForValue) {
+        if (stateEventMapBuilder_ == null) {
+          stateEventMap_ = builderForValue.build();
+          onChanged();
+        } else {
+          stateEventMapBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public Builder mergeStateEventMap(de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap value) {
+        if (stateEventMapBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              stateEventMap_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance()) {
+            stateEventMap_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.newBuilder(stateEventMap_).mergeFrom(value).buildPartial();
+          } else {
+            stateEventMap_ = value;
+          }
+          onChanged();
+        } else {
+          stateEventMapBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public Builder clearStateEventMap() {
+        if (stateEventMapBuilder_ == null) {
+          stateEventMap_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.getDefaultInstance();
+          onChanged();
+        } else {
+          stateEventMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder getStateEventMapBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getStateEventMapFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder getStateEventMapOrBuilder() {
+        if (stateEventMapBuilder_ != null) {
+          return stateEventMapBuilder_.getMessageOrBuilder();
+        } else {
+          return stateEventMap_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpStateEventMap stateEventMap = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder> 
+          getStateEventMapFieldBuilder() {
+        if (stateEventMapBuilder_ == null) {
+          stateEventMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMapOrBuilder>(
+                  stateEventMap_,
+                  getParentForChildren(),
+                  isClean());
+          stateEventMap_ = null;
+        }
+        return stateEventMapBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpSimplifiedTemporalLogic)
+    }
+
+    static {
+      defaultInstance = new GpSimplifiedTemporalLogic(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpSimplifiedTemporalLogic)
+  }
+
+  public interface GpConditionOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional .pdp.GpOslFormula condition = 1;
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    boolean hasCondition();
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getCondition();
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getConditionOrBuilder();
+
+    // optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    boolean hasConditionSimp();
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic getConditionSimp();
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder getConditionSimpOrBuilder();
+  }
+  /**
+   * Protobuf type {@code pdp.GpCondition}
+   */
+  public static final class GpCondition extends
+      com.google.protobuf.GeneratedMessage
+      implements GpConditionOrBuilder {
+    // Use GpCondition.newBuilder() to construct.
+    private GpCondition(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpCondition(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpCondition defaultInstance;
+    public static GpCondition getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpCondition getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpCondition(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = condition_.toBuilder();
+              }
+              condition_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(condition_);
+                condition_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = conditionSimp_.toBuilder();
+              }
+              conditionSimp_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(conditionSimp_);
+                conditionSimp_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpCondition_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpCondition_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpCondition> PARSER =
+        new com.google.protobuf.AbstractParser<GpCondition>() {
+      public GpCondition parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpCondition(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpCondition> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional .pdp.GpOslFormula condition = 1;
+    public static final int CONDITION_FIELD_NUMBER = 1;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula condition_;
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    public boolean hasCondition() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getCondition() {
+      return condition_;
+    }
+    /**
+     * <code>optional .pdp.GpOslFormula condition = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getConditionOrBuilder() {
+      return condition_;
+    }
+
+    // optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;
+    public static final int CONDITIONSIMP_FIELD_NUMBER = 2;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic conditionSimp_;
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    public boolean hasConditionSimp() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic getConditionSimp() {
+      return conditionSimp_;
+    }
+    /**
+     * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder getConditionSimpOrBuilder() {
+      return conditionSimp_;
+    }
+
+    private void initFields() {
+      condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+      conditionSimp_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (hasConditionSimp()) {
+        if (!getConditionSimp().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, condition_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, conditionSimp_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, condition_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, conditionSimp_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpCondition}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpCondition_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpCondition_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getConditionFieldBuilder();
+          getConditionSimpFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (conditionBuilder_ == null) {
+          condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+        } else {
+          conditionBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (conditionSimpBuilder_ == null) {
+          conditionSimp_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance();
+        } else {
+          conditionSimpBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpCondition_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        if (conditionBuilder_ == null) {
+          result.condition_ = condition_;
+        } else {
+          result.condition_ = conditionBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (conditionSimpBuilder_ == null) {
+          result.conditionSimp_ = conditionSimp_;
+        } else {
+          result.conditionSimp_ = conditionSimpBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance()) return this;
+        if (other.hasCondition()) {
+          mergeCondition(other.getCondition());
+        }
+        if (other.hasConditionSimp()) {
+          mergeConditionSimp(other.getConditionSimp());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasConditionSimp()) {
+          if (!getConditionSimp().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional .pdp.GpOslFormula condition = 1;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder> conditionBuilder_;
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public boolean hasCondition() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula getCondition() {
+        if (conditionBuilder_ == null) {
+          return condition_;
+        } else {
+          return conditionBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public Builder setCondition(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula value) {
+        if (conditionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          condition_ = value;
+          onChanged();
+        } else {
+          conditionBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public Builder setCondition(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder builderForValue) {
+        if (conditionBuilder_ == null) {
+          condition_ = builderForValue.build();
+          onChanged();
+        } else {
+          conditionBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public Builder mergeCondition(de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula value) {
+        if (conditionBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001) &&
+              condition_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance()) {
+            condition_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.newBuilder(condition_).mergeFrom(value).buildPartial();
+          } else {
+            condition_ = value;
+          }
+          onChanged();
+        } else {
+          conditionBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public Builder clearCondition() {
+        if (conditionBuilder_ == null) {
+          condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.getDefaultInstance();
+          onChanged();
+        } else {
+          conditionBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder getConditionBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return getConditionFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder getConditionOrBuilder() {
+        if (conditionBuilder_ != null) {
+          return conditionBuilder_.getMessageOrBuilder();
+        } else {
+          return condition_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpOslFormula condition = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder> 
+          getConditionFieldBuilder() {
+        if (conditionBuilder_ == null) {
+          conditionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormulaOrBuilder>(
+                  condition_,
+                  getParentForChildren(),
+                  isClean());
+          condition_ = null;
+        }
+        return conditionBuilder_;
+      }
+
+      // optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic conditionSimp_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder> conditionSimpBuilder_;
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public boolean hasConditionSimp() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic getConditionSimp() {
+        if (conditionSimpBuilder_ == null) {
+          return conditionSimp_;
+        } else {
+          return conditionSimpBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public Builder setConditionSimp(de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic value) {
+        if (conditionSimpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          conditionSimp_ = value;
+          onChanged();
+        } else {
+          conditionSimpBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public Builder setConditionSimp(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder builderForValue) {
+        if (conditionSimpBuilder_ == null) {
+          conditionSimp_ = builderForValue.build();
+          onChanged();
+        } else {
+          conditionSimpBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public Builder mergeConditionSimp(de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic value) {
+        if (conditionSimpBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              conditionSimp_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance()) {
+            conditionSimp_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.newBuilder(conditionSimp_).mergeFrom(value).buildPartial();
+          } else {
+            conditionSimp_ = value;
+          }
+          onChanged();
+        } else {
+          conditionSimpBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public Builder clearConditionSimp() {
+        if (conditionSimpBuilder_ == null) {
+          conditionSimp_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.getDefaultInstance();
+          onChanged();
+        } else {
+          conditionSimpBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder getConditionSimpBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getConditionSimpFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder getConditionSimpOrBuilder() {
+        if (conditionSimpBuilder_ != null) {
+          return conditionSimpBuilder_.getMessageOrBuilder();
+        } else {
+          return conditionSimp_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpSimplifiedTemporalLogic conditionSimp = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder> 
+          getConditionSimpFieldBuilder() {
+        if (conditionSimpBuilder_ == null) {
+          conditionSimpBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogicOrBuilder>(
+                  conditionSimp_,
+                  getParentForChildren(),
+                  isClean());
+          conditionSimp_ = null;
+        }
+        return conditionSimpBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpCondition)
+    }
+
+    static {
+      defaultInstance = new GpCondition(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpCondition)
+  }
+
+  public interface GpHistoryOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // repeated .pdp.GpEvent trace = 1;
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> 
+        getTraceList();
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTrace(int index);
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    int getTraceCount();
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+        getTraceOrBuilderList();
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTraceOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code pdp.GpHistory}
+   */
+  public static final class GpHistory extends
+      com.google.protobuf.GeneratedMessage
+      implements GpHistoryOrBuilder {
+    // Use GpHistory.newBuilder() to construct.
+    private GpHistory(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpHistory(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpHistory defaultInstance;
+    public static GpHistory getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpHistory getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpHistory(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                trace_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              trace_.add(input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          trace_ = java.util.Collections.unmodifiableList(trace_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpHistory_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpHistory_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpHistory> PARSER =
+        new com.google.protobuf.AbstractParser<GpHistory>() {
+      public GpHistory parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpHistory(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpHistory> getParserForType() {
+      return PARSER;
+    }
+
+    // repeated .pdp.GpEvent trace = 1;
+    public static final int TRACE_FIELD_NUMBER = 1;
+    private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> trace_;
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> getTraceList() {
+      return trace_;
+    }
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+        getTraceOrBuilderList() {
+      return trace_;
+    }
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    public int getTraceCount() {
+      return trace_.size();
+    }
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTrace(int index) {
+      return trace_.get(index);
+    }
+    /**
+     * <code>repeated .pdp.GpEvent trace = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTraceOrBuilder(
+        int index) {
+      return trace_.get(index);
+    }
+
+    private void initFields() {
+      trace_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      for (int i = 0; i < getTraceCount(); i++) {
+        if (!getTrace(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < trace_.size(); i++) {
+        output.writeMessage(1, trace_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < trace_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, trace_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpHistory}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpHistory_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpHistory_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getTraceFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (traceBuilder_ == null) {
+          trace_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          traceBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpHistory_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory(this);
+        int from_bitField0_ = bitField0_;
+        if (traceBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            trace_ = java.util.Collections.unmodifiableList(trace_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.trace_ = trace_;
+        } else {
+          result.trace_ = traceBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance()) return this;
+        if (traceBuilder_ == null) {
+          if (!other.trace_.isEmpty()) {
+            if (trace_.isEmpty()) {
+              trace_ = other.trace_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureTraceIsMutable();
+              trace_.addAll(other.trace_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.trace_.isEmpty()) {
+            if (traceBuilder_.isEmpty()) {
+              traceBuilder_.dispose();
+              traceBuilder_ = null;
+              trace_ = other.trace_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              traceBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getTraceFieldBuilder() : null;
+            } else {
+              traceBuilder_.addAllMessages(other.trace_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getTraceCount(); i++) {
+          if (!getTrace(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // repeated .pdp.GpEvent trace = 1;
+      private java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> trace_ =
+        java.util.Collections.emptyList();
+      private void ensureTraceIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          trace_ = new java.util.ArrayList<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent>(trace_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> traceBuilder_;
+
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> getTraceList() {
+        if (traceBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(trace_);
+        } else {
+          return traceBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public int getTraceCount() {
+        if (traceBuilder_ == null) {
+          return trace_.size();
+        } else {
+          return traceBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTrace(int index) {
+        if (traceBuilder_ == null) {
+          return trace_.get(index);
+        } else {
+          return traceBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder setTrace(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+        if (traceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTraceIsMutable();
+          trace_.set(index, value);
+          onChanged();
+        } else {
+          traceBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder setTrace(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+        if (traceBuilder_ == null) {
+          ensureTraceIsMutable();
+          trace_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          traceBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder addTrace(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+        if (traceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTraceIsMutable();
+          trace_.add(value);
+          onChanged();
+        } else {
+          traceBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder addTrace(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+        if (traceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTraceIsMutable();
+          trace_.add(index, value);
+          onChanged();
+        } else {
+          traceBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder addTrace(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+        if (traceBuilder_ == null) {
+          ensureTraceIsMutable();
+          trace_.add(builderForValue.build());
+          onChanged();
+        } else {
+          traceBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder addTrace(
+          int index, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+        if (traceBuilder_ == null) {
+          ensureTraceIsMutable();
+          trace_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          traceBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder addAllTrace(
+          java.lang.Iterable<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent> values) {
+        if (traceBuilder_ == null) {
+          ensureTraceIsMutable();
+          super.addAll(values, trace_);
+          onChanged();
+        } else {
+          traceBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder clearTrace() {
+        if (traceBuilder_ == null) {
+          trace_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          traceBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public Builder removeTrace(int index) {
+        if (traceBuilder_ == null) {
+          ensureTraceIsMutable();
+          trace_.remove(index);
+          onChanged();
+        } else {
+          traceBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder getTraceBuilder(
+          int index) {
+        return getTraceFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTraceOrBuilder(
+          int index) {
+        if (traceBuilder_ == null) {
+          return trace_.get(index);  } else {
+          return traceBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public java.util.List<? extends de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+           getTraceOrBuilderList() {
+        if (traceBuilder_ != null) {
+          return traceBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(trace_);
+        }
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder addTraceBuilder() {
+        return getTraceFieldBuilder().addBuilder(
+            de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder addTraceBuilder(
+          int index) {
+        return getTraceFieldBuilder().addBuilder(
+            index, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .pdp.GpEvent trace = 1;</code>
+       */
+      public java.util.List<de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder> 
+           getTraceBuilderList() {
+        return getTraceFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+          getTraceFieldBuilder() {
+        if (traceBuilder_ == null) {
+          traceBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder>(
+                  trace_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          trace_ = null;
+        }
+        return traceBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpHistory)
+    }
+
+    static {
+      defaultInstance = new GpHistory(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpHistory)
+  }
+
+  public interface GpMechanismOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional .pdp.GpCondition condition = 1;
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    boolean hasCondition();
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition getCondition();
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder getConditionOrBuilder();
+
+    // optional string mechanismName = 2;
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    boolean hasMechanismName();
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    java.lang.String getMechanismName();
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getMechanismNameBytes();
+
+    // optional .pdp.GpResponse response = 3;
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    boolean hasResponse();
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse getResponse();
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder getResponseOrBuilder();
+
+    // optional .pdp.GpHistory state = 4;
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    boolean hasState();
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory getState();
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder getStateOrBuilder();
+
+    // optional .pdp.GpEvent triggerEvent = 5;
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    boolean hasTriggerEvent();
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTriggerEvent();
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTriggerEventOrBuilder();
+  }
+  /**
+   * Protobuf type {@code pdp.GpMechanism}
+   */
+  public static final class GpMechanism extends
+      com.google.protobuf.GeneratedMessage
+      implements GpMechanismOrBuilder {
+    // Use GpMechanism.newBuilder() to construct.
+    private GpMechanism(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private GpMechanism(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final GpMechanism defaultInstance;
+    public static GpMechanism getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public GpMechanism getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GpMechanism(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = condition_.toBuilder();
+              }
+              condition_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(condition_);
+                condition_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              mechanismName_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = response_.toBuilder();
+              }
+              response_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(response_);
+                response_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = state_.toBuilder();
+              }
+              state_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(state_);
+                state_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+            case 42: {
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = triggerEvent_.toBuilder();
+              }
+              triggerEvent_ = input.readMessage(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(triggerEvent_);
+                triggerEvent_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpMechanism_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpMechanism_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<GpMechanism> PARSER =
+        new com.google.protobuf.AbstractParser<GpMechanism>() {
+      public GpMechanism parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GpMechanism(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GpMechanism> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional .pdp.GpCondition condition = 1;
+    public static final int CONDITION_FIELD_NUMBER = 1;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition condition_;
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    public boolean hasCondition() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition getCondition() {
+      return condition_;
+    }
+    /**
+     * <code>optional .pdp.GpCondition condition = 1;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder getConditionOrBuilder() {
+      return condition_;
+    }
+
+    // optional string mechanismName = 2;
+    public static final int MECHANISMNAME_FIELD_NUMBER = 2;
+    private java.lang.Object mechanismName_;
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    public boolean hasMechanismName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    public java.lang.String getMechanismName() {
+      java.lang.Object ref = mechanismName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          mechanismName_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string mechanismName = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMechanismNameBytes() {
+      java.lang.Object ref = mechanismName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        mechanismName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // optional .pdp.GpResponse response = 3;
+    public static final int RESPONSE_FIELD_NUMBER = 3;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse response_;
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    public boolean hasResponse() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse getResponse() {
+      return response_;
+    }
+    /**
+     * <code>optional .pdp.GpResponse response = 3;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder getResponseOrBuilder() {
+      return response_;
+    }
+
+    // optional .pdp.GpHistory state = 4;
+    public static final int STATE_FIELD_NUMBER = 4;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory state_;
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    public boolean hasState() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory getState() {
+      return state_;
+    }
+    /**
+     * <code>optional .pdp.GpHistory state = 4;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder getStateOrBuilder() {
+      return state_;
+    }
+
+    // optional .pdp.GpEvent triggerEvent = 5;
+    public static final int TRIGGEREVENT_FIELD_NUMBER = 5;
+    private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent triggerEvent_;
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    public boolean hasTriggerEvent() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTriggerEvent() {
+      return triggerEvent_;
+    }
+    /**
+     * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+     */
+    public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTriggerEventOrBuilder() {
+      return triggerEvent_;
+    }
+
+    private void initFields() {
+      condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance();
+      mechanismName_ = "";
+      response_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.getDefaultInstance();
+      state_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance();
+      triggerEvent_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (hasCondition()) {
+        if (!getCondition().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasResponse()) {
+        if (!getResponse().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasState()) {
+        if (!getState().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasTriggerEvent()) {
+        if (!getTriggerEvent().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, condition_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getMechanismNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, response_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, state_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, triggerEvent_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, condition_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getMechanismNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, response_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, state_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, triggerEvent_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pdp.GpMechanism}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanismOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpMechanism_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpMechanism_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.class, de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.Builder.class);
+      }
+
+      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getConditionFieldBuilder();
+          getResponseFieldBuilder();
+          getStateFieldBuilder();
+          getTriggerEventFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (conditionBuilder_ == null) {
+          condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance();
+        } else {
+          conditionBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        mechanismName_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (responseBuilder_ == null) {
+          response_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.getDefaultInstance();
+        } else {
+          responseBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        if (stateBuilder_ == null) {
+          state_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance();
+        } else {
+          stateBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (triggerEventBuilder_ == null) {
+          triggerEvent_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+        } else {
+          triggerEventBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.internal_static_pdp_GpMechanism_descriptor;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism getDefaultInstanceForType() {
+        return de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.getDefaultInstance();
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism build() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism buildPartial() {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism result = new de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        if (conditionBuilder_ == null) {
+          result.condition_ = condition_;
+        } else {
+          result.condition_ = conditionBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.mechanismName_ = mechanismName_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        if (responseBuilder_ == null) {
+          result.response_ = response_;
+        } else {
+          result.response_ = responseBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (stateBuilder_ == null) {
+          result.state_ = state_;
+        } else {
+          result.state_ = stateBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        if (triggerEventBuilder_ == null) {
+          result.triggerEvent_ = triggerEvent_;
+        } else {
+          result.triggerEvent_ = triggerEventBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism) {
+          return mergeFrom((de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism other) {
+        if (other == de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.getDefaultInstance()) return this;
+        if (other.hasCondition()) {
+          mergeCondition(other.getCondition());
+        }
+        if (other.hasMechanismName()) {
+          bitField0_ |= 0x00000002;
+          mechanismName_ = other.mechanismName_;
+          onChanged();
+        }
+        if (other.hasResponse()) {
+          mergeResponse(other.getResponse());
+        }
+        if (other.hasState()) {
+          mergeState(other.getState());
+        }
+        if (other.hasTriggerEvent()) {
+          mergeTriggerEvent(other.getTriggerEvent());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasCondition()) {
+          if (!getCondition().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasResponse()) {
+          if (!getResponse().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasState()) {
+          if (!getState().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasTriggerEvent()) {
+          if (!getTriggerEvent().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional .pdp.GpCondition condition = 1;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition, de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder> conditionBuilder_;
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public boolean hasCondition() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition getCondition() {
+        if (conditionBuilder_ == null) {
+          return condition_;
+        } else {
+          return conditionBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public Builder setCondition(de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition value) {
+        if (conditionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          condition_ = value;
+          onChanged();
+        } else {
+          conditionBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public Builder setCondition(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder builderForValue) {
+        if (conditionBuilder_ == null) {
+          condition_ = builderForValue.build();
+          onChanged();
+        } else {
+          conditionBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public Builder mergeCondition(de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition value) {
+        if (conditionBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001) &&
+              condition_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance()) {
+            condition_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.newBuilder(condition_).mergeFrom(value).buildPartial();
+          } else {
+            condition_ = value;
+          }
+          onChanged();
+        } else {
+          conditionBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public Builder clearCondition() {
+        if (conditionBuilder_ == null) {
+          condition_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.getDefaultInstance();
+          onChanged();
+        } else {
+          conditionBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder getConditionBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return getConditionFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder getConditionOrBuilder() {
+        if (conditionBuilder_ != null) {
+          return conditionBuilder_.getMessageOrBuilder();
+        } else {
+          return condition_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpCondition condition = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition, de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder> 
+          getConditionFieldBuilder() {
+        if (conditionBuilder_ == null) {
+          conditionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition, de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpConditionOrBuilder>(
+                  condition_,
+                  getParentForChildren(),
+                  isClean());
+          condition_ = null;
+        }
+        return conditionBuilder_;
+      }
+
+      // optional string mechanismName = 2;
+      private java.lang.Object mechanismName_ = "";
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public boolean hasMechanismName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public java.lang.String getMechanismName() {
+        java.lang.Object ref = mechanismName_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          mechanismName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMechanismNameBytes() {
+        java.lang.Object ref = mechanismName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          mechanismName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public Builder setMechanismName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        mechanismName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public Builder clearMechanismName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        mechanismName_ = getDefaultInstance().getMechanismName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string mechanismName = 2;</code>
+       */
+      public Builder setMechanismNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        mechanismName_ = value;
+        onChanged();
+        return this;
+      }
+
+      // optional .pdp.GpResponse response = 3;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse response_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder> responseBuilder_;
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public boolean hasResponse() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse getResponse() {
+        if (responseBuilder_ == null) {
+          return response_;
+        } else {
+          return responseBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public Builder setResponse(de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse value) {
+        if (responseBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          response_ = value;
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public Builder setResponse(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder builderForValue) {
+        if (responseBuilder_ == null) {
+          response_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public Builder mergeResponse(de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse value) {
+        if (responseBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              response_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.getDefaultInstance()) {
+            response_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.newBuilder(response_).mergeFrom(value).buildPartial();
+          } else {
+            response_ = value;
+          }
+          onChanged();
+        } else {
+          responseBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public Builder clearResponse() {
+        if (responseBuilder_ == null) {
+          response_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.getDefaultInstance();
+          onChanged();
+        } else {
+          responseBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder getResponseBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getResponseFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder getResponseOrBuilder() {
+        if (responseBuilder_ != null) {
+          return responseBuilder_.getMessageOrBuilder();
+        } else {
+          return response_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpResponse response = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder> 
+          getResponseFieldBuilder() {
+        if (responseBuilder_ == null) {
+          responseBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpResponseOrBuilder>(
+                  response_,
+                  getParentForChildren(),
+                  isClean());
+          response_ = null;
+        }
+        return responseBuilder_;
+      }
+
+      // optional .pdp.GpHistory state = 4;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory state_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder> stateBuilder_;
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public boolean hasState() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory getState() {
+        if (stateBuilder_ == null) {
+          return state_;
+        } else {
+          return stateBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public Builder setState(de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory value) {
+        if (stateBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          state_ = value;
+          onChanged();
+        } else {
+          stateBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public Builder setState(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder builderForValue) {
+        if (stateBuilder_ == null) {
+          state_ = builderForValue.build();
+          onChanged();
+        } else {
+          stateBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public Builder mergeState(de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory value) {
+        if (stateBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              state_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance()) {
+            state_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.newBuilder(state_).mergeFrom(value).buildPartial();
+          } else {
+            state_ = value;
+          }
+          onChanged();
+        } else {
+          stateBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public Builder clearState() {
+        if (stateBuilder_ == null) {
+          state_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.getDefaultInstance();
+          onChanged();
+        } else {
+          stateBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder getStateBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getStateFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder getStateOrBuilder() {
+        if (stateBuilder_ != null) {
+          return stateBuilder_.getMessageOrBuilder();
+        } else {
+          return state_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpHistory state = 4;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder> 
+          getStateFieldBuilder() {
+        if (stateBuilder_ == null) {
+          stateBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpHistoryOrBuilder>(
+                  state_,
+                  getParentForChildren(),
+                  isClean());
+          state_ = null;
+        }
+        return stateBuilder_;
+      }
+
+      // optional .pdp.GpEvent triggerEvent = 5;
+      private de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent triggerEvent_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> triggerEventBuilder_;
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public boolean hasTriggerEvent() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent getTriggerEvent() {
+        if (triggerEventBuilder_ == null) {
+          return triggerEvent_;
+        } else {
+          return triggerEventBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public Builder setTriggerEvent(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+        if (triggerEventBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          triggerEvent_ = value;
+          onChanged();
+        } else {
+          triggerEventBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public Builder setTriggerEvent(
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder builderForValue) {
+        if (triggerEventBuilder_ == null) {
+          triggerEvent_ = builderForValue.build();
+          onChanged();
+        } else {
+          triggerEventBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public Builder mergeTriggerEvent(de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent value) {
+        if (triggerEventBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              triggerEvent_ != de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance()) {
+            triggerEvent_ =
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.newBuilder(triggerEvent_).mergeFrom(value).buildPartial();
+          } else {
+            triggerEvent_ = value;
+          }
+          onChanged();
+        } else {
+          triggerEventBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public Builder clearTriggerEvent() {
+        if (triggerEventBuilder_ == null) {
+          triggerEvent_ = de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.getDefaultInstance();
+          onChanged();
+        } else {
+          triggerEventBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder getTriggerEventBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getTriggerEventFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      public de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder getTriggerEventOrBuilder() {
+        if (triggerEventBuilder_ != null) {
+          return triggerEventBuilder_.getMessageOrBuilder();
+        } else {
+          return triggerEvent_;
+        }
+      }
+      /**
+       * <code>optional .pdp.GpEvent triggerEvent = 5;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder> 
+          getTriggerEventFieldBuilder() {
+        if (triggerEventBuilder_ == null) {
+          triggerEventBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent, de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.Builder, de.tum.in.i22.pdp.gpb.PdpProtos.GpEventOrBuilder>(
+                  triggerEvent_,
+                  getParentForChildren(),
+                  isClean());
+          triggerEvent_ = null;
+        }
+        return triggerEventBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pdp.GpMechanism)
+    }
+
+    static {
+      defaultInstance = new GpMechanism(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pdp.GpMechanism)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_pdp_GpEvent_descriptor;
   private static
@@ -3292,6 +10623,56 @@ public final class PdpProtos {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pdp_GpResponse_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpData_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpData_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpOslFormula_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpOslFormula_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpDataEventMap_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpDataEventMap_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpStateEventMap_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpStateEventMap_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpSimplifiedTemporalLogic_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpSimplifiedTemporalLogic_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpCondition_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpCondition_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpHistory_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpHistory_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pdp_GpMechanism_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pdp_GpMechanism_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3304,13 +10685,34 @@ public final class PdpProtos {
       "\n\017PdpProtos.proto\022\003pdp\"\177\n\007GpEvent\022\014\n\004nam" +
       "e\030\001 \001(\t\022)\n\010mapEntry\030\002 \003(\0132\027.pdp.GpEvent." +
       "GpMapEntry\022\021\n\ttimestamp\030\003 \001(\t\032(\n\nGpMapEn" +
-      "try\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \001(\t\"\200\001\n\010GpSt" +
+      "try\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"\200\001\n\010GpSt" +
       "atus\022$\n\005value\030\001 \002(\0162\025.pdp.GpStatus.EStat" +
       "us\"N\n\007EStatus\022\n\n\006ERROR1\020\001\022\010\n\004OKAY\020\002\022\n\n\006E" +
       "RROR2\020\003\022\n\n\006INIBIT\020\004\022\t\n\005ALLOW\020\005\022\n\n\006MODIFY" +
       "\020\006\"\202\001\n\nGpResponse\022*\n\023authorizationAction" +
       "\030\001 \001(\0132\r.pdp.GpStatus\022#\n\rexecuteAction\030\002" +
       " \003(\0132\014.pdp.GpEvent\022#\n\rmodifiedEvent\030\003 \001(",
+      "\0132\014.pdp.GpEvent\"\024\n\006GpData\022\n\n\002id\030\001 \001(\t\"\037\n" +
+      "\014GpOslFormula\022\017\n\007formula\030\001 \001(\t\"\231\001\n\016GpDat" +
+      "aEventMap\0229\n\010mapEntry\030\001 \003(\0132\'.pdp.GpData" +
+      "EventMap.GpDataEventMapEntry\032L\n\023GpDataEv" +
+      "entMapEntry\022\030\n\003key\030\001 \002(\0132\013.pdp.GpData\022\033\n" +
+      "\005value\030\002 \002(\0132\014.pdp.GpEvent\"\220\001\n\017GpStateEv" +
+      "entMap\022;\n\010mapEntry\030\001 \003(\0132).pdp.GpStateEv" +
+      "entMap.GpStateEventMapEntry\032@\n\024GpStateEv" +
+      "entMapEntry\022\013\n\003key\030\001 \002(\t\022\033\n\005value\030\002 \002(\0132" +
+      "\014.pdp.GpEvent\"\227\001\n\031GpSimplifiedTemporalLo",
+      "gic\022)\n\014dataEventMap\030\001 \001(\0132\023.pdp.GpDataEv" +
+      "entMap\022\"\n\007formula\030\002 \001(\0132\021.pdp.GpOslFormu" +
+      "la\022+\n\rstateEventMap\030\003 \001(\0132\024.pdp.GpStateE" +
+      "ventMap\"j\n\013GpCondition\022$\n\tcondition\030\001 \001(" +
+      "\0132\021.pdp.GpOslFormula\0225\n\rconditionSimp\030\002 " +
+      "\001(\0132\036.pdp.GpSimplifiedTemporalLogic\"(\n\tG" +
+      "pHistory\022\033\n\005trace\030\001 \003(\0132\014.pdp.GpEvent\"\257\001" +
+      "\n\013GpMechanism\022#\n\tcondition\030\001 \001(\0132\020.pdp.G" +
+      "pCondition\022\025\n\rmechanismName\030\002 \001(\t\022!\n\010res" +
+      "ponse\030\003 \001(\0132\017.pdp.GpResponse\022\035\n\005state\030\004 ",
+      "\001(\0132\016.pdp.GpHistory\022\"\n\014triggerEvent\030\005 \001(" +
       "\0132\014.pdp.GpEventB\"\n\025de.tum.in.i22.pdp.gpb" +
       "B\tPdpProtos"
     };
@@ -3343,6 +10745,66 @@ public final class PdpProtos {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_pdp_GpResponse_descriptor,
               new java.lang.String[] { "AuthorizationAction", "ExecuteAction", "ModifiedEvent", });
+          internal_static_pdp_GpData_descriptor =
+            getDescriptor().getMessageTypes().get(3);
+          internal_static_pdp_GpData_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpData_descriptor,
+              new java.lang.String[] { "Id", });
+          internal_static_pdp_GpOslFormula_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_pdp_GpOslFormula_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpOslFormula_descriptor,
+              new java.lang.String[] { "Formula", });
+          internal_static_pdp_GpDataEventMap_descriptor =
+            getDescriptor().getMessageTypes().get(5);
+          internal_static_pdp_GpDataEventMap_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpDataEventMap_descriptor,
+              new java.lang.String[] { "MapEntry", });
+          internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor =
+            internal_static_pdp_GpDataEventMap_descriptor.getNestedTypes().get(0);
+          internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpDataEventMap_GpDataEventMapEntry_descriptor,
+              new java.lang.String[] { "Key", "Value", });
+          internal_static_pdp_GpStateEventMap_descriptor =
+            getDescriptor().getMessageTypes().get(6);
+          internal_static_pdp_GpStateEventMap_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpStateEventMap_descriptor,
+              new java.lang.String[] { "MapEntry", });
+          internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor =
+            internal_static_pdp_GpStateEventMap_descriptor.getNestedTypes().get(0);
+          internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpStateEventMap_GpStateEventMapEntry_descriptor,
+              new java.lang.String[] { "Key", "Value", });
+          internal_static_pdp_GpSimplifiedTemporalLogic_descriptor =
+            getDescriptor().getMessageTypes().get(7);
+          internal_static_pdp_GpSimplifiedTemporalLogic_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpSimplifiedTemporalLogic_descriptor,
+              new java.lang.String[] { "DataEventMap", "Formula", "StateEventMap", });
+          internal_static_pdp_GpCondition_descriptor =
+            getDescriptor().getMessageTypes().get(8);
+          internal_static_pdp_GpCondition_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpCondition_descriptor,
+              new java.lang.String[] { "Condition", "ConditionSimp", });
+          internal_static_pdp_GpHistory_descriptor =
+            getDescriptor().getMessageTypes().get(9);
+          internal_static_pdp_GpHistory_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpHistory_descriptor,
+              new java.lang.String[] { "Trace", });
+          internal_static_pdp_GpMechanism_descriptor =
+            getDescriptor().getMessageTypes().get(10);
+          internal_static_pdp_GpMechanism_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pdp_GpMechanism_descriptor,
+              new java.lang.String[] { "Condition", "MechanismName", "Response", "State", "TriggerEvent", });
           return null;
         }
       };

@@ -1,7 +1,7 @@
 package de.tum.in.i22.pdp.datatypes;
 
 public interface IMechanism {
-	public String getName();
+	public String getMechanismName();
 	public ICondition getCondition();
 	public IResponse getResponse();
 	public IHistory getState();

@@ -15,7 +15,7 @@ import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.ResponseBasic;
+import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 

@@ -1,10 +1,11 @@
-package de.tum.in.i22.pdp.datatypes;
+package de.tum.in.i22.pdp.datatypes.basic;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.GpMapEntry;

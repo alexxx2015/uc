@@ -8,10 +8,10 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.datatypes.EventBasic;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.ResponseBasic;
+import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
+import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 
