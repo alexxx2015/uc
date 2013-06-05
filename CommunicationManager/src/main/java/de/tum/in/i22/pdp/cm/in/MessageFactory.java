@@ -24,6 +24,12 @@ public class MessageFactory implements IMessageFactory {
 	}
 	
 	@Override
+	public IEvent createEvent(GpEvent gpEvent) {
+		EventBasic e = new EventBasic(gpEvent);
+		return e;
+	}
+	
+	@Override
 	public IEvent createEvent(GpEvent gpEvent, long timestamp) {
 		EventBasic e = new EventBasic(gpEvent);
 		e.setTimestamp(timestamp);

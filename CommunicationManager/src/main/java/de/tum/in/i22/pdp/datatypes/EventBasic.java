@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.tum.in.i22.pdp.gpb.PdpProtos;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.MapEntry;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.GpMapEntry;
 
 public class EventBasic implements IEvent {
 	private String _name = null;
@@ -26,12 +26,17 @@ public class EventBasic implements IEvent {
 		int count = event.getMapEntryCount();
 		_map = new HashMap<String, String>();
 		if (count > 0) {
-			Iterator<MapEntry> it = event.getMapEntryList().iterator();
+			Iterator<GpMapEntry> it = event.getMapEntryList().iterator();
 			while (it.hasNext()) {
-				MapEntry entry = it.next();
+				GpMapEntry entry = it.next();
 				_map.put(entry.getKey(), entry.getValue());
 			}
 		}
+		
+		if (event.getTimestamp() != null && !event.getTimestamp().isEmpty())
+			_timestamp = Long.valueOf(event.getTimestamp());
+		else
+			_timestamp = 0;
 	}
 	
 	@Override
@@ -56,7 +61,7 @@ public class EventBasic implements IEvent {
 	/**
 	 * 
 	 * @param e
-	 * @return Google Protocol Buffer equivalent to IEvent
+	 * @return Google Protocol Buffer object corresponding to IEvent
 	 */
 	public static GpEvent createGpbEvent(IEvent e) {
 		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
@@ -67,7 +72,7 @@ public class EventBasic implements IEvent {
 			Set<String> keys = map.keySet();
 			for (String key:keys) {
 				String value = map.get(key);
-				PdpProtos.GpEvent.MapEntry.Builder entry = PdpProtos.GpEvent.MapEntry.newBuilder();
+				PdpProtos.GpEvent.GpMapEntry.Builder entry = PdpProtos.GpEvent.GpMapEntry.newBuilder();
 				entry.setKey(key);
 				entry.setValue(value);
 				
@@ -80,7 +85,8 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventBasic [_name=" + _name + "]";
+		return "EventBasic [_name=" + _name + ", _map=" + _map
+				+ ", _timestamp=" + _timestamp + "]";
 	}
 
 }

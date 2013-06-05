@@ -6,6 +6,6 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public interface IResponse {
 	public EStatus getAuthorizationAction();
-	public List<IEvent> getExecutedActions();
+	public List<IEvent> getExecuteActions();
 	public IEvent getModifiedEvent();
 }

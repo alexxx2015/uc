@@ -10,7 +10,7 @@ import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
 
@@ -49,11 +49,11 @@ public class TestPep2PdpCommunication {
 		// connect to pdp
 		_pdpProxy.connect();
 		// notify event1
-		EStatus status1 = _pdpProxy.notifyEvent(event1);
-		_logger.debug("Received status as reply to event 1: " + status1);
+		IResponse response1 = _pdpProxy.notifyEvent(event1);
+		_logger.debug("Received response as reply to event 1: " + response1);
 		
-		EStatus status2 = _pdpProxy.notifyEvent(event2);
-		_logger.debug("Received status as reply to event 2: " + status2);
+		IResponse response2 = _pdpProxy.notifyEvent(event2);
+		_logger.debug("Received response as reply to event 2: " + response2);
 		// disconnect from pdp
 		_pdpProxy.disconnect();
 		
@@ -65,8 +65,8 @@ public class TestPep2PdpCommunication {
 		}
 		
 		// check if status is not null
-		Assert.assertNotNull(status1);
-		Assert.assertNotNull(status2);
+		Assert.assertNotNull(response1);
+		Assert.assertNotNull(response2);
 	}
 	
 	

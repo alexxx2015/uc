@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.datatypes.EventBasic;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
+import de.tum.in.i22.pdp.datatypes.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 
 public class Pep2PdpFastImp implements IPep2PdpFast {
 	
@@ -30,7 +31,8 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 		_port = port;
 	}
  	
-	public EStatus notifyEvent(IEvent event) {
+ 	@Override
+	public IResponse notifyEvent(IEvent event) {
 		_logger.debug("Create Google Protocol Buffer event instance.");
 		GpEvent e = EventBasic.createGpbEvent(event);
 		
@@ -46,8 +48,8 @@ public class Pep2PdpFastImp implements IPep2PdpFast {
 			
 			_logger.debug("Event written to OutputStream.");
 			
-			GpStatus status = GpStatus.parseDelimitedFrom(_input);
-			return status.getValue();
+			GpResponse gpResponse = GpResponse.parseDelimitedFrom(_input);
+			return new ResponseBasic(gpResponse);
 		} catch (IOException ex) {
 			_logger.error("Failed to notify event.", ex);
 		}

@@ -10,15 +10,16 @@ import java.net.Socket;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.EventHandler;
-import de.tum.in.i22.pdp.IResponder;
+import de.tum.in.i22.pdp.IForwarder;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
+import de.tum.in.i22.pdp.datatypes.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 
-public class ClientConnectionHandler implements Runnable, IResponder {
+public class ClientConnectionHandler implements Runnable, IForwarder {
 	private static Logger _logger = Logger.getRootLogger();
 	private Socket _socket;
 	private InputStream _input;
@@ -26,7 +27,7 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 	
 	private boolean _isOpen;
 	
-	private EStatus _status = null;
+	private IResponse _response = null;
 	
 	public ClientConnectionHandler(Socket socket) {
 		super();
@@ -54,7 +55,6 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 					//parse message
 					GpEvent gpEvent = GpEvent.parseFrom(bytes);					
 					if (gpEvent != null) {
-						//TODO process event
 						_logger.trace("Received event: " + gpEvent);
 						
 						EventHandler eventHandler = EventHandler.getInstance();
@@ -64,18 +64,17 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 						eventHandler.addEvent(event, this);
 						
 						synchronized(this) {
-							while (_status == null) {
+							while (_response == null) {
 								_logger.debug("Wait for the event to be processed.");
 								wait();
 							}
 						}
 						
-						_logger.debug("Status to return: " + _status);
+						_logger.trace("Response to return: " + _response);
 						
-						GpStatus.Builder status = GpStatus.newBuilder();
-						status.setValue(_status);
-						_status = null;
-						status.build().writeDelimitedTo(_output);
+						GpResponse gpResponse = ResponseBasic.createGpbResponse(_response);
+						_response = null;
+						gpResponse.writeDelimitedTo(_output);
 						_output.flush();
 					} else {
 						_logger.debug("Received event is null.");
@@ -114,10 +113,11 @@ public class ClientConnectionHandler implements Runnable, IResponder {
 		}
 	}
 
-	public void forwardResponse(EStatus status) {
+	@Override
+	public void forwardResponse(IResponse response) {
 		_logger.debug("Wake up the thread.");
 		synchronized(this) {
-			_status = status;
+			_response = response;
 			notifyAll();
 		}
 	}

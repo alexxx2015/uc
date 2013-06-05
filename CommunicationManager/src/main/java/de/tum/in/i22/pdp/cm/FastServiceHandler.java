@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 public class FastServiceHandler extends CommunicationHandler implements
@@ -52,7 +53,7 @@ public class FastServiceHandler extends CommunicationHandler implements
 
 					ClientConnectionHandler clientConnHandler = new ClientConnectionHandler(
 							client);
-					//FIXME improve this code, use new features introduced in java 1.7, thread pools
+					//TODO improve this code, use new features introduced in java 1.7, thread pools
 					Thread thread = new Thread(clientConnHandler);
 					thread.start();
 				} catch (IOException e) {
@@ -112,7 +113,8 @@ public class FastServiceHandler extends CommunicationHandler implements
 		return null;
 	}
 
-	public EStatus notifyEvent(IEvent event) {
+	@Override
+	public IResponse notifyEvent(IEvent event) {
 		// TODO Auto-generated method stub
 		return null;
 	}

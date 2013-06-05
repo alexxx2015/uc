@@ -8,4 +8,5 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 public interface IMessageFactory {
 	public IEvent createEvent(String Name, Map<String, String> map);
 	public IEvent createEvent(GpEvent gpEvent, long timestamp);
+	public IEvent createEvent(GpEvent gpEvent);
 }
