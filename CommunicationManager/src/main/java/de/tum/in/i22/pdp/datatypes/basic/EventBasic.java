@@ -20,22 +20,23 @@ public class EventBasic implements IEvent {
 		_map = map;
 	}
 	
-	public EventBasic(GpEvent event) {
-		_name = event.getName();
+	public EventBasic(GpEvent gpEvent) {
+		_name = gpEvent.getName();
 		
 		//number of elements in the map
-		int count = event.getMapEntryCount();
+		int count = gpEvent.getMapEntryCount();
 		_map = new HashMap<String, String>();
 		if (count > 0) {
-			Iterator<GpMapEntry> it = event.getMapEntryList().iterator();
+			Iterator<GpMapEntry> it = gpEvent.getMapEntryList().iterator();
 			while (it.hasNext()) {
 				GpMapEntry entry = it.next();
 				_map.put(entry.getKey(), entry.getValue());
 			}
 		}
 		
-		if (event.getTimestamp() != null && !event.getTimestamp().isEmpty())
-			_timestamp = Long.valueOf(event.getTimestamp());
+		// Insert timestamp
+		if (gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
+			_timestamp = Long.valueOf(gpEvent.getTimestamp());
 		else
 			_timestamp = 0;
 	}
@@ -90,4 +91,15 @@ public class EventBasic implements IEvent {
 				+ ", _timestamp=" + _timestamp + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		boolean isEqual = false;
+		if (obj != null && this.getClass() == obj.getClass()) {
+			EventBasic o = (EventBasic)obj;
+			//TODO check if timestamp should be checked
+			isEqual = CompareUtil.areObjectsEqual(_name, o.getName())
+					&& CompareUtil.areMapsEqual(_map, o.getParameters());
+		}
+		return isEqual;
+	}
 }

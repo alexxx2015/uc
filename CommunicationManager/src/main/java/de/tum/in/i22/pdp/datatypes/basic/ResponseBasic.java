@@ -18,6 +18,7 @@ public class ResponseBasic implements IResponse {
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
 	
+	//TODO think if the factory is really necessary
 	private final static IMessageFactory _factory = MessageFactory.getInstance();
 	
 	public ResponseBasic(EStatus authorizationAction,
@@ -101,4 +102,18 @@ public class ResponseBasic implements IResponse {
 				+ _modifiedEvent + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		boolean isEqual = false;
+		if (obj != null && this.getClass() == obj.getClass()) {
+			ResponseBasic o = (ResponseBasic)obj;
+			isEqual = CompareUtil.areObjectsEqual(
+						_authorizationAction, o.getAuthorizationAction())
+					&& CompareUtil.areListsEqual(
+							_executeActions, o.getExecuteActions())
+					&& CompareUtil.areObjectsEqual(
+							_modifiedEvent, o.getModifiedEvent());
+		}
+		return isEqual;
+	}
 }
