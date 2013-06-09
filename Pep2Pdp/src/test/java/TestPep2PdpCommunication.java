@@ -24,7 +24,7 @@ public class TestPep2PdpCommunication {
 	
 	static {
 		PdpController pdp = new PdpController();
-		pdp.start(50001);
+		pdp.start(50001, 50002);
 		
 		try {
 			_logger.debug("Pause the main thread for 1s (PDP starting).");

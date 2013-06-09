@@ -12,8 +12,8 @@ import de.tum.in.i22.pdp.datatypes.IDataEventMap;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpData;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 
 public class DataEventMapBasic implements IDataEventMap {
 	private static final Logger _logger = Logger.getLogger(DataEventMapBasic.class);
@@ -28,6 +28,7 @@ public class DataEventMapBasic implements IDataEventMap {
 	public DataEventMapBasic(GpDataEventMap gpDataEventMap) {
 		if (gpDataEventMap == null)
 			return;
+		
 		List<GpDataEventMapEntry> list = gpDataEventMap.getMapEntryList();
 		if (list != null && !list.isEmpty()) {
 			_map = new HashMap<>();
@@ -36,7 +37,7 @@ public class DataEventMapBasic implements IDataEventMap {
 				GpData gpData = entry.getKey();
 				GpEvent gpEvent = entry.getValue();
 				
-				_map.put(new DataBasic(gpData.getId()), new EventBasic(gpEvent));
+				_map.put(new DataBasic(gpData), new EventBasic(gpEvent));
 			}
 		}
 	}

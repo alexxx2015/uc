@@ -3,6 +3,8 @@ package de.tum.in.i22.pdp;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.cm.FastServiceHandler;
+import de.tum.in.i22.pdp.cm.PepFastServiceHandler;
+import de.tum.in.i22.pdp.cm.PmpFastServiceHandler;
 
 public class PdpController {
 	
@@ -12,11 +14,11 @@ public class PdpController {
 	
 	public static void main(String[] args) {
 		PdpController pdp = new PdpController();
-		pdp.start(50001);
+		pdp.start(50001, 50002);
 	}
 	
 	//TODO add additional parameters
-	public void start(int portNum) {
+	public void start(int portNumPep, int portNumPmp) {
 		if (_isStarted)
 			return;
 		_isStarted = true;
@@ -27,11 +29,17 @@ public class PdpController {
 		EventHandler eventHandler = EventHandler.getInstance();
 		Thread thread = new Thread(eventHandler);
 		thread.start();
+
+		_logger.info("Start PmpFastServiceHandler");
+		FastServiceHandler pmpFastServiceHandler = new PmpFastServiceHandler(portNumPmp);
+		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
+		threadPmpFastServiceHandler.start();
 		
-		_logger.info("Start FastServiceHandler");
-		FastServiceHandler fastServiceHandler = new FastServiceHandler(portNum);
-		Thread threadFastServiceHandler = new Thread(fastServiceHandler);
-		threadFastServiceHandler.start();
+		_logger.info("Start PepFastServiceHandler");
+		FastServiceHandler pepFastServiceHandler = new PepFastServiceHandler(portNumPep);
+		Thread threadPepFastServiceHandler = new Thread(pepFastServiceHandler);
+		threadPepFastServiceHandler.start();
+
 		
 		// EventHandler thread loops forever, this stops the main thread,
 		// otherwise the app will be closed

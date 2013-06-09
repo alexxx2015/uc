@@ -21,12 +21,16 @@ public class EventBasic implements IEvent {
 	}
 	
 	public EventBasic(GpEvent gpEvent) {
-		_name = gpEvent.getName();
+		if (gpEvent == null)
+			return;
+		
+		if (gpEvent.hasName())
+			_name = gpEvent.getName();
 		
 		//number of elements in the map
 		int count = gpEvent.getMapEntryCount();
-		_map = new HashMap<String, String>();
 		if (count > 0) {
+			_map = new HashMap<String, String>();
 			Iterator<GpMapEntry> it = gpEvent.getMapEntryList().iterator();
 			while (it.hasNext()) {
 				GpMapEntry entry = it.next();
@@ -35,7 +39,7 @@ public class EventBasic implements IEvent {
 		}
 		
 		// Insert timestamp
-		if (gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
+		if (gpEvent.hasTimestamp() && gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
 			_timestamp = Long.valueOf(gpEvent.getTimestamp());
 		else
 			_timestamp = 0;
@@ -66,10 +70,14 @@ public class EventBasic implements IEvent {
 	 * @return Google Protocol Buffer object corresponding to IEvent
 	 */
 	public static GpEvent createGpbEvent(IEvent e) {
-		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
-		gpEvent.setName(e.getName());
-		Map<String, String> map = e.getParameters();
+		if (e == null) 
+			return null;
 		
+		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
+		if (e.getName() != null)
+			gpEvent.setName(e.getName());
+		
+		Map<String, String> map = e.getParameters();
 		if (map != null && !map.isEmpty()) {
 			Set<String> keys = map.keySet();
 			for (String key:keys) {

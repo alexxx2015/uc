@@ -6,20 +6,28 @@ import de.tum.in.i22.pdp.datatypes.ICondition;
 import de.tum.in.i22.pdp.datatypes.IOslFormula;
 import de.tum.in.i22.pdp.datatypes.ISimplifiedTemporalLogic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic;
 
 public class ConditionBasic implements ICondition {
 	private static Logger _logger = Logger.getLogger(ConditionBasic.class);
 	private IOslFormula _condition;
 	private ISimplifiedTemporalLogic _conditionSimp;
 
+	public ConditionBasic() {
+	}
+	
 	public ConditionBasic(GpCondition gpCondition) {
 		if (gpCondition == null)
 			return;
-		_condition = new OslFormulaBasic(gpCondition.getCondition());
 		
-		_conditionSimp = 
-				new SimplifiedTemporalLogicBasic(
-						gpCondition.getConditionSimp());
+		if (gpCondition.hasCondition())
+			_condition = new OslFormulaBasic(gpCondition.getCondition());
+		
+		if (gpCondition.hasConditionSimp())
+			_conditionSimp = 
+					new SimplifiedTemporalLogicBasic(
+							gpCondition.getConditionSimp());
 	}
 	
 	public ConditionBasic(IOslFormula condition,
@@ -39,6 +47,14 @@ public class ConditionBasic implements ICondition {
 		return _conditionSimp;
 	}
 	
+	public void setCondition(IOslFormula condition) {
+		_condition = condition;
+	}
+
+	public void setConditionSimp(ISimplifiedTemporalLogic conditionSimp) {
+		_conditionSimp = conditionSimp;
+	}
+
 	/**
 	 * 
 	 * @return Google Protocol Buffer object corresponding to ICondition
@@ -49,10 +65,18 @@ public class ConditionBasic implements ICondition {
 		_logger.trace("Build condition");
 		
 		GpCondition.Builder gp = GpCondition.newBuilder();
-		gp.setCondition(OslFormulaBasic.createGpbOslFormula(condition.getCondition()));
-		gp.setConditionSimp(
-				SimplifiedTemporalLogicBasic.createGpbSimplifiedTemporalLogic(
-						condition.getConditionSimp()));
+		GpOslFormula gpOslFormula = 
+				OslFormulaBasic.createGpbOslFormula(
+						condition.getCondition());
+		if (gpOslFormula != null)
+			gp.setCondition(gpOslFormula);
+		
+		GpSimplifiedTemporalLogic gpSimplifiedTemporalLogic = 
+		SimplifiedTemporalLogicBasic.createGpbSimplifiedTemporalLogic(
+				condition.getConditionSimp());
+		
+		if (gpSimplifiedTemporalLogic != null)
+			gp.setConditionSimp(gpSimplifiedTemporalLogic);
 		
 		return gp.build();
 	}

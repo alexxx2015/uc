@@ -1,3 +1,4 @@
+package pdp.tests;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,7 +8,11 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.tum.in.i22.pdp.datatypes.IData;
+import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.basic.CompareUtil;
+import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
+import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
 
 
 public class CompareUtilTest {
@@ -51,6 +56,21 @@ public class CompareUtilTest {
 		Assert.assertFalse(CompareUtil.areMapsEqual(map1, map3));
 		Assert.assertFalse(CompareUtil.areMapsEqual(map3, map2));
 		Assert.assertTrue(CompareUtil.areMapsEqual(null, null));
+		
+		Map<IData, IEvent> mapA = new HashMap<IData, IEvent>();
+		mapA.put(new DataBasic("x"), new EventBasic("y", null));
+		mapA.put(new DataBasic("xx"), new EventBasic("yy", null));
+		
+		Map<IData, IEvent> mapB = new HashMap<IData, IEvent>();
+		mapB.put(new DataBasic("x"), new EventBasic("y", null));
+		mapB.put(new DataBasic("xx"), new EventBasic("yy", null));
+
+		Map<IData, IEvent> mapC = new HashMap<IData, IEvent>();
+		mapC.put(new DataBasic("x"), new EventBasic("y", null));
+		mapC.put(new DataBasic("xxx"), new EventBasic("yy", null));
+		
+		Assert.assertTrue(CompareUtil.areMapsEqual(mapA, mapB));
+		Assert.assertFalse(CompareUtil.areMapsEqual(mapA, mapC));
 	}
 
 }

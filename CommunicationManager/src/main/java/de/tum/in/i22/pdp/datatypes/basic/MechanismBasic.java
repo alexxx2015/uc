@@ -7,7 +7,11 @@ import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IHistory;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.IResponse;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 
 public class MechanismBasic implements IMechanism {
 	private static Logger _logger = Logger.getLogger(MechanismBasic.class);
@@ -17,15 +21,23 @@ public class MechanismBasic implements IMechanism {
 	private IHistory _state;
 	private IEvent _triggerEvent;
 	
+	public MechanismBasic() {
+	}
+	
 	public MechanismBasic(GpMechanism gpM) {
 		if (gpM == null)
 			return;
 		
-		_mechanismName = gpM.getMechanismName();
-		_condition = new ConditionBasic(gpM.getCondition());
-		_response = new ResponseBasic(gpM.getResponse());		
-		_state = new HistoryBasic(gpM.getState());
-		_triggerEvent = new EventBasic(gpM.getTriggerEvent());
+		if (gpM.hasMechanismName())
+			_mechanismName = gpM.getMechanismName();
+		if (gpM.hasCondition())
+			_condition = new ConditionBasic(gpM.getCondition());
+		if (gpM.hasResponse())
+			_response = new ResponseBasic(gpM.getResponse());
+		if (gpM.hasState())
+			_state = new HistoryBasic(gpM.getState());
+		if (gpM.hasTriggerEvent())
+			_triggerEvent = new EventBasic(gpM.getTriggerEvent());
 	}
 
 	@Override
@@ -52,7 +64,27 @@ public class MechanismBasic implements IMechanism {
 	public IEvent getTriggerEvent() {
 		return _triggerEvent;
 	}
-	
+
+	public void setCondition(ICondition condition) {
+		_condition = condition;
+	}
+
+	public void setMechanismName(String mechanismName) {
+		_mechanismName = mechanismName;
+	}
+
+	public void setResponse(IResponse response) {
+		_response = response;
+	}
+
+	public void setState(IHistory state) {
+		_state = state;
+	}
+
+	public void setTriggerEvent(IEvent triggerEvent) {
+		_triggerEvent = triggerEvent;
+	}
+
 	/**
 	 * 
 	 * @param e
@@ -63,25 +95,33 @@ public class MechanismBasic implements IMechanism {
 		GpMechanism.Builder gp = GpMechanism.newBuilder();
 		
 		_logger.trace("Build condition");
-		gp.setCondition(
-				ConditionBasic.createGpbCondition(
-						m.getCondition()));
 		
-		gp.setMechanismName(m.getMechanismName());
+		GpCondition gpCondition = ConditionBasic.createGpbCondition(
+				m.getCondition());
+		if (gpCondition != null)
+			gp.setCondition(gpCondition);
+		
+		String mechanismName = m.getMechanismName();
+		if (mechanismName != null)
+			gp.setMechanismName(mechanismName);
+		
 		_logger.trace("Build response");
-		gp.setResponse(
-				ResponseBasic.createGpbResponse(
-						m.getResponse()));
+		GpResponse gpResponse = ResponseBasic.createGpbResponse(
+				m.getResponse());
+		if (gpResponse != null)
+			gp.setResponse(gpResponse);
 		
 		_logger.trace("Build state");
-		gp.setState(
-				HistoryBasic.createGpbHistory(
-						m.getState()));
+		GpHistory gpHistory = HistoryBasic.createGpbHistory(
+				m.getState());
+		if (gpHistory != null)
+			gp.setState(gpHistory);
 		
 		_logger.trace("Build trigger event");
-		gp.setTriggerEvent(
-				EventBasic.createGpbEvent(
-						m.getTriggerEvent()));
+		GpEvent gpEvent = EventBasic.createGpbEvent(
+				m.getTriggerEvent());
+		if (gpEvent != null)
+			gp.setTriggerEvent(gpEvent);
 		
 		return gp.build();
 	}

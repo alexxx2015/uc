@@ -30,11 +30,14 @@ public class ResponseBasic implements IResponse {
 	}
 
 	public ResponseBasic(GpResponse gpResponse) {
-		// Copy Authorization Action
-		GpStatus gpAuthorizationAction = gpResponse.getAuthorizationAction();
-		// Check for null, the constructor should not fail
-		if (gpAuthorizationAction != null)
+		if (gpResponse == null) 
+			return;
+		
+		if (gpResponse.hasAuthorizationAction()) {
+			// Copy Authorization Action
+			GpStatus gpAuthorizationAction = gpResponse.getAuthorizationAction();
 			_authorizationAction = gpAuthorizationAction.getValue();
+		}
 		
 		// Copy Execute Actions
 		List<GpEvent> list = gpResponse.getExecuteActionList();
@@ -46,10 +49,11 @@ public class ResponseBasic implements IResponse {
 			}
 		}
 		
-		// Copy Modified Event
-		GpEvent modifiedGpEvent = gpResponse.getModifiedEvent();
-		if (modifiedGpEvent != null)
+		if (gpResponse.hasModifiedEvent()) {
+			// Copy Modified Event
+			GpEvent modifiedGpEvent = gpResponse.getModifiedEvent();
 			_modifiedEvent = _factory.createEvent(modifiedGpEvent);
+		}
 	}
 	
 	@Override
@@ -73,25 +77,33 @@ public class ResponseBasic implements IResponse {
 	 * @return Google Protocol Buffer object corresponding to IResponse
 	 */
 	public static GpResponse createGpbResponse(IResponse response) {
+		if (response == null) 
+			return null;
+		
 		PdpProtos.GpResponse.Builder gpResponse = PdpProtos.GpResponse.newBuilder();
 		
 		// Set authorization action
-		GpStatus.Builder gpStatus = GpStatus.newBuilder();
-		gpStatus.setValue(response.getAuthorizationAction());
-		gpResponse.setAuthorizationAction(gpStatus.build());
+		if (response.getAuthorizationAction() != null) {
+			GpStatus.Builder gpStatus = GpStatus.newBuilder();
+			gpStatus.setValue(response.getAuthorizationAction());
+			gpResponse.setAuthorizationAction(gpStatus.build());
+		}
 		
 		// Set modified event
 		IEvent modifiedEvent = response.getModifiedEvent();
-		GpEvent modifiedGpEvent = EventBasic.createGpbEvent(modifiedEvent);
-		gpResponse.setModifiedEvent(modifiedGpEvent);
+		if (modifiedEvent != null) {
+			GpEvent modifiedGpEvent = EventBasic.createGpbEvent(modifiedEvent);
+			gpResponse.setModifiedEvent(modifiedGpEvent);
+		}
 		
 		// Set execute actions
 		List<IEvent> executeActions = response.getExecuteActions();
-		for (IEvent executedAction:executeActions) {
-			GpEvent executeGpAction = EventBasic.createGpbEvent(executedAction);
-			gpResponse.addExecuteAction(executeGpAction);
+		if (executeActions != null && !executeActions.isEmpty()) {
+			for (IEvent executedAction:executeActions) {
+				GpEvent executeGpAction = EventBasic.createGpbEvent(executedAction);
+				gpResponse.addExecuteAction(executeGpAction);
+			}
 		}
-		
 		return gpResponse.build();
 	}
 

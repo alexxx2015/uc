@@ -14,10 +14,12 @@ public class OslFormulaBasic implements IOslFormula {
 		_stringRepresentation = stringRepresentation;
 	}
 	
-	public OslFormulaBasic(GpOslFormula condition) {
-		if (condition == null)
+	public OslFormulaBasic(GpOslFormula gpOslFormula) {
+		if (gpOslFormula == null)
 			return;
-		_stringRepresentation = condition.getFormula();
+		
+		if (gpOslFormula.hasFormula())
+			_stringRepresentation = gpOslFormula.getFormula();
 	}
 
 	@Override
@@ -35,7 +37,8 @@ public class OslFormulaBasic implements IOslFormula {
 			return null;
 		_logger.trace("Build OslFormula");
 		GpOslFormula.Builder gp = GpOslFormula.newBuilder();
-		gp.setFormula(formula.getAsString());
+		if (formula.getAsString() != null)
+			gp.setFormula(formula.getAsString());
 		return gp.build();
 	}
 	

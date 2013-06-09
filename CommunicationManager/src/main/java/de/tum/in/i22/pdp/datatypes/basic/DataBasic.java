@@ -1,5 +1,7 @@
 package de.tum.in.i22.pdp.datatypes.basic;
 
+import java.util.UUID;
+
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpData;
 
@@ -15,11 +17,16 @@ public class DataBasic implements IData {
 	public DataBasic(GpData gpData) {
 		if (gpData == null) 
 			return;
-		_id = gpData.getId();
+		
+		if (gpData.hasId())
+			_id = gpData.getId();
 	}
 
 	@Override
 	public String getId() {
+		if (_id == null) {
+			_id = UUID.randomUUID().toString();
+		}
 		return _id;
 	}
 	
@@ -42,6 +49,11 @@ public class DataBasic implements IData {
 		}
 		
 		return isEqual;
+	}
+	
+	@Override
+	public int hashCode() {
+		return _id.hashCode();
 	}
 
 }

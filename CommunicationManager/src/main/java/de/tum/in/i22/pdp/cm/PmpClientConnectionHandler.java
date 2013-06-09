@@ -9,17 +9,15 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.EventHandler;
 import de.tum.in.i22.pdp.IForwarder;
-import de.tum.in.i22.pdp.cm.in.IMessageFactory;
-import de.tum.in.i22.pdp.cm.in.MessageFactory;
-import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
-public class ClientConnectionHandler implements Runnable, IForwarder {
+public class PmpClientConnectionHandler 
+	implements Runnable, IForwarder{
+
 	private static Logger _logger = Logger.getRootLogger();
 	private Socket _socket;
 	private InputStream _input;
@@ -27,9 +25,9 @@ public class ClientConnectionHandler implements Runnable, IForwarder {
 	
 	private boolean _isOpen;
 	
-	private IResponse _response = null;
+//	private IResponse _response = null;
 	
-	public ClientConnectionHandler(Socket socket) {
+	public PmpClientConnectionHandler(Socket socket) {
 		super();
 		_socket = socket;
 		_isOpen = true;
@@ -53,38 +51,43 @@ public class ClientConnectionHandler implements Runnable, IForwarder {
 					byte[] bytes = new byte[messageSize];
 					_objInp.readFully(bytes);
 					//parse message
-					GpEvent gpEvent = GpEvent.parseFrom(bytes);					
-					if (gpEvent != null) {
-						_logger.trace("Received event: " + gpEvent);
+					GpMechanism gpMechanism = GpMechanism.parseFrom(bytes);					
+					if (gpMechanism != null) {
+						_logger.trace("Received mechanism: " + gpMechanism);
 						
-						EventHandler eventHandler = EventHandler.getInstance();
+//						EventHandler eventHandler = EventHandler.getInstance();
+//						
+//						IMessageFactory mf = MessageFactory.getInstance();
+//						IEvent event = mf.createEvent(gpEvent, System.currentTimeMillis());
+//						eventHandler.addEvent(event, this);
 						
-						IMessageFactory mf = MessageFactory.getInstance();
-						IEvent event = mf.createEvent(gpEvent, System.currentTimeMillis());
-						eventHandler.addEvent(event, this);
+//						synchronized(this) {
+//							while (_response == null) {
+//								_logger.debug("Wait for the event to be processed.");
+//								wait();
+//							}
+//						}
 						
-						synchronized(this) {
-							while (_response == null) {
-								_logger.debug("Wait for the event to be processed.");
-								wait();
-							}
-						}
+//						_logger.trace("Response to return: " + _response);
+//						
+//						GpResponse gpResponse = ResponseBasic.createGpbResponse(_response);
+//						_response = null;
+//						gpResponse.writeDelimitedTo(_output);
+//						_output.flush();
 						
-						_logger.trace("Response to return: " + _response);
-						
-						GpResponse gpResponse = ResponseBasic.createGpbResponse(_response);
-						_response = null;
-						gpResponse.writeDelimitedTo(_output);
+						GpStatus.Builder status = GpStatus.newBuilder();
+						status.setValue(EStatus.OKAY);
+						status.build().writeDelimitedTo(_output);
 						_output.flush();
 					} else {
 						_logger.debug("Received event is null.");
 					}
 				}
 			}
-			catch (InterruptedException e) {
-				_logger.error("Thread interrupted. Cannot server the client request.", e);
-				return;
-			}
+//			catch (InterruptedException e) {
+//				_logger.error("Thread interrupted. Cannot server the client request.", e);
+//				return;
+//			}
 			catch (EOFException eof) {
 				_logger.warn("End of stream reached");
 				_isOpen = false;
@@ -117,7 +120,7 @@ public class ClientConnectionHandler implements Runnable, IForwarder {
 	public void forwardResponse(IResponse response) {
 		_logger.debug("Wake up the thread.");
 		synchronized(this) {
-			_response = response;
+//			_response = response;
 			notifyAll();
 		}
 	}
