@@ -2,13 +2,13 @@ package de.tum.in.i22.pdp;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.FastServiceHandler;
-import de.tum.in.i22.pdp.cm.PepFastServiceHandler;
-import de.tum.in.i22.pdp.cm.PmpFastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 
 public class PdpController {
 	
-	private static Logger _logger = Logger.getRootLogger();
+	private static Logger _logger = Logger.getLogger(PdpController.class);
 	
 	private boolean _isStarted = false;
 	

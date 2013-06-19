@@ -8,7 +8,7 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.EPmp2PdpMethods;
+import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethods;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
