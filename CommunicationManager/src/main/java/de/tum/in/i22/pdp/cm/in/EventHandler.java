@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp;
+package de.tum.in.i22.pdp.cm.in;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.IForwarder;
-import de.tum.in.i22.pdp.cm.in.IMessageFactory;
-import de.tum.in.i22.pdp.cm.in.MessageFactory;
+import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
@@ -20,7 +18,8 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 public class EventHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
 	private static EventHandler _instance = null;
-	private BlockingQueue<EventHandlerWrapper> _eventQueue = null;
+	private BlockingQueue<RequestWrapper> _eventQueue = null;
+	
 	private boolean _pause = false;
 	private Object _pauseLock = new Object();
 	
@@ -35,7 +34,7 @@ public class EventHandler implements Runnable {
 	
 	private EventHandler() {
 		// maximum size of the queue 100
-		_eventQueue = new ArrayBlockingQueue<EventHandlerWrapper>(100, true);
+		_eventQueue = new ArrayBlockingQueue<RequestWrapper>(100, true);
 	}
 	
 	/**
@@ -61,7 +60,7 @@ public class EventHandler implements Runnable {
 		// add event to the tail of the queue
 		// put method blocks until the space in the queue is available
 		
-		EventHandlerWrapper obj = new EventHandlerWrapper(event, responder);
+		RequestWrapper obj = new RequestWrapper(event, responder);
 		_logger.debug("Add " + obj + " pair to the queue.");
 		_eventQueue.put(obj);
 	}
@@ -69,7 +68,7 @@ public class EventHandler implements Runnable {
 	public void run() {
 		_logger.debug("Run method entered.");
 		while (!Thread.interrupted()) {
-			EventHandlerWrapper obj = null;
+			RequestWrapper obj = null;
 			try {
 				obj = _eventQueue.take();
 			} catch (InterruptedException e) {
@@ -124,10 +123,10 @@ public class EventHandler implements Runnable {
 		return response;
 	}
 
-	private class EventHandlerWrapper {
+	private class RequestWrapper {
 		private IEvent _event;
 		private IForwarder _responder;
-		public EventHandlerWrapper(IEvent event, IForwarder responder) {
+		public RequestWrapper(IEvent event, IForwarder responder) {
 			super();
 			_event = event;
 			_responder = responder;
