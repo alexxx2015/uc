@@ -8,12 +8,22 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pdp.cm.EPmp2PdpMethods;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 
+/**
+ * Each method writes a message to the output stream. 
+ * First an {@link EPmp2PdpMethods} is written that identifies the method.
+ * Then the message size is written as int.
+ * Finally, the message is written.
+ * @author Stoimenov
+ *
+ */
 public class Pmp2PdpFastImp implements IPmp2PdpFast {
 	private Logger _logger = Logger.getRootLogger();
 	
@@ -63,37 +73,84 @@ public class Pmp2PdpFastImp implements IPmp2PdpFast {
 	}
 
 	public EStatus deployMechanism(IMechanism mechanism) {
-		_logger.debug("Create Google Protocol Buffer Mechanism instance");
+		_logger.debug("Deploy mechanism");
+		_logger.trace("Create Google Protocol Buffer Mechanism instance");
 		GpMechanism gpMechanism = MechanismBasic.createGpbMechanism(mechanism);
 		
 		try {
 			int messageSize = gpMechanism.getSerializedSize();
-			_logger.debug("GPB message size: " + messageSize);
+			_logger.trace("GPB message size: " + messageSize);
 //			if (messageSize > 1024) {
 //				throw new RuntimeException("Message too big! Message size: " + messageSize);
 //			}
+			_objOutput.writeByte(EPmp2PdpMethods.DEPLOY_MECHANISM.getValue());
 			_objOutput.writeInt(messageSize);
 			_objOutput.write(gpMechanism.toByteArray());
 			_objOutput.flush();
+			_logger.trace("GpMechanism written to OutputStream");
 			
-			_logger.debug("Event written to OutputStream.");
-			
+			_logger.trace("Wait for GpStatus message");
 			GpStatus gpStatus = GpStatus.parseDelimitedFrom(_input);
 			return gpStatus.getValue();
 		} catch (IOException ex) {
-			_logger.error("Failed to notify event.", ex);
+			_logger.error("Deploy mechanism failed.", ex);
+			return null;
 		}
-		
-		return null;
 	}
 
-	public EStatus exportMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
+	public IMechanism exportMechanism(String par) {
+		_logger.debug("Export mechanism");
+		_logger.trace("Create Google Protocol Buffer GpString");
+		GpString gpString = createGpString(par);
+		try {
+			int messageSize = gpString.getSerializedSize();
+			_logger.trace("GPB message size: " + messageSize);
+//			if (messageSize > 1024) {
+//				throw new RuntimeException("Message too big! Message size: " + messageSize);
+//			}
+			_objOutput.writeByte(EPmp2PdpMethods.EXPORT_MECHANISM.getValue());
+			_objOutput.writeInt(messageSize);
+			_objOutput.write(gpString.toByteArray());
+			_objOutput.flush();
+			_logger.trace("GpString written to OutputStream");
+			
+			_logger.trace("Wait for GpMechanism message");
+			GpMechanism gpMechanism = GpMechanism.parseDelimitedFrom(_input);
+			return new MechanismBasic(gpMechanism);
+		} catch (IOException ex) {
+			_logger.error("Export mechanism failed.", ex);
+			return null;
+		}
 	}
 
 	public EStatus revokeMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
+		_logger.debug("Revoke mechanism");
+		_logger.trace("Create Google Protocol Buffer GpString");
+		GpString gpString = createGpString(par);
+		try {
+			int messageSize = gpString.getSerializedSize();
+			_logger.trace("GPB message size: " + messageSize);
+//			if (messageSize > 1024) {
+//				throw new RuntimeException("Message too big! Message size: " + messageSize);
+//			}
+			_objOutput.writeByte(EPmp2PdpMethods.REVOKE_MECHANISM.getValue());
+			_objOutput.writeInt(messageSize);
+			_objOutput.write(gpString.toByteArray());
+			_objOutput.flush();
+			_logger.trace("GpString written to OutputStream");
+			
+			_logger.trace("Wait for GpStatus message");
+			GpStatus gpStatus = GpStatus.parseDelimitedFrom(_input);
+			return gpStatus.getValue();
+		} catch (IOException ex) {
+			_logger.error("Revoke mechanism failed.", ex);
+			return null;
+		}
+	}
+	
+	private GpString createGpString(String par) {
+		GpString.Builder gpStringBuilder = GpString.newBuilder();
+		gpStringBuilder.setValue(par);
+		return gpStringBuilder.build();
 	}
 }

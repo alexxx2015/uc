@@ -6,12 +6,7 @@ import java.net.ServerSocket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
-
-public abstract class FastServiceHandler extends CommunicationHandler implements
+public abstract class FastServiceHandler implements
 		Runnable {
 
 	protected static Logger _logger = Logger.getRootLogger();
@@ -66,27 +61,6 @@ public abstract class FastServiceHandler extends CommunicationHandler implements
 			}
 			return false;
 		}
-	}
-
-	public EStatus deployMechanism(IMechanism mechanism) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public EStatus exportMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public EStatus revokeMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IResponse notifyEvent(IEvent event) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }
