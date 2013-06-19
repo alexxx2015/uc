@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp.cm;
+package de.tum.in.i22.pdp.cm.in.pmp;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.IForwarder;
+import de.tum.in.i22.pdp.cm.in.IForwarder;
 import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;

@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp;
+package de.tum.in.i22.pdp.cm.in;
 
 import de.tum.in.i22.pdp.datatypes.IResponse;
 
