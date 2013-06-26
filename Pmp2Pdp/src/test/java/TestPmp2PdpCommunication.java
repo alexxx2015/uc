@@ -34,7 +34,7 @@ public class TestPmp2PdpCommunication {
 		pdp.start(50001, 50003);
 		
 		try {
-			_logger.debug("Pause the main thread for 3s (PDP starting).");
+			_logger.debug("Pause the main thread for 1s (PDP starting).");
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			_logger.error("Main thread interrupted.", e);

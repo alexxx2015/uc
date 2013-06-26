@@ -8,7 +8,7 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethods;
+import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
@@ -18,7 +18,7 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 
 /**
  * Each method writes a message to the output stream. 
- * First an {@link EPmp2PdpMethods} is written that identifies the method.
+ * First an {@link EPmp2PdpMethod} is written that identifies the method.
  * Then the message size is written as int.
  * Finally, the message is written.
  * @author Stoimenov
@@ -83,7 +83,7 @@ public class Pmp2PdpFastImp implements IPmp2PdpFast {
 //			if (messageSize > 1024) {
 //				throw new RuntimeException("Message too big! Message size: " + messageSize);
 //			}
-			_objOutput.writeByte(EPmp2PdpMethods.DEPLOY_MECHANISM.getValue());
+			_objOutput.writeByte(EPmp2PdpMethod.DEPLOY_MECHANISM.getValue());
 			_objOutput.writeInt(messageSize);
 			_objOutput.write(gpMechanism.toByteArray());
 			_objOutput.flush();
@@ -108,7 +108,7 @@ public class Pmp2PdpFastImp implements IPmp2PdpFast {
 //			if (messageSize > 1024) {
 //				throw new RuntimeException("Message too big! Message size: " + messageSize);
 //			}
-			_objOutput.writeByte(EPmp2PdpMethods.EXPORT_MECHANISM.getValue());
+			_objOutput.writeByte(EPmp2PdpMethod.EXPORT_MECHANISM.getValue());
 			_objOutput.writeInt(messageSize);
 			_objOutput.write(gpString.toByteArray());
 			_objOutput.flush();
@@ -133,7 +133,7 @@ public class Pmp2PdpFastImp implements IPmp2PdpFast {
 //			if (messageSize > 1024) {
 //				throw new RuntimeException("Message too big! Message size: " + messageSize);
 //			}
-			_objOutput.writeByte(EPmp2PdpMethods.REVOKE_MECHANISM.getValue());
+			_objOutput.writeByte(EPmp2PdpMethod.REVOKE_MECHANISM.getValue());
 			_objOutput.writeInt(messageSize);
 			_objOutput.write(gpString.toByteArray());
 			_objOutput.flush();

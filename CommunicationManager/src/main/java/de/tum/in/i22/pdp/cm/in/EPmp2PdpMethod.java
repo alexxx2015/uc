@@ -17,7 +17,19 @@ public enum EPmp2PdpMethod {
     private EPmp2PdpMethod(byte value) {
         this.value = value;
     }
+    
     public byte getValue() {
         return value;
+    }
+    
+    public static EPmp2PdpMethod fromByte(byte b) {
+
+        for(EPmp2PdpMethod t : values())
+        {
+            if(t.getValue() == b)
+                return t;
+        } 
+        
+        throw new RuntimeException("Byte value " + b + " not valid for EPmp2PdpMethod.");
     }
 }

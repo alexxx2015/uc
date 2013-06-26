@@ -2,7 +2,7 @@ package de.tum.in.i22.pdp;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.EventHandler;
+import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
@@ -27,7 +27,7 @@ public class PdpController {
 		_logger.info("Start pdp");
 		
 		_logger.info("Start EventHandler");
-		EventHandler eventHandler = EventHandler.getInstance();
+		RequestHandler eventHandler = RequestHandler.getInstance();
 		Thread thread = new Thread(eventHandler);
 		thread.start();
 

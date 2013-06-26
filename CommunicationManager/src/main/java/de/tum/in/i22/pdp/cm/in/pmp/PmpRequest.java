@@ -9,6 +9,7 @@ public class PmpRequest {
 	private String _stringParameter;
 	
 	private PmpRequest(EPmp2PdpMethod method, IMechanism mechanism, String stringParam) {
+		_method = method;
 		if (method == EPmp2PdpMethod.DEPLOY_MECHANISM) {
 			_mechanism = mechanism;
 		} else if (method == EPmp2PdpMethod.EXPORT_MECHANISM
@@ -37,5 +38,11 @@ public class PmpRequest {
 	
 	public String getStringParameter() {
 		return _stringParameter;
+	}
+
+	@Override
+	public String toString() {
+		return "PmpRequest [_method=" + _method + ", _mechanism=" + _mechanism
+				+ ", _stringParameter=" + _stringParameter + "]";
 	}
 }

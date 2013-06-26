@@ -9,12 +9,14 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pdp.cm.in.IForwarder;
+
 /**
  * Template class
  * @author Stoimenov
  *
  */
-public abstract class ClientConnectionHandler implements Runnable {
+public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
 	protected static Logger _logger = Logger.getRootLogger();
 	private Socket _socket;
@@ -22,6 +24,8 @@ public abstract class ClientConnectionHandler implements Runnable {
 	private ObjectInputStream _objInput;
 	private OutputStream _output;
 	private boolean _shouldContinue;
+	
+	private Object _response = null;
 
 	protected ClientConnectionHandler(Socket socket) {
 		super();
@@ -71,6 +75,36 @@ public abstract class ClientConnectionHandler implements Runnable {
 				_logger.debug("Unable to tear down connection!", ioe);
 			}
 		}
+	}
+	
+	protected Object waitForResponse() throws InterruptedException {
+		synchronized (this) {
+			while (_response == null) {
+				_logger.debug("Wait for the event to be processed.");
+				wait();
+			}
+			return _response;
+		}
+	}
+	
+	@Override
+	public void forwardResponse(Object response) {
+		_logger.debug("Response to forward: " + response + ". Wake up the thread.");
+		synchronized (this) {
+			_response = response;
+			notifyAll();
+		}
+	}
+	
+	protected Object getResponse() {
+		return _response;
+	}
+	
+	/**
+	 * Sets response to null
+	 */
+	protected void throwAwayResponse() {
+		_response = null;
 	}
 	
 	protected OutputStream getOutputStream() {
