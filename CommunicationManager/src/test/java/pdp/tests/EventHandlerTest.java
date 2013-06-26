@@ -3,10 +3,6 @@ package pdp.tests;
 import org.junit.Test;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
-import de.tum.in.i22.pdp.cm.in.IForwarder;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
 
 public class EventHandlerTest {
 	static RequestHandler eventHandler;
