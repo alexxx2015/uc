@@ -26,7 +26,7 @@ public class PdpController {
 		
 		_logger.info("Start pdp");
 		
-		_logger.info("Start EventHandler");
+		_logger.info("Start Request Handler");
 		RequestHandler eventHandler = RequestHandler.getInstance();
 		Thread thread = new Thread(eventHandler);
 		thread.start();

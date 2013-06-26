@@ -37,7 +37,7 @@ public class TestPep2PdpCommunication {
 	}
 	
 	@Test
-	public void test() throws Exception{
+	public void testNotifyTwoEvents() throws Exception{
 		// create event
 		IMessageFactory mf = MessageFactory.getInstance();
 		String eventName1 = "event1";
@@ -57,16 +57,17 @@ public class TestPep2PdpCommunication {
 		// disconnect from pdp
 		_pdpProxy.disconnect();
 		
-		try {
-			_logger.debug("Pause the main thread for 1s (PDP stopping).");
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			_logger.error("Main thread interrupted.", e);
-		}
-		
 		// check if status is not null
 		Assert.assertNotNull(response1);
 		Assert.assertNotNull(response2);
+	}
+	
+	
+	@Test
+	public void multipleInvocationsOfNotifyEvent() throws Exception {
+		for (int i = 0; i < 100; i++) {
+			testNotifyTwoEvents();
+		}
 	}
 	
 	

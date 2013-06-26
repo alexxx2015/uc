@@ -8,10 +8,18 @@ import java.util.Map;
 import de.tum.in.i22.pdp.cm.in.IIncoming;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
+import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.IResponse;
+import de.tum.in.i22.pdp.datatypes.basic.ConditionBasic;
+import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
+import de.tum.in.i22.pdp.datatypes.basic.DataEventMapBasic;
+import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
+import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
+import de.tum.in.i22.pdp.datatypes.basic.OslFormulaBasic;
 import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
+import de.tum.in.i22.pdp.datatypes.basic.SimplifiedTemporalLogicBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 
 /**
@@ -39,24 +47,44 @@ public class CommunicationHandler
 
 	@Override
 	public EStatus deployMechanism(IMechanism mechanism) {
-		// TODO Auto-generated method stub
+		// TODO implement
 		return EStatus.OKAY;
 	}
 
 	@Override
 	public IMechanism exportMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO implement
+		MechanismBasic m = new MechanismBasic();
+		
+		
+		//* set condition
+		ConditionBasic condition = new ConditionBasic();
+		//** set condition condition
+		OslFormulaBasic formula = new OslFormulaBasic("Formula xxxx");
+		condition.setCondition(formula);
+		//** set condition conditionSimp
+		SimplifiedTemporalLogicBasic conditionSimp = new SimplifiedTemporalLogicBasic();
+		conditionSimp.setFormula(new OslFormulaBasic("Formula yyyy"));
+		
+		//*** set condition conditionSimp dataEventMap
+		Map<IData, IEvent> map1 = new HashMap<IData, IEvent>();
+		map1.put(new DataBasic("id1"), new EventBasic("event1", null));
+		DataEventMapBasic dataEventMap = new DataEventMapBasic(map1);
+		conditionSimp.setDataEventMap(dataEventMap);
+		condition.setConditionSimp(conditionSimp);
+		m.setCondition(condition);
+		return m;
 	}
 
 	@Override
 	public EStatus revokeMechanism(String par) {
-		// TODO Auto-generated method stub
-		return null;
+		//TODO implement
+		return EStatus.OKAY;
 	}
 
 	@Override
 	public IResponse notifyEvent(IEvent event) {
+		//TODO implements
 		EStatus status = EStatus.ALLOW;
 		
 		List<IEvent> executeActions = new ArrayList<IEvent>();

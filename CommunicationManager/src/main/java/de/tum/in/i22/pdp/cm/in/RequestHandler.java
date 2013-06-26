@@ -61,45 +61,48 @@ public class RequestHandler implements Runnable {
 		}
 	}
 	
-	public void addEvent(IEvent event, IForwarder responder) throws InterruptedException {				
+	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {				
 		// add event to the tail of the queue
 		// put method blocks until the space in the queue is available
-		RequestWrapper obj = new RequestWrapper(event, responder);
+		RequestWrapper obj = new PepRequestWrapper(forwarder, event);
 		_logger.debug("Add " + obj + " pair to the queue.");
 		_requestQueue.put(obj);
 	}
 	
-	public void addPmpRequest(PmpRequest request, IForwarder responder)
+	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
 			throws InterruptedException {
 		// add pmpRequest to the tail of the queue
 		// put method blocks until the space in the queue is available
-		RequestWrapper obj = new RequestWrapper(request, responder);
+		RequestWrapper obj = new PmpRequestWrapper(forwarder, request);
 		_logger.debug("Add " + obj + " pair to the queue.");
 		_requestQueue.put(obj);
 	}
 
 	public void run() {
-		_logger.debug("Run method entered.");
+		_logger.debug("Request handler run method");
 		while (!Thread.interrupted()) {
-			RequestWrapper obj = null;
+			RequestWrapper request = null;
 			try {
-				obj = _requestQueue.take();
+				request = _requestQueue.take();
 			} catch (InterruptedException e) {
 				_logger.error("Event handler interrupted.", e);
 				return;
 			}
 			
 			Object response = null;
-			if (obj.getEvent() != null)
-				response = communicationHandler.notifyEvent(obj.getEvent());
-			else if (obj.getPmpRequest() != null) {
-				response = processPmpRequest(obj.getPmpRequest());
+			if (request instanceof PepRequestWrapper) {
+				IEvent event = ((PepRequestWrapper)request).getEvent();
+				response = communicationHandler.notifyEvent(event);
+				
+			} else if (request instanceof PmpRequestWrapper) {
+				PmpRequest pmpRequest = ((PmpRequestWrapper)request).getPmpRequest();
+				response = processPmpRequest(pmpRequest);
 			} else {
-				throw new RuntimeException("Queue element " + obj + " must be either event or PmpRequest!");
+				throw new RuntimeException("Queue element " + request + " must be either event or PmpRequest!");
 			}
 			
-			IForwarder responder = obj.getResponder();
-			responder.forwardResponse(response);
+			IForwarder forwarder = request.getForwarder();
+			forwarder.forwardResponse(response);
 		}
 		
 		// the thread is interrupted, stop processing the events
@@ -140,40 +143,53 @@ public class RequestHandler implements Runnable {
 	}
 
 	private class RequestWrapper {
-		private IEvent _event;
-		private PmpRequest _pmpRequest;
+		// Forwarder is the thread that will send back the response
 		private IForwarder _forwarder;
-		
-		public RequestWrapper(IEvent event, IForwarder forwarder) {
+
+		public RequestWrapper(IForwarder forwarder) {
 			super();
-			_pmpRequest = null;
-			_event = event;
 			_forwarder = forwarder;
 		}
 		
-		public RequestWrapper(PmpRequest pmpRequest, IForwarder forwarder) {
-			super();
-			_event = null;
+		public IForwarder getForwarder() {
+			return _forwarder;
+		}
+		
+	}
+	
+	private class PmpRequestWrapper extends RequestWrapper {
+		private PmpRequest _pmpRequest;
+		
+		public PmpRequestWrapper(IForwarder forwarder, PmpRequest pmpRequest) {
+			super(forwarder);
 			_pmpRequest = pmpRequest;
-			_forwarder = forwarder;
 		}
-		
-		public IEvent getEvent() {
-			return _event;
+
+		@Override
+		public String toString() {
+			return "PmpRequestWrapper [_pmpRequest=" + _pmpRequest + "]";
 		}
 		
 		public PmpRequest getPmpRequest() {
 			return _pmpRequest;
 		}
-		
-		public IForwarder getResponder() {
-			return _forwarder;
+	}
+	
+	private class PepRequestWrapper extends RequestWrapper {
+		private IEvent _event;
+
+		public PepRequestWrapper(IForwarder forwarder, IEvent event) {
+			super(forwarder);
+			_event = event;
 		}
 
 		@Override
 		public String toString() {
-			return "RequestWrapper [_event=" + _event + ", _pmpRequest="
-					+ _pmpRequest + ", _forwarder=" + _forwarder + "]";
+			return "PepRequestWrapper [_event=" + _event + "]";
+		}
+		
+		public IEvent getEvent() {
+			return _event;
 		}
 		
 	}
