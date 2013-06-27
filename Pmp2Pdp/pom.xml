@@ -1,29 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>pdp</groupId>
-  <artifactId>Pmp2Pdp</artifactId>
-  <version>1.0</version>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>pdp</groupId>
+		<artifactId>simple-parent</artifactId>
+		<version>1.0</version>
+		<relativePath>../PDP/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>Pmp2Pdp</artifactId>
+
+	<dependencies>
 		<dependency>
 			<groupId>pdp</groupId>
 			<artifactId>CommunicationManager</artifactId>
 			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.5.0</version>
 		</dependency>
 	</dependencies>
 
