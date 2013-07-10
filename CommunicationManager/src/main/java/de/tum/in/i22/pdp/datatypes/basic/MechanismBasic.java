@@ -20,8 +20,19 @@ public class MechanismBasic implements IMechanism {
 	private IResponse _response;
 	private IHistory _state;
 	private IEvent _triggerEvent;
+	private String _xml;
 	
 	public MechanismBasic() {
+	}
+	
+	public MechanismBasic(String xml) {
+		_xml = xml;
+		//TODO implement: create mechanism from xml
+	}
+	
+	@Override
+	public String toXML() {
+		return _xml;
 	}
 	
 	public MechanismBasic(GpMechanism gpM) {
@@ -139,5 +150,14 @@ public class MechanismBasic implements IMechanism {
 		}
 		return isEqual;
 	}
+
+	@Override
+	public String toString() {
+		return "MechanismBasic [_condition=" + _condition + ", _mechanismName="
+				+ _mechanismName + ", _response=" + _response + ", _state="
+				+ _state + ", _triggerEvent=" + _triggerEvent + "]";
+	}
+	
+	
 	
 }

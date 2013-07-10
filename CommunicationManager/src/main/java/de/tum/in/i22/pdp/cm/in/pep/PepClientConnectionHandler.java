@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
+import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
@@ -21,12 +22,12 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 
 	@Override
 	protected void doProcessing() throws IOException, EOFException,
-			InterruptedException {
+			InterruptedException, MessageTooLargeException {
 		
 		int messageSize = getObjectInputStream().readInt();
-		if (messageSize > 1024) {
+		if (messageSize > PdpSettings.getMaxPepToPdpMessageSize()) {
 			_logger.debug("Message size to big: " + messageSize);
-			throw new RuntimeException("Message too big! Message size: "
+			throw new MessageTooLargeException("Message too big! Message size: "
 					+ messageSize);
 		}
 

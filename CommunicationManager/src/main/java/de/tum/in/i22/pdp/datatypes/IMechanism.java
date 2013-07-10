@@ -6,4 +6,5 @@ public interface IMechanism {
 	public IResponse getResponse();
 	public IHistory getState();
 	public IEvent getTriggerEvent();
+	public String toXML();
 }

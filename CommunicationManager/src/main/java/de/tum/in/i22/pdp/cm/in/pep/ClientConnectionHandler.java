@@ -59,6 +59,11 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 				_logger.error("Connection lost.", ex);
 				_shouldContinue = false;
 			}
+			catch (MessageTooLargeException etl) {
+				_logger.error("Incoming message to large.", etl);
+				_logger.info("The connection to the client will be interrupted.");
+				_shouldContinue = false;
+			}
 			
 		}
 		catch (IOException ioe) {
@@ -115,7 +120,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 		return _objInput;
 	}
 	
-	protected abstract void doProcessing() throws IOException, EOFException, InterruptedException;
+	protected abstract void doProcessing() throws IOException,
+		EOFException, InterruptedException, MessageTooLargeException;
 	
 	@Override
 	public String toString() {

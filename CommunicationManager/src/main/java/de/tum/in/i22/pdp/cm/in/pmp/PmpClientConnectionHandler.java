@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.ClientConnectionHandler;
+import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
@@ -25,7 +27,7 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 	
 	@Override
 	protected void doProcessing() throws IOException, EOFException,
-			InterruptedException {
+			InterruptedException, MessageTooLargeException {
 		
 		// first determine the method (operation) by reading the first byte
 		_logger.trace("Process the incomming bytes");
@@ -36,10 +38,9 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 		_logger.trace("Method to invoke: " + method);
 		
 		int messageSize = objInput.readInt();
-		//TODO use value from configuration file
-		if (messageSize > 1024) {
+		if (messageSize > PdpSettings.getMaxPmpToPdpMessageSize()) {
 			_logger.debug("Message size to big: " + messageSize);
-			throw new RuntimeException("Message too big! Message size: " + messageSize);
+			throw new MessageTooLargeException("Message too big! Message size: " + messageSize);
 		}
 		
 		byte[] bytes = new byte[messageSize];

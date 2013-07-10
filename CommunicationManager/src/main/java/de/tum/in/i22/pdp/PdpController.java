@@ -15,7 +15,8 @@ public class PdpController {
 	
 	public static void main(String[] args) {
 		PdpController pdp = new PdpController();
-		pdp.start(50001, 50002);
+		pdp.start(PdpSettings.getPepListenerPortNum(),
+				PdpSettings.getPmpListenerPortNum());
 	}
 	
 	//TODO add additional parameters

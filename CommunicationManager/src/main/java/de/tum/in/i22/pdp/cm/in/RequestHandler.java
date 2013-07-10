@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.CommunicationHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.datatypes.IEvent;
@@ -16,10 +17,6 @@ public class RequestHandler implements Runnable {
 	
 	private CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
 	
-	//TODO currently not used, but consider using this approach
-	private boolean _pause = false;
-	private Object _pauseLock = new Object();
-	
 	public static RequestHandler getInstance() {
 		if (_instance == null) {
 			_instance = new RequestHandler();
@@ -28,37 +25,8 @@ public class RequestHandler implements Runnable {
 	}
 	
 	private RequestHandler() {
-		// maximum size of the queue 100
-		_requestQueue = new ArrayBlockingQueue<RequestWrapper>(100, true);
-	}
-	
-	/**
-	 * Causes the thread to stop processing the events in the queue.
-	 * It blocks until it is sure the handler has been stopped.
-	 */
-	public void pause() {
-		_logger.info("Pause Event Handler");
-		synchronized(_pauseLock) {
-			_pause = true;
-			while (_pause) {
-				try {
-					_pauseLock.wait();
-				} catch (InterruptedException e) {
-					
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Resumes 
-	 */
-	public void resume() {
-		_logger.info("Resume Event Handler");
-		synchronized(_pauseLock) {
-			_pause = false;
-			_pauseLock.notifyAll();
-		}
+		_requestQueue = 
+				new ArrayBlockingQueue<RequestWrapper>(PdpSettings.getQueueSize(), true);
 	}
 	
 	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {				
@@ -107,21 +75,6 @@ public class RequestHandler implements Runnable {
 		
 		// the thread is interrupted, stop processing the events
 	}
-	
-//	private void checkIfPausedAndWait() {
-//		synchronized(_pauseLock) {
-//			while (_pause) {
-//				try {
-//					_logger.info("Invoke wait");
-//					_pauseLock.wait();
-//					_logger.info("After wait");
-//				} catch (InterruptedException e) {
-//					_logger.error("Event handler interrupted.", e);
-//					return;
-//				}
-//			}
-//		}
-//	}
 	
 	private Object processPmpRequest(PmpRequest pmpRequest) {
 		_logger.debug("Process event " + pmpRequest);
