@@ -19,4 +19,9 @@ public class PmpFastServiceHandler extends FastServiceHandler {
 		thread.start();
 	}
 	
+	@Override
+	protected String getServerInfo() {
+		return "PMPlistener";
+	}
+	
 }

@@ -17,6 +17,17 @@ public class PdpController {
 		PdpController pdp = new PdpController();
 		pdp.start(PdpSettings.getPepListenerPortNum(),
 				PdpSettings.getPmpListenerPortNum());
+		
+//		 EventHandler thread loops forever, this stops the main thread,
+//		 otherwise the app will be closed
+		Object lock = new Object();
+		synchronized(lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				_logger.error("EventHandler thread interrupted.", e);
+			}
+		}
 	}
 	
 	//TODO add additional parameters
@@ -41,14 +52,5 @@ public class PdpController {
 		FastServiceHandler pepFastServiceHandler = new PepFastServiceHandler(portNumPep);
 		Thread threadPepFastServiceHandler = new Thread(pepFastServiceHandler);
 		threadPepFastServiceHandler.start();
-
-		
-		// EventHandler thread loops forever, this stops the main thread,
-		// otherwise the app will be closed
-//		try {
-//			thread.join();
-//		} catch (InterruptedException e) {
-//			_logger.error("EventHandler thread interrupted.", e);
-//		}
 	}
 }

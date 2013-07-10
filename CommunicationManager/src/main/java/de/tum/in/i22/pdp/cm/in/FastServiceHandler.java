@@ -57,7 +57,7 @@ public abstract class FastServiceHandler implements
 		_logger.info("Initialize server");
 		try {
 			_serverSocket = new ServerSocket(_port);
-			_logger.info("Server listening on port: "
+			_logger.info("Server " + getServerInfo() + " listening on port: "
 					+ _serverSocket.getLocalPort());
 			return true;
 		} catch (IOException e) {
@@ -99,5 +99,7 @@ public abstract class FastServiceHandler implements
 	}
 	
 	protected abstract void doHandleClientConnection(Socket client);
+	
+	protected abstract String getServerInfo();
 	
 }

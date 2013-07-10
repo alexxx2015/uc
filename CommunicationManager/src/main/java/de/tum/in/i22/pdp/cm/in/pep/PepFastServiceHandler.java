@@ -18,4 +18,9 @@ public class PepFastServiceHandler extends FastServiceHandler {
 		Thread thread = new Thread(pepClientConnHandler);
 		thread.start();
 	}
+	
+	@Override
+	protected String getServerInfo() {
+		return "PEPlistener";
+	}
 }
