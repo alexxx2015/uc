@@ -6,9 +6,9 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import de.tum.in.i22.pdp.PdpSettings;
+import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
-import de.tum.in.i22.pdp.cm.in.pep.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
