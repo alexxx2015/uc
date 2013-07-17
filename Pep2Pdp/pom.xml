@@ -7,7 +7,7 @@
 		<version>1.0</version>
 		<relativePath>../PDP/pom.xml</relativePath>
 	</parent>
-	<artifactId>pep2pdp</artifactId>
+	<artifactId>Pep2Pdp</artifactId>
 
 	<dependencies>
 		<dependency>
