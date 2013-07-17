@@ -1,9 +1,11 @@
 package de.tum.in.i22.pdp.cm.in;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -20,9 +22,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
 	protected static Logger _logger = Logger.getRootLogger();
 	private Socket _socket;
-	private InputStream _input;
-	private ObjectInputStream _objInput;
-	private OutputStream _output;
+	private InputStream _inputStream;
+	private OutputStream _outputStream;
 	private boolean _shouldContinue;
 	
 	private Object _response = null;
@@ -36,10 +37,9 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	@Override
 	public void run() {
 		try {
-			_input = _socket.getInputStream();
-			_output = _socket.getOutputStream();
-
-			_objInput = new ObjectInputStream(_input);
+			_inputStream = _socket.getInputStream();
+			_outputStream = _socket.getOutputStream();
+			
 			try {
 				while (_shouldContinue) {
 					doProcessing();
@@ -71,9 +71,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 		} finally {
 			try {
 				if (_socket != null) {
-					_input.close();
-					_objInput.close();
-					_output.close();
+					_inputStream.close();
+					_outputStream.close();
 					_socket.close();
 				}
 			} catch (IOException ioe) {
@@ -113,11 +112,11 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	}
 	
 	protected OutputStream getOutputStream() {
-		return _output;
+		return _outputStream;
 	}
 	
-	protected ObjectInputStream getObjectInputStream() {
-		return _objInput;
+	public DataInputStream getDataInputStream() {
+		return new DataInputStream(_inputStream);
 	}
 	
 	protected abstract void doProcessing() throws IOException,

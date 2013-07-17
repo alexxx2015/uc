@@ -4,9 +4,10 @@ import java.util.List;
 
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
+import de.tum.in.i22.pdp.datatypes.IEvent;
 
 public interface IPdp2Pip {
-	public boolean evaluatePredicate(String predicate);
+	public Boolean evaluatePredicate(IEvent event, String predicate);
 	public List<IContainer> getContainerForData(IData data);
 	public List<IData> getDataInContainer(IContainer container);
 }

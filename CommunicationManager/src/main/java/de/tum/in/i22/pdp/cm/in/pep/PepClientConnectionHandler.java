@@ -14,6 +14,7 @@ import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.pdp.util.GpUtil;
 
 public class PepClientConnectionHandler extends ClientConnectionHandler {
 	
@@ -25,7 +26,9 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
 		
-		int messageSize = getObjectInputStream().readInt();
+		byte[] messageSizeBytes = new byte[4];
+		getDataInputStream().read(messageSizeBytes);
+		int messageSize =  GpUtil.convertToInt(messageSizeBytes);
 		if (messageSize > PdpSettings.getMaxPepToPdpMessageSize()) {
 			_logger.debug("Message size to big: " + messageSize);
 			throw new MessageTooLargeException("Message too big! Message size: "
@@ -33,7 +36,8 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 		}
 
 		byte[] bytes = new byte[messageSize];
-		getObjectInputStream().readFully(bytes);
+//		getInputStream().readFully(bytes);
+		getDataInputStream().read(bytes);
 		// parse message
 		GpEvent gpEvent = GpEvent.parseFrom(bytes);
 		if (gpEvent != null) {

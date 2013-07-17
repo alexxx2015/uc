@@ -1,13 +1,13 @@
 package de.tum.in.i22.pdp.cm.in.pmp;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
@@ -16,6 +16,7 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
+import de.tum.in.i22.pdp.util.GpUtil;
 
 public class PmpClientConnectionHandler extends ClientConnectionHandler {
 	
@@ -31,20 +32,26 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 		
 		// first determine the method (operation) by reading the first byte
 		_logger.trace("Process the incomming bytes");
-		ObjectInputStream objInput = getObjectInputStream();
-		
-		byte methodCode = objInput.readByte();
-		EPmp2PdpMethod method = EPmp2PdpMethod.fromByte(methodCode);
+		DataInputStream dis = getDataInputStream();
+		byte methodCodeBytes[] = new byte[1];
+		dis.readFully(methodCodeBytes);
+		EPmp2PdpMethod method = EPmp2PdpMethod.fromByte(methodCodeBytes[0]);
 		_logger.trace("Method to invoke: " + method);
 		
-		int messageSize = objInput.readInt();
+		byte messageSizeBytes[] = new byte[4];
+		
+		dis.readFully(messageSizeBytes);
+		_logger.debug("Message size bytes: " + Arrays.toString(messageSizeBytes));
+		int messageSize = GpUtil.convertToInt(messageSizeBytes);
+		_logger.debug("Message size: " + messageSize);
 		if (messageSize > PdpSettings.getMaxPmpToPdpMessageSize()) {
 			_logger.debug("Message size to big: " + messageSize);
 			throw new MessageTooLargeException("Message too big! Message size: " + messageSize);
 		}
 		
 		byte[] bytes = new byte[messageSize];
-		objInput.readFully(bytes);
+		dis.readFully(bytes);
+		
 		
 		//parse message
 		switch (method) {

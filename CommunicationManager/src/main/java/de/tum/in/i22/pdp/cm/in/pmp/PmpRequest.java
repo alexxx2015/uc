@@ -1,6 +1,5 @@
 package de.tum.in.i22.pdp.cm.in.pmp;
 
-import de.tum.in.i22.pdp.cm.in.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.datatypes.IMechanism;
 
 public class PmpRequest {
