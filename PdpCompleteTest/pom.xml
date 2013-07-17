@@ -6,7 +6,7 @@
         <groupId>pdp</groupId>
         <artifactId>simple-parent</artifactId>
         <version>1.0</version>
-        <relativePath>../PDP/pom.xml</relativePath>
+        <relativePath>../Pdp/pom.xml</relativePath>
     </parent>
     
 	<artifactId>PdpCompleteTest</artifactId>
