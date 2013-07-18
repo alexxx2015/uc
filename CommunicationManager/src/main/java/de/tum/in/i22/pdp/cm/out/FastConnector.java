@@ -56,6 +56,16 @@ public abstract class FastConnector implements IFastConnector {
 		}
 	}
 	
+	/**
+	 * This method is currently not used. The idea was to use it instead of
+	 *  Google Protocol Buffer method writeDelimitedTo().
+	 * It first writes the operation type (one byte), then the size of the message as 32 bit int
+	 *  and then it writes the message bytes. The message size always takes 32 bits. WriteDelimitedTo()
+	 *  method uses compact representation of int.
+	 * @param operationType
+	 * @param messages
+	 * @throws IOException
+	 */
 	protected void sendData(byte operationType, MessageLite... messages) 
 			throws IOException {
 		_logger.trace("Write operation type. Byte representation: " + operationType);
@@ -79,6 +89,7 @@ public abstract class FastConnector implements IFastConnector {
 	}
 	
 	/**
+	 * Currently not used.
 	 * Writes 4 bytes (int as 4 bytes, Big Endian format, most significant byte first)
 	 * @param out OutputStream where the data will be written
 	 * @param value int value

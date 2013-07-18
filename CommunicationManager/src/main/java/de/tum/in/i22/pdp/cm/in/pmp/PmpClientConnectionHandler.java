@@ -4,9 +4,7 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
@@ -16,7 +14,6 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
-import de.tum.in.i22.pdp.util.GpUtil;
 
 public class PmpClientConnectionHandler extends ClientConnectionHandler {
 	
@@ -32,48 +29,33 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 		
 		// first determine the method (operation) by reading the first byte
 		_logger.trace("Process the incomming bytes");
-		DataInputStream dis = getDataInputStream();
+		DataInputStream dataInputStream = getDataInputStream();
 		byte methodCodeBytes[] = new byte[1];
-		dis.readFully(methodCodeBytes);
+		dataInputStream.readFully(methodCodeBytes);
 		EPmp2PdpMethod method = EPmp2PdpMethod.fromByte(methodCodeBytes[0]);
 		_logger.trace("Method to invoke: " + method);
-		
-		byte messageSizeBytes[] = new byte[4];
-		
-		dis.readFully(messageSizeBytes);
-		_logger.debug("Message size bytes: " + Arrays.toString(messageSizeBytes));
-		int messageSize = GpUtil.convertToInt(messageSizeBytes);
-		_logger.debug("Message size: " + messageSize);
-		if (messageSize > PdpSettings.getMaxPmpToPdpMessageSize()) {
-			_logger.debug("Message size to big: " + messageSize);
-			throw new MessageTooLargeException("Message too big! Message size: " + messageSize);
-		}
-		
-		byte[] bytes = new byte[messageSize];
-		dis.readFully(bytes);
-		
 		
 		//parse message
 		switch (method) {
 			case DEPLOY_MECHANISM:
-				doDeployMechanism(bytes);
+				doDeployMechanism();
 				break;
 			case EXPORT_MECHANISM:
-				doExportMechanism(bytes);
+				doExportMechanism();
 				break;
 			case REVOKE_MECHANISM:
-				doRevokeMechanism(bytes);
+				doRevokeMechanism();
 				break;
 			default:
 				throw new RuntimeException("Method " + method + " is not supported.");
 		}
 	}
 	
-	private void doDeployMechanism(byte[] bytes)
+	private void doDeployMechanism()
 			throws IOException, InterruptedException {
 		
 		_logger.debug("Do deploy mechanism");
-		GpMechanism gpMechanism = GpMechanism.parseFrom(bytes);					
+		GpMechanism gpMechanism = GpMechanism.parseDelimitedFrom(getDataInputStream());					
 		if (gpMechanism != null) {
 			_logger.trace("Received mechanism: " + gpMechanism);
 			
@@ -100,11 +82,11 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 		}
 	}
 	
-	private void doExportMechanism(byte[] bytes)
+	private void doExportMechanism()
 			throws IOException, InterruptedException {
 		
 		_logger.debug("Do export mechanism");
-		GpString gpString = GpString.parseFrom(bytes);
+		GpString gpString = GpString.parseDelimitedFrom(getDataInputStream());
 		if (gpString != null) {
 			_logger.trace("Received string parameter: " + gpString.getValue());
 			String param = gpString.getValue();
@@ -129,11 +111,11 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 		}
 	}
 	
-	private void doRevokeMechanism(byte[] bytes)
+	private void doRevokeMechanism()
 			throws IOException, InterruptedException {
 		
 		_logger.debug("Do revoke mechanism");
-		GpString gpString = GpString.parseFrom(bytes);
+		GpString gpString = GpString.parseDelimitedFrom(getDataInputStream());
 		if (gpString != null) {
 			_logger.trace("Received string parameter: " + gpString.getValue());
 			String param = gpString.getValue();

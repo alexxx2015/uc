@@ -24,7 +24,7 @@ public class TestPep2PdpCommunication {
 	
 	static {
 		PdpController pdp = new PdpController();
-		pdp.start(50001, 50002);
+		pdp.start(50007, 50008);
 		
 		try {
 			_logger.debug("Pause the main thread for 1s (PDP starting).");
@@ -33,7 +33,7 @@ public class TestPep2PdpCommunication {
 			_logger.error("Main thread interrupted.", e);
 		}
 		
-		_pdpProxy = new Pep2PdpFastImp("localhost", 50001);
+		_pdpProxy = new Pep2PdpFastImp("localhost", 50007);
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ public class TestPep2PdpCommunication {
 	
 	@Test
 	public void multipleInvocationsOfNotifyEvent() throws Exception {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			testNotifyTwoEvents();
 		}
 	}

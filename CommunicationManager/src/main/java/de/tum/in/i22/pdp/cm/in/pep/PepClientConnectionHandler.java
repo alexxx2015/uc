@@ -1,10 +1,10 @@
 package de.tum.in.i22.pdp.cm.in.pep;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
@@ -14,7 +14,6 @@ import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
-import de.tum.in.i22.pdp.util.GpUtil;
 
 public class PepClientConnectionHandler extends ClientConnectionHandler {
 	
@@ -26,20 +25,13 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
 		
-		byte[] messageSizeBytes = new byte[4];
-		getDataInputStream().read(messageSizeBytes);
-		int messageSize =  GpUtil.convertToInt(messageSizeBytes);
-		if (messageSize > PdpSettings.getMaxPepToPdpMessageSize()) {
-			_logger.debug("Message size to big: " + messageSize);
-			throw new MessageTooLargeException("Message too big! Message size: "
-					+ messageSize);
-		}
-
-		byte[] bytes = new byte[messageSize];
-//		getInputStream().readFully(bytes);
-		getDataInputStream().read(bytes);
+		_logger.debug("Do processing invoked in PEP client connection handler");
+		// first byte is currently not used
+		DataInputStream dis = getDataInputStream();
+		dis.readFully(new byte[1]);
+		
 		// parse message
-		GpEvent gpEvent = GpEvent.parseFrom(bytes);
+		GpEvent gpEvent = GpEvent.parseDelimitedFrom(getDataInputStream());
 		if (gpEvent != null) {
 			_logger.trace("Received event: " + gpEvent);
 

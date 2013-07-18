@@ -1,6 +1,7 @@
 package de.tum.in.i22.pmp2pdp;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.cm.out.FastConnector;
@@ -33,7 +34,10 @@ public class Pmp2PdpFastImp extends FastConnector
 		GpMechanism gpMechanism = MechanismBasic.createGpbMechanism(mechanism);
 		
 		try {
-			sendData(EPmp2PdpMethod.DEPLOY_MECHANISM.getValue(), gpMechanism);
+			OutputStream out = getOutputStream();
+			out.write(EPmp2PdpMethod.DEPLOY_MECHANISM.getValue());
+			gpMechanism.writeDelimitedTo(out);
+			out.flush();
 			_logger.trace("GpMechanism written to OutputStream");
 			
 			_logger.trace("Wait for GpStatus message");
@@ -50,7 +54,10 @@ public class Pmp2PdpFastImp extends FastConnector
 		_logger.trace("Create Google Protocol Buffer GpString");
 		GpString gpString = GpUtil.createGpString(par);
 		try {
-			sendData(EPmp2PdpMethod.EXPORT_MECHANISM.getValue(), gpString);
+			OutputStream out = getOutputStream();
+			out.write(EPmp2PdpMethod.EXPORT_MECHANISM.getValue());
+			gpString.writeDelimitedTo(out);
+			out.flush();
 			_logger.trace("GpString written to OutputStream");
 			
 			_logger.trace("Wait for GpMechanism message");
@@ -67,7 +74,10 @@ public class Pmp2PdpFastImp extends FastConnector
 		_logger.trace("Create Google Protocol Buffer GpString");
 		GpString gpString = GpUtil.createGpString(par);
 		try {
-			sendData(EPmp2PdpMethod.REVOKE_MECHANISM.getValue(), gpString);
+			OutputStream out = getOutputStream();
+			out.write(EPmp2PdpMethod.REVOKE_MECHANISM.getValue());
+			gpString.writeDelimitedTo(out);
+			out.flush();
 			_logger.trace("GpString written to OutputStream");
 			
 			_logger.trace("Wait for GpStatus message");
