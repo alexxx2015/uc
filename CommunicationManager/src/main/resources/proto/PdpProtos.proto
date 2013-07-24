@@ -3,6 +3,10 @@ package pdp;
 option java_package = "de.tum.in.i22.pdp.gpb";
 option java_outer_classname = "PdpProtos";
 
+message GpBoolean {
+	required bool value = 1;
+}
+
 message GpString {
 	required string value = 1;
 }

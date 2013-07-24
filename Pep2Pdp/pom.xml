@@ -12,7 +12,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>pdp</groupId>
-			<artifactId>CommunicationManager</artifactId>
+			<artifactId>PdpCommunicationManager</artifactId>
 			<version>1.0</version>
 			<scope>compile</scope>
 		</dependency>

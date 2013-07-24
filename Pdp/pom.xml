@@ -10,7 +10,7 @@
 	<name>PDP parent project</name>
 
 	<modules>
-		<module>../CommunicationManager</module>
+		<module>../PdpCommunicationManager</module>
 		<module>../Pep2Pdp</module>
 		<module>../Pmp2Pdp</module>
 		<module>../PdpCompleteTest</module>

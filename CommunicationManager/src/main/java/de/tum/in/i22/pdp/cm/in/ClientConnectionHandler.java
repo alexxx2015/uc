@@ -18,7 +18,7 @@ import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
  */
 public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
-	protected static Logger _logger = Logger.getRootLogger();
+	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
 	private Socket _socket;
 	private InputStream _inputStream;
 	private OutputStream _outputStream;

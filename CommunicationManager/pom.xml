@@ -8,7 +8,7 @@
 		<version>1.0</version>
 		<relativePath>../Pdp/pom.xml</relativePath>
 	</parent>
-	<artifactId>CommunicationManager</artifactId>
+	<artifactId>PdpCommunicationManager</artifactId>
 
 	<build>
 		<plugins>
