@@ -1,9 +1,11 @@
 package de.tum.in.i22.pdp;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 
@@ -14,6 +16,13 @@ public class PdpController {
 	private boolean _isStarted = false;
 	
 	public static void main(String[] args) {
+		try {
+			PdpSettings.loadProperties();
+		} catch (IOException e) {
+			_logger.fatal("Properties cannot be loaded.", e);
+			return;
+		}
+		
 		PdpController pdp = new PdpController();
 		pdp.start(PdpSettings.getPepListenerPortNum(),
 				PdpSettings.getPmpListenerPortNum());
@@ -30,7 +39,6 @@ public class PdpController {
 		}
 	}
 	
-	//TODO add additional parameters
 	public void start(int portNumPep, int portNumPmp) {
 		if (_isStarted)
 			return;

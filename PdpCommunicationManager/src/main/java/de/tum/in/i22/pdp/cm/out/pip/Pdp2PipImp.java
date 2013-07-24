@@ -6,7 +6,6 @@ import java.util.List;
 
 import de.tum.in.i22.pdp.cm.out.EPdp2PipMethod;
 import de.tum.in.i22.pdp.cm.out.FastConnector;
-import de.tum.in.i22.pdp.cm.out.IPdp2Pip;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
@@ -16,7 +15,7 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 import de.tum.in.i22.pdp.util.GpUtil;
 
-public class Pdp2PipImp extends FastConnector implements IPdp2Pip {
+public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 
 	public Pdp2PipImp(String address, int port) {
 		super(address, port);

@@ -109,6 +109,9 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 				throw new RuntimeException("IMechanism type expected for " + responseObj);
 			}
 		}
+		else {
+			_logger.error("No data received as string parameter");
+		}
 	}
 	
 	private void doRevokeMechanism()

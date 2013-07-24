@@ -49,6 +49,19 @@ message GpData {
 	optional string id = 1;
 }
 
+message GpDataList {
+	repeated GpData dataElement = 1;
+}
+
+message GpContainer {
+	optional string classValue = 1;
+	optional string id = 2;
+}
+
+message GpContainerList {
+	repeated GpContainer containerElement = 1;
+}
+
 message GpOslFormula {
 	optional string formula = 1;
 }
