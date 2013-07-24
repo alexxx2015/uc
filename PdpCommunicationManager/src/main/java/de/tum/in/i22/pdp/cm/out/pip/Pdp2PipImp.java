@@ -9,8 +9,14 @@ import de.tum.in.i22.pdp.cm.out.FastConnector;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
 import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpBoolean;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainer;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainerList;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpData;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpDataList;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 import de.tum.in.i22.pdp.util.GpUtil;
@@ -26,6 +32,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 		_logger.debug("Evaluate predicate invoked");
 		_logger.trace("Create Google Protocol Buffer Event instance");
 		GpEvent gpEvent = EventBasic.createGpbEvent(event);
+		_logger.trace("Create Google Protocol Buffer String instance");
 		GpString gpPredicate = GpUtil.createGpString(predicate);
 		try {
 			OutputStream out = getOutputStream();
@@ -46,14 +53,44 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 
 	@Override
 	public List<IContainer> getContainerForData(IData data) {
-		// TODO Auto-generated method stub
-		return null;
+		_logger.debug("Get container for data invoked");
+		_logger.trace("Create Gpb data instance");
+		GpData gpData = DataBasic.createGpbData(data);
+		try {
+			OutputStream out = getOutputStream();
+			out.write(EPdp2PipMethod.GET_CONTAINER_FOR_DATA.getValue());
+			gpData.writeDelimitedTo(out);
+			out.flush();
+			_logger.trace("GpData written to OutputStream");
+			
+			_logger.trace("Wait for containers");
+			GpContainerList gpContainerList = GpContainerList.parseDelimitedFrom(getInputStream());
+			return GpUtil.convertToList(gpContainerList);
+		} catch (IOException e) {
+			_logger.error("Get container for data failed.", e);
+			return null;
+		}
 	}
 
 	@Override
 	public List<IData> getDataInContainer(IContainer container) {
-		// TODO Auto-generated method stub
-		return null;
+		_logger.debug("Get data in container invoked");
+		_logger.trace("Create Gpb container instance");
+		GpContainer gpContainer = ContainerBasic.createGpbContainer(container);
+		try {
+			OutputStream out = getOutputStream();
+			out.write(EPdp2PipMethod.GET_DATA_IN_CONTAINER.getValue());
+			gpContainer.writeDelimitedTo(out);
+			out.flush();
+			_logger.trace("GpContainer written to OutputStream");
+			
+			_logger.trace("Wait for data list");
+			GpDataList gpDataList = GpDataList.parseDelimitedFrom(getInputStream());
+			return GpUtil.convertToList(gpDataList);
+		} catch (IOException e) {
+			_logger.error("Get data in container failed.", e);
+			return null;
+		}
 	}
 
 }
