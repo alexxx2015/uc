@@ -4,14 +4,23 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
 import de.tum.in.i22.pdp.cm.out.EPdp2PipMethod;
 import de.tum.in.i22.pdp.cm.out.IPdp2Pip;
+import de.tum.in.i22.pdp.datatypes.IContainer;
+import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
 import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpBoolean;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainer;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainerList;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpData;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpDataList;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 import de.tum.in.i22.pdp.util.GpUtil;
@@ -50,14 +59,38 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		}
 	}
 
-	private void doGetContainerForData() {
-		// TODO Auto-generated method stub
+	private void doGetContainerForData() 
+			throws IOException {
+		_logger.debug("Do get container for data");
+		GpData gpData = GpData.parseDelimitedFrom(getDataInputStream());
+		assert(gpData != null);
 		
+		_logger.trace("Received data parameter: " + gpData);
+		
+		IData data = new DataBasic(gpData);
+		
+		List<IContainer> containerForDataList = _pdp2pip.getContainerForData(data);
+		_logger.trace("Return the list of containers for data");
+		GpContainerList gpContainerList = GpUtil.convertToGpContainerList(containerForDataList);
+		gpContainerList.writeDelimitedTo(getOutputStream());
+		getOutputStream().flush();
 	}
 
-	private void doGetDataInContainer() {
-		// TODO Auto-generated method stub
+	private void doGetDataInContainer() 
+			throws IOException {
+		_logger.debug("Do get data in container");
+		GpContainer gpContainer = GpContainer.parseDelimitedFrom(getDataInputStream());
+		assert(gpContainer != null);
 		
+		_logger.trace("Received container parameter: " + gpContainer);
+		
+		IContainer container = new ContainerBasic(gpContainer);
+		
+		List<IData> dataInContainerList = _pdp2pip.getDataInContainer(container);
+		_logger.trace("Return the list of data in container");
+		GpDataList gpDataList = GpUtil.convertToGpList(dataInContainerList);
+		gpDataList.writeDelimitedTo(getOutputStream());
+		getOutputStream().flush();
 	}
 
 	private void doEvaluatePredicate() 

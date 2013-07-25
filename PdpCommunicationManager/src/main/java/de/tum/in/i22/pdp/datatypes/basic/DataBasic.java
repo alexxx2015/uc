@@ -56,4 +56,9 @@ public class DataBasic implements IData {
 		return _id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "DataBasic [_id=" + _id + "]";
+	}
+
 }

@@ -70,4 +70,11 @@ public class ContainerBasic implements IContainer {
 	public int hashCode() {
 		return _id.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return "ContainerBasic [_classValue=" + _classValue + ", _id=" + _id
+				+ "]";
+	}
+	
 }
