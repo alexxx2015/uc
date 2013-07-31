@@ -10,4 +10,7 @@ public interface IPdp2Pip {
 	public Boolean evaluatePredicate(IEvent event, String predicate);
 	public List<IContainer> getContainerForData(IData data);
 	public List<IData> getDataInContainer(IContainer container);
+	
+	//TODO implement
+	//public IStatus notifyActualEvent(IEvent event);
 }

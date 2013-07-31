@@ -2,7 +2,6 @@ package de.tum.in.i22.pdp.datatypes;
 
 import java.util.Map;
 
-
 public interface IEvent {
 	/**
 	 * Event name
@@ -20,4 +19,8 @@ public interface IEvent {
 	 * Timestamp, inserted when the event is received
 	 */
 	public long getTimestamp();
+	
+	
+	//TODO implement
+	//public boolean isActual();
 }

@@ -60,6 +60,9 @@ public class RequestHandler implements Runnable {
 			Object response = null;
 			if (request instanceof PepRequestWrapper) {
 				IEvent event = ((PepRequestWrapper)request).getEvent();
+//				if (event instanceof IActualEvent) {
+				// FIXME if ActualEvent invoke PIP
+				Exception e;
 				response = communicationHandler.notifyEvent(event);
 				
 			} else if (request instanceof PmpRequestWrapper) {
