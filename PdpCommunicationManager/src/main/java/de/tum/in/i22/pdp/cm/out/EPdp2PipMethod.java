@@ -4,7 +4,8 @@ package de.tum.in.i22.pdp.cm.out;
 public enum EPdp2PipMethod {
 	EVALUATE_PREDICATE((byte)1),
 	GET_CONTAINER_FOR_DATA((byte)2),
-	GET_DATA_IN_CONTAINER((byte)3);
+	GET_DATA_IN_CONTAINER((byte)3),
+	NOTIFY_ACTUAL_EVENT((byte)4);
 	
     private final byte value;
 

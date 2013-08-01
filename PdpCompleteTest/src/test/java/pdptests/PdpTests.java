@@ -7,9 +7,12 @@ import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import testutil.DummyMessageGen;
 import de.tum.in.i22.pdp.PdpController;
+import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IData;
@@ -26,6 +29,7 @@ import de.tum.in.i22.pdp.datatypes.basic.SimplifiedTemporalLogicBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.pip.PipController;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
 
@@ -39,19 +43,35 @@ public class PdpTests {
 	// num of calls from pmp thread
 	private final static int NUM_OF_CALLS_FROM_PMP = 10;
 	
+	
+	private final static int PIP_PORT_NUM = 60011;
+	private final static String PIP_ADDRESS = "localhost";
+	private final static int PMP_LISTENER_PORT_NUM = 50003;
+	private final static int PEP_LISTENER_PORT_NUM = 50004;
+	
 	private static Thread _t1;
 	private static Thread _t2;
+	private static Thread _t3;
 
 	public PdpTests() {
 		// TODO Auto-generated constructor stub
 	}
 
-	static {
+	@BeforeClass
+    public static void beforeClass() {
 		startPdpServer();
 		startPepClient();
 		startPmpClient();
+		startPip();
+		
+		try {
+			_logger.debug("Pause the main thread for 1s so that PDP and PIP can be started.");
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			_logger.error("Main thread interrupted.", e);
+		}
 
-		_pdpProxy = new Pep2PdpFastImp("localhost", 50001);
+		_pdpProxy = new Pep2PdpFastImp("localhost", PEP_LISTENER_PORT_NUM);
 	}
 
 	@Test
@@ -86,6 +106,15 @@ public class PdpTests {
 			testNotifyTwoEvents();
 		}
 	}
+	
+	@Test
+	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
+		IEvent event = DummyMessageGen.createActualEvent();
+		_pdpProxy.connect();
+		IResponse response = _pdpProxy.notifyEvent(event);
+		_pdpProxy.disconnect();
+		Assert.assertNotNull(response);
+	}
 
 	private Map<String, String> createDummyMap() {
 		Map<String, String> map = new HashMap<String, String>();
@@ -98,14 +127,12 @@ public class PdpTests {
 
 	private static void startPdpServer() {
 		PdpController pdp = new PdpController();
-		pdp.start(50001, 50002);
-
-		try {
-			_logger.debug("Pause the main thread for 1s (PDP starting).");
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			_logger.error("Main thread interrupted.", e);
-		}
+		PdpSettings pdpSettings = pdp.getPdpSettings();
+		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
+		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
+		pdpSettings.setPipPortNum(PIP_PORT_NUM);
+		pdpSettings.setPipAddress(PIP_ADDRESS);
+		pdp.start();
 	}
 
 	private static Thread startPepClient() {
@@ -114,7 +141,7 @@ public class PdpTests {
 			@Override
 			public void run() {
 				IPep2PdpFast pdpProxyOne = new Pep2PdpFastImp("localhost",
-						50001);
+						PEP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyOne.connect();
 				} catch (Exception e) {
@@ -152,7 +179,7 @@ public class PdpTests {
 		_t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IPmp2PdpFast pdpProxyTwo = new Pmp2PdpFastImp("localhost", 50002);
+				IPmp2PdpFast pdpProxyTwo = new Pmp2PdpFastImp("localhost", PMP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyTwo.connect();
 				} catch (Exception e) {
@@ -172,13 +199,28 @@ public class PdpTests {
 						_logger.error(e);
 					}
 				}
-				_pdpProxy.disconnect();
+				pdpProxyTwo.disconnect();
 			}
 		});
 
 		_t2.start();
 		
 		return _t2;
+	}
+	
+	private static Thread startPip() {
+		_t3 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				_logger.debug("Start PIP on port " + PIP_PORT_NUM);
+				PipController pipController = new PipController();
+				pipController.start(PIP_PORT_NUM);
+			}
+		});
+
+		_t3.start();
+		
+		return _t3;
 	}
 	
 	private static IMechanism createMechanism() {
@@ -204,13 +246,14 @@ public class PdpTests {
 		return m;
 	}
 	
+	
 	@AfterClass
     public static void afterClass() {
 		_logger.info("After class");
 		try {
-			// wait for max 5s for t1 and t2 to die
 			_t1.join();
 			_t2.join();
+			_t3.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

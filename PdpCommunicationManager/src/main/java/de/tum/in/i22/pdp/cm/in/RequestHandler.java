@@ -8,7 +8,10 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.CommunicationHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
+import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
+import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 
 public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
@@ -16,6 +19,7 @@ public class RequestHandler implements Runnable {
 	private BlockingQueue<RequestWrapper> _requestQueue = null;
 	
 	private CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+	private IPdp2PipFast _pdp2PipProxy = null;
 	
 	public static RequestHandler getInstance() {
 		if (_instance == null) {
@@ -25,8 +29,9 @@ public class RequestHandler implements Runnable {
 	}
 	
 	private RequestHandler() {
+		int queueSize = PdpSettings.getInstance().getQueueSize();
 		_requestQueue = 
-				new ArrayBlockingQueue<RequestWrapper>(PdpSettings.getQueueSize(), true);
+				new ArrayBlockingQueue<RequestWrapper>(queueSize, true);
 	}
 	
 	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {				
@@ -60,11 +65,13 @@ public class RequestHandler implements Runnable {
 			Object response = null;
 			if (request instanceof PepRequestWrapper) {
 				IEvent event = ((PepRequestWrapper)request).getEvent();
-//				if (event instanceof IActualEvent) {
-				// FIXME if ActualEvent invoke PIP
-				Exception e;
-				response = communicationHandler.notifyEvent(event);
-				
+				if (event.isActual()) {
+					// event is actual, send it to PIP
+					response = notifyEventToPip(event);
+				} else {
+					// send the event to the PDP itself
+					response = communicationHandler.notifyEvent(event);
+				}
 			} else if (request instanceof PmpRequestWrapper) {
 				PmpRequest pmpRequest = ((PmpRequestWrapper)request).getPmpRequest();
 				response = processPmpRequest(pmpRequest);
@@ -96,6 +103,40 @@ public class RequestHandler implements Runnable {
 			throw new RuntimeException("Method " + pmpRequest.getMethod() + " is not supported!");
 		}
 		return result;
+	}
+	
+	/**
+	 * The proxy object will be created only if needed on the
+	 * first invocation of this method.
+	 * @return
+	 */
+	private IPdp2PipFast getPdp2PipProxy() throws Exception {
+		if (_pdp2PipProxy == null) {
+			String pipAddress = PdpSettings.getInstance().getPipAddress();
+			int pipPort = PdpSettings.getInstance().getPipPortNum();
+			
+			_logger.debug("Create proxy object to connect to PIP listener " + pipAddress + ":" + pipPort);
+			_pdp2PipProxy = new Pdp2PipImp(pipAddress, pipPort);
+		}
+		return _pdp2PipProxy;
+	}
+	
+	private IResponse notifyEventToPip(IEvent event) {
+		try {
+			IPdp2PipFast pipProxy = getPdp2PipProxy();
+			// TODO maybe thes better solution will be
+			// to establish the connection only once and keep
+			// it alive
+			_logger.debug("Establish connection to PIP");
+			pipProxy.connect();
+			IResponse response = pipProxy.notifyActualEvent(event);	
+			pipProxy.disconnect();
+			return response;
+		} catch (Exception e) {
+			// TODO think what can we do in case of an error
+			_logger.fatal("Failed to notify actual event to PIP.", e);
+			return null;
+		}
 	}
 
 	private class RequestWrapper {

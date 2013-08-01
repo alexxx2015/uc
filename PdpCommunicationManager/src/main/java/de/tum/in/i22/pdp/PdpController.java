@@ -17,15 +17,14 @@ public class PdpController {
 	
 	public static void main(String[] args) {
 		try {
-			PdpSettings.loadProperties();
+			PdpSettings.getInstance().loadProperties();
 		} catch (IOException e) {
 			_logger.fatal("Properties cannot be loaded.", e);
 			return;
 		}
 		
 		PdpController pdp = new PdpController();
-		pdp.start(PdpSettings.getPepListenerPortNum(),
-				PdpSettings.getPmpListenerPortNum());
+		pdp.start();
 		
 //		 EventHandler thread loops forever, this stops the main thread,
 //		 otherwise the app will be closed
@@ -39,7 +38,7 @@ public class PdpController {
 		}
 	}
 	
-	public void start(int portNumPep, int portNumPmp) {
+	public void start() {
 		if (_isStarted)
 			return;
 		_isStarted = true;
@@ -51,14 +50,20 @@ public class PdpController {
 		Thread thread = new Thread(eventHandler);
 		thread.start();
 
-		_logger.info("Start PmpFastServiceHandler");
-		FastServiceHandler pmpFastServiceHandler = new PmpFastServiceHandler(portNumPmp);
+		int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
+		_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
+		FastServiceHandler pmpFastServiceHandler = new PmpFastServiceHandler(pmpListenerPort);
 		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
 		threadPmpFastServiceHandler.start();
 		
-		_logger.info("Start PepFastServiceHandler");
-		FastServiceHandler pepFastServiceHandler = new PepFastServiceHandler(portNumPep);
+		int pepListenerPort = getPdpSettings().getPepListenerPortNum();
+		_logger.info("Start PepFastServiceHandler on port: " + pepListenerPort);
+		FastServiceHandler pepFastServiceHandler = new PepFastServiceHandler(pepListenerPort);
 		Thread threadPepFastServiceHandler = new Thread(pepFastServiceHandler);
 		threadPepFastServiceHandler.start();
+	}
+	
+	public PdpSettings getPdpSettings() {
+		return PdpSettings.getInstance();
 	}
 }

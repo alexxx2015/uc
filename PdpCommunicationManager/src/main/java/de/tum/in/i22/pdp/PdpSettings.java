@@ -9,27 +9,32 @@ import org.apache.log4j.Logger;
  * 
  * @author Stoimenov
  * Settings are read from properties file named "pdp.properties".
- * This class has only static methods. There is no need for instances 
- * of the class.
+ * Singleton. 
  *
  */
 public class PdpSettings {
 	
 	private static Logger _logger = Logger.getLogger(PdpSettings.class);
 	
-	private static final String PROPERTIES_FILE_NAME = "pdp.properties";
+	private final static PdpSettings _instance = new PdpSettings();
 	
-	// default values wil be overridden with the values from the properties file
-	private static int _pepListenerPortNum = 60001;
-	private static int _pmpListenerPortNum = 60002;
-	private static int _maxPmpToPdpMessageSize = 1024; // in B
-	private static int _maxPepToPdpMessageSize = 1024; // in B
-	private static int _queueSize = 100;
+	private final String PROPERTIES_FILE_NAME = "pdp.properties";
 	
-	// the class is static, no need for objects
+	// default values will be overridden with the values from the properties file
+	private int _pepListenerPortNum = 60001;
+	private int _pmpListenerPortNum = 60002;
+	
+	private String _pipAddress;
+	private int _pipPortNum;
+	private int _queueSize = 100;
+	
 	private PdpSettings() {}
+	
+	public static PdpSettings getInstance() {
+		return _instance;
+	}
 
-	public static void loadProperties() throws IOException {
+	public void loadProperties() throws IOException {
 		Properties props = SettingsLoader.loadProperties(PROPERTIES_FILE_NAME);
 		
 		try {
@@ -47,53 +52,72 @@ public class PdpSettings {
 		}
 		
 		try {
-			_maxPepToPdpMessageSize = Integer.valueOf((String)props.get("max_pep_to_pdp_message_size"));
+			_pipAddress = (String)props.getProperty("pip_address");
 		} catch (Exception e) {
-			_logger.warn("Cannot read max pep to pdp message size.", e);
-			_logger.info("Default max pep to pdp message size: " + _maxPepToPdpMessageSize);
+			_logger.fatal("Cannot read pip address.", e);
+			_logger.debug("Killing the app.");
+			System.exit(1);
 		}
 		
 		try {
-			_maxPmpToPdpMessageSize = Integer.valueOf((String)props.get("max_pmp_to_pdp_message_size"));
+			_pipPortNum = Integer.valueOf((String)props.getProperty("pip_port_num"));
 		} catch (Exception e) {
-			_logger.warn("Cannot read max pmp to pdp message size.", e);
-			_logger.info("Default max pmp to pdp message size: " + _maxPmpToPdpMessageSize);
+			_logger.fatal("Cannot read pip port number.", e);
+			_logger.debug("Killing the app.");
+			System.exit(1);
 		}
 		
 		try {
 			_queueSize = Integer.valueOf((String)props.get("queue_size"));
 		} catch (Exception e) {
 			_logger.warn("Cannot read queue size.", e);
-			_logger.info("Default queue size: " + _maxPmpToPdpMessageSize);
+			_logger.info("Default queue size: " + _queueSize);
 		}
 	}
 
-	public static Logger getLogger() {
-		return _logger;
-	}
 
-	public static String getPropertiesFileName() {
+	public String getPropertiesFileName() {
 		return PROPERTIES_FILE_NAME;
 	}
 
-	public static int getPepListenerPortNum() {
+	public int getPepListenerPortNum() {
 		return _pepListenerPortNum;
 	}
 
-	public static int getPmpListenerPortNum() {
+	public int getPmpListenerPortNum() {
 		return _pmpListenerPortNum;
 	}
-
-	public static int getMaxPmpToPdpMessageSize() {
-		return _maxPmpToPdpMessageSize;
-	}
-
-	public static int getMaxPepToPdpMessageSize() {
-		return _maxPepToPdpMessageSize;
+	
+	public String getPipAddress() {
+		return _pipAddress;
 	}
 	
-	public static int getQueueSize() {
+	public int getPipPortNum() {
+		return _pipPortNum;
+	}
+
+	public int getQueueSize() {
 		return _queueSize;
+	}
+
+	public void setPepListenerPortNum(int pepListenerPortNum) {
+		_pepListenerPortNum = pepListenerPortNum;
+	}
+
+	public void setPmpListenerPortNum(int pmpListenerPortNum) {
+		_pmpListenerPortNum = pmpListenerPortNum;
+	}
+
+	public void setPipAddress(String pipAddress) {
+		_pipAddress = pipAddress;
+	}
+
+	public void setPipPortNum(int pipPortNum) {
+		_pipPortNum = pipPortNum;
+	}
+
+	public void setQueueSize(int queueSize) {
+		_queueSize = queueSize;
 	}
 	
 }

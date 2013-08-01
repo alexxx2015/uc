@@ -12,6 +12,7 @@ import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.GpMapEntry;
 
 public class EventBasic implements IEvent {
 	private String _name = null;
+	private boolean _isActual = false;
 	private Map<String, String> _map = null;
 	private long _timestamp;
 
@@ -20,12 +21,20 @@ public class EventBasic implements IEvent {
 		_map = map;
 	}
 	
+	public EventBasic(String name, Map<String, String> map, boolean isActual) {
+		this(name, map);
+		_isActual = isActual;
+	}
+	
 	public EventBasic(GpEvent gpEvent) {
 		if (gpEvent == null)
 			return;
 		
 		if (gpEvent.hasName())
 			_name = gpEvent.getName();
+		
+		if (gpEvent.hasIsActual())
+			_isActual = gpEvent.getIsActual();
 		
 		//number of elements in the map
 		int count = gpEvent.getMapEntryCount();
@@ -56,6 +65,11 @@ public class EventBasic implements IEvent {
 	}
 
 	@Override
+	public boolean isActual() {
+		return _isActual;
+	}
+	
+	@Override
 	public Map<String, String> getParameters() {
 		return _map;
 	}
@@ -77,6 +91,8 @@ public class EventBasic implements IEvent {
 		if (e.getName() != null)
 			gpEvent.setName(e.getName());
 		
+		gpEvent.setIsActual(e.isActual());
+		
 		Map<String, String> map = e.getParameters();
 		if (map != null && !map.isEmpty()) {
 			Set<String> keys = map.keySet();
@@ -95,8 +111,8 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventBasic [_name=" + _name + ", _map=" + _map
-				+ ", _timestamp=" + _timestamp + "]";
+		return "EventBasic [_name=" + _name + ", _isActual=" + _isActual
+				+ ", _map=" + _map + ", _timestamp=" + _timestamp + "]";
 	}
 
 	@Override
@@ -106,6 +122,7 @@ public class EventBasic implements IEvent {
 			EventBasic o = (EventBasic)obj;
 			//TODO check if timestamp should be checked
 			isEqual = CompareUtil.areObjectsEqual(_name, o.getName())
+					&& _isActual == o.isActual()
 					&& CompareUtil.areMapsEqual(_map, o.getParameters());
 		}
 		return isEqual;

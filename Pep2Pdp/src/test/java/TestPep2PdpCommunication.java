@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import de.tum.in.i22.pdp.PdpController;
+import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.IMessageFactory;
 import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.datatypes.IEvent;
@@ -21,10 +22,15 @@ public class TestPep2PdpCommunication {
 	private static Logger _logger = Logger.getRootLogger();
 
 	private static IPep2PdpFast _pdpProxy;
+	private static int _pepListenerPortNum = 50007;
+	private static int _pmpListenerPortNum = 50008;
 	
 	static {
 		PdpController pdp = new PdpController();
-		pdp.start(50007, 50008);
+		PdpSettings pdpSettings = pdp.getPdpSettings();
+		pdpSettings.setPepListenerPortNum(_pepListenerPortNum);
+		pdpSettings.setPmpListenerPortNum(_pmpListenerPortNum);
+		pdp.start();
 		
 		try {
 			_logger.debug("Pause the main thread for 1s (PDP starting).");
@@ -33,7 +39,7 @@ public class TestPep2PdpCommunication {
 			_logger.error("Main thread interrupted.", e);
 		}
 		
-		_pdpProxy = new Pep2PdpFastImp("localhost", 50007);
+		_pdpProxy = new Pep2PdpFastImp("localhost", _pepListenerPortNum);
 	}
 	
 	@Test

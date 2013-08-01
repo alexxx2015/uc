@@ -13,6 +13,7 @@
 		<module>../PdpCommunicationManager</module>
 		<module>../Pep2Pdp</module>
 		<module>../Pmp2Pdp</module>
+		<module>../PipCommunicationManager</module>
 		<module>../PdpCompleteTest</module>
 	</modules>
 

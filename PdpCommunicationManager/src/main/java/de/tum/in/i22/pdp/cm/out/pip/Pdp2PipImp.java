@@ -9,15 +9,18 @@ import de.tum.in.i22.pdp.cm.out.FastConnector;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
 import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
+import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpBoolean;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpContainerList;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpData;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpDataList;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
 import de.tum.in.i22.pdp.util.GpUtil;
 
@@ -89,6 +92,27 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			return GpUtil.convertToList(gpDataList);
 		} catch (IOException e) {
 			_logger.error("Get data in container failed.", e);
+			return null;
+		}
+	}
+	
+	@Override
+	public IResponse notifyActualEvent(IEvent event) {
+		_logger.debug("Notify actual event invoked");
+		_logger.trace("Create Gpb event instance");
+		GpEvent gpEvent = EventBasic.createGpbEvent(event);
+		try {
+			OutputStream out = getOutputStream();
+			out.write(EPdp2PipMethod.NOTIFY_ACTUAL_EVENT.getValue());
+			gpEvent.writeDelimitedTo(out);
+			out.flush();
+			_logger.trace("GpEvent written to OutputStream");
+			
+			_logger.trace("Wait for response");
+			GpResponse gpResponse = GpResponse.parseDelimitedFrom(getInputStream());
+			return new ResponseBasic(gpResponse);
+		} catch (IOException e) {
+			_logger.error("Notify actual event failed.", e);
 			return null;
 		}
 	}

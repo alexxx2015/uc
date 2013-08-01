@@ -5,22 +5,24 @@ import java.util.Map;
 public interface IEvent {
 	/**
 	 * Event name
-	 * @return
+	 * @return The name of the event.
 	 */
 	public String getName();
 	
 	/**
-	 * Event parameters
-	 * @return empty or non-empty map
+	 * Event parameters.
+	 * @return Empty or non-empty map containing the parameters.
 	 */
 	public Map<String, String> getParameters();
 	
 	/**
-	 * Timestamp, inserted when the event is received
+	 * @return Timestamp which is inserted when the event is received.
 	 */
 	public long getTimestamp();
 	
-	
-	//TODO implement
-	//public boolean isActual();
+	/**
+	 * 
+	 * @return true if the event is actual.
+	 */
+	public boolean isActual();
 }

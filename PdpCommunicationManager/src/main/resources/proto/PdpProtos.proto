@@ -13,15 +13,16 @@ message GpString {
 
 message GpEvent {
 	optional string name = 1;
+	optional bool isActual = 2;
 	
 	message GpMapEntry {
 		required string key = 1;
 		required string value = 2;
 	}
 	
-	repeated GpMapEntry mapEntry = 2;
+	repeated GpMapEntry mapEntry = 3;
 	
-	optional string timestamp = 3;
+	optional string timestamp = 4;
 }
 
 

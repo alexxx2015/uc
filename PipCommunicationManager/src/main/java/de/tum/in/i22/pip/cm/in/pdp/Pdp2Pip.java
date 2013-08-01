@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
+
+import testutil.DummyMessageGen;
+
 import de.tum.in.i22.pdp.cm.out.IPdp2Pip;
 import de.tum.in.i22.pdp.datatypes.IContainer;
 import de.tum.in.i22.pdp.datatypes.IData;
 import de.tum.in.i22.pdp.datatypes.IEvent;
+import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pdp.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
 
@@ -19,6 +24,8 @@ import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
  *
  */
 public class Pdp2Pip implements IPdp2Pip {
+	
+	private static final Logger _logger = Logger.getLogger(Pdp2Pip.class);
 	
 	private static Pdp2Pip _instance = new Pdp2Pip();
 	
@@ -58,4 +65,9 @@ public class Pdp2Pip implements IPdp2Pip {
 		return list;
 	}
 	
+	public IResponse notifyActualEvent(IEvent event) {
+		_logger.debug("Notify actual event called");
+		return DummyMessageGen.createResponse();
+	}
+
 }
