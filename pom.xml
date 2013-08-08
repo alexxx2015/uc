@@ -11,10 +11,10 @@
 
 	<modules>
 		<module>CommunicationBase</module>
-		<module>pip</module>
-		<module>pdp</module>
-		<module>pmp</module>
-		<module>pep</module>
+		<module>Pip</module>
+		<module>Pdp</module>
+		<module>Pmp</module>
+		<module>Pep</module>
 		<module>UsageControlTests</module>
 	</modules>
 
