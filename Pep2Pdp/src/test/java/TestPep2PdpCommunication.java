@@ -8,12 +8,12 @@ import org.junit.Test;
 
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
-import de.tum.in.i22.pdp.cm.in.IMessageFactory;
-import de.tum.in.i22.pdp.cm.in.MessageFactory;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.in.IMessageFactory;
+import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 
 

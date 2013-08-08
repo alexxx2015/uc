@@ -2,17 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>pdp</groupId>
-		<artifactId>simple-parent</artifactId>
+		<groupId>UsageControlSystem</groupId>
+		<artifactId>Pmp</artifactId>
 		<version>1.0</version>
-		<relativePath>../Pdp/pom.xml</relativePath>
+		<relativePath>../Pmp/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>Pmp2Pdp</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>pdp</groupId>
+			<groupId>UsageControlSystem</groupId>
 			<artifactId>PdpCommunicationManager</artifactId>
 			<version>1.0</version>
 		</dependency>

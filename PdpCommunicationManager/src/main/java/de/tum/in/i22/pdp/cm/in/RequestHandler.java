@@ -10,8 +10,9 @@ import de.tum.in.i22.pdp.cm.CommunicationHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.in.IForwarder;
 
 public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
@@ -64,14 +65,13 @@ public class RequestHandler implements Runnable {
 			
 			Object response = null;
 			if (request instanceof PepRequestWrapper) {
-				IEvent event = ((PepRequestWrapper)request).getEvent();
+				IEvent event = ((PepRequestWrapper) request).getEvent();
 				if (event.isActual()) {
 					// event is actual, send it to PIP
-					response = notifyEventToPip(event);
-				} else {
-					// send the event to the PDP itself
-					response = communicationHandler.notifyEvent(event);
+					notifyEventToPip(event);
 				}
+				// send the event to the PDP itself
+				response = communicationHandler.notifyEvent(event);
 			} else if (request instanceof PmpRequestWrapper) {
 				PmpRequest pmpRequest = ((PmpRequestWrapper)request).getPmpRequest();
 				response = processPmpRequest(pmpRequest);
@@ -121,6 +121,7 @@ public class RequestHandler implements Runnable {
 		return _pdp2PipProxy;
 	}
 	
+	//FIXME do not return response, get the status
 	private IResponse notifyEventToPip(IEvent event) {
 		try {
 			IPdp2PipFast pipProxy = getPdp2PipProxy();

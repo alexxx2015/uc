@@ -5,15 +5,16 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.pdp.cm.in.IMessageFactory;
-import de.tum.in.i22.pdp.cm.in.MessageFactory;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.IMessageFactory;
+import de.tum.in.i22.uc.cm.in.MessageFactory;
+import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
 public class PepClientConnectionHandler extends ClientConnectionHandler {
 	

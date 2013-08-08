@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>pdp</groupId>
-		<artifactId>simple-parent</artifactId>
+		<groupId>UsageControlSystem</groupId>
+		<artifactId>Pdp</artifactId>
 		<version>1.0</version>
 		<relativePath>../Pdp/pom.xml</relativePath>
 	</parent>

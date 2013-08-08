@@ -3,50 +3,31 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>pdp</groupId>
-	<artifactId>simple-parent</artifactId>
-	<packaging>pom</packaging>
-	<version>1.0</version>
+	<parent>
+		<groupId>UsageControlSystem</groupId>
+		<artifactId>simple-parent</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>Pdp</artifactId>
 	<name>PDP parent project</name>
+	<packaging>pom</packaging>
 
 	<modules>
 		<module>../PdpCommunicationManager</module>
-		<module>../Pep2Pdp</module>
-		<module>../Pmp2Pdp</module>
-		<module>../PipCommunicationManager</module>
-		<module>../PdpCompleteTest</module>
 	</modules>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.5.0</version>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>PipCommunicationManager</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
+
 </project>

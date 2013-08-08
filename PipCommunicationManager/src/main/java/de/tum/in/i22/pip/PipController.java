@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
 import de.tum.in.i22.pip.cm.in.pdp.PdpFastServiceHandler;
+import de.tum.in.i22.pip.cm.in.pmp.Pmp2PipFastServiceHandler;
+import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PipController {
 	private static Logger _logger = Logger.getLogger(PipController.class);
@@ -15,7 +16,7 @@ public class PipController {
 	public static void main(String[] args) {
 		
 		try {
-			PipSettings.loadProperties();
+			PipSettings.getInstance().loadProperties();
 		} catch (IOException e) {
 			_logger.fatal("Properties cannot be loaded.", e);
 			return;
@@ -23,7 +24,7 @@ public class PipController {
 		
 		PipController pip = new PipController();
 		
-		pip.start(PipSettings.getPdpListenerPortNum());
+		pip.start();
 		
 //		 EventHandler thread loops forever, this stops the main thread,
 //		 otherwise the app will be closed
@@ -37,7 +38,7 @@ public class PipController {
 		}
 	}
 	
-	public void start(int pdpListenerPortNum) {
+	public void start() {
 		if (_isStarted)
 			return;
 		_isStarted = true;
@@ -45,8 +46,20 @@ public class PipController {
 		_logger.info("Start pip");
 		
 		_logger.info("Start PdpFastServiceHandler");
+		PipSettings settings = getPipSettings();
+		int pdpListenerPortNum = settings.getPdpListenerPortNum();
 		FastServiceHandler pdpFastServiceHandler = new PdpFastServiceHandler(pdpListenerPortNum);
 		Thread threadPdpFastServiceHandler = new Thread(pdpFastServiceHandler);
 		threadPdpFastServiceHandler.start();
+		
+		
+		int pmpListenerPortNum = settings.getPmpListenerPortNum();
+		FastServiceHandler pmpFastServiceHandler = new Pmp2PipFastServiceHandler(pmpListenerPortNum);
+		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
+		threadPmpFastServiceHandler.start();
+	}
+	
+	public PipSettings getPipSettings() {
+		return PipSettings.getInstance();
 	}
 }

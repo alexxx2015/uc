@@ -3,16 +3,22 @@ package de.tum.in.i22.pep2pdp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.tum.in.i22.pdp.cm.out.FastConnector;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
-import de.tum.in.i22.pdp.datatypes.basic.ResponseBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse;
+import org.apache.log4j.Logger;
+
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.uc.cm.out.FastConnector;
 
 public class Pep2PdpFastImp extends FastConnector implements IPep2PdpFast {
 
+	
+	private static final Logger _logger = Logger
+			.getLogger(Pep2PdpFastImp.class);
+	
  	public Pep2PdpFastImp(String address, int port) {
  		super(address, port);
 	}

@@ -8,11 +8,11 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.tum.in.i22.pdp.datatypes.IData;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.basic.CompareUtil;
-import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
-import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.CompareUtil;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
 
 
 public class CompareUtilTest {

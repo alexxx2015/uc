@@ -1,6 +1,6 @@
 package de.tum.in.i22.pdp.cm.in.pmp;
 
-import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 
 /**

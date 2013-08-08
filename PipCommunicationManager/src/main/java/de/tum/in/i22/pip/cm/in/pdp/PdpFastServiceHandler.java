@@ -2,7 +2,7 @@ package de.tum.in.i22.pip.cm.in.pdp;
 
 import java.net.Socket;
 
-import de.tum.in.i22.pdp.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PdpFastServiceHandler extends FastServiceHandler {
 

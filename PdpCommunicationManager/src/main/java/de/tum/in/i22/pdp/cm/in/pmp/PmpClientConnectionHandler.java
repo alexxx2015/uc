@@ -5,15 +5,15 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.pdp.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
-import de.tum.in.i22.pdp.cm.in.pep.MessageTooLargeException;
-import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
+import de.tum.in.i22.uc.cm.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
 public class PmpClientConnectionHandler extends ClientConnectionHandler {
 	

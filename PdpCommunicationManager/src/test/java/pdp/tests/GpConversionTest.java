@@ -6,16 +6,16 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.tum.in.i22.pdp.datatypes.IData;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.basic.ConditionBasic;
-import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
-import de.tum.in.i22.pdp.datatypes.basic.DataEventMapBasic;
-import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
-import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.pdp.datatypes.basic.OslFormulaBasic;
-import de.tum.in.i22.pdp.datatypes.basic.SimplifiedTemporalLogicBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
+import de.tum.in.i22.uc.cm.basic.ConditionBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
+import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 
 
 public class GpConversionTest {

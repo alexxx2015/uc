@@ -8,33 +8,33 @@ import org.junit.Test;
 
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
-import de.tum.in.i22.pdp.datatypes.IData;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.datatypes.basic.ConditionBasic;
-import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
-import de.tum.in.i22.pdp.datatypes.basic.DataEventMapBasic;
-import de.tum.in.i22.pdp.datatypes.basic.EventBasic;
-import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.pdp.datatypes.basic.OslFormulaBasic;
-import de.tum.in.i22.pdp.datatypes.basic.SimplifiedTemporalLogicBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
+import de.tum.in.i22.uc.cm.basic.ConditionBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
+import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 
 public class TestPmp2PdpCommunication {
 
 	private static Logger _logger = Logger.getRootLogger();
 
 	private static IPmp2PdpFast _pdpProxy;
-	private static int _pepListenerPortNum = 50007;
-	private static int _pmpListenerPortNum = 50008;
+	private static final int PEP_LISTENER_PORT_NUM = 50007;
+	private static final int PMP_LISTENER_PORT_NUM = 50008;
 
 	static {
 		PdpController pdp = new PdpController();
 		PdpSettings pdpSettings = pdp.getPdpSettings();
-		pdpSettings.setPepListenerPortNum(_pepListenerPortNum);
-		pdpSettings.setPmpListenerPortNum(_pmpListenerPortNum);
+		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
+		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
 		pdp.start();
 
 		try {
@@ -44,7 +44,7 @@ public class TestPmp2PdpCommunication {
 			_logger.error("Main thread interrupted.", e);
 		}
 
-		_pdpProxy = new Pmp2PdpFastImp("localhost", _pmpListenerPortNum);
+		_pdpProxy = new Pmp2PdpFastImp("localhost", PMP_LISTENER_PORT_NUM);
 	}
 
 	@Test

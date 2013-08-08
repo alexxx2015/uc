@@ -7,14 +7,12 @@ import java.util.UUID;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-
-import de.tum.in.i22.pdp.cm.out.IPdp2Pip;
-import de.tum.in.i22.pdp.datatypes.IContainer;
-import de.tum.in.i22.pdp.datatypes.IData;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.datatypes.basic.ContainerBasic;
-import de.tum.in.i22.pdp.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
 
 /**
  * This class should contain the real implementation of the methods

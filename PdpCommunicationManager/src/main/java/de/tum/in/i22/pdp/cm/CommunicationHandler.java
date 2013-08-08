@@ -4,10 +4,10 @@ import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
 import de.tum.in.i22.pdp.cm.in.IIncoming;
-import de.tum.in.i22.pdp.datatypes.IEvent;
-import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.datatypes.IResponse;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 
 /**
  * This is just a stub for now

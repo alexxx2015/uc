@@ -3,15 +3,17 @@ package de.tum.in.i22.pmp2pdp;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.log4j.Logger;
+
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
-import de.tum.in.i22.pdp.cm.out.FastConnector;
-import de.tum.in.i22.pdp.datatypes.IMechanism;
-import de.tum.in.i22.pdp.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.EStatus;
-import de.tum.in.i22.pdp.gpb.PdpProtos.GpString;
-import de.tum.in.i22.pdp.util.GpUtil;
+import de.tum.in.i22.uc.cm.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
+import de.tum.in.i22.uc.cm.out.FastConnector;
+import de.tum.in.i22.uc.cm.util.GpUtil;
 
 /**
  * Each method writes a message to the output stream. 
@@ -24,6 +26,10 @@ import de.tum.in.i22.pdp.util.GpUtil;
 public class Pmp2PdpFastImp extends FastConnector
 		implements IPmp2PdpFast {
 
+	
+	private static final Logger _logger = Logger
+			.getLogger(Pmp2PdpFastImp.class);
+	
  	public Pmp2PdpFastImp(String address, int port) {
  		super(address, port);
 	}

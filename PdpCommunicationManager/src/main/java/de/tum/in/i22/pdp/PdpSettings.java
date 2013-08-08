@@ -5,6 +5,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.uc.cm.SettingsLoader;
+
 /**
  * 
  * @author Stoimenov

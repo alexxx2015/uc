@@ -3,20 +3,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-        <groupId>pdp</groupId>
-        <artifactId>simple-parent</artifactId>
+        <groupId>UsageControlSystem</groupId>
+        <artifactId>Pip</artifactId>
         <version>1.0</version>
-        <relativePath>../Pdp/pom.xml</relativePath>
+        <relativePath>../Pip/pom.xml</relativePath>
     </parent>
 	
 	<artifactId>PipCommunicationManager</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>pdp</groupId>
-			<artifactId>PdpCommunicationManager</artifactId>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	
