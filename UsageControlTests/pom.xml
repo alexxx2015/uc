@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>PdpCompleteTest</artifactId>
+	<artifactId>UsageControlTests</artifactId>
 
 	<dependencies>
 		<dependency>
