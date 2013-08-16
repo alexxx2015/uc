@@ -264,7 +264,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpBoolean.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -700,7 +700,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpString.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1438,7 +1438,7 @@ public final class PdpProtos {
                   de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry.Builder.class);
         }
 
-        // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.GpMapEntry.newBuilder()
+        // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2014,7 +2014,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpEvent.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2619,15 +2619,30 @@ public final class PdpProtos {
   public interface GpStatusOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // required .pdp.GpStatus.EStatus value = 1;
+    // required .pdp.GpStatus.GpEStatus value = 1;
     /**
-     * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+     * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
      */
     boolean hasValue();
     /**
-     * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+     * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
      */
-    de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus getValue();
+    de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus getValue();
+
+    // optional string errorMessage = 2;
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    boolean hasErrorMessage();
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    java.lang.String getErrorMessage();
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getErrorMessageBytes();
   }
   /**
    * Protobuf type {@code pdp.GpStatus}
@@ -2682,13 +2697,18 @@ public final class PdpProtos {
             }
             case 8: {
               int rawValue = input.readEnum();
-              de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus value = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus.valueOf(rawValue);
+              de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
                 value_ = value;
               }
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              errorMessage_ = input.readBytes();
               break;
             }
           }
@@ -2731,9 +2751,9 @@ public final class PdpProtos {
     }
 
     /**
-     * Protobuf enum {@code pdp.GpStatus.EStatus}
+     * Protobuf enum {@code pdp.GpStatus.GpEStatus}
      */
-    public enum EStatus
+    public enum GpEStatus
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
        * <code>ERROR1 = 1;</code>
@@ -2748,9 +2768,9 @@ public final class PdpProtos {
        */
       ERROR2(2, 3),
       /**
-       * <code>INIBIT = 4;</code>
+       * <code>INHIBIT = 4;</code>
        */
-      INIBIT(3, 4),
+      INHIBIT(3, 4),
       /**
        * <code>ALLOW = 5;</code>
        */
@@ -2774,9 +2794,9 @@ public final class PdpProtos {
        */
       public static final int ERROR2_VALUE = 3;
       /**
-       * <code>INIBIT = 4;</code>
+       * <code>INHIBIT = 4;</code>
        */
-      public static final int INIBIT_VALUE = 4;
+      public static final int INHIBIT_VALUE = 4;
       /**
        * <code>ALLOW = 5;</code>
        */
@@ -2789,27 +2809,27 @@ public final class PdpProtos {
 
       public final int getNumber() { return value; }
 
-      public static EStatus valueOf(int value) {
+      public static GpEStatus valueOf(int value) {
         switch (value) {
           case 1: return ERROR1;
           case 2: return OKAY;
           case 3: return ERROR2;
-          case 4: return INIBIT;
+          case 4: return INHIBIT;
           case 5: return ALLOW;
           case 6: return MODIFY;
           default: return null;
         }
       }
 
-      public static com.google.protobuf.Internal.EnumLiteMap<EStatus>
+      public static com.google.protobuf.Internal.EnumLiteMap<GpEStatus>
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<EStatus>
+      private static com.google.protobuf.Internal.EnumLiteMap<GpEStatus>
           internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<EStatus>() {
-              public EStatus findValueByNumber(int number) {
-                return EStatus.valueOf(number);
+            new com.google.protobuf.Internal.EnumLiteMap<GpEStatus>() {
+              public GpEStatus findValueByNumber(int number) {
+                return GpEStatus.valueOf(number);
               }
             };
 
@@ -2826,9 +2846,9 @@ public final class PdpProtos {
         return de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.getDescriptor().getEnumTypes().get(0);
       }
 
-      private static final EStatus[] VALUES = values();
+      private static final GpEStatus[] VALUES = values();
 
-      public static EStatus valueOf(
+      public static GpEStatus valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
         if (desc.getType() != getDescriptor()) {
           throw new java.lang.IllegalArgumentException(
@@ -2840,33 +2860,77 @@ public final class PdpProtos {
       private final int index;
       private final int value;
 
-      private EStatus(int index, int value) {
+      private GpEStatus(int index, int value) {
         this.index = index;
         this.value = value;
       }
 
-      // @@protoc_insertion_point(enum_scope:pdp.GpStatus.EStatus)
+      // @@protoc_insertion_point(enum_scope:pdp.GpStatus.GpEStatus)
     }
 
     private int bitField0_;
-    // required .pdp.GpStatus.EStatus value = 1;
+    // required .pdp.GpStatus.GpEStatus value = 1;
     public static final int VALUE_FIELD_NUMBER = 1;
-    private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus value_;
+    private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value_;
     /**
-     * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+     * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
      */
     public boolean hasValue() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+     * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
      */
-    public de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus getValue() {
+    public de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus getValue() {
       return value_;
     }
 
+    // optional string errorMessage = 2;
+    public static final int ERRORMESSAGE_FIELD_NUMBER = 2;
+    private java.lang.Object errorMessage_;
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    public boolean hasErrorMessage() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    public java.lang.String getErrorMessage() {
+      java.lang.Object ref = errorMessage_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          errorMessage_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string errorMessage = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getErrorMessageBytes() {
+      java.lang.Object ref = errorMessage_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        errorMessage_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
-      value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus.ERROR1;
+      value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+      errorMessage_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2887,6 +2951,9 @@ public final class PdpProtos {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeEnum(1, value_.getNumber());
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getErrorMessageBytes());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2899,6 +2966,10 @@ public final class PdpProtos {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, value_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getErrorMessageBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2996,7 +3067,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpStatus.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3016,8 +3087,10 @@ public final class PdpProtos {
 
       public Builder clear() {
         super.clear();
-        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus.ERROR1;
+        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
         bitField0_ = (bitField0_ & ~0x00000001);
+        errorMessage_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -3050,6 +3123,10 @@ public final class PdpProtos {
           to_bitField0_ |= 0x00000001;
         }
         result.value_ = value_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.errorMessage_ = errorMessage_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3068,6 +3145,11 @@ public final class PdpProtos {
         if (other == de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.getDefaultInstance()) return this;
         if (other.hasValue()) {
           setValue(other.getValue());
+        }
+        if (other.hasErrorMessage()) {
+          bitField0_ |= 0x00000002;
+          errorMessage_ = other.errorMessage_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -3100,24 +3182,24 @@ public final class PdpProtos {
       }
       private int bitField0_;
 
-      // required .pdp.GpStatus.EStatus value = 1;
-      private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus.ERROR1;
+      // required .pdp.GpStatus.GpEStatus value = 1;
+      private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
       /**
-       * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+       * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
        */
       public boolean hasValue() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+       * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
        */
-      public de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus getValue() {
+      public de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus getValue() {
         return value_;
       }
       /**
-       * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+       * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
        */
-      public Builder setValue(de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus value) {
+      public Builder setValue(de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -3127,11 +3209,85 @@ public final class PdpProtos {
         return this;
       }
       /**
-       * <code>required .pdp.GpStatus.EStatus value = 1;</code>
+       * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
        */
       public Builder clearValue() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus.ERROR1;
+        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+        onChanged();
+        return this;
+      }
+
+      // optional string errorMessage = 2;
+      private java.lang.Object errorMessage_ = "";
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public boolean hasErrorMessage() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public java.lang.String getErrorMessage() {
+        java.lang.Object ref = errorMessage_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          errorMessage_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getErrorMessageBytes() {
+        java.lang.Object ref = errorMessage_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          errorMessage_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public Builder setErrorMessage(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        errorMessage_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public Builder clearErrorMessage() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        errorMessage_ = getDefaultInstance().getErrorMessage();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string errorMessage = 2;</code>
+       */
+      public Builder setErrorMessageBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        errorMessage_ = value;
         onChanged();
         return this;
       }
@@ -3572,7 +3728,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpResponse.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -4528,7 +4684,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpData.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -5007,7 +5163,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpDataList.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -5744,7 +5900,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpContainer.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6308,7 +6464,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpContainerList.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6974,7 +7130,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpOslFormula.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpOslFormula.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpOslFormula.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpOslFormula.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -7629,7 +7785,7 @@ public final class PdpProtos {
                   de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.Builder.class);
         }
 
-        // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.newBuilder()
+        // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.GpDataEventMapEntry.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -8182,7 +8338,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpDataEventMap.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -9052,7 +9208,7 @@ public final class PdpProtos {
                   de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.Builder.class);
         }
 
-        // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.newBuilder()
+        // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -9555,7 +9711,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpStateEventMap.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -10339,7 +10495,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpSimplifiedTemporalLogic.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpSimplifiedTemporalLogic.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpSimplifiedTemporalLogic.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpSimplifiedTemporalLogic.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -11191,7 +11347,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCondition.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCondition.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpCondition.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCondition.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -11867,7 +12023,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpHistory.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpHistory.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpHistory.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpHistory.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -12791,7 +12947,7 @@ public final class PdpProtos {
                 de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism.class, de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism.Builder.class);
       }
 
-      // Construct using de.tum.in.i22.pdp.gpb.PdpProtos.GpMechanism.newBuilder()
+      // Construct using de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -13651,40 +13807,40 @@ public final class PdpProtos {
       "\n\007GpEvent\022\014\n\004name\030\001 \001(\t\022\020\n\010isActual\030\002 \001(" +
       "\010\022)\n\010mapEntry\030\003 \003(\0132\027.pdp.GpEvent.GpMapE" +
       "ntry\022\021\n\ttimestamp\030\004 \001(\t\032(\n\nGpMapEntry\022\013\n" +
-      "\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"\200\001\n\010GpStatus\022$" +
-      "\n\005value\030\001 \002(\0162\025.pdp.GpStatus.EStatus\"N\n\007" +
-      "EStatus\022\n\n\006ERROR1\020\001\022\010\n\004OKAY\020\002\022\n\n\006ERROR2\020" +
-      "\003\022\n\n\006INIBIT\020\004\022\t\n\005ALLOW\020\005\022\n\n\006MODIFY\020\006\"\202\001\n" +
-      "\nGpResponse\022*\n\023authorizationAction\030\001 \001(\013",
-      "2\r.pdp.GpStatus\022#\n\rexecuteAction\030\002 \003(\0132\014" +
-      ".pdp.GpEvent\022#\n\rmodifiedEvent\030\003 \001(\0132\014.pd" +
-      "p.GpEvent\"\024\n\006GpData\022\n\n\002id\030\001 \001(\t\".\n\nGpDat" +
-      "aList\022 \n\013dataElement\030\001 \003(\0132\013.pdp.GpData\"" +
-      "-\n\013GpContainer\022\022\n\nclassValue\030\001 \001(\t\022\n\n\002id" +
-      "\030\002 \001(\t\"=\n\017GpContainerList\022*\n\020containerEl" +
-      "ement\030\001 \003(\0132\020.pdp.GpContainer\"\037\n\014GpOslFo" +
-      "rmula\022\017\n\007formula\030\001 \001(\t\"\231\001\n\016GpDataEventMa" +
-      "p\0229\n\010mapEntry\030\001 \003(\0132\'.pdp.GpDataEventMap" +
-      ".GpDataEventMapEntry\032L\n\023GpDataEventMapEn",
-      "try\022\030\n\003key\030\001 \002(\0132\013.pdp.GpData\022\033\n\005value\030\002" +
-      " \002(\0132\014.pdp.GpEvent\"\220\001\n\017GpStateEventMap\022;" +
-      "\n\010mapEntry\030\001 \003(\0132).pdp.GpStateEventMap.G" +
-      "pStateEventMapEntry\032@\n\024GpStateEventMapEn" +
-      "try\022\013\n\003key\030\001 \002(\t\022\033\n\005value\030\002 \002(\0132\014.pdp.Gp" +
-      "Event\"\227\001\n\031GpSimplifiedTemporalLogic\022)\n\014d" +
-      "ataEventMap\030\001 \001(\0132\023.pdp.GpDataEventMap\022\"" +
-      "\n\007formula\030\002 \001(\0132\021.pdp.GpOslFormula\022+\n\rst" +
-      "ateEventMap\030\003 \001(\0132\024.pdp.GpStateEventMap\"" +
-      "j\n\013GpCondition\022$\n\tcondition\030\001 \001(\0132\021.pdp.",
-      "GpOslFormula\0225\n\rconditionSimp\030\002 \001(\0132\036.pd" +
-      "p.GpSimplifiedTemporalLogic\"(\n\tGpHistory" +
-      "\022\033\n\005trace\030\001 \003(\0132\014.pdp.GpEvent\"\257\001\n\013GpMech" +
-      "anism\022#\n\tcondition\030\001 \001(\0132\020.pdp.GpConditi" +
-      "on\022\025\n\rmechanismName\030\002 \001(\t\022!\n\010response\030\003 " +
-      "\001(\0132\017.pdp.GpResponse\022\035\n\005state\030\004 \001(\0132\016.pd" +
-      "p.GpHistory\022\"\n\014triggerEvent\030\005 \001(\0132\014.pdp." +
-      "GpEventB\"\n\025de.tum.in.i22.pdp.gpbB\tPdpPro" +
-      "tos"
+      "\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"\233\001\n\010GpStatus\022&" +
+      "\n\005value\030\001 \002(\0162\027.pdp.GpStatus.GpEStatus\022\024" +
+      "\n\014errorMessage\030\002 \001(\t\"Q\n\tGpEStatus\022\n\n\006ERR" +
+      "OR1\020\001\022\010\n\004OKAY\020\002\022\n\n\006ERROR2\020\003\022\013\n\007INHIBIT\020\004" +
+      "\022\t\n\005ALLOW\020\005\022\n\n\006MODIFY\020\006\"\202\001\n\nGpResponse\022*",
+      "\n\023authorizationAction\030\001 \001(\0132\r.pdp.GpStat" +
+      "us\022#\n\rexecuteAction\030\002 \003(\0132\014.pdp.GpEvent\022" +
+      "#\n\rmodifiedEvent\030\003 \001(\0132\014.pdp.GpEvent\"\024\n\006" +
+      "GpData\022\n\n\002id\030\001 \001(\t\".\n\nGpDataList\022 \n\013data" +
+      "Element\030\001 \003(\0132\013.pdp.GpData\"-\n\013GpContaine" +
+      "r\022\022\n\nclassValue\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"=\n\017GpC" +
+      "ontainerList\022*\n\020containerElement\030\001 \003(\0132\020" +
+      ".pdp.GpContainer\"\037\n\014GpOslFormula\022\017\n\007form" +
+      "ula\030\001 \001(\t\"\231\001\n\016GpDataEventMap\0229\n\010mapEntry" +
+      "\030\001 \003(\0132\'.pdp.GpDataEventMap.GpDataEventM",
+      "apEntry\032L\n\023GpDataEventMapEntry\022\030\n\003key\030\001 " +
+      "\002(\0132\013.pdp.GpData\022\033\n\005value\030\002 \002(\0132\014.pdp.Gp" +
+      "Event\"\220\001\n\017GpStateEventMap\022;\n\010mapEntry\030\001 " +
+      "\003(\0132).pdp.GpStateEventMap.GpStateEventMa" +
+      "pEntry\032@\n\024GpStateEventMapEntry\022\013\n\003key\030\001 " +
+      "\002(\t\022\033\n\005value\030\002 \002(\0132\014.pdp.GpEvent\"\227\001\n\031GpS" +
+      "implifiedTemporalLogic\022)\n\014dataEventMap\030\001" +
+      " \001(\0132\023.pdp.GpDataEventMap\022\"\n\007formula\030\002 \001" +
+      "(\0132\021.pdp.GpOslFormula\022+\n\rstateEventMap\030\003" +
+      " \001(\0132\024.pdp.GpStateEventMap\"j\n\013GpConditio",
+      "n\022$\n\tcondition\030\001 \001(\0132\021.pdp.GpOslFormula\022" +
+      "5\n\rconditionSimp\030\002 \001(\0132\036.pdp.GpSimplifie" +
+      "dTemporalLogic\"(\n\tGpHistory\022\033\n\005trace\030\001 \003" +
+      "(\0132\014.pdp.GpEvent\"\257\001\n\013GpMechanism\022#\n\tcond" +
+      "ition\030\001 \001(\0132\020.pdp.GpCondition\022\025\n\rmechani" +
+      "smName\030\002 \001(\t\022!\n\010response\030\003 \001(\0132\017.pdp.GpR" +
+      "esponse\022\035\n\005state\030\004 \001(\0132\016.pdp.GpHistory\022\"" +
+      "\n\014triggerEvent\030\005 \001(\0132\014.pdp.GpEventB$\n\027de" +
+      ".tum.in.i22.uc.cm.gpbB\tPdpProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -13720,7 +13876,7 @@ public final class PdpProtos {
           internal_static_pdp_GpStatus_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_pdp_GpStatus_descriptor,
-              new java.lang.String[] { "Value", });
+              new java.lang.String[] { "Value", "ErrorMessage", });
           internal_static_pdp_GpResponse_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_pdp_GpResponse_fieldAccessorTable = new

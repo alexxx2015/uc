@@ -1,6 +1,6 @@
 package pdp;
 
-option java_package = "de.tum.in.i22.pdp.gpb";
+option java_package = "de.tum.in.i22.uc.cm.gpb";
 option java_outer_classname = "PdpProtos";
 
 message GpBoolean {
@@ -27,16 +27,17 @@ message GpEvent {
 
 
 message GpStatus {
-	enum EStatus {
+	enum GpEStatus {
 		ERROR1 = 1;
 		OKAY = 2;
 		ERROR2 = 3;
-		INIBIT = 4;
+		INHIBIT = 4;
 		ALLOW = 5;
 		MODIFY = 6;
 	}
 	
-	required EStatus value = 1;
+	required GpEStatus value = 1;
+	optional string errorMessage = 2;
 }
 
 message GpResponse {
