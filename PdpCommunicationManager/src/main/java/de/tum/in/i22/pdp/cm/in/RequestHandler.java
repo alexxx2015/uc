@@ -11,7 +11,7 @@ import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 
 public class RequestHandler implements Runnable {
@@ -121,8 +121,7 @@ public class RequestHandler implements Runnable {
 		return _pdp2PipProxy;
 	}
 	
-	//FIXME do not return response, get the status
-	private IResponse notifyEventToPip(IEvent event) {
+	private EStatus notifyEventToPip(IEvent event) {
 		try {
 			IPdp2PipFast pipProxy = getPdp2PipProxy();
 			// TODO maybe thes better solution will be
@@ -130,9 +129,9 @@ public class RequestHandler implements Runnable {
 			// it alive
 			_logger.debug("Establish connection to PIP");
 			pipProxy.connect();
-			IResponse response = pipProxy.notifyActualEvent(event);	
+			EStatus status = pipProxy.notifyActualEvent(event);	
 			pipProxy.disconnect();
-			return response;
+			return status;
 		} catch (Exception e) {
 			// TODO think what can we do in case of an error
 			_logger.fatal("Failed to notify actual event to PIP.", e);

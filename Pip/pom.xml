@@ -14,5 +14,6 @@
 
 	<modules>
 		<module>../PipCommunicationManager</module>
+		<module>../PipCore</module>
 	</modules>
 </project>

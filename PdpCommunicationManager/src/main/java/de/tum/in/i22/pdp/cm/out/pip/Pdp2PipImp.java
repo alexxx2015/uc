@@ -10,18 +10,17 @@ import de.tum.in.i22.pip.cm.in.pdp.EPdp2PipMethod;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.out.FastConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
@@ -102,7 +101,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 	}
 	
 	@Override
-	public IResponse notifyActualEvent(IEvent event) {
+	public EStatus notifyActualEvent(IEvent event) {
 		_logger.debug("Notify actual event invoked");
 		_logger.trace("Create Gpb event instance");
 		GpEvent gpEvent = EventBasic.createGpbEvent(event);
@@ -113,9 +112,9 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			out.flush();
 			_logger.trace("GpEvent written to OutputStream");
 			
-			_logger.trace("Wait for response");
-			GpResponse gpResponse = GpResponse.parseDelimitedFrom(getInputStream());
-			return new ResponseBasic(gpResponse);
+			_logger.trace("Wait for status");
+			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
+			return gpStatus.getValue();
 		} catch (IOException e) {
 			_logger.error("Notify actual event failed.", e);
 			return null;

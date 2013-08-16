@@ -7,12 +7,13 @@ import java.util.UUID;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 
 /**
  * This class should contain the real implementation of the methods
@@ -63,9 +64,9 @@ public class Pdp2Pip implements IPdp2Pip {
 		return list;
 	}
 	
-	public IResponse notifyActualEvent(IEvent event) {
+	public EStatus notifyActualEvent(IEvent event) {
 		_logger.debug("Notify actual event called");
-		return DummyMessageGen.createResponse();
+		return DummyMessageGen.createStatus();
 	}
 
 }

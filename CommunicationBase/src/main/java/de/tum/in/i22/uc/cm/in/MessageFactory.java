@@ -3,8 +3,11 @@ package de.tum.in.i22.uc.cm.in;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 
 /**
  * Google Protocol Buffer Message Factory
@@ -36,4 +39,9 @@ public class MessageFactory implements IMessageFactory {
 		return e;
 	}
 	
+	@Override
+	public IResponse createError1Response() {
+		IResponse response = new ResponseBasic(EStatus.ERROR1, null, null);
+		return response;
+	}
 }

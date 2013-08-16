@@ -9,6 +9,11 @@ public class DataBasic implements IData {
 
 	private String _id;
 	
+	public DataBasic() {
+		// generate unique id
+		_id = UUID.randomUUID().toString();
+	}
+	
 	public DataBasic(String id) {
 		super();
 		_id = id;
