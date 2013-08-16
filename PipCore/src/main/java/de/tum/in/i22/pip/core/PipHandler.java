@@ -5,7 +5,7 @@ import java.util.List;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipHandler implements IPdp2Pip {
 	
@@ -36,7 +36,7 @@ public class PipHandler implements IPdp2Pip {
 	}
 
 	@Override
-	public EStatus notifyActualEvent(IEvent event) {
+	public IStatus notifyActualEvent(IEvent event) {
 		return _pipSemantics.processEvent(event, _pipModel);
 	}
 

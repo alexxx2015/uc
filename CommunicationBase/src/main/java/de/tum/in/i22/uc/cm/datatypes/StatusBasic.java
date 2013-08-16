@@ -1,16 +1,30 @@
 package de.tum.in.i22.uc.cm.datatypes;
 
+import de.tum.in.i22.uc.cm.basic.CompareUtil;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus;
 
 public class StatusBasic implements IStatus {
-	private EStatus _eStatus;
-	private String _errorMessage;
+	private EStatus _eStatus = null;
+	private String _errorMessage  = null;
 	
 	public StatusBasic(GpStatus gpStatus) {
-		GpEStatus gpEStatus = gpStatus.getValue();
-		_eStatus = EStatus.convertFromGpEStatus(gpEStatus);
-		_errorMessage = gpStatus.getErrorMessage();
+		if (gpStatus.hasValue()) {
+			GpEStatus gpEStatus = gpStatus.getValue();
+			_eStatus = EStatus.convertFromGpEStatus(gpEStatus);
+		}
+		
+		if (gpStatus.hasErrorMessage())
+			_errorMessage = gpStatus.getErrorMessage();
+	}
+	
+	public StatusBasic(EStatus eStatus, String errorMessage) {
+		_eStatus = eStatus;
+		_errorMessage = errorMessage;
+	}
+	
+	public StatusBasic(EStatus eStatus) {
+		this(eStatus, null);
 	}
 
 	@Override
@@ -31,8 +45,26 @@ public class StatusBasic implements IStatus {
 	public static GpStatus createGpbStatus(IStatus status) {
 		GpStatus.Builder gpStatus = GpStatus.newBuilder();
 		gpStatus.setValue(status.getEStatus().asGpEStatus());
-		gpStatus.setErrorMessage(status.getErrorMessage());
+		
+		if (status.getErrorMessage() != null)
+			gpStatus.setErrorMessage(status.getErrorMessage());
 		return gpStatus.build();
+	}
+	
+	public boolean equals(Object obj) {
+		boolean isEqual = false;
+		if (obj != null && this.getClass() == obj.getClass()) {
+			StatusBasic o = (StatusBasic)obj;
+			isEqual = CompareUtil.areObjectsEqual(_errorMessage, o.getErrorMessage())
+					&& CompareUtil.areObjectsEqual(_eStatus, o.getEStatus());
+		}
+		return isEqual;
+	}
+
+	@Override
+	public String toString() {
+		return "StatusBasic [_eStatus=" + _eStatus + ", _errorMessage="
+				+ _errorMessage + "]";
 	}
 	
 }

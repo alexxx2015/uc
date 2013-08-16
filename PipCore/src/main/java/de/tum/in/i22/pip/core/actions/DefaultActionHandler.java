@@ -1,7 +1,8 @@
 package de.tum.in.i22.pip.core.actions;
 
+import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
 public class DefaultActionHandler extends BaseActionHandler {
@@ -11,9 +12,9 @@ public class DefaultActionHandler extends BaseActionHandler {
 	}
 
 	@Override
-	public EStatus execute() {
+	public IStatus execute() {
 		//FIXME what is the return status, it was 1 so far
-		return EStatus.OKAY;
+		return DummyMessageGen.createOkStatus();
 	}
 	
 	@Override

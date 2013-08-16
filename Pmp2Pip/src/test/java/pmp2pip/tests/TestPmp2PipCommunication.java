@@ -12,7 +12,7 @@ import de.tum.in.i22.pmp2pip.IPmp2PipFast;
 import de.tum.in.i22.pmp2pip.Pmp2PipFastImp;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class TestPmp2PipCommunication {
 
@@ -48,7 +48,7 @@ public class TestPmp2PipCommunication {
 		_pipProxy.connect();
 		IContainer container = DummyMessageGen.createContainer();
 		IData data = DummyMessageGen.createData();
-		EStatus status = _pipProxy.initialRepresentation(container, data);
+		IStatus status = _pipProxy.initialRepresentation(container, data);
 		_logger.debug("Received status: " + status);
 
 		// disconnect from PIP

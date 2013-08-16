@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * This class should contain the real implementation of the methods
@@ -64,9 +64,9 @@ public class Pdp2Pip implements IPdp2Pip {
 		return list;
 	}
 	
-	public EStatus notifyActualEvent(IEvent event) {
+	public IStatus notifyActualEvent(IEvent event) {
 		_logger.debug("Notify actual event called");
-		return DummyMessageGen.createStatus();
+		return DummyMessageGen.createAllowStatus();
 	}
 
 }

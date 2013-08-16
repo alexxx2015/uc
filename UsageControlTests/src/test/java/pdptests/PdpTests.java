@@ -30,7 +30,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IMessageFactory;
 import de.tum.in.i22.uc.cm.in.MessageFactory;
 
@@ -191,7 +191,7 @@ public class PdpTests {
 					//TODO invoke some methods
 					// deploy mechanism
 					IMechanism m = createMechanism();
-					EStatus status = pdpProxyTwo.deployMechanism(m);
+					IStatus status = pdpProxyTwo.deployMechanism(m);
 					_logger.debug("Received status: " + status);
 					
 					try {

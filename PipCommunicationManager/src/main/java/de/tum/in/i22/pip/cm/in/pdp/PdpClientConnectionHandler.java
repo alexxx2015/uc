@@ -13,6 +13,8 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList;
@@ -20,7 +22,6 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
@@ -124,8 +125,8 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		_logger.trace("Received event parameter: " + gpEvent);
 		
 		IEvent event = new EventBasic(gpEvent);
-		EStatus status = _pdp2pip.notifyActualEvent(event);
-		GpStatus gpStatus = GpUtil.convertToGpStatus(status);
+		IStatus status = _pdp2pip.notifyActualEvent(event);
+		GpStatus gpStatus = StatusBasic.createGpbStatus(status);
 		gpStatus.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}

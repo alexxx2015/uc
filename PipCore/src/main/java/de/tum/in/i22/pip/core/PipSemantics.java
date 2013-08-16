@@ -1,15 +1,14 @@
 package de.tum.in.i22.pip.core;
 
-import de.tum.in.i22.pip.core.actions.DefaultActionHandler;
 import de.tum.in.i22.pip.core.actions.IActionHandler;
 import de.tum.in.i22.pip.core.actions.ReadFileActionHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipSemantics {
 	private PipModel _ifModel = null;
 	
-	public EStatus processEvent(IEvent event, PipModel ifModel) {
+	public IStatus processEvent(IEvent event, PipModel ifModel) {
 		/*_ifModel = ifModel;
 		//LEGEND
 		// -1 ERROR1

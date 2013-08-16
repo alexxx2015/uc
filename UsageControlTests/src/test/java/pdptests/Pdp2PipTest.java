@@ -24,7 +24,7 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class Pdp2PipTest {
 	
@@ -94,7 +94,7 @@ public class Pdp2PipTest {
 	@Test
 	public void testNotifyActualEvent() {
 		IEvent event = DummyMessageGen.createEvent();
-		EStatus status = _pipProxy.notifyActualEvent(event);
+		IStatus status = _pipProxy.notifyActualEvent(event);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);
 	}

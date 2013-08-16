@@ -8,9 +8,10 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.out.FastConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
@@ -34,7 +35,7 @@ public class Pmp2PdpFastImp extends FastConnector
  		super(address, port);
 	}
 
-	public EStatus deployMechanism(IMechanism mechanism) {
+	public IStatus deployMechanism(IMechanism mechanism) {
 		_logger.debug("Deploy mechanism");
 		_logger.trace("Create Google Protocol Buffer Mechanism instance");
 		GpMechanism gpMechanism = MechanismBasic.createGpbMechanism(mechanism);
@@ -48,7 +49,7 @@ public class Pmp2PdpFastImp extends FastConnector
 			
 			_logger.trace("Wait for GpStatus message");
 			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
-			return gpStatus.getValue();
+			return new StatusBasic(gpStatus);
 		} catch (IOException ex) {
 			_logger.error("Deploy mechanism failed.", ex);
 			return null;
@@ -75,7 +76,7 @@ public class Pmp2PdpFastImp extends FastConnector
 		}
 	}
 
-	public EStatus revokeMechanism(String par) {
+	public IStatus revokeMechanism(String par) {
 		_logger.debug("Revoke mechanism");
 		_logger.trace("Create Google Protocol Buffer GpString");
 		GpString gpString = GpUtil.createGpString(par);
@@ -88,7 +89,7 @@ public class Pmp2PdpFastImp extends FastConnector
 			
 			_logger.trace("Wait for GpStatus message");
 			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
-			return gpStatus.getValue();
+			return new StatusBasic(gpStatus);
 		} catch (IOException ex) {
 			_logger.error("Revoke mechanism failed.", ex);
 			return null;

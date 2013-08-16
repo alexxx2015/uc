@@ -5,23 +5,24 @@ import java.util.List;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.in.IMessageFactory;
 import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 public class ResponseBasic implements IResponse {
-	private EStatus _authorizationAction = null;
+	private IStatus _authorizationAction = null;
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
 	
 	//TODO think if the factory is really necessary
 	private final static IMessageFactory _factory = MessageFactory.getInstance();
 	
-	public ResponseBasic(EStatus authorizationAction,
+	public ResponseBasic(IStatus authorizationAction,
 			List<IEvent> executeActions, IEvent modifiedEvent) {
 		super();
 		_authorizationAction = authorizationAction;
@@ -36,7 +37,7 @@ public class ResponseBasic implements IResponse {
 		if (gpResponse.hasAuthorizationAction()) {
 			// Copy Authorization Action
 			GpStatus gpAuthorizationAction = gpResponse.getAuthorizationAction();
-			_authorizationAction = gpAuthorizationAction.getValue();
+			_authorizationAction = new StatusBasic(gpAuthorizationAction);
 		}
 		
 		// Copy Execute Actions
@@ -57,7 +58,7 @@ public class ResponseBasic implements IResponse {
 	}
 	
 	@Override
-	public EStatus getAuthorizationAction() {
+	public IStatus getAuthorizationAction() {
 		return _authorizationAction;
 	}
 
@@ -84,9 +85,8 @@ public class ResponseBasic implements IResponse {
 		
 		// Set authorization action
 		if (response.getAuthorizationAction() != null) {
-			GpStatus.Builder gpStatus = GpStatus.newBuilder();
-			gpStatus.setValue(response.getAuthorizationAction());
-			gpResponse.setAuthorizationAction(gpStatus.build());
+			GpStatus gpStatus = StatusBasic.createGpbStatus(response.getAuthorizationAction());
+			gpResponse.setAuthorizationAction(gpStatus);
 		}
 		
 		// Set modified event

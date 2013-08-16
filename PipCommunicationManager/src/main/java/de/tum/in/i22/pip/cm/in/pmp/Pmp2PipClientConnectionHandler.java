@@ -9,13 +9,13 @@ import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
-import de.tum.in.i22.uc.cm.util.GpUtil;
 
 public class Pmp2PipClientConnectionHandler extends ClientConnectionHandler {
 	private IPmp2Pip _pmp2pip = Pmp2Pip.getInstance();
@@ -52,9 +52,9 @@ public class Pmp2PipClientConnectionHandler extends ClientConnectionHandler {
 		IContainer container = new ContainerBasic(gpContainer);
 		IData data = new DataBasic(gpData);
 		
-		EStatus status = _pmp2pip.initialRepresentation(container, data);
+		IStatus status = _pmp2pip.initialRepresentation(container, data);
 		_logger.trace("Return status: " + status);
-		GpStatus gpStatus = GpUtil.convertToGpStatus(status);
+		GpStatus gpStatus = StatusBasic.createGpbStatus(status);
 		gpStatus.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}

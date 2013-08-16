@@ -15,12 +15,14 @@ import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.in.IMessageFactory;
 import de.tum.in.i22.uc.cm.in.MessageFactory;
 
@@ -51,7 +53,7 @@ public class DummyMessageGen {
 	}
 	
 	public static IResponse createResponse() {
-		EStatus status = EStatus.ALLOW;
+		IStatus status = new StatusBasic(EStatus.ALLOW, null);
 		
 		List<IEvent> executeActions = new ArrayList<IEvent>();
 		Map<String, String> map1 = new HashMap<String, String>();
@@ -68,8 +70,12 @@ public class DummyMessageGen {
 		return response;
 	}
 	
-	public static EStatus createStatus() {
-		return EStatus.ALLOW;
+	public static IStatus createAllowStatus() {
+		return new StatusBasic(EStatus.ALLOW);
+	}
+	
+	public static IStatus createOkStatus() {
+		return new StatusBasic(EStatus.ALLOW);
 	}
 
 	public static IEvent createEvent() {

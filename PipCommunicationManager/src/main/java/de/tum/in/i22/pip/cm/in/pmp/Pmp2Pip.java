@@ -3,7 +3,7 @@ package de.tum.in.i22.pip.cm.in.pmp;
 import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class Pmp2Pip implements IPmp2Pip {
 
@@ -18,9 +18,9 @@ public class Pmp2Pip implements IPmp2Pip {
 	}
 	
 	@Override
-	public EStatus initialRepresentation(IContainer container, IData data) {
+	public IStatus initialRepresentation(IContainer container, IData data) {
 		// TODO implement
-		return DummyMessageGen.createStatus();
+		return DummyMessageGen.createAllowStatus();
 	}
 
 }

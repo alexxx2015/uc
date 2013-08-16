@@ -8,10 +8,11 @@ import java.net.Socket;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
@@ -65,14 +66,13 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 			
 			Object responseObj = waitForResponse();
 			
-			if (responseObj instanceof EStatus) {
-				EStatus response = (EStatus)responseObj;
-				GpStatus.Builder status = GpStatus.newBuilder();
-				status.setValue(response);
+			if (responseObj instanceof IStatus) {
+				IStatus responseStatus = (IStatus)responseObj;
+				GpStatus gpStatus = StatusBasic.createGpbStatus(responseStatus);
 				// it is crucial to call throwAwayResponse method at this point
 				// it will set response to null so that pause/resume thread works correctly
 				throwAwayResponse();
-				status.build().writeDelimitedTo(getOutputStream());
+				gpStatus.writeDelimitedTo(getOutputStream());
 				getOutputStream().flush();
 			} else {
 				throw new RuntimeException("EStatus type expected for " + responseObj);
@@ -128,14 +128,13 @@ public class PmpClientConnectionHandler extends ClientConnectionHandler {
 			_logger.trace("Wait for EStatus response");
 			Object responseObj = waitForResponse();
 			
-			if (responseObj instanceof EStatus) {
-				EStatus response = (EStatus)responseObj;
-				GpStatus.Builder status = GpStatus.newBuilder();
-				status.setValue(response);
+			if (responseObj instanceof IStatus) {
+				IStatus responseStatus = (IStatus)responseObj;
+				GpStatus gpStatus = StatusBasic.createGpbStatus(responseStatus);
 				// it is crucial to call throwAwayResponse method at this point
 				// it will set response to null so that pause/resume thread works correctly
 				throwAwayResponse();
-				status.build().writeDelimitedTo(getOutputStream());
+				gpStatus.writeDelimitedTo(getOutputStream());
 				getOutputStream().flush();
 				
 			} else {

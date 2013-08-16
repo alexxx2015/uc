@@ -7,7 +7,7 @@ import de.tum.in.i22.pdp.cm.in.IIncoming;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * This is just a stub for now
@@ -36,10 +36,10 @@ public class CommunicationHandler
 	}
 
 	@Override
-	public EStatus deployMechanism(IMechanism mechanism) {
+	public IStatus deployMechanism(IMechanism mechanism) {
 		// TODO implement
 		_logger.debug("Deploy mechanism called");
-		return EStatus.OKAY;
+		return DummyMessageGen.createOkStatus();
 	}
 
 	@Override
@@ -50,10 +50,10 @@ public class CommunicationHandler
 	}
 
 	@Override
-	public EStatus revokeMechanism(String par) {
+	public IStatus revokeMechanism(String par) {
 		_logger.debug("Revoke mechanism called");
 		//TODO implement
-		return EStatus.OKAY;
+		return DummyMessageGen.createOkStatus();
 	}
 
 	@Override

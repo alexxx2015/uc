@@ -20,7 +20,7 @@ import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class TestPmp2PdpCommunication {
 
@@ -54,7 +54,7 @@ public class TestPmp2PdpCommunication {
 
 		// deploy mechanism
 		IMechanism m = createMechanism();
-		EStatus status = _pdpProxy.deployMechanism(m);
+		IStatus status = _pdpProxy.deployMechanism(m);
 		_logger.debug("Received status: " + status);
 
 		// disconnect from pdp
@@ -71,7 +71,7 @@ public class TestPmp2PdpCommunication {
 
 		// deploy mechanism
 		IMechanism m = createMechanism();
-		EStatus status = _pdpProxy.deployMechanism(m);
+		IStatus status = _pdpProxy.deployMechanism(m);
 		_logger.debug("Received status: " + status);
 		// check if status is not null
 		Assert.assertNotNull(status);
@@ -111,7 +111,7 @@ public class TestPmp2PdpCommunication {
 		_pdpProxy.connect();
 
 		// revoke
-		EStatus status = _pdpProxy.revokeMechanism("param1");
+		IStatus status = _pdpProxy.revokeMechanism("param1");
 		_logger.debug("Received status: " + status);
 
 		// disconnect from pdp

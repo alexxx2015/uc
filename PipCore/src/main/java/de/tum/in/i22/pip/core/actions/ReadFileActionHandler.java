@@ -1,10 +1,8 @@
 package de.tum.in.i22.pip.core.actions;
 
-import java.util.Map;
-
 import de.tum.in.i22.pip.core.PipModel;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class ReadFileActionHandler extends BaseActionHandler {
 
@@ -14,7 +12,7 @@ public class ReadFileActionHandler extends BaseActionHandler {
 	}
 
 	@Override
-	public EStatus execute() {
+	public IStatus execute() {
 		/*
 		PipModel ifModel = getIfModel();
 		Map<String, String> parameters = getEvent().getParameters();

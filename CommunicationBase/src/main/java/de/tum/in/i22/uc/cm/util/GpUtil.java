@@ -12,9 +12,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataList;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
 
 public class GpUtil {
 	public static GpString createGpString(String par) {
@@ -68,11 +66,5 @@ public class GpUtil {
 			}
 		
 		return gp.build();
-	}
-	
-	public static GpStatus convertToGpStatus(EStatus status) {
-		GpStatus.Builder gpStatus = GpStatus.newBuilder();
-		gpStatus.setValue(status);
-		return gpStatus.build();
 	}
 }

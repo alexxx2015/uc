@@ -11,7 +11,7 @@ import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 
 public class RequestHandler implements Runnable {
@@ -121,7 +121,7 @@ public class RequestHandler implements Runnable {
 		return _pdp2PipProxy;
 	}
 	
-	private EStatus notifyEventToPip(IEvent event) {
+	private IStatus notifyEventToPip(IEvent event) {
 		try {
 			IPdp2PipFast pipProxy = getPdp2PipProxy();
 			// TODO maybe thes better solution will be
@@ -129,7 +129,7 @@ public class RequestHandler implements Runnable {
 			// it alive
 			_logger.debug("Establish connection to PIP");
 			pipProxy.connect();
-			EStatus status = pipProxy.notifyActualEvent(event);	
+			IStatus status = pipProxy.notifyActualEvent(event);	
 			pipProxy.disconnect();
 			return status;
 		} catch (Exception e) {
