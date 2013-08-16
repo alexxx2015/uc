@@ -12,6 +12,11 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
 
+/**
+ * Data flow model
+ * @author Stoimenov
+ *
+ */
 public class PipModel {
 	// counter of the unique data and counter ids
 	private int _dataIdCounter = 0;

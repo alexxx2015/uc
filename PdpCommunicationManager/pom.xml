@@ -9,6 +9,14 @@
 		<relativePath>../Pdp/pom.xml</relativePath>
 	</parent>
 	<artifactId>PdpCommunicationManager</artifactId>
+	
+	<dependencies>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>PdpCore</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
