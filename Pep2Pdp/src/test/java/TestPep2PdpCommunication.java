@@ -10,10 +10,10 @@ import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.in.IMessageFactory;
-import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 
 
@@ -45,7 +45,7 @@ public class TestPep2PdpCommunication {
 	@Test
 	public void testNotifyTwoEvents() throws Exception{
 		// create event
-		IMessageFactory mf = MessageFactory.getInstance();
+		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		String eventName1 = "event1";
 		String eventName2 = "event2";
 		Map<String, String> map = createDummyMap();

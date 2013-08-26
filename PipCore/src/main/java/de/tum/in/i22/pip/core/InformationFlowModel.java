@@ -1,9 +1,11 @@
 package de.tum.in.i22.pip.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -13,14 +15,12 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
 
 /**
- * Data flow model
- * @author Stoimenov
- *
+ * Information flow model
+ * Sigleton.
  */
-public class PipModel {
-	// counter of the unique data and counter ids
-	private int _dataIdCounter = 0;
-	private int _containerIdCounter = 0;
+public class InformationFlowModel {
+	private static final InformationFlowModel _instance = new InformationFlowModel();
+	
 	
 	// list of containers
 	private Set<IContainer> _containerSet = null;
@@ -29,14 +29,23 @@ public class PipModel {
 	
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<String, Set<String>> _dataToContainerMap = null;
+	
 	// [Container.identifier -> List[Container.identifier]]
 	private Map<String, Set<String>> _containerAliasesMap = null;
 	
-	public PipModel() {
+	// the naming set [name -> List[Container.identifier]]
+	private Map<PipName, String> _namingSet = null;
+	
+	public InformationFlowModel() {
 		_containerSet = new HashSet<>();
 		_dataSet = new HashSet<>();
 		_dataToContainerMap = new HashMap<>();
 		_containerAliasesMap = new HashMap<>();
+		_namingSet = new HashMap<>();
+	}
+	
+	public static InformationFlowModel getInstance() {
+		return _instance;
 	}
 	
 	/**
@@ -91,7 +100,7 @@ public class PipModel {
 	/**
 	 * Inserts container into the model.
 	 * @param container
-	 * @return Id of the container.
+	 * @return Id )of the container.
 	 */
 	public String addContainer(IContainer container) {
 		if (_containerSet.contains(container)) {
@@ -113,18 +122,18 @@ public class PipModel {
 		return res;
 	}
 	
-	public boolean hasContainer(String id) {
-		IContainer container = getContainer(id);
+	public boolean hasContainerWithId(String id) {
+		IContainer container = getContainerById(id);
 		return container != null ? true : false;
 	}
 	
-	public IContainer getContainer(String id) {
+	public IContainer getContainerById(String id) {
 		return (IContainer)getElementFromSet(id, _containerSet);
 	}
 	
 	public boolean emptyContainer(String id) {
 		boolean res = false;
-		if (hasContainer(id)) {
+		if (hasContainerWithId(id)) {
 			Set<String> set = _dataToContainerMap.get(id);
 			if (set != null) {
 				set.clear();
@@ -178,7 +187,7 @@ public class PipModel {
 	public Set<String> getAliasesForContainer(String id) {
 		Set<String> result = _containerAliasesMap.get(id);
 		// if no such element is present, return an empty set
-		if (result != null) result = new HashSet<>();
+		if (result == null) result = new HashSet<>();
 		
 		return result;
 	}
@@ -279,7 +288,7 @@ public class PipModel {
 		return element;
 	}
 	
-	public boolean addContainerToDataMapping(String containerId, String dataId) {
+	public boolean addDataToContainerMapping(String dataId, String containerId) {
 		boolean res = false;
 		if (_dataToContainerMap.containsKey(containerId)) {
 			Set<String> dataSet = _dataToContainerMap.get(containerId);
@@ -333,7 +342,7 @@ public class PipModel {
 		return result;
 	}
 	
-	public boolean addDataToContainerMappings(String containerId, Set<String> dataSet) {
+	public boolean addDataToContainerMappings(Set<String> dataSet, String containerId) {
 		assert(dataSet != null);
 		
 		boolean res = false;
@@ -345,6 +354,117 @@ public class PipModel {
 	
 		res = existingDataSet.addAll(dataSet);
 		return res;
+	}
+	
+	// Naming set manipulation functions:
+	/**
+	 * Adds an entry to the naming mapping for container contID, with the naming/representation name.
+	 * @param name
+	 * @param containerId
+	 * @return
+	 */
+	public boolean addName(PipName name, String containerId) {
+		boolean res = false;
+		if (name != null && !name.getDataContainerName().isEmpty()) {
+			_namingSet.put(name, containerId);
+			res = true;
+		}
+		return res;
+	}
+	
+	/**
+	 * Removes the naming/representation name from the naming set.
+	 * @param name
+	 * @return
+	 */
+	public boolean removeName(PipName name) {
+		boolean res = false;
+		if (name != null) {
+			String removedEntry = _namingSet.remove(name);
+			res = removedEntry != null ? true : false;
+		}
+		return res;
+	}
+	
+	/**
+	 * Returns the container that is referenced by the naming name.
+	 * @param name
+	 * @return
+	 */
+	public String getContainerIdByName(PipName name) {
+		String containerId = null;
+		if (name != null && name.getDataContainerName() != null) {
+			Set<PipName> pipNameSet = _namingSet.keySet();
+			for (PipName nm: pipNameSet) {
+				String dataContainerName = nm.getDataContainerName();
+				int processId = nm.getProcessId();
+				if (name.getDataContainerName().equals(dataContainerName) &&
+						name.getProcessId() == processId) {
+					
+					containerId = _namingSet.get(nm);
+					break;
+				}
+			}
+		}
+		return containerId;
+	}
+	
+	/**
+	 * Returns the container that is referenced by the naming name.
+     * The search is done in a less strict way; it is enough that the name only partially
+     * fits an entry in the naming mapping.
+	 * @param name
+	 * @return
+	 */
+	public String getContainerIdByNameRelaxed(PipName name) {
+		String containerId = null;
+		if (name != null && name.getDataContainerName() != null) {
+			String dataContainerName = name.getDataContainerName();
+			int processId = name.getProcessId();
+			for (PipName nm : _namingSet.keySet()) {
+				if (nm.getDataContainerName() != null && 
+						nm.getDataContainerName().contains(dataContainerName) &&
+						nm.getProcessId() == processId) {
+					
+					containerId = _namingSet.get(nm);
+					break;
+				}
+			}
+		}
+		return containerId;
+	}
+	
+	/**
+	 * Return all namings that refer to the container with containerId.
+	 * @param containerId
+	 * @return
+	 */
+	public List<PipName> getAllNames(String containerId) {
+		List<PipName> result = new ArrayList<PipName>();
+		
+		if (_namingSet.containsValue(containerId)) {
+			for (Entry<PipName, String> entry : _namingSet.entrySet()) {
+				if (entry.getValue() == containerId) {
+					result.add(entry.getKey());
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns all representations that correspond to a process with ID processId.
+	 * @param processId
+	 * @return
+	 */
+	public List<PipName> getAllNamingsFromProcess(int processId) {
+		List<PipName> result = new ArrayList<PipName>();
+		for (Entry<PipName, String> entry : _namingSet.entrySet()) {
+			if (entry.getKey().getProcessId() == processId) {
+				result.add(entry.getKey());
+			}
+		}
+		return result;
 	}
 	
 }

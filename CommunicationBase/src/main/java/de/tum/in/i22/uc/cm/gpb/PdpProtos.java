@@ -2756,67 +2756,67 @@ public final class PdpProtos {
     public enum GpEStatus
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
-       * <code>ERROR1 = 1;</code>
+       * <code>OKAY = 1;</code>
        */
-      ERROR1(0, 1),
+      OKAY(0, 1),
       /**
-       * <code>OKAY = 2;</code>
+       * <code>ERROR = 2;</code>
        */
-      OKAY(1, 2),
+      ERROR(1, 2),
       /**
-       * <code>ERROR2 = 3;</code>
+       * <code>INHIBIT = 3;</code>
        */
-      ERROR2(2, 3),
+      INHIBIT(2, 3),
       /**
-       * <code>INHIBIT = 4;</code>
+       * <code>ALLOW = 4;</code>
        */
-      INHIBIT(3, 4),
+      ALLOW(3, 4),
       /**
-       * <code>ALLOW = 5;</code>
+       * <code>MODIFY = 5;</code>
        */
-      ALLOW(4, 5),
+      MODIFY(4, 5),
       /**
-       * <code>MODIFY = 6;</code>
+       * <code>ERROR_EVENT_PARAMETER_MISSING = 6;</code>
        */
-      MODIFY(5, 6),
+      ERROR_EVENT_PARAMETER_MISSING(5, 6),
       ;
 
       /**
-       * <code>ERROR1 = 1;</code>
+       * <code>OKAY = 1;</code>
        */
-      public static final int ERROR1_VALUE = 1;
+      public static final int OKAY_VALUE = 1;
       /**
-       * <code>OKAY = 2;</code>
+       * <code>ERROR = 2;</code>
        */
-      public static final int OKAY_VALUE = 2;
+      public static final int ERROR_VALUE = 2;
       /**
-       * <code>ERROR2 = 3;</code>
+       * <code>INHIBIT = 3;</code>
        */
-      public static final int ERROR2_VALUE = 3;
+      public static final int INHIBIT_VALUE = 3;
       /**
-       * <code>INHIBIT = 4;</code>
+       * <code>ALLOW = 4;</code>
        */
-      public static final int INHIBIT_VALUE = 4;
+      public static final int ALLOW_VALUE = 4;
       /**
-       * <code>ALLOW = 5;</code>
+       * <code>MODIFY = 5;</code>
        */
-      public static final int ALLOW_VALUE = 5;
+      public static final int MODIFY_VALUE = 5;
       /**
-       * <code>MODIFY = 6;</code>
+       * <code>ERROR_EVENT_PARAMETER_MISSING = 6;</code>
        */
-      public static final int MODIFY_VALUE = 6;
+      public static final int ERROR_EVENT_PARAMETER_MISSING_VALUE = 6;
 
 
       public final int getNumber() { return value; }
 
       public static GpEStatus valueOf(int value) {
         switch (value) {
-          case 1: return ERROR1;
-          case 2: return OKAY;
-          case 3: return ERROR2;
-          case 4: return INHIBIT;
-          case 5: return ALLOW;
-          case 6: return MODIFY;
+          case 1: return OKAY;
+          case 2: return ERROR;
+          case 3: return INHIBIT;
+          case 4: return ALLOW;
+          case 5: return MODIFY;
+          case 6: return ERROR_EVENT_PARAMETER_MISSING;
           default: return null;
         }
       }
@@ -2929,7 +2929,7 @@ public final class PdpProtos {
     }
 
     private void initFields() {
-      value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+      value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.OKAY;
       errorMessage_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -3087,7 +3087,7 @@ public final class PdpProtos {
 
       public Builder clear() {
         super.clear();
-        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.OKAY;
         bitField0_ = (bitField0_ & ~0x00000001);
         errorMessage_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -3183,7 +3183,7 @@ public final class PdpProtos {
       private int bitField0_;
 
       // required .pdp.GpStatus.GpEStatus value = 1;
-      private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+      private de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.OKAY;
       /**
        * <code>required .pdp.GpStatus.GpEStatus value = 1;</code>
        */
@@ -3213,7 +3213,7 @@ public final class PdpProtos {
        */
       public Builder clearValue() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.ERROR1;
+        value_ = de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus.OKAY;
         onChanged();
         return this;
       }
@@ -13807,40 +13807,41 @@ public final class PdpProtos {
       "\n\007GpEvent\022\014\n\004name\030\001 \001(\t\022\020\n\010isActual\030\002 \001(" +
       "\010\022)\n\010mapEntry\030\003 \003(\0132\027.pdp.GpEvent.GpMapE" +
       "ntry\022\021\n\ttimestamp\030\004 \001(\t\032(\n\nGpMapEntry\022\013\n" +
-      "\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"\233\001\n\010GpStatus\022&" +
+      "\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"\261\001\n\010GpStatus\022&" +
       "\n\005value\030\001 \002(\0162\027.pdp.GpStatus.GpEStatus\022\024" +
-      "\n\014errorMessage\030\002 \001(\t\"Q\n\tGpEStatus\022\n\n\006ERR" +
-      "OR1\020\001\022\010\n\004OKAY\020\002\022\n\n\006ERROR2\020\003\022\013\n\007INHIBIT\020\004" +
-      "\022\t\n\005ALLOW\020\005\022\n\n\006MODIFY\020\006\"\202\001\n\nGpResponse\022*",
-      "\n\023authorizationAction\030\001 \001(\0132\r.pdp.GpStat" +
-      "us\022#\n\rexecuteAction\030\002 \003(\0132\014.pdp.GpEvent\022" +
-      "#\n\rmodifiedEvent\030\003 \001(\0132\014.pdp.GpEvent\"\024\n\006" +
-      "GpData\022\n\n\002id\030\001 \001(\t\".\n\nGpDataList\022 \n\013data" +
-      "Element\030\001 \003(\0132\013.pdp.GpData\"-\n\013GpContaine" +
-      "r\022\022\n\nclassValue\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"=\n\017GpC" +
-      "ontainerList\022*\n\020containerElement\030\001 \003(\0132\020" +
-      ".pdp.GpContainer\"\037\n\014GpOslFormula\022\017\n\007form" +
-      "ula\030\001 \001(\t\"\231\001\n\016GpDataEventMap\0229\n\010mapEntry" +
-      "\030\001 \003(\0132\'.pdp.GpDataEventMap.GpDataEventM",
-      "apEntry\032L\n\023GpDataEventMapEntry\022\030\n\003key\030\001 " +
-      "\002(\0132\013.pdp.GpData\022\033\n\005value\030\002 \002(\0132\014.pdp.Gp" +
-      "Event\"\220\001\n\017GpStateEventMap\022;\n\010mapEntry\030\001 " +
-      "\003(\0132).pdp.GpStateEventMap.GpStateEventMa" +
-      "pEntry\032@\n\024GpStateEventMapEntry\022\013\n\003key\030\001 " +
-      "\002(\t\022\033\n\005value\030\002 \002(\0132\014.pdp.GpEvent\"\227\001\n\031GpS" +
-      "implifiedTemporalLogic\022)\n\014dataEventMap\030\001" +
-      " \001(\0132\023.pdp.GpDataEventMap\022\"\n\007formula\030\002 \001" +
-      "(\0132\021.pdp.GpOslFormula\022+\n\rstateEventMap\030\003" +
-      " \001(\0132\024.pdp.GpStateEventMap\"j\n\013GpConditio",
-      "n\022$\n\tcondition\030\001 \001(\0132\021.pdp.GpOslFormula\022" +
-      "5\n\rconditionSimp\030\002 \001(\0132\036.pdp.GpSimplifie" +
-      "dTemporalLogic\"(\n\tGpHistory\022\033\n\005trace\030\001 \003" +
-      "(\0132\014.pdp.GpEvent\"\257\001\n\013GpMechanism\022#\n\tcond" +
-      "ition\030\001 \001(\0132\020.pdp.GpCondition\022\025\n\rmechani" +
-      "smName\030\002 \001(\t\022!\n\010response\030\003 \001(\0132\017.pdp.GpR" +
-      "esponse\022\035\n\005state\030\004 \001(\0132\016.pdp.GpHistory\022\"" +
-      "\n\014triggerEvent\030\005 \001(\0132\014.pdp.GpEventB$\n\027de" +
-      ".tum.in.i22.uc.cm.gpbB\tPdpProtos"
+      "\n\014errorMessage\030\002 \001(\t\"g\n\tGpEStatus\022\010\n\004OKA" +
+      "Y\020\001\022\t\n\005ERROR\020\002\022\013\n\007INHIBIT\020\003\022\t\n\005ALLOW\020\004\022\n" +
+      "\n\006MODIFY\020\005\022!\n\035ERROR_EVENT_PARAMETER_MISS",
+      "ING\020\006\"\202\001\n\nGpResponse\022*\n\023authorizationAct" +
+      "ion\030\001 \001(\0132\r.pdp.GpStatus\022#\n\rexecuteActio" +
+      "n\030\002 \003(\0132\014.pdp.GpEvent\022#\n\rmodifiedEvent\030\003" +
+      " \001(\0132\014.pdp.GpEvent\"\024\n\006GpData\022\n\n\002id\030\001 \001(\t" +
+      "\".\n\nGpDataList\022 \n\013dataElement\030\001 \003(\0132\013.pd" +
+      "p.GpData\"-\n\013GpContainer\022\022\n\nclassValue\030\001 " +
+      "\001(\t\022\n\n\002id\030\002 \001(\t\"=\n\017GpContainerList\022*\n\020co" +
+      "ntainerElement\030\001 \003(\0132\020.pdp.GpContainer\"\037" +
+      "\n\014GpOslFormula\022\017\n\007formula\030\001 \001(\t\"\231\001\n\016GpDa" +
+      "taEventMap\0229\n\010mapEntry\030\001 \003(\0132\'.pdp.GpDat",
+      "aEventMap.GpDataEventMapEntry\032L\n\023GpDataE" +
+      "ventMapEntry\022\030\n\003key\030\001 \002(\0132\013.pdp.GpData\022\033" +
+      "\n\005value\030\002 \002(\0132\014.pdp.GpEvent\"\220\001\n\017GpStateE" +
+      "ventMap\022;\n\010mapEntry\030\001 \003(\0132).pdp.GpStateE" +
+      "ventMap.GpStateEventMapEntry\032@\n\024GpStateE" +
+      "ventMapEntry\022\013\n\003key\030\001 \002(\t\022\033\n\005value\030\002 \002(\013" +
+      "2\014.pdp.GpEvent\"\227\001\n\031GpSimplifiedTemporalL" +
+      "ogic\022)\n\014dataEventMap\030\001 \001(\0132\023.pdp.GpDataE" +
+      "ventMap\022\"\n\007formula\030\002 \001(\0132\021.pdp.GpOslForm" +
+      "ula\022+\n\rstateEventMap\030\003 \001(\0132\024.pdp.GpState",
+      "EventMap\"j\n\013GpCondition\022$\n\tcondition\030\001 \001" +
+      "(\0132\021.pdp.GpOslFormula\0225\n\rconditionSimp\030\002" +
+      " \001(\0132\036.pdp.GpSimplifiedTemporalLogic\"(\n\t" +
+      "GpHistory\022\033\n\005trace\030\001 \003(\0132\014.pdp.GpEvent\"\257" +
+      "\001\n\013GpMechanism\022#\n\tcondition\030\001 \001(\0132\020.pdp." +
+      "GpCondition\022\025\n\rmechanismName\030\002 \001(\t\022!\n\010re" +
+      "sponse\030\003 \001(\0132\017.pdp.GpResponse\022\035\n\005state\030\004" +
+      " \001(\0132\016.pdp.GpHistory\022\"\n\014triggerEvent\030\005 \001" +
+      "(\0132\014.pdp.GpEventB$\n\027de.tum.in.i22.uc.cm." +
+      "gpbB\tPdpProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

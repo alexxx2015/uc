@@ -19,6 +19,8 @@ import de.tum.in.i22.pip.PipController;
 import de.tum.in.i22.pip.PipSettings;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
@@ -31,8 +33,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.in.IMessageFactory;
-import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 public class PdpTests {
 
@@ -78,7 +78,7 @@ public class PdpTests {
 	@Test
 	public void testNotifyTwoEvents() throws Exception {
 		// create event
-		IMessageFactory mf = MessageFactory.getInstance();
+		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		String eventName1 = "event1";
 		String eventName2 = "event2";
 		Map<String, String> map = createDummyMap();
@@ -156,7 +156,7 @@ public class PdpTests {
 					map.put("key1", "value1");
 					map.put("key2", "value2");
 					map.put("key3", "value3");
-					IMessageFactory mf = MessageFactory.getInstance();
+					IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 					IEvent event1 = mf.createEvent(eventName1, map);
 
 					pdpProxyOne.notifyEvent(event1);

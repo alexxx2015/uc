@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
@@ -23,11 +26,9 @@ import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
-import de.tum.in.i22.uc.cm.in.IMessageFactory;
-import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 public class DummyMessageGen {
-	private static IMessageFactory _factory = MessageFactory.getInstance();
+	private static IMessageFactory _factory = MessageFactoryCreator.createMessageFactory();
 	
 	public static IMechanism createMechanism() {
 		MechanismBasic m = new MechanismBasic();
@@ -80,13 +81,32 @@ public class DummyMessageGen {
 
 	public static IEvent createEvent() {
 		Map<String, String> map = createDummyMap();
-		IEvent event = new EventBasic("event1", map);
+		IEvent event = _factory.createEvent("event1", map);
 		return event;
 	}
 	
 	public static IEvent createActualEvent() {
 		Map<String, String> map = createDummyMap();
-		IEvent event = new EventBasic("event1", map, true);
+		IEvent event = _factory.createActualEvent("event1", map);
+		return event;
+	}
+	
+	public static IEvent createActualEvent(String eventName) {
+		Map<String, String> map = createDummyMap();
+		IEvent event = _factory.createActualEvent(eventName, map);
+		return event;
+	}
+	
+	@SafeVarargs
+	public static IEvent createActualEvent(String eventName, Entry<String, String>... parameters) {
+		Map<String, String> map = null;
+		if (parameters != null) {
+			map = new HashMap<>();
+			for(int i = 0; i < parameters.length; i++){
+		        map.put(parameters[i].getKey(), parameters[i].getValue());
+		    }
+		}
+		IEvent event = _factory.createActualEvent(eventName, map);
 		return event;
 	}
 	

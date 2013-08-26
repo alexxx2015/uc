@@ -4,22 +4,16 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus;
 
 
 public enum EStatus {
-	ERROR1 {
-		@Override
-		public GpEStatus asGpEStatus() {
-			return GpEStatus.ERROR1;
-		}
-	},
 	OKAY {
 		@Override
 		public GpEStatus asGpEStatus() {
 			return GpEStatus.OKAY;
 		}
 	},
-	ERROR2 {
+	ERROR {
 		@Override
 		public GpEStatus asGpEStatus() {
-			return GpEStatus.ERROR2;
+			return GpEStatus.ERROR;
 		}
 	},
 	INHIBIT {
@@ -39,11 +33,18 @@ public enum EStatus {
 		public GpEStatus asGpEStatus() {
 			return GpEStatus.MODIFY;
 		}
-	};
+	},
+	ERROR_EVENT_PARAMETER_MISSING {
+		@Override
+		public GpEStatus asGpEStatus() {
+			return GpEStatus.ERROR_EVENT_PARAMETER_MISSING;
+		}
+	}
+	;
 	
 	
 	public GpEStatus asGpEStatus() {
-		return GpEStatus.ERROR1;
+		return GpEStatus.ERROR;
 	}
 	
 	public static EStatus convertFromGpEStatus(GpEStatus gpEStatus) {

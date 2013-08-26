@@ -1,71 +1,100 @@
 package de.tum.in.i22.pip.core.actions;
 
-import de.tum.in.i22.pip.core.PipModel;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import de.tum.in.i22.pip.core.InformationFlowModel;
+import de.tum.in.i22.pip.core.PipName;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class ReadFileActionHandler extends BaseActionHandler {
+	
+	private final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
-	public ReadFileActionHandler(IEvent event, PipModel ifModel) {
-		super(event, ifModel);
-		// TODO Auto-generated constructor stub
+	private static final Logger _logger = Logger
+			.getLogger(ReadFileActionHandler.class);
+
+	public ReadFileActionHandler() {
+		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		/*
-		PipModel ifModel = getIfModel();
-		Map<String, String> parameters = getEvent().getParameters();
-		String filename = getParameterValue("InFileName");
+		_logger.info("ReadFile action handler execute");
 
-		String pid = getParameterValue("PID");
-		String processName = getParameterValue("ProcessName");
-		int processContainerID = instantiateProcess(pid, processName, ifModel);
+		InformationFlowModel ifModel = getInformationFlowModel();
+		String fileName = null;
+		String pid = null;
+		String processName = null;
+		
+		try {
+			fileName = getParameterValue("InFileName");
+			pid = getParameterValue("PID");
+			processName = getParameterValue("ProcessName");
+		} catch (ParameterNotFoundException e) {
+			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+		}
 
-		int fileContainerID = ifModel.getContainerByName(new PIPName(-1,
-				filename));
+		String processContainerID = instantiateProcess(pid, processName);
 
-		// check if container for filename exists and create new container if
-		// not
-		if (fileContainerID == -1) {
-			fileContainerID = ifModel.addContainer(null);
-			int fileDataID = ifModel.addData(null);
+		String fileContainerID = ifModel.getContainerIdByName(new PipName(-1,
+				fileName));
 
-			ifModel.addDataContainer(fileContainerID, fileDataID);
+		// check if container for filename exists and create new container
+		if (fileContainerID == null) {
+			fileContainerID = ifModel.addContainer(_messageFactory.createContainer());
+			String fileDataID = ifModel.addData(_messageFactory.createData());
 
-			ifModel.addName(new PIPName(-1, filename), fileContainerID);
+			ifModel.addDataToContainerMapping(fileDataID, fileContainerID);
+
+			ifModel.addName(new PipName(-1, fileName), fileContainerID);
 		}
 
 		// add data to transitive reflexive closure of process container
-		for (int tempContainerID : ifModel
-				.getAliasClosureByID(processContainerID)) {
-			ifModel.addDataContainerList(tempContainerID,
-					ifModel.getDataInContainer(fileContainerID));
+		Set<String> reflexiveClosureOfProcessContainer = ifModel.getAliasClosure(processContainerID);
+		Set<String> dataSet = ifModel.getDataInContainer(fileContainerID);
+		for (String tempContainerID : reflexiveClosureOfProcessContainer) {
+			ifModel.addDataToContainerMappings(dataSet, tempContainerID);
 		}
-		*/
-		return null;
-
+		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-	
-	/*
-    /**
-     *  Checks if a process with given parameters already exists, if not create container, data and names for it.
-     *   
-     
-    private int instantiateProcess(String PID, String processName, PIPStructOld ifModel)
-    {
-       int processContainerID = ifModel.getContainerByName(new PIPName(-1, PID));
 
-        //check if container for process exists and create new container if not
-        if (processContainerID == -1)
-        {
-            processContainerID = ifModel.addContainer(null);
-            ifModel.addDataContainer(processContainerID, ifModel.addData(null));
-            ifModel.addName(new PIPName(-1, PID), processContainerID);
-            ifModel.addName(new PIPName(Integer.parseInt(PID), processName), processContainerID);
-        };
+	/**
+	 * Checks if the process with given parameters already exists, if not create
+	 * container, data and names for it.
+	 * 
+	 * @param PID
+	 * @param processName
+	 * @param ifModel
+	 * @return
+	 */
+	private String instantiateProcess(String processId, String processName) {
+		InformationFlowModel ifModel = getInformationFlowModel();
+		String containerID = ifModel
+				.getContainerIdByName(new PipName(-1, processId));
 
-        return processContainerID;
-    } */
+		// check if container for process exists and create new container if not
+		if (containerID == null) {
+			IContainer container = _messageFactory.createContainer();
+			containerID = ifModel.addContainer(container);
+			
+			IData data = _messageFactory.createData();
+			String dataId = ifModel.addData(data);
+			
+			
+			ifModel.addDataToContainerMapping(dataId, containerID);
+			ifModel.addName(new PipName(-1, processId), containerID);
+			ifModel.addName(new PipName(Integer.parseInt(processId), processName),
+					containerID);
+		}
+
+		return containerID;
+	}
 
 }

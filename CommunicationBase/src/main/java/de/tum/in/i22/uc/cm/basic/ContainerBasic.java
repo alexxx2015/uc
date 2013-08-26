@@ -7,7 +7,9 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 
 public class ContainerBasic implements IContainer {
 	private String _classValue;
-	private String _id;
+	private String _id = UUID.randomUUID().toString();
+	
+	public ContainerBasic() {}
 	
 	public ContainerBasic(String classValue, String id) {
 		super();
@@ -36,9 +38,6 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public String getId() {
-		if (_id == null) {
-			_id = UUID.randomUUID().toString();
-		}
 		return _id;
 	}
 	

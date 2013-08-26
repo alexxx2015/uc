@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.cm.basic;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -11,16 +13,13 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.in.IMessageFactory;
-import de.tum.in.i22.uc.cm.in.MessageFactory;
 
 public class ResponseBasic implements IResponse {
 	private IStatus _authorizationAction = null;
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
 	
-	//TODO think if the factory is really necessary
-	private final static IMessageFactory _factory = MessageFactory.getInstance();
+	private final static IMessageFactory _factory = MessageFactoryCreator.createMessageFactory();
 	
 	public ResponseBasic(IStatus authorizationAction,
 			List<IEvent> executeActions, IEvent modifiedEvent) {
