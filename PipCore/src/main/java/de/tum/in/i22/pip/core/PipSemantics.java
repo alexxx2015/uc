@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.actions.DefaultActionHandler;
-import de.tum.in.i22.pip.core.actions.IActionHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 

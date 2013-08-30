@@ -48,10 +48,11 @@ public class InformationFlowModelTest {
 		_ifModel.addAlias("E", "H");
 		_ifModel.addAlias("B", "H");
 		_ifModel.addAlias("C", "K");
+		_ifModel.addAlias("B", "A");
 		
 		Set<String> expectedClosure = new HashSet<>(Arrays.asList("A", "B", "C", "D", "H", "K"));
 		
-		Set<String> aliasClosure = _ifModel.getAliasClosure("A");
+		Set<String> aliasClosure = _ifModel.getAliasTransitiveReflexiveClosure("A");
 		_logger.debug(Arrays.toString(aliasClosure.toArray()));
 		
 		Assert.assertEquals(expectedClosure, aliasClosure);

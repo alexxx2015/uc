@@ -59,5 +59,45 @@ public class PipCoreTest {
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
+	
+	@Test
+	public void testWriteFileAction() {
+		Map<String, String> map = new HashMap<>();
+		map.put("InFileName", "notes1.txt");
+		map.put("PID", "1293");
+		map.put("ProcessName", "notepad.exe");
+		IEvent event = _messageFactory.createActualEvent("WriteFile", map);
+		IStatus status = _pipHandler.notifyActualEvent(event);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+	}
+	
+	@Test
+	public void testCreateProcessAction() {
+		Map<String, String> map = new HashMap<>();
+		map.put("PID_Child", "8101");
+        map.put("PID", "7192");
+        map.put("VisibleWindows", "8412");
+        IEvent event = _messageFactory.createActualEvent("CreateProcess", map);
+		IStatus status = _pipHandler.notifyActualEvent(event);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+	}
+	
+	@Test
+	public void testKillProcessAction() {
+		Map<String, String> map = new HashMap<>();
+		map.put("PID_Child", "8101");
+        IEvent event = _messageFactory.createActualEvent("KillProcess", map);
+		IStatus status = _pipHandler.notifyActualEvent(event);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+	}
+	
+	@Test
+	public void testSetClipboardDataAction() {
+		Map<String, String> map = new HashMap<>();
+		map.put("PID", "8101");
+        IEvent event = _messageFactory.createActualEvent("SetClipboardData", map);
+		IStatus status = _pipHandler.notifyActualEvent(event);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+	}
 
 }

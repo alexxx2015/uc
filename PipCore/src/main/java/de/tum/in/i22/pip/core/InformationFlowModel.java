@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
 
 /**
  * Information flow model
- * Sigleton.
+ * Singleton.
  */
 public class InformationFlowModel {
 	private static final InformationFlowModel _instance = new InformationFlowModel();
@@ -34,7 +34,7 @@ public class InformationFlowModel {
 	private Map<String, Set<String>> _containerAliasesMap = null;
 	
 	// the naming set [name -> List[Container.identifier]]
-	private Map<PipName, String> _namingSet = null;
+	private Map<Name, String> _namingSet = null;
 	
 	public InformationFlowModel() {
 		_containerSet = new HashSet<>();
@@ -199,7 +199,7 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public Set<String> getAliasClosure(String containerId) {
+	public Set<String> getAliasTransitiveReflexiveClosure(String containerId) {
 		Set<String> closureSet = getAliasClosureExcludeStartId(containerId);
 		// add self to set ==> reflexive
 		closureSet.add(containerId);
@@ -212,7 +212,7 @@ public class InformationFlowModel {
 	 * @param fromContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesFrom(int fromContainerId) {
+	public boolean removeAllAliasesFrom(String fromContainerId) {
 		boolean res = false;
 		if (_containerAliasesMap.containsKey(fromContainerId)) {
 			Set<String> set = _containerAliasesMap.get(fromContainerId);
@@ -227,7 +227,7 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesTo(int toContainerId) {
+	public boolean removeAllAliasesTo(String toContainerId) {
 		//TODO This method seems to have a bug.
 		boolean res = false;
 		Set<String> aliasesToContainer = getAliasesTo(toContainerId);
@@ -248,7 +248,7 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return All aliases that go to the container with the given id.
 	 */
-	public Set<String> getAliasesTo(int toContainerId) {
+	public Set<String> getAliasesTo(String toContainerId) {
 		Set<String> result = new HashSet<String>();
 		Set<Entry<String, Set<String>>> entrySet = _containerAliasesMap.entrySet();
 		for (Entry<String, Set<String>> entry : entrySet) {
@@ -343,16 +343,20 @@ public class InformationFlowModel {
 	}
 	
 	public boolean addDataToContainerMappings(Set<String> dataSet, String containerId) {
-		assert(dataSet != null);
+		if (dataSet == null) {
+			return true;
+		}
 		
 		boolean res = false;
 		
 		Set<String> existingDataSet = _dataToContainerMap.get(containerId);
-		if (dataSet == null) {
-			existingDataSet = new HashSet<String>();
+		if (existingDataSet == null) {
+			Set<String> newDataSet = new HashSet<>(dataSet);
+			_dataToContainerMap.put(containerId, newDataSet);
+			res = true;
+		} else {
+			res = existingDataSet.addAll(dataSet);
 		}
-	
-		res = existingDataSet.addAll(dataSet);
 		return res;
 	}
 	
@@ -363,9 +367,9 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public boolean addName(PipName name, String containerId) {
+	public boolean addName(Name name, String containerId) {
 		boolean res = false;
-		if (name != null && !name.getDataContainerName().isEmpty()) {
+		if (name != null && !name.getName().isEmpty()) {
 			_namingSet.put(name, containerId);
 			res = true;
 		}
@@ -377,7 +381,7 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(PipName name) {
+	public boolean removeName(Name name) {
 		boolean res = false;
 		if (name != null) {
 			String removedEntry = _namingSet.remove(name);
@@ -391,16 +395,13 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByName(PipName name) {
+	public String getContainerIdByName(Name name) {
 		String containerId = null;
-		if (name != null && name.getDataContainerName() != null) {
-			Set<PipName> pipNameSet = _namingSet.keySet();
-			for (PipName nm: pipNameSet) {
-				String dataContainerName = nm.getDataContainerName();
-				int processId = nm.getProcessId();
-				if (name.getDataContainerName().equals(dataContainerName) &&
-						name.getProcessId() == processId) {
-					
+		if (name != null && name.getName() != null) {
+			Set<Name> pipNameSet = _namingSet.keySet();
+			for (Name nm: pipNameSet) {
+				String representationName = nm.getName();
+				if (name.getName().equals(representationName)) {
 					containerId = _namingSet.get(nm);
 					break;
 				}
@@ -416,15 +417,13 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByNameRelaxed(PipName name) {
+	public String getContainerIdByNameRelaxed(Name name) {
 		String containerId = null;
-		if (name != null && name.getDataContainerName() != null) {
-			String dataContainerName = name.getDataContainerName();
-			int processId = name.getProcessId();
-			for (PipName nm : _namingSet.keySet()) {
-				if (nm.getDataContainerName() != null && 
-						nm.getDataContainerName().contains(dataContainerName) &&
-						nm.getProcessId() == processId) {
+		if (name != null && name.getName() != null) {
+			String representationName = name.getName();
+			for (Name nm : _namingSet.keySet()) {
+				if (nm.getName() != null && 
+						nm.getName().contains(representationName)) {
 					
 					containerId = _namingSet.get(nm);
 					break;
@@ -435,15 +434,15 @@ public class InformationFlowModel {
 	}
 	
 	/**
-	 * Return all namings that refer to the container with containerId.
+	 * Return all re that refer to the container with containerId.
 	 * @param containerId
 	 * @return
 	 */
-	public List<PipName> getAllNames(String containerId) {
-		List<PipName> result = new ArrayList<PipName>();
+	public List<Name> getAllNames(String containerId) {
+		List<Name> result = new ArrayList<Name>();
 		
 		if (_namingSet.containsValue(containerId)) {
-			for (Entry<PipName, String> entry : _namingSet.entrySet()) {
+			for (Entry<Name, String> entry : _namingSet.entrySet()) {
 				if (entry.getValue() == containerId) {
 					result.add(entry.getKey());
 				}
@@ -452,19 +451,21 @@ public class InformationFlowModel {
 		return result;
 	}
 	
-	/**
-	 * Returns all representations that correspond to a process with ID processId.
-	 * @param processId
-	 * @return
-	 */
-	public List<PipName> getAllNamingsFromProcess(int processId) {
-		List<PipName> result = new ArrayList<PipName>();
-		for (Entry<PipName, String> entry : _namingSet.entrySet()) {
-			if (entry.getKey().getProcessId() == processId) {
-				result.add(entry.getKey());
-			}
-		}
-		return result;
-	}
+    /**
+     *  Returns all representations that correspond to the process with pid.
+     *   
+    */
+    public List<Name> getAllNamingsFrom(String pid)
+    {
+        List<Name> result = new ArrayList<Name>();
+
+        for (Entry<Name, String> entry : _namingSet.entrySet())
+        {
+            if (entry.getKey().getName().equals(pid))
+            	result.add(entry.getKey());
+        }
+
+        return result;
+    }
 	
 }
