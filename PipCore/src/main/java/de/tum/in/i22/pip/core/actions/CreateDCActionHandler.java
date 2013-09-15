@@ -10,8 +10,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * Printing action
+ * 
  * @author Stoimenov
- *
+ * 
  */
 public class CreateDCActionHandler extends BaseActionHandler {
 
@@ -26,11 +27,11 @@ public class CreateDCActionHandler extends BaseActionHandler {
 	public IStatus execute() {
 		_logger.info("CreateDC action handler execute");
 		String pid = null;
-		// String processNaem = null;
+		String processName = null;
 		String deviceName = null;
 		try {
 			pid = getParameterValue("PID");
-			// processName = getParameterValue("ProcessName");
+			processName = getParameterValue("ProcessName");
 			deviceName = getParameterValue("lpszDevice");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -38,10 +39,11 @@ public class CreateDCActionHandler extends BaseActionHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid);
+		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new Name(deviceName));
+		String deviceContainerId = ifModel.getContainerIdByName(new Name(
+				deviceName));
 
 		// check if container for device exists and create new container if not
 		if (deviceContainerId == null) {

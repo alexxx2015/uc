@@ -34,7 +34,7 @@ public class CreateWindowActionHandler extends BaseActionHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid);
+		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
 		String containerIdByWindowHandle = ifModel.getContainerIdByName(new Name(windowHandle));
@@ -45,7 +45,6 @@ public class CreateWindowActionHandler extends BaseActionHandler {
 			containerIdByWindowHandle = ifModel.addContainer(container);
 			ifModel.addName(new Name(windowHandle), containerIdByWindowHandle);
 		}
-		;
 
 		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), containerIdByWindowHandle);
 		ifModel.addAlias(processContainerId, containerIdByWindowHandle);

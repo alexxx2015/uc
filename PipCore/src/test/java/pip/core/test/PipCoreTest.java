@@ -77,6 +77,8 @@ public class PipCoreTest {
 		map.put("PID_Child", "8101");
         map.put("PID", "7192");
         map.put("VisibleWindows", "8412");
+        map.put("ChildProcessName", "java");
+        map.put("ParentProcessName", "eclipse");
         IEvent event = _messageFactory.createActualEvent("CreateProcess", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
@@ -95,6 +97,7 @@ public class PipCoreTest {
 	public void testSetClipboardDataAction() {
 		Map<String, String> map = new HashMap<>();
 		map.put("PID", "8101");
+		map.put("ProcessName", "thunderbird");
         IEvent event = _messageFactory.createActualEvent("SetClipboardData", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());

@@ -23,16 +23,16 @@ public class GetClipboardDataActionHandler extends BaseActionHandler {
 		_logger.info("GetClipboardData action handler execute");
 		
 		String pid = null;
-//		String processName = null;
+		String processName = null;
 		
 		try {
 			 pid = getParameterValue("PID");
-//	         processName = getParameterValue("ProcessName");
+	         processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-        String  processContainerId = instantiateProcess(pid);
+        String  processContainerId = instantiateProcess(pid, processName);
 
         InformationFlowModel ifModel = getInformationFlowModel();
         String clipboardContainerId = ifModel.getContainerIdByName(new Name("clipboard"));

@@ -62,19 +62,4 @@ public abstract class BaseActionHandler implements IActionHandler {
 
 		return containerID;
 	}
-	
-	protected String instantiateProcess(String processId) {
-		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerID = ifModel
-				.getContainerIdByName(new Name(processId));
-
-		// check if container for process exists and create new container if not
-		if (containerID == null) {
-			IContainer container = _messageFactory.createContainer();
-			containerID = ifModel.addContainer(container);
-			ifModel.addName(new Name(processId), containerID);
-		}
-
-		return containerID;
-	}
 }

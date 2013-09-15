@@ -25,23 +25,23 @@ public class CreateProcessActionHandler extends BaseActionHandler {
 		String parentPid = null;
 		String visibleWindows = null;
 		// currently not used
-//		String processName = null;
-//		String parentProcessName = null;
+		String processName = null;
+		String parentProcessName = null;
 		
 		try {
 			pid = getParameterValue("PID_Child");
 	        parentPid = getParameterValue("PID");
 	        visibleWindows = getParameterValue("VisibleWindows");
 	
-//	        processName = getParameterValue("ChildProcessName");
-//	        parentProcessName = getParameterValue("ParentProcessName");
+	        processName = getParameterValue("ChildProcessName");
+	        parentProcessName = getParameterValue("ParentProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-        String processContainerId = instantiateProcess(pid);
-        String parentProcessContainerId = instantiateProcess(parentPid);
+        String processContainerId = instantiateProcess(pid, processName);
+        String parentProcessContainerId = instantiateProcess(parentPid, parentProcessName);
 
         InformationFlowModel ifModel = getInformationFlowModel();
         //add data of parent process container to child process container

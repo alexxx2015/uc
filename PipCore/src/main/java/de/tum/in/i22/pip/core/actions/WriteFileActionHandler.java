@@ -25,25 +25,26 @@ public class WriteFileActionHandler extends BaseActionHandler {
 		String fileName = null;
 		String pid = null;
 		// currently not used
-		// String processName = null;
+		String processName = null;
 
 		try {
 			fileName = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
-			// processName = getParameterValue("ProcessName");
+			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid);
+		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String fileContainerId = ifModel.getContainerIdByName(new Name(
-				fileName));
+		String fileContainerId = ifModel
+				.getContainerIdByName(new Name(fileName));
 
-		// check if container for filename exists and create new container if not
+		// check if container for filename exists and create new container if
+		// not
 		if (fileContainerId == null) {
 			IContainer container = _messageFactory.createContainer();
 			fileContainerId = ifModel.addContainer(container);
@@ -56,8 +57,7 @@ public class WriteFileActionHandler extends BaseActionHandler {
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId),
-				fileContainerId);
+				ifModel.getDataInContainer(processContainerId), fileContainerId);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
