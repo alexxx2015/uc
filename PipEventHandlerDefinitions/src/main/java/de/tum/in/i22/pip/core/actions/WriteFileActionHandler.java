@@ -1,33 +1,37 @@
 package de.tum.in.i22.pip.core.actions;
 
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class CreateWindowActionHandler extends BaseActionHandler {
+public class WriteFileActionHandler extends BaseActionHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(CreateWindowActionHandler.class);
+			.getLogger(WriteFileActionHandler.class);
 
-	public CreateWindowActionHandler() {
+	public WriteFileActionHandler() {
 		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateWindow action handler execute");
+		_logger.info("WriteFile action handler execute");
 
+		String fileName = null;
 		String pid = null;
+		// currently not used
 		String processName = null;
-		String windowHandle = null;
+
 		try {
+			fileName = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
 			processName = getParameterValue("ProcessName");
-			windowHandle = getParameterValue("WindowHandle");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -37,18 +41,26 @@ public class CreateWindowActionHandler extends BaseActionHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerIdByWindowHandle = ifModel.getContainerIdByName(new Name(windowHandle));
+		String fileContainerId = ifModel
+				.getContainerIdByName(new Name(fileName));
 
-		// check if container for window exists and create new container if not
-		if (containerIdByWindowHandle == null) {
+		// check if container for filename exists and create new container if
+		// not
+		if (fileContainerId == null) {
 			IContainer container = _messageFactory.createContainer();
-			containerIdByWindowHandle = ifModel.addContainer(container);
-			ifModel.addName(new Name(windowHandle), containerIdByWindowHandle);
+			fileContainerId = ifModel.addContainer(container);
+			IData data = _messageFactory.createData();
+			String fileDataId = ifModel.addData(data);
+
+			ifModel.addDataToContainerMapping(fileDataId, fileContainerId);
+
+			ifModel.addName(new Name(fileName), fileContainerId);
 		}
 
-		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), containerIdByWindowHandle);
-		ifModel.addAlias(processContainerId, containerIdByWindowHandle);
+		ifModel.addDataToContainerMappings(
+				ifModel.getDataInContainer(processContainerId), fileContainerId);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
+
 }

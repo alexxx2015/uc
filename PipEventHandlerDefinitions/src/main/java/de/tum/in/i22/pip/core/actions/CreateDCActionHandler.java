@@ -1,36 +1,39 @@
 package de.tum.in.i22.pip.core.actions;
 
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class WriteFileActionHandler extends BaseActionHandler {
+/**
+ * Printing action
+ * 
+ * @author Stoimenov
+ * 
+ */
+public class CreateDCActionHandler extends BaseActionHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(WriteFileActionHandler.class);
+			.getLogger(CreateDCActionHandler.class);
 
-	public WriteFileActionHandler() {
+	public CreateDCActionHandler() {
 		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		_logger.info("WriteFile action handler execute");
-
-		String fileName = null;
+		_logger.info("CreateDC action handler execute");
 		String pid = null;
-		// currently not used
 		String processName = null;
-
+		String deviceName = null;
 		try {
-			fileName = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
 			processName = getParameterValue("ProcessName");
+			deviceName = getParameterValue("lpszDevice");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -40,24 +43,19 @@ public class WriteFileActionHandler extends BaseActionHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String fileContainerId = ifModel
-				.getContainerIdByName(new Name(fileName));
+		String deviceContainerId = ifModel.getContainerIdByName(new Name(
+				deviceName));
 
-		// check if container for filename exists and create new container if
-		// not
-		if (fileContainerId == null) {
+		// check if container for device exists and create new container if not
+		if (deviceContainerId == null) {
 			IContainer container = _messageFactory.createContainer();
-			fileContainerId = ifModel.addContainer(container);
-			IData data = _messageFactory.createData();
-			String fileDataId = ifModel.addData(data);
-
-			ifModel.addDataToContainerMapping(fileDataId, fileContainerId);
-
-			ifModel.addName(new Name(fileName), fileContainerId);
+			deviceContainerId = ifModel.addContainer(container);
+			ifModel.addName(new Name(deviceName), deviceContainerId);
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId), fileContainerId);
+				ifModel.getDataInContainer(processContainerId),
+				deviceContainerId);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

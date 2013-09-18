@@ -14,49 +14,40 @@ public class ActionHandlerManager implements IActionHandlerCreator {
 	private static final Logger _logger = Logger
 			.getLogger(ActionHandlerManager.class);
 	
-	private Map<String, byte[]> _map = null;
 	private Map<String, PipClassLoader> _classLoaderMap = null;
 	
-	private PipClassLoader _pipClassLoader = null;
-	
 	public ActionHandlerManager() {
-		_map = new HashMap<>();
 		_classLoaderMap = new HashMap<>();
 	}
 	
 	@Override
-	public IActionHandler createActionHandler(String actionName) {
-		String className = "de.tum.in.i22.pip.core.actions." + actionName + "ActionHandler";
+	public IActionHandler createActionHandler(String actionName) 
+		throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 		
-		try {
-			PipClassLoader _pipClassLoader = null;
-			if (_map.containsKey(className)) {
-				 _pipClassLoader = new PipClassLoader(ActionHandlerManager.class.getClassLoader(), _map);
-				 _classLoaderMap.put(className, _pipClassLoader);
-				 _map.remove(className);
-			}
-			else if (_classLoaderMap.containsKey(className)) {
-				this._pipClassLoader = _classLoaderMap.get(className);
-			} else {
-				return null;
-			}
-			
+		String className = "de.tum.in.i22.pip.core.actions." + actionName + "ActionHandler";
+
+		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
+		if (pipClassLoader != null) {
 			_logger.trace("Load class: " + className);
-	        Class<?> actionHandlerClass = _pipClassLoader.loadClass(className);
+	        Class<?> actionHandlerClass = pipClassLoader.loadClass(className);
 	        _logger.trace("Create class " + className + " instance");
 	        IActionHandler actionHandler = (IActionHandler)actionHandlerClass.newInstance();
 	        return actionHandler;
-		} catch (Exception e) {
-			// TODO handle exceptions more gracefuly
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	public void setClassToBeLoaded(ActionHandlerDefinition actionHandlerDefinition) {
-		_map.put(actionHandlerDefinition.getClassName(), actionHandlerDefinition.getClassFile());
-	}
+		_logger.debug("Creating class loader for class: " + actionHandlerDefinition.getClassName());
+		String className = actionHandlerDefinition.getClassName();
+		
+		PipClassLoader pipClassLoader = new PipClassLoader(
+				 PipClassLoader.class.getClassLoader(),
+				 className,
+				 actionHandlerDefinition.getClassFile());
+		
+		_classLoaderMap.put(className, pipClassLoader);
 	
-	public void loadClassDefinitions() {
-		//TODO load from the database on startup
 	}
 }

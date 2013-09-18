@@ -15,5 +15,6 @@
 	<modules>
 		<module>../PipCommunicationManager</module>
 		<module>../PipCore</module>
+		<module>../PipEventHandlerDefinitions</module>
 	</modules>
 </project>

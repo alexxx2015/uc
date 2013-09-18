@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,19 +37,16 @@ public class PipManager implements IPipManager {
 		_actionHandlerManager = actionHandlerManager;
 	}
 	
-	public boolean initialize() {
-		boolean res = true;
+	public void initialize() {
+		_logger.info("Create data access object");
 		_actionHandlerDao = new ActionHandlerDao();
-		try {
-			_actionHandlerDao.initialize();
-			res = true;
-		} catch (Exception e) {
-			_logger.error("Failed to initialize data access object" +
-					" for action handlers. Error: " + e.getMessage());
-			res = false;
-		}
+		_actionHandlerDao.initialize();
 		
-		return res;
+		// read the database and store class definitions in the action handler manager
+		List<ActionHandlerDefinition> actionHandlerDefinitions = _actionHandlerDao.getCurrentActionHandlerDefinitions();
+		for (ActionHandlerDefinition actionHandlerDefinition : actionHandlerDefinitions) {
+			_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
+		}
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class PipManager implements IPipManager {
 		
 		try {
 			Path destination = Files.createTempDirectory("PipTemp");
-		    System.out.println(destination.toAbsolutePath().toString());
+		   _logger.trace("Temporary dir: " + destination.toAbsolutePath().toString());
 		    
 		    ZipFile zipFile = new ZipFile(jarFile);
 		    zipFile.extractAll(destination.toString());
@@ -87,45 +85,25 @@ public class PipManager implements IPipManager {
 		    
 		    Set<String> keySet = map.keySet();
 			switch (flagForTheConflictResolution) {
-			case KEEP_ALL:
-				for (String className : keySet) {
-					ActionHandlerDefinition actionHandlerDefinition = map.get(className);
-					_actionHandlerDao.saveActionHandlerDefinition(actionHandlerDefinition);
-					// load class, use the latest received?
-					_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
+				case OVERWRITE:
+					_logger.info("Owerwrite class definitions");
+					for (String className : keySet) {
+						ActionHandlerDefinition actionHandlerDefinition = map.get(className);
+						_actionHandlerDao.saveActionHandlerDefinition(actionHandlerDefinition);
+						_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
+					}
+					break;
+				case IGNORE_UPDATES: break; // currently not used
+				case KEEP_ALL: break; // currently not used
 				}
-				break;
-
-			case IGNORE_UPDATES:
-				for (String className : keySet) {
-					_actionHandlerDao.saveActionHandlerDefinitionIfNotPresent(map
-							.get(className));
-					// load new class
-				}
-				break;
-			case OVERWRITE:
-				for (String className : keySet) {
-					_actionHandlerDao.saveActionHandlerDefinitionOverwrite(map
-							.get(className));
-					// load new class
-				}
-				break;
-//			case TAKE_NEWEST:
-//				for (String className : keySet) {
-//					_actionHandlerDao.saveActionHandlerDefinition(map
-//							.get(className));
-//				}
-//				break;
-//				
-//			case TAKE_OLDEST:
-//				for (String className : keySet) {
-//					_actionHandlerDao.saveActionHandlerDefinition(map
-//							.get(className));
-//				}
-//				break;
-			}
 		    
-		    // TODO delete temporary folder
+		    
+			try {
+				// delete temporary folder
+				FileUtils.deleteDirectory(destination.toFile());
+			} catch (IOException e) {
+				_logger.warn("Failed to delete temporary dir: " + destination);
+			}
 		    
 		    
 		} catch (ZipException e) {

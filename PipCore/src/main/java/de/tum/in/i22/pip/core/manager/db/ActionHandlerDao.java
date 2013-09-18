@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
@@ -34,47 +35,51 @@ public class ActionHandlerDao {
 		_logger.debug("Entity manager created.");
 	}
 	
-	public List<ActionHandlerDefinition> getActionHandlerDefinitions(String className) {
+	public ActionHandlerDefinition getActionHandlerDefinition(String className) {
 		_logger.debug("Get action handler definition for " + className);
 		TypedQuery<ActionHandlerDefinition> q = _entityManager.createQuery(
-				"select t from ActionHandlerDefinition t where t.className=:className" +
-				" order by version desc",
+				"select t from ActionHandlerDefinition t where t.className=:className",
 				ActionHandlerDefinition.class);
 		q.setParameter("className", className);
 		
-		return q.getResultList();
-	}
-	
-	public ActionHandlerDefinition getActionHandlerDefinitionInUse(String className) {
-		_logger.debug("Get action handler definition for " + className);
-		TypedQuery<ActionHandlerDefinition> q = _entityManager.createQuery(
-				"select t from ActionHandlerDefinition t where t.className=:className" +
-				" and t.currentlyActive=true order by version desc",
-				ActionHandlerDefinition.class);
-		q.setParameter("className", className);
-		if (q.getResultList() != null && q.getResultList().size() >= 2) {
-			_logger.warn("Inconsistency: " +
-					"There is more than one class definition marked as current for class: " + className);
+		try {
+			ActionHandlerDefinition result =  q.getSingleResult();
+			return result;
+		} catch (NoResultException e) {
+			return null;
 		}
-		return q.getSingleResult();
 	}
 
 	public void saveActionHandlerDefinition(
 			ActionHandlerDefinition actionHandlerDefinition) {
-		_entityManager.getTransaction().begin();
-		_entityManager.persist(actionHandlerDefinition);
-		_entityManager.getTransaction().commit();
+		
+		_logger.debug("Save action handler definition: " + actionHandlerDefinition.getClassName());
+		// check if action handler definition already exists
+		ActionHandlerDefinition existingActionHandlerDef = 
+				getActionHandlerDefinition(actionHandlerDefinition.getClassName());
+		
+		if (existingActionHandlerDef == null) {
+			_logger.debug("Create new table entry");
+			_entityManager.getTransaction().begin();
+			_entityManager.persist(actionHandlerDefinition);
+			_entityManager.getTransaction().commit();
+		} else {
+			existingActionHandlerDef.setClassName(actionHandlerDefinition.getClassName());
+			existingActionHandlerDef.setClassFile(actionHandlerDefinition.getClassFile());
+			existingActionHandlerDef.setSourceFile(actionHandlerDefinition.getSourceFile());
+			
+			_logger.debug("Update existing table entry");
+			_entityManager.getTransaction().begin();
+			_entityManager.merge(existingActionHandlerDef);
+			_entityManager.getTransaction().commit();
+		}
 	}
 
-	public void saveActionHandlerDefinitionIfNotPresent(
-			ActionHandlerDefinition actionHandlerDefinition) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void saveActionHandlerDefinitionOverwrite(
-			ActionHandlerDefinition actionHandlerDefinition) {
-		// TODO Auto-generated method stub
-		
+	public List<ActionHandlerDefinition> getCurrentActionHandlerDefinitions() {
+		_logger.debug("Get current action handler definitions");
+		TypedQuery<ActionHandlerDefinition> q = _entityManager.createQuery(
+				"select t from ActionHandlerDefinition t where t.currentlyActive=true",
+				ActionHandlerDefinition.class);
+		return q.getResultList();
 	}
 }

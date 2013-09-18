@@ -1,5 +1,6 @@
 package de.tum.in.i22.pip.core.actions;
 
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
@@ -8,29 +9,28 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class SetClipboardDataActionHandler extends BaseActionHandler {
+public class TakeScreenshotActionHandler extends BaseActionHandler {
 	
-	private static final Logger _logger = Logger.getLogger(SetClipboardDataActionHandler.class);
 	
-	public SetClipboardDataActionHandler() {
+	private static final Logger _logger = Logger
+			.getLogger(TakeScreenshotActionHandler.class);
+	
+	public TakeScreenshotActionHandler() {
 		super();
 	}
-	
+
 	@Override
 	public IStatus execute() {
-		_logger.info("SetClipboardData action handler execute");
-		
-		String pid = null;
-		String processName = null;
-		try {
-	        pid = getParameterValue("PID");
-	        processName = getParameterValue("ProcessName");
-		} catch (ParameterNotFoundException e) {
+		_logger.info("TakeScreenshot action handler execute");
+        String visibleWindow = null;
+        try {
+        	visibleWindow = getParameterValue("VisibleWindow");
+        } catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
-			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
-		}
-        String processContainerId = instantiateProcess(pid, processName);
-
+			return _messageFactory.createStatus(
+					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+        }
+        
         InformationFlowModel ifModel = getInformationFlowModel();
         String clipboardContainerId = ifModel.getContainerIdByName(new Name("clipboard"));
 
@@ -42,8 +42,11 @@ public class SetClipboardDataActionHandler extends BaseActionHandler {
             ifModel.addName(new Name("clipboard"), clipboardContainerId);
         };
 
-        ifModel.emptyContainer(clipboardContainerId);
-        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), clipboardContainerId);
+        //do not empty as take screenshot events are split to one screenshot event per visible window
+        //ifModel.emptyContainer(clipboardContainerID);
+
+        String windowContainerId = ifModel.getContainerIdByName(new Name(visibleWindow));
+        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(windowContainerId), clipboardContainerId);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

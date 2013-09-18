@@ -1,21 +1,33 @@
 package de.tum.in.i22.pip.core.manager;
 
-import java.util.Map;
+import org.apache.log4j.Logger;
+
 
 public class PipClassLoader extends ClassLoader {
-	private Map<String, byte[]> _map = null;
 	
-	public PipClassLoader(ClassLoader parent, Map<String, byte[]> map) {
+	private static final Logger _logger = Logger
+			.getLogger(PipClassLoader.class);
+	
+	private String _nameOfTheClassToLoad;
+	private byte[] _classBytes;
+	private boolean _classLoaded;
+	
+	public PipClassLoader(ClassLoader parent, String nameOfTheClassToLoad, byte[] classBytes) {
 		super(parent);
-		this._map = map;
+		_nameOfTheClassToLoad = nameOfTheClassToLoad;
+		_classBytes = classBytes;
+		_classLoaded = false;
 	}
 	
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		if (!_map.containsKey(name)) {
+		if (!_nameOfTheClassToLoad.equals(name) || _classLoaded) {
 			return super.loadClass(name);
 		}
 		
-		return defineClass(name, _map.get(name), 0, _map.get(name).length);
+		_logger.trace("Define class " + name + " from bytes");
+		Class<?> result = defineClass(name, _classBytes, 0, _classBytes.length);
+		_classLoaded = true;
+		return result;
 	}
 }

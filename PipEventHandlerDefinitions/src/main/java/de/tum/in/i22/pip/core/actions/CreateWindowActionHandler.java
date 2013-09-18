@@ -1,5 +1,6 @@
 package de.tum.in.i22.pip.core.actions;
 
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
@@ -8,31 +9,26 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-/**
- * Printing action
- * 
- * @author Stoimenov
- * 
- */
-public class CreateDCActionHandler extends BaseActionHandler {
+public class CreateWindowActionHandler extends BaseActionHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(CreateDCActionHandler.class);
+			.getLogger(CreateWindowActionHandler.class);
 
-	public CreateDCActionHandler() {
+	public CreateWindowActionHandler() {
 		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateDC action handler execute");
+		_logger.info("CreateWindow action handler execute");
+
 		String pid = null;
 		String processName = null;
-		String deviceName = null;
+		String windowHandle = null;
 		try {
 			pid = getParameterValue("PID");
 			processName = getParameterValue("ProcessName");
-			deviceName = getParameterValue("lpszDevice");
+			windowHandle = getParameterValue("WindowHandle");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -42,21 +38,18 @@ public class CreateDCActionHandler extends BaseActionHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new Name(
-				deviceName));
+		String containerIdByWindowHandle = ifModel.getContainerIdByName(new Name(windowHandle));
 
-		// check if container for device exists and create new container if not
-		if (deviceContainerId == null) {
+		// check if container for window exists and create new container if not
+		if (containerIdByWindowHandle == null) {
 			IContainer container = _messageFactory.createContainer();
-			deviceContainerId = ifModel.addContainer(container);
-			ifModel.addName(new Name(deviceName), deviceContainerId);
+			containerIdByWindowHandle = ifModel.addContainer(container);
+			ifModel.addName(new Name(windowHandle), containerIdByWindowHandle);
 		}
 
-		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId),
-				deviceContainerId);
+		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), containerIdByWindowHandle);
+		ifModel.addAlias(processContainerId, containerIdByWindowHandle);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
 }

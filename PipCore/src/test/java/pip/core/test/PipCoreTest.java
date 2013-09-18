@@ -1,5 +1,6 @@
 package pip.core.test;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,10 @@ import org.junit.Test;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
+import de.tum.in.i22.pip.core.manager.ActionHandlerManager;
+import de.tum.in.i22.pip.core.manager.EConflictResolution;
+import de.tum.in.i22.pip.core.manager.IPipManager;
+import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -23,11 +28,21 @@ public class PipCoreTest {
 	
 	private static IPdp2Pip _pipHandler;
 	private static IMessageFactory _messageFactory;
+	private static IPipManager _pipManager;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pipHandler = new PipHandler();
+		ActionHandlerManager actionHandlerManager = new ActionHandlerManager();
+		PipManager pipManager = new PipManager(actionHandlerManager);
+		pipManager.initialize();
+		
+		_pipManager = pipManager;
+		
+		
+		_pipHandler = new PipHandler(actionHandlerManager);
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
+		
+		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
 
 	@AfterClass
@@ -36,6 +51,7 @@ public class PipCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
 	@After
@@ -82,6 +98,7 @@ public class PipCoreTest {
         IEvent event = _messageFactory.createActualEvent("CreateProcess", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
 	
 	@Test

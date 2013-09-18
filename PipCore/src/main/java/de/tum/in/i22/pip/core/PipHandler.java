@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pip.core.actions.DefaultActionHandler;
+import de.tum.in.i22.pip.core.manager.IActionHandlerCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -13,10 +15,10 @@ public class PipHandler implements IPdp2Pip {
 	
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 	
-	private PipSemantics _pipSemantics = null;
+	public IActionHandlerCreator _actionHandlerCreator;
 	
-	public PipHandler() {
-		_pipSemantics = new PipSemantics();
+	public PipHandler(IActionHandlerCreator actionHandlerCreator) {
+		_actionHandlerCreator = actionHandlerCreator;
 	}
 
 	@Override
@@ -39,7 +41,30 @@ public class PipHandler implements IPdp2Pip {
 
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
-		_logger.trace("Delegate notify actual event to PipSemantics");
-		return _pipSemantics.processEvent(event);
+		String action = event.getName();
+		_logger.debug("Action name: " + action);
+		IActionHandler actionHandler = null;
+		try {
+			_logger.trace("Create action handler");
+			actionHandler = _actionHandlerCreator.createActionHandler(action);
+		} catch (IllegalAccessException | InstantiationException e) {
+			_logger.error("Failed to create Action Handler for action " + action, e);
+			// FIXME create error status with description
+		} catch (ClassNotFoundException e ){
+			_logger.error("Class not found for Action Handler " + action, e);
+			// FIXME create error status with description
+		}
+		
+		if (actionHandler == null) {
+			_logger.trace("Create default action handler");
+			actionHandler = new DefaultActionHandler();
+		}
+		
+		actionHandler.setEvent(event);
+		
+		IStatus status =  actionHandler.execute();
+		_logger.trace("Status to return: " + status);
+		
+		return status;
 	}
 }

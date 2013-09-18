@@ -5,7 +5,6 @@ import java.io.File;
 
 
 public interface IPipManager {
-	// jar file
 	public void updateInformationFlowSemantics(
 			IPipDeployer deployer,
 			File jarFile,
