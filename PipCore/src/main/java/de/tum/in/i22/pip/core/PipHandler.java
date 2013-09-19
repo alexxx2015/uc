@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.core.actions.DefaultActionHandler;
+import de.tum.in.i22.pip.core.eventdef.DefaultActionHandler;
 import de.tum.in.i22.pip.core.manager.IActionHandlerCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -46,7 +46,7 @@ public class PipHandler implements IPdp2Pip {
 		IActionHandler actionHandler = null;
 		try {
 			_logger.trace("Create action handler");
-			actionHandler = _actionHandlerCreator.createActionHandler(action);
+			actionHandler = _actionHandlerCreator.createEventHandler(action);
 		} catch (IllegalAccessException | InstantiationException e) {
 			_logger.error("Failed to create Action Handler for action " + action, e);
 			// FIXME create error status with description

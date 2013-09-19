@@ -1,15 +1,17 @@
-package de.tum.in.i22.pip.core.actions;
+package de.tum.in.i22.pip.core.eventdef;
 
 
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class GetClipboardDataActionHandler extends BaseActionHandler {
+public class GetClipboardDataActionHandler extends BaseEventHandler {
 	
 	private static final Logger _logger = Logger
 			.getLogger(GetClipboardDataActionHandler.class);

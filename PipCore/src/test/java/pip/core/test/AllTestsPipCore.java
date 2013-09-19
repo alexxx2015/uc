@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ InformationFlowModelTest.class, PipCoreTest.class, PipManagerTest.class })
+@SuiteClasses({ InformationFlowModelTest.class, PipCoreTest.class})
 public class AllTestsPipCore {
 
 }

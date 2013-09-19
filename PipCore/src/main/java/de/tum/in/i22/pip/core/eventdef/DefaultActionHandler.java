@@ -1,10 +1,10 @@
-package de.tum.in.i22.pip.core.actions;
+package de.tum.in.i22.pip.core.eventdef;
 
 import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
-public class DefaultActionHandler extends BaseActionHandler {
+public class DefaultActionHandler extends BaseEventHandler {
 
 	public DefaultActionHandler() {
 		super();

@@ -35,15 +35,15 @@ public class ActionHandlerDao {
 		_logger.debug("Entity manager created.");
 	}
 	
-	public ActionHandlerDefinition getActionHandlerDefinition(String className) {
+	public EventHandlerDefinition getActionHandlerDefinition(String className) {
 		_logger.debug("Get action handler definition for " + className);
-		TypedQuery<ActionHandlerDefinition> q = _entityManager.createQuery(
-				"select t from ActionHandlerDefinition t where t.className=:className",
-				ActionHandlerDefinition.class);
+		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
+				"select t from EventHandlerDefinition t where t.className=:className",
+				EventHandlerDefinition.class);
 		q.setParameter("className", className);
 		
 		try {
-			ActionHandlerDefinition result =  q.getSingleResult();
+			EventHandlerDefinition result =  q.getSingleResult();
 			return result;
 		} catch (NoResultException e) {
 			return null;
@@ -51,11 +51,11 @@ public class ActionHandlerDao {
 	}
 
 	public void saveActionHandlerDefinition(
-			ActionHandlerDefinition actionHandlerDefinition) {
+			EventHandlerDefinition actionHandlerDefinition) {
 		
 		_logger.debug("Save action handler definition: " + actionHandlerDefinition.getClassName());
 		// check if action handler definition already exists
-		ActionHandlerDefinition existingActionHandlerDef = 
+		EventHandlerDefinition existingActionHandlerDef = 
 				getActionHandlerDefinition(actionHandlerDefinition.getClassName());
 		
 		if (existingActionHandlerDef == null) {
@@ -75,11 +75,11 @@ public class ActionHandlerDao {
 		}
 	}
 
-	public List<ActionHandlerDefinition> getCurrentActionHandlerDefinitions() {
+	public List<EventHandlerDefinition> getCurrentActionHandlerDefinitions() {
 		_logger.debug("Get current action handler definitions");
-		TypedQuery<ActionHandlerDefinition> q = _entityManager.createQuery(
-				"select t from ActionHandlerDefinition t where t.currentlyActive=true",
-				ActionHandlerDefinition.class);
+		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
+				"select t from EventHandlerDefinition t where t.currentlyActive=true",
+				EventHandlerDefinition.class);
 		return q.getResultList();
 	}
 }

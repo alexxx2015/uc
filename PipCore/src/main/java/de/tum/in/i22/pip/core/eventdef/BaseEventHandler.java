@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.core.actions;
+package de.tum.in.i22.pip.core.eventdef;
 
 
 import java.util.Map;
@@ -11,11 +11,11 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 
-public abstract class BaseActionHandler implements IActionHandler {
+public abstract class BaseEventHandler implements IActionHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 	
 	private IEvent _event;
-	public BaseActionHandler() {
+	public BaseEventHandler() {
 		super();
 	}
 	

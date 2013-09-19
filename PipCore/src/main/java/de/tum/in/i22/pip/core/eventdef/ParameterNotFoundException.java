@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.core.actions;
+package de.tum.in.i22.pip.core.eventdef;
 
 
 public class ParameterNotFoundException extends Exception {

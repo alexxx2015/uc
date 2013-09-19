@@ -21,7 +21,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.manager.db.ActionHandlerDao;
-import de.tum.in.i22.pip.core.manager.db.ActionHandlerDefinition;
+import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
 
 
 public class PipManager implements IPipManager {
@@ -30,10 +30,10 @@ public class PipManager implements IPipManager {
 	private static final Logger _logger = Logger.getLogger(PipManager.class);
 	
 	
-	private ActionHandlerManager _actionHandlerManager = null;
+	private EventHandlerManager _actionHandlerManager = null;
 	private ActionHandlerDao _actionHandlerDao = null;
 	
-	public PipManager(ActionHandlerManager actionHandlerManager) {
+	public PipManager(EventHandlerManager actionHandlerManager) {
 		_actionHandlerManager = actionHandlerManager;
 	}
 	
@@ -43,8 +43,8 @@ public class PipManager implements IPipManager {
 		_actionHandlerDao.initialize();
 		
 		// read the database and store class definitions in the action handler manager
-		List<ActionHandlerDefinition> actionHandlerDefinitions = _actionHandlerDao.getCurrentActionHandlerDefinitions();
-		for (ActionHandlerDefinition actionHandlerDefinition : actionHandlerDefinitions) {
+		List<EventHandlerDefinition> actionHandlerDefinitions = _actionHandlerDao.getCurrentActionHandlerDefinitions();
+		for (EventHandlerDefinition actionHandlerDefinition : actionHandlerDefinitions) {
 			_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
 		}
 	}
@@ -57,7 +57,7 @@ public class PipManager implements IPipManager {
 		_logger.debug("Update information flow semantics");
 
 		// class name to ActionHandlerDefinition
-		Map<String, ActionHandlerDefinition> map = new HashMap<String, ActionHandlerDefinition>();
+		Map<String, EventHandlerDefinition> map = new HashMap<String, EventHandlerDefinition>();
 		
 		try {
 			Path destination = Files.createTempDirectory("PipTemp");
@@ -88,7 +88,7 @@ public class PipManager implements IPipManager {
 				case OVERWRITE:
 					_logger.info("Owerwrite class definitions");
 					for (String className : keySet) {
-						ActionHandlerDefinition actionHandlerDefinition = map.get(className);
+						EventHandlerDefinition actionHandlerDefinition = map.get(className);
 						_actionHandlerDao.saveActionHandlerDefinition(actionHandlerDefinition);
 						_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
 					}
@@ -117,20 +117,20 @@ public class PipManager implements IPipManager {
 	}
 	
 	private void updateMapWithSrcDefinition(
-			Map<String, ActionHandlerDefinition> map, String fullClassName,
+			Map<String, EventHandlerDefinition> map, String fullClassName,
 			File file) 
 		throws IOException {
 		
-		ActionHandlerDefinition definition = getMapEntry(map, fullClassName);
+		EventHandlerDefinition definition = getMapEntry(map, fullClassName);
 		definition.setSourceFile(FileUtils.readFileToString(file));
 	}
 	
 	private void updateMapWithClassDefinition(
-			Map<String, ActionHandlerDefinition> map, String fullClassName,
+			Map<String, EventHandlerDefinition> map, String fullClassName,
 			File file) 
 		throws IOException {
 		
-		ActionHandlerDefinition definition = getMapEntry(map, fullClassName);
+		EventHandlerDefinition definition = getMapEntry(map, fullClassName);
 		definition.setClassFile(FileUtils.readFileToByteArray(file));
 		
 		definition.setClassFileLastModified(new Timestamp(file.lastModified()));
@@ -138,12 +138,12 @@ public class PipManager implements IPipManager {
 		definition.setDateReceived(new Timestamp(today.getTime()));
 	}
 
-	private ActionHandlerDefinition getMapEntry(Map<String, ActionHandlerDefinition> map,
+	private EventHandlerDefinition getMapEntry(Map<String, EventHandlerDefinition> map,
 			String fullClassName) {
 		
-		ActionHandlerDefinition actionHandlerDefinition = map.get(fullClassName);
+		EventHandlerDefinition actionHandlerDefinition = map.get(fullClassName);
 		if (actionHandlerDefinition == null) {
-			actionHandlerDefinition = new ActionHandlerDefinition();
+			actionHandlerDefinition = new EventHandlerDefinition();
 			actionHandlerDefinition.setClassName(fullClassName);
 			map.put(fullClassName, actionHandlerDefinition);
 		}

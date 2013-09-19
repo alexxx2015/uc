@@ -6,25 +6,25 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.IActionHandler;
-import de.tum.in.i22.pip.core.manager.db.ActionHandlerDefinition;
+import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
 
-public class ActionHandlerManager implements IActionHandlerCreator {
+public class EventHandlerManager implements IActionHandlerCreator {
 	
 	
 	private static final Logger _logger = Logger
-			.getLogger(ActionHandlerManager.class);
+			.getLogger(EventHandlerManager.class);
 	
 	private Map<String, PipClassLoader> _classLoaderMap = null;
 	
-	public ActionHandlerManager() {
+	public EventHandlerManager() {
 		_classLoaderMap = new HashMap<>();
 	}
 	
 	@Override
-	public IActionHandler createActionHandler(String actionName) 
+	public IActionHandler createEventHandler(String actionName) 
 		throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 		
-		String className = "de.tum.in.i22.pip.core.actions." + actionName + "ActionHandler";
+		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "ActionHandler";
 
 		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
 		if (pipClassLoader != null) {
@@ -38,14 +38,14 @@ public class ActionHandlerManager implements IActionHandlerCreator {
 		}
 	}
 
-	public void setClassToBeLoaded(ActionHandlerDefinition actionHandlerDefinition) {
-		_logger.debug("Creating class loader for class: " + actionHandlerDefinition.getClassName());
-		String className = actionHandlerDefinition.getClassName();
+	public void setClassToBeLoaded(EventHandlerDefinition eventHandlerDefinition) {
+		_logger.debug("Creating class loader for class: " + eventHandlerDefinition.getClassName());
+		String className = eventHandlerDefinition.getClassName();
 		
 		PipClassLoader pipClassLoader = new PipClassLoader(
 				 PipClassLoader.class.getClassLoader(),
 				 className,
-				 actionHandlerDefinition.getClassFile());
+				 eventHandlerDefinition.getClassFile());
 		
 		_classLoaderMap.put(className, pipClassLoader);
 	

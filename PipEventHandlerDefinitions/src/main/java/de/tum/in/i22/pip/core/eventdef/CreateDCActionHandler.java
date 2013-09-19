@@ -1,21 +1,23 @@
-package de.tum.in.i22.pip.core.actions;
+package de.tum.in.i22.pip.core.eventdef;
 
 
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
- * Printing action
+ * Print event
  * 
  * @author Stoimenov
  * 
  */
-public class CreateDCActionHandler extends BaseActionHandler {
+public class CreateDCActionHandler extends BaseEventHandler {
 
 	private static final Logger _logger = Logger
 			.getLogger(CreateDCActionHandler.class);
@@ -26,7 +28,7 @@ public class CreateDCActionHandler extends BaseActionHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateDC action handler execute");
+		_logger.info("CreateDC event handler execute");
 		String pid = null;
 		String processName = null;
 		String deviceName = null;

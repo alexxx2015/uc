@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
-import de.tum.in.i22.pip.core.manager.ActionHandlerManager;
+import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.EConflictResolution;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
@@ -32,7 +32,7 @@ public class PipCoreTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		ActionHandlerManager actionHandlerManager = new ActionHandlerManager();
+		EventHandlerManager actionHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(actionHandlerManager);
 		pipManager.initialize();
 		

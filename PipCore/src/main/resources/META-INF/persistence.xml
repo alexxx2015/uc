@@ -3,7 +3,7 @@
 	version="1.0">
 	<persistence-unit name="PIP" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>de.tum.in.i22.pip.core.manager.db.ActionHandlerDefinition</class>
+		<class>de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
 			<property name="javax.persistence.jdbc.url"
