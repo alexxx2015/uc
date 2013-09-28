@@ -29,12 +29,12 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pep2Pdp</artifactId>
+			<artifactId>PipCore</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pmp2Pdp</artifactId>
+			<artifactId>Pep2Pdp</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>

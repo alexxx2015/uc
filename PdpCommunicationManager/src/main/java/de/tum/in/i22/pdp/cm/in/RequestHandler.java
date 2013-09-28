@@ -6,10 +6,10 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.PdpSettings;
-import de.tum.in.i22.pdp.cm.CommunicationHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
+import de.tum.in.i22.pdp.core.PdpHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
@@ -19,7 +19,7 @@ public class RequestHandler implements Runnable {
 	private static RequestHandler _instance = null;
 	private BlockingQueue<RequestWrapper> _requestQueue = null;
 	
-	private CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+	private PdpHandler communicationHandler = PdpHandler.getInstance();
 	private IPdp2PipFast _pdp2PipProxy = null;
 	
 	public static RequestHandler getInstance() {

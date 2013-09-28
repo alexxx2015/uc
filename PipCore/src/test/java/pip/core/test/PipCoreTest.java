@@ -51,7 +51,7 @@ public class PipCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		
+		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
 
 	@After
