@@ -1,11 +1,13 @@
 package pip.core.test;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,8 +16,8 @@ import org.junit.Test;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
-import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.EConflictResolution;
+import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -41,8 +43,8 @@ public class PipCoreTest {
 		
 		_pipHandler = new PipHandler(actionHandlerManager);
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
-		
-		_pipManager.updateInformationFlowSemantics(null, new File("test.jar"), EConflictResolution.OVERWRITE);
+		File file = FileUtils.toFile(PipCoreTest.class.getResource("test.jar"));
+		_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
 	}
 
 	@AfterClass
