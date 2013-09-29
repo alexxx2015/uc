@@ -1,13 +1,13 @@
 package pip.core.test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,6 +28,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipCoreTest {
 	
+	
+	private static final Logger _logger = Logger.getLogger(PipCoreTest.class);
+	
 	private static IPdp2Pip _pipHandler;
 	private static IMessageFactory _messageFactory;
 	private static IPipManager _pipManager;
@@ -43,8 +46,13 @@ public class PipCoreTest {
 		
 		_pipHandler = new PipHandler(actionHandlerManager);
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
-		File file = FileUtils.toFile(PipCoreTest.class.getResource("test.jar"));
-		_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+		File file = FileUtils.toFile(PipCoreTest.class.getResource("/test.jar"));
+		
+		if (file != null && file.exists()) {
+			_logger.debug("File " + file.getAbsolutePath() + " exists.");
+			_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+		}
+		
 	}
 
 	@AfterClass
