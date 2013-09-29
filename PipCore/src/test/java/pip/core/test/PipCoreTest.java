@@ -42,7 +42,7 @@ public class PipCoreTest {
 		_pipHandler = new PipHandler(actionHandlerManager);
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
 		
-		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
+		_pipManager.updateInformationFlowSemantics(null, new File("test.jar"), EConflictResolution.OVERWRITE);
 	}
 
 	@AfterClass
