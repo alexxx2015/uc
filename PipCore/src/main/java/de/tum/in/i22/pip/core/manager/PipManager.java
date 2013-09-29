@@ -159,8 +159,13 @@ public class PipManager implements IPipManager {
 	 * @return
 	 */
 	private String convertToFullClassName(File file, Path destination) {
-		String temp = file.getAbsolutePath().substring(destination.toAbsolutePath().toString().length() + 1);
+		String filePath = file.toPath().toAbsolutePath().toString();
+		_logger.debug("File path: " + filePath);
+		String temp = filePath.substring(destination.toAbsolutePath().toString().length() + 1);
+		// for windows
 		temp = temp.replace("\\", ".");
+		// for linux
+		temp = temp.replace("/", ".");
 		temp = temp.substring(0, temp.lastIndexOf("."));
 		return temp;
 	}

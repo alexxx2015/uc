@@ -1,13 +1,13 @@
 package pip.core.test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipCoreTest {
-	
+	private static Logger _logger = Logger.getLogger(PipCoreTest.class);
 	private static IPdp2Pip _pipHandler;
 	private static IMessageFactory _messageFactory;
 	private static IPipManager _pipManager;
@@ -43,8 +43,15 @@ public class PipCoreTest {
 		
 		_pipHandler = new PipHandler(actionHandlerManager);
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
-		File file = FileUtils.toFile(PipCoreTest.class.getResource("test.jar"));
-		_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+		File file = getJarFile();
+		
+		if (file != null && file.exists()) {
+			_logger.debug("File file " + file.getAbsolutePath() + " found.");
+			_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+		} else {
+			_logger.fatal("Zip file not found.");
+		}
+		
 	}
 
 	@AfterClass
@@ -53,7 +60,7 @@ public class PipCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
+		_pipManager.updateInformationFlowSemantics(null, getJarFile(), EConflictResolution.OVERWRITE);
 	}
 
 	@After
@@ -120,6 +127,11 @@ public class PipCoreTest {
         IEvent event = _messageFactory.createActualEvent("SetClipboardData", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+	}
+	
+	private static File getJarFile() {
+		File file = FileUtils.toFile(PipCoreTest.class.getResource("/test.jar"));
+		return file;
 	}
 
 }
