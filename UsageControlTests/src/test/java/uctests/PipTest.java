@@ -1,4 +1,4 @@
-package pdptests;
+package uctests;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class Pdp2PipTest {
+public class PipTest {
 	
 	private static Logger _logger = Logger.getRootLogger();
 	

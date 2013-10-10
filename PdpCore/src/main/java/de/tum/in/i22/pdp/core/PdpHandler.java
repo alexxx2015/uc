@@ -3,8 +3,10 @@ package de.tum.in.i22.pdp.core;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -60,5 +62,14 @@ public class PdpHandler
 		//TODO implement
 		_logger.debug("Notify event called");
 		return DummyMessageGen.createResponse();
+	}
+
+	@Override
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
+			byte[] jarFileBytes, EConflictResolution flagForTheConflictResolution) {
+		// leave empty
+		// this method is never called
+		// instead PDP delegates it to PIP
+		return null;
 	}
 }

@@ -1,11 +1,14 @@
-package pdptests;
+package uctests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ Pdp2PipTest.class, PdpTests.class })
+@SuiteClasses({ 
+	PipTest.class,
+	PdpTest.class,
+	TestPep2PdpCommunication.class })
 public class AllTests {
 
 }

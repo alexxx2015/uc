@@ -5,13 +5,16 @@ import java.util.Map;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 
 /**
  * MessageFactory
@@ -65,5 +68,10 @@ public class MessageFactory implements IMessageFactory {
 	@Override
 	public IStatus createStatus(EStatus status, String errorMessage) {
 		return new StatusBasic(status, errorMessage);
+	}
+	
+	@Override
+	public IPipDeployer createPipDeployer(GpPipDeployer gpPipDeployer) {
+		return new PipDeployerBasic(gpPipDeployer);
 	}
 }

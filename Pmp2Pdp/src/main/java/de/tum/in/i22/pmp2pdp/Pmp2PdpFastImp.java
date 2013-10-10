@@ -7,9 +7,9 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;

@@ -58,7 +58,7 @@ public class DataBasic implements IData {
 	
 	@Override
 	public int hashCode() {
-		return _id.hashCode();
+		return getId().hashCode();
 	}
 
 	@Override

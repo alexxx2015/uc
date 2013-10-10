@@ -1,6 +1,7 @@
-package de.tum.in.i22.uc.cm.datatypes;
+package de.tum.in.i22.uc.cm.basic;
 
-import de.tum.in.i22.uc.cm.basic.CompareUtil;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus;
 
@@ -51,6 +52,7 @@ public class StatusBasic implements IStatus {
 		return gpStatus.build();
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
 		if (obj != null && this.getClass() == obj.getClass()) {

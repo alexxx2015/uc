@@ -16,12 +16,9 @@ import org.junit.Test;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
-import de.tum.in.i22.pip.core.manager.EConflictResolution;
-import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IPipManager;
-import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -31,24 +28,17 @@ public class PipCoreTest {
 	
 	private static IPdp2Pip _pipHandler;
 	private static IMessageFactory _messageFactory;
-	private static IPipManager _pipManager;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		EventHandlerManager actionHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(actionHandlerManager);
-		pipManager.initialize();
 		
-		_pipManager = pipManager;
-		
-		
-		_pipHandler = new PipHandler(actionHandlerManager);
+		_pipHandler = PipHandler.getInstance();
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
 		File file = getJarFile();
 		
 		if (file != null && file.exists()) {
 			_logger.debug("File file " + file.getAbsolutePath() + " found.");
-			_pipManager.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+			_pipHandler.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
 		} else {
 			_logger.fatal("Zip file not found.");
 		}
@@ -61,7 +51,7 @@ public class PipCoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_pipManager.updateInformationFlowSemantics(null, getJarFile(), EConflictResolution.OVERWRITE);
+//		_pipHandler.updateInformationFlowSemantics(null, getJarFile(), EConflictResolution.OVERWRITE);
 	}
 
 	@After
@@ -108,7 +98,7 @@ public class PipCoreTest {
         IEvent event = _messageFactory.createActualEvent("CreateProcess", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
-		_pipManager.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
+		_pipHandler.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
 	
 	@Test

@@ -1,8 +1,11 @@
+package uctests;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -12,8 +15,13 @@ import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
 
@@ -66,6 +74,25 @@ public class TestPep2PdpCommunication {
 		// check if status is not null
 		Assert.assertNotNull(response1);
 		Assert.assertNotNull(response2);
+	}
+	
+	/**
+	 * IfFlow stands for Information Flow
+	 */
+	@Test
+	public void testUpdateIfFlowSemantics() throws Exception {
+		// connect to pdp
+		_pdpProxy.connect();
+		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
+		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
+		byte[] jarFileBytes = FileUtils.readFileToByteArray(file);
+		IStatus status = _pdpProxy.updateInformationFlowSemantics(
+				pipDeployer,
+				jarFileBytes,
+				EConflictResolution.OVERWRITE);
+		// disconnect from pdp
+		_pdpProxy.disconnect();
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 	
 	

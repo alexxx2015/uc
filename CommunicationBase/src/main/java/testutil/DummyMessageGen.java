@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -25,7 +26,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 
 public class DummyMessageGen {
 	private static IMessageFactory _factory = MessageFactoryCreator.createMessageFactory();

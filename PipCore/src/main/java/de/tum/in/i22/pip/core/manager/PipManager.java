@@ -22,6 +22,12 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.manager.db.ActionHandlerDao;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
 public class PipManager implements IPipManager {
@@ -32,6 +38,8 @@ public class PipManager implements IPipManager {
 	
 	private EventHandlerManager _actionHandlerManager = null;
 	private ActionHandlerDao _actionHandlerDao = null;
+	
+	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 	
 	public PipManager(EventHandlerManager actionHandlerManager) {
 		_actionHandlerManager = actionHandlerManager;
@@ -50,7 +58,7 @@ public class PipManager implements IPipManager {
 	}
 
 	@Override
-	public void updateInformationFlowSemantics(
+	public IStatus updateInformationFlowSemantics(
 			IPipDeployer deployer, File jarFile,
 			EConflictResolution flagForTheConflictResolution) {
 		
@@ -108,12 +116,13 @@ public class PipManager implements IPipManager {
 		    
 		} catch (ZipException e) {
 			_logger.error(e.toString());
+			return _mf.createStatus(EStatus.ERROR, "Error when unzipping jar file: " + e.getMessage());
 		} catch (Exception e1) {
 			_logger.error(e1.toString());
+			return _mf.createStatus(EStatus.ERROR, e1.getMessage());
 		}
 		
-		
-		
+		return _mf.createStatus(EStatus.OKAY);
 	}
 	
 	private void updateMapWithSrcDefinition(

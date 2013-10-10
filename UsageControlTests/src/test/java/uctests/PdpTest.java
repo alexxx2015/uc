@@ -1,10 +1,12 @@
-package pdptests;
+package uctests;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,14 +29,18 @@ import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
+import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class PdpTests {
+public class PdpTest {
 
 	private static Logger _logger = Logger.getRootLogger();
 	private static IPep2PdpFast _pdpProxy;
@@ -54,7 +60,7 @@ public class PdpTests {
 	private static Thread _t2;
 	private static Thread _t3;
 
-	public PdpTests() {
+	public PdpTest() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -115,6 +121,25 @@ public class PdpTests {
 		IResponse response = _pdpProxy.notifyEvent(event);
 		_pdpProxy.disconnect();
 		Assert.assertNotNull(response);
+	}
+	
+	/**
+	 * IfFlow stands for Information Flow
+	 */
+	@Test
+	public void testUpdateIfFlowSemantics() throws Exception {
+		// connect to pdp
+		_pdpProxy.connect();
+		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
+		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
+		byte[] jarFileBytes = FileUtils.readFileToByteArray(file);
+		IStatus status = _pdpProxy.updateInformationFlowSemantics(
+				pipDeployer,
+				jarFileBytes,
+				EConflictResolution.OVERWRITE);
+		// disconnect from pdp
+		_pdpProxy.disconnect();
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
 	private Map<String, String> createDummyMap() {

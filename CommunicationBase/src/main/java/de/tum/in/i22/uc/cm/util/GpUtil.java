@@ -3,11 +3,17 @@ package de.tum.in.i22.uc.cm.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.protobuf.ByteString;
+
+import de.tum.in.i22.uc.cm.basic.ConflictResolutionFlagBasic;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpByteArray;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainerList;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
@@ -25,6 +31,13 @@ public class GpUtil {
 		GpBoolean.Builder gpBooleanBuilder = GpBoolean.newBuilder();
 		gpBooleanBuilder.setValue(par);
 		return gpBooleanBuilder.build();
+	}
+	
+	public static GpByteArray createGpByteString(byte[] bytes) {
+		GpByteArray.Builder gp = GpByteArray.newBuilder();
+		ByteString byteString = ByteString.copyFrom(bytes);
+		gp.setByteArray(byteString);
+		return gp.build();
 	}
 	
 	public static List<IContainer> convertToList(GpContainerList gpList) {
@@ -67,4 +80,12 @@ public class GpUtil {
 		
 		return gp.build();
 	}
+
+	public static GpConflictResolutionFlag createGpConflictResolutionFlag(
+			EConflictResolution flagForTheConflictResolution) {
+		
+		return ConflictResolutionFlagBasic.createGpbConflictResolutionFlag(
+ 				new ConflictResolutionFlagBasic(flagForTheConflictResolution));
+	}
+
 }

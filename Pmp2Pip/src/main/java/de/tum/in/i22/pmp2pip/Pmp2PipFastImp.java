@@ -7,10 +7,10 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;

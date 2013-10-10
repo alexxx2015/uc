@@ -108,5 +108,27 @@ message GpMechanism {
 	optional GpHistory state = 4;
 	optional GpEvent triggerEvent = 5;
 }
+
+message GpConflictResolutionFlag {
+	enum GpEConflictResolution {
+		OVERWRITE = 1;
+		IGNORE_UPDATES = 2;
+		KEEP_ALL = 3;
+	}
+	
+	required GpEConflictResolution value = 1;
+}
+
+message GpPipDeployer {
+	required string id = 1;
+	required string name = 2; 
+}
+
+message GpByteArray {
+	required bytes byteArray = 1;
+}
+
+
+	
 	
 	

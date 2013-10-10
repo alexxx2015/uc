@@ -8,7 +8,6 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.StatusBasic;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;

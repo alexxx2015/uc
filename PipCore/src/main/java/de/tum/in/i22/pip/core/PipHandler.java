@@ -1,42 +1,77 @@
 package de.tum.in.i22.pip.core;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.eventdef.DefaultActionHandler;
+import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IActionHandlerCreator;
+import de.tum.in.i22.pip.core.manager.IPipManager;
+import de.tum.in.i22.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipHandler implements IPdp2Pip {
 	
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 	
-	public IActionHandlerCreator _actionHandlerCreator;
+	private IActionHandlerCreator _actionHandlerCreator;
+	private IPipManager _pipManager; 
 	
-	public PipHandler(IActionHandlerCreator actionHandlerCreator) {
-		_actionHandlerCreator = actionHandlerCreator;
+	private static IPdp2Pip _instance = null;
+	
+	public static IPdp2Pip getInstance() {
+		if (_instance == null) {
+			_instance = new PipHandler();
+		}
+		return _instance;
+	}
+	
+	private PipHandler() {
+		EventHandlerManager actionHandlerManager = new EventHandlerManager();
+		PipManager pipManager = new PipManager(actionHandlerManager);
+		pipManager.initialize();
+		
+		_actionHandlerCreator = actionHandlerManager;
+		_pipManager = pipManager;
 	}
 
-	@Override
 	public Boolean evaluatePredicate(IEvent event, String predicate) {
-		// TODO Auto-generated method stub
-		return null;
+		// returns always true, for testing purposes only
+		//FIXME provide real implementation of the method
+		return true;
 	}
 
-	@Override
-	public List<IContainer> getContainerForData(IData data) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IContainer> getContainerForData(IData arg0) {
+		// returns dummy list, for testing purposes only
+		//FIXME provide real implementation of the method
+		List<IContainer> list = new ArrayList<IContainer>();
+		for (int i = 0; i < 6; i++) {
+			IContainer container = new ContainerBasic("dummy class", null);
+			list.add(container);
+		}
+		return list;
 	}
 
-	@Override
 	public List<IData> getDataInContainer(IContainer container) {
-		// TODO Auto-generated method stub
-		return null;
+		// returns dummy list, for testing purposes only
+		//FIXME provide real implementation of the method
+		List<IData> list = new ArrayList<IData>();
+		for (int i = 0; i < 10; i++) {
+			IData data = new DataBasic(UUID.randomUUID().toString());
+			list.add(data);
+		}
+		return list;
 	}
 
 	@Override
@@ -66,5 +101,12 @@ public class PipHandler implements IPdp2Pip {
 		_logger.trace("Status to return: " + status);
 		
 		return status;
+	}
+
+	@Override
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
+			File jarFile, EConflictResolution flagForTheConflictResolution) {
+		
+		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 }
