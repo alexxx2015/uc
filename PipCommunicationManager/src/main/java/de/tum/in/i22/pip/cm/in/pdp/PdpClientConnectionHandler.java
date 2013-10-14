@@ -167,7 +167,7 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		FileUtils.writeByteArrayToFile(file, jarBytes);
 		_logger.trace("File name: " + file.getAbsolutePath());
 		IStatus status = _pdp2pip.updateInformationFlowSemantics(pipDeployer, file, conflictResolutionFlag);
-//		file.delete();
+		file.delete();
 		
 		_logger.debug("Send status back to PDP. Status: " + status);
 		GpStatus gpStatus = StatusBasic.createGpbStatus(status);
