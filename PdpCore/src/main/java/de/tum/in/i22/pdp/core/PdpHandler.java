@@ -1,5 +1,6 @@
 package de.tum.in.i22.pdp.core;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,10 @@ import de.fraunhofer.iese.ind2uce.internal.pdp.AuthorizationAction;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
 import de.fraunhofer.iese.ind2uce.internal.pdp.ExecuteAction;
+import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Param;
+import de.fraunhofer.iese.ind2uce.pdp.PolicyDecisionPoint;
+import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -36,7 +40,9 @@ public class PdpHandler implements IIncoming {
 
 	private static PdpHandler _instance;
 	public static boolean pdpRunning = false;
-	
+
+	private static IPolicyDecisionPoint lpdp;
+
 	private static final String TIMESTAMP = "timestamp";
 
 	public static PdpHandler getInstance() {
@@ -50,15 +56,19 @@ public class PdpHandler implements IIncoming {
 		System.out.println("Loading native PDP library");
 
 		try {
-			System.loadLibrary("pdp");
-			pdpRunning = true;
-			System.out.println("Native PDP library loaded...");
-			this.pdpStart();
+			// System.loadLibrary("pdp");
+			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libpthread-2.dll");
+			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libgnurx-0.dll");
+			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/pdp.dll");
+			// pdpRunning = true;
+			// System.out.println("Native PDP library loaded...");
+			lpdp = PolicyDecisionPoint.getInstance();
+			lpdp.pdpStart();
 			System.out.println("native PDP started...");
 		} catch (Exception e) {
 			System.out.println("Could not load native PDP library!");
 			System.out.println(e.getMessage());
-		} 
+		}
 	}
 
 	@Override
@@ -86,84 +96,84 @@ public class PdpHandler implements IIncoming {
 	public IResponse notifyEvent(IEvent event) {
 		// TODO implement
 		_logger.debug("Notify event called");
-		
+
 		_logger.debug("Prapere to invoke old PDP");
 		// convert IEvent to de.fraunhofer.iese.ind2uce.Event
-		Event curEvent = new Event(event.getName(), !event.isActual());
-		
+		Event curEvent = new Event(event.getName(), !event.isActual(),
+				event.getTimestamp());
+
 		Map<String, String> map = event.getParameters();
-		
+
 		Set<String> keySet = map.keySet();
 		for (String key : keySet) {
 			curEvent.addStringParameter(key, map.get(key));
 		}
-		
-		curEvent.addLongParameter(TIMESTAMP, event.getTimestamp());
-		
-		Decision d = this.pdpNotifyEventJNI(curEvent);
+
+		Decision d = null;
+		try {
+			d = lpdp.pdpNotifyEventJNI(curEvent);
+		} catch (RemoteException e) {
+			_logger.error("Call to native lib failed.", e);
+		}
 		_logger.debug("Response from the old PDP: " + d);
-		
+
 		_logger.debug("Convert decision to response");
 		AuthorizationAction authorizationAction = d.getAuthorizationAction();
-		
+
 		_logger.debug("Create status");
 		IStatus status = convertFrom(authorizationAction);
-		
+
 		_logger.debug("Create modified event");
 		EventBasic modifiedEvent = new EventBasic();
 		modifiedEvent.setName(event.getName());
 		// only attempted event can be modified
 		modifiedEvent.setActual(false);
+		modifiedEvent.setTimestamp(event.getTimestamp());
 		if (status.getEStatus() == EStatus.MODIFY) {
 			List<Param<?>> list = authorizationAction.getModifiers();
 			for (Param<?> param : list) {
 				String paramName = param.getName();
-				if (paramName.equals(TIMESTAMP)) {
-					try {
-						long timestamp = (Long)param.getValue();
-						modifiedEvent.setTimestamp(timestamp);
-					} catch (Exception e){
-						_logger.error("Error parsing timestamp.", e);
-					}
-				} else {
-					try {
-						modifiedEvent.addParameter(paramName, (String)param.getValue());
-					} catch (Exception e) {
-						_logger.error("Error parsing parameter " + paramName, e);
-					}
+				
+				try {
+					modifiedEvent.addParameter(paramName,
+							(String) param.getValue());
+				} catch (Exception e) {
+					_logger.error("Error parsing parameter " + paramName, e);
 				}
+
 			}
 		}
-		
-		
+
 		_logger.debug("Create execute actions");
 		List<IEvent> executeActions = new ArrayList<>();
 		List<ExecuteAction> list = authorizationAction.getExecuteActions();
 		long timestamp = System.currentTimeMillis();
-		for (ExecuteAction executeAction : list ){
+		for (ExecuteAction executeAction : list) {
 			// for each element in the list create corresponding event object
 			EventBasic executeEvent = new EventBasic();
 			executeEvent.setName(executeAction.getName());
 			executeEvent.setActual(false);
 			executeEvent.setTimestamp(timestamp);
-			
+
 			List<Param<?>> parameters = executeAction.getParams();
 			for (Param<?> param : parameters) {
 				String paramName = param.getName();
 				try {
-					executeEvent.addParameter(paramName, (String)param.getValue());
+					executeEvent.addParameter(paramName,
+							(String) param.getValue());
 				} catch (Exception e) {
 					_logger.error("Error parsing parameter " + paramName, e);
 				}
 			}
-			
+
 			executeActions.add(executeEvent);
 		}
-		
-		ResponseBasic response = new ResponseBasic(status, executeActions, modifiedEvent);
-		
+
+		ResponseBasic response = new ResponseBasic(status, executeActions,
+				modifiedEvent);
+
 		_logger.debug("Response to return: " + response);
-		
+
 		return response;
 	}
 
@@ -176,7 +186,7 @@ public class PdpHandler implements IIncoming {
 		// instead PDP delegates it to PIP
 		return null;
 	}
-	
+
 	private IStatus convertFrom(AuthorizationAction action) {
 		StatusBasic status = new StatusBasic();
 		if (!action.getAuthorizationAction()) {
@@ -189,31 +199,8 @@ public class PdpHandler implements IIncoming {
 				status.seteStatus(EStatus.MODIFY);
 			}
 		}
-		
+
 		return status;
 	}
-	
-	  // Native method declaration
-	  public native int               pdpStart();
-	  public native int               pdpStop();
-	  
-	  public native int               registerPEP(String pepName, String className);
-	  public native int               registerAction(String actionName, String pepName);
-	  public native int               registerPXP(String pepName, String className);
-	  public native int               registerPXPinstance(String pxpName, Object clazz);
-	  public native int               registerExecutor(String actionName, String pepName);
-	  
-	  public native String            pdpNotifyEventXML(String event);
-	  public native Decision          pdpNotifyEventJNI(Event event);
-	  
-	  public native int               pdpDeployPolicy(String mechanism_doc_path);
-	  public native int               pdpDeployPolicyString(String policy, String namespace);
-	  public native int               pdpDeployMechanism(String mechanism_doc_path, String mechName);
-	  public native int               pdpDeployMechanismString(String policy, String mechName);
-	  public native int               pdpRevokeMechanism(String mechName, String namespace);
 
-	  public native String            listDeployedMechanisms();
-	  public native ArrayList<String> listDeployedMechanismsJNI();
-
-	  public native int               setRuntimeLogLevel(int newLevel);
 }

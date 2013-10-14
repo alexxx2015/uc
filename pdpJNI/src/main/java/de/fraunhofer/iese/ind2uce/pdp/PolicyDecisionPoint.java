@@ -22,7 +22,10 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
     
     try
     {
-      System.loadLibrary("pdp");
+      //System.loadLibrary("pdp");
+    	System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libpthread-2.dll");
+		System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libgnurx-0.dll");
+		System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/pdp.dll");
       pdpRunning=true;
       System.out.println("Native PDP library loaded...");
     }

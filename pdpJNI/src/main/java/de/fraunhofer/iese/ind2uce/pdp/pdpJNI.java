@@ -2,6 +2,8 @@ package de.fraunhofer.iese.ind2uce.pdp;
 
 import java.io.IOException;
 
+import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
+import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
 import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
 
 public class pdpJNI
@@ -38,6 +40,13 @@ public class pdpJNI
     int ret=0;
     // do something...
     //
+    
+    System.out.println(lpdp.listDeployedMechanismsJNI());
+    Event e = new Event("bliblablub", true);
+    e.addStringParameter("param", "value");
+    Decision d = lpdp.pdpNotifyEventJNI(e);
+    System.out.println(d);
+    
     System.in.read();
     System.in.read();
     System.in.read();
