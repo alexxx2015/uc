@@ -89,5 +89,13 @@ call mvn install:install-file ^
 	-DartifactId=zip4j ^
 	-Dversion=1.2.4 ^
 	-Dpackaging=jar
+	echo Install zip4jj 1.2.4
+	
+call mvn install:install-file ^
+	-Dfile=internals-0.0.1-20131001.090326-11.jar ^
+	-DgroupId=de.fraunhofer.iese.ind2uce ^
+	-DartifactId=internals ^
+	-Dversion=0.0.1-SNAPSHOT ^
+	-Dpackaging=jar
 	
 pause->null

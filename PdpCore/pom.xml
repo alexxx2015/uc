@@ -9,12 +9,66 @@
 		<relativePath>../Pdp/pom.xml</relativePath>
 	</parent>
 	<artifactId>PdpCore</artifactId>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>PdpEngine</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>de.fraunhofer.iese.ind2uce</groupId>
+			<artifactId>pdpNative</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fraunhofer.iese.ind2uce</groupId>
+			<artifactId>internals</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>de.fraunhofer.iese.ind2uce</groupId>
+									<artifactId>pdpNative</artifactId>
+									<version>0.0.3-SNAPSHOT</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory> ${project.build.directory}/natives
+									</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>java.library.path</name>
+							<value>target/natives/</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
