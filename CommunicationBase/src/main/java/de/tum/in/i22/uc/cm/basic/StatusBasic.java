@@ -9,6 +9,9 @@ public class StatusBasic implements IStatus {
 	private EStatus _eStatus = null;
 	private String _errorMessage  = null;
 	
+	public StatusBasic() {
+	}
+	
 	public StatusBasic(GpStatus gpStatus) {
 		if (gpStatus.hasValue()) {
 			GpEStatus gpEStatus = gpStatus.getValue();
@@ -28,6 +31,10 @@ public class StatusBasic implements IStatus {
 		this(eStatus, null);
 	}
 
+	public void seteStatus(EStatus eStatus) {
+		_eStatus = eStatus;
+	}
+	
 	@Override
 	public EStatus getEStatus() {
 		return _eStatus;

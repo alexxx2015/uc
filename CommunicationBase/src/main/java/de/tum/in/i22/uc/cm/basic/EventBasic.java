@@ -16,6 +16,10 @@ public class EventBasic implements IEvent {
 	private Map<String, String> _map = null;
 	private long _timestamp;
 
+	public EventBasic() {
+		_map = new HashMap<>();
+	}
+	
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
 		_map = map;
@@ -54,6 +58,10 @@ public class EventBasic implements IEvent {
 			_timestamp = 0;
 	}
 	
+	public void addParameter(String key, String value) {
+		_map.put(key, value);
+	}
+	
 	@Override
 	public long getTimestamp() {
 		return _timestamp;
@@ -62,6 +70,14 @@ public class EventBasic implements IEvent {
 	@Override
 	public String getName() {
 		return _name;
+	}
+	
+	public void setName(String name) {
+		_name = name;
+	}
+	
+	public void setActual(boolean isActual) {
+		_isActual = isActual;
 	}
 
 	@Override
