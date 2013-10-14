@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/rdpef/!svn/ver/209/trunk/pef/src/main/resources/win32/glib2/include/glib-2.0
+END
+gmodule.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/rdpef/!svn/ver/209/trunk/pef/src/main/resources/win32/glib2/include/glib-2.0/gmodule.h
+END
+glib.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/rdpef/!svn/ver/209/trunk/pef/src/main/resources/win32/glib2/include/glib-2.0/glib.h
+END
+glib-object.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/rdpef/!svn/ver/209/trunk/pef/src/main/resources/win32/glib2/include/glib-2.0/glib-object.h
+END

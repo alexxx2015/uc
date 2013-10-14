@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/rdpef/!svn/ver/328/trunk/pef/src/main/c/config
+END
+aal.conf
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/rdpef/!svn/ver/309/trunk/pef/src/main/c/config/aal.conf
+END
+scons.linux
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/rdpef/!svn/ver/307/trunk/pef/src/main/c/config/scons.linux
+END
+android.conf
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/config/android.conf
+END
+scons.win32
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/rdpef/!svn/ver/321/trunk/pef/src/main/c/config/scons.win32
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/c/config/SConscript
+END
+default.conf
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/rdpef/!svn/ver/328/trunk/pef/src/main/c/config/default.conf
+END
+rd1.conf
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/config/rd1.conf
+END
+logConf.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/rdpef/!svn/ver/228/trunk/pef/src/main/c/config/logConf.py
+END
+scons.openbsd
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/rdpef/!svn/ver/239/trunk/pef/src/main/c/config/scons.openbsd
+END

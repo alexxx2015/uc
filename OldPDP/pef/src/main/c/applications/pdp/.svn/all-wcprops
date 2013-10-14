@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/rdpef/!svn/ver/327/trunk/pef/src/main/c/applications/pdp
+END
+appPDP.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/255/trunk/pef/src/main/c/applications/pdp/appPDP.c
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/rdpef/!svn/ver/327/trunk/pef/src/main/c/applications/pdp/SConscript
+END
+appPDPcpp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/rdpef/!svn/ver/327/trunk/pef/src/main/c/applications/pdp/appPDPcpp.cc
+END

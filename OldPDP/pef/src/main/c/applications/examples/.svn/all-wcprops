@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/c/applications/examples
+END
+socketTCPclient.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/examples/socketTCPclient.c
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/c/applications/examples/SConscript
+END
+socketTCPserver.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/examples/socketTCPserver.c
+END
+exRegex.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/examples/exRegex.c
+END
+pdpXMLrpcTest.c
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/examples/pdpXMLrpcTest.c
+END
+pdpSocketClient.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/examples/pdpSocketClient.c
+END

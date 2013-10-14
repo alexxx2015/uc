@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/rdpef/!svn/ver/328/trunk/pef/src/main/c/applications/tests
+END
+testOperators.c
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/rdpef/!svn/ver/283/trunk/pef/src/main/c/applications/tests/testOperators.c
+END
+testjni.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/rdpef/!svn/ver/285/trunk/pef/src/main/c/applications/tests/testjni.c
+END
+testEvent.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/tests/testEvent.c
+END
+testTimestamp.c
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/tests/testTimestamp.c
+END
+testpdp.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/rdpef/!svn/ver/328/trunk/pef/src/main/c/applications/tests/testpdp.c
+END
+testcpp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/rdpef/!svn/ver/307/trunk/pef/src/main/c/applications/tests/testcpp.cc
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/rdpef/!svn/ver/285/trunk/pef/src/main/c/applications/tests/SConscript
+END
+pdpSoapClient.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/tests/pdpSoapClient.php
+END
+testAction.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/applications/tests/testAction.c
+END

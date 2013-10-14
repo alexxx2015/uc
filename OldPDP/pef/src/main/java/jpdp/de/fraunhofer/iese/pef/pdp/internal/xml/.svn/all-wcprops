@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/java/jpdp/de/fraunhofer/iese/pef/pdp/internal/xml
+END
+XmlUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/java/jpdp/de/fraunhofer/iese/pef/pdp/internal/xml/XmlUtils.java
+END
+DecisionParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/java/jpdp/de/fraunhofer/iese/pef/pdp/internal/xml/DecisionParser.java
+END
+EventParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/rdpef/!svn/ver/267/trunk/pef/src/main/java/jpdp/de/fraunhofer/iese/pef/pdp/internal/xml/EventParser.java
+END

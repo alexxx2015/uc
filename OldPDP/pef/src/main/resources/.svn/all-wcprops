@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/rdpef/!svn/ver/302/trunk/pef/src/main/resources
+END
+filelist.ods
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/resources/filelist.ods
+END
+systracePEP
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/rdpef/!svn/ver/139/trunk/pef/src/main/resources/systracePEP
+END
+doxygen.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/rdpef/!svn/ver/133/trunk/pef/src/main/resources/doxygen.py
+END
+exportldlibrary
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/rdpef/!svn/ver/139/trunk/pef/src/main/resources/exportldlibrary
+END
+pdpTodo
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/rdpef/!svn/ver/253/trunk/pef/src/main/resources/pdpTodo
+END
+testpdpValgrind
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/rdpef/!svn/ver/233/trunk/pef/src/main/resources/testpdpValgrind
+END
+pef.doxyfile
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/rdpef/!svn/ver/301/trunk/pef/src/main/resources/pef.doxyfile
+END

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib
+END
+libgmodule-2.0.a
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgmodule-2.0.a
+END
+libglib-2.0.a
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libglib-2.0.a
+END
+libgobject-2.0.a
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgobject-2.0.a
+END
+charset.alias
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/rdpef/!svn/ver/209/trunk/pef/src/main/resources/win32/glib2/lib/charset.alias
+END
+libgio-2.0.a
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgio-2.0.a
+END
+libgthread-2.0.a
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgthread-2.0.a
+END
+libgmodule-2.0.la
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgmodule-2.0.la
+END
+libglib-2.0.la
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libglib-2.0.la
+END
+libgobject-2.0.la
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgobject-2.0.la
+END
+libgio-2.0.la
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgio-2.0.la
+END
+libgthread-2.0.la
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/rdpef/!svn/ver/271/trunk/pef/src/main/resources/win32/glib2/lib/libgthread-2.0.la
+END

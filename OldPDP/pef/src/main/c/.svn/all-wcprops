@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/rdpef/!svn/ver/330/trunk/pef/src/main/c
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/rdpef/!svn/ver/285/trunk/pef/src/main/c/.project
+END
+.cproject
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/rdpef/!svn/ver/307/trunk/pef/src/main/c/.cproject
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/rdpef/!svn/ver/321/trunk/pef/src/main/c/SConscript
+END
+SConstruct
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/rdpef/!svn/ver/215/trunk/pef/src/main/c/SConstruct
+END

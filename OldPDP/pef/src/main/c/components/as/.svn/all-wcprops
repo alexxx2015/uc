@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/components/as
+END
+services.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/75/trunk/pef/src/main/c/components/as/services.xml
+END
+as.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/components/as/as.c
+END
+key.blob
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/rdpef/!svn/ver/75/trunk/pef/src/main/c/components/as/key.blob
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/rdpef/!svn/ver/242/trunk/pef/src/main/c/components/as/SConscript
+END
+as_axis.c
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/rdpef/!svn/ver/75/trunk/pef/src/main/c/components/as/as_axis.c
+END
+cert.pem
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/rdpef/!svn/ver/75/trunk/pef/src/main/c/components/as/cert.pem
+END

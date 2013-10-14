@@ -1,0 +1,10 @@
+package de.fraunhofer.iese.pef.pdp.example;
+
+public class pepExample
+{
+  public static int handlePEPsubscribe(String request, int unsubscribe)
+  {
+    System.out.println("[pepExample] Received PEP subscribe request: [" + request + ", "+ unsubscribe +"]");
+    return 0;
+  }
+}

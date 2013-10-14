@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/rdpef/!svn/ver/329/trunk/pef/src/main/xml/examples
+END
+policySetDenis4.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/xml/examples/policySetDenis4.xml
+END
+testAuthActions.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testAuthActions.xml
+END
+eventTobias.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/rdpef/!svn/ver/132/trunk/pef/src/main/xml/examples/eventTobias.xml
+END
+policySetExample.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/xml/examples/policySetExample.xml
+END
+mechanisms.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/132/trunk/pef/src/main/xml/examples/mechanisms.xml
+END
+eventDenis4.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/rdpef/!svn/ver/132/trunk/pef/src/main/xml/examples/eventDenis4.xml
+END
+testDuring.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testDuring.xml
+END
+testReplim.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testReplim.xml
+END
+aalpol1.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/rdpef/!svn/ver/327/trunk/pef/src/main/xml/examples/aalpol1.xml
+END
+mechanismsRDsystrace.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/xml/examples/mechanismsRDsystrace.xml
+END
+aalpol4.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/rdpef/!svn/ver/277/trunk/pef/src/main/xml/examples/aalpol4.xml
+END
+testRepmax.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testRepmax.xml
+END
+eventExample.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/eventExample.xml
+END
+policy.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/rdpef/!svn/ver/320/trunk/pef/src/main/xml/examples/policy.xml
+END
+testAlways.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testAlways.xml
+END
+testSince.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testSince.xml
+END
+eventManu.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/rdpef/!svn/ver/132/trunk/pef/src/main/xml/examples/eventManu.xml
+END
+testBefore.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testBefore.xml
+END
+testWithin.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testWithin.xml
+END
+testevent1.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/139/trunk/pef/src/main/xml/examples/testevent1.xml
+END
+eventTobias2.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/rdpef/!svn/ver/132/trunk/pef/src/main/xml/examples/eventTobias2.xml
+END
+testRepSince.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/rdpef/!svn/ver/250/trunk/pef/src/main/xml/examples/testRepSince.xml
+END
+polKomplett.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/xml/examples/polKomplett.xml
+END
+41c5a.xml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/rdpef/!svn/ver/268/trunk/pef/src/main/xml/examples/41c5a.xml
+END
+test.xml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/rdpef/!svn/ver/329/trunk/pef/src/main/xml/examples/test.xml
+END

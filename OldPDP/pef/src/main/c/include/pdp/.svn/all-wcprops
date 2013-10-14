@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/rdpef/!svn/ver/320/trunk/pef/src/main/c/include/pdp
+END
+authorizationAction.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/include/pdp/authorizationAction.h
+END
+executeAction.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/rdpef/!svn/ver/267/trunk/pef/src/main/c/include/pdp/executeAction.h
+END
+pdpInternal.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/rdpef/!svn/ver/252/trunk/pef/src/main/c/include/pdp/pdpInternal.h
+END
+pdp.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/rdpef/!svn/ver/320/trunk/pef/src/main/c/include/pdp/pdp.h
+END
+mechanism.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/rdpef/!svn/ver/239/trunk/pef/src/main/c/include/pdp/mechanism.h
+END
