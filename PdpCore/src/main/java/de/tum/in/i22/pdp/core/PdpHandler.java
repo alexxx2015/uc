@@ -1,14 +1,23 @@
 package de.tum.in.i22.pdp.core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.fraunhofer.iese.ind2uce.internal.pdp.AuthorizationAction;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
+import de.fraunhofer.iese.ind2uce.internal.pdp.ExecuteAction;
+import de.fraunhofer.iese.ind2uce.internal.pdp.Param;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
@@ -27,6 +36,8 @@ public class PdpHandler implements IIncoming {
 
 	private static PdpHandler _instance;
 	public static boolean pdpRunning = false;
+	
+	private static final String TIMESTAMP = "timestamp";
 
 	public static PdpHandler getInstance() {
 		if (_instance == null) {
@@ -75,18 +86,85 @@ public class PdpHandler implements IIncoming {
 	public IResponse notifyEvent(IEvent event) {
 		// TODO implement
 		_logger.debug("Notify event called");
-	
 		
+		_logger.debug("Prapere to invoke old PDP");
 		// convert IEvent to de.fraunhofer.iese.ind2uce.Event
-		Event curEvent = new Event(event.getName(), event.isActual());
+		Event curEvent = new Event(event.getName(), !event.isActual());
 		
 		Map<String, String> map = event.getParameters();
 		
+		Set<String> keySet = map.keySet();
+		for (String key : keySet) {
+			curEvent.addStringParameter(key, map.get(key));
+		}
+		
+		curEvent.addLongParameter(TIMESTAMP, event.getTimestamp());
+		
 		Decision d = this.pdpNotifyEventJNI(curEvent);
+		_logger.debug("Response from the old PDP: " + d);
 		
-		// convert Decision to IResponse...
+		_logger.debug("Convert decision to response");
+		AuthorizationAction authorizationAction = d.getAuthorizationAction();
 		
-		return DummyMessageGen.createResponse();
+		_logger.debug("Create status");
+		IStatus status = convertFrom(authorizationAction);
+		
+		_logger.debug("Create modified event");
+		EventBasic modifiedEvent = new EventBasic();
+		modifiedEvent.setName(event.getName());
+		// only attempted event can be modified
+		modifiedEvent.setActual(false);
+		if (status.getEStatus() == EStatus.MODIFY) {
+			List<Param<?>> list = authorizationAction.getModifiers();
+			for (Param<?> param : list) {
+				String paramName = param.getName();
+				if (paramName.equals(TIMESTAMP)) {
+					try {
+						long timestamp = (Long)param.getValue();
+						modifiedEvent.setTimestamp(timestamp);
+					} catch (Exception e){
+						_logger.error("Error parsing timestamp.", e);
+					}
+				} else {
+					try {
+						modifiedEvent.addParameter(paramName, (String)param.getValue());
+					} catch (Exception e) {
+						_logger.error("Error parsing parameter " + paramName, e);
+					}
+				}
+			}
+		}
+		
+		
+		_logger.debug("Create execute actions");
+		List<IEvent> executeActions = new ArrayList<>();
+		List<ExecuteAction> list = authorizationAction.getExecuteActions();
+		long timestamp = System.currentTimeMillis();
+		for (ExecuteAction executeAction : list ){
+			// for each element in the list create corresponding event object
+			EventBasic executeEvent = new EventBasic();
+			executeEvent.setName(executeAction.getName());
+			executeEvent.setActual(false);
+			executeEvent.setTimestamp(timestamp);
+			
+			List<Param<?>> parameters = executeAction.getParams();
+			for (Param<?> param : parameters) {
+				String paramName = param.getName();
+				try {
+					executeEvent.addParameter(paramName, (String)param.getValue());
+				} catch (Exception e) {
+					_logger.error("Error parsing parameter " + paramName, e);
+				}
+			}
+			
+			executeActions.add(executeEvent);
+		}
+		
+		ResponseBasic response = new ResponseBasic(status, executeActions, modifiedEvent);
+		
+		_logger.debug("Response to return: " + response);
+		
+		return response;
 	}
 
 	@Override
@@ -97,6 +175,22 @@ public class PdpHandler implements IIncoming {
 		// this method is never called
 		// instead PDP delegates it to PIP
 		return null;
+	}
+	
+	private IStatus convertFrom(AuthorizationAction action) {
+		StatusBasic status = new StatusBasic();
+		if (!action.getAuthorizationAction()) {
+			status.seteStatus(EStatus.INHIBIT);
+		} else {
+			List<Param<?>> list = action.getModifiers();
+			if (list == null || list.isEmpty()) {
+				status.seteStatus(EStatus.ALLOW);
+			} else {
+				status.seteStatus(EStatus.MODIFY);
+			}
+		}
+		
+		return status;
 	}
 	
 	  // Native method declaration
