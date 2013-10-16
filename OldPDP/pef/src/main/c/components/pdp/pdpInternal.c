@@ -616,6 +616,22 @@ unsigned int notifyResponseProcessMechanism(notifyResponse_ptr response, mechani
     }
   }
   else log_trace("Response is already INHIBIT");
+  
+  // always add executeAction to response
+  if(mech->cntExecuteActions>0)
+  {
+    log_trace("copying execute-actions to response!");
+    response->executeActions=realloc(response->executeActions,(response->cntExecuteActions+mech->cntExecuteActions)*sizeof(executeAction_ptr));
+    checkNullInt(response->executeActions, "Could not allocate memory for new action");
+
+    unsigned int a;
+    for(a=0; a<mech->cntExecuteActions; a++)
+    { // copy actions to execute from mechanism to response to avoid duplicating them (time consumption)
+      // ==> should NOT be freed with freeing response!!!!
+      response->executeActions[response->cntExecuteActions+a]=mech->executeActions[a];
+    }
+    response->cntExecuteActions+=mech->cntExecuteActions;
+  }
 
   return R_SUCCESS;
 }
