@@ -16,7 +16,7 @@
 			<artifactId>PdpEngine</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
+		<!--  <dependency>
 			<groupId>de.fraunhofer.iese.ind2uce</groupId>
 			<artifactId>pdpNative</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
@@ -25,7 +25,7 @@
 			<groupId>de.fraunhofer.iese.ind2uce</groupId>
 			<artifactId>internals</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>
