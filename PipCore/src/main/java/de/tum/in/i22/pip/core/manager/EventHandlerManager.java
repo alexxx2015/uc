@@ -41,8 +41,8 @@ public class EventHandlerManager implements IActionHandlerCreator {
 				_logger.trace("Create class " + className + " instance");
 				IActionHandler actionHandler = (IActionHandler) actionHandlerClass.newInstance();
 				return actionHandler;
-			} catch (ClassNotFoundException e) {
-				_logger.warn("Class " + className + " not found.", e);
+			} catch (Exception e) {
+				_logger.warn("Class " + className + " not found. Error: " + e.getMessage());
 				return null;
 			}
 		}

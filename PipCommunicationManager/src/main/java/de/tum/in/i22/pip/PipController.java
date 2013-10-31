@@ -42,9 +42,12 @@ public class PipController {
 		if (_isStarted)
 			return;
 		_isStarted = true;
-		
 		_logger.info("Start pip");
 		
+		// FIXME based on an argument, perform initialization of this
+//		_logger.info("Initialize PipHandler");
+//		PipHandler.getInstance();
+				
 		_logger.info("Start PdpFastServiceHandler");
 		PipSettings settings = getPipSettings();
 		int pdpListenerPortNum = settings.getPdpListenerPortNum();

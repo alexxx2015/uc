@@ -34,14 +34,14 @@ public class PipCoreTest {
 		
 		_pipHandler = PipHandler.getInstance();
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
-//		File file = getJarFile();
-//		
-//		if (file != null && file.exists()) {
-//			_logger.debug("File file " + file.getAbsolutePath() + " found.");
-//			_pipHandler.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
-//		} else {
-//			_logger.fatal("Zip file not found.");
-//		}
+		File file = getJarFile();
+		
+		if (file != null && file.exists()) {
+			_logger.debug("File file " + file.getAbsolutePath() + " found.");
+			_pipHandler.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
+		} else {
+			_logger.fatal("Zip file not found.");
+		}
 		
 	}
 
