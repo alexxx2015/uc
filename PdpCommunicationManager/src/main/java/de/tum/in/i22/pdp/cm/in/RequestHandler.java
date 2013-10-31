@@ -12,7 +12,7 @@ import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.core.PdpHandlerDummy;
+import de.tum.in.i22.pdp.core.PdpHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -27,7 +27,7 @@ public class RequestHandler implements Runnable {
 	private static RequestHandler _instance = null;
 	private BlockingQueue<RequestWrapper> _requestQueue = null;
 	
-	private IIncoming communicationHandler = PdpHandlerDummy.getInstance();
+	private IIncoming communicationHandler = PdpHandler.getInstance();
 	private IPdp2PipFast _pdp2PipProxy = null;
 	
 	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();

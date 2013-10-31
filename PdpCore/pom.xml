@@ -43,8 +43,8 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>de.fraunhofer.iese.ind2uce</groupId>
-									<artifactId>pdpNative</artifactId>
+									<groupId>UsageControlSystem</groupId>
+									<artifactId>PdpNative</artifactId>
 									<version>0.0.3-SNAPSHOT</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>

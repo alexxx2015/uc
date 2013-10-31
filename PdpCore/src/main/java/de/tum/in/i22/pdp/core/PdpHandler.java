@@ -16,7 +16,6 @@ import de.fraunhofer.iese.ind2uce.internal.pdp.ExecuteAction;
 import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Param;
 import de.fraunhofer.iese.ind2uce.pdp.PolicyDecisionPoint;
-import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -53,21 +52,14 @@ public class PdpHandler implements IIncoming {
 	}
 
 	private PdpHandler() {
-		System.out.println("Loading native PDP library");
-
 		try {
-			// System.loadLibrary("pdp");
-			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libpthread-2.dll");
-			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/libgnurx-0.dll");
-			// System.load("C:/Users/user/Desktop/pdp/PdpCore/target/natives/pdp.dll");
-			// pdpRunning = true;
-			// System.out.println("Native PDP library loaded...");
+			_logger.info("Get instance of native PDP ...");
 			lpdp = PolicyDecisionPoint.getInstance();
+			_logger.info("Start native PDP ..");
 			lpdp.pdpStart();
-			System.out.println("native PDP started...");
+			_logger.info("Native PDP started");
 		} catch (Exception e) {
-			System.out.println("Could not load native PDP library!");
-			System.out.println(e.getMessage());
+			_logger.fatal("Could not load native PDP library!", e);
 		}
 	}
 
