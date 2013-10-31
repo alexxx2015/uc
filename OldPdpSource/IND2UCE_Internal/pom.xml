@@ -3,7 +3,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>de.fraunhofer.iese.ind2uce</groupId>
 	<artifactId>internals</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -13,28 +12,28 @@
 	<description>IND2UCE :: Internals</description>
 
 	<!-- Properties -->
-  <properties>
-    <servicemix.nmr.version>1.6.1</servicemix.nmr.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<properties>
+		<servicemix.nmr.version>1.6.1</servicemix.nmr.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-  </dependencies>
-  
+	</dependencies>
+
 	<dependencyManagement>
-    <dependencies>
-        <!-- ServiceMix NMR -->
-      <dependency>
-        <groupId>org.apache.servicemix.nmr</groupId>
-        <artifactId>parent</artifactId>
-        <version>${servicemix.nmr.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+		<dependencies>
+			<!-- ServiceMix NMR -->
+			<dependency>
+				<groupId>org.apache.servicemix.nmr</groupId>
+				<artifactId>parent</artifactId>
+				<version>${servicemix.nmr.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -52,25 +51,51 @@
 							org.slf4j
 						</Import-Package>
 						<Export-Package>
-              de.fraunhofer.iese.ind2uce.internal.pdp,
-              de.fraunhofer.iese.ind2uce.internal.pep,
-              de.fraunhofer.iese.ind2uce.internal.pip,
-              de.fraunhofer.iese.ind2uce.internal.pxp,
-              de.fraunhofer.iese.ind2uce.internal.pmp,
+							de.fraunhofer.iese.ind2uce.internal.pdp,
+							de.fraunhofer.iese.ind2uce.internal.pep,
+							de.fraunhofer.iese.ind2uce.internal.pip,
+							de.fraunhofer.iese.ind2uce.internal.pxp,
+							de.fraunhofer.iese.ind2uce.internal.pmp,
 						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -85,6 +110,6 @@
 			<name>Internal Releases</name>
 			<url>http://nexus:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
-	</distributionManagement>	
+	</distributionManagement>
 
 </project>
