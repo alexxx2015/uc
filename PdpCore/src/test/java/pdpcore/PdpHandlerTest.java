@@ -6,16 +6,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pdp.core.PdpHandler;
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-
 public class PdpHandlerTest {
 	
-	private static PdpHandler _pdpHandler;
+//	private static PdpHandler _pdpHandler;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdpHandler = PdpHandler.getInstance();
+//		_pdpHandler = PdpHandler.getInstance();
 	}
 
 	@AfterClass
@@ -32,7 +29,7 @@ public class PdpHandlerTest {
 
 	@Test
 	public void test() {
-		_pdpHandler.notifyEvent(new EventBasic("test", null, true));
+		//_pdpHandler.notifyEvent(new EventBasic("test", null, true));
 	}
 
 }

@@ -78,7 +78,7 @@ public class ActionHandlerDao {
 	public List<EventHandlerDefinition> getCurrentActionHandlerDefinitions() {
 		_logger.debug("Get current action handler definitions");
 		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
-				"select t from EventHandlerDefinition t where t.currentlyActive=true",
+				"select t from EventHandlerDefinition t",
 				EventHandlerDefinition.class);
 		return q.getResultList();
 	}
