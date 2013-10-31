@@ -10,9 +10,9 @@ call mvn install:install-file ^
 	
 echo Install junit 4.4
 call mvn install:install-file ^
-	-Dfile=junit-4.4 ^
-	-Dsources=junit-4.4-sources ^
-	-Djavadoc=junit-4.4-javadoc ^
+	-Dfile=junit-4.4.jar ^
+	-Dsources=junit-4.4-sources.jar ^
+	-Djavadoc=junit-4.4-javadoc.jar ^
 	-DgroupId=junit ^
 	-DartifactId=junit ^
 	-Dversion=4.4 ^
@@ -20,12 +20,10 @@ call mvn install:install-file ^
 	
 echo Install log4j 1.2.14
 call mvn install:install-file ^
-	-Dfile=junit-4.4 ^
-	-Dsources=junit-4.4-sources ^
-	-Djavadoc=junit-4.4-javadoc ^
-	-DgroupId=junit ^
-	-DartifactId=junit ^
-	-Dversion=4.4 ^
+	-Dfile=log4j-1.2.14.jar ^
+	-DgroupId=log4j ^
+	-DartifactId=log4j ^
+	-Dversion=1.2.14 ^
 	-Dpackaging=jar
 	
 echo Install derby 10.10.1.1
@@ -69,30 +67,23 @@ call mvn install:install-file ^
 	-DartifactId=commons-io ^
 	-Dversion=2.4 ^
 	-Dpackaging=jar
-
-echo Install zip4jj 1.2.4
-call mvn install:install-file ^
-	-Dfile=zip4j-1.2.4.jar ^
-	-Dsources=commons-io-2.4.jar-sources ^
-	-Djavadoc=zip4j-1.2.4-javadoc.jar ^
-	-DgroupId=net.lingala.zip4j ^
-	-DartifactId=zip4j ^
-	-Dversion=1.2.4 ^
-	-Dpackaging=jar
 	
 echo Install zip4jj 1.2.4
 call mvn install:install-file ^
 	-Dfile=zip4j-1.2.4.jar ^
-	-Dsources=commons-io-2.4.jar-sources ^
+	-Dsources=zip4j-1.2.4-sources.jar ^
 	-Djavadoc=zip4j-1.2.4-javadoc.jar ^
 	-DgroupId=net.lingala.zip4j ^
 	-DartifactId=zip4j ^
 	-Dversion=1.2.4 ^
 	-Dpackaging=jar
 	echo Install zip4jj 1.2.4
-	
+
+echo Install internals by Kornelius
 call mvn install:install-file ^
 	-Dfile=internals-0.0.1-20131001.090326-11.jar ^
+	-Dsources=internals-0.0.1-SNAPSHOT-sources.jar ^
+	-Djavadoc=internals-0.0.1-SNAPSHOT-javadoc.jar ^
 	-DgroupId=de.fraunhofer.iese.ind2uce ^
 	-DartifactId=internals ^
 	-Dversion=0.0.1-SNAPSHOT ^
