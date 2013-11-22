@@ -138,7 +138,7 @@ message GpCacheUpdate {
 		required GpBoolean value = 2;
 	}
 	
-	required string scopeID = 1;
+	required string scopeId = 1;
 	repeated GpCacheUpdateEntry map = 2;
 
 }

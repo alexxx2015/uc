@@ -15659,20 +15659,20 @@ public final class PdpProtos {
   public interface GpCacheUpdateOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // required string scopeID = 1;
+    // required string scopeId = 1;
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
-    boolean hasScopeID();
+    boolean hasScopeId();
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
-    java.lang.String getScopeID();
+    java.lang.String getScopeId();
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
     com.google.protobuf.ByteString
-        getScopeIDBytes();
+        getScopeIdBytes();
 
     // repeated .pdp.GpCacheUpdate.GpCacheUpdateEntry map = 2;
     /**
@@ -15752,7 +15752,7 @@ public final class PdpProtos {
             }
             case 10: {
               bitField0_ |= 0x00000001;
-              scopeID_ = input.readBytes();
+              scopeId_ = input.readBytes();
               break;
             }
             case 18: {
@@ -16537,20 +16537,20 @@ public final class PdpProtos {
     }
 
     private int bitField0_;
-    // required string scopeID = 1;
+    // required string scopeId = 1;
     public static final int SCOPEID_FIELD_NUMBER = 1;
-    private java.lang.Object scopeID_;
+    private java.lang.Object scopeId_;
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
-    public boolean hasScopeID() {
+    public boolean hasScopeId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
-    public java.lang.String getScopeID() {
-      java.lang.Object ref = scopeID_;
+    public java.lang.String getScopeId() {
+      java.lang.Object ref = scopeId_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
@@ -16558,22 +16558,22 @@ public final class PdpProtos {
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         if (bs.isValidUtf8()) {
-          scopeID_ = s;
+          scopeId_ = s;
         }
         return s;
       }
     }
     /**
-     * <code>required string scopeID = 1;</code>
+     * <code>required string scopeId = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getScopeIDBytes() {
-      java.lang.Object ref = scopeID_;
+        getScopeIdBytes() {
+      java.lang.Object ref = scopeId_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        scopeID_ = b;
+        scopeId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -16617,7 +16617,7 @@ public final class PdpProtos {
     }
 
     private void initFields() {
-      scopeID_ = "";
+      scopeId_ = "";
       map_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -16625,7 +16625,7 @@ public final class PdpProtos {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasScopeID()) {
+      if (!hasScopeId()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -16643,7 +16643,7 @@ public final class PdpProtos {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getScopeIDBytes());
+        output.writeBytes(1, getScopeIdBytes());
       }
       for (int i = 0; i < map_.size(); i++) {
         output.writeMessage(2, map_.get(i));
@@ -16659,7 +16659,7 @@ public final class PdpProtos {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getScopeIDBytes());
+          .computeBytesSize(1, getScopeIdBytes());
       }
       for (int i = 0; i < map_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -16782,7 +16782,7 @@ public final class PdpProtos {
 
       public Builder clear() {
         super.clear();
-        scopeID_ = "";
+        scopeId_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
         if (mapBuilder_ == null) {
           map_ = java.util.Collections.emptyList();
@@ -16821,7 +16821,7 @@ public final class PdpProtos {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.scopeID_ = scopeID_;
+        result.scopeId_ = scopeId_;
         if (mapBuilder_ == null) {
           if (((bitField0_ & 0x00000002) == 0x00000002)) {
             map_ = java.util.Collections.unmodifiableList(map_);
@@ -16847,9 +16847,9 @@ public final class PdpProtos {
 
       public Builder mergeFrom(de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCacheUpdate other) {
         if (other == de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCacheUpdate.getDefaultInstance()) return this;
-        if (other.hasScopeID()) {
+        if (other.hasScopeId()) {
           bitField0_ |= 0x00000001;
-          scopeID_ = other.scopeID_;
+          scopeId_ = other.scopeId_;
           onChanged();
         }
         if (mapBuilder_ == null) {
@@ -16883,7 +16883,7 @@ public final class PdpProtos {
       }
 
       public final boolean isInitialized() {
-        if (!hasScopeID()) {
+        if (!hasScopeId()) {
           
           return false;
         }
@@ -16915,76 +16915,76 @@ public final class PdpProtos {
       }
       private int bitField0_;
 
-      // required string scopeID = 1;
-      private java.lang.Object scopeID_ = "";
+      // required string scopeId = 1;
+      private java.lang.Object scopeId_ = "";
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
-      public boolean hasScopeID() {
+      public boolean hasScopeId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
-      public java.lang.String getScopeID() {
-        java.lang.Object ref = scopeID_;
+      public java.lang.String getScopeId() {
+        java.lang.Object ref = scopeId_;
         if (!(ref instanceof java.lang.String)) {
           java.lang.String s = ((com.google.protobuf.ByteString) ref)
               .toStringUtf8();
-          scopeID_ = s;
+          scopeId_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
       public com.google.protobuf.ByteString
-          getScopeIDBytes() {
-        java.lang.Object ref = scopeID_;
+          getScopeIdBytes() {
+        java.lang.Object ref = scopeId_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          scopeID_ = b;
+          scopeId_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
-      public Builder setScopeID(
+      public Builder setScopeId(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-        scopeID_ = value;
+        scopeId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
-      public Builder clearScopeID() {
+      public Builder clearScopeId() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        scopeID_ = getDefaultInstance().getScopeID();
+        scopeId_ = getDefaultInstance().getScopeId();
         onChanged();
         return this;
       }
       /**
-       * <code>required string scopeID = 1;</code>
+       * <code>required string scopeId = 1;</code>
        */
-      public Builder setScopeIDBytes(
+      public Builder setScopeIdBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-        scopeID_ = value;
+        scopeId_ = value;
         onChanged();
         return this;
       }
@@ -17419,7 +17419,7 @@ public final class PdpProtos {
       "ORE_UPDATES\020\002\022\014\n\010KEEP_ALL\020\003\")\n\rGpPipDepl" +
       "oyer\022\n\n\002id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\" \n\013GpByte" +
       "Array\022\021\n\tbyteArray\030\001 \002(\014\"\024\n\005GpKey\022\013\n\003key" +
-      "\030\001 \002(\005\"\242\001\n\rGpCacheUpdate\022\017\n\007scopeID\030\001 \002(" +
+      "\030\001 \002(\005\"\242\001\n\rGpCacheUpdate\022\017\n\007scopeId\030\001 \002(" +
       "\t\0222\n\003map\030\002 \003(\0132%.pdp.GpCacheUpdate.GpCac" +
       "heUpdateEntry\032L\n\022GpCacheUpdateEntry\022\027\n\003k" +
       "ey\030\001 \002(\0132\n.pdp.GpKey\022\035\n\005value\030\002 \002(\0132\016.pd" +
@@ -17574,7 +17574,7 @@ public final class PdpProtos {
           internal_static_pdp_GpCacheUpdate_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_pdp_GpCacheUpdate_descriptor,
-              new java.lang.String[] { "ScopeID", "Map", });
+              new java.lang.String[] { "ScopeId", "Map", });
           internal_static_pdp_GpCacheUpdate_GpCacheUpdateEntry_descriptor =
             internal_static_pdp_GpCacheUpdate_descriptor.getNestedTypes().get(0);
           internal_static_pdp_GpCacheUpdate_GpCacheUpdateEntry_fieldAccessorTable = new
