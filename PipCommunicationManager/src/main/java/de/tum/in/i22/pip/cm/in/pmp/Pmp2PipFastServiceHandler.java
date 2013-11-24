@@ -14,9 +14,9 @@ public class Pmp2PipFastServiceHandler extends FastServiceHandler {
 	protected void doHandleClientConnection(Socket clientSocket) {
 		Pmp2PipClientConnectionHandler pmpClientConnHandler = 
 				new Pmp2PipClientConnectionHandler(clientSocket);
-		//TODO improve this code, use new features introduced in java 1.7, thread pools
-		Thread thread = new Thread(pmpClientConnHandler);
-		thread.start();
+		// invoke run directly (do not create separate thread)
+		// this means that the requests from PMP will be served sequentially 
+		pmpClientConnHandler.run();
 	}
 
 	@Override

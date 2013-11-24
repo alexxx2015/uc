@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IActionHandlerCreator;
+import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -27,7 +27,7 @@ public class PipHandler implements IPdp2Pip //,IPipCacher2Pip
 	
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 	
-	private IActionHandlerCreator _actionHandlerCreator;
+	private IEventHandlerCreator _actionHandlerCreator;
 	private IPipManager _pipManager; 
 	
 	
@@ -49,11 +49,11 @@ public class PipHandler implements IPdp2Pip //,IPipCacher2Pip
 //	}
 	
 	private PipHandler() {
-		EventHandlerManager actionHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(actionHandlerManager);
+		EventHandlerManager eventHandlerManager = new EventHandlerManager();
+		PipManager pipManager = new PipManager(eventHandlerManager);
 		pipManager.initialize();
 		
-		_actionHandlerCreator = actionHandlerManager;
+		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;
 	}
 
@@ -89,7 +89,7 @@ public class PipHandler implements IPdp2Pip //,IPipCacher2Pip
 	public IStatus notifyActualEvent(IEvent event) {
 		String action = event.getName();
 		_logger.debug("Action name: " + action);
-		IActionHandler actionHandler = null;
+		IEventHandler actionHandler = null;
 		try {
 			_logger.trace("Create event handler");
 			actionHandler = _actionHandlerCreator.createEventHandler(action);

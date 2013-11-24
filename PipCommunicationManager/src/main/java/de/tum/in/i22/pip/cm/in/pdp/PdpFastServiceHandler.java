@@ -14,9 +14,9 @@ public class PdpFastServiceHandler extends FastServiceHandler {
 	protected void doHandleClientConnection(Socket clientSocket) {
 		PdpClientConnectionHandler pdpClientConnHandler = 
 				new PdpClientConnectionHandler(clientSocket);
-		//TODO improve this code, use new features introduced in java 1.7, thread pools
-		Thread thread = new Thread(pdpClientConnHandler);
-		thread.start();
+		// invoke run directly (do not create separate thread)
+		// this means that the requests from PDP will be served sequentially 
+		pdpClientConnHandler.run();
 	}
 
 	@Override

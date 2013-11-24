@@ -3,7 +3,7 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Map;
 
-import de.tum.in.i22.pip.core.IActionHandler;
+import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 
-public abstract class BaseEventHandler implements IActionHandler {
+public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 	
 	private IEvent _event;

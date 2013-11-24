@@ -20,7 +20,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.core.manager.db.ActionHandlerDao;
+import de.tum.in.i22.pip.core.manager.db.EventHandlerDao;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -36,24 +36,24 @@ public class PipManager implements IPipManager {
 	private static final Logger _logger = Logger.getLogger(PipManager.class);
 	
 	
-	private EventHandlerManager _actionHandlerManager = null;
-	private ActionHandlerDao _actionHandlerDao = null;
+	private EventHandlerManager _eventHandlerManager = null;
+	private EventHandlerDao _eventHandlerDao = null;
 	
 	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 	
-	public PipManager(EventHandlerManager actionHandlerManager) {
-		_actionHandlerManager = actionHandlerManager;
+	public PipManager(EventHandlerManager eventHandlerManager) {
+		_eventHandlerManager = eventHandlerManager;
 	}
 	
 	public void initialize() {
 		_logger.info("Create data access object");
-		_actionHandlerDao = new ActionHandlerDao();
-		_actionHandlerDao.initialize();
+		_eventHandlerDao = new EventHandlerDao();
+		_eventHandlerDao.initialize();
 		
 		// read the database and store class definitions in the event handler manager
-		List<EventHandlerDefinition> actionHandlerDefinitions = _actionHandlerDao.getCurrentActionHandlerDefinitions();
-		for (EventHandlerDefinition actionHandlerDefinition : actionHandlerDefinitions) {
-			_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
+		List<EventHandlerDefinition> eventHandlerDefinitions = _eventHandlerDao.getCurrentEventHandlerDefinitions();
+		for (EventHandlerDefinition eventHandlerDefinition : eventHandlerDefinitions) {
+			_eventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
 		}
 	}
 
@@ -64,7 +64,7 @@ public class PipManager implements IPipManager {
 		
 		_logger.debug("Update information flow semantics");
 
-		// class name to ActionHandlerDefinition
+		// class name to EventHandlerDefinition
 		Map<String, EventHandlerDefinition> map = new HashMap<String, EventHandlerDefinition>();
 		
 		try {
@@ -96,9 +96,9 @@ public class PipManager implements IPipManager {
 				case OVERWRITE:
 					_logger.info("Owerwrite class definitions");
 					for (String className : keySet) {
-						EventHandlerDefinition actionHandlerDefinition = map.get(className);
-						_actionHandlerDao.saveActionHandlerDefinition(actionHandlerDefinition);
-						_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);
+						EventHandlerDefinition eventHandlerDefinition = map.get(className);
+						_eventHandlerDao.saveEventHandlerDefinition(eventHandlerDefinition);
+						_eventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
 					}
 					break;
 				case IGNORE_UPDATES: break; // currently not used
@@ -150,14 +150,14 @@ public class PipManager implements IPipManager {
 	private EventHandlerDefinition getMapEntry(Map<String, EventHandlerDefinition> map,
 			String fullClassName) {
 		
-		EventHandlerDefinition actionHandlerDefinition = map.get(fullClassName);
-		if (actionHandlerDefinition == null) {
-			actionHandlerDefinition = new EventHandlerDefinition();
-			actionHandlerDefinition.setClassName(fullClassName);
-			map.put(fullClassName, actionHandlerDefinition);
+		EventHandlerDefinition eventHandlerDefinition = map.get(fullClassName);
+		if (eventHandlerDefinition == null) {
+			eventHandlerDefinition = new EventHandlerDefinition();
+			eventHandlerDefinition.setClassName(fullClassName);
+			map.put(fullClassName, eventHandlerDefinition);
 		}
 		
-		return actionHandlerDefinition;
+		return eventHandlerDefinition;
 	}
 
 
