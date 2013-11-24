@@ -3,6 +3,7 @@ package de.tum.in.i22.pip.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -15,18 +16,21 @@ import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class PipHandler implements IPdp2Pip {
+public class PipHandler implements IPdp2Pip,IPipCacher2Pip {
 	
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 	
 	private IActionHandlerCreator _actionHandlerCreator;
 	private IPipManager _pipManager; 
+	
 	
 	private static IPdp2Pip _instance = null;
 	
@@ -36,6 +40,14 @@ public class PipHandler implements IPdp2Pip {
 		}
 		return _instance;
 	}
+	
+//	private static IPipCacher2Pip _instance = null;
+//	public static IPipCacher2Pip getInstance() {
+//		if (_instance == null) {
+//			_instance = new PipHandler();
+//		}
+//		return _instance;
+//	}
 	
 	private PipHandler() {
 		EventHandlerManager actionHandlerManager = new EventHandlerManager();
@@ -108,5 +120,35 @@ public class PipHandler implements IPdp2Pip {
 			File jarFile, EConflictResolution flagForTheConflictResolution) {
 		
 		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
+	}
+
+	@Override
+	public IStatus startSimulation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus stopSimulation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ICacheUpdate update(IEvent e) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus addPredicates(Map<IKey, String> predicates) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus revokePredicates(List<IKey> keys) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

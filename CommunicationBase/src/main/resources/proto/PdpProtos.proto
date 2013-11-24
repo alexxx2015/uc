@@ -128,7 +128,19 @@ message GpByteArray {
 	required bytes byteArray = 1;
 }
 
+message GpKey {
+	required int32 key = 1;
+}
 
+message GpCacheUpdate {
+	message GpCacheUpdateEntry{
+		required GpKey key = 1;
+		required GpBoolean value = 2;
+	}
 	
+	required string scopeId = 1;
+	repeated GpCacheUpdateEntry map = 2;
+
+}
 	
 	
