@@ -36,20 +36,11 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public class PdpHandlerPdpNative implements IIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerPdpNative.class);
-
-	private static PdpHandlerPdpNative _instance;
 	public static boolean pdpRunning = false;
 
 	private static IPolicyDecisionPoint lpdp;
 
-	public static PdpHandlerPdpNative getInstance() {
-		if (_instance == null) {
-			_instance = new PdpHandlerPdpNative();
-		}
-		return _instance;
-	}
-
-	private PdpHandlerPdpNative() {
+	public PdpHandlerPdpNative() {
 		try {
 			_logger.info("Get instance of native PDP ...");
 			lpdp = PolicyDecisionPoint.getInstance();

@@ -16,20 +16,11 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  * @author Stoimenov
  * 
  */
-public class PdpHandlerDummy implements IIncoming {
+public class PdpHandlerMock implements IIncoming {
 
-	private static final Logger _logger = Logger.getLogger(PdpHandlerDummy.class);
+	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
 
-	private static PdpHandlerDummy _instance;
-
-	public static PdpHandlerDummy getInstance() {
-		if (_instance == null) {
-			_instance = new PdpHandlerDummy();
-		}
-		return _instance;
-	}
-
-	private PdpHandlerDummy() {
+	public PdpHandlerMock() {
 	}
 
 	@Override

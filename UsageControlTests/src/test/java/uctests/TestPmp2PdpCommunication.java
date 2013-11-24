@@ -1,10 +1,15 @@
+package uctests;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
@@ -30,8 +35,10 @@ public class TestPmp2PdpCommunication {
 	private static final int PEP_LISTENER_PORT_NUM = 50007;
 	private static final int PMP_LISTENER_PORT_NUM = 50008;
 
-	static {
-		PdpController pdp = new PdpController();
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		Injector injector = Guice.createInjector(new PdpTestModule());
+		PdpController pdp = injector.getInstance(PdpController.class);
 		PdpSettings pdpSettings = pdp.getPdpSettings();
 		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
 		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);

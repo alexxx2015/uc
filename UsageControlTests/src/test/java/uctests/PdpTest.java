@@ -13,6 +13,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
@@ -59,6 +63,8 @@ public class PdpTest {
 	private static Thread _t1;
 	private static Thread _t2;
 	private static Thread _t3;
+	
+	private static Injector _injector = null;
 
 	public PdpTest() {
 		// TODO Auto-generated constructor stub
@@ -66,6 +72,13 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
+		
+		 /*
+	     * Guice.createInjector() takes your Modules, and returns a new Injector
+	     * instance.
+	     */
+	    _injector = Guice.createInjector(new PdpTestModule());
+	    
 		startPdpServer();
 		startPepClient();
 		startPmpClient();
@@ -152,7 +165,7 @@ public class PdpTest {
 	}
 
 	private static void startPdpServer() {
-		PdpController pdp = new PdpController();
+		PdpController pdp = _injector.getInstance(PdpController.class);
 		PdpSettings pdpSettings = pdp.getPdpSettings();
 		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
 		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
@@ -277,14 +290,14 @@ public class PdpTest {
 	
 	@AfterClass
     public static void afterClass() {
-		_logger.info("After class");
-		try {
-			_t1.join();
-			_t2.join();
-			_t3.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		_logger.info("After class");
+//		try {
+//			_t1.join();
+//			_t2.join();
+//			_t3.join();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
     }
 
 }
