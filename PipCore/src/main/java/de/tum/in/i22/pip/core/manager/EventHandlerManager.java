@@ -22,7 +22,7 @@ public class EventHandlerManager implements IActionHandlerCreator {
 	public IActionHandler createEventHandler(String actionName) throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
 
-		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "ActionHandler";
+		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "EventHandler";
 
 		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
 		if (pipClassLoader != null) {

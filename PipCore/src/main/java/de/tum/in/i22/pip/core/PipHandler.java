@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.core.eventdef.DefaultActionHandler;
+import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IActionHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
@@ -92,7 +92,7 @@ public class PipHandler implements IPdp2Pip {
 		
 		if (actionHandler == null) {
 			_logger.trace("Create default action handler");
-			actionHandler = new DefaultActionHandler();
+			actionHandler = new DefaultEventHandler();
 		}
 		
 		actionHandler.setEvent(event);

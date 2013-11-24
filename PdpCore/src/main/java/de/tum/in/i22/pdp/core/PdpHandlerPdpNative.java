@@ -28,30 +28,28 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
- * This is just a stub for now
+ * PdpHandler
  * 
  * @author Stoimenov
- * 
+ * This Handler invokes the old PDP that is written in c.
  */
-public class PdpHandler implements IIncoming {
+public class PdpHandlerPdpNative implements IIncoming {
 
-	private static final Logger _logger = Logger.getLogger(PdpHandler.class);
+	private static final Logger _logger = Logger.getLogger(PdpHandlerPdpNative.class);
 
-	private static PdpHandler _instance;
+	private static PdpHandlerPdpNative _instance;
 	public static boolean pdpRunning = false;
 
 	private static IPolicyDecisionPoint lpdp;
 
-	private static final String TIMESTAMP = "timestamp";
-
-	public static PdpHandler getInstance() {
+	public static PdpHandlerPdpNative getInstance() {
 		if (_instance == null) {
-			_instance = new PdpHandler();
+			_instance = new PdpHandlerPdpNative();
 		}
 		return _instance;
 	}
 
-	private PdpHandler() {
+	private PdpHandlerPdpNative() {
 		try {
 			_logger.info("Get instance of native PDP ...");
 			lpdp = PolicyDecisionPoint.getInstance();

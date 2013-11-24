@@ -6,13 +6,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.tum.in.i22.pdp.core.PdpHandlerPdpNative;
+
 public class PdpHandlerTest {
 	
-//	private static PdpHandler _pdpHandler;
+	private static PdpHandlerPdpNative _pdpHandler;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		_pdpHandler = PdpHandler.getInstance();
+//		_pdpHandler = PdpHandlerPdpNative.getInstance();
 	}
 
 	@AfterClass
@@ -29,7 +31,7 @@ public class PdpHandlerTest {
 
 	@Test
 	public void test() {
-		//_pdpHandler.notifyEvent(new EventBasic("test", null, true));
+//		_pdpHandler.notifyEvent(new EventBasic("test", null, true));
 	}
 
 }

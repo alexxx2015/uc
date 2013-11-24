@@ -5,14 +5,14 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class TestBeActionHandler extends BaseEventHandler {
+public class TestCeEventHandler extends BaseEventHandler {
 	private static final Logger _logger = Logger
-			.getLogger(EmptyCliboardAction.class);
+			.getLogger(EmptyCliboardEventHandler.class);
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("TestBeActionHandler execute");
-		return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
+		_logger.info("TestCeEventHandler execute");
+		return _messageFactory.createStatus(EStatus.ALLOW);
 	}
 
 }

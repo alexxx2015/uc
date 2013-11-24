@@ -12,12 +12,12 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class KillProcessActionHandler extends BaseEventHandler {
+public class KillProcessEventHandler extends BaseEventHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(KillProcessActionHandler.class);
+			.getLogger(KillProcessEventHandler.class);
 
-	public KillProcessActionHandler() {
+	public KillProcessEventHandler() {
 		super();
 	}
 

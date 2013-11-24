@@ -11,13 +11,13 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class TakeScreenshotActionHandler extends BaseEventHandler {
+public class TakeScreenshotEventHandler extends BaseEventHandler {
 	
 	
 	private static final Logger _logger = Logger
-			.getLogger(TakeScreenshotActionHandler.class);
+			.getLogger(TakeScreenshotEventHandler.class);
 	
-	public TakeScreenshotActionHandler() {
+	public TakeScreenshotEventHandler() {
 		super();
 	}
 

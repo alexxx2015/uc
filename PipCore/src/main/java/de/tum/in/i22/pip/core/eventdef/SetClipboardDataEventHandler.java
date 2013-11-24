@@ -11,11 +11,11 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class SetClipboardDataActionHandler extends BaseEventHandler {
+public class SetClipboardDataEventHandler extends BaseEventHandler {
 	
-	private static final Logger _logger = Logger.getLogger(SetClipboardDataActionHandler.class);
+	private static final Logger _logger = Logger.getLogger(SetClipboardDataEventHandler.class);
 	
-	public SetClipboardDataActionHandler() {
+	public SetClipboardDataEventHandler() {
 		super();
 	}
 	

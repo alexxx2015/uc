@@ -10,12 +10,12 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class EmptyCliboardAction extends BaseEventHandler {
+public class EmptyCliboardEventHandler extends BaseEventHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(EmptyCliboardAction.class);
+			.getLogger(EmptyCliboardEventHandler.class);
 
-	public EmptyCliboardAction() {
+	public EmptyCliboardEventHandler() {
 		super();
 	}
 

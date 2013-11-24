@@ -73,8 +73,8 @@
 
 		<pluginManagement>
 			<plugins>
-				<!-- m2e does not support copy-dependencies and unpack -->
-				<!-- Ignore/Execute plugin execution -->
+				<!-- m2e does not support copy-dependencies and unpack
+					Ignore/Execute plugin execution  -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -82,7 +82,7 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
-								<!-- copy-dependency plugin -->
+								copy-dependency plugin
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>

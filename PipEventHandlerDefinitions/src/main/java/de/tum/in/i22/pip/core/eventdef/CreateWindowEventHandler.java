@@ -11,12 +11,12 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class CreateWindowActionHandler extends BaseEventHandler {
+public class CreateWindowEventHandler extends BaseEventHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(CreateWindowActionHandler.class);
+			.getLogger(CreateWindowEventHandler.class);
 
-	public CreateWindowActionHandler() {
+	public CreateWindowEventHandler() {
 		super();
 	}
 

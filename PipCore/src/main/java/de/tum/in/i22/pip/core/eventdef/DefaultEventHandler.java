@@ -4,9 +4,9 @@ import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
-public class DefaultActionHandler extends BaseEventHandler {
+public class DefaultEventHandler extends BaseEventHandler {
 
-	public DefaultActionHandler() {
+	public DefaultEventHandler() {
 		super();
 	}
 

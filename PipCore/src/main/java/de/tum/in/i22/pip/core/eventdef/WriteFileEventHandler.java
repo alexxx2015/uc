@@ -9,33 +9,31 @@ import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-/**
- * Print event
- * 
- * @author Stoimenov
- * 
- */
-public class CreateDCActionHandler extends BaseEventHandler {
+public class WriteFileEventHandler extends BaseEventHandler {
 
 	private static final Logger _logger = Logger
-			.getLogger(CreateDCActionHandler.class);
+			.getLogger(WriteFileEventHandler.class);
 
-	public CreateDCActionHandler() {
+	public WriteFileEventHandler() {
 		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateDC event handler execute");
+		_logger.info("WriteFile action handler execute");
+
+		String fileName = null;
 		String pid = null;
+		// currently not used
 		String processName = null;
-		String deviceName = null;
+
 		try {
+			fileName = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
 			processName = getParameterValue("ProcessName");
-			deviceName = getParameterValue("lpszDevice");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -45,19 +43,24 @@ public class CreateDCActionHandler extends BaseEventHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new Name(
-				deviceName));
+		String fileContainerId = ifModel
+				.getContainerIdByName(new Name(fileName));
 
-		// check if container for device exists and create new container if not
-		if (deviceContainerId == null) {
+		// check if container for filename exists and create new container if
+		// not
+		if (fileContainerId == null) {
 			IContainer container = _messageFactory.createContainer();
-			deviceContainerId = ifModel.addContainer(container);
-			ifModel.addName(new Name(deviceName), deviceContainerId);
+			fileContainerId = ifModel.addContainer(container);
+			IData data = _messageFactory.createData();
+			String fileDataId = ifModel.addData(data);
+
+			ifModel.addDataToContainerMapping(fileDataId, fileContainerId);
+
+			ifModel.addName(new Name(fileName), fileContainerId);
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId),
-				deviceContainerId);
+				ifModel.getDataInContainer(processContainerId), fileContainerId);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

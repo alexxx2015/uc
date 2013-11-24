@@ -2,7 +2,6 @@ package de.fraunhofer.iese.ind2uce.pdp;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -23,8 +22,11 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
 	private PolicyDecisionPoint() throws RemoteException {
 		_logger.info("Loading native PDP library");
 		try {
-			loadDinamicLibrary("win64", "libpthread-2.dll");
+			loadDinamicLibrary("win64", "libglib-2.0-0.dll");
 			loadDinamicLibrary("win64", "libgnurx-0.dll");
+			loadDinamicLibrary("win64", "libiconv-2.dll");
+			loadDinamicLibrary("win64", "libintl-8.dll");
+			loadDinamicLibrary("win64", "libpthread-2.dll");
 			loadDinamicLibrary("win64", "pdp.dll");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
@@ -39,11 +41,13 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
 		if (directory != null) {
 			relativePath = "/" + directory + "/" + dllName;
 		} else {
-			relativePath = dllName;
+			relativePath = "/" + dllName;
 		}
 		
-		URL dll = PolicyDecisionPoint.class.getResource(relativePath);
-		File dllFile = new File(dll.toURI());
+//		URL dll = PdpHandler.class.getResource(relativePath);
+		String location = "D:/githiwi/PdpCore/target/natives" + relativePath;
+		_logger.info("Loading: " + location);
+		File dllFile = new File(location);
 		System.load(dllFile.getAbsolutePath());
 	}
 
