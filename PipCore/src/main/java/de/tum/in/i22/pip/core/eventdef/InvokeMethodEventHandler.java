@@ -5,17 +5,17 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class InvokeMethodActionHandler extends BaseEventHandler {
+public class InvokeMethodEventHandler extends BaseEventHandler {
 	private static final Logger _logger = Logger
-			.getLogger(KillProcessActionHandler.class);
+			.getLogger(InvokeMethodEventHandler.class);
 	
-	public InvokeMethodActionHandler() {
+	public InvokeMethodEventHandler() {
 		super();
 	}
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("InvokeMethod action handler execute");
+		_logger.info("InvokeMethod event handler execute");
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

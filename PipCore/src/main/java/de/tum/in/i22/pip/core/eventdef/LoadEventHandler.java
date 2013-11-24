@@ -1,9 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -12,11 +10,11 @@ import de.tum.in.i22.pip.core.Scope;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class LoadActionHandler extends BaseEventHandler {
+public class LoadEventHandler extends BaseEventHandler {
 	private static final Logger _logger = Logger
-			.getLogger(KillProcessActionHandler.class);
+			.getLogger(LoadEventHandler.class);
 	
-	public LoadActionHandler() {
+	public LoadEventHandler() {
 		super();
 	}
 	
@@ -24,13 +22,13 @@ public class LoadActionHandler extends BaseEventHandler {
 	public IStatus execute() {
 		_logger.info("Load action handler execute");
 
-		String direction = null;
+//		String direction = null;
 		String delimiter = null;
 		String filename = null;
 		
 
 		try {
-			direction = getParameterValue("direction");
+//			direction = getParameterValue("direction");
 			delimiter = getParameterValue("delimiter");
 			filename = getParameterValue("filename");
 			
