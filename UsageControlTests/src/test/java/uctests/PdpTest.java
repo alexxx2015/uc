@@ -72,7 +72,7 @@ public class PdpTest {
 		startPip();
 		
 		try {
-			_logger.debug("Pause the main thread for 1s so that PDP and PIP can be started.");
+			_logger.debug("Pause the main thread for 1 s so that PDP and PIP can be started.");
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			_logger.error("Main thread interrupted.", e);
@@ -235,11 +235,11 @@ public class PdpTest {
 	}
 	
 	private static Thread startPip() {
+		final PipController pipController = new PipController();
 		_t3 = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				_logger.debug("Start PIP. Listen from incoming PDP connections on port " + PDP_LISTENER_PORT_IN_PIP);
-				PipController pipController = new PipController();
 				PipSettings pipSettings = pipController.getPipSettings();
 				pipSettings.setPdpListenerPortNum(PDP_LISTENER_PORT_IN_PIP);
 				pipController.start();

@@ -1,4 +1,4 @@
-package pmp2pip.tests;
+package uctests;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;

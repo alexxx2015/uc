@@ -22,7 +22,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateProcess action handler execute");
+		_logger.info("CreateProcess event handler execute");
 		
 		String pid = null;
 		String parentPid = null;

@@ -21,7 +21,7 @@ public class EmptyCliboardEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("EmptyClipboard action handler execute");
+		_logger.info("EmptyClipboard event handler execute");
 		InformationFlowModel ifModel = getInformationFlowModel();
 		String clipboardContainerId = ifModel.getContainerIdByName(new Name(
 				"clipboard"));

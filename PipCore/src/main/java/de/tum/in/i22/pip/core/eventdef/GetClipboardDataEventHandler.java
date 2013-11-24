@@ -23,7 +23,7 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("GetClipboardData action handler execute");
+		_logger.info("GetClipboardData event handler execute");
 		
 		String pid = null;
 		String processName = null;

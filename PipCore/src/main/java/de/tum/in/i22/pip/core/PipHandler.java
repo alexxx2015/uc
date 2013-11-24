@@ -91,18 +91,18 @@ public class PipHandler implements IPdp2Pip //,IPipCacher2Pip
 		_logger.debug("Action name: " + action);
 		IActionHandler actionHandler = null;
 		try {
-			_logger.trace("Create action handler");
+			_logger.trace("Create event handler");
 			actionHandler = _actionHandlerCreator.createEventHandler(action);
 		} catch (IllegalAccessException | InstantiationException e) {
-			_logger.error("Failed to create Action Handler for action " + action, e);
+			_logger.error("Failed to create event handler for action " + action, e);
 			// FIXME create error status with description
 		} catch (ClassNotFoundException e ){
-			_logger.error("Class not found for Action Handler " + action, e);
+			_logger.error("Class not found for event handler " + action, e);
 			// FIXME create error status with description
 		}
 		
 		if (actionHandler == null) {
-			_logger.trace("Create default action handler");
+			_logger.trace("Create default event handler");
 			actionHandler = new DefaultEventHandler();
 		}
 		

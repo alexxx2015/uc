@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 import org.apache.log4j.Logger;
 
 /**
- * Action handler data access object class.
+ * event handler data access object class.
  * @author Stoimenov
  *
  */
@@ -36,7 +36,7 @@ public class ActionHandlerDao {
 	}
 	
 	public EventHandlerDefinition getActionHandlerDefinition(String className) {
-		_logger.debug("Get action handler definition for " + className);
+		_logger.debug("Get event handler definition for " + className);
 		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
 				"select t from EventHandlerDefinition t where t.className=:className",
 				EventHandlerDefinition.class);
@@ -53,8 +53,8 @@ public class ActionHandlerDao {
 	public void saveActionHandlerDefinition(
 			EventHandlerDefinition actionHandlerDefinition) {
 		
-		_logger.debug("Save action handler definition: " + actionHandlerDefinition.getClassName());
-		// check if action handler definition already exists
+		_logger.debug("Save event handler definition: " + actionHandlerDefinition.getClassName());
+		// check if event handler definition already exists
 		EventHandlerDefinition existingActionHandlerDef = 
 				getActionHandlerDefinition(actionHandlerDefinition.getClassName());
 		
@@ -76,7 +76,7 @@ public class ActionHandlerDao {
 	}
 
 	public List<EventHandlerDefinition> getCurrentActionHandlerDefinitions() {
-		_logger.debug("Get current action handler definitions");
+		_logger.debug("Get current event handler definitions");
 		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
 				"select t from EventHandlerDefinition t",
 				EventHandlerDefinition.class);

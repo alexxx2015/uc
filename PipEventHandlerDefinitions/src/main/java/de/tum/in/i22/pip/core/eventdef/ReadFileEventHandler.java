@@ -23,7 +23,7 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("ReadFile action handler execute");
+		_logger.info("ReadFile event handler execute");
 		
 		String fileName = null;
 		String pid = null;

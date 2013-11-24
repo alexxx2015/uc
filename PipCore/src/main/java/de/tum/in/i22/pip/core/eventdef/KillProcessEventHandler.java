@@ -23,7 +23,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("KillProcess action handler execute");
+		_logger.info("KillProcess event handler execute");
 		String pid = null;
 //		String processName = null;
 		

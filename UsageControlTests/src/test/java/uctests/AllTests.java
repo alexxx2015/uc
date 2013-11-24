@@ -8,7 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ 
 	PipTest.class,
 	PdpTest.class,
-	TestPep2PdpCommunication.class })
+	TestPep2PdpCommunication.class,
+	TestPmp2PipCommunication.class})
 public class AllTests {
 
 }

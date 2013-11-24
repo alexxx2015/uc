@@ -20,7 +20,7 @@ public class LoadEventHandler extends BaseEventHandler {
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("Load action handler execute");
+		_logger.info("Load event handler execute");
 
 //		String direction = null;
 		String delimiter = null;

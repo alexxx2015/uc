@@ -23,7 +23,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("WriteFile action handler execute");
+		_logger.info("WriteFile event handler execute");
 
 		String fileName = null;
 		String pid = null;

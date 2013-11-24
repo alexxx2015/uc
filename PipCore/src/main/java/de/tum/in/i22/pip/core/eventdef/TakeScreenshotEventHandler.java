@@ -23,7 +23,7 @@ public class TakeScreenshotEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("TakeScreenshot action handler execute");
+		_logger.info("TakeScreenshot event handler execute");
         String visibleWindow = null;
         try {
         	visibleWindow = getParameterValue("VisibleWindow");

@@ -50,7 +50,7 @@ public class PipManager implements IPipManager {
 		_actionHandlerDao = new ActionHandlerDao();
 		_actionHandlerDao.initialize();
 		
-		// read the database and store class definitions in the action handler manager
+		// read the database and store class definitions in the event handler manager
 		List<EventHandlerDefinition> actionHandlerDefinitions = _actionHandlerDao.getCurrentActionHandlerDefinitions();
 		for (EventHandlerDefinition actionHandlerDefinition : actionHandlerDefinitions) {
 			_actionHandlerManager.setClassToBeLoaded(actionHandlerDefinition);

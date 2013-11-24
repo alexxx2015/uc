@@ -21,7 +21,7 @@ public class SetClipboardEventActionHandler extends BaseEventHandler {
 	
 	@Override
 	public IStatus execute() {
-		_logger.info("SetClipboardData action handler execute");
+		_logger.info("SetClipboardData event handler execute");
 		
 		String pid = null;
 		String processName = null;
