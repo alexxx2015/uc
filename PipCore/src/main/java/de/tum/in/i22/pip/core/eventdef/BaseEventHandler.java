@@ -19,7 +19,8 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator
 			.createMessageFactory();
-	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
+	private static final Logger _logger = Logger
+			.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
 
@@ -27,8 +28,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * scopes affected bz the current event execution
 	 */
 	protected static final String _delimiterName = "delimiter";
-	protected static final String _openDelimiter = "open";
-	protected static final String _closeDelimiter = "close";
+	protected static final String _openDelimiter = "start";
+	protected static final String _closeDelimiter = "end";
 
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
@@ -77,8 +78,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 	/*
 	 * This function takes as parameter the scope object to be opened, check if
 	 * it is already opened and if not, it opens it. It return OKAY if
-	 * everything went fine, ERROR if the scope is already opened.
-	 * It should be final.
+	 * everything went fine, ERROR if the scope is already opened. It should be
+	 * final.
 	 */
 	protected final IStatus openScope(Scope scope) {
 		InformationFlowModel ifModel = getInformationFlowModel();
@@ -122,12 +123,13 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	public IStatus execute() {
 		// TODO: implement a body
-		IEvent e=getEvent();
-		if (e==null)
+		IEvent e = getEvent();
+		if (e == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters()==null)
-			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
-		
+		if (e.getParameters() == null)
+			return _messageFactory
+					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
@@ -142,60 +144,72 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * @see de.tum.in.i22.pip.core.IActionHandler#execute_event()
 	 */
 	@Override
-	public IStatus execute_event() {
-		
-		IEvent e=getEvent();
-		if (e==null)
+	public IStatus executeEvent() {
+
+		IEvent e = getEvent();
+		if (e == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters()==null)
-			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
-		
-		
+		if (e.getParameters() == null)
+			return _messageFactory
+					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
+
 		IStatus finalStatus = _messageFactory.createStatus(EStatus.OKAY);
-		String errorString="";
-		
+		String errorString = "";
+
 		/*
-		 * 1) create the list of scopes affected by the execution of the current event and store the number in scopeNum
+		 * 1) create the list of scopes affected by the execution of the current
+		 * event and store the number in scopeNum
 		 */
 		int scopeNum = createScope();
 
-		
 		/*
 		 * 2) opens all the scopes to be opened
 		 */
-		if (scopeNum>0){
-			for (Scope scope : _scopesToBeOpened){
-				_logger.info("Opening scope "+ scope.get_humanReadableName());
-				IStatus is=openScope(scope);
-				if (!is.isSameStatus(_messageFactory.createStatus(EStatus.OKAY))){
-					finalStatus=_messageFactory.createStatus(EStatus.ERROR);
-					errorString = errorString + "\n" + is.getErrorMessage();
+		if (scopeNum > 0) {
+			if (_scopesToBeOpened != null) {
+				for (Scope scope : _scopesToBeOpened) {
+					_logger.info("Opening scope "
+							+ scope.get_humanReadableName());
+					IStatus is = openScope(scope);
+					if (!is.isSameStatus(_messageFactory
+							.createStatus(EStatus.OKAY))) {
+						finalStatus = _messageFactory
+								.createStatus(EStatus.ERROR);
+						errorString = errorString + "\n" + is.getErrorMessage();
+					}
 				}
 			}
 		}
-		
+
 		/*
 		 * 3) Update the ifModel according to the single event semantics
 		 */
-		
-		execute();
 
+		execute();
 
 		/*
 		 * 4) Closes all the scopes to be closed
 		 */
-		if (scopeNum>0){
-			for (Scope scope : _scopesToBeClosed){
-				_logger.info("Closing scope "+ scope.get_humanReadableName());
-				IStatus is=closeScope(scope);
-				if (!is.isSameStatus(_messageFactory.createStatus(EStatus.OKAY))){
-					finalStatus=_messageFactory.createStatus(EStatus.ERROR);
-					errorString = errorString + "\n" + is.getErrorMessage();
+		if (scopeNum > 0) {
+			if (_scopesToBeClosed != null) {
+				for (Scope scope : _scopesToBeClosed) {
+					_logger.info("Closing scope "
+							+ scope.get_humanReadableName());
+					IStatus is = closeScope(scope);
+					if (!is.isSameStatus(_messageFactory
+							.createStatus(EStatus.OKAY))) {
+						finalStatus = _messageFactory
+								.createStatus(EStatus.ERROR);
+						errorString = errorString + "\n" + is.getErrorMessage();
+					}
 				}
 			}
 		}
-		
-		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR))) finalStatus.setErrorMessage(errorString);
+
+		if (finalStatus.isSameStatus(_messageFactory
+				.createStatus(EStatus.ERROR)))
+			finalStatus.setErrorMessage(errorString);
+
 		return finalStatus;
 
 	}

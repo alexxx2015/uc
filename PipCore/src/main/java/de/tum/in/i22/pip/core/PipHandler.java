@@ -108,7 +108,7 @@ public class PipHandler implements IPdp2Pip //,IPipCacher2Pip
 		
 		actionHandler.setEvent(event);
 		
-		IStatus status =  actionHandler.execute_event();
+		IStatus status =  actionHandler.executeEvent();
 		_logger.trace("Status to return: " + status);
 		
 		return status;
