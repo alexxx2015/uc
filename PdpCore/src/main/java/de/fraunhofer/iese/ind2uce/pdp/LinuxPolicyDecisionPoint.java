@@ -14,10 +14,7 @@ public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 	public void initialize() throws Exception {
 		_logger.info("Loading native PDP library");
 		try {
-			loadDinamicLibrary("pdpNative/win64", "libiconv-2.dll");
-			loadDinamicLibrary("pdpNative/win64", "libintl-8.dll");
-			loadDinamicLibrary("pdpNative/win64", "libglib-2.0-0.dll");
-			loadDinamicLibrary("pdpNative/win64", "pdp.dll");
+			loadDinamicLibrary("pdpNative/linux", "pdp.dll");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 		} catch (Exception e) {
