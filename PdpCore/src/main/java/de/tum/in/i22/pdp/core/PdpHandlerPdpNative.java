@@ -1,6 +1,5 @@
 package de.tum.in.i22.pdp.core;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +8,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Inject;
+
 import de.fraunhofer.iese.ind2uce.internal.pdp.AuthorizationAction;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
 import de.fraunhofer.iese.ind2uce.internal.pdp.ExecuteAction;
-import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Param;
 import de.fraunhofer.iese.ind2uce.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
@@ -38,20 +39,22 @@ public class PdpHandlerPdpNative implements IIncoming {
 	private static final Logger _logger = Logger.getLogger(PdpHandlerPdpNative.class);
 	public static boolean pdpRunning = false;
 
-	private static IPolicyDecisionPoint lpdp;
+	private static PolicyDecisionPoint _lpdp;
 
-	public PdpHandlerPdpNative() {
+	@Inject
+	public PdpHandlerPdpNative(PolicyDecisionPoint lpdp) {
+		_lpdp = lpdp;
 		try {
 			_logger.info("Get instance of native PDP ...");
-			lpdp = PolicyDecisionPoint.getInstance();
+			_lpdp.initialize();
 			_logger.info("Start native PDP ..");
-			lpdp.pdpStart();
+			_lpdp.pdpStart();
 			_logger.info("Native PDP started");
 		} catch (Exception e) {
-			_logger.fatal("Could not load native PDP library!", e);
+			_logger.fatal("Could not load native PDP library! " + e.getMessage());
 		}
 	}
-
+	
 	@Override
 	public IStatus deployMechanism(IMechanism mechanism) {
 		// TODO implement
@@ -91,11 +94,11 @@ public class PdpHandlerPdpNative implements IIncoming {
 		}
 
 		Decision d = null;
-		try {
-			d = lpdp.pdpNotifyEventJNI(curEvent);
-		} catch (RemoteException e) {
-			_logger.error("Call to native lib failed.", e);
-		}
+//		try {
+			d = _lpdp.pdpNotifyEventJNI(curEvent);
+//		} catch (RemoteException e) {
+//			_logger.error("Call to native lib failed.", e);
+//		}
 		_logger.debug("Response from the old PDP: " + d);
 
 		_logger.debug("Convert decision to response");

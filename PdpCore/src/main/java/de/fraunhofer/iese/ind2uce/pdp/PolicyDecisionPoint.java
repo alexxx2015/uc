@@ -13,29 +13,19 @@ import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
 import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
 import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
 
-public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyDecisionPoint, Serializable {
+public abstract class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyDecisionPoint, Serializable {
 	private static final long serialVersionUID = -6823961095919408237L;
-	private static Logger _logger = Logger.getLogger(PolicyDecisionPoint.class);
+	protected static Logger _logger = Logger.getLogger(PolicyDecisionPoint.class);
 
-	public static IPolicyDecisionPoint curInstance = null;
 	public static boolean pdpRunning = false;
-
-	private PolicyDecisionPoint() throws RemoteException {
-		_logger.info("Loading native PDP library");
-		try {
-			loadDinamicLibrary("pdpNative/win64", "libiconv-2.dll");
-			loadDinamicLibrary("pdpNative/win64", "libintl-8.dll");
-			loadDinamicLibrary("pdpNative/win64", "libglib-2.0-0.dll");
-			loadDinamicLibrary("pdpNative/win64", "pdp.dll");
-			pdpRunning = true;
-			_logger.info("Native PDP library loaded...");
-		} catch (Exception e) {
-			System.out.println("Could not load native PDP library!");
-			System.out.println(e.getMessage());
-		}
+	
+	public PolicyDecisionPoint() throws RemoteException {
+		super();
 	}
+	
+	public abstract void initialize() throws Exception;
 
-	private void loadDinamicLibrary(String directory, String dllName) throws Exception {
+	protected void loadDinamicLibrary(String directory, String dllName) throws Exception {
 		String relativePath = null;
 		if (directory != null) {
 			relativePath = "/" + directory + "/" + dllName;
@@ -47,13 +37,6 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
 		_logger.info("Loading: " + dll.toURI());
 		File dllFile = new File(dll.toURI());
 		System.load(dllFile.getAbsolutePath());
-	}
-
-	public static IPolicyDecisionPoint getInstance() throws RemoteException {
-		if (curInstance == null)
-			curInstance = new PolicyDecisionPoint();
-		_logger.info("Returning curinstance of PDP...");
-		return curInstance;
 	}
 
 	// Native method declaration
