@@ -12,7 +12,6 @@ import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.core.PdpHandlerDummy;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -27,7 +26,7 @@ public class RequestHandler implements Runnable {
 	private static RequestHandler _instance = null;
 	private BlockingQueue<RequestWrapper> _requestQueue = null;
 	
-	private IIncoming communicationHandler = PdpHandlerDummy.getInstance();
+	private IIncoming pdpHandler;
 	private IPdp2PipFast _pdp2PipProxy = null;
 	
 	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
@@ -37,6 +36,10 @@ public class RequestHandler implements Runnable {
 			_instance = new RequestHandler();
 		}
 		return _instance;
+	}
+	
+	public void setPdpHandler(IIncoming pdpHandler) {
+		this.pdpHandler = pdpHandler;
 	}
 	
 	private RequestHandler() {
@@ -95,7 +98,7 @@ public class RequestHandler implements Runnable {
 					notifyEventToPip(event);
 				}
 				// send the event to the PDP itself
-				response = communicationHandler.notifyEvent(event);
+				response = pdpHandler.notifyEvent(event);
 			} else if (request instanceof PmpRequestWrapper) {
 				PmpRequest pmpRequest = ((PmpRequestWrapper)request).getPmpRequest();
 				response = processPmpRequest(pmpRequest);
@@ -118,13 +121,13 @@ public class RequestHandler implements Runnable {
 		Object result = null;
 		switch (pmpRequest.getMethod()) {
 		case DEPLOY_MECHANISM: 
-			result = communicationHandler.deployMechanism(pmpRequest.getMechanism());
+			result = pdpHandler.deployMechanism(pmpRequest.getMechanism());
 			break;
 		case EXPORT_MECHANISM: 
-			result = communicationHandler.exportMechanism(pmpRequest.getStringParameter());
+			result = pdpHandler.exportMechanism(pmpRequest.getStringParameter());
 			break;
 		case REVOKE_MECHANISM:  
-			result = communicationHandler.revokeMechanism(pmpRequest.getStringParameter());
+			result = pdpHandler.revokeMechanism(pmpRequest.getStringParameter());
 			break;
 		default: 
 			throw new RuntimeException("Method " + pmpRequest.getMethod() + " is not supported!");

@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
@@ -28,9 +31,13 @@ public class PdpWithPdpNativeTest {
 
 	private static Thread _t1;
 	private static Thread _t2;
+	
+	private static Injector _injector;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		_injector = Guice.createInjector(new PdpTestModule());
+		
 		startPdp();
 		startPip();
 
@@ -81,7 +88,7 @@ public class PdpWithPdpNativeTest {
 	private static void startPdp() {
 		_t1 = new Thread(new Runnable() {
 				public void run() {
-				PdpController pdp = new PdpController();
+				PdpController pdp =  _injector.getInstance(PdpController.class);
 				PdpSettings pdpSettings = pdp.getPdpSettings();
 				pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
 				pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);

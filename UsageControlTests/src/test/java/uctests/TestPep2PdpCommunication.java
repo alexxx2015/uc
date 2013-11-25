@@ -7,7 +7,11 @@ import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import de.tum.in.i22.pdp.PdpController;
 import de.tum.in.i22.pdp.PdpSettings;
@@ -33,8 +37,10 @@ public class TestPep2PdpCommunication {
 	private static int _pepListenerPortNum = 50007;
 	private static int _pmpListenerPortNum = 50008;
 	
-	static {
-		PdpController pdp = new PdpController();
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		Injector injector = Guice.createInjector(new PdpTestModule());
+		PdpController pdp = injector.getInstance(PdpController.class);
 		PdpSettings pdpSettings = pdp.getPdpSettings();
 		pdpSettings.setPepListenerPortNum(_pepListenerPortNum);
 		pdpSettings.setPmpListenerPortNum(_pmpListenerPortNum);

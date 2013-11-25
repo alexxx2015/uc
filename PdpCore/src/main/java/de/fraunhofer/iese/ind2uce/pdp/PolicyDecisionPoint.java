@@ -23,9 +23,10 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
 	private PolicyDecisionPoint() throws RemoteException {
 		_logger.info("Loading native PDP library");
 		try {
-			loadDinamicLibrary("win64", "libpthread-2.dll");
-			loadDinamicLibrary("win64", "libgnurx-0.dll");
-			loadDinamicLibrary("win64", "pdp.dll");
+			loadDinamicLibrary("pdpNative/win64", "libiconv-2.dll");
+			loadDinamicLibrary("pdpNative/win64", "libintl-8.dll");
+			loadDinamicLibrary("pdpNative/win64", "libglib-2.0-0.dll");
+			loadDinamicLibrary("pdpNative/win64", "pdp.dll");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 		} catch (Exception e) {
@@ -39,10 +40,11 @@ public class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyD
 		if (directory != null) {
 			relativePath = "/" + directory + "/" + dllName;
 		} else {
-			relativePath = dllName;
+			relativePath = "/" + dllName;
 		}
 		
 		URL dll = PolicyDecisionPoint.class.getResource(relativePath);
+		_logger.info("Loading: " + dll.toURI());
 		File dllFile = new File(dll.toURI());
 		System.load(dllFile.getAbsolutePath());
 	}

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.core.IActionHandler;
+import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.Scope;
@@ -16,11 +16,10 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public abstract class BaseEventHandler implements IActionHandler {
+public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator
 			.createMessageFactory();
-	private static final Logger _logger = Logger
-			.getLogger(BaseEventHandler.class);
+	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
 

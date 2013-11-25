@@ -6,12 +6,18 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.cm.in.pdp.PdpFastServiceHandler;
 import de.tum.in.i22.pip.cm.in.pmp.Pmp2PipFastServiceHandler;
+import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PipController {
 	private static Logger _logger = Logger.getLogger(PipController.class);
 	
 	private boolean _isStarted = false;
+	
+	public PipController() {
+		_logger.info("Initialize PipHandler");
+		PipHandler.getInstance();
+	}
 	
 	public static void main(String[] args) {
 		
@@ -42,7 +48,6 @@ public class PipController {
 		if (_isStarted)
 			return;
 		_isStarted = true;
-		
 		_logger.info("Start pip");
 		
 		_logger.info("Start PdpFastServiceHandler");

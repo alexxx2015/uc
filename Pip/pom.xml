@@ -13,8 +13,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>../PipCommunicationManager</module>
 		<module>../PipCore</module>
+		<module>../PipCommunicationManager</module>
 		<module>../PipEventHandlerDefinitions</module>
 	</modules>
 </project>

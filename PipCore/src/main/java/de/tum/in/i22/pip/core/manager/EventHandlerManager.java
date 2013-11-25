@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.core.IActionHandler;
+import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
 
-public class EventHandlerManager implements IActionHandlerCreator {
+public class EventHandlerManager implements IEventHandlerCreator {
 
 	private static final Logger _logger = Logger.getLogger(EventHandlerManager.class);
 
@@ -19,17 +19,17 @@ public class EventHandlerManager implements IActionHandlerCreator {
 	}
 
 	@Override
-	public IActionHandler createEventHandler(String actionName) throws IllegalAccessException, InstantiationException,
+	public IEventHandler createEventHandler(String actionName) throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
 
-		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "ActionHandler";
+		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "EventHandler";
 
 		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
 		if (pipClassLoader != null) {
 			_logger.trace("Load class (definition obtained from database): " + className);
 			Class<?> actionHandlerClass = pipClassLoader.loadClass(className);
 			_logger.trace("Create class " + className + " instance");
-			IActionHandler actionHandler = (IActionHandler) actionHandlerClass.newInstance();
+			IEventHandler actionHandler = (IEventHandler) actionHandlerClass.newInstance();
 			return actionHandler;
 		} else {
 			// The specified class is not found in the database.
@@ -39,10 +39,10 @@ public class EventHandlerManager implements IActionHandlerCreator {
 				_logger.trace("Load class from class path: " + className);
 				Class<?> actionHandlerClass = classLoader.loadClass(className);
 				_logger.trace("Create class " + className + " instance");
-				IActionHandler actionHandler = (IActionHandler) actionHandlerClass.newInstance();
+				IEventHandler actionHandler = (IEventHandler) actionHandlerClass.newInstance();
 				return actionHandler;
-			} catch (ClassNotFoundException e) {
-				_logger.warn("Class " + className + " not found.", e);
+			} catch (Exception e) {
+				_logger.warn("Class " + className + " not found. Error: " + e.getMessage());
 				return null;
 			}
 		}
