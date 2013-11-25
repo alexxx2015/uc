@@ -3,6 +3,8 @@ package de.tum.in.i22.pdp.core;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
+import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -19,6 +21,8 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public class PdpHandlerMock implements IIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
+	
+	private IPdpCore2PipCacher _pipCacher = new PipCacherImpl(); 
 
 	public PdpHandlerMock() {
 	}
