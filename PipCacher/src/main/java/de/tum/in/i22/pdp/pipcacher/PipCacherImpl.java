@@ -40,4 +40,10 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 		return false;
 	}
 
+	@Override
+	public String getScopeId(IEvent event) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

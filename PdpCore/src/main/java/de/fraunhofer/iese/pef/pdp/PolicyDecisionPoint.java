@@ -1,4 +1,4 @@
-package de.fraunhofer.iese.ind2uce.pdp;
+package de.fraunhofer.iese.pef.pdp;
 
 import java.io.File;
 import java.io.Serializable;
@@ -9,21 +9,24 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
-import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
-import de.fraunhofer.iese.ind2uce.internal.pdp.IPolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.internal.*;
 
 public abstract class PolicyDecisionPoint extends UnicastRemoteObject implements IPolicyDecisionPoint, Serializable {
 	private static final long serialVersionUID = -6823961095919408237L;
+	
 	protected static Logger _logger = Logger.getLogger(PolicyDecisionPoint.class);
 
 	public static boolean pdpRunning = false;
+	
+	
 	
 	public PolicyDecisionPoint() throws RemoteException {
 		super();
 	}
 	
 	public abstract void initialize() throws Exception;
+	
+
 
 	protected void loadDinamicLibrary(String directory, String dllName) throws Exception {
 		String relativePath = null;
@@ -73,5 +76,7 @@ public abstract class PolicyDecisionPoint extends UnicastRemoteObject implements
 	public native ArrayList<String> listDeployedMechanismsJNI();
 
 	public native int setRuntimeLogLevel(int newLevel);
+	
+	
 
 }

@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.fraunhofer.iese.ind2uce.pdp.LinuxPolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.LinuxPolicyDecisionPoint;
 import de.tum.in.i22.pdp.core.PdpHandlerPdpNative;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
@@ -39,8 +39,14 @@ public class PdpHandlerNativeImplTest {
 
 	@Test
 	public void test() {
+
+		
+		
 		Map<String, String> map = new HashMap<>();
-		IResponse response = _pdpHandler.notifyEvent(new EventBasic("test", map, true));
+		map.put("val1", "value1");
+		map.put("val2", "value2");
+		IResponse response = _pdpHandler.notifyEvent(new EventBasic("testEvent", map, false));
+		
 		if (response == null) {
 			Assert.fail("Expected response different than null.");
 		}

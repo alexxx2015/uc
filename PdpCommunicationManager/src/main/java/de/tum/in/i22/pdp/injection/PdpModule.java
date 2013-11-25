@@ -3,8 +3,8 @@ package de.tum.in.i22.pdp.injection;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-import de.fraunhofer.iese.ind2uce.pdp.LinuxPolicyDecisionPoint;
-import de.fraunhofer.iese.ind2uce.pdp.PolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.LinuxPolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.core.PdpHandlerPdpNative;
 

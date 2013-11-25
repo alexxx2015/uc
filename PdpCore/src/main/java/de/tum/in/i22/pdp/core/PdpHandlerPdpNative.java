@@ -11,12 +11,12 @@ import testutil.DummyMessageGen;
 
 import com.google.inject.Inject;
 
-import de.fraunhofer.iese.ind2uce.internal.pdp.AuthorizationAction;
-import de.fraunhofer.iese.ind2uce.internal.pdp.Decision;
-import de.fraunhofer.iese.ind2uce.internal.pdp.Event;
-import de.fraunhofer.iese.ind2uce.internal.pdp.ExecuteAction;
-import de.fraunhofer.iese.ind2uce.internal.pdp.Param;
-import de.fraunhofer.iese.ind2uce.pdp.PolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.PolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.internal.AuthorizationAction;
+import de.fraunhofer.iese.pef.pdp.internal.Decision;
+import de.fraunhofer.iese.pef.pdp.internal.Event;
+import de.fraunhofer.iese.pef.pdp.internal.ExecuteAction;
+import de.fraunhofer.iese.pef.pdp.internal.Param;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
