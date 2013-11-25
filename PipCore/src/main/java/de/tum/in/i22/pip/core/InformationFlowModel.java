@@ -71,16 +71,22 @@ public class InformationFlowModel {
 		return _instance;
 	}
 
+	
+	public boolean isSimulating(){
+		return ((_containerSetBackup == null) && (_dataSetBackup == null)
+				&& (_dataToContainerMapBackup == null)
+				&& (_containerAliasesMapBackup == null)
+				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
+	}
+	
+	
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
 	public boolean push() {
 		_logger.info("Pushing current PIP state...");
-		if ((_containerSetBackup == null) && (_dataSetBackup == null)
-				&& (_dataToContainerMapBackup == null)
-				&& (_containerAliasesMapBackup == null)
-				&& (_namingSetBackup == null) && (_scopeSetBackup == null)) {
+		if (isSimulating()) {
 			_logger.info("..done!");
 			_containerSet = _containerSetBackup;
 			_dataSetBackup = new HashSet<>(_dataSet);
@@ -111,10 +117,7 @@ public class InformationFlowModel {
 	 */
 	public boolean pop() {
 		_logger.info("Popping current PIP state...");
-		if ((_containerSetBackup != null) && (_dataSetBackup != null)
-				&& (_dataToContainerMapBackup != null)
-				&& (_containerAliasesMapBackup != null)
-				&& (_namingSetBackup != null) && (_scopeSetBackup != null)) {
+		if (!isSimulating()) {
 			_logger.info("..done!");
 			_containerSetBackup = new HashSet<>(_containerSet);
 			_dataSet = _dataSetBackup;

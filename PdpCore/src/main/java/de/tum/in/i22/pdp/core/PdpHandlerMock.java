@@ -22,7 +22,7 @@ public class PdpHandlerMock implements IIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
 	
-	private IPdpCore2PipCacher _pipCacher = new PipCacherImpl(); 
+	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference(); 
 
 	public PdpHandlerMock() {
 	}

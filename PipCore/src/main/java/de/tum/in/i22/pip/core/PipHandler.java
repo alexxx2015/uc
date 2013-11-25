@@ -32,8 +32,10 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	private IEventHandlerCreator _actionHandlerCreator;
 	private IPipManager _pipManager;
 	private InformationFlowModel _ifModel;
+	
+	//info for PipCacher
 	private Map<IKey, String> _predicatesToEvaluate;
-
+		
 	private static PipHandler _instance = null;
 
 	public static PipHandler getInstance() {
@@ -219,24 +221,29 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 	@Override
-	public ICacheUpdate update(IEvent e) {
-		// TODO Auto-generated method stub
+	public ICacheUpdate refresh (IEvent e) {
+		//if (_ifModel.push())
 		return null;
 	}
 
 	@Override
 	public IStatus addPredicates(Map<IKey, String> predicates) {
-		if (predicates == null)
+		if (predicates == null){
+			_logger.warn("Empty list of predicates!");
 			return DummyMessageGen
 					.createErrorStatus("Empty list of predicates!");
+		}
 		if (_predicatesToEvaluate == null) {
 			_predicatesToEvaluate = predicates;
+			_logger.trace("Succesfully replaced empty list of predicates with one of size " + predicates.size());
 			return DummyMessageGen.createOkStatus();
 		}
 		for (IKey k : predicates.keySet()) {
 			if (!_predicatesToEvaluate.containsKey(k)) {
 				_predicatesToEvaluate.put(k, predicates.get(k));
 			}
+			_logger.trace("Succesfully added list of predicates of length " + predicates.size() + ". New size is "+ _predicatesToEvaluate.size());
+
 		}
 		return DummyMessageGen.createOkStatus();
 	}
@@ -254,5 +261,10 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			}
 		}
 		return DummyMessageGen.createOkStatus();
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return _ifModel.isSimulating();
 	}
 }
