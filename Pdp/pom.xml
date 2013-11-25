@@ -15,7 +15,7 @@
 
 	<modules>
 		<module>../PdpNative</module>
-		<!-- <module>../PipCacher</module>  -->
+		<module>../PipCacher</module> 
 		<module>../PdpEngine</module>
 		<module>../PdpCore</module>
 		<module>../PdpCommunicationManager</module>

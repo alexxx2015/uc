@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.fraunhofer.iese.ind2uce.pdp.Win64PolicyDecisionPoint;
 import de.tum.in.i22.pdp.core.PdpHandlerPdpNative;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
@@ -21,7 +22,7 @@ public class PdpHandlerNativeImplTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdpHandler = new PdpHandlerPdpNative();
+		_pdpHandler = new PdpHandlerPdpNative(new Win64PolicyDecisionPoint());
 	}
 
 	@AfterClass
