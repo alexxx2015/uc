@@ -1,17 +1,14 @@
 package de.tum.in.i22.pdp.pipcacher;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-
-import de.tum.in.i22.pip.PipController;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
-import de.tum.in.i22.pip.core.manager.IPipManager;
+import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -25,7 +22,8 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	private static PipCacherImpl _reference;
 	private static IPipCacher2Pip _pip; 
 	
-	private static Map<IKey, String> _predicatesToEvaluate;
+	private static Map<String, IKey> _predicatesToEvaluate;
+	private static ICacheUpdate _cache;
 	
 	private PipCacherImpl(){
 		_pip=PipHandler.getInstance();
@@ -38,13 +36,16 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	
 	@Override
 	public IStatus refresh(IEvent desiredEvent) {
-		_pip.refresh(desiredEvent);
-		
-		return null;
+		ICacheUpdate newCache=_pip.refresh(desiredEvent);
+		if (newCache!=null){
+			_cache=newCache;
+			return DummyMessageGen.createOkStatus();
+		}
+		return DummyMessageGen.createErrorStatus("PIP returned empty cache on update!");
 	}
 	
 	@Override
-	public IStatus addPredicates(Map<IKey, String> predicates) {
+	public IStatus addPredicates(Map<String, IKey> predicates) {
 		IStatus status=_pip.addPredicates(predicates);
 		if (predicates == null){
 			_logger.warn("Empty list of predicates!");
@@ -56,9 +57,9 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 			_logger.trace("Succesfully replaced empty list of predicates with one of size " + predicates.size());
 			return DummyMessageGen.createOkStatus();
 		}
-		for (IKey k : predicates.keySet()) {
-			if (!_predicatesToEvaluate.containsKey(k)) {
-				_predicatesToEvaluate.put(k, predicates.get(k));
+		for (String s : predicates.keySet()) {
+			if (!_predicatesToEvaluate.containsKey(s)) {
+				_predicatesToEvaluate.put(s, predicates.get(s));
 			}
 			_logger.trace("Succesfully added list of predicates of length " + predicates.size() + ". New size is "+ _predicatesToEvaluate.size());
 
@@ -68,37 +69,43 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 
 	
 	@Override
-	public IStatus revokePredicates(List<IKey> keys) {
-		//TODO: add logger output
-		IStatus status = _pip.revokePredicates(keys);
-		if (keys == null)
-			return DummyMessageGen.createErrorStatus("Empty list of keys!");
-		if (_predicatesToEvaluate == null) {
-			return DummyMessageGen.createOkStatus();
+	public Boolean eval(IKey key) {
+		if (key==null) {
+			return null; 
 		}
-		for (IKey k : keys) {
-			if (_predicatesToEvaluate.containsKey(k)) {
-				_predicatesToEvaluate.remove(k);
+		if (_cache !=null) {
+			Boolean res=_cache.getVal(key);
+			_logger.debug("eval key ["+key+"] =" +res);
+			return res; 
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean eval(IKey key, IEvent event2Simulate) {
+		if (_pip.isSimulating()){
+			_logger.error("Not possible to simulate event "+event2Simulate+" while PIP is already simulating. Return null.");
+			return null;
+		} else {
+			_pip.startSimulation();
+			IStatus status=_pip.notifyActualEvent(event2Simulate);
+			Boolean result=null;
+			if (status.isSameStatus(DummyMessageGen.createOkStatus())){
+				_logger.trace("Simulating execution of event " + event2Simulate);
+				result= eval(key);
+				_logger.trace("Evaluation of predicate [" + key +"] after simulation of execution of event " + event2Simulate +" = "+result);
+			} else {
+				_logger.error ("Not possible to simulate event "+ event2Simulate+". Return null");
+				return null;
 			}
+			_pip.stopSimulation();
+			return result;
 		}
-		return DummyMessageGen.createOkStatus();
 	}
 
 	@Override
-	public boolean eval(IKey key) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean eval(IKey key, IEvent event2Simulate) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String getScopeId(IEvent event) {
-		return ""; 
+	public String getScopeId() {
+		return _cache.getScopeId(); 
 	}
 
 	@Override
@@ -125,5 +132,22 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	public Set<IContainer> getContainerForData(IData data) {
 		return	_pip.getContainerForData(data);
 	}
+
+	@Override
+	public IStatus revokePredicates(Set<IKey> keys) {
+		//no need to store the result of revoke _pip.revokePredicate, because it should behave exactly like this local function
+		_pip.revokePredicates(keys);
+		if (keys == null)
+			return DummyMessageGen.createErrorStatus("Empty list of keys!");
+		if (_predicatesToEvaluate == null) {
+			return DummyMessageGen.createOkStatus();
+		}
+		for (IKey k : keys) {
+			if (_predicatesToEvaluate.containsKey(k)) {
+				_predicatesToEvaluate.remove(k);
+			}
+		}
+		return DummyMessageGen.createOkStatus();
+		}
 
 }

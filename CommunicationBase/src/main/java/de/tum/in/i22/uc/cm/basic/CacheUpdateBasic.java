@@ -8,15 +8,13 @@ import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCacheUpdate;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCacheUpdate.GpCacheUpdateEntry;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpKey;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry;
 
 
 public class CacheUpdateBasic implements ICacheUpdate {
 	private String _scopeId;
 	private HashMap<IKey,Boolean> _map;
 	
-	
+
 	@Override
 	public Map<IKey,Boolean> getMap() {
 		return _map;
@@ -35,6 +33,10 @@ public class CacheUpdateBasic implements ICacheUpdate {
 	}
 	
 	
+	public CacheUpdateBasic(){
+		_scopeId="<scope not initialized>";
+		_map=null;
+	}
 	
 	public CacheUpdateBasic(GpCacheUpdate gpCU) {
 		 if (gpCU.isInitialized()) {
@@ -58,6 +60,15 @@ public class CacheUpdateBasic implements ICacheUpdate {
 				
 		 }
 		 
+	}
+
+	public void setScopeId(String _scopeId) {
+		this._scopeId = _scopeId;
+	}
+
+
+	public void setMap(Map<IKey, Boolean> _map) {
+		this._map = new HashMap<IKey, Boolean>(_map);
 	}
 
 

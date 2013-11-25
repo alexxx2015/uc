@@ -17,8 +17,8 @@ public interface IPipCacher2Pip extends IPipManager {
     public IStatus        startSimulation();
     public IStatus        stopSimulation();
     public ICacheUpdate   refresh(IEvent e);
-    public IStatus        addPredicates(Map<IKey,String> predicates);
-    public IStatus        revokePredicates(List<IKey> keys);
+    public IStatus        addPredicates(Map<String,IKey> predicates);
+    public IStatus        revokePredicates(Set<IKey> keys);
     public boolean		  isSimulating();
     
     //PDP FUNCTIONALITIES AVAILABLE FOR DIRECT INVOCATION

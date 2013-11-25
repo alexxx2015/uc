@@ -9,17 +9,18 @@ import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public interface IPdpEngine2PipCacher {
-    public boolean    eval(IKey key);
-    public boolean    eval(IKey key, IEvent event2Simulate);
-    public String     getScopeId(IEvent event);
+    public Boolean    eval(IKey key);
+    public String     getScopeId();
     
     //PIP DIRECT FUNCTION INVOCATION (BYPASS PIPCACHER)
-    //Note: use it with care and check for simulation state.
-    //using isSimulating()
     public boolean	  isSimulating();
-    public Boolean 	  evaluatePredicate(IEvent event, String predicate);
-	public Boolean 	  evaluatePredicate(String predicate);
+    public Boolean 	  evaluatePredicate(String predicate);
 	public Set<IData> getDataInContainer(IContainer container);
 	public Set<IContainer> 	getContainerForData(IData data);
-	 
+	
+	//Note: use these with care and check for simulation state.
+    //      using isSimulating() before executing them
+    public Boolean 	  evaluatePredicate(IEvent event, String predicate);
+    public Boolean    eval(IKey key, IEvent event2Simulate);
+    
 }

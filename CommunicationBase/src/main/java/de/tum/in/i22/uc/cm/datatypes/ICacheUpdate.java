@@ -9,6 +9,7 @@ public interface ICacheUpdate {
 
 	Map<IKey, Boolean> getMap();
 
-	
+	public void setMap(Map<IKey, Boolean> map);
+	public void setScopeId(String scopeId);
 	
 }

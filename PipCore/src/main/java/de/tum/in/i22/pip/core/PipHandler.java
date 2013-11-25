@@ -34,7 +34,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	private InformationFlowModel _ifModel;
 	
 	//info for PipCacher
-	private Map<IKey, String> _predicatesToEvaluate;
+	private Map<String, IKey> _predicatesToEvaluate;
 		
 	private static PipHandler _instance = null;
 
@@ -53,7 +53,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;
 		_ifModel = InformationFlowModel.getInstance();
-		_predicatesToEvaluate = new HashMap<IKey, String>();
+		_predicatesToEvaluate = new HashMap<String,IKey>();
 	}
 
 
@@ -227,7 +227,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 	@Override
-	public IStatus addPredicates(Map<IKey, String> predicates) {
+	public IStatus addPredicates(Map<String, IKey> predicates) {
 		if (predicates == null){
 			_logger.warn("Empty list of predicates!");
 			return DummyMessageGen
@@ -238,9 +238,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			_logger.trace("Succesfully replaced empty list of predicates with one of size " + predicates.size());
 			return DummyMessageGen.createOkStatus();
 		}
-		for (IKey k : predicates.keySet()) {
-			if (!_predicatesToEvaluate.containsKey(k)) {
-				_predicatesToEvaluate.put(k, predicates.get(k));
+		for (String s : predicates.keySet()) {
+			if (!_predicatesToEvaluate.containsKey(s)) {
+				_predicatesToEvaluate.put(s, predicates.get(s));
 			}
 			_logger.trace("Succesfully added list of predicates of length " + predicates.size() + ". New size is "+ _predicatesToEvaluate.size());
 
@@ -249,7 +249,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 	@Override
-	public IStatus revokePredicates(List<IKey> keys) {
+	public IStatus revokePredicates(Set<IKey> keys) {
 		if (keys == null)
 			return DummyMessageGen.createErrorStatus("Empty list of keys!");
 		if (_predicatesToEvaluate == null) {
