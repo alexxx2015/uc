@@ -71,9 +71,26 @@ public class StatusBasic implements IStatus {
 	}
 
 	@Override
+	public boolean isSameStatus(IStatus status) {
+		boolean isEqual = false;
+		if (status != null && this.getClass() == status.getClass()) {
+			StatusBasic o = (StatusBasic)status;
+			isEqual = CompareUtil.areObjectsEqual(_eStatus, o.getEStatus());
+		}
+		return isEqual;
+	}
+
+	
+	
+	@Override
 	public String toString() {
 		return "StatusBasic [_eStatus=" + _eStatus + ", _errorMessage="
 				+ _errorMessage + "]";
+	}
+
+	@Override
+	public void setErrorMessage(String error) {
+		_errorMessage=error;
 	}
 	
 }
