@@ -13,7 +13,7 @@ public class Scope {
 	// This is used as a simple filter to rule out certain scopes when searching
 	// for a specific one
 	public enum scopeType {
-		EMPTY, SAVE_FILE, LOAD_FILE, COPY_CLIPBOARD, PASTE_CLIPBOARD, SEND_SOCKET, READ_SOCKET, SEND_EMAIL, GET_EMAIL
+		EMPTY, SAVE_FILE, LOAD_FILE, COPY_CLIPBOARD, PASTE_CLIPBOARD, SEND_SOCKET, READ_SOCKET, SEND_EMAIL, GET_EMAIL, GENERIC_IN, GENERIC_OUT
 	}
 
 	private String _id;
