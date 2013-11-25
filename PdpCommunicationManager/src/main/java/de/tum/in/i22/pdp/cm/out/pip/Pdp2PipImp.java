@@ -3,7 +3,9 @@ package de.tum.in.i22.pdp.cm.out.pip;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -73,7 +75,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 	}
 
 	@Override
-	public List<IContainer> getContainerForData(IData data) {
+	public Set<IContainer> getContainerForData(IData data) {
 		_logger.debug("Get container for data invoked");
 		_logger.trace("Create Gpb data instance");
 		GpData gpData = DataBasic.createGpbData(data);
@@ -86,7 +88,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			
 			_logger.trace("Wait for containers");
 			GpContainerList gpContainerList = GpContainerList.parseDelimitedFrom(getInputStream());
-			return GpUtil.convertToList(gpContainerList);
+			return new HashSet<IContainer>(GpUtil.convertToList(gpContainerList));
 		} catch (IOException e) {
 			_logger.error("Get container for data failed.", e);
 			return null;
@@ -94,7 +96,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 	}
 
 	@Override
-	public List<IData> getDataInContainer(IContainer container) {
+	public Set<IData> getDataInContainer(IContainer container) {
 		_logger.debug("Get data in container invoked");
 		_logger.trace("Create Gpb container instance");
 		GpContainer gpContainer = ContainerBasic.createGpbContainer(container);
@@ -107,7 +109,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			
 			_logger.trace("Wait for data list");
 			GpDataList gpDataList = GpDataList.parseDelimitedFrom(getInputStream());
-			return GpUtil.convertToList(gpDataList);
+			return new HashSet<IData>(GpUtil.convertToList(gpDataList));
 		} catch (IOException e) {
 			_logger.error("Get data in container failed.", e);
 			return null;
@@ -161,6 +163,12 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
  			_logger.error("Failed to update information flow semantics.", ex);
  			return _mf.createStatus(EStatus.ERROR, "Error detected at PDP: " + ex.getMessage());
  		}
+	}
+
+	@Override
+	public Boolean evaluatePredicate(String predicate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

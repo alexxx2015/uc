@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
@@ -18,6 +20,9 @@ import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
  * Information flow model Singleton.
  */
 public class InformationFlowModel {
+	private static final Logger _logger = Logger
+			.getLogger(InformationFlowModel.class);
+
 	private static final InformationFlowModel _instance = new InformationFlowModel();
 
 	// list of containers
@@ -35,7 +40,15 @@ public class InformationFlowModel {
 	private Map<Name, String> _namingSet = null;
 
 	// list of currently opened scopes
-	private Set<Scope> _scopes = null;
+	private Set<Scope> _scopeSet = null;
+
+	// BACKUP TABLES FOR SIMULATION
+	private Set<IContainer> _containerSetBackup;
+	private Set<IData> _dataSetBackup;
+	private Map<String, Set<String>> _dataToContainerMapBackup;
+	private Map<String, Set<String>> _containerAliasesMapBackup;
+	private Map<Name, String> _namingSetBackup;
+	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
 		_containerSet = new HashSet<>();
@@ -43,11 +56,84 @@ public class InformationFlowModel {
 		_dataToContainerMap = new HashMap<>();
 		_containerAliasesMap = new HashMap<>();
 		_namingSet = new HashMap<>();
-		_scopes = new HashSet<>();
+		_scopeSet = new HashSet<>();
+
+		_containerSetBackup = null;
+		_dataSetBackup = null;
+		_dataToContainerMapBackup = null;
+		_containerAliasesMapBackup = null;
+		_namingSetBackup = null;
+		_scopeSetBackup = null;
+
 	}
 
 	public static InformationFlowModel getInstance() {
 		return _instance;
+	}
+
+	/**
+	 * Simulation step: push. Stores the current IF state, if not already stored
+	 * @return true if the state has been successfully pushed, false otherwise
+	 */
+	public boolean push() {
+		_logger.info("Pushing current PIP state...");
+		if ((_containerSetBackup == null) && (_dataSetBackup == null)
+				&& (_dataToContainerMapBackup == null)
+				&& (_containerAliasesMapBackup == null)
+				&& (_namingSetBackup == null) && (_scopeSetBackup == null)) {
+			_logger.info("..done!");
+			_containerSet = _containerSetBackup;
+			_dataSetBackup = new HashSet<>(_dataSet);
+
+			_dataToContainerMapBackup = new HashMap<String, Set<String>>();
+			for (Entry<String, Set<String>> e : _dataToContainerMap.entrySet()) {
+				Set<String> s = new HashSet<String>(e.getValue());
+				_dataToContainerMapBackup.put(e.getKey(), s);
+			}
+
+			_containerAliasesMapBackup = new HashMap<>();
+			for (Entry<String, Set<String>> e : _containerAliasesMap.entrySet()) {
+				Set<String> s = new HashSet<String>(e.getValue());
+				_containerAliasesMapBackup.put(e.getKey(), s);
+			}
+
+			_namingSetBackup = new HashMap<Name, String>(_namingSet);
+			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
+			return true;
+		}
+		_logger.error("Current stack not empty!");
+		return false;
+	}
+
+	/**
+	 * Simulation step: pop. Restore a previously pushed IF state, if any.
+	 * @return true if the state has been successfully restored, false otherwise
+	 */
+	public boolean pop() {
+		_logger.info("Popping current PIP state...");
+		if ((_containerSetBackup != null) && (_dataSetBackup != null)
+				&& (_dataToContainerMapBackup != null)
+				&& (_containerAliasesMapBackup != null)
+				&& (_namingSetBackup != null) && (_scopeSetBackup != null)) {
+			_logger.info("..done!");
+			_containerSetBackup = new HashSet<>(_containerSet);
+			_dataSet = _dataSetBackup;
+			_dataToContainerMap = _dataToContainerMapBackup;
+			_containerAliasesMap = _containerAliasesMapBackup;
+			_namingSet = _namingSetBackup;
+			_scopeSet = _scopeSetBackup;
+
+			_containerSetBackup = null;
+			_dataSetBackup = null;
+			_dataToContainerMapBackup = null;
+			_containerAliasesMapBackup = null;
+			_namingSetBackup = null;
+			_scopeSetBackup = null;
+
+			return true;
+		}
+		_logger.error("Current stack empty!");
+		return false;
 	}
 
 	/**
@@ -60,7 +146,7 @@ public class InformationFlowModel {
 	 */
 	public boolean addScope(Scope scope) {
 		assert (scope != null);
-		return _scopes.add(scope);
+		return _scopeSet.add(scope);
 	}
 
 	/**
@@ -84,7 +170,7 @@ public class InformationFlowModel {
 	 */
 	public boolean removeScope(Scope scope) {
 		assert (scope != null);
-		return _scopes.remove(scope);
+		return _scopeSet.remove(scope);
 	}
 
 	/**
@@ -109,7 +195,7 @@ public class InformationFlowModel {
 	 * 
 	 */
 	public boolean isScopeOpened(Scope scope) {
-		return _scopes.contains(scope);
+		return _scopeSet.contains(scope);
 	}
 
 	/**
@@ -134,7 +220,7 @@ public class InformationFlowModel {
 
 			// ...then clone the set...
 			Set<Scope> tmpSet = new HashSet<>();
-			tmpSet.addAll(_scopes);
+			tmpSet.addAll(_scopeSet);
 
 			// ...remove it...
 			tmpSet.remove(scope);
@@ -145,7 +231,7 @@ public class InformationFlowModel {
 				return null;
 
 			// ..otherwise return the only matching from the original set.
-			for (Scope s : _scopes)
+			for (Scope s : _scopeSet)
 				if (scope.equals(s))
 					return s;
 			// Note that we have to iterate until the matching is found again

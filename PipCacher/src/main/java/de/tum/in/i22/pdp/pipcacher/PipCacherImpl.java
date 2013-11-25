@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
-public class PipCacherImpl implements IPdpCore2PipCacher {
+public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 
 	@Override
 	public IStatus refresh(IEvent desiredEvent) {
@@ -26,6 +26,18 @@ public class PipCacherImpl implements IPdpCore2PipCacher {
 	public IStatus revokePredicates(List<IKey> keys) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean eval(IKey key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean eval(IKey key, IEvent event2Simulate) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

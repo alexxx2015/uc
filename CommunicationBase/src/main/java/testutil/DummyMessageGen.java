@@ -101,7 +101,15 @@ public class DummyMessageGen {
 	public static IStatus createOkStatus() {
 		return new StatusBasic(EStatus.ALLOW);
 	}
-
+	
+	public static IStatus createErrorStatus() {
+		return new StatusBasic(EStatus.ERROR);
+	}
+	
+	public static IStatus createErrorStatus(String errorMessage) {
+		return new StatusBasic(EStatus.ERROR, errorMessage);
+	}
+	
 	public static IEvent createEvent() {
 		Map<String, String> map = createDummyMap();
 		IEvent event = _factory.createEvent("event1", map);

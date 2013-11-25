@@ -5,7 +5,9 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -88,9 +90,9 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		
 		IData data = new DataBasic(gpData);
 		
-		List<IContainer> containerForDataList = _pdp2pip.getContainerForData(data);
+		Set<IContainer> containerForDataList = _pdp2pip.getContainerForData(data);
 		_logger.trace("Return the list of containers for data");
-		GpContainerList gpContainerList = GpUtil.convertToGpContainerList(containerForDataList);
+		GpContainerList gpContainerList = GpUtil.convertToGpContainerList(new ArrayList<IContainer>(containerForDataList));
 		gpContainerList.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}
@@ -105,9 +107,9 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		
 		IContainer container = new ContainerBasic(gpContainer);
 		
-		List<IData> dataInContainerList = _pdp2pip.getDataInContainer(container);
+		Set<IData> dataInContainerList = _pdp2pip.getDataInContainer(container);
 		_logger.trace("Return the list of data in container");
-		GpDataList gpDataList = GpUtil.convertToGpList(dataInContainerList);
+		GpDataList gpDataList = GpUtil.convertToGpList(new ArrayList<IData>(dataInContainerList));
 		gpDataList.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}
