@@ -4,9 +4,14 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import de.tum.in.i22.pip.cm.in.pdp.PdpFastServiceHandler;
 import de.tum.in.i22.pip.cm.in.pmp.Pmp2PipFastServiceHandler;
-import de.tum.in.i22.pip.core.PipHandler;
+import de.tum.in.i22.pip.core.IPdp2Pip;
+import de.tum.in.i22.pip.injection.PipModule;
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PipController {
@@ -14,9 +19,11 @@ public class PipController {
 	
 	private boolean _isStarted = false;
 	
-	public PipController() {
-		_logger.info("Initialize PipHandler");
-		PipHandler.getInstance();
+	private IPdp2Pip _pipHandler;
+	
+	@Inject
+	public PipController(IPdp2Pip pipHandler) {
+		_pipHandler = pipHandler;
 	}
 	
 	public static void main(String[] args) {
@@ -28,7 +35,9 @@ public class PipController {
 			return;
 		}
 		
-		PipController pip = new PipController();
+		Injector injector = Guice.createInjector(new PipModule());
+		
+		PipController pip = injector.getInstance(PipController.class);
 		
 		pip.start();
 		
@@ -53,7 +62,8 @@ public class PipController {
 		_logger.info("Start PdpFastServiceHandler");
 		PipSettings settings = getPipSettings();
 		int pdpListenerPortNum = settings.getPdpListenerPortNum();
-		FastServiceHandler pdpFastServiceHandler = new PdpFastServiceHandler(pdpListenerPortNum);
+		
+		FastServiceHandler pdpFastServiceHandler = new PdpFastServiceHandler(pdpListenerPortNum, _pipHandler);
 		Thread threadPdpFastServiceHandler = new Thread(pdpFastServiceHandler);
 		threadPdpFastServiceHandler.start();
 		

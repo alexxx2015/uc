@@ -79,11 +79,9 @@ call mvn install:install-file ^
 	-Dpackaging=jar
 	echo Install zip4jj 1.2.4
 
-echo Install internals by Kornelius
+echo Install internals by Cornelius
 call mvn install:install-file ^
-	-Dfile=internals-0.0.1-20131001.090326-11.jar ^
-	-Dsources=internals-0.0.1-SNAPSHOT-sources.jar ^
-	-Djavadoc=internals-0.0.1-SNAPSHOT-javadoc.jar ^
+	-Dfile=internals-0.0.1.jar ^
 	-DgroupId=de.fraunhofer.iese.ind2uce ^
 	-DartifactId=internals ^
 	-Dversion=0.0.1-SNAPSHOT ^

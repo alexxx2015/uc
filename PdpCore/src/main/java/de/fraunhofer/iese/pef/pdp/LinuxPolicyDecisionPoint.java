@@ -1,11 +1,8 @@
 package de.fraunhofer.iese.pef.pdp;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import de.fraunhofer.iese.pef.pdp.internal.IPolicyDecisionPoint;
-import de.fraunhofer.iese.pef.pdp.internal.Decision;
-import de.fraunhofer.iese.pef.pdp.internal.Event;
 
 public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 	private static final long serialVersionUID = 1L;

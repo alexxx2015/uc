@@ -247,8 +247,8 @@ public class PdpTest {
 		return _t2;
 	}
 	
-	private static Thread startPip() {
-		final PipController pipController = new PipController();
+	private static Thread startPip() {		
+		final PipController pipController = _injector.getInstance(PipController.class);
 		_t3 = new Thread(new Runnable() {
 			@Override
 			public void run() {

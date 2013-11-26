@@ -1,8 +1,7 @@
 package uctests;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -14,15 +13,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pip.PipController;
 import de.tum.in.i22.pip.PipSettings;
-import de.tum.in.i22.uc.cm.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -36,7 +35,8 @@ public class PipTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pipController = new PipController();
+		Injector injector = Guice.createInjector(new PdpTestModule());
+		_pipController =  injector.getInstance(PipController.class);
 		PipSettings pipSettings = _pipController.getPipSettings();
 		pipSettings.setPdpListenerPortNum(PDP_LISTENER_PORT);
 		_pipController.start();
@@ -66,7 +66,8 @@ public class PipTest {
 	
 	@Test
 	public void testEvaluatePredicate() {
-		IEvent event = new EventBasic("event1", null);
+		Map<String, String> map = new HashMap<>();
+		IEvent event = new EventBasic("event1", map);
 		String predicate = "dummy string";
 		boolean res = _pipProxy.evaluatePredicate(event, predicate);
 		_logger.debug("Received result: " + res);

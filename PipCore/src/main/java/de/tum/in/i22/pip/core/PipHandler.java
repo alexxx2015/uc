@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,17 +34,8 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	
 	//info for PipCacher
 	private Map<String, IKey> _predicatesToEvaluate;
-		
-	private static PipHandler _instance = null;
 
-	public static PipHandler getInstance() {
-		if (_instance == null) {
-			_instance = new PipHandler();
-		}
-		return _instance;
-	}
-
-	private PipHandler() {
+	public PipHandler() {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(eventHandlerManager);
 		pipManager.initialize();

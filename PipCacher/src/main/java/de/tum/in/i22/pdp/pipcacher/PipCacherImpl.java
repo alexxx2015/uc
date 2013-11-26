@@ -6,8 +6,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Inject;
+
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
-import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -18,20 +20,14 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	private static Logger _logger = Logger.getLogger(PipCacherImpl.class);
-	
-	private static PipCacherImpl _reference;
 	private static IPipCacher2Pip _pip; 
 	
 	private static Map<String, IKey> _predicatesToEvaluate;
 	private static ICacheUpdate _cache;
 	
-	private PipCacherImpl(){
-		_pip=PipHandler.getInstance();
-	}
-	
-	public static PipCacherImpl getReference(){
-		if (_reference==null) _reference=new PipCacherImpl();
-		return _reference;
+	@Inject
+	public PipCacherImpl(IPipCacher2Pip pipHandler){
+		_pip = pipHandler;
 	}
 	
 	@Override

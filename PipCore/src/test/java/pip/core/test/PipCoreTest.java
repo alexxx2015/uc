@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
-import de.tum.in.i22.pip.core.PipHandler;
+import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -32,7 +32,7 @@ public class PipCoreTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		_pipHandler = PipHandler.getInstance();
+		_pipHandler = new PipHandlerMock();
 		_messageFactory = MessageFactoryCreator.createMessageFactory();
 		File file = getJarFile();
 		

@@ -6,6 +6,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.tum.in.i22.pip.PipController;
 import de.tum.in.i22.pip.PipSettings;
 import de.tum.in.i22.pmp2pip.IPmp2PipFast;
@@ -26,7 +30,8 @@ public class TestPmp2PipCommunication {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		PipController pipController = new PipController();
+		Injector injector = Guice.createInjector(new PdpTestModule());
+		PipController pipController = injector.getInstance(PipController.class);
 		PipSettings settings = pipController.getPipSettings();
 		settings.setPdpListenerPortNum(PIP_PDP_LISTENER_PORT);
 		settings.setPmpListenerPortNum(PIP_PMP_LISTENER_PORT);

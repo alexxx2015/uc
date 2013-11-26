@@ -6,13 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
-import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -41,10 +39,11 @@ import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
 public class PdpClientConnectionHandler extends ClientConnectionHandler {
-	private IPdp2Pip _pdp2pip = PipHandler.getInstance();
+	private IPdp2Pip _pdp2pip;
 
-	protected PdpClientConnectionHandler(Socket socket) {
+	protected PdpClientConnectionHandler(Socket socket, IPdp2Pip pdp2Pip) {
 		super(socket);
+		_pdp2pip = pdp2Pip;
 	}
 
 	@Override

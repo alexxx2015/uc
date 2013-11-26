@@ -1,6 +1,5 @@
 package de.fraunhofer.iese.pef.pdp;
 
-import java.rmi.RemoteException;
 
 //public class Win64PolicyDecisionPoint extends PolicyDecisionPoint {
 //	private static final long serialVersionUID = 1L;

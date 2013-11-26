@@ -106,7 +106,7 @@ public class PdpWithPdpNativeTest {
 			@Override
 			public void run() {
 				_logger.debug("Start PIP. Listen from incoming PDP connections on port " + PDP_LISTENER_PORT_IN_PIP);
-				PipController pipController = new PipController();
+				PipController pipController =  _injector.getInstance(PipController.class);
 				PipSettings pipSettings = pipController.getPipSettings();
 				pipSettings.setPdpListenerPortNum(PDP_LISTENER_PORT_IN_PIP);
 				pipController.start();
