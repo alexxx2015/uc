@@ -27,7 +27,7 @@ public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 	public void initialize() throws Exception {
 		_logger.info("Loading native PDP library");
 		try {
-			System.load("/home/uc/xlayerpip/jpdp/bin/linux/components/pdp/libpdp.so");
+			loadDinamicLibrary("pdpNative/linux", "libpdp.so");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 			_logger.info("starting returned: " + this.pdpStart());
