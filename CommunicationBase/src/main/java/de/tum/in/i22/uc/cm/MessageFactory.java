@@ -36,6 +36,12 @@ public class MessageFactory implements IMessageFactory {
 	}
 	
 	@Override
+	public IEvent createDesiredEvent(String name, Map<String, String> map) {
+		IEvent e =  new EventBasic(name, map, false);
+		return e;
+	}
+
+	@Override
 	public IEvent createEvent(GpEvent gpEvent) {
 		EventBasic e = new EventBasic(gpEvent);
 		return e;
@@ -59,6 +65,13 @@ public class MessageFactory implements IMessageFactory {
 		IData data = new DataBasic();
 		return data;
 	}
+	
+	@Override
+	public IData createData(String id) {
+		IData data = new DataBasic(id);
+		return data;
+	}
+
 	
 	@Override
 	public IStatus createStatus(EStatus status) {

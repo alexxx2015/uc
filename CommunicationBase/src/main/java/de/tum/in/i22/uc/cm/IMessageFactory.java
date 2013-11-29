@@ -21,4 +21,6 @@ public interface IMessageFactory {
 	public IContainer createContainer();
 	public IData createData();
 	public IPipDeployer createPipDeployer(GpPipDeployer gpPipDe);
+	public IData createData(String id);
+	public IEvent createDesiredEvent(String name, Map<String, String> map);
 }

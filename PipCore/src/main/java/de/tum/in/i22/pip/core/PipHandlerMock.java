@@ -2,6 +2,7 @@ package de.tum.in.i22.pip.core;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,9 +16,11 @@ import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -26,7 +29,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  * @author Stoimenov
  *
  */
-public class PipHandlerMock implements IPdp2Pip //,IPipCacher2Pip 
+public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip 
 {
 	
 	private static final Logger _logger = Logger.getLogger(PipHandlerMock.class);
@@ -106,5 +109,41 @@ public class PipHandlerMock implements IPdp2Pip //,IPipCacher2Pip
 	public Boolean evaluatePredicate(String predicate) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IStatus startSimulation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus stopSimulation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ICacheUpdate refresh(IEvent e) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus addPredicates(Map<String, IKey> predicates) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus revokePredicates(Set<IKey> keys) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isSimulating() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

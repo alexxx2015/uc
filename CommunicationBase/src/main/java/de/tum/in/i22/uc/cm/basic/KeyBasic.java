@@ -7,6 +7,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpKey;
 public class KeyBasic implements IKey {
 	
 	private int _key;
+	private static int counter=0;
 	
 	@Override
 	public int getKey() {
@@ -24,6 +25,10 @@ public class KeyBasic implements IKey {
 			_key=-1;
 	}
 	
+	public KeyBasic (int _key){
+			this._key=_key;
+	}
+	
 	public static GpKey createGpbKey(IKey k) {
 		PdpProtos.GpKey.Builder gpKey = PdpProtos.GpKey.newBuilder();
 		if (k.getKey() != -1)
@@ -31,6 +36,11 @@ public class KeyBasic implements IKey {
 		else
 			gpKey.setKey(-1); //TODO: find something more clever to do if key is not valid
 		return gpKey.build();
+	}
+
+
+	public static IKey createNewKey(){
+		return new KeyBasic(counter++);
 	}
 	
 }

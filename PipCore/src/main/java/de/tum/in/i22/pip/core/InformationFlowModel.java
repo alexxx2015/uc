@@ -282,6 +282,21 @@ public class InformationFlowModel {
 		return _dataSet.remove(data);
 	}
 
+	
+	/**
+	 * Removes data object form an internal set.
+	 * 
+	 * @param dataId
+	 * @return true if the data object is successfully removed.
+	 */
+	public boolean removeData(String dataId) {
+		assert (dataId != null);
+		
+		return _dataSet.remove(dataId);
+	}
+
+	
+	
 	/**
 	 * Searches for data object by id.
 	 * 
@@ -513,6 +528,8 @@ public class InformationFlowModel {
 			res = dataSet.add(dataId);
 		} else {
 			Set<String> newDataSet = new HashSet<>();
+			
+			//TODO: check if dataId corresponds to a valid data element
 			newDataSet.add(dataId);
 
 			_dataToContainerMap.put(containerId, newDataSet);

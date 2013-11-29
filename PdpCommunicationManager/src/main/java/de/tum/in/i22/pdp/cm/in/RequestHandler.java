@@ -12,6 +12,8 @@ import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pdp.core.IIncoming;
+import de.tum.in.i22.pip.core.IPdp2Pip;
+import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;

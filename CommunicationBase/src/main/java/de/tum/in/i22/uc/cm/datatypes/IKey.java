@@ -12,8 +12,5 @@ public interface IKey {
 	 */
 	public void setKey(int key);
 	
-	
-	
-	
 
 }
