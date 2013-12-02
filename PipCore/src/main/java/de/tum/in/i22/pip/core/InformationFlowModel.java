@@ -23,7 +23,7 @@ public class InformationFlowModel {
 	private static final Logger _logger = Logger
 			.getLogger(InformationFlowModel.class);
 
-	private static final InformationFlowModel _instance = new InformationFlowModel();
+	private static InformationFlowModel _instance = new InformationFlowModel();
 
 	// list of containers
 	private Set<IContainer> _containerSet = null;
@@ -68,12 +68,13 @@ public class InformationFlowModel {
 	}
 
 	public static InformationFlowModel getInstance() {
+		if (_instance==null) _instance = new InformationFlowModel();
 		return _instance;
 	}
 
 	
 	public boolean isSimulating(){
-		return ((_containerSetBackup == null) && (_dataSetBackup == null)
+		return !((_containerSetBackup == null) && (_dataSetBackup == null)
 				&& (_dataToContainerMapBackup == null)
 				&& (_containerAliasesMapBackup == null)
 				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
@@ -86,7 +87,7 @@ public class InformationFlowModel {
 	 */
 	public boolean push() {
 		_logger.info("Pushing current PIP state...");
-		if (isSimulating()) {
+		if (!isSimulating()) {
 			_logger.info("..done!");
 			_containerSet = _containerSetBackup;
 			_dataSetBackup = new HashSet<>(_dataSet);
@@ -117,9 +118,9 @@ public class InformationFlowModel {
 	 */
 	public boolean pop() {
 		_logger.info("Popping current PIP state...");
-		if (!isSimulating()) {
+		if (isSimulating()) {
 			_logger.info("..done!");
-			_containerSetBackup = new HashSet<>(_containerSet);
+			_containerSetBackup = _containerSet;
 			_dataSet = _dataSetBackup;
 			_dataToContainerMap = _dataToContainerMapBackup;
 			_containerAliasesMap = _containerAliasesMapBackup;
@@ -509,6 +510,7 @@ public class InformationFlowModel {
 
 	private IIdentifiable getElementFromSet(String id,
 			Set<? extends IIdentifiable> set) {
+		if (set==null) return null;
 		Iterator<? extends IIdentifiable> it = set.iterator();
 		IIdentifiable element = null;
 		boolean found = false;

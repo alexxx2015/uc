@@ -69,7 +69,7 @@ public class PipTest {
 		Map<String, String> map = new HashMap<>();
 		IEvent event = new EventBasic("event1", map);
 		String predicate = "dummy string";
-		boolean res = _pipProxy.evaluatePredicate(event, predicate);
+		boolean res = _pipProxy.evaluatePredicateSimulatingNextState(event, predicate);
 		_logger.debug("Received result: " + res);
 		Assert.assertEquals(true, res);
 	}

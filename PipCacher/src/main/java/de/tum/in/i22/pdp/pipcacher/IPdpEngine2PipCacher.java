@@ -14,13 +14,13 @@ public interface IPdpEngine2PipCacher {
     
     //PIP DIRECT FUNCTION INVOCATION (BYPASS PIPCACHER)
     public boolean	  isSimulating();
-    public Boolean 	  evaluatePredicate(String predicate);
+    public Boolean 	  evaluatePredicateCurrentState(String predicate);
 	public Set<IData> getDataInContainer(IContainer container);
 	public Set<IContainer> 	getContainerForData(IData data);
 	
 	//Note: use these with care and check for simulation state.
     //      using isSimulating() before executing them
-    public Boolean 	  evaluatePredicate(IEvent event, String predicate);
+    public Boolean 	  evaluatePredicateSimulatingNextState(IEvent event, String predicate);
     public Boolean    eval(IKey key, IEvent event2Simulate);
     
 }

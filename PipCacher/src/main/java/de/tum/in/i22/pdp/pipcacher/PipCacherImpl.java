@@ -32,16 +32,23 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	
 	@Override
 	public IStatus refresh(IEvent desiredEvent) {
+		if (desiredEvent!= null) _logger.debug("refresh ("+desiredEvent.getName()+") invoked");
+		else _logger.debug("refresh (null) invoked");
+
 		ICacheUpdate newCache=_pip.refresh(desiredEvent);
 		if (newCache!=null){
+			_logger.debug("newCache != null");
 			_cache=newCache;
 			return DummyMessageGen.createOkStatus();
+		} else {
+			_logger.debug("newCache still == null");
 		}
 		return DummyMessageGen.createErrorStatus("PIP returned empty cache on update!");
 	}
 	
 	@Override
 	public IStatus addPredicates(Map<String, IKey> predicates) {
+		_logger.debug("addPredicates invoked");
 		IStatus status=_pip.addPredicates(predicates);
 		if (predicates == null){
 			_logger.warn("Empty list of predicates!");
@@ -66,6 +73,7 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	
 	@Override
 	public Boolean eval(IKey key) {
+		_logger.debug("eval("+key+") invoked");
 		if (key==null) {
 			return null; 
 		}
@@ -73,6 +81,8 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 			Boolean res=_cache.getVal(key);
 			_logger.debug("eval key ["+key+"] =" +res);
 			return res; 
+		} else{
+			_logger.debug("cache is null!");
 		}
 		return null;
 	}
@@ -110,22 +120,26 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	}
 
 	@Override
-	public Boolean evaluatePredicate(IEvent event, String predicate) {
-		return _pip.evaluatePredicate(event, predicate);
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
+		_logger.debug("Method evaluatePredicate(E,P) invoked. Bypassing PipCacher and invoking it directly on Pip...");
+		return _pip.evaluatePredicateSimulatingNextState(event, predicate);
 	}
 
 	@Override
-	public Boolean evaluatePredicate(String predicate) {
-		return _pip.evaluatePredicate(predicate);
+	public Boolean evaluatePredicateCurrentState(String predicate) {
+		_logger.debug("Method evaluatePredicate(P) invoked. Bypassing PipCacher and invoking it directly on Pip...");
+		return _pip.evaluatePredicatCurrentState(predicate);
 	}
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
+		_logger.debug("Method getDataInContainer invoked. Bypassing PipCacher and invoking it directly on Pip...");
 		return _pip.getDataInContainer(container);
 	}
 
 	@Override
 	public Set<IContainer> getContainerForData(IData data) {
+		_logger.debug("Method getContainerForData invoked. Bypassing PipCacher and invoking it directly on Pip...");
 		return	_pip.getContainerForData(data);
 	}
 

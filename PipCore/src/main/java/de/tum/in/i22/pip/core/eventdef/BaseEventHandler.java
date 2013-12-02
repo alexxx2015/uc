@@ -30,7 +30,11 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected static final String _delimiterName = "delimiter";
 	protected static final String _openDelimiter = "start";
 	protected static final String _closeDelimiter = "end";
-
+	
+	protected static final String _directionName = "direction";
+	protected static final String _genericInDirection = "IN";
+	protected static final String _genericOutDirection = "OUT";
+	
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 

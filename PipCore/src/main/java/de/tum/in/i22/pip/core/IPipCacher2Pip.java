@@ -22,8 +22,8 @@ public interface IPipCacher2Pip extends IPipManager {
     
     //PDP FUNCTIONALITIES AVAILABLE FOR DIRECT INVOCATION
     //Use with caution!!!
-	public Boolean evaluatePredicate(IEvent event, String predicate);
-	public Boolean evaluatePredicate(String predicate);
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
+	public Boolean evaluatePredicatCurrentState(String predicate);
 	public Set<IContainer> getContainerForData(IData data);
 	public Set<IData> getDataInContainer(IContainer container);
 	public IStatus notifyActualEvent(IEvent event);

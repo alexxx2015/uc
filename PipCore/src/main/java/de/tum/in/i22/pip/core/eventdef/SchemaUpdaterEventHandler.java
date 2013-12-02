@@ -36,16 +36,25 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		//this should contain TEST_D
 		
 		// check if container for clipboard exists and create new container if not
-		if (contId == null) return _messageFactory.createStatus(EStatus.ERROR);
+		if (contId == null) {
+			_logger.error("No container named "+ contName);
+			return _messageFactory.createStatus(EStatus.ERROR);
+		}
 				
 		Set<String> dataIds=ifModel.getDataInContainer(contId);
 		
-		if ((dataIds == null)||(dataIds.size()!=1))return _messageFactory.createStatus(EStatus.ERROR);
-				
+		if ((dataIds == null)||(dataIds.size()!=1)){
+			_logger.error("content of "+ contName+" different from expected. is dataIds empty? "+(dataIds == null));
+			return _messageFactory.createStatus(EStatus.ERROR);
+		}
+		
+		_logger.debug("emptying container "+ contName);
 		ifModel.emptyContainer(contId);
+		
+		_logger.debug("deleting data d from ifModel... ");
 		ifModel.removeData(ifModel.getDataById((String)(dataIds.toArray()[0])));
 				
-		_logger.debug(ifModel);
+		_logger.debug(ifModel.toString());
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

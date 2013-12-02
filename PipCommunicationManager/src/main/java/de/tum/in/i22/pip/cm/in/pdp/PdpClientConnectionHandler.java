@@ -125,7 +125,7 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		_logger.trace("Received predicate parameter: " + gpPredicate);
 		
 		IEvent event = new EventBasic(gpEvent);
-		boolean result = _pdp2pip.evaluatePredicate(event, gpPredicate.getValue());
+		boolean result = _pdp2pip.evaluatePredicateSimulatingNextState(event, gpPredicate.getValue());
 		GpBoolean gpResult = GpUtil.createGpBoolean(result);
 		gpResult.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();

@@ -46,7 +46,7 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 		_pipManager = pipManager;
 	}
 
-	public Boolean evaluatePredicate(IEvent event, String predicate) {
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
 		// returns always true, for testing purposes only
 		return true;
 	}
@@ -106,7 +106,7 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 	}
 
 	@Override
-	public Boolean evaluatePredicate(String predicate) {
+	public Boolean evaluatePredicatCurrentState(String predicate) {
 		// TODO Auto-generated method stub
 		return null;
 	}

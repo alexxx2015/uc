@@ -92,9 +92,11 @@ public class Scope {
 	 */
 	@Override
 	public String toString() {
-		return "Scope [_id=" + _id + ", _humanReadableName="
-				+ _humanReadableName + ", _attributes=" + _attributes
-				+ ", _scopeType=" + _scopeType + "]";
+		return "[("+_id + ") "
+				+ _humanReadableName + 
+//				", _attributes=" + _attributes
+//				+ ", _scopeType=" + _scopeType + 
+				"]";
 	}
 
 	/**

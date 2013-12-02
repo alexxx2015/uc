@@ -35,19 +35,17 @@ public class LoadEventHandler extends BaseEventHandler {
 		attributes.put("app", "Thunderbird");
 		attributes.put("filename", _filename);
 
+		
+		Scope scope = new Scope("TB loading file " + _filename + " OPEN",
+				Scope.scopeType.GENERIC_IN, attributes);
+
 		if (_delimiter.equals(_openDelimiter)) {
-			Scope scope = new Scope("TB loading file " + _filename + " OPEN",
-					Scope.scopeType.GENERIC_IN, attributes);
-			openScope(scope);
-			_scopesToBeOpened = new HashSet<Scope>();
+			if (_scopesToBeOpened==null) _scopesToBeOpened = new HashSet<Scope>();
 			_scopesToBeOpened.add(scope);
 			return 1;
 
 		} else if (_delimiter.equals(_closeDelimiter)) {
-			Scope scope = new Scope("TB loading file " + _filename + " CLOSE",
-					Scope.scopeType.GENERIC_OUT, attributes);
-			closeScope(scope);
-			_scopesToBeClosed = new HashSet<Scope>();
+			if (_scopesToBeClosed==null) _scopesToBeClosed = new HashSet<Scope>();
 			_scopesToBeClosed.add(scope);
 			return 1;
 		}

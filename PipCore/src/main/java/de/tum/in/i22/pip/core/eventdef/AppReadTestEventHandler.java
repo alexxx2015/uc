@@ -8,6 +8,6 @@ public class AppReadTestEventHandler extends GenericAppEventHandler {
 
 	@Override
 	public String scopeName(String delimiter) {
-		return "AppReadTestEventHandler: " + delimiter + "\n";
+		return "AppReadTestEventHandler (" + delimiter + ")";
 	}
 }

@@ -10,11 +10,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.pip.core.Scope.scopeType;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -28,9 +30,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 
-	private IEventHandlerCreator _actionHandlerCreator;
-	private IPipManager _pipManager;
-	private InformationFlowModel _ifModel;
+	private static IEventHandlerCreator _actionHandlerCreator;
+	private static  IPipManager _pipManager;
+	private static InformationFlowModel _ifModel;
 	
 	//info for PipCacher
 	private Map<String, IKey> _predicatesToEvaluate;
@@ -51,7 +53,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	 * Evaluate the predicate in the state obtained simulating the execution of event.
 	 * @return the result of the formula 
 	 */
-	public Boolean evaluatePredicate(IEvent event, String predicate){
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
 		_logger.info("Saving PIP current state");
 		if (_ifModel.push()) {
 			_logger.trace("Updating PIP semantics with current event ("
@@ -59,7 +61,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			notifyActualEvent(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");
-			Boolean res = evaluatePredicate(predicate);
+			Boolean res = evaluatePredicatCurrentState(predicate);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModel.pop();
 			_logger.trace("done!");
@@ -69,7 +71,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		return null;
 	}
 
-	public Boolean evaluatePredicate(String predicate) {
+	public Boolean evaluatePredicatCurrentState(String predicate) {
 		// TODO: add code to evaluate generic predicate
 		// Note that the three parameters of the predicate (State-based formula,
 		// parameter1, parameter2) should be separated by separator1, while list
@@ -77,6 +79,13 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		String separator1 = "\\|";
 		String separator2 = ":";
 		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
+		
+		if (_ifModel.getDataInContainer("TEST_C")!=null){
+			_logger.debug("number of data elements in container TEST_C = "+_ifModel.getDataInContainer("TEST_C").size());
+		} else {
+			_logger.debug("TEST_C contains no data or no container TEST_C found");
+		}
+		
 		//System.err.println(_ifModel.printModel());
 		String[] st = predicate.split(separator1);
 		_logger.debug("st.length="+st.length);
@@ -212,8 +221,32 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	@Override
 	public ICacheUpdate refresh (IEvent e) {
-		//if (_ifModel.push())
-		return null;
+		ICacheUpdate res = new CacheUpdateBasic();
+		Map<IKey,Boolean> map=new HashMap<IKey,Boolean>();
+
+		//TODO: fix missing getScopeId. requires implementation of XBEHAV.
+			
+		res.setMap(map);
+		res.setScopeId("<GET SCOPE ID STILL NOT IMPLEMENTED>");
+		
+		int counter=0;
+		_logger.debug("refreshing cache with event "+e);
+		_logger.debug("starting simulation");
+		if (!isSimulating()){
+			startSimulation();
+			notifyActualEvent(e);			
+			for (String key : _predicatesToEvaluate.keySet()){
+				Boolean b = evaluatePredicatCurrentState(key);
+				_logger.debug("("+counter+") ["+key+"]="+b);
+				map.put(_predicatesToEvaluate.get(key), b);
+				counter++;
+			}
+			stopSimulation();
+		} else {
+			_logger.error("Pip is already simulating");
+		}
+						
+		return res;
 	}
 
 	@Override

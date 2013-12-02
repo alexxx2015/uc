@@ -50,7 +50,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 	}
 
 	@Override
-	public Boolean evaluatePredicate(IEvent event, String predicate) {
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
 		_logger.debug("Evaluate predicate invoked");
 		_logger.trace("Create Google Protocol Buffer Event instance");
 		GpEvent gpEvent = EventBasic.createGpbEvent(event);
@@ -165,7 +165,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 	}
 
 	@Override
-	public Boolean evaluatePredicate(String predicate) {
+	public Boolean evaluatePredicatCurrentState(String predicate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
