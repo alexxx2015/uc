@@ -99,20 +99,18 @@ public class PdpHandlerTestPip implements IIncoming {
 			} else{
 				_logger.debug("event is Desired. Let's do some tests");
 
-				_logger.debug("test evaluation of test predicate in current actual state: ");
 				Boolean b=_engine2pip.evaluatePredicateCurrentState(_test_predicate);
-				_logger.debug("--->"+b);
+				_logger.debug("test evaluation of test predicate in current actual state: "+b);
 				
 				_logger.debug("Refresh pipCacher");
 				_core2pip.refresh(event);
 				
-				_logger.debug("evaluate test predicate in current actual state: ");
 				b=_engine2pip.evaluatePredicateCurrentState(_test_predicate);
-				_logger.debug("--->"+b);
+				_logger.debug("evaluate test predicate in current actual state: "+b);
 				
-				_logger.debug("evaluate test predicate on cache state:____");
+				
 				b=_engine2pip.eval(_test_predicate_key);
-				_logger.debug("--->"+b);
+				_logger.debug("evaluate test predicate on cache state: "+b);
 				
 			}
 		}

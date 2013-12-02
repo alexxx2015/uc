@@ -23,6 +23,15 @@ public class InformationFlowModel {
 	private static final Logger _logger = Logger
 			.getLogger(InformationFlowModel.class);
 
+	@Override
+	public String toString() {
+		return "InformationFlowModel [_containerSet=" + _containerSet
+				+ ", _dataSet=" + _dataSet + ", _dataToContainerMap="
+				+ _dataToContainerMap + ", _containerAliasesMap="
+				+ _containerAliasesMap + ", _namingSet=" + _namingSet
+				+ ", _scopeSet=" + _scopeSet + " IS_SIMULATING="+isSimulating()+"]";
+	}
+
 	private static InformationFlowModel _instance = new InformationFlowModel();
 
 	// list of containers
@@ -89,7 +98,7 @@ public class InformationFlowModel {
 		_logger.info("Pushing current PIP state...");
 		if (!isSimulating()) {
 			_logger.info("..done!");
-			_containerSet = _containerSetBackup;
+			_containerSetBackup = _containerSet;
 			_dataSetBackup = new HashSet<>(_dataSet);
 
 			_dataToContainerMapBackup = new HashMap<String, Set<String>>();
@@ -120,7 +129,7 @@ public class InformationFlowModel {
 		_logger.info("Popping current PIP state...");
 		if (isSimulating()) {
 			_logger.info("..done!");
-			_containerSetBackup = _containerSet;
+			_containerSet = _containerSetBackup;
 			_dataSet = _dataSetBackup;
 			_dataToContainerMap = _dataToContainerMapBackup;
 			_containerAliasesMap = _containerAliasesMapBackup;
@@ -359,7 +368,12 @@ public class InformationFlowModel {
 		if (hasContainerWithId(id)) {
 			Set<String> set = _dataToContainerMap.get(id);
 			if (set != null) {
-				set.clear();
+				
+				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
+				//JUST WASTED HOURS FINDING THE BUG
+				_dataToContainerMap.remove(id);
+				
+				
 				res = true;
 			}
 		}

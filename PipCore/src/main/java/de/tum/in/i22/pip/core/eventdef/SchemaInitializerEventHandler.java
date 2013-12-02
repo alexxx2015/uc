@@ -34,16 +34,21 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		String contId = ifModel.getContainerIdByName(new Name(
 				contName));
 
-		// check if container for clipboard exists and create new container if not
+		_logger.debug("contID = " + contId);
+
 		if (contId == null) {
-			IContainer container = _messageFactory.createContainer();
-		    contId = ifModel.addContainer(container);
+			IContainer container = _messageFactory.createContainer("TestContainer",contName);
+			
+			contId = ifModel.addContainer(container);
 			ifModel.addName(new Name(contName), contId);
 		
 			IData d= _messageFactory.createData(dataName);
 			ifModel.addData(d);
 			ifModel.addDataToContainerMapping(dataName, contId);
 			_logger.debug(ifModel.toString());
+		} else {
+			_logger.error("contID = " + contId+" Already exists!!!! IMPOSSIBRU!!!");
+		_logger.debug(ifModel.toString());
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
