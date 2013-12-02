@@ -12,20 +12,21 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
-import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
+//import de.tum.in.i22.pip.core.PipHandlerMock;
 
 public class PipCacherTest {
-	private static final Logger _logger = Logger.getLogger(PipCacherTest.class);
+/*	private static final Logger _logger = Logger.getLogger(PipCacherTest.class);
 	
 	private static IPdpCore2PipCacher _core2pip;
 	private static IPdpEngine2PipCacher _engine2pip;
@@ -88,6 +89,6 @@ public class PipCacherTest {
 		
 	}
 	
-
+*/
 
 }

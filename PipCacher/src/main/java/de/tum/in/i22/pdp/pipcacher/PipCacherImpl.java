@@ -10,7 +10,6 @@ import testutil.DummyMessageGen;
 import com.google.inject.Inject;
 
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
-import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
