@@ -3,6 +3,8 @@ package pdp.pipCacher.test;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,6 +20,7 @@ import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 
@@ -56,21 +59,30 @@ public class PipCacherTest {
 	@Test
 	public void testEvaluateSimulation() {
 		
-		//Initialize if model with TEST_C --> TEST_D
-		IEvent initEvent = _messageFactory.createActualEvent("SchemaInitializer", null);
-		_pipHandler.notifyActualEvent(initEvent);
-		
 		//Add exemplary predicate
 		Map <String,IKey> predicates=new HashMap<String,IKey>();
 		IKey k = KeyBasic.createNewKey();
 		predicates.put("isNotIn(TEST_D,TEST_C)", k);
 		_core2pip.addPredicates(predicates);
 				
-		IEvent updateDesiredEvent = _messageFactory.createActualEvent("SchemaUpdater", null);
+		//Initialize if model with TEST_C --> TEST_D
+		IEvent initEvent = _messageFactory.createActualEvent("SchemaInitializer", null);
+		_pipHandler.notifyActualEvent(initEvent);
+
+		//Test refresh
+		IEvent updateDesiredEvent = _messageFactory.createDesiredEvent("SchemaUpdater", null);
 		_core2pip.refresh(updateDesiredEvent);
+		
+		//Evaluate formula in simulated state
+		Boolean b=_engine2pip.eval(k);
+		assert(b!=null);
+		Assert.assertEquals((boolean)b, true);
 		
 		IEvent updateActualEvent = _messageFactory.createActualEvent("SchemaUpdater", null);
 		_pipHandler.notifyActualEvent(updateActualEvent);
+		
+		Assert.assertEquals((boolean)b,true);
+
 
 		///TODO: finish writing it
 		
