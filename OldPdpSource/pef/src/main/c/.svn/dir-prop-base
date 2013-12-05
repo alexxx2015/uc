@@ -1,8 +1,0 @@
-K 10
-svn:ignore
-V 40
-.sconf_temp
-.sconsign.dblite
-config.log
-
-END

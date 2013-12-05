@@ -1,5 +1,6 @@
 package de.fraunhofer.iese.pef.pdp;
 
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import de.fraunhofer.iese.pef.pdp.internal.IPolicyDecisionPoint;
@@ -27,7 +28,12 @@ public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 	public void initialize() throws Exception {
 		_logger.info("Loading native PDP library");
 		try {
-			loadDinamicLibrary("pdpNative/linux", "libpdp.so");
+//			String relativePath= "/" + "../natives/nativeLibs" + "/" + "libpdp.so";
+//			URL dll = PolicyDecisionPoint.class.getResource(relativePath);
+//			_logger.info("Loading: " + dll.toURI());
+			
+			//loadDinamicLibrary("../natives/nativeLibs", "libpdp.so");
+			System.load("/home/uc/pdp/PdpCore/target/natives/nativeLibs/libpdp.so");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 			_logger.info("starting returned: " + this.pdpStart());
