@@ -72,6 +72,11 @@ __attribute__((destructor)) static void pdpDest(void)
 
 bool pdpStart()
 {
+	if(pdp->mechanismTable!=NULL)
+	{
+		log_warn("pdp is already instantiated => ignoring it");
+		return TRUE;
+	}
   pdp->mechanismTable=g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)mechanismFree);
   checkNullInt(pdp->mechanismTable, "Unable to create PDP hash table");
 
@@ -203,6 +208,8 @@ notifyResponse_ptr pdpNotifyEvent(event_ptr levent)
 {
   checkNullPtr(levent, "Got NULL-event as notification?!");
 
+  log_warn("mechanisms: [%s]", pdpListDeployedMechanisms());
+
   log_debug("Searching for subscribed condition nodes for event=[%s]; subscribed nodes=[%d]",
       levent->actionDesc->actionName, g_slist_length(levent->actionDesc->conditions));
 
@@ -233,6 +240,7 @@ unsigned int pdpDeployPolicy(const char *policyDocPath)
   log_trace("%s - %s", __func__, policyDocPath);
   unsigned int ret=loadPolicy(policyDocPath, NULL);
   log_trace("%s - loading policy returned [%s]", __func__, returnStr[ret]);
+  log_warn("mechanisms: [%s]", pdpListDeployedMechanisms());
   return ret;
 }
 

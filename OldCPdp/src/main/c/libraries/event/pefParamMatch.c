@@ -82,11 +82,13 @@ bool paramMatch_context(event_ptr curEvent, paramMatch_ptr matchParam)
   bool paramMatch_dataUsage(event_ptr curEvent, paramMatch_ptr matchParam)
   {
     if(curEvent==NULL || matchParam==NULL) return FALSE;
+
     eventParam_ptr eventParam=eventFindParam(curEvent, matchParam->paramDesc->name);
     log_debug("Matching dataUsage-parameter");
 
     if(DATA_FLOW_ENABLED==1)
     { /// @todo dataUsage-parameter are only matched if DATA_FLOW_ENABLED is enabled? use existing stub-method!
+    	log_debug("eventParam=[%p]", eventParam);
       if(eventParam->paramType!=PARAM_STRING)
       {
         log_error("trying to compare INT-PARAM as DATAUSAGE -> not yet supported");
@@ -94,6 +96,7 @@ bool paramMatch_context(event_ptr curEvent, paramMatch_ptr matchParam)
       }
 
       //bool pipResponse=representationRefinesData(eventParam->paramValue->paramString, matchParam->value->paramString);
+      log_debug("trying to invoke pipEval");
       bool pipResponse=pipEval(eventParam->paramValue->paramString, matchParam->value->paramString);
       log_warn("pip returned=[%s]",boolStr[pipResponse]);
       if(pipResponse==TRUE)
@@ -143,13 +146,13 @@ bool paramMatch_re(event_ptr curEvent, paramMatch_ptr matchParam)
   // expect paramType to be STRING
   if(eventParam->paramType!=PARAM_STRING) {log_warn("Incompatible parameter types for matching?!"); return FALSE;}
 
-  int val=regexec(matchParam->re, eventParam->paramValue->paramString, 0, NULL, 0);
-  if(val==0) {log_debug("regex match event paramter"); return TRUE;}
-  else if(val==REG_NOMATCH) {log_debug("regex does NOT match event parameter"); return FALSE;}
+  //int val=regexec(matchParam->re, eventParam->paramValue->paramString, 0, NULL, 0);
+  //if(val==0) {log_debug("regex match event paramter"); return TRUE;}
+  //else if(val==REG_NOMATCH) {log_debug("regex does NOT match event parameter"); return FALSE;}
 
-  char buf[128];
-  regerror(val, matchParam->re, buf, sizeof(buf));
-  log_error("Error executing regex=[%s]", buf);
+  //char buf[128];
+  //regerror(val, matchParam->re, buf, sizeof(buf));
+  //log_error("Error executing regex=[%s]", buf);
   return FALSE;
 }
 
@@ -207,7 +210,7 @@ void paramMatchFree(gpointer data, gpointer userData)
   }
   else if(paramMatch->type==PARAM_REGEX && paramMatch->re!=NULL)
   {
-    regfree(paramMatch->re);
+    //regfree(paramMatch->re);
     free(paramMatch->re);
   }
 

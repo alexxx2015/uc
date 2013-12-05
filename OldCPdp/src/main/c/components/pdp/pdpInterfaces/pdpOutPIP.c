@@ -97,11 +97,12 @@
     (*curjvm)->AttachCurrentThread(curjvm, (void **)&lenv, NULL);
     if(lenv==NULL) {log_error("ERROR! JNI environment could not be retrieved! -> returning errorStr..."); return -1;}
 
+    log_debug("pipEval rep=[%s], dataID=[%s]", rep, dataID);
     jstring jniRep=(*lenv)->NewStringUTF(lenv, rep);
     jstring jniDataID=(*lenv)->NewStringUTF(lenv, dataID);
 
     //int ret=(*lenv)->CallIntMethod(lenv, jniPDP.instance, jniPDP.handlePIPeval, jniRequest, jniParams);
-    int ret=(*lenv)->CallIntMethod(lenv, jniPIP.instance, jniPIP.handlePIPeval, jniRep, jniDataID);
+    int ret=(*lenv)->CallIntMethod(lenv, jniPIP.instance, jniPDP.handlePIPeval, jniRep, jniDataID);
     //(*lenv)->ReleaseStringUTFChars(lenv, jniRequest, jniRequest);
     log_debug("PIP returned=[%d]", ret);
     return ret;
@@ -127,7 +128,7 @@
     //jstring jniMethod=(*lenv)->NewStringUTF(lenv, method);
     jstring jniParam=(*lenv)->NewStringUTF(lenv, param);
     log_debug("invoking handlePIPinit-method...");
-    jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPIP.instance, jniPIP.handlePIPinit, jniParam);
+    jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPDP.instance, jniPDP.handlePIPinit, jniParam);
     char *strval=(char*)(*lenv)->GetStringUTFChars(lenv, retStr, 0);
     log_debug("LibPIP returned=[%s]", strval);
 
@@ -154,9 +155,10 @@
     log_debug("method=[%s]", method);
     log_debug("param=[%s]", param);
     log_debug("initDataID=[%s]", initDataID);
-    log_debug("handler=[%p]", jniPIP.handlePIPinitDataID);
+    log_debug("handler=[%p]", jniPDP.handlePIPinitDataID);
 
-    jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPIP.instance, jniPIP.handlePIPinitDataID, jniParam, jniDataID);
+    //jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPIP.instance, jniPIP.handlePIPinitDataID, jniParam, jniDataID);
+    jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPDP.instance, jniPDP.handlePIPinitDataID, jniParam, jniDataID);
 
     char *strval=(char*)(*lenv)->GetStringUTFChars(lenv, retStr, 0);
     log_debug("PIP InitDataId returned=[%s]", strval);
@@ -181,7 +183,8 @@
       jevent=prepareJNIevent(lenv, curEvent);
     }
 
-    int ret=(*lenv)->CallIntMethod(lenv, jniPIP.instance, jniPIP.evaluatePredicate, jniPredicate, jevent);
+    //int ret=(*lenv)->CallIntMethod(lenv, jniPIP.instance, jniPIP.evaluatePredicate, jniPredicate, jevent);
+    int ret=(*lenv)->CallIntMethod(lenv, jniPDP.instance, jniPDP.evaluatePredicate, jniPredicate, jevent);
     log_debug("PIP returned=[%d]", ret);
     return ret;
   }

@@ -26,6 +26,10 @@ struct jniPDP_s
   jobject   instance;
   jmethodID getInstance;
   jmethodID handlePEPsubscribe;
+  jmethodID handlePIPinit;
+  jmethodID handlePIPinitDataID;
+  jmethodID handlePIPeval;
+  jmethodID evaluatePredicate;
 } jniPDP;
 
 /**

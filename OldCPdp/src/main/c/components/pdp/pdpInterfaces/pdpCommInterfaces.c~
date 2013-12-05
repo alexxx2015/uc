@@ -188,8 +188,8 @@ unsigned int pdpInterfaceFree(pdpInterface_ptr linterface)
 
   if(linterface->socket!=NULL)
   {
-    //if(pefSocketFree(linterface->socket)==R_ERROR) log_error("Error deallocating interface socket!");
-    //else log_debug("Interface socket deallocated");
+    if(pefSocketFree(linterface->socket)==R_ERROR) log_error("Error deallocating interface socket!");
+    else log_debug("Interface socket deallocated");
   }
 
   free(linterface);

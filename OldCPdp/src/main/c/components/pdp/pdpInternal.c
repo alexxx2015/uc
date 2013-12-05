@@ -313,7 +313,8 @@ unsigned int interfaceDescriptions_parseXML(xmlNodePtr node)
         }
         long porti=strtol(port, NULL, 10);
         log_trace("Found TCP socket specification: host=[%s], port=[%d]", host, porti);
-        linterface->socket=pefSocketClientNew(PEFSOCKET_TCP, host, porti);
+        log_error("sockets not supported...");
+        /*linterface->socket=pefSocketClientNew(PEFSOCKET_TCP, host, porti);
         if(linterface->socket==NULL)
         {
           log_error("Error initializing socket for interface");
@@ -333,6 +334,7 @@ unsigned int interfaceDescriptions_parseXML(xmlNodePtr node)
           pdpInterfaceFree(linterface);
         }
         else log_debug("Finished [%s] registration with socket interface for PEP [%s] => [%u]", (peppxp==0?"PEP":"PXP"), name, ret);
+        */
       }
       else if(strncasecmp(type, "xmlrpc", 6)==0)
       {
@@ -616,6 +618,22 @@ unsigned int notifyResponseProcessMechanism(notifyResponse_ptr response, mechani
     }
   }
   else log_trace("Response is already INHIBIT");
+  
+  // always add executeAction to response
+  if(mech->cntExecuteActions>0)
+  {
+    log_trace("copying execute-actions to response!");
+    response->executeActions=realloc(response->executeActions,(response->cntExecuteActions+mech->cntExecuteActions)*sizeof(executeAction_ptr));
+    checkNullInt(response->executeActions, "Could not allocate memory for new action");
+
+    unsigned int a;
+    for(a=0; a<mech->cntExecuteActions; a++)
+    { // copy actions to execute from mechanism to response to avoid duplicating them (time consumption)
+      // ==> should NOT be freed with freeing response!!!!
+      response->executeActions[response->cntExecuteActions+a]=mech->executeActions[a];
+    }
+    response->cntExecuteActions+=mech->cntExecuteActions;
+  }
 
   return R_SUCCESS;
 }

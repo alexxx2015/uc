@@ -142,6 +142,11 @@ struct notifyResponse_s
   event_ptr               event;
   /// the collected authorization actions of all relevant mechanisms
   authorizationAction_ptr authorizationAction;
+  
+  /// number of executeActions in array
+  unsigned int            cntExecuteActions;
+  /// array of executeActions
+  executeAction_ptr      *executeActions;
 };
 
 /**

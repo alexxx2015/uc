@@ -15,13 +15,16 @@ env.Append(CPPPATH = ['/usr/include/libxml2',
                       '/usr/lib/jvm/java-6-sun-1.6.0.26/include',
                       '/usr/lib/jvm/java-6-sun-1.6.0.26/include/linux',
                       '/usr/lib/jvm/java-6-openjdk/include',
+                      '/usr/lib/jvm/java-7-oracle/include',
+                      '/usr/lib/jvm/java-7-oracle/include/linux',
                       '/usr/lib/i386-linux-gnu/glib-2.0/include',
                      ])
 
 env.Append(CCFLAGS = " -fPIC ")
 
 #env.Append(LIBPATH = ["/usr/lib/jvm/jdk1.6.0_32/jre/lib/i386/client/"])
-env.Append(LIBPATH = ["/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386/client/"])
+#env.Append(LIBPATH = ["/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386/client/"])
+env.Append(LIBPATH = ["/usr/lib/jvm/java-7-oracle/jre/lib/i386/server"])
 
 #######################################################################
 # module configuration

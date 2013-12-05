@@ -62,12 +62,16 @@ static char* const errorStr="ERROR";
 
 #ifdef __WIN32__
   #define size_t _ssize_t
+  #define _ssize_t long
 
   // commented because otherwise only these methods are exported in shared library;
   // in general ALL methods are exported except if at least on is explicitly exported using dllexport directive
   // which is given for JNI-methods --> added -Wl,--export-all-symbols to build script
   //#undef LIBEXPORT
   //#define LIBEXPORT __declspec(dllexport)
+  
+  #include <winsock2.h>
+  
 	#include <windows.h>
   #include <windef.h>
 #endif

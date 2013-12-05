@@ -137,7 +137,7 @@ if not GetOption('clean') and not GetOption('help'):
 
   if errors == True:
     print "Error occured in configuration check..."
-    Exit(1)
+    #Exit(1)
   env = conf.Finish()
 
 

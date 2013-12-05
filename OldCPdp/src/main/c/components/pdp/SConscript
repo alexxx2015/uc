@@ -64,11 +64,11 @@ else:
   Depends(pdp, pdpLog)
   Default(pdp)
 
-env.Install(os.path.join(env['PEFBASE'], "..", "resources","nativeLibs"), pdp)
+env.Install(os.path.join(env['PEFBUILD'], "..", "..", "target","classes", "nativeLibs"), pdp)
   
 Depends(pdp, pdpLog)
-Default([pdp, os.path.join(env['PEFBASE'], "..", "resources","nativeLibs")])
-Alias('pdp', [pdp, os.path.join(env['PEFBASE'], "..", "resources","nativeLibs")])
+Default([pdp, os.path.join(env['PEFBUILD'], "..", "..", "target","classes", "nativeLibs")])
+Alias('pdp', [pdp, os.path.join(env['PEFBUILD'], "..", "..", "target","classes", "nativeLibs")])
 
 
 

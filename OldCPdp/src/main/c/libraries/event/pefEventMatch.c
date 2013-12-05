@@ -248,16 +248,16 @@ unsigned int eventMatchAddParam(eventMatch_ptr eventMatch, paramDescription_ptr 
   if(type==PARAM_REGEX)
   { // value is regular expression, pre-compiling for performance reasons
     log_debug("Parameter value is regular expression => precompiling re=[%s]...", value);
-    paramMatch->re=memAlloc(sizeof(regex_t));
-    int val=regcomp(paramMatch->re, value, 0); /// @todo use REG_EXTENDED | REG_ICASE: to disable case sensitivity and use extended Posix regex-syntax!
-    if(val!=0)
-    {
-      char buf[128];
-      regerror(val, paramMatch->re, buf, sizeof(buf));
-      log_error("Error pre-compiling regex: [%s]", buf);
-      return R_ERROR;
-    }
-    else log_debug("Regular expression successfully compiled.");
+    //paramMatch->re=memAlloc(sizeof(regex_t));
+    //int val=regcomp(paramMatch->re, value, 0); /// @todo use REG_EXTENDED | REG_ICASE: to disable case sensitivity and use extended Posix regex-syntax!
+    //if(val!=0)
+    //{
+    //  char buf[128];
+    //  regerror(val, paramMatch->re, buf, sizeof(buf));
+    //  log_error("Error pre-compiling regex: [%s]", buf);
+    //  return R_ERROR;
+    //}
+    //else log_debug("Regular expression successfully compiled.");
   }
 
   // setting matching-function for parameter

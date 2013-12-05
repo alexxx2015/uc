@@ -35,7 +35,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
   }
   log_debug("JVM reference retrieved.");
 
-  jclass lclsPDPinstance=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/PolicyDecisionPoint");
+  jclass lclsPDPinstance=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/JNICommunicatorFromOldPdp");
   jclass lclsDecision=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/internal/Decision");
   jclass lclsExecuteAction=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/internal/ExecuteAction");
   jclass lclsAuthorizationAction=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/internal/AuthorizationAction");
@@ -173,7 +173,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 
   // requesting singleton instance of PolicyDecisionPoint
   //jniPDP.getInstance=(*lenv)->GetStaticMethodID(lenv, jniPDP.cls, "getInstance", "()Lde/fraunhofer/iese/pef/pdp/IPolicyDecisionPoint;");
-  jniPDP.getInstance=(*lenv)->GetStaticMethodID(lenv, jniPDP.cls, "getInstance", "()Lde/fraunhofer/iese/pef/pdp/internal/IPolicyDecisionPoint;");
+  jniPDP.getInstance=(*lenv)->GetStaticMethodID(lenv, jniPDP.cls, "getInstance", "()Lde/fraunhofer/iese/pef/pdp/JNICommunicatorFromOldPdp;");
   if(jniPDP.getInstance==NULL) {log_error("Error resolving methodID for getDefault in PDP class"); return JNI_ERR;}
 
   jobject lpdpSingletonInstance=(jobject)(*lenv)->CallStaticObjectMethod(lenv, jniPDP.cls, jniPDP.getInstance);
@@ -182,8 +182,21 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
   if(jniPDP.instance==NULL) {log_error("ERROR: Could not create global reference for PDP object!"); return JNI_ERR;}
   (*lenv)->DeleteLocalRef(lenv, lpdpSingletonInstance);
 
+  jniPDP.handlePIPeval=(*lenv)->GetMethodID(lenv, jniPDP.cls, "eval", "(Ljava/lang/String;Ljava/lang/String;)I");
+  jniPDP.handlePIPinit=(*lenv)->GetMethodID(lenv, jniPDP.cls, "init", "(Ljava/lang/String;)Ljava/lang/String;");
+  jniPDP.handlePIPinitDataID=(*lenv)->GetMethodID(lenv, jniPDP.cls, "init", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+  jniPDP.evaluatePredicate=(*lenv)->GetMethodID(lenv, jniPDP.cls, "evaluatePredicate", "(Ljava/lang/String;Lde/fraunhofer/iese/pef/pdp/internal/Event;)I");
+  log_debug("evaluatePredciate=[%p]", jniPDP.evaluatePredicate);
+
+  if(jniPDP.handlePIPeval==NULL || jniPDP.handlePIPinit==NULL || jniPDP.handlePIPinitDataID==NULL || jniPDP.evaluatePredicate==NULL)
+    {log_error("ERROR: Could not find required methods IDs for PIP!"); return JNI_ERR;}
+
+  log_debug("PIP initialization finished");
+
+
   // Initializing PIP connection (if set to JNI)
   #if PDP_PIPSOCKET == 1
+  /*
     log_debug("Initializing PIP connection via JNI");
     // todo should be done via registry and interfaceDescription!
     //jclass lclsPIPinstance=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/example/pipExample");
@@ -221,7 +234,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
       {log_error("ERROR: Could not find required methods IDs for PIP!"); return JNI_ERR;}
 
     log_debug("PIP initialization finished");
-
+*/
   #endif
 
   log_info("JNI initialization finished");
@@ -281,7 +294,9 @@ JNIEXPORT jint JNICALL Java_de_fraunhofer_iese_pef_pdp_PolicyDecisionPoint_pdpSt
 
 JNIEXPORT jint JNICALL Java_de_fraunhofer_iese_pef_pdp_PolicyDecisionPoint_pdpDeployPolicy(JNIEnv *env, jobject jobj, jstring jPolicyDocPath)
 {
+	log_debug("pdpDeployPolicy");
   const char *mechanismDocPath=(*env)->GetStringUTFChars(env, jPolicyDocPath, 0);
+  log_debug("[%p]", pdp->deployPolicy);
   unsigned int ret=pdp->deployPolicy(mechanismDocPath);
   (*env)->ReleaseStringUTFChars(env, jPolicyDocPath, mechanismDocPath);
   return ret;

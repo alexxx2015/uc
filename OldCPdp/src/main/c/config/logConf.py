@@ -125,7 +125,7 @@ def prepLogConfigHeader(out, src, target, env):
           out.write("#define GLOBAL_LOG_OUTPUT stdout1\n");
         else:
 		# win32 similar to openbsd (&_iob[1]) -> gcc fails due to not constant assignment
-		if ( (clogoutput == "stdout" or clogoutput == "stderr") and (sys.platform=="win32")):
+		if ( (clogoutput == "stdout" or clogoutput == "stderr")):# and (sys.platform=="win32")):
 			out.write("#define STDOUTFLAG 1\n");
 			out.write("static FILE *stdout1 = NULL;\n");
 			out.write("#undef GLOBAL_LOG_OUTPUT\n");
