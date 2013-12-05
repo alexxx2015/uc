@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.fraunhofer.iese.ind2uce</groupId>
+	<artifactId>PdpNativeSource</artifactId>
+	<packaging>jar</packaging>
+	<name>IND2UCE :: PDP native library</name>
+	<version>0.0.3-SNAPSHOT</version>
+	<description>IND2UCE :: PDP native library</description>
+	
+	<!-- Properties -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+	
+	<build>
+	
+	
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/nativeLibs/*</include>
+        </includes>
+        <excludes>
+          <exclude>**/doku</exclude>
+          <exclude>**/evalLogs</exclude>
+          <exclude>**/win32</exclude>
+          <exclude>**/win64</exclude>
+        </excludes>
+      </resource>
+    </resources>	
+	
+    <plugins>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </configuration>
+         </plugin>
+    
+    
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>        
+        <execution>
+          <id>sconsClean</id>
+          <phase>clean</phase>
+           <configuration>
+               <executable>scons</executable>
+               <workingDirectory>./src/main/c</workingDirectory>
+               <arguments>
+                   <argument>-c</argument>
+               </arguments>
+           </configuration>
+           <goals>
+               <goal>exec</goal>
+           </goals>
+       </execution>
+
+       <execution>
+           <id>sconsCompile</id>
+           <phase>generate-source</phase>
+           <configuration>
+               <executable>scons</executable>
+               <workingDirectory>./src/main/c</workingDirectory>
+          <arguments>
+            <!--<argument></argument>-->
+          </arguments>
+           </configuration>
+           <goals>
+               <goal>exec</goal>
+           </goals>
+       </execution>
+       </executions>        
+
+      </plugin>      
+      
+    </plugins>
+  </build>
+  
+</project>
