@@ -13,7 +13,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>PdpEngine</artifactId>
+			<artifactId>PdpEvalEngine</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
@@ -27,13 +27,14 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-		<groupId>de.fraunhofer.iese.ind2uce</groupId>
-		<artifactId>PdpNativeSource</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+			<groupId>de.fraunhofer.iese.ind2uce</groupId>
+			<artifactId>PdpNativeSource</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	
 	<build>
+	<pluginManagement>
 	<plugins>
 	<plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -62,5 +63,6 @@
         </executions>
       </plugin>
       </plugins>
+      </pluginManagement>
 	</build>
 </project>

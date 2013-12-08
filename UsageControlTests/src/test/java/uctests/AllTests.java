@@ -1,5 +1,7 @@
 package uctests;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -8,5 +10,15 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class,
 		TestPmp2PdpCommunication.class })
 public class AllTests {
+    
+	@BeforeClass 
+    public static void setUpClass() {      
+        System.out.println("Master setup");
+
+    }
+
+    @AfterClass public static void tearDownClass() { 
+        System.out.println("Master tearDown");
+    }
 	
 }
