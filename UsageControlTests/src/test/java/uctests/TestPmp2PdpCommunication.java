@@ -8,11 +8,6 @@ import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import de.tum.in.i22.pdp.PdpController;
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
@@ -32,26 +27,10 @@ public class TestPmp2PdpCommunication {
 	private static Logger _logger = Logger.getRootLogger();
 
 	private static IPmp2PdpFast _pdpProxy;
-	private static final int PEP_LISTENER_PORT_NUM = 50007;
-	private static final int PMP_LISTENER_PORT_NUM = 50008;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Injector injector = Guice.createInjector(new PdpTestModule());
-		PdpController pdp = injector.getInstance(PdpController.class);
-		PdpSettings pdpSettings = pdp.getPdpSettings();
-		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
-		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
-		pdp.start();
-
-		try {
-			_logger.debug("Pause the main thread for 1s (PDP starting).");
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			_logger.error("Main thread interrupted.", e);
-		}
-
-		_pdpProxy = new Pmp2PdpFastImp("localhost", PMP_LISTENER_PORT_NUM);
+		_pdpProxy = new Pmp2PdpFastImp("localhost", TestSettings.PMP_LISTENER_PORT_NUM);
 	}
 
 	@Test

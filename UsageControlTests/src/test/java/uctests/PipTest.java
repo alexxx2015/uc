@@ -13,14 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
-import de.tum.in.i22.pip.PipController;
-import de.tum.in.i22.pip.PipSettings;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -29,24 +23,11 @@ public class PipTest {
 	
 	private static Logger _logger = Logger.getRootLogger();
 	
-	private static PipController _pipController;
 	private static IPdp2PipFast _pipProxy;
-	private final static int PDP_LISTENER_PORT = 60011;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Injector injector = Guice.createInjector(new PdpTestModule());
-		_pipController =  injector.getInstance(PipController.class);
-		PipSettings pipSettings = _pipController.getPipSettings();
-		pipSettings.setPdpListenerPortNum(PDP_LISTENER_PORT);
-		_pipController.start();
-		try {
-			_logger.debug("Pause the main thread for 1s (PIP starting).");
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			_logger.error("Main thread interrupted.", e);
-		}
-		_pipProxy = new Pdp2PipImp("localhost", PDP_LISTENER_PORT);
+		_pipProxy = new Pdp2PipImp("localhost", TestSettings.PDP_LISTENER_PORT_IN_PIP);
 	}
 
 	@AfterClass

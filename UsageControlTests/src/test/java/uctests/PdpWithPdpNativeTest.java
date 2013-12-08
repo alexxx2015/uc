@@ -19,6 +19,8 @@ import de.tum.in.i22.pip.PipSettings;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 
+//FIXME This test does not correspond to its name. It should be adjusted. The injector for instance 
+// uses PdpTestModule ...
 public class PdpWithPdpNativeTest {
 
 	private static Logger _logger = Logger.getRootLogger();

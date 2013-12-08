@@ -13,16 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import de.tum.in.i22.pdp.PdpController;
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pep2pdp.IPep2PdpFast;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
-import de.tum.in.i22.pip.PipController;
-import de.tum.in.i22.pip.PipSettings;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -54,17 +46,11 @@ public class PdpTest {
 	// num of calls from pmp thread
 	private final static int NUM_OF_CALLS_FROM_PMP = 10;
 	
-	
-	private final static int PDP_LISTENER_PORT_IN_PIP = 60011;
-	private final static String PIP_ADDRESS = "localhost";
 	private final static int PMP_LISTENER_PORT_NUM = 50008;
 	private final static int PEP_LISTENER_PORT_NUM = 50009;
 	
-	private static Thread _t1;
-	private static Thread _t2;
-	private static Thread _t3;
-	
-	private static Injector _injector = null;
+	private static Thread _threadPep;
+	private static Thread _threadPmp;
 
 	public PdpTest() {
 		// TODO Auto-generated constructor stub
@@ -72,24 +58,8 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
-		
-		 /*
-	     * Guice.createInjector() takes your Modules, and returns a new Injector
-	     * instance.
-	     */
-	    _injector = Guice.createInjector(new PdpTestModule());
-	    
-		startPdpServer();
 		startPepClient();
 		startPmpClient();
-		startPip();
-		
-		try {
-			_logger.debug("Pause the main thread for 1 s so that PDP and PIP can be started.");
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			_logger.error("Main thread interrupted.", e);
-		}
 
 		_pdpProxy = new Pep2PdpFastImp("localhost", PEP_LISTENER_PORT_NUM);
 	}
@@ -164,18 +134,8 @@ public class PdpTest {
 		return map;
 	}
 
-	private static void startPdpServer() {
-		PdpController pdp = _injector.getInstance(PdpController.class);
-		PdpSettings pdpSettings = pdp.getPdpSettings();
-		pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
-		pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
-		pdpSettings.setPipPortNum(PDP_LISTENER_PORT_IN_PIP);
-		pdpSettings.setPipAddress(PIP_ADDRESS);
-		pdp.start();
-	}
-
 	private static Thread startPepClient() {
-		_t1 = new Thread(new Runnable() {
+		_threadPep = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -209,13 +169,13 @@ public class PdpTest {
 			}
 		});
 
-		_t1.start();
+		_threadPep.start();
 		
-		return _t1;
+		return _threadPep;
 	}
 	
 	private static Thread startPmpClient() {
-		_t2 = new Thread(new Runnable() {
+		_threadPmp = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				IPmp2PdpFast pdpProxyTwo = new Pmp2PdpFastImp("localhost", PMP_LISTENER_PORT_NUM);
@@ -242,26 +202,9 @@ public class PdpTest {
 			}
 		});
 
-		_t2.start();
+		_threadPmp.start();
 		
-		return _t2;
-	}
-	
-	private static Thread startPip() {		
-		final PipController pipController = _injector.getInstance(PipController.class);
-		_t3 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				_logger.debug("Start PIP. Listen from incoming PDP connections on port " + PDP_LISTENER_PORT_IN_PIP);
-				PipSettings pipSettings = pipController.getPipSettings();
-				pipSettings.setPdpListenerPortNum(PDP_LISTENER_PORT_IN_PIP);
-				pipController.start();
-			}
-		});
-
-		_t3.start();
-		
-		return _t3;
+		return _threadPmp;
 	}
 	
 	private static IMechanism createMechanism() {

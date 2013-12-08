@@ -47,7 +47,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 				_shouldContinue = false;
 			}
 			catch (EOFException eof) {
-				_logger.warn("End of stream reached.");
+				_logger.debug("End of stream reached.");
 				_shouldContinue = false;
 			}	
 			/* connection either terminated by the client or lost due to 
