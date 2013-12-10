@@ -1,4 +1,4 @@
-file /home/rd/projects/tum/pdp/OldCPdp/src/main/c/SConscript,line 116:
+file /home/uc/pdpNew/pdp/OldCPdp/src/main/c/SConscript,line 116:
 	Configure(confdir = .sconf_temp)
 scons: Configure: Checking whether the C compiler works
 scons: Configure: ".sconf_temp/conftest_0.c" is up to date.
@@ -98,10 +98,7 @@ scons: Configure: The original builder output was:
   |  |
   |  |
   |
-scons: Configure: ".sconf_temp/conftest_4.o" is up to date.
-scons: Configure: The original builder output was:
-  |Compiling .sconf_temp/conftest_4.o
-  |
-scons: Configure: (cached) yes
+Compiling .sconf_temp/conftest_4.o
+scons: Configure: yes
 
 
