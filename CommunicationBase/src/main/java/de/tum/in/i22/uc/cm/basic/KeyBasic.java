@@ -43,4 +43,12 @@ public class KeyBasic implements IKey {
 		return new KeyBasic(counter++);
 	}
 	
+	public static IKey keyfromString(String stringKey){
+		if (stringKey==null) return null;
+		if (stringKey=="") return null;
+		if (stringKey.matches("[0-9]*")) return new KeyBasic(Integer.decode(stringKey));
+		return null;
+	}
+	
+	
 }

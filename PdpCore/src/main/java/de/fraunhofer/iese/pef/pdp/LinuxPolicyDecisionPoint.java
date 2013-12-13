@@ -33,10 +33,12 @@ public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 //			_logger.info("Loading: " + dll.toURI());
 			
 			//loadDinamicLibrary("../natives/nativeLibs", "libpdp.so");
+			//TODO FIXME: replace with relative path
 			System.load("/home/uc/pdp/OldCPdp/target/classes/nativeLibs/libpdp.so");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 			_logger.info("starting returned: " + this.pdpStart());
+			//TODO FIXME: replace with relative path
 			int ret=this.pdpDeployPolicy("/home/uc/xlayerpip/jpdp/src/main/xml/examples/testTUM.xml");
 			_logger.info("policy should be deployed... "+ret);
 //			_logger.info("mechanisms: " + this.listDeployedMechanismsJNI());
