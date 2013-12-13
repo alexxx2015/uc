@@ -1,4 +1,4 @@
-file /home/rd/projects/tum/pdp/OldCPdp/src/main/c/SConscript,line 116:
+file /home/uc/pdp/OldCPdp/src/main/c/SConscript,line 116:
 	Configure(confdir = .sconf_temp)
 scons: Configure: Checking whether the C compiler works
 scons: Configure: ".sconf_temp/conftest_0.c" is up to date.

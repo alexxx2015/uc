@@ -14,27 +14,64 @@ public class JNICommunicatorFromOldPdp {
 		if(_instance==null) _instance=new JNICommunicatorFromOldPdp(); 
 		return _instance;
 	}
+
+	/**************************
+	 * 
+	 * PIP functionalities
+	 * 
+	 *************************/
 	
-	public int evaluatePredicate(String a, Event b)
+	/* return
+	 * -1 -> error
+	 * 0 -> false
+	 * 1 -> true
+	 */
+	public int evaluatePredicate(String predicate, Event event)
 	{
 		int ret=0;
 		//forward to new PIP
 		return ret;
 	}
 	
-	public int eval(String a, String b)
+	/* return
+	 * -1 -> error
+	 * 0 -> false
+	 * 1 -> true
+	 */
+	public int containerRefinesData(String container, String dataID)
 	{
 		return 0;
 	}
 	
-	public String init(String initialRepresentation)
+	public String initialRepresentation(String container)
 	{
 		return "BLUB"; 		
 	}
 	
-	public String init(String container, String initialDataID)
+	public String initialRepresentation(String container, String initialDataID)
 	{
 		return "bla";
 	}
+		
 	
+	/**************************
+	 * 
+	 * External evaluated functionalities
+	 * 
+	 *************************/
+	/* return
+	 * -1 -> error
+	 * 0 -> false
+	 * 1 -> true
+	 */
+	public int evalOperator(String predicateType, String predicate, Event event)
+	{
+		return 0;
+	}
+	
+	
+	
+	//<eval type="XPATH"> danasjknsajknsjkncsjkacnasdjk </eval>
+	
+
 }

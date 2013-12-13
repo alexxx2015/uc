@@ -16,7 +16,7 @@
 			<artifactId>PdpEvalEngine</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>de.fraunhofer.iese.ind2uce</groupId>
 			<artifactId>internals</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

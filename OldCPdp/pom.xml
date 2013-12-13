@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
   <name>IND2UCE :: PDP native library</name>
   <version>0.0.3-SNAPSHOT</version>
-  <description>IND2UCE :: PDP native library</description>
+  <description>IND2UCE :: OldCPdp</description>
 
   <!-- Properties -->
   <properties>
@@ -24,7 +24,6 @@
       </resource>
     </resources>
 
-	<pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -85,7 +84,6 @@
       </plugin>
 
     </plugins>
-    </pluginManagement>
   </build>
 
 </project>

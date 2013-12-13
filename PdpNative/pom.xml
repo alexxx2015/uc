@@ -13,5 +13,5 @@
 	<packaging>jar</packaging>
 	<name>IND2UCE :: PDP native library for win 64</name>
 	<version>0.0.3-SNAPSHOT</version>
-	<description>IND2UCE :: PDP native library for win 64</description>
+	<description>IND2UCE :: PDP native library</description>
 </project>
