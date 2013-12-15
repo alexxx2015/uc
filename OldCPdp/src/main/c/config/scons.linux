@@ -6,6 +6,8 @@ env=Environment(PEFCONFIG=tmpConfig['PEFCONFIG'],
                 PEFBUILD=tmpConfig['PEFBUILD'], 
                 PEFincludes=tmpConfig['PEFincludes'])
 
+env['compilerFound']=True
+
 #######################################################################
 # Platform specific configuration
 env.Append(CPPPATH = ['/usr/include/libxml2',

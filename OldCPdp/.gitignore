@@ -1,5 +1,4 @@
-/*
-!src/
-!pom.xml
-!.gitignore
-
+.classpath
+.project
+bin
+target

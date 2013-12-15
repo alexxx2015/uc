@@ -33,11 +33,12 @@
 #define REPMAX      15
 #define XPATH       16
 #define STATEBASED  17
+#define EVALOP      18
 #define NO_OSL_OP   99
 
 /// static textual representation of osl operators; used for logging
 static char* const operatorNames[]={"FALSE","TRUE","EVENTMATCH","","NOT","AND","OR","IMPLIES",
-                                    "SINCE","ALWAYS","BEFORE","DURING","WITHIN","REPLIM","REPSINCE","REPMAX","XPATH", "STATEBASED"};
+                                    "SINCE","ALWAYS","BEFORE","DURING","WITHIN","REPLIM","REPSINCE","REPMAX","XPATH", "STATEBASED", "EVAL"};
 
 
 // Forward definitions
@@ -59,6 +60,8 @@ typedef        oslBinary_t *oslBinary_ptr;
 typedef struct oslStateBased_s  oslStateBased_t;
 typedef        oslStateBased_t *oslStateBased_ptr;
 
+typedef struct oslEvalOp_s  oslEvalOp_t;
+typedef        oslEvalOp_t *oslEvalOp_ptr;
 
 /**
  * @struct oslTimeUnary_s
@@ -151,6 +154,12 @@ struct oslStateBased_s
   char *param1;
   char *param2;
   char *param3;
+};
+
+struct oslEvalOp_s
+{
+  char *content;
+  char *type;
 };
 
 
@@ -324,6 +333,7 @@ bool          eval_repmax(operator_ptr curop, event_ptr curEvent, mechanism_ptr 
 
 
 bool eval_stateBased(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech);
+bool eval_evalOperator(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech);
 
 #endif /* OSLEVAL_H_ */
 

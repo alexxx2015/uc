@@ -59,18 +59,6 @@ bool eval_event(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
 bool eval_stateBased(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
 {
   log_debug("evaluating statebased operator; forwarding to PIP");
-//  bool pipResponse=representationRefinesData(eventParam->paramValue->paramString, matchParam->value->paramString);
-//  log_warn("pip returned=[%s]",boolStr[pipResponse]);
-//  if(pipResponse==TRUE)
-//  {
-//    log_info("  [%s] \"refines\" [%s]", eventParam->paramValue->paramString, matchParam->value->paramString);
-//    return TRUE;
-//  }
-//  else
-//  {
-//    log_info("  [%s] doesn't \"refine\" [%s]", eventParam->paramValue->paramString, matchParam->value->paramString);
-//    return FALSE;
-//  }
   char *predicate=NULL;
   oslStateBased_ptr curOperands=curop->operands;
 
@@ -81,7 +69,7 @@ bool eval_stateBased(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
   if(curOperands->param3!=NULL)
     predicateLength+=strlen(curOperands->param3) + 2;
 
-  log_debug("calculated predicateLength=[%d]", predicateLength);
+  //log_debug("calculated predicateLength=[%d]", predicateLength);
   predicate=(char*)memCalloc(predicateLength, sizeof(char));
   if(curOperands->param2!=NULL)
   {
@@ -100,10 +88,20 @@ bool eval_stateBased(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
   log_debug("predicate=[%s]", predicate);
 
   curop->state->value=pipEvaluatePredicate(predicate, curEvent);
-
-
   return  curop->state->value;
 }
+
+bool eval_evalOperator(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
+{
+  log_debug("evaluating eval operator; forwarding to PDPevaluationEngine");
+  oslEvalOp_ptr curOperands=curop->operands;
+  log_debug("predicateType=[%s]", curOperands->type);
+  log_debug("predicate=[%s]", curOperands->content);
+
+  curop->state->value=pipEvalOperator(curOperands->type, curOperands->content, curEvent);
+  return  curop->state->value;
+}
+
 
 bool eval_xpath(operator_ptr curop, event_ptr curEvent, mechanism_ptr mech)
 {

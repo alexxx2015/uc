@@ -19,7 +19,7 @@ if env['PEFCONFIG']['socketUtils'] == True:
 
   lCommunication.append([socketObject, socketPlatformObject])
   env.Append(pefSocketUtils = [socketObject, socketPlatformObject])
-  Alias('pefSocketUtils', [socketObject, socketPlatformObject])
+  env.rdAlias('pefSocketUtils', [socketObject, socketPlatformObject])
 else:
   env.Append(pefSocketUtils = [])
 
@@ -36,7 +36,7 @@ else:
 #Depends(soapObject, axiomObject)
 #Alias('pefSoapUtils' = [soapObject, axiomObject])
 
-Alias('communication', lCommunication)
+env.rdAlias('communication', lCommunication)
 
 
 

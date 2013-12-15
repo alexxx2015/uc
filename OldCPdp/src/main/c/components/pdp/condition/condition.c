@@ -151,6 +151,31 @@ operator_ptr conditionParseSubCondition(condition_ptr curCondition, xmlNodePtr n
       log_debug("parsed operator=[%s], param1=[%s], param2=[%s], param3=[%s]", operator, param1, (param2==NULL ? "NULL" : param2), (param3==NULL ? "NULL" : param3));
       break;
     }
+    case EVALOP:
+    {
+      log_debug("preparing evalOperator...");
+      op=operatorNew(curType);
+      oslEvalOp_ptr curOperands=op->operands;
+
+      char *typeStr=xmlGetProp(node, "type");
+      char* type=strdup(typeStr);
+      xmlFree(typeStr);
+
+      xmlNodePtr tmp = NULL;
+      for(tmp=node->children; tmp; tmp=tmp->next)
+        if(tmp->type==XML_TEXT_NODE)
+        {
+          char *content=(char*)xmlNodeGetContent(tmp);
+          curOperands->content=memCalloc(strlen(content)+1, sizeof(char));
+          strncpy(curOperands->content, content, strlen(content));
+          free(content);
+          break;
+        }
+
+      curOperands->type=type;
+      log_debug("parsed type=[%s], content=[%s]", curOperands->type, curOperands->content);
+      break;
+    }
     case XPATH:
     {
       op=operatorNew(XPATH);

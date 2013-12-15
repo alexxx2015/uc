@@ -21,16 +21,39 @@ tmpConfig['PEFCONFIG']['soupUtils']   = False
 tmpConfig['PEFCONFIG']['examples']    = False
 tmpConfig['PEFCONFIG']['tests']       = False
 
-print "Processing platform specific configuration parameters for '" + sys.platform + "'"
-if sys.platform == "linux2": # linux>2<??
-  env = SConscript("scons.linux", exports=['tmpConfig'])
-elif sys.platform == "openbsd4":
-  env = SConscript("scons.openbsd", exports=['tmpConfig'])
-elif sys.platform == "win32":
-  env = SConscript("scons.win32", exports=['tmpConfig'])
+if tmpConfig['PEFtarget'] == "native":
+  print "Processing platform specific configuration parameters for '" + sys.platform + "'"
+  if sys.platform == "linux2": # linux>2<??
+    env = SConscript("scons.linux", exports=['tmpConfig'])
+  elif sys.platform == "openbsd4":
+    env = SConscript("scons.openbsd", exports=['tmpConfig'])
+  elif sys.platform == "win32":
+    env = SConscript("scons.win32", exports=['tmpConfig'])
+  else:
+    print "No configuration for this platform present..."
+    Exit(1)
+  env['PEFtarget']="native"
 else:
-  print "No configuration for this platform present..."
-  Exit(1)
+  if tmpConfig['PEFtarget'] == "win32":
+    print "Trying to cross-compile for given target=" + tmpConfig['PEFtarget']
+    env = SConscript("scons.win32CC", exports=['tmpConfig'])
+    if env['compilerFound'] == True:
+      print "Found a cross-compiler for win32..."
+    else:
+      print "No suitable cross-compiler found!"
+      #Exit(1)
+  elif tmpConfig['PEFtarget'] == "win64":
+    print "Trying to cross-compile for given target=" + tmpConfig['PEFtarget']
+    env = SConscript("scons.win64CC", exports=['tmpConfig'])
+    if env['compilerFound'] == True:
+      print "Found a cross-compiler for win64..."
+    else:
+      print "No suitable cross-compiler found!"
+      #Exit(1)
+      
+  else:
+    print "Not supported target platform!"
+    Exit(1)
 
 # Default values for PDP configuration
 env.Append(PDPCONFIG={})
@@ -52,6 +75,11 @@ env['PEFLOGCONFIG']['RUNTIME_LOGLEVEL_EVAL'] = 0
 env['PEFLOGCONFIG']['RUNTIME_LOGLEVEL']      = logConf.TRACE
 env['PEFLOGCONFIG']['GLOBAL_LOG_LEVEL']      = logConf.TRACE
 env['PEFLOGCONFIG']['GLOBAL_LOG_OUTPUT']     = 'stdout'
+
+env['PEFobjects']={}
+env['PEFobjects']['native']={}
+env['PEFobjects']['win32']={}
+env['PEFobjects']['win64']={}
 
 env.Append(android = False)
 env.Append(LIBS=[])

@@ -90,7 +90,7 @@ uint64_t      xmlParseTimestepSize(const xmlNodePtr node);
  * @return  R_SUCCESS on success or
  *          R_ERROR otherwise
 **/
-unsigned int  mechanismAddExecuteAction(mechanism_ptr mech, xmlNodePtr node, const char *name);
+unsigned int  mechanismAddExecuteAction(mechanism_ptr mech, xmlNodePtr node, const char *name, unsigned int sync, const char *processor);
 
 /**
  * Serialization of a mechanism to an XML representation\n

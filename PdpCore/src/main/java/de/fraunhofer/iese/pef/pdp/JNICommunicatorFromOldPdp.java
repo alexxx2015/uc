@@ -1,7 +1,9 @@
 package de.fraunhofer.iese.pef.pdp;
 
+import java.util.List;
+
 import de.fraunhofer.iese.pef.pdp.internal.Event;
-import de.fraunhofer.iese.pef.pdp.internal.IPolicyDecisionPoint;
+import de.fraunhofer.iese.pef.pdp.internal.Param;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
@@ -49,6 +51,7 @@ public class JNICommunicatorFromOldPdp {
 	 */
 	public int evaluatePredicate(String predicate, Event event)
 	{
+		System.out.println("evaluatePredicate: ["+predicate+"]");
 		int ret=-1;
 		Boolean b=_pip.eval(KeyBasic.keyfromString(predicate),(IEvent) event);
 		if (b==null) ret=-1;
@@ -75,12 +78,12 @@ public class JNICommunicatorFromOldPdp {
 	
 	public String initialRepresentation(String container)
 	{
-		return "BLUB"; 		
+		return "initialRepresentationForContainer["+container+"]"; 		
 	}
 	
 	public String initialRepresentation(String container, String initialDataID)
 	{
-		return "bla";
+		return "initialRepresentationForContainerWithInitialDataID["+container+","+initialDataID+"]";
 	}
 		
 	
@@ -96,6 +99,13 @@ public class JNICommunicatorFromOldPdp {
 	 */
 	public int evalOperator(String predicateType, String predicate, Event event)
 	{
+		System.out.println("evalOperator type="+predicateType+", predicate=["+predicate+"]");
+		return 0;
+	}
+	
+	public int pxpExecuteAction(String name, int synchronous, List<Param<?>> params, Event event)
+	{
+		System.out.println("executeAction ["+name+"], sync=["+synchronous+"], params=["+params+"]");
 		return 0;
 	}
 	
@@ -103,7 +113,7 @@ public class JNICommunicatorFromOldPdp {
 	
 	//<eval type="XPATH"> danasjknsajknsjkncsjkacnasdjk </eval>
 
-	
+	// TODO: these methods are obsolete...
 	public int eval(String a, String b){
 		return (containerRefinesData(a,b));
 	}

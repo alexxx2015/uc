@@ -158,11 +158,12 @@ authorizationAction_ptr authorizationActionProcessXMLnode(mechanism_ptr curMech,
           tmpNode=cur->children;
           while(tmpNode!=NULL)
           {
-            if(!xmlStrncasecmp(tmpNode->name, "executeAction", 13))
+            //if(!xmlStrncasecmp(tmpNode->name, "executeAction", 13))
+            if(!xmlStrncasecmp(tmpNode->name, "executeSyncAction", 17))
             {
               char *execName=xmlGetProp(tmpNode, "name");
-              if(execName==NULL) {log_error("Execute action in authorizationAction requires field name!"); return NULL;}
-              log_debug("Found an executeAction [%s] in allow node", execName);
+              if(execName==NULL) {log_error("Synchronous execute action in authorizationAction requires field name!"); return NULL;}
+              log_debug("Found an executeSyncAction [%s] in allow node", execName);
 
               curMechAuth->executeActions=realloc(curMechAuth->executeActions,(curMechAuth->cntExecuteActions+1)*sizeof(executeAction_ptr));
               checkNullPtr(curMechAuth->executeActions, "Could not allocate memory for new executeAction");
@@ -191,13 +192,13 @@ authorizationAction_ptr authorizationActionProcessXMLnode(mechanism_ptr curMech,
               {
                 log_trace("Processing given PXP interface [%s] for executeAction [%s]", pxpInterface, execName);
                 unsigned int ret=pdpRegisterExecutor(execName, pxpInterface);
-                log_debug("Action registration for action [%s] via PEP interface [%s] => [%u]", execName, pxpInterface, ret);
+                log_debug("Action registration for action [%s] via PXP interface [%s] => [%u]", execName, pxpInterface, ret);
                 xmlFree(pxpInterface);
               }
-              else log_warn("NO PEP interface specified for action [%s]...", execName);
+              else log_warn("NO PXP interface specified for action [%s]...", execName);
 
               curMechAuth->executeActions[curMechAuth->cntExecuteActions]=nexecAction;
-              log_trace("Successfully added executeAction \"%s\" to authorizationAction", execName);
+              log_trace("Successfully added executeSyncAction \"%s\" to authorizationAction", execName);
               curMechAuth->cntExecuteActions++;
             }
             tmpNode=tmpNode->next;

@@ -20,6 +20,7 @@
 #include "pdpJNItypes.h"
 #include "pdpInterface.h"
 #include "paramInstanceType.h"
+#include "eventTypes.h"
 
 /**
  * PDP out interface: PXP invocation via JNI interface
@@ -29,7 +30,7 @@
  * @param   params       array of parameters for this action execution
  * @return  R_SUCCESS on success or R_ERROR otherwise
 **/
-unsigned int pxpExecuteJNI(pdpInterface_ptr linterface, char *name, unsigned int cntParams, parameterInstance_ptr *params);
+unsigned int pxpExecuteJNI(pdpInterface_ptr linterface, char *name, unsigned int sync, unsigned int cntParams, parameterInstance_ptr *params, event_ptr event);
 
 /**
  * PDP out interface: PXP invocation via socket

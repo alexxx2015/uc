@@ -1,26 +1,48 @@
 import os
-env=SConscript('SConscript')
 
-# Walk through directories "libraries", "components" and "applications"
-for curBaseDir in env.dirList('.', 'libraries'):
-  SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
+def pefBuild(target, env):
+  env=SConscript('SConscript', exports=['target'])
+  if env['compilerFound']==False:
+    print "No compiler found for target="+target
+    return  
 
-for curBaseDir in env.dirList('.', 'components'):
-  SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
+  # Walk through directories "libraries", "components" and "applications"
+  for curBaseDir in env.dirList('.', 'libraries'):
+    SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
 
-#for curBaseDir in env.dirList('.', 'applications'):
-#  SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
+  for curBaseDir in env.dirList('.', 'components'):
+    SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
 
-#doxygen and graphviz needs to be present!
-if env['PEFCONFIG']['pefDoxygen'] == True:
-  resourceDir=os.path.join(env['PEFBASE'], "..", "resources")
-  env2=env.Clone(tools = ["doxygen"], toolpath = [resourceDir])  
-  docroot=os.path.join(env['PEFBASE'],'..','..','..','doc')
+  #for curBaseDir in env.dirList('.', 'applications'):
+  #  SConscript(dirs=curBaseDir, exports=['env','curBaseDir'], variant_dir = os.path.join(env['PEFBUILD'], curBaseDir), duplicate = False)
 
-  pefDoc = env2.Doxygen(os.path.join(env['PEFBASE'], "..", "resources", "pef.doxyfile"))
-  #pefPDF = env2.PDF(docroot + '/pef.pdf', os.path.join(docroot, 'latex','refman.tex'))
-  #Depends(pefPDF, env.dirList(".", os.path.join(docroot, 'latex')))
-  cleaningList=env.dirList(".", docroot, True)
-  Clean(pefDoc, cleaningList)
-  Alias('doc', [pefDoc])
+  #doxygen and graphviz needs to be present!
+  if env['PEFCONFIG']['pefDoxygen'] == True:
+    resourceDir=os.path.join(env['PEFBASE'], "..", "resources")
+    env2=env.Clone(tools = ["doxygen"], toolpath = [resourceDir])  
+    docroot=os.path.join(env['PEFBASE'],'..','..','..','doc')
+
+    pefDoc = env2.Doxygen(os.path.join(env['PEFBASE'], "..", "resources", "pef.doxyfile"))
+    #pefPDF = env2.PDF(docroot + '/pef.pdf', os.path.join(docroot, 'latex','refman.tex'))
+    #Depends(pefPDF, env.dirList(".", os.path.join(docroot, 'latex')))
+    cleaningList=env.dirList(".", docroot, True)
+    Clean(pefDoc, cleaningList)
+    Alias('doc', [pefDoc])
+
+
+target=ARGUMENTS.get('target', "native")
+if target == "all":
+  print "Building for all supported targets"
+  envNative=None
+  pefBuild("native", envNative)
+  print "\n----------------------------------------------------"
+  envWin32=None
+  pefBuild("win32", envWin32)
+  print "\n----------------------------------------------------"
+  envWin64=None
+  pefBuild("win64", envWin64)
+else:
+  print "Building for target=" + target
+  envTarget=None
+  pefBuild(target, envTarget)
 

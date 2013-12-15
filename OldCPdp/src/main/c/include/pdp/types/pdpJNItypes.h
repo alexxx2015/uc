@@ -30,6 +30,8 @@ struct jniPDP_s
   jmethodID handlePIPinitDataID;
   jmethodID handlePIPeval;
   jmethodID evaluatePredicate;
+  jmethodID evalOperator;
+  jmethodID pxpExecute;
 } jniPDP;
 
 /**

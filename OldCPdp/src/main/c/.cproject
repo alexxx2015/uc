@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.base.12820446">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.base.12820446" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -32,8 +30,6 @@
 									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
 									<listOptionValue builtIn="false" value="/usr/include/libsoup-2.4"/>
-									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-6-sun-1.6.0.26/include"/>
-									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-6-sun-1.6.0.26/include/linux"/>
 									<listOptionValue builtIn="false" value="&quot;C:\local\rd\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\local\rd\usr\home\raindrop\workspace\localglibS\include\glib-2.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;e:\Programme\Java\jdk1.6.0_32\include&quot;"/>
@@ -42,6 +38,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pef/src/main/resources/win32/glib2/include/glib-2.0}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Java\jdk1.6.0_32\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Java\jdk1.6.0_32\include\win32&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-7-oracle/include"/>
+									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-7-oracle/include/linux"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1385439822" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="PDP_JNI"/>
@@ -75,8 +73,10 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="FhG-ESF.null.724991419" name="FhG-ESF"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/pef"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/pef"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
@@ -85,4 +85,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

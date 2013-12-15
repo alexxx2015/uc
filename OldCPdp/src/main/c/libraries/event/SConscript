@@ -7,5 +7,5 @@ pefParamObject = env.rdObject('pefParam.c')
 pefEventMatchObject = env.rdObject('pefEventMatch.c')
 pefParamMatchObject = env.rdObject('pefParamMatch.c')
 
-Alias('event', [pefEventMatchObject, pefEventObject, pefParamObject, pefParamMatchObject])
+env.rdAlias('event', [pefEventMatchObject, pefEventObject, pefParamObject, pefParamMatchObject])
 

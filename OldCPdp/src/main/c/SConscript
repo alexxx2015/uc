@@ -4,7 +4,7 @@ import glob, re, fileinput, stat
 from time import localtime, strftime
 
 if "config" not in sys.path:
-     sys.path.insert(0, "config")
+ sys.path.insert(0, "config")
 import logConf
 
 #######################################################################
@@ -46,21 +46,63 @@ def rdObject(self, source, target = None, ccflags = None):
   
 AddMethod(Environment, rdObject)
 
+#def Alias(self, alias, objects):
+#  print "rdAlias invoked"
+#AddMethod(Environment, Alias)
+
+def rdAlias(self, alias, objects):
+  curTarget=env['PEFtarget']
+  if alias in env['PEFobjects'][curTarget]:
+    env['PEFobjects'][curTarget][alias].append(objects)
+  else:
+    env['PEFobjects'][curTarget][alias] = objects
+AddMethod(Environment, rdAlias)  
+
 def getAliasObjects(self, alias):
-  return env.Alias(alias)[0].all_children()
+  #objects = env.Alias(alias)[0].all_children()
+  #print objects
+  #print "alias: " + alias
+  #print "generating list of alias-objects for platform: " + env['PEFtarget']
+  #listPlatformObjects=[]
+  #for obj in objects:
+  #  if env['PEFtarget'] in str(obj):
+  #    print "found for object: " + str(obj)
+  #    listPlatformObjects.append(obj)
+  #  else:
+  #    print "skipping incompatible object: " + str(obj)
+  #return env.Alias(alias)[0].all_children()
+  curTarget=env['PEFtarget']
+  #print "requesting aliases for target="+curTarget
+  if not alias in env['PEFobjects'][curTarget]:
+    #print "nothing defined for alias '" + alias + "'"
+    return []
+  #print "returning ["+alias+"]: " + str(env['PEFobjects'][curTarget][alias])
+  return env['PEFobjects'][curTarget][alias]
 AddMethod(Environment, getAliasObjects)
 
 #######################################################################
 # folder structure: basePath:  pef/src/main/c 
 #                 : buildPath: pef/bin/platform.system
 basePath =os.getcwd()
-buildPath=os.path.join(basePath, "..","..", "..", "bin", str.lower(platform.system()))
+buildPath=os.path.join(basePath, "..","..", "..", "bin", str.lower(platform.system()+"-"+platform.machine()))
 
 #######################################################################
 tmpConfig={}
 tmpConfig['PEFBASE']    =basePath
-tmpConfig['PEFBUILD']   =buildPath
+
+#######################################################################
+# Processing cross-compilation options...
+Import('target')
+#if ARGUMENTS.get('target') == "win32" or ARGUMENTS.get('target') == "win64":
+if target == "win32" or target == "win64":
+  tmpConfig['PEFtarget'] = target
+  tmpConfig['PEFBUILD'] = os.path.join(basePath, "..","..", "..", "bin", target)
+else:
+  tmpConfig['PEFtarget'] = "native"
+  tmpConfig['PEFBUILD']   =buildPath
+
 tmpConfig['PEFincludes']=dirList(None, basePath, 'include')
+
 
 #######################################################################
 # fetch platform and user specific configuration
@@ -109,36 +151,36 @@ else:
 
 #######################################################################
 # Configuration checking
-print "Checking system configuration..." 
-#env.ParseConfig("pkg-config x11 --cflags --libs")
-if not GetOption('clean') and not GetOption('help'):
-  errors = False
-  conf = Configure(env, clean = False, help = False)
-
-  if not conf.CheckCC():
-    errors = True
-  if not conf.CheckLib('glib-2.0'):
-    print "searched in: " + str(env['CPPPATH'])
-    errors=True
-  if not conf.CheckLib('xml2'):
-    errors=True
-  if env['PEFCONFIG']['tssUtils'] == True:
-    if not conf.CheckLib('tspi'):
-      errors=True
-  if env['PEFCONFIG']['cryptoUtils'] == True:
-    if not conf.CheckLib('crypto'):
-      errors=True
-  if not conf.CheckLib('pthread'):
-    errors=True
-  if env['PEFCONFIG']['pdpjni'] == True and not ARGUMENTS.get('conf', '')=="android":
-    if not conf.CheckCHeader('jni.h'):
-      print "searched in: " + str(env['CPPPATH'])
-      errors=True
-
-  if errors == True:
-    print "Error occured in configuration check..."
-    #Exit(1)
-  env = conf.Finish()
+#print "Checking system configuration..." 
+##env.ParseConfig("pkg-config x11 --cflags --libs")
+#if not GetOption('clean') and not GetOption('help'):
+#  errors = False
+#  conf = Configure(env, clean = False, help = False)
+#
+#  if not conf.CheckCC():
+#    errors = True
+#  if not conf.CheckLib('glib-2.0'):
+#    print "searched in: " + str(env['CPPPATH'])
+#    errors=True
+#  if not conf.CheckLib('xml2'):
+#    errors=True
+#  if env['PEFCONFIG']['tssUtils'] == True:
+#    if not conf.CheckLib('tspi'):
+#      errors=True
+#  if env['PEFCONFIG']['cryptoUtils'] == True:
+#    if not conf.CheckLib('crypto'):
+#      errors=True
+#  if not conf.CheckLib('pthread'):
+#    errors=True
+#  if env['PEFCONFIG']['pdpjni'] == True and not ARGUMENTS.get('conf', '')=="android":
+#    if not conf.CheckCHeader('jni.h'):
+#      print "searched in: " + str(env['CPPPATH'])
+#      errors=True
+#
+#  if errors == True:
+#    print "Error occured in configuration check..."
+#    #Exit(1)
+#  env = conf.Finish()
 
 
 Help("\nscons               build entire PEF\n"

@@ -7,7 +7,7 @@ operatorsObject=env.rdObject('oslOperators.c')
 operatorEvalObject=env.rdObject('oslEval.c')
 opStateObject=env.rdObject('opState.c')
 
-Alias('condition', [conditionObject, operatorsObject, opStateObject, operatorEvalObject])
+env.rdAlias('condition', [conditionObject, operatorsObject, opStateObject, operatorEvalObject])
 Default([conditionObject, operatorsObject, opStateObject, operatorEvalObject])
 
 

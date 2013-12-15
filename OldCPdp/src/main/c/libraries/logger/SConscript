@@ -4,12 +4,12 @@ Import('env','curBaseDir')
 
 loggerConfig=env.pefLoggerConfig(os.path.join(env['PEFBUILD'], "include", "logger_base.h"), 'logger.c')
 Depends(loggerConfig, env['userConfFile'])
-Alias('pefLoggerConfig', loggerConfig)
+env.rdAlias('pefLoggerConfig', loggerConfig)
 
 if env['android']==True:
-  env.Alias('logger', [loggerConfig])
+  env.rdAlias('logger', [loggerConfig])
   Return()
 
 loggerObject = env.Object('logger.c', CCFLAGS=env['CCFLAGS']+' -fno-builtin -O2 ')
 loggerInternalObject = env.Object('logInternal.c', CCFLAGS=env['CCFLAGS']+' -fno-builtin -O2 ')
-Alias('logger', [loggerObject, loggerInternalObject])
+env.rdAlias('logger', [loggerObject, loggerInternalObject])

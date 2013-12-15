@@ -40,6 +40,15 @@
     <attribute name="param3"   type="string" use="optional" />
   </complexType>
 
+  <complexType name="EvalOperatorType">
+    <!-- <attribute name="type" type="string" use="required" /> -->
+		<simpleContent>
+      <extension base="string">
+		    <attribute name="type" type="string" use="required" />
+		  </extension>
+		</simpleContent>    
+  </complexType>  
+
   <group name="OperatorsGroup">
     <annotation>
       <documentation>Propositional, temporal logic and cardinality operators</documentation>
@@ -64,6 +73,9 @@
       
       <!-- stateBasedFormula -->
       <element name="stateBasedFormula" type="tns:StateBasedOperatorType" />
+
+      <!-- evalOperator -->
+      <element name="eval" type="tns:EvalOperatorType" />
 
       <!-- temporal operators -->
 
@@ -197,7 +209,7 @@
     <sequence>
       <element name="delay"         type="tns:DelayActionType"      minOccurs="0" maxOccurs="1" />
       <element name="modify"        type="tns:ModifyActionType"     minOccurs="0" maxOccurs="1" />
-      <element name="executeAction" type="action:ExecuteActionType" minOccurs="0" maxOccurs="unbounded" />
+      <element name="executeSyncAction" type="action:ExecuteActionType" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
   </complexType>
 
@@ -235,7 +247,7 @@
     <complexContent>
       <extension base="tns:MechanismBaseType">  
         <sequence>
-          <element name="executeAction" type="action:ExecuteActionType" minOccurs="0" maxOccurs="unbounded" />
+          <element name="executeAsyncAction" type="action:ExecuteAsyncActionType" minOccurs="0" maxOccurs="unbounded" />
         </sequence>
       </extension>
     </complexContent>
@@ -250,8 +262,8 @@
     <complexContent>
       <extension base="tns:MechanismBaseType">  
         <sequence>
-          <element name="authorizationAction" type="tns:AuthorizationActionType"  minOccurs="1" maxOccurs="unbounded" />
-          <element name="executeAction"       type="action:ExecuteActionType"     minOccurs="0" maxOccurs="unbounded" />
+          <element name="authorizationAction" type="tns:AuthorizationActionType"   minOccurs="1" maxOccurs="unbounded" />
+          <element name="executeAsyncAction"  type="action:ExecuteAsyncActionType" minOccurs="0" maxOccurs="unbounded" />
         </sequence>
       </extension>
     </complexContent>

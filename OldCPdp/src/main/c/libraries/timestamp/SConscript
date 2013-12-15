@@ -3,4 +3,4 @@ import os
 Import('env','curBaseDir')
 
 timestampObject = env.rdObject('timestamp.c')
-Alias('timestamp', timestampObject)
+env.rdAlias('timestamp', timestampObject)

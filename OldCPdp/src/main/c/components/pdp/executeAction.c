@@ -34,6 +34,8 @@ executeAction_ptr executeActionNew(const char *name)
   nAction->actionDesc=laction;
   nAction->cntParams=0;
   nAction->params=NULL;
+  nAction->sync=TRUE;
+  nAction->processor=0;
   log_trace("%s - successfully created new action=[%s]", __func__, name);
   return nAction;
 }
@@ -101,11 +103,12 @@ unsigned int executeActionParseXML(mechanism_ptr curMech, const xmlNodePtr rootN
   xmlNodePtr node=rootNode->children;
   while(node!=NULL)
   {
-    if(xmlIsElement(node) && !xmlStrcmp(node->name, "executeAction"))
+    if(xmlIsElement(node) && !xmlStrcmp(node->name, "executeAsyncAction"))
     {
       char *actionName=xmlGetProp(node, "name");
-      mechanismAddExecuteAction(curMech, node, actionName);
-      log_trace("Successfully parsed executeAction [%s]", actionName);
+      char *processor=xmlGetProp(node, "processor");
+      mechanismAddExecuteAction(curMech, node, actionName, FALSE, processor);
+      log_trace("Successfully parsed executeAsyncAction [%s]", actionName);
 
       char *pxpInterface=xmlGetProp(node, "pxp");
       // Processing interface if present in actionDescription

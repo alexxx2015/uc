@@ -1,4 +1,4 @@
-*.pyc
 config.log
-*.dblite
-*.o
+.sconsign.dblite
+.sconf_temp
+config/logConf.pyc

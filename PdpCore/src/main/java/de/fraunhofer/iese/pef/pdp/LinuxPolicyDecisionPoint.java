@@ -1,8 +1,9 @@
 package de.fraunhofer.iese.pef.pdp;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 
+import de.fraunhofer.iese.pef.pdp.internal.Decision;
+import de.fraunhofer.iese.pef.pdp.internal.Event;
 import de.fraunhofer.iese.pef.pdp.internal.IPolicyDecisionPoint;
 
 public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
@@ -34,19 +35,20 @@ public class LinuxPolicyDecisionPoint extends PolicyDecisionPoint {
 			
 			//loadDinamicLibrary("../natives/nativeLibs", "libpdp.so");
 			//TODO FIXME: replace with relative path
-			System.load("/home/uc/pdp/OldCPdp/target/classes/nativeLibs/libpdp.so");
+			System.load("/home/rd/projects/tum/pdpX1/pdp/OldCPdp/target/classes/nativeLibs/libpdp.so");
 			pdpRunning = true;
 			_logger.info("Native PDP library loaded...");
 			_logger.info("starting returned: " + this.pdpStart());
 			//TODO FIXME: replace with relative path
-			int ret=this.pdpDeployPolicy("/home/uc/xlayerpip/jpdp/src/main/xml/examples/testTUM.xml");
+			int ret=this.pdpDeployPolicy("/home/rd/projects/tum/pdpX1/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
 			_logger.info("policy should be deployed... "+ret);
 //			_logger.info("mechanisms: " + this.listDeployedMechanismsJNI());
-//			Event e = new Event("testEvent", true);
-//			e.addStringParameter("val1", "value1");
-//			e.addStringParameter("val2", "value2");
-//			Decision d = this.pdpNotifyEventJNI(e);
-//			_logger.info("decision: " + d);
+
+			//Event e = new Event("testEvent", true);
+			//e.addStringParameter("val1", "value1");
+			//e.addStringParameter("val2", "value2");
+			//Decision d = this.pdpNotifyEventJNI(e);
+			//_logger.info("decision: " + d);
 		} catch (Exception e) {
 			_logger.error("Could not load native PDP library! " + e.getMessage());
 			throw e;

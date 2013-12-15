@@ -6,23 +6,23 @@ pdpCCFlags=env['CCFLAGS'] + " -DLIBXML_STATIC "
 if env['PEFCONFIG']['pdpjni'] == True:
   pdpCCFlags=pdpCCFlags + " -DPDP_JNI "
   pdpJNIobject=env.rdObject('pdpInJNI.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-  Alias('pdpInterfaces', pdpJNIobject)
+  env.rdAlias('pdpInterfaces', pdpJNIobject)
 
 if env['PDPCONFIG']['PDP_TCPSOCKET']!=0:
   pdpSocketObject=env.rdObject('pdpInSocket.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-  Alias('pdpInterfaces', pdpSocketObject)
+  env.rdAlias('pdpInterfaces', pdpSocketObject)
 
 pdpInterfacesObject=env.rdObject('pdpCommInterfaces.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-Alias('pdpInterfaces', pdpInterfacesObject)
+env.rdAlias('pdpInterfaces', pdpInterfacesObject)
 
 pdpPEPObject=env.rdObject('pdpOutPEP.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-Alias('pdpInterfaces', pdpPEPObject)
+env.rdAlias('pdpInterfaces', pdpPEPObject)
 
 pdpPXPObject=env.rdObject('pdpOutPXP.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-Alias('pdpInterfaces', pdpPXPObject)
+env.rdAlias('pdpInterfaces', pdpPXPObject)
 
 pdpPIPObject=env.rdObject('pdpOutPIP.c', ccflags = env['CCFLAGS']+pdpCCFlags)
-Alias('pdpInterfaces', pdpPIPObject)
+env.rdAlias('pdpInterfaces', pdpPIPObject)
 
 
 

@@ -5,16 +5,16 @@ Import('env','curBaseDir')
 lUtilities = []
 
 stringObject = env.rdObject('stringUtils.c', ccflags = env['CCFLAGS']+'-fno-builtin ')
-Alias('pefStringUtils', stringObject)
+env.rdAlias('pefStringUtils', stringObject)
 
 xmlObject=env.rdObject('xmlUtils.c', ccflags = env['CCFLAGS']+'-fno-builtin ')
-Alias('pefXMLutils', xmlObject)
+env.rdAlias('pefXMLutils', xmlObject)
 
 memObject=env.rdObject('memUtils.c', ccflags = env['CCFLAGS']+'-fno-builtin ')
-Alias('pefMemUtils', memObject)
+env.rdAlias('pefMemUtils', memObject)
 
 javaObject=env.rdObject('javaUtils.c', ccflags = env['CCFLAGS'])
-Alias('pefJavaUtils', javaObject)
+env.rdAlias('pefJavaUtils', javaObject)
 
 lUtilities.append(xmlObject)
 lUtilities.append(stringObject)
@@ -40,7 +40,7 @@ if env['PEFCONFIG']['tssUtils'] == True:
   env.Append(pefTSSutils = tssObject)
   lUtilities.append(tssObject)
 
-Alias('utilities', lUtilities)
+env.rdAlias('utilities', lUtilities)
 
 
 

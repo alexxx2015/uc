@@ -463,6 +463,8 @@ notifyResponse_ptr notifyResponseNew(event_ptr levent)
   checkNullPtr(nResponse, "Could not allocate memory for notification response");
   nResponse->event=levent;
   nResponse->authorizationAction=NULL;
+  nResponse->cntExecuteActions=0;
+  nResponse->executeActions=NULL;
   return nResponse;
 }
 
@@ -554,8 +556,9 @@ unsigned int notifyResponseProcessMechanism(notifyResponse_ptr response, mechani
                                                            curExecAction->cntParams,
                                                            curExecAction->actionDesc->pxpInterface->pxpExecute);
 
-          executeReturns=curExecAction->actionDesc->pxpInterface->pxpExecute(curExecAction->actionDesc->pxpInterface,
-              curExecAction->actionDesc->actionName, curExecAction->cntParams, curExecAction->params);
+          //executeReturns=curExecAction->actionDesc->pxpInterface->pxpExecute(curExecAction->actionDesc->pxpInterface,
+          //    curExecAction->actionDesc->actionName, curExecAction->cntParams, curExecAction->params);
+          executeReturns=pxpExecuteJNI(NULL, curExecAction->actionDesc->actionName, curExecAction->sync, curExecAction->cntParams, curExecAction->params, response->event);
 
           log_trace("Executing [%s] returned [%s]", curExecAction->actionDesc->actionName, returnStr[executeReturns]);
           if(executeReturns==R_ERROR) break;
@@ -619,20 +622,55 @@ unsigned int notifyResponseProcessMechanism(notifyResponse_ptr response, mechani
   }
   else log_trace("Response is already INHIBIT");
   
-  // always add executeAction to response
+  // always add pep-executeAction to response
   if(mech->cntExecuteActions>0)
   {
-    log_trace("copying execute-actions to response!");
-    response->executeActions=realloc(response->executeActions,(response->cntExecuteActions+mech->cntExecuteActions)*sizeof(executeAction_ptr));
-    checkNullInt(response->executeActions, "Could not allocate memory for new action");
+    log_trace("copying execute-actions (processed by pep) to response!");
 
     unsigned int a;
+    unsigned int copyCounter=0;
+    for(a=0; a<mech->cntExecuteActions; a++)
+    {
+      if(mech->executeActions[a]->processor==1)
+        copyCounter++;
+    }
+    log_debug("copyCounter: [%d]", copyCounter);
+
+    log_debug("realloc; response->executeAction=[%p], response-cnt: [%d], ", response->executeActions, response->cntExecuteActions);
+    response->executeActions=realloc(response->executeActions,(response->cntExecuteActions+copyCounter)*sizeof(executeAction_ptr));
+    //response->executeActions=realloc(response->executeActions,(response->cntExecuteActions+copyCounter)*sizeof(executeAction_ptr));
+    checkNullInt(response->executeActions, "Could not allocate memory for new action");
+
+    log_debug("copying...");
+    copyCounter=0;
     for(a=0; a<mech->cntExecuteActions; a++)
     { // copy actions to execute from mechanism to response to avoid duplicating them (time consumption)
       // ==> should NOT be freed with freeing response!!!!
-      response->executeActions[response->cntExecuteActions+a]=mech->executeActions[a];
+      if(mech->executeActions[a]->processor==1)
+      {
+        log_debug("copying executeAction=[%s]", mech->executeActions[a]->actionDesc->actionName);
+        response->executeActions[response->cntExecuteActions+copyCounter++]=mech->executeActions[a];
+      }
     }
-    response->cntExecuteActions+=mech->cntExecuteActions;
+    //response->cntExecuteActions+=mech->cntExecuteActions;
+    response->cntExecuteActions+=copyCounter;
+    log_debug("copied [%d] executeActions for pep-processing", copyCounter);
+
+    log_debug("executing (optional) pxp-executeActions...");
+    for(a=0; a<mech->cntExecuteActions; a++)
+    {
+      if(mech->executeActions[a]->processor==0)
+      {
+        executeAction_ptr curExecAction=mech->executeActions[a];
+        log_trace("Executing [%s] interfaceMethod=[%p]", curExecAction->actionDesc->actionName,
+                                                         curExecAction->actionDesc->pxpInterface->pxpExecute);
+        //executeReturns=curExecAction->actionDesc->pxpInterface->pxpExecute(curExecAction->actionDesc->pxpInterface,
+        //    curExecAction->actionDesc->actionName, curExecAction->cntParams, curExecAction->params);
+        unsigned int ret=pxpExecuteJNI(NULL, curExecAction->actionDesc->actionName, curExecAction->sync, curExecAction->cntParams, curExecAction->params, NULL);
+        log_trace("Executing [%s] returned [%s]", curExecAction->actionDesc->actionName, returnStr[ret]);
+      }
+    }
+
   }
 
   return R_SUCCESS;

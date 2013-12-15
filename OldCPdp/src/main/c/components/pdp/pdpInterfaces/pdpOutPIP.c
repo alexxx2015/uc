@@ -167,7 +167,6 @@
     return strval;
   }
 
-  //public int evaluatePredicate(String predicate, PDPEvent event) {
   int pipEvaluatePredicate(char* predicate, event_ptr curEvent)
   { // return -1, because 0 => FALSE and 1 => TRUE
     if(curjvm==NULL) {log_error("ERROR! JVM is not set! -> returning -1..."); return -1;}
@@ -180,12 +179,33 @@
     if(curEvent!=NULL)
     {
       log_debug("preparing JNI-event for evaluatePredicate");
-      jevent=prepareJNIevent(lenv, curEvent);
+      jevent=(jobject)prepareJNIevent(lenv, curEvent);
     }
 
     //int ret=(*lenv)->CallIntMethod(lenv, jniPIP.instance, jniPIP.evaluatePredicate, jniPredicate, jevent);
     int ret=(*lenv)->CallIntMethod(lenv, jniPDP.instance, jniPDP.evaluatePredicate, jniPredicate, jevent);
     log_debug("PIP returned=[%d]", ret);
+    return ret;
+  }
+
+  int pipEvalOperator(char *predicateType, char* predicate, event_ptr curEvent)
+  { // return -1, because 0 => FALSE and 1 => TRUE
+    if(curjvm==NULL) {log_error("ERROR! JVM is not set! -> returning -1..."); return -1;}
+    JNIEnv *lenv=NULL;
+    (*curjvm)->AttachCurrentThread(curjvm, (void **)&lenv, NULL);
+    if(lenv==NULL) {log_error("ERROR! JNI environment could not be retrieved! -> returning -1..."); return -1;}
+
+    jstring jniPredicateType=(*lenv)->NewStringUTF(lenv, predicateType);
+    jstring jniPredicate=(*lenv)->NewStringUTF(lenv, predicate);
+    jobject jevent=NULL;
+    if(curEvent!=NULL)
+    {
+      log_debug("preparing JNI-event for evalOperator");
+      jevent=(jobject)prepareJNIevent(lenv, curEvent);
+    }
+
+    int ret=(*lenv)->CallIntMethod(lenv, jniPDP.instance, jniPDP.evalOperator, jniPredicateType, jniPredicate, jevent);
+    log_debug("PDPEvaluationEngine returned=[%d]", ret);
     return ret;
   }
 

@@ -182,60 +182,19 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
   if(jniPDP.instance==NULL) {log_error("ERROR: Could not create global reference for PDP object!"); return JNI_ERR;}
   (*lenv)->DeleteLocalRef(lenv, lpdpSingletonInstance);
 
-  jniPDP.handlePIPeval=(*lenv)->GetMethodID(lenv, jniPDP.cls, "eval", "(Ljava/lang/String;Ljava/lang/String;)I");
-  jniPDP.handlePIPinit=(*lenv)->GetMethodID(lenv, jniPDP.cls, "init", "(Ljava/lang/String;)Ljava/lang/String;");
-  jniPDP.handlePIPinitDataID=(*lenv)->GetMethodID(lenv, jniPDP.cls, "init", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+  jniPDP.handlePIPeval=(*lenv)->GetMethodID(lenv, jniPDP.cls, "containerRefinesData", "(Ljava/lang/String;Ljava/lang/String;)I");
+  jniPDP.handlePIPinit=(*lenv)->GetMethodID(lenv, jniPDP.cls, "initialRepresentation", "(Ljava/lang/String;)Ljava/lang/String;");
+  jniPDP.handlePIPinitDataID=(*lenv)->GetMethodID(lenv, jniPDP.cls, "initialRepresentation", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
   jniPDP.evaluatePredicate=(*lenv)->GetMethodID(lenv, jniPDP.cls, "evaluatePredicate", "(Ljava/lang/String;Lde/fraunhofer/iese/pef/pdp/internal/Event;)I");
-  log_debug("evaluatePredciate=[%p]", jniPDP.evaluatePredicate);
+  jniPDP.evalOperator=(*lenv)->GetMethodID(lenv, jniPDP.cls, "evalOperator", "(Ljava/lang/String;Ljava/lang/String;Lde/fraunhofer/iese/pef/pdp/internal/Event;)I");
 
-  if(jniPDP.handlePIPeval==NULL || jniPDP.handlePIPinit==NULL || jniPDP.handlePIPinitDataID==NULL || jniPDP.evaluatePredicate==NULL)
-    {log_error("ERROR: Could not find required methods IDs for PIP!"); return JNI_ERR;}
+  jniPDP.pxpExecute=(*lenv)->GetMethodID(lenv, jniPDP.cls, "pxpExecuteAction", "(Ljava/lang/String;ILjava/util/List;Lde/fraunhofer/iese/pef/pdp/internal/Event;)I");
+
+  if(jniPDP.handlePIPeval==NULL || jniPDP.handlePIPinit==NULL || jniPDP.handlePIPinitDataID==NULL || jniPDP.evaluatePredicate==NULL || jniPDP.evalOperator==NULL ||
+     jniPDP.pxpExecute==NULL)
+    {log_error("ERROR: Could not find required methods IDs for PIP communication!"); return JNI_ERR;}
 
   log_debug("PIP initialization finished");
-
-
-  // Initializing PIP connection (if set to JNI)
-  #if PDP_PIPSOCKET == 1
-  /*
-    log_debug("Initializing PIP connection via JNI");
-    // todo should be done via registry and interfaceDescription!
-    //jclass lclsPIPinstance=(*lenv)->FindClass(lenv, "de/fraunhofer/iese/pef/pdp/example/pipExample");
-    jclass lclsPIPinstance=(*lenv)->FindClass(lenv, "main/PIPHandler");
-    if(lclsPIPinstance==NULL)
-      {log_error("ERROR: Could not find required classes for initializing PIP connection!"); return JNI_ERR;}
-
-    // creating global references of classes
-    jniPIP.cls=(*lenv)->NewGlobalRef(lenv, lclsPIPinstance);
-    (*lenv)->DeleteLocalRef(lenv, lclsPIPinstance);
-
-    jniPIP.getInstance=(*lenv)->GetStaticMethodID(lenv, jniPIP.cls, "getInstance", "()Lhelper/IPIPCommunication;");
-    if(jniPIP.getInstance==NULL) {log_error("Error resolving methodID for getDefault in PIP class"); return JNI_ERR;}
-
-    jobject lpipSingletonInstance=(jobject)(*lenv)->CallStaticObjectMethod(lenv, jniPIP.cls, jniPIP.getInstance);
-    if(lpipSingletonInstance==NULL) {log_error("Error retrieving PDP instance object"); return JNI_ERR;}
-    jniPIP.instance=(*lenv)->NewGlobalRef(lenv, lpipSingletonInstance);
-    if(jniPIP.instance==NULL) {log_error("ERROR: Could not create global reference for PIP object!"); return JNI_ERR;}
-    (*lenv)->DeleteLocalRef(lenv, lpipSingletonInstance);
-
-    jniPIP.handlePIPeval=(*lenv)->GetMethodID(lenv, jniPIP.cls, "eval", "(Ljava/lang/String;Ljava/lang/String;)I");
-    jniPIP.handlePIPinit=(*lenv)->GetMethodID(lenv, jniPIP.cls, "init", "(Ljava/lang/String;)Ljava/lang/String;");
-    jniPIP.handlePIPinitDataID=(*lenv)->GetMethodID(lenv, jniPIP.cls, "init", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
-    jniPIP.initializePIP=(*lenv)->GetMethodID(lenv, jniPIP.cls, "initializePIP", "()Z");
-    jniPIP.evaluatePredicate=(*lenv)->GetMethodID(lenv, jniPIP.cls, "evaluatePredicate", "(Ljava/lang/String;Lde/fraunhofer/iese/pef/pdp/internal/Event;)I");
-    log_debug("evaluatePredciate=[%p]", jniPIP.evaluatePredicate);
-
-    log_debug("start call PIP initilizePIP");
-    jboolean istry = (jboolean)(*lenv)->CallObjectMethod(lenv, jniPIP.instance, jniPIP.initializePIP);
-    log_debug("end call PIP initilizePIP");
-
-    //jstring retStr=(jstring)(*lenv)->CallObjectMethod(lenv, jniPIP.instance, jniPIP.handlePIPinit, jniParam);
-
-    if(jniPIP.handlePIPeval==NULL || jniPIP.handlePIPinit==NULL || jniPIP.handlePIPinitDataID==NULL || jniPIP.evaluatePredicate==NULL)
-      {log_error("ERROR: Could not find required methods IDs for PIP!"); return JNI_ERR;}
-
-    log_debug("PIP initialization finished");
-*/
-  #endif
 
   log_info("JNI initialization finished");
   return JNI_VERSION_1_6;

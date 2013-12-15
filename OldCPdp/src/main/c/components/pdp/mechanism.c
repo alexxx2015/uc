@@ -133,7 +133,7 @@ void printMechNames(mechanism_ptr mech, void* a)
   log_debug("curmechName=[%s]",mech->mechName);
 }
 
-unsigned int mechanismAddExecuteAction(mechanism_ptr curMech, xmlNodePtr node, const char *name)
+unsigned int mechanismAddExecuteAction(mechanism_ptr curMech, xmlNodePtr node, const char *name, unsigned int sync, const char *processor)
 { // node = XMLnode action -> increase list of executeAction_ptr's and parse parameters in action
   checkNullInt(curMech, "%s - curMech is NULL",__func__);
   checkNullInt(node,    "Error: NULL parameter for [%s]", __func__);
@@ -143,6 +143,14 @@ unsigned int mechanismAddExecuteAction(mechanism_ptr curMech, xmlNodePtr node, c
   checkNullInt(curMech->executeActions, "Could not allocate memory for new action");
 
   executeAction_ptr nAction = executeActionNew(name);
+  nAction->sync=sync;
+
+  if(!strncasecmp(processor, "pep", 3))
+  {
+    log_debug("execution should be done by pep");
+    nAction->processor=1;
+  }
+
   xmlNodePtr cur=node->children;
   while(cur!=NULL)
   {
@@ -161,7 +169,7 @@ unsigned int mechanismAddExecuteAction(mechanism_ptr curMech, xmlNodePtr node, c
   }
 
   curMech->executeActions[curMech->cntExecuteActions]=nAction;
-  log_trace("Successfully added executeAction \"%s\" mechanism", name);
+  log_trace("Successfully added executeAction \"%s\" (sync=%d) to mechanism", name, sync);
   curMech->cntExecuteActions++;
   return R_SUCCESS;
 }
@@ -411,12 +419,20 @@ LPTHREAD_START_ROUTINE mechanismUpdateThread(void* mech)
       for(a=0; a<curMech->cntExecuteActions; a++)
       {
         executeAction_ptr curExecAction=curMech->executeActions[a];
-        log_trace("Executing [%s] interfaceMethod=[%p]", curExecAction->actionDesc->actionName,
-                                                         curExecAction->actionDesc->pxpInterface->pxpExecute);
-        executeReturns=curExecAction->actionDesc->pxpInterface->pxpExecute(curExecAction->actionDesc->pxpInterface,
-            curExecAction->actionDesc->actionName, curExecAction->cntParams, curExecAction->params);
+        if(curExecAction->processor==0)
+        { // execution by pxp
+          log_trace("Executing [%s] interfaceMethod=[%p]", curExecAction->actionDesc->actionName,
+                                                           curExecAction->actionDesc->pxpInterface->pxpExecute);
+          //executeReturns=curExecAction->actionDesc->pxpInterface->pxpExecute(curExecAction->actionDesc->pxpInterface,
+          //    curExecAction->actionDesc->actionName, curExecAction->cntParams, curExecAction->params);
+          executeReturns=pxpExecuteJNI(NULL, curExecAction->actionDesc->actionName, curExecAction->sync, curExecAction->cntParams, curExecAction->params, NULL);
 
-        log_trace("Executing [%s] returned [%s]", curExecAction->actionDesc->actionName, returnStr[executeReturns]);
+          log_trace("Executing [%s] returned [%s]", curExecAction->actionDesc->actionName, returnStr[executeReturns]);
+        }
+        else
+        {
+          log_debug("Execution should be done by PEP, impossible in time triggered evaluation...");
+        }
       }
     }
     curMech->mechMutex->unlock(curMech->mechMutex);

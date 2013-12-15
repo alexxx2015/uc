@@ -2,13 +2,17 @@
 import os
 Import('tmpConfig')
 
-DefaultEnvironment(tools=[])
-#env=Environment(tools=['mingw','javac','jar','rmic'],
-env=Environment(CC='/home/rd/w64/local32/bin/i686-w64-mingw32-gcc',
+#DefaultEnvironment(tools=[])
+#env=Environment(CC='/home/rd/w64/local32/bin/i686-w64-mingw32-gcc',
+env=Environment(tools=['mingw','javac','jar','rmic'],
                 PEFCONFIG=tmpConfig['PEFCONFIG'], 
                 PEFBASE=tmpConfig['PEFBASE'], 
                 PEFBUILD=tmpConfig['PEFBUILD'], 
                 PEFincludes=tmpConfig['PEFincludes'])
+
+env['PEFtarget'] = "win32"
+
+env['compilerFound']=True
 
 # Java JDK include path
 #java="C:\\Program Files\\Java\\jdk1.6.0_33\\include"

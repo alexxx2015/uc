@@ -9,45 +9,46 @@
     <actionDescription name="event.homeapp.controller.backend" />
   </actionDescriptions>
 
-  <preventiveMechanism name="testReplim">
+  <preventiveMechanism name="testTUM">
     <description>...</description>
-    <timestep amount="3" unit="SECONDS" />
+    <timestep amount="10" unit="SECONDS" />
     <trigger action="testEvent" isTry="true">
 <!--      <paramMatch name="val1" value="value1" type="dataUsage" />
       <paramMatch name="val2" value="value2" type="dataUsage" />-->
     </trigger>
     <condition>
-    	<not><stateBasedFormula operator="isNotIn" param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" /></not>
-      <!-- operator isNotIn and operator isOnlyIn -> par1=data par2=string -->
-      <!-- operator isCombinedWith -> par1=data par2=data -->
-      <!-- operator atMostInSet and atMostInEach -> par1=data par2=string par3=int -->
-      
-
-     <eval type="XPATH"> an arbitrary xpath formula </eval>
-     <eval type="MATH"> 3+2=5 </eval>
-
-      <!-- <repLim amount="14" unit="SECONDS" lowerLimit="1" upperLimit="2">
-        <eventMatch action="action1" isTry="true">
-          <paramMatch name="val1" value="value1" />
-        </eventMatch>
-      </repLim> -->
+      <or>
+	    	<not>
+	    	 <stateBasedFormula operator="isNotIn" param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" />
+	    	</not>
+	      <!-- operator isNotIn and operator isOnlyIn -> par1=data par2=string -->
+	      <!-- operator isCombinedWith -> par1=data par2=data -->
+	      <!-- operator atMostInSet and atMostInEach -> par1=data par2=string par3=int -->
+        <and>
+					<eval type="XPATH"> an arbitrary xpath formula </eval>
+					<eval type="MATH"> 3+2=5 </eval>
+        </and>
+      </or>      
     </condition>
-    <authorizationAction name="default" fallback="fallback">
+    <authorizationAction name="default" start="true" fallback="fallback">
       <allow>
         <executeSyncAction name="deployPolicy">
-          <paramter name="file" value="abc.xml"/>
-        </executeAction>
+          <parameter name="file" value="abc.xml"/>
+        </executeSyncAction>
       </allow>
     </authorizationAction>
-    <authorizationAction name="fallback" fallback="fb2">
+    <authorizationAction name="fallback">
       <allow>
         <modify>
-          <!-- ... -->
+          <parameter name="path" value="dev/null"/>
         </modify>
       </allow>
     </authorizationAction>
-  <executeAsyncAction name="log" processor="pep|pxp">
-  <!-- ... -->
-  </executeAction>
+	  <executeAsyncAction name="log" processor="pep">
+	    <parameter name="file" value="abc.xml"/>
+	  </executeAsyncAction>
+    <executeAsyncAction name="log2" processor="pxp">
+      <parameter name="file" value="abc.xml"/>
+    </executeAsyncAction>	  
   </preventiveMechanism>
 </policySet>

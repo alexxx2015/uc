@@ -11,7 +11,7 @@
 #ifdef PDP_JNI
   // PDP out interface: PXP invocation via JNI interface
   extern JavaVM *curjvm;
-  unsigned int pxpExecuteJNI(pdpInterface_ptr linterface, char *name, unsigned int cntParams, parameterInstance_ptr *params)
+  unsigned int pxpExecuteJNI(pdpInterface_ptr linterface, char *name, unsigned int sync, unsigned int cntParams, parameterInstance_ptr *params, event_ptr event)
   {
     if(curjvm==NULL)
     {
@@ -34,8 +34,16 @@
       (*lenv)->CallVoidMethod(lenv, paramList, jniArrayList.add, parameter);
     }
 
-    jstring jniRequest=(*lenv)->NewStringUTF(lenv, name);
-    int ret=(*lenv)->CallStaticIntMethod(lenv, linterface->classPXP, linterface->pxpExecutionMethod, jniRequest, paramList);
+    jobject jevent=NULL;
+    if(event!=NULL)
+    {
+      log_debug("preparing JNI-event for pxpExecute");
+      jevent=(jobject)prepareJNIevent(lenv, event);
+    }
+
+    jstring jniName=(*lenv)->NewStringUTF(lenv, name);
+    //int ret=(*lenv)->CallStaticIntMethod(lenv, linterface->classPXP, linterface->pxpExecutionMethod, jniRequest, paramList);
+    int ret=(*lenv)->CallIntMethod(lenv, jniPDP.instance, jniPDP.pxpExecute, jniName, sync, paramList, jevent);
     log_debug("PXP returned for execution=[%d]", ret);
     return ret;
   }

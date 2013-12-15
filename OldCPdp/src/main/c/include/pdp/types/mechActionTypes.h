@@ -38,6 +38,10 @@ struct executeAction_s
   unsigned int           cntParams;
   /// array of parameter instances for this action
   parameterInstance_ptr *params;
+  /// processor (0 -> pxp (default), 1 -> pep)
+  unsigned int           processor;
+  /// synchronous (TRUE) or asynchronous (FALSE) execution
+  unsigned int           sync;
 };
 
 /**

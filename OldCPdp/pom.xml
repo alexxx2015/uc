@@ -1,89 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.fraunhofer.iese.ind2uce</groupId>
-  <artifactId>PdpNativeSource</artifactId>
-  <packaging>jar</packaging>
-  <name>IND2UCE :: PDP native library</name>
-  <version>0.0.3-SNAPSHOT</version>
-  <description>IND2UCE :: OldCPdp</description>
+	<groupId>de.fraunhofer.iese.ind2uce</groupId>
+	<artifactId>PdpNativeSource</artifactId>
+	<packaging>jar</packaging>
+	<name>IND2UCE :: PDP native library</name>
+	<version>0.0.3-SNAPSHOT</version>
+	<description>IND2UCE :: OldCPdp</description>
 
-  <!-- Properties -->
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<!-- Properties -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*</exclude>
-        </excludes>
-      </resource>
-    </resources>
+	<profiles>
+		<profile>
+			<id>profileWindows</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<!-- <name>Windows XP</name> <family>Windows</family> <arch>x86</arch> 
+						<version>5.1.2600</version> -->
+				</os>
+			</activation>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
+			<properties>
+				<sconsExecutable>${basedir}\src\main\resources\scripts\invokeScons.bat</sconsExecutable>
+			</properties>
+		</profile>
+		
+		<profile>
+		  <id>profileLinux</id>
+		  <activation>
+			<os>
+			  <family>linux</family>
+			</os>
+		  </activation>
+		  <properties>
+				<sconsExecutable>${basedir}/src/main/resources/scripts/invokeScons.sh</sconsExecutable>
+		  </properties>
+		</profile>
+	</profiles>
+	
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>**/*</exclude>
+						</excludes>
+					</resource>
+				</resources>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <executions>
-          <execution>
-            <id>sconsClean</id>
-            <phase>clean</phase>
-            <configuration>
-              <executable>scons</executable>
-              <workingDirectory>./src/main/c</workingDirectory>
-              <arguments>
-                <argument>-c</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/*.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
 
-          <execution>
-            <id>sconsCompile</id>
-            <phase>compile</phase>
-            <configuration>
-              <executable>scons</executable>
-              <workingDirectory>./src/main/c</workingDirectory>
-              <arguments>
-                <!--<argument></argument> -->
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
+							<execution>
+								<id>sconsClean</id>
+								<phase>clean</phase>
+								<configuration>
+									<executable>${sconsExecutable}</executable>
+									<workingDirectory>./src/main/c</workingDirectory>
+									<arguments>
+										<argument>-c</argument>
+										<argument>target=all</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <includes>
-            <include>**/nativeLibs/*</include>
-          </includes>
-        </configuration>
-      </plugin>
+							<execution>
+								<id>sconsCompile</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>${sconsExecutable}</executable>
+									<workingDirectory>./src/main/c</workingDirectory>
+									<arguments>
+										<argument>target=all</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 
-    </plugins>
-  </build>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.4</version>
+						<configuration>
+							<includes>
+								<include>**/nativeLibs/**</include>
+							</includes>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>	
 
 </project>

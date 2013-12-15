@@ -44,6 +44,10 @@ operator_ptr operatorNew(const char opType)
                     nop->eval=eval_stateBased;
                     break;
 
+    case EVALOP:    nop->operands=memAlloc(sizeof(oslEvalOp_t));
+                    nop->eval=eval_evalOperator;
+                    break;
+
     // tns:BinaryOperatorType           -> operands=2 operator_ptr
     case OR:        nop->operands=memAlloc(sizeof(oslBinary_t));
                     nop->eval=eval_or;
@@ -118,6 +122,9 @@ unsigned int operatorFree(operator_ptr op, mechanism_ptr curMech)
                     break;
     case STATEBASED: // TODO
                     log_warn("freeing stateBased operator not yet implemented...");
+                    break;
+    case EVALOP: // TODO
+                    log_warn("freeing evalOperator operator not yet implemented...");
                     break;
     case XPATH:     log_warn("freeing xpath operand"); free(((char *)op->operands));
                     break;
@@ -203,6 +210,7 @@ uint8_t getOperatorType(const char *str)
   else if(!strncasecmp(str,"and",3))          return AND;
   else if(!strncasecmp(str,"true",4))         return OSL_TRUE;
   else if(!strncasecmp(str,"false",4))        return OSL_FALSE;
+  else if(!strncasecmp(str, "eval",4))        return EVALOP;
   else if(!strncasecmp(str,"since",5))        return SINCE;
   else if(!strncasecmp(str,"xpath",5))        return XPATH;
   else if(!strncasecmp(str,"always",6))       return ALWAYS;
@@ -244,6 +252,7 @@ unsigned long operatorMemSize(operator_ptr op)
     case REPMAX: size+=0; break;
     case REPSINCE: size+=0; break;
     case STATEBASED: size+=0; break;
+    case EVALOP: size+=0; break;
   }
   return size;
 }
@@ -286,6 +295,14 @@ void operatorLog(operator_ptr op)
       log_trace("          op1: %s", curOperands->param1);
       log_trace("          op2: %s", curOperands->param2);
       log_trace("          op3: %s", curOperands->param3);
+      break;
+    }
+    case EVALOP:
+    {
+      log_debug("evalOperator logging...");
+      oslEvalOp_ptr curOperands=op->operands;
+      log_trace("         type: %s", curOperands->type);
+      log_trace("      content: %s", curOperands->content);
       break;
     }
     case XPATH:

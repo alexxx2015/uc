@@ -3,13 +3,13 @@ import os
 Import('env','curBaseDir')
 
 actionObject=env.rdObject('action.c')
-Alias('action', actionObject)
+env.rdAlias('action', actionObject)
 
 paramObject=env.rdObject('paramDesc.c')
-Alias('action', paramObject)
+env.rdAlias('action', paramObject)
 
 actionDescriptionStoreObject=env.rdObject('actionDescStore.c')
-Alias('action', actionDescriptionStoreObject)
+env.rdAlias('action', actionDescriptionStoreObject)
 
 
 
