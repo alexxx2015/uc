@@ -11,5 +11,7 @@ exit
 
 :noScons
 	echo scons is NOT installed; skipping build
-	pause
+	mkdir ..\..\..\target\classes\nativeLibs
+	xcopy /E ..\..\..\nativeLibs ..\..\..\target\classes\nativeLibs
 	
+	pause
