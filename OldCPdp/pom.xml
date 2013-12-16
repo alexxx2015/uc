@@ -15,6 +15,20 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>		
+	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>profileWindows</id>
@@ -30,91 +44,127 @@
 				<sconsExecutable>${basedir}\src\main\resources\scripts\invokeScons.bat</sconsExecutable>
 			</properties>
 		</profile>
-		
+
 		<profile>
-		  <id>profileLinux</id>
-		  <activation>
-			<os>
-			  <family>linux</family>
-			</os>
-		  </activation>
-		  <properties>
+			<id>profileLinux</id>
+			<activation>
+				<os>
+					<family>linux</family>
+				</os>
+			</activation>
+			<properties>
 				<sconsExecutable>${basedir}/src/main/resources/scripts/invokeScons.sh</sconsExecutable>
-		  </properties>
+			</properties>
 		</profile>
+		
+    <profile>
+      <id>profileLinux-i686</id>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>i386</arch>
+        </os>
+      </activation>
+      <properties>
+        <libDirectory>${basedir}/target/classes/nativeLibs/linux-i686</libDirectory>
+      </properties>
+    </profile>
+    
+    <profile>
+      <id>profileLinux-x86_64</id>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>x86_64</arch>
+        </os>
+      </activation>
+      <properties>
+        <libDirectory>${basedir}/target/classes/nativeLibs/linux-x86_64</libDirectory>
+      </properties>
+    </profile>
+    
+      
 	</profiles>
-	
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>**/*</exclude>
-						</excludes>
-					</resource>
-				</resources>
 
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<!-- <excludes> <exclude>**/*.java</exclude> </excludes> -->
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>sconsClean</id>
+						<phase>clean</phase>
 						<configuration>
-							<excludes>
-								<exclude>**/*.java</exclude>
-							</excludes>
+							<executable>${sconsExecutable}</executable>
+							<workingDirectory>./src/main/c</workingDirectory>
+							<arguments>
+								<argument>-c</argument>
+								<argument>target=all</argument>
+							</arguments>
 						</configuration>
-					</plugin>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
 
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
-						<executions>
-							<execution>
-								<id>sconsClean</id>
-								<phase>clean</phase>
-								<configuration>
-									<executable>${sconsExecutable}</executable>
-									<workingDirectory>./src/main/c</workingDirectory>
-									<arguments>
-										<argument>-c</argument>
-										<argument>target=all</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-
-							<execution>
-								<id>sconsCompile</id>
-								<phase>compile</phase>
-								<configuration>
-									<executable>${sconsExecutable}</executable>
-									<workingDirectory>./src/main/c</workingDirectory>
-									<arguments>
-										<argument>target=all</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>2.4</version>
+					<execution>
+						<id>sconsCompile</id>
+						<phase>compile</phase>
 						<configuration>
-							<includes>
-								<include>**/nativeLibs/**</include>
-							</includes>
+							<executable>${sconsExecutable}</executable>
+							<workingDirectory>./src/main/c</workingDirectory>
+							<arguments>
+								<argument>target=all</argument>
+							</arguments>
 						</configuration>
-					</plugin>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-				</plugins>
-			</build>	
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+<!-- 				<configuration>
+					<includes>
+						<include>**/nativeLibs/**</include>
+					</includes>
+				</configuration>
+ -->			</plugin>
+			
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-Djava.library.path=${libDirectory}</argLine>
+        </configuration>
+      </plugin>   			
+
+		</plugins>
+	</build>
 
 </project>
