@@ -21,6 +21,7 @@ public interface IPdpEngine2PipCacher {
 	//Note: use these with care and check for simulation state.
     //      using isSimulating() before executing them
     public Boolean 	  evaluatePredicateSimulatingNextState(IEvent event, String predicate);
+    public Boolean 	  evaluatePredicateSimulatingNextState(IEvent event, IKey key);
     public Boolean    eval(IKey key, IEvent event2Simulate);
     
 }

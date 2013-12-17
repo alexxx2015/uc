@@ -102,19 +102,19 @@ public class JNICommunicatorFromOldPdp
   // <eval type="XPATH"> danasjknsajknsjkncsjkacnasdjk </eval>
 
   // TODO: these methods are obsolete...
-  public int eval(String a, String b)
-  {
-    return(containerRefinesData(a, b));
-  }
-
-  public String init(String container)
-  {
-    return initialRepresentation(container);
-  }
-
-  public String init(String container, String initialDataID)
-  {
-    return initialRepresentation(container, initialDataID);
-  }
+//  public int eval(String a, String b)
+//  {
+//    return(containerRefinesData(a, b));
+//  }
+//
+//  public String init(String container)
+//  {
+//    return initialRepresentation(container);
+//  }
+//
+//  public String init(String container, String initialDataID)
+//  {
+//    return initialRepresentation(container, initialDataID);
+//  }
 
 }

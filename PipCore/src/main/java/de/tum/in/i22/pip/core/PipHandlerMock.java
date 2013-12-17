@@ -146,4 +146,11 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event,
+			IKey predicate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

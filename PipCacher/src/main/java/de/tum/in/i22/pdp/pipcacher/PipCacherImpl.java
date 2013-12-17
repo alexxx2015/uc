@@ -126,6 +126,12 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	}
 
 	@Override
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, IKey predicate) {
+		_logger.debug("Method evaluatePredicate(E,P) invoked. Bypassing PipCacher and invoking it directly on Pip...");
+		return _pip.evaluatePredicateSimulatingNextState(event, predicate);
+	}
+
+	@Override
 	public Boolean evaluatePredicateCurrentState(String predicate) {
 		_logger.debug("Method evaluatePredicate(P) invoked. Bypassing PipCacher and invoking it directly on Pip...");
 		return _pip.evaluatePredicatCurrentState(predicate);

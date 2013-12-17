@@ -2,6 +2,9 @@ package de.fraunhofer.iese.pef.pdp;
 
 import java.io.File;
 
+import de.fraunhofer.iese.pef.pdp.internal.Decision;
+import de.fraunhofer.iese.pef.pdp.internal.Event;
+
 public class Win64PolicyDecisionPoint extends PolicyDecisionPoint
 {
   private static final long serialVersionUID =1L;
@@ -41,6 +44,11 @@ public class Win64PolicyDecisionPoint extends PolicyDecisionPoint
       
       pdpRunning=true;
       _logger.info("Native PDP library loaded...");
+//		Event e = new Event("testEvent", true);
+//		e.addStringParameter("val1", "value1");
+//		e.addStringParameter("val2", "value2");
+//		Decision d = this.pdpNotifyEventJNI(e);
+//		_logger.info("decision: " + d);      
     }
     catch(Exception e)
     {

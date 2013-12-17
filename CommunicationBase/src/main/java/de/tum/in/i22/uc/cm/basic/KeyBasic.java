@@ -10,6 +10,28 @@ public class KeyBasic implements IKey {
 	private static int counter=0;
 	
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + _key;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		KeyBasic other = (KeyBasic) obj;
+		if (_key != other._key)
+			return false;
+		return true;
+	}
+
+	@Override
 	public int getKey() {
 		return _key;
 	}
@@ -49,6 +71,7 @@ public class KeyBasic implements IKey {
 		if (stringKey.matches("[0-9]*")) return new KeyBasic(Integer.decode(stringKey));
 		return null;
 	}
+	
 	
 	
 }

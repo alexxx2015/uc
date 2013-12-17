@@ -49,27 +49,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 
-	/**
-	 * Evaluate the predicate in the state obtained simulating the execution of event.
-	 * @return the result of the formula 
-	 */
-	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
-		_logger.info("Saving PIP current state");
-		if (_ifModel.push()) {
-			_logger.trace("Updating PIP semantics with current event ("
-					+ (event == null ? "null" : event.getName()) + ")");
-			notifyActualEvent(event);
-			_logger.trace("Evaluate predicate in new updated state ("
-					+ predicate + ")");
-			Boolean res = evaluatePredicatCurrentState(predicate);
-			_logger.trace("Restoring PIP previous state...");
-			_ifModel.pop();
-			_logger.trace("done!");
-			return res;
-		}
-		_logger.error("Failed! Stack not empty!");
-		return null;
-	}
+
 
 	public Boolean evaluatePredicatCurrentState(String predicate) {
 		// TODO: add code to evaluate generic predicate
@@ -312,4 +292,52 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	public boolean isSimulating() {
 		return _ifModel.isSimulating();
 	}
+
+
+	/**
+	 * Evaluate the predicate in the state obtained simulating the execution of event.
+	 * @return the result of the formula 
+	 */
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
+		_logger.info("Saving PIP current state");
+		if (_ifModel.push()) {
+			_logger.trace("Updating PIP semantics with current event ("
+					+ (event == null ? "null" : event.getName()) + ")");
+			notifyActualEvent(event);
+			_logger.trace("Evaluate predicate in new updated state ("
+					+ predicate + ")");
+			Boolean res = evaluatePredicatCurrentState(predicate);
+			_logger.trace("Restoring PIP previous state...");
+			_ifModel.pop();
+			_logger.trace("done!");
+			return res;
+		}
+		_logger.error("Failed! Stack not empty!");
+		return null;
+	}
+	
+	
+	@Override
+	public Boolean evaluatePredicateSimulatingNextState(IEvent event,
+			IKey predicate) {
+		_logger.info("retrieveing predicate with key "+ predicate);
+		
+		if (_predicatesToEvaluate.containsValue(predicate)){
+			String pred=null;
+			for (String s : _predicatesToEvaluate.keySet()){
+				if (_predicatesToEvaluate.get(s).equals(predicate)){
+					pred=s;
+				}
+			}
+			if (pred==null) {
+				_logger.error("impossible to evaluate key "+ predicate +" because it doesn't exists in the PIP. returning null.");
+				return null;
+			}
+			
+			return evaluatePredicateSimulatingNextState(event, pred);
+		}
+		_logger.error("impossible to evaluate key "+ predicate +" because it doesn't exists in the PIP. returning null.");
+		return null;
+	}
+	
 }
