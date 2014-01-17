@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+  xmlns              = "http://www.w3.org/2001/XMLSchema"  
+  targetNamespace    = "http://www.iese.fhg.de/pef/1.0/action"
+  xmlns:tns          = "http://www.iese.fhg.de/pef/1.0/action"
+  
+  xmlns:jaxb         = "http://java.sun.com/xml/ns/jaxb"
+  xmlns:xjc          = "http://java.sun.com/xml/ns/jaxb/xjc"
+  jaxb:version       = "1.0" 
+  jaxb:extensionBindingPrefixes="xjc"  
+  elementFormDefault = "qualified">
+
+  <simpleType name="ParamInstanceTypes">
+    <restriction base="string">
+      <enumeration value="string"/>
+      <enumeration value="xpath"/>
+    </restriction>
+  </simpleType>
+  
+  <simpleType name="ExecutorProcessors">
+    <restriction base="string">
+      <enumeration value="pep"/>
+      <enumeration value="pxp"/>
+    </restriction>
+  </simpleType>  
+  
+  <complexType name="ParameterType">
+    <attribute name="name"  type="string"                 use="required" />
+    <attribute name="value" type="string"                 use="required" />
+    <attribute name="type"  type="tns:ParamInstanceTypes" use="optional" default="string" />
+  </complexType>
+
+  <complexType name="ExecuteActionType">
+    <sequence>
+      <element name="parameter" type="tns:ParameterType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="name"    type="string" use="required" />
+  </complexType>
+
+  <complexType name="ExecuteAsyncActionType">
+    <complexContent>
+      <extension base="tns:ExecuteActionType">
+          <attribute name="processor"     type="tns:ExecutorProcessors" use="optional" default="pxp"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  
+</schema>

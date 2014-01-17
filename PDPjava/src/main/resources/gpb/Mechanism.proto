@@ -1,0 +1,23 @@
+package de.fraunhofer.iese.pef.pdp;
+
+option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_outer_classname = "MechanismProto";
+
+import "Event.proto";
+import "AuthorizationAction.proto";
+import "ExecuteAction.proto";
+import "Condition.proto";
+
+message PbMechanism
+{
+  required string name = 1;
+  optional string description = 2;
+  optional uint64 lastUpdate = 3;
+  optional uint64 timestepSize = 4;
+  optional uint64 timestep = 5;
+  
+  optional PbEvent triggerEvent = 6;
+  optional PbUnaryOperator condition = 7;
+  optional PbAuthorizationAction authorizationAction = 8;
+  repeated PbExecuteAction executeAsyncAction = 9;  
+}

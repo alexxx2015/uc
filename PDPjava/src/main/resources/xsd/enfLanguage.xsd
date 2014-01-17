@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+  xmlns              = "http://www.w3.org/2001/XMLSchema"   
+  targetNamespace    = "http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+  xmlns:tns          = "http://www.iese.fhg.de/pef/1.0/enforcementLanguage"  
+  xmlns:time         = "http://www.iese.fhg.de/pef/1.0/time"
+  xmlns:action       = "http://www.iese.fhg.de/pef/1.0/action"
+  xmlns:event        = "http://www.iese.fhg.de/pef/1.0/event"
+  xmlns:cnd     		 = "http://www.iese.fhg.de/pef/1.0/condition"
+  
+  xmlns:xjc          = "http://java.sun.com/xml/ns/jaxb/xjc"
+  xmlns:jaxb         = "http://java.sun.com/xml/ns/jaxb"
+  jaxb:version       = "1.0" 
+  jaxb:extensionBindingPrefixes="xjc"  
+  elementFormDefault = "qualified">
+
+  <import namespace="http://www.iese.fhg.de/pef/1.0/time"      schemaLocation="time.xsd" />
+  <import namespace="http://www.iese.fhg.de/pef/1.0/action"    schemaLocation="action.xsd" />
+  <import namespace="http://www.iese.fhg.de/pef/1.0/event"     schemaLocation="event.xsd" />
+
+  <element name="condition" type="tns:ConditionType" />
+
+  <complexType name="ConditionType">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="1" maxOccurs="1" />
+    </sequence>
+  </complexType>
+
+  <complexType name="NotType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+  </complexType>
+
+  <complexType name="TrueType" abstract="true">
+    <sequence />
+  </complexType>
+
+  <complexType name="FalseType" abstract="true">
+    <sequence />
+  </complexType>
+
+  <complexType name="OrType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
+    </sequence>
+  </complexType>
+
+  <complexType name="AndType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="ImpliesType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="SinceType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
+    </sequence>
+  </complexType>  
+  
+  <complexType name="AlwaysType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="BeforeType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+    <attributeGroup ref="time:TimeAmountAttributeGroup" />
+  </complexType>
+  
+  <complexType name="DuringType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+    <attributeGroup ref="time:TimeAmountAttributeGroup" />    
+  </complexType>
+  
+  <complexType name="WithinType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+    <attributeGroup ref="time:TimeAmountAttributeGroup" />
+  </complexType>
+
+  <complexType name="RepLimType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+    <attributeGroup ref="time:TimeAmountAttributeGroup" />
+    <attribute name="lowerLimit" type="nonNegativeInteger" use="required" />
+    <attribute name="upperLimit" type="positiveInteger"    use="required" />
+  </complexType>
+
+  <complexType name="RepSinceType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
+    </sequence>
+    <attribute name="limit" type="nonNegativeInteger" use="required" />
+  </complexType>
+  
+  <complexType name="RepMaxType" abstract="true">
+    <sequence>
+      <group ref="tns:Operators" />
+    </sequence>
+    <attribute name="limit" type="nonNegativeInteger" use="required" />
+  </complexType>
+  
+  <complexType name="StateBasedOperatorType" abstract="true">
+    <attribute name="operator" type="string" use="required" />
+    <attribute name="param1"   type="string" use="required" />
+    <attribute name="param2"   type="string" use="optional" />
+    <attribute name="param3"   type="string" use="optional" />
+  </complexType>
+
+  <complexType name="EvalOperatorType" abstract="true">
+    <sequence>
+      <element name="content" type="string"/>
+     </sequence>
+    <attribute name="type" type="string" use="required" />
+  </complexType>  
+  
+  <group name="Operators">
+    <choice>
+      <element name="true"    type="tns:TrueType" />
+      <element name="false"   type="tns:FalseType" />
+      <element name="not"     type="tns:NotType" />
+      <element name="or"      type="tns:OrType" />
+      <element name="and"     type="tns:AndType" />
+      <element name="implies" type="tns:ImpliesType" />
+
+      <element name="eventMatch" type="tns:EventMatchingOperatorType"/>
+
+      <element name="since"  type="tns:SinceType" />
+      <element name="always" type="tns:AlwaysType" />
+      <element name="before" type="tns:BeforeType" />
+      <element name="during" type="tns:DuringType" />
+      <element name="within" type="tns:WithinType" />
+      
+      <element name="repLim"   type="tns:RepLimType" />
+      <element name="repSince" type="tns:RepSinceType" />
+      <element name="repMax"   type="tns:RepMaxType" />
+      
+      <element name="stateBasedFormula" type="tns:StateBasedOperatorType" />
+      <element name="eval"              type="tns:EvalOperatorType" />
+    </choice>
+  </group>
+  
+  <simpleType name="ParamMatchDataTypes">
+    <restriction base="string">
+      <pattern value="string|dataUsage|xpath|regex|binary|int|long|bool|stringArray|context"/>
+    </restriction>
+  </simpleType>
+    
+  <complexType name="ParamMatchType">
+    <attribute name="name"    type="string"                  use="required" />
+    <attribute name="value"   type="string"                  use="required" />
+    <attribute name="type"    type="tns:ParamMatchDataTypes" use="optional" default="string" />
+    <attribute name="dataID"  type="string"                  use="optional" default="" />
+    <attribute name="negate"  type="boolean"                 use="optional" default="false" />
+  </complexType>
+
+  <complexType name="EventMatchingOperatorType" abstract="true">
+    <sequence>
+      <element name="paramMatch" type="tns:ParamMatchType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="action"   type="string"                 use="required" />
+    <attribute name="tryEvent" type="boolean"                use="required" />
+  </complexType>
+  
+  <complexType name="DelayActionType">
+    <attributeGroup ref="time:TimeAmountAttributeGroup" />
+  </complexType>
+
+  <complexType name="ModifyActionType">
+		<sequence>
+		  <element name="parameter" type="action:ParameterType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+  </complexType>
+
+  <complexType name="AuthorizationInhibitType">
+    <sequence>
+      <element name="delay" type="tns:DelayActionType" minOccurs="0" maxOccurs="1" />
+    </sequence>
+  </complexType>
+
+  <complexType name="AuthorizationAllowType">
+    <sequence>
+      <element name="delay"             type="tns:DelayActionType"      minOccurs="0" maxOccurs="1" />
+      <element name="modify"            type="tns:ModifyActionType"     minOccurs="0" maxOccurs="1" />
+      <element name="executeSyncAction" type="action:ExecuteActionType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+  </complexType>
+
+  <complexType name="AuthorizationActionType">
+    <choice>
+      <element name="allow"   type="tns:AuthorizationAllowType" />
+      <element name="inhibit" type="tns:AuthorizationInhibitType" />
+    </choice>
+    <attribute name="name" type="string"     use="required" />
+    <!--  indicates starting point in authorizationAction hierarchy -->
+    <attribute name="start" type="boolean"    use="optional" default="false"/>
+    <!--  reference to fallback authorizationAction (name), if executeActions/modification could not be performed successfully -->
+    <attribute name="fallback" type="string" use="optional" default="inhibit"/>
+  </complexType>
+  
+  <!-- Preventive mechanisms can only come to decisions on the grounds of their current knowledge, so 
+    they use past formulas. The mechanism consists of an Event, a Condition, and an Action part (ECA).
+    The Event is called trigger Event. When the condition evaluates to true the action part is executed. -->
+  <complexType name="MechanismBaseType">
+    <sequence>
+      <element name="description"         type="string"                        minOccurs="0" maxOccurs="1" />
+      <!-- Timestep size must not use timestep time unit! -->
+      <element name="timestep"            type="time:TimeAmountType"           minOccurs="0" maxOccurs="1" />
+      <element name="trigger"             type="tns:EventMatchingOperatorType" minOccurs="0" maxOccurs="1" />
+      <element name="condition"           type="tns:ConditionType"             minOccurs="0" maxOccurs="1" />
+      <element name="authorizationAction" type="tns:AuthorizationActionType"   minOccurs="0" maxOccurs="0" />
+      <element name="executeAsyncAction"  type="action:ExecuteAsyncActionType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="name" type="string"  use="required" />
+  </complexType>
+
+  <complexType name="DetectiveMechanismType">
+    <complexContent>
+      <extension base="tns:MechanismBaseType">  
+        <sequence />
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="PreventiveMechanismType">
+    <complexContent>
+      <extension base="tns:MechanismBaseType">  
+        <sequence>
+          <element name="authorizationAction" type="tns:AuthorizationActionType"   minOccurs="1" maxOccurs="unbounded" />
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="PolicyType">
+    <sequence>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element name="detectiveMechanism"    type="tns:DetectiveMechanismType" />
+        <element name="preventiveMechanism"   type="tns:PreventiveMechanismType" />
+      </choice>
+    </sequence>
+    <attribute name="name" type="string" use="required" />
+  </complexType>
+  
+  <element name="policy" type="tns:PolicyType" />
+
+</schema>

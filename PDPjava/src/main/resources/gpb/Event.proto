@@ -1,0 +1,14 @@
+package de.fraunhofer.iese.pef.pdp;
+
+option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_outer_classname = "EventProto";
+
+import "Parameter.proto";
+
+message PbEvent
+{
+  required string action = 1;
+  optional bool isTry = 2;
+
+  repeated PbParameter parameter = 3;  
+}

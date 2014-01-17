@@ -1,0 +1,10 @@
+package de.fraunhofer.iese.pef.pdp;
+
+option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_outer_classname = "ParameterProto";
+
+message PbParameter
+{
+  required string name = 1;
+  required string value = 2;
+}

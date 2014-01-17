@@ -1,0 +1,76 @@
+package de.fraunhofer.iese.pef.pdp;
+
+option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_outer_classname = "ConditionProto";
+
+import "Event.proto";
+
+message PbTrue
+{}
+
+message PbFalse
+{}
+
+message PbUnaryOperator
+{
+  optional PbTrue           true = 3;
+  optional PbFalse          false = 4;
+  optional PbUnaryOperator  not = 5;
+
+  optional PbBinaryOperator and = 7;
+  optional PbBinaryOperator or = 6;
+  optional PbBinaryOperator implies = 8;
+
+  optional PbEvent          eventMatch = 9;
+
+  optional PbBinaryOperator since = 10;
+  optional PbUnaryOperator  always = 11;
+  optional PbTimeBoundedUnaryOperator before = 12;
+  optional PbTimeBoundedUnaryOperator during = 13;
+  optional PbTimeBoundedUnaryOperator within = 14;
+}
+
+message PbBinaryOperator
+{
+  repeated PbTrue           true = 3;
+  repeated PbFalse          false = 4;
+  repeated PbUnaryOperator  not = 5;
+  repeated PbBinaryOperator and = 7;
+  repeated PbBinaryOperator or = 6;
+  repeated PbBinaryOperator implies = 8;
+
+  repeated PbEvent          eventMatch = 9;
+
+  repeated PbBinaryOperator since = 10;
+  repeated PbUnaryOperator  always = 11;
+  repeated PbTimeBoundedUnaryOperator before = 12;
+  repeated PbTimeBoundedUnaryOperator during = 13;
+  repeated PbTimeBoundedUnaryOperator within = 14;
+}
+
+message PbTimeAmount
+{
+  required uint64 amount = 1;
+  optional string unit   = 2;
+}
+
+message PbTimeBoundedUnaryOperator
+{
+  required PbTimeAmount     timeAmount = 1;
+
+  optional PbTrue           true = 3;
+  optional PbFalse          false = 4;
+  optional PbUnaryOperator  not = 5;
+  optional PbBinaryOperator and = 7;
+  optional PbBinaryOperator or = 6;
+  optional PbBinaryOperator implies = 8;
+
+  optional PbEvent          eventMatch = 9;
+
+  optional PbBinaryOperator since = 10;
+  optional PbUnaryOperator  always = 11;
+  optional PbTimeBoundedUnaryOperator before = 12;
+  optional PbTimeBoundedUnaryOperator during = 13;
+  optional PbTimeBoundedUnaryOperator within = 14;
+}
+
