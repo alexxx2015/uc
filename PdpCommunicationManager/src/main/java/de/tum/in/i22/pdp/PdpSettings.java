@@ -23,8 +23,9 @@ public class PdpSettings {
 	private final String PROPERTIES_FILE_NAME = "pdp.properties";
 	
 	// default values will be overridden with the values from the properties file
-	private int _pepListenerPortNum = 60001;
-	private int _pmpListenerPortNum = 60002;
+	private int _pepGPBListenerPortNum = 10001;
+	private int _pepThriftListenerPortNum=20001;
+	private int _pmpListenerPortNum = 10002;
 	
 	private String _pipAddress;
 	private int _pipPortNum;
@@ -40,10 +41,17 @@ public class PdpSettings {
 		Properties props = SettingsLoader.loadProperties(PROPERTIES_FILE_NAME);
 		
 		try {
-			_pepListenerPortNum = Integer.valueOf((String)props.get("pep_listener_port_num"));
+			_pepGPBListenerPortNum = Integer.valueOf((String)props.get("pep_GPB_listener_port_num"));
 		} catch (Exception e) {
-			_logger.warn("Cannot read pep listener port number.", e);
-			_logger.info("Default port of pep listener: " + _pepListenerPortNum);
+			_logger.warn("Cannot read GPB pep listener port number.", e);
+			_logger.info("Default port of GPB pep listener: " + _pepGPBListenerPortNum);
+		}
+
+		try {
+			_pepThriftListenerPortNum = Integer.valueOf((String)props.get("pep_Thrift_listener_port_num"));
+		} catch (Exception e) {
+			_logger.warn("Cannot read Thrift pep listener port number.", e);
+			_logger.info("Default port of Thrift pep listener: " + _pepGPBListenerPortNum);
 		}
 		
 		try {
@@ -82,8 +90,12 @@ public class PdpSettings {
 		return PROPERTIES_FILE_NAME;
 	}
 
-	public int getPepListenerPortNum() {
-		return _pepListenerPortNum;
+	public int getPepGPBListenerPortNum() {
+		return _pepGPBListenerPortNum;
+	}
+	
+	public int getPepThriftListenerPortNum() {
+		return _pepThriftListenerPortNum;
 	}
 
 	public int getPmpListenerPortNum() {
@@ -102,8 +114,12 @@ public class PdpSettings {
 		return _queueSize;
 	}
 
-	public void setPepListenerPortNum(int pepListenerPortNum) {
-		_pepListenerPortNum = pepListenerPortNum;
+	public void setPepGPBListenerPortNum(int pepGPBListenerPortNum) {
+		_pepGPBListenerPortNum = pepGPBListenerPortNum;
+	}
+	
+	public void setPepThriftListenerPortNum(int pepThriftListenerPortNum) {
+		_pepThriftListenerPortNum = pepThriftListenerPortNum;
 	}
 
 	public void setPmpListenerPortNum(int pmpListenerPortNum) {

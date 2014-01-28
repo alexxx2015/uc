@@ -92,7 +92,7 @@ public class PdpWithPdpNativeTest {
 				public void run() {
 				PdpController pdp =  _injector.getInstance(PdpController.class);
 				PdpSettings pdpSettings = pdp.getPdpSettings();
-				pdpSettings.setPepListenerPortNum(PEP_LISTENER_PORT_NUM);
+				pdpSettings.setPepGPBListenerPortNum(PEP_LISTENER_PORT_NUM);
 				pdpSettings.setPmpListenerPortNum(PMP_LISTENER_PORT_NUM);
 				pdpSettings.setPipPortNum(PDP_LISTENER_PORT_IN_PIP);
 				pdpSettings.setPipAddress(PIP_ADDRESS);

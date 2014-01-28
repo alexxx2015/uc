@@ -8,11 +8,12 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import de.tum.i22.monitor.connector.ThriftServer;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.injection.PdpModule;
+import de.tum.in.i22.pdp.injection.PdpModuleMock;
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PdpController {
@@ -53,11 +54,16 @@ public class PdpController {
 		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
 		threadPmpFastServiceHandler.start();
 
-		int pepListenerPort = getPdpSettings().getPepListenerPortNum();
-		_logger.info("Start PepFastServiceHandler on port: " + pepListenerPort);
-		FastServiceHandler pepFastServiceHandler = new PepFastServiceHandler(pepListenerPort);
-		Thread threadPepFastServiceHandler = new Thread(pepFastServiceHandler);
-		threadPepFastServiceHandler.start();
+		int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
+		_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
+		FastServiceHandler pepGPBFastServiceHandler = new PepFastServiceHandler(pepGPBListenerPort);
+		Thread threadPepGPBFastServiceHandler = new Thread(pepGPBFastServiceHandler);
+		threadPepGPBFastServiceHandler.start();
+		
+		int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
+		_logger.info("Start PepThriftFastServiceHandler on port: " + pepThriftListenerPort);
+		ThriftServer.createListener(pepThriftListenerPort, pepGPBListenerPort);
+		ThriftServer.startListener();
 	}
 
 	public PdpSettings getPdpSettings() {
@@ -77,7 +83,7 @@ public class PdpController {
 		 * instance. Most applications will call this method exactly once, in
 		 * their main() method.
 		 */
-		Injector injector = Guice.createInjector(new PdpModule());
+		Injector injector = Guice.createInjector(new PdpModuleMock());
 
 		/*
 		 * Now that we've got the injector, we can build objects.

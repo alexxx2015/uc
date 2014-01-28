@@ -5,7 +5,6 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.cm.in.pep.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
@@ -21,6 +20,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.out.FastConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 

@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp.cm.in.pep;
+package de.tum.in.i22.uc.cm.in;
 
 
 public enum EPep2PdpMethod {

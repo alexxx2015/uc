@@ -14,5 +14,6 @@
 
 	<modules>
 		<module>../Pep2Pdp</module>
+		<module>../ThriftSupport</module>
 	</modules>
 </project>

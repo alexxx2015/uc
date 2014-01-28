@@ -12,9 +12,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>PdpCommunicationManager</artifactId>
+			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>PdpCore</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

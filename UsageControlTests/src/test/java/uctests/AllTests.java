@@ -46,7 +46,7 @@ public class AllTests {
 		final PdpController pdp = _injector.getInstance(PdpController.class);
 		_logger.debug("Start PDP. Listen from incoming PEP connections on port " + TestSettings.PEP_LISTENER_PORT_NUM);
 		PdpSettings pdpSettings = pdp.getPdpSettings();
-		pdpSettings.setPepListenerPortNum(TestSettings.PEP_LISTENER_PORT_NUM);
+		pdpSettings.setPepGPBListenerPortNum(TestSettings.PEP_LISTENER_PORT_NUM);
 		pdpSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_NUM);
 		pdpSettings.setPipPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
 		pdpSettings.setPipAddress(TestSettings.PIP_ADDRESS);
