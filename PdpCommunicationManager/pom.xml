@@ -9,7 +9,7 @@
 		<relativePath>../Pdp/pom.xml</relativePath>
 	</parent>
 	<artifactId>PdpCommunicationManager</artifactId>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
@@ -17,9 +17,14 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftSupport</artifactId>
-			<version>1.0</version>
+			<groupId>org.apache.thrift</groupId>
+			<artifactId>libthrift</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.8</version>
 		</dependency>
 	</dependencies>
 

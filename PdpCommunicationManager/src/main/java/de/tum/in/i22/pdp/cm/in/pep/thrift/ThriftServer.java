@@ -1,4 +1,4 @@
-package de.tum.i22.monitor.connector;
+package de.tum.in.i22.pdp.cm.in.pep.thrift;
 
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TServer.Args;
