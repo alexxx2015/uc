@@ -120,7 +120,6 @@ public class Mechanism extends Thread
   
   public Mechanism(PbMechanismOrBuilder pbMechanism) throws InvalidOperatorException
   {
-    log.debug("Preparing Mechanism from pbMechanism");
     if(pbMechanism == null) return;
 
     if(pbMechanism.hasName()) this.mechanismName=pbMechanism.getName();
@@ -134,7 +133,6 @@ public class Mechanism extends Thread
     {
       for(PbExecuteAction execAction : pbMechanism.getExecuteAsyncActionList())
       {
-        log.debug("processing executeActionfrom pbAuthorizationAction...");
         executeAsyncActions.add(new ExecuteAction(execAction));
       }
     }
@@ -262,6 +260,7 @@ public class Mechanism extends Thread
 
     boolean conditionValue=this.condition.evaluate(null);
     log.debug("conditionValue: {}", conditionValue);
+    log.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
     
     return conditionValue;
   }

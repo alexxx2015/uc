@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iese.pef.pdp.internal.Event;
 import de.fraunhofer.iese.pef.pdp.internal.Mechanism;
+import de.fraunhofer.iese.pef.pdp.internal.condition.CircularArray;
 import de.fraunhofer.iese.pef.pdp.internal.condition.Operator;
 import de.fraunhofer.iese.pef.pdp.internal.condition.TimeAmount;
 import de.fraunhofer.iese.pef.pdp.xsd.RepLimType;
@@ -21,6 +22,9 @@ public class RepLim extends RepLimType
   public void initOperatorForMechanism(Mechanism mech)
   {
     this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
+    this.state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
+    for(int a=0; a<this.timeAmount.timestepInterval; a++)
+      this.state.circArray.set(false, a);        
     ((Operator)this.getOperators()).initOperatorForMechanism(mech);
   }  
   
@@ -32,8 +36,31 @@ public class RepLim extends RepLimType
   @Override
   public boolean evaluate(Event curEvent)
   {
-    // TODO: RepLim evaluation NYI
-    //this.state.value = !this.operand1.evaluate(curEvent);
+    log.debug("circularArray: {}", this.state.circArray);
+    if(this.state.counter >= this.getLowerLimit() && this.state.counter <= this.getUpperLimit())
+      this.state.value = true;
+    else this.state.value = false;
+    
+    if(curEvent==null)
+    {
+      Boolean curValue = this.state.circArray.pop();
+      if(curValue)
+      {
+        this.state.counter--;
+        log.debug("[REPLIM] Decrementing counter to [{}]", this.state.counter);
+      }
+      
+      Boolean operandState = ((Operator)this.getOperators()).evaluate(curEvent);
+      if(operandState)
+      {
+        this.state.counter++;
+        log.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this.state.counter);
+      }
+      
+      this.state.circArray.push(operandState);
+      log.debug("circularArray: {}", this.state.circArray);
+    }
+    
     log.debug("eval REPLIM [{}]", this.state.value);
     return this.state.value;
   }

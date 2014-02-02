@@ -51,8 +51,7 @@ public class Within extends WithinType
       if(operandValue)
       {
         this.state.counter=this.timeAmount.timestepInterval+1;
-        log.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-            this.state.counter, operandValue);
+        log.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]", this.state.counter, operandValue);
       }
       else
       {

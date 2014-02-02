@@ -110,7 +110,6 @@ public class AuthorizationAction implements Serializable
   
   public AuthorizationAction(PbAuthorizationAction pbAuthorizationAction)
   {
-    log.debug("Preparing Mechanism from pbMechanism");
     if(pbAuthorizationAction == null) return;
 
     if(pbAuthorizationAction.hasName()) name=pbAuthorizationAction.getName();
@@ -124,7 +123,6 @@ public class AuthorizationAction implements Serializable
     {
       for(PbParameter param : pbAuthorizationAction.getAuthorization().getModifyList())
       {
-        log.debug("Processing modify-param from PbParameter...");
         addModifier(new Param<String>(param.getName(), param.getValue()));
       }
     }
@@ -133,13 +131,11 @@ public class AuthorizationAction implements Serializable
     {
       for(PbExecuteAction execAction : pbAuthorizationAction.getAuthorization().getExecuteSyncActionList())
       {
-        log.debug("Processing executeAction from PbExecuteAction...");
         addExecuteAction(new ExecuteAction(execAction));
       }
     }
     if(pbAuthorizationAction.hasFallback())
     {
-      log.debug("Processing fallback-authorizationAction");
       fallback = new AuthorizationAction(pbAuthorizationAction.getFallback());
     }
   }

@@ -108,94 +108,94 @@ public class PbOperatorHelper
   public Operator processOperator(String descriptorName, int index) throws InvalidOperatorException
   {
     Operator op1 = null;
-    log.debug("processing descriptorName: {}", descriptorName);
+    log.trace("processing descriptorName: {}", descriptorName);
     switch(descriptorName)
     {
       case "true":  op1=new OSLTrue(); break;
       case "false": op1=new OSLFalse(); break;
       case "not": 
       {
-        log.debug("processing not");
+        log.trace("processing not");
         PbOperatorHelper helper = new PbOperatorHelper();
         op1 = new OSLNot(helper.processOperator(this.getNot(index)));
         break;
       }
       case "or":
       {
-        log.debug("processing or");
+        log.trace("processing or");
         PbOperatorHelper helper = new PbOperatorHelper();
         ArrayList<Operator> children = helper.processOperator(this.getOr(index));
         op1=new OSLOr(children.get(0), children.get(1));
-        log.debug("or finished");
+        log.trace("or finished");
         break;
       }
       case "and":
       {
-        log.debug("processing and");
+        log.trace("processing and");
         PbOperatorHelper helper = new PbOperatorHelper();
         ArrayList<Operator> children = helper.processOperator(this.getAnd(index));
         op1=new OSLAnd(children.get(0), children.get(1));
-        log.debug("and finished");
+        log.trace("and finished");
         break;
       }
       case "implies":
       {
-        log.debug("processing implies");
+        log.trace("processing implies");
         PbOperatorHelper helper = new PbOperatorHelper();
         ArrayList<Operator> children = helper.processOperator(this.getImplies(index));
         op1=new OSLImplies(children.get(0), children.get(1));
-        log.debug("implies finished");
+        log.trace("implies finished");
         break;
       }
       case "eventMatch":
       {
-        log.debug("processing eventMatch");
+        log.trace("processing eventMatch");
         op1 = new EventMatchOperator(this.getEventMatch(index));
-        log.debug("eventMatch finished");        
+        log.trace("eventMatch finished");        
         break;
       }
       case "always":
       {
-        log.debug("processing always");
+        log.trace("processing always");
         PbOperatorHelper helper = new PbOperatorHelper();
         op1 = new Always(helper.processOperator(this.getAlways(index)));
-        log.debug("always finished");        
+        log.trace("always finished");        
         break;
       }
       case "since":
       {
-        log.debug("processing since");
+        log.trace("processing since");
         PbOperatorHelper helper = new PbOperatorHelper();
         ArrayList<Operator> children = helper.processOperator(this.getSince(index));
         op1=new Since(children.get(0), children.get(1));
-        log.debug("since finished");        
+        log.trace("since finished");        
         break;
       }
       case "before":
       {
-        log.debug("processing before");
+        log.trace("processing before");
         PbOperatorHelper helper = new PbOperatorHelper();
         PbTimeBoundedUnaryOperator before = this.getBefore(index);
         op1 = new Before(helper.processOperator(before), before.getTimeAmount());
-        log.debug("before finished");
+        log.trace("before finished");
         break;
       }
       case "during":
       {
-        log.debug("processing during");
+        log.trace("processing during");
         PbOperatorHelper helper = new PbOperatorHelper();
         PbTimeBoundedUnaryOperator during = this.getDuring(index);
         op1 = new During(helper.processOperator(during), during.getTimeAmount());
-        log.debug("during finished");
+        log.trace("during finished");
         break;
       }     
       case "within":
       {
-        log.debug("processing within");
+        log.trace("processing within");
         PbOperatorHelper helper = new PbOperatorHelper();
         PbTimeBoundedUnaryOperator within = this.getWithin(index);
         op1 = new Within(helper.processOperator(within), within.getTimeAmount());
-        log.debug("within finished");
+        log.trace("within finished");
         break;
       }      
     }
@@ -205,7 +205,7 @@ public class PbOperatorHelper
   
   public Operator processOperator(PbUnaryOperator op) throws InvalidOperatorException
   {
-    log.debug("processOperator unaryOperator");
+    log.trace("processOperator unaryOperator");
     this.op1=op;
     Map<FieldDescriptor, Object> values=this.getAllFields();
     Operator op1=null;
@@ -218,21 +218,21 @@ public class PbOperatorHelper
   
   public ArrayList<Operator> processOperator(PbBinaryOperator op) throws InvalidOperatorException
   {
-    log.debug("processOperator binaryOperator");
+    log.trace("processOperator binaryOperator");
     this.op2=op;
     Map<FieldDescriptor, Object> values=this.getAllFields();
     ArrayList<Operator> ops = new ArrayList<Operator>(2);
     
     if(values.size()==1)
     {
-      log.debug("twice the same operator");
+      log.trace("twice the same operator");
       for(FieldDescriptor fd : values.keySet())
       {
-        log.debug("processing fdsame: {}", fd.getName());
+        log.trace("processing fdsame: {}", fd.getName());
         ops.add(this.processOperator(fd.getName(), 0));
         ops.add(this.processOperator(fd.getName(), 1));
       }
-      log.debug("finished iterating...");
+      log.trace("finished iterating...");
     }
     else
     {
@@ -246,7 +246,7 @@ public class PbOperatorHelper
   
   public Operator processOperator(PbTimeBoundedUnaryOperator op) throws InvalidOperatorException
   {
-    log.debug("processOperator timeBoundedOperator");
+    log.trace("processOperator timeBoundedOperator");
     this.op3=op;
     Map<FieldDescriptor, Object> values=this.getAllFields();
     Operator op1=null;

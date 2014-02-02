@@ -34,6 +34,7 @@ public class Condition
 //    {
 //      e.printStackTrace();
 //    }
+    log.debug("condition: {}", this.operator);
   }
   
   public Condition(PbUnaryOperator pbCondition, Mechanism curMechanism) throws InvalidOperatorException

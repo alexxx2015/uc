@@ -38,7 +38,7 @@ public class StateBasedOperator extends StateBasedOperatorType
   public boolean evaluate(Event curEvent)
   {
     log.debug("eval StateBasedFormula");
-    // TODO: stateBasedFormula evaluation: forward to PIP for evaluation 
+    // TODO: stateBasedFormula evaluation NYI: forward to PIP for evaluation 
     return true;
   }
 }

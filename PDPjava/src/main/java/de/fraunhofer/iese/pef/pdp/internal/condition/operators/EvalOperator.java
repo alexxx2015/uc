@@ -28,7 +28,7 @@ public class EvalOperator extends EvalOperatorType
   public boolean evaluate(Event curEvent)
   {
     log.debug("eval EvalOperator");
-    // TODO: evalOperator evaluation NYI
+    // TODO: evalOperator evaluation NYI; forward to external evaluation engine
     return false;
   }
 }
