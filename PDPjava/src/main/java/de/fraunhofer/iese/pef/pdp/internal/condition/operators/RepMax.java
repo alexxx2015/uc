@@ -11,7 +11,7 @@ import de.fraunhofer.iese.pef.pdp.xsd.RepMaxType;
 public class RepMax extends RepMaxType 
 {
   private static Logger log   =LoggerFactory.getLogger(RepMax.class);
-  public long           limit =0;
+  //public long           limit =0;
   
   public RepMax()
   {}
@@ -38,8 +38,10 @@ public class RepMax extends RepMaxType
         log.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", this.state.counter);
       }
 
-      if(this.state.counter<=limit) this.state.value=true;
-      else this.state.value=false;
+      if(this.state.counter<=this.getLimit())
+        this.state.value=true;
+      else 
+        this.state.value=false;
 
       if(curEvent==null && !this.state.value)
       {

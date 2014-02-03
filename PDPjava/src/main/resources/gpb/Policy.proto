@@ -1,0 +1,12 @@
+package de.fraunhofer.iese.pef.pdp;
+
+option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_outer_classname = "PolicyProto";
+
+import "Mechanism.proto";
+
+message PbPolicy
+{
+  required string name = 1;
+  repeated PbMechanism mechanisms = 2;
+}

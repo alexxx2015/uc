@@ -30,6 +30,10 @@ public class During extends DuringType
   public void initOperatorForMechanism(Mechanism mech)
   {
     this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
+    
+    // for evaluation without history set counter to interval for DURING
+    this.state.counter=this.timeAmount.timestepInterval+1;
+    
     ((Operator)this.getOperators()).initOperatorForMechanism(mech);
   }
   

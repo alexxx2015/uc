@@ -96,22 +96,22 @@
       <group ref="tns:Operators" />
     </sequence>
     <attributeGroup ref="time:TimeAmountAttributeGroup" />
-    <attribute name="lowerLimit" type="nonNegativeInteger" use="required" />
-    <attribute name="upperLimit" type="positiveInteger"    use="required" />
+    <attribute name="lowerLimit" type="long" use="required" />
+    <attribute name="upperLimit" type="long" use="required" />
   </complexType>
 
   <complexType name="RepSinceType" abstract="true">
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
-    <attribute name="limit" type="nonNegativeInteger" use="required" />
+    <attribute name="limit" type="long" use="required" />
   </complexType>
   
   <complexType name="RepMaxType" abstract="true">
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
-    <attribute name="limit" type="nonNegativeInteger" use="required" />
+    <attribute name="limit" type="long" use="required" />
   </complexType>
   
   <complexType name="StateBasedOperatorType" abstract="true">

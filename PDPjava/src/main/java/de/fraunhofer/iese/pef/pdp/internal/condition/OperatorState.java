@@ -6,8 +6,7 @@ public class OperatorState
   public boolean immutable = false;
   
   public long counter = 0;
-  
-  // still used? currently not all operator evaluations implemented, so wait...
   public boolean subEverTrue = false;
   
+  public CircularArray<Boolean> circArray = null;
 }

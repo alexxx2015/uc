@@ -17,10 +17,6 @@ public class Before extends BeforeType
   private static Logger         log        =LoggerFactory.getLogger(Before.class);
   public TimeAmount             timeAmount =null;
   
-  // CircularArray cannot be declared in OperatorState, otherwise there are many "unchecked casts" required
-  // because OperatorState can't declare the inner type of the circularArray 
-  public CircularArray<Boolean> circArray = null;
-  
   public Before()
   {}
   
@@ -35,9 +31,9 @@ public class Before extends BeforeType
   public void initOperatorForMechanism(Mechanism mech)
   {
     this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-    this.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
+    this.state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
     for(int a=0; a<this.timeAmount.timestepInterval; a++)
-      this.circArray.set(false, a);    
+      this.state.circArray.set(false, a);    
     ((Operator)this.getOperators()).initOperatorForMechanism(mech);
   }  
   
@@ -48,18 +44,18 @@ public class Before extends BeforeType
 
   @Override
   public boolean evaluate(Event curEvent)
-  { // before = at (currentTime - interval) op3 was true
-    log.debug("circularArray: {}", this.circArray);
+  { // before = at (currentTime - interval) operand was true
+    log.debug("circularArray: {}", this.state.circArray);
     
-    Boolean curValue = this.circArray.readFirst();
+    Boolean curValue = this.state.circArray.readFirst();
     this.state.value = curValue;
     if(curEvent==null)
     {
-      curValue=this.circArray.pop();
+      curValue=this.state.circArray.pop();
       Boolean operandState =  ((Operator)this.getOperators()).evaluate(curEvent);
-      this.circArray.push(operandState);
+      this.state.circArray.push(operandState);
       
-      log.debug("circularArray: {}", this.circArray);
+      log.debug("circularArray: {}", this.state.circArray);
     }
     
     log.debug("eval BEFORE [{}]", this.state.value);

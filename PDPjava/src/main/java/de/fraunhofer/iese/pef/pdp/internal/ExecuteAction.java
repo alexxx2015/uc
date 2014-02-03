@@ -54,7 +54,6 @@ public class ExecuteAction implements Serializable
   
   public ExecuteAction(PbExecuteAction pbExecuteAction)
   {
-    log.debug("Preparing executeAction from pbExecuteAction");
     if(pbExecuteAction == null) return;
 
     if(pbExecuteAction.hasName()) name=pbExecuteAction.getName();
@@ -62,7 +61,6 @@ public class ExecuteAction implements Serializable
     {
       for(PbParameter param : pbExecuteAction.getParameterList())
       {
-        log.debug("Processing executeAction-param from PbParameter...");
         parameter.add(new Param<String>(param.getName(), param.getValue()));
       }
     }
