@@ -3,7 +3,7 @@ package pdp.tests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fraunhofer.iese.pef.pdp.internal.condition.CircularArray;
+import de.tum.in.i22.pdp.internal.condition.CircularArray;
 
 public class CircArrayTest
 {

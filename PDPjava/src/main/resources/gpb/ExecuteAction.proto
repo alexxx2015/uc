@@ -1,6 +1,6 @@
-package de.fraunhofer.iese.pef.pdp;
+package de.tum.in.i22.pdp;
 
-option java_package = "de.fraunhofer.iese.pef.pdp.gproto";
+option java_package = "de.tum.in.i22.pdp.gproto";
 option java_outer_classname = "ExecuteActionProto";
 
 import "Parameter.proto";
