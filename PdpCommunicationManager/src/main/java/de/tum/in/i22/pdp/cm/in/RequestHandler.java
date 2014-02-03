@@ -111,8 +111,11 @@ public class RequestHandler implements Runnable {
 				throw new RuntimeException("Queue element " + request + " must be either event or PmpRequest!");
 			}
 			
+			_logger.trace("event " + request.toString() +" processed. forward response");
 			IForwarder forwarder = request.getForwarder();
 			forwarder.forwardResponse(response);
+			_logger.trace("response forwarded");
+
 		}
 		
 		// the thread is interrupted, stop processing the events
@@ -160,16 +163,19 @@ public class RequestHandler implements Runnable {
 			//FIXME: need to restore this function. At the moment pip communication hardcoded in pdp notify event
 			//TODO: 
 			
-//			IPdp2PipFast pipProxy = getPdp2PipProxy();
-//			// TODO maybe thes better solution will be
-//			// to establish the connection only once and keep
-//			// it alive
-//			_logger.debug("Establish connection to PIP");
-//			pipProxy.connect();
-//			IStatus status = pipProxy.notifyActualEvent(event);	
-//			pipProxy.disconnect();			
-//			return status;
-			return _mf.createStatus(EStatus.OKAY);
+			IPdp2PipFast pipProxy = getPdp2PipProxy();
+			// TODO maybe thes better solution will be
+			// to establish the connection only once and keep
+			// it alive
+			_logger.debug("Establish connection to PIP");
+			pipProxy.connect();
+			IStatus status = pipProxy.notifyActualEvent(event);	
+			pipProxy.disconnect();			
+			return status;
+			
+			
+			
+///			return _mf.createStatus(EStatus.OKAY);
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);
 			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());

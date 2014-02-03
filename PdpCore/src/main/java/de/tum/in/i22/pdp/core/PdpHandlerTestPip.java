@@ -6,6 +6,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+
+import com.google.inject.Inject;
+
+import de.fraunhofer.iese.pef.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
@@ -25,9 +29,9 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
- * This is just a stub for now
+ * This contains some tests to run the PIP "inside" the PDP
  * 
- * @author Stoimenov
+ * @author Lovat
  * 
  */
 public class PdpHandlerTestPip implements IIncoming {
@@ -38,13 +42,17 @@ public class PdpHandlerTestPip implements IIncoming {
 	private static IPipCacher2Pip _pipHandler;
 	private static IMessageFactory _messageFactory;
 		
+	
+	private static PolicyDecisionPoint _lpdp;
+	
+	
 	//TEST ONLY
 	private IKey _test_predicate_key = KeyBasic.createNewKey();
 	private String _test_predicate="isNotIn|TEST_D|TEST_C|0";
 	
 //	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference(); 
 
-	public PdpHandlerTestPip() {
+	public void initializeAll(){
 		_pipHandler = new PipHandler();
 		_core2pip= new PipCacherImpl(_pipHandler);
 		_engine2pip= (PipCacherImpl) _core2pip;
@@ -61,9 +69,31 @@ public class PdpHandlerTestPip implements IIncoming {
 		_logger.debug("TEST: Initialize if model with TEST_C-->TEST_D");
 		IEvent initEvent = _messageFactory.createActualEvent("SchemaInitializer", new HashMap<String, String>());
 		_pipHandler.notifyActualEvent(initEvent);
-	
 	}
-
+	
+	public PdpHandlerTestPip() {
+		initializeAll();
+	}
+	
+	@Inject
+	public PdpHandlerTestPip(PolicyDecisionPoint lpdp){
+		_lpdp = lpdp;
+		try {
+			_logger.info("Get instance of native PDP ...");
+			_lpdp.initialize();
+			_logger.info("Start native PDP ..");
+			_lpdp.pdpStart();
+			_logger.info("Native PDP started");
+			_lpdp.pdpDeployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
+			_logger.info("Test policy deployed");
+		} catch (Exception e) {
+			_logger.fatal("Could not load native PDP library! " + e.getMessage());
+		}
+		initializeAll();
+	}
+	
+	
+	
 	@Override
 	public IStatus deployMechanism(IMechanism mechanism) {
 		// TODO implement

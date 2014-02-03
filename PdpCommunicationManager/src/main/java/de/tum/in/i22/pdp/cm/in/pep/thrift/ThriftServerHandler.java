@@ -56,6 +56,8 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 			return null;
 		}
 
+		_logger.trace("Response received");
+
 		if (responseObj instanceof IResponse) {
 			IResponse response = (IResponse) responseObj;
 			return response;
@@ -112,6 +114,13 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 		case ALLOW:
 			finalThriftResponse = new Response(StatusType.ALLOW);
 
+			// TODO: This needs to be changed. The correct behavior in theory is
+			// that the PEP re-send another actual event when things actually
+			// happen. For the time being, we pretend everything goes fine when
+			// we allow and thus we notify the actual event to the pip.
+			_logger.trace("Event " + e.name+" is allowed. Let's notify the PIP about it.");
+			processEvent(new EventBasic(e.name, e.parameters, true));
+			
 		case MODIFY:
 			// TODO: Add modification action cause it is not supported on
 			// the PEP side yet
@@ -122,12 +131,6 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 		}
 		throwAwayResponse();
 		return finalThriftResponse;
-	}
-
-	@Override
-	public void forwardResponse(Object response) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -74,7 +74,7 @@ public class PdpController {
 		try {
 			PdpSettings.getInstance().loadProperties();
 		} catch (IOException e) {
-			_logger.fatal("Properties cannot be loaded.", e);
+			_logger.fatal("Properties cannot be loaded.	", e);
 			return;
 		}
 

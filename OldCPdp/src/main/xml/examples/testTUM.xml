@@ -51,4 +51,34 @@
       <parameter name="file" value="abc.xml"/>
     </executeAsyncAction>	  
   </preventiveMechanism>
+
+
+  <preventiveMechanism name="WritefileTest">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="WriteFile" isTry="true">
+      <paramMatch name="InFileName" value="C:\Users\user\Desktop\copyAndRun\file3.txt"/>
+    </trigger>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="default" start="true">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+  <preventiveMechanism name="createFileTest">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="CreateFileW" isTry="true">
+      <paramMatch name="InFileName" value="C:\Users\user\Desktop\copyAndRun\file3.txt"/>
+    </trigger>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="default" start="true">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
 </policySet>
