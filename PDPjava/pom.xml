@@ -114,12 +114,12 @@
         </configuration>
       </plugin>
 
+      <!-- 
       <plugin>
         <groupId>com.google.protobuf.tools</groupId>
         <artifactId>maven-protoc-plugin</artifactId>
         <version>0.3.3-SNAPSHOT</version>
         <configuration>
-          <!-- <protocExecutable>/usr/local/bin/protoc</protocExecutable> -->
           <protoSourceRoot>${project.basedir}/src/main/resources/gpb/</protoSourceRoot>
         </configuration>
         <executions>
@@ -131,6 +131,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
 
     </plugins>
   </build>

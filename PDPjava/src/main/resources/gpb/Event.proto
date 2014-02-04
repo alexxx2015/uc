@@ -1,6 +1,6 @@
-package de.tum.in.i22.pdp;
+package de.tum.in.i22.cm.pdp;
 
-option java_package = "de.tum.in.i22.pdp.gproto";
+option java_package = "de.tum.in.i22.cm.pdp.gproto";
 option java_outer_classname = "EventProto";
 
 import "Parameter.proto";
