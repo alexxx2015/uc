@@ -9,7 +9,7 @@ import testutil.DummyMessageGen;
 
 import com.google.inject.Inject;
 
-import de.fraunhofer.iese.pef.pdp.PolicyDecisionPoint;
+import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
@@ -79,12 +79,12 @@ public class PdpHandlerTestPip implements IIncoming {
 	public PdpHandlerTestPip(PolicyDecisionPoint lpdp){
 		_lpdp = lpdp;
 		try {
-			_logger.info("Get instance of native PDP ...");
-			_lpdp.initialize();
-			_logger.info("Start native PDP ..");
-			_lpdp.pdpStart();
-			_logger.info("Native PDP started");
-			_lpdp.pdpDeployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
+			//_logger.info("Get instance of native PDP (skipped)...");
+			//_lpdp.initialize();
+			//_logger.info("Start native PDP (skipped) ..");
+			//_lpdp.pdpStart();
+			_logger.info("JavaPDP started");
+			_lpdp.deployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
 			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());

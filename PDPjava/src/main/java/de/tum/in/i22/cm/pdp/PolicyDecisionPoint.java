@@ -19,6 +19,7 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.protobuf.Message.Builder;
 import com.google.protobuf.TextFormat;
 
@@ -46,6 +47,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable
   private ActionDescriptionStore                actionDescriptionStore =null;
   private HashMap<String, ArrayList<Mechanism>> policyTable = new HashMap<String, ArrayList<Mechanism>>();
   
+  @Inject
   private PolicyDecisionPoint()
   {
     this.actionDescriptionStore = ActionDescriptionStore.getInstance();
