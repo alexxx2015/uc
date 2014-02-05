@@ -269,7 +269,7 @@ public class Mechanism extends Thread
   @Override
   public void run()
   {
-    long sleepValue = this.timestepSize / 5000;
+    long sleepValue = this.timestepSize / 1000;
     log.info("Started mechanism update thread usleep={} ms", sleepValue);
     
     while(true)

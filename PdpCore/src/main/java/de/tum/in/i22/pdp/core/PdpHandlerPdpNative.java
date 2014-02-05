@@ -17,6 +17,8 @@ import de.fraunhofer.iese.pef.pdp.internal.Decision;
 import de.fraunhofer.iese.pef.pdp.internal.Event;
 import de.fraunhofer.iese.pef.pdp.internal.ExecuteAction;
 import de.fraunhofer.iese.pef.pdp.internal.Param;
+import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
+import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -187,6 +189,18 @@ public class PdpHandlerPdpNative implements IIncoming {
 		}
 
 		return status;
+	}
+
+	@Override
+	public IStatus setPdpCore2PipCacher(IPdpCore2PipCacher core2cacher) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus setPdpEngine2PipCacher(IPdpEngine2PipCacher engine2cacher) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

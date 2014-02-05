@@ -13,6 +13,7 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
 public class ThriftServerHandler extends ClientConnectionHandler implements
@@ -110,7 +111,7 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 		switch (response.getAuthorizationAction().getEStatus()) {
 		case INHIBIT:
 			finalThriftResponse = new Response(StatusType.INHIBIT);
-
+			break;
 		case ALLOW:
 			finalThriftResponse = new Response(StatusType.ALLOW);
 
@@ -119,12 +120,14 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 			// happen. For the time being, we pretend everything goes fine when
 			// we allow and thus we notify the actual event to the pip.
 			_logger.trace("Event " + e.name+" is allowed. Let's notify the PIP about it.");
+			throwAwayResponse();
 			processEvent(new EventBasic(e.name, e.parameters, true));
-			
+			break;
 		case MODIFY:
 			// TODO: Add modification action cause it is not supported on
 			// the PEP side yet
 			finalThriftResponse = new Response(StatusType.MODIFY);
+			break;
 		default:
 			finalThriftResponse = new Response(StatusType.ERROR);
 			finalThriftResponse.setComment("Error. Answer is " + response);
@@ -136,6 +139,8 @@ public class ThriftServerHandler extends ClientConnectionHandler implements
 	@Override
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
+		_logger.debug("Thrift doProcessing invoked");
+		
 		// TODO Auto-generated method stub
 
 	}

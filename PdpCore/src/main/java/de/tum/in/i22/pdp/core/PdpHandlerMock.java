@@ -3,6 +3,8 @@ package de.tum.in.i22.pdp.core;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
+import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -60,6 +62,18 @@ public class PdpHandlerMock implements IIncoming {
 		// leave empty
 		// this method is never called
 		// instead PDP delegates it to PIP
+		return null;
+	}
+
+	@Override
+	public IStatus setPdpCore2PipCacher(IPdpCore2PipCacher core2cacher) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus setPdpEngine2PipCacher(IPdpEngine2PipCacher engine2cacher) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

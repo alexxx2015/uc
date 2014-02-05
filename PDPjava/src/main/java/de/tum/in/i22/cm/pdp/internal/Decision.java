@@ -1,12 +1,20 @@
 package de.tum.in.i22.cm.pdp.internal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.cm.pxp.IPolicyExecutionPoint;
 import de.tum.in.i22.cm.pxp.PXPStub;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It
@@ -158,6 +166,35 @@ public class Decision implements java.io.Serializable
     str+="]";
 
     return str;
+  }
+
+  public IResponse getResponse() {
+	//Convert an (IESE) Decision object into a (TUM) Response
+	IStatus status;
+
+	try{
+		if (getAuthorizationAction().getAuthorizationAction()){
+			status= new StatusBasic(EStatus.ALLOW);
+		} else {
+			status= new StatusBasic(EStatus.INHIBIT);
+		}
+	} catch (Exception e){
+			status= new StatusBasic(EStatus.ERROR,"PDP returned wrong status ("+e+")");
+		}
+
+	List<IEvent> list = new ArrayList<IEvent>();
+	
+    for (ExecuteAction ea : getExecuteActions()){
+    	Event e = new Event(ea.getName(),true);
+    	for (Param<?> p: ea.getParams()) e.addParam(p);
+    	list.add(e.toIEvent());
+    	//TODO: take care of processor. for the time being ignored by TUM
+	}	
+    
+	//TODO: add modified event, didn't found it so far. probably implemented as inhibit+execute.
+	IResponse res = new ResponseBasic(status, list, null);
+	
+	return res;
   }
 
 }

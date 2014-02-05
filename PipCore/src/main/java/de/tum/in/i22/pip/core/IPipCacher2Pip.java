@@ -15,6 +15,12 @@ public interface IPipCacher2Pip extends IPipManager {
 
     public IStatus        startSimulation();
     public IStatus        stopSimulation();
+    /**
+     * If @param event is a desired event, simulates the new state in the PIP, update the cache, and then revert.
+     * If @param event is an actual event, does the same, but the PIP remains in the new state.
+     * @param event
+     * @return
+     */
     public ICacheUpdate   refresh(IEvent e);
     public IStatus        addPredicates(Map<String,IKey> predicates);
     public IStatus        revokePredicates(Set<IKey> keys);

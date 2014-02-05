@@ -47,6 +47,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable
   private ActionDescriptionStore                actionDescriptionStore =null;
   private HashMap<String, ArrayList<Mechanism>> policyTable = new HashMap<String, ArrayList<Mechanism>>();
   
+  //private static 
+  
   @Inject
   private PolicyDecisionPoint()
   {

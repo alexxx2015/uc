@@ -56,8 +56,8 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		// Note that the three parameters of the predicate (State-based formula,
 		// parameter1, parameter2) should be separated by separator1, while list
 		// of elements (containers or data) should be separated by separator2
-		String separator1 = "\\|";
-		String separator2 = ":";
+		final String separator1 = "\\|";
+		final String separator2 = ":";
 		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
 		
 		
@@ -221,8 +221,18 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				.createErrorStatus("Impossible to pop current state.");
 	}
 
+    /**
+     * If @param event is a desired event, simulates the new state in the PIP, update the cache, and then revert.
+     * If @param event is an actual event, does the same, but the PIP remains in the new state.
+     * @param event
+     * @return
+     */
 	@Override
 	public ICacheUpdate refresh (IEvent e) {
+		if (e==null) {
+			_logger.error("null event received. returning null");
+			return null;
+		}
 		ICacheUpdate res = new CacheUpdateBasic();
 		Map<IKey,Boolean> map=new HashMap<IKey,Boolean>();
 
@@ -233,21 +243,40 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		
 		int counter=0;
 		_logger.debug("refreshing cache with event "+e);
-		_logger.debug("starting simulation");
-		if (!isSimulating()){
-			startSimulation();
-			notifyActualEvent(e);			
-			for (String key : _predicatesToEvaluate.keySet()){
-				Boolean b = evaluatePredicatCurrentState(key);
-				_logger.debug("("+counter+") ["+key+"]="+b);
-				map.put(_predicatesToEvaluate.get(key), b);
-				counter++;
+
+		if (!e.isActual()){
+			_logger.debug("event " + e.getName() + " is a desired event. Simulating new state.");
+			if (!isSimulating()){
+				startSimulation();
+			} else {
+				_logger.error("Pip is already simulating. returning null");
+				return null;
 			}
-			stopSimulation();
 		} else {
-			_logger.error("Pip is already simulating");
+			_logger.debug("event " + e.getName() + " is an actual event");
 		}
-						
+		_logger.debug("Updating PIP with event " + e.getName() );
+		notifyActualEvent(e);			
+		_logger.debug("Creating cache response");
+		for (String key : _predicatesToEvaluate.keySet()){
+			Boolean b = evaluatePredicatCurrentState(key);
+			_logger.debug("("+counter+") ["+key+"]="+b);
+			map.put(_predicatesToEvaluate.get(key), b);
+			counter++;
+		}
+
+		if (!e.isActual()){
+			_logger.debug("Reverting simulation");
+			if (isSimulating()){
+				stopSimulation();
+			} else {
+				_logger.error("Pip is not simulating. ERROR!!!! returning null");
+				return null;
+			}
+		} else {
+			_logger.debug("Done!");
+		}
+
 		return res;
 	}
 

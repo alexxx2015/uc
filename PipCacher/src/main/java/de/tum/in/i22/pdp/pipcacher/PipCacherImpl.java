@@ -30,6 +30,12 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 		_pip = pipHandler;
 	}
 	
+    /**
+     * If @param event is a desired event, simulates the new state in the PIP, update the cache, and then revert.
+     * If @param event is an actual event, does the same, but the PIP remains in the new state.
+     * @param event
+     * @return
+     */
 	@Override
 	public IStatus refresh(IEvent desiredEvent) {
 		if (desiredEvent!= null) _logger.debug("refresh ("+desiredEvent.getName()+") invoked");

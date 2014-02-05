@@ -6,6 +6,6 @@ package de.tum.in.i22.pdp.core;
  * @author Stoimenov
  *
  */
-public interface IIncoming extends IPmp2Pdp, IPep2Pdp, IPip2Pdp{
+public interface IIncoming extends IPmp2Pdp, IPep2Pdp, IPip2Pdp, IPdpConf{
 	
 }
