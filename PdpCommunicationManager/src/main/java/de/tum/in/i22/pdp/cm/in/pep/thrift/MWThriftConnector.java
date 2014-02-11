@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package de.tum.in.i22.pdp.cm.in.pep.thrift;
+package de.tum.i22.monitor.connector;
 
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class MWThriftConnector {
 
-  public interface Iface extends GenericThriftConnector.Iface {
+  public interface Iface {
 
     public void dumpGraph(String graphName) throws org.apache.thrift.TException;
 
@@ -48,7 +48,7 @@ public class MWThriftConnector {
 
   }
 
-  public interface AsyncIface extends GenericThriftConnector .AsyncIface {
+  public interface AsyncIface {
 
     public void dumpGraph(String graphName, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -62,7 +62,7 @@ public class MWThriftConnector {
 
   }
 
-  public static class Client extends GenericThriftConnector.Client implements Iface {
+  public static class Client extends org.apache.thrift.TServiceClient implements Iface {
     public static class Factory implements org.apache.thrift.TServiceClientFactory<Client> {
       public Factory() {}
       public Client getClient(org.apache.thrift.protocol.TProtocol prot) {
@@ -178,7 +178,7 @@ public class MWThriftConnector {
     }
 
   }
-  public static class AsyncClient extends GenericThriftConnector.AsyncClient implements AsyncIface {
+  public static class AsyncClient extends org.apache.thrift.async.TAsyncClient implements AsyncIface {
     public static class Factory implements org.apache.thrift.async.TAsyncClientFactory<AsyncClient> {
       private org.apache.thrift.async.TAsyncClientManager clientManager;
       private org.apache.thrift.protocol.TProtocolFactory protocolFactory;
@@ -361,7 +361,7 @@ public class MWThriftConnector {
 
   }
 
-  public static class Processor<I extends Iface> extends GenericThriftConnector.Processor<I> implements org.apache.thrift.TProcessor {
+  public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class.getName());
     public Processor(I iface) {
       super(iface, getProcessMap(new HashMap<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>>()));
@@ -480,7 +480,7 @@ public class MWThriftConnector {
 
   }
 
-  public static class AsyncProcessor<I extends AsyncIface> extends GenericThriftConnector.AsyncProcessor<I> {
+  public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncProcessor.class.getName());
     public AsyncProcessor(I iface) {
       super(iface, getProcessMap(new HashMap<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>>()));

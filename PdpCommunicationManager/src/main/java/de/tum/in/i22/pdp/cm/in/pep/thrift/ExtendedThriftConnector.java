@@ -32,25 +32,25 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GenericThriftConnector {
+public class ExtendedThriftConnector {
 
-  public interface Iface {
+  public interface Iface extends GenericThriftConnector.Iface {
 
-    public void processEventAsync(Event e) throws org.apache.thrift.TException;
+    public void processEventAsync(Event e, String senderID) throws org.apache.thrift.TException;
 
-    public Response processEventSync(Event e) throws org.apache.thrift.TException;
-
-  }
-
-  public interface AsyncIface {
-
-    public void processEventAsync(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void processEventSync(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public Response processEventSync(Event e, String senderID) throws org.apache.thrift.TException;
 
   }
 
-  public static class Client extends org.apache.thrift.TServiceClient implements Iface {
+  public interface AsyncIface extends GenericThriftConnector .AsyncIface {
+
+    public void processEventAsync(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void processEventSync(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+  }
+
+  public static class Client extends GenericThriftConnector.Client implements Iface {
     public static class Factory implements org.apache.thrift.TServiceClientFactory<Client> {
       public Factory() {}
       public Client getClient(org.apache.thrift.protocol.TProtocol prot) {
@@ -70,28 +70,30 @@ public class GenericThriftConnector {
       super(iprot, oprot);
     }
 
-    public void processEventAsync(Event e) throws org.apache.thrift.TException
+    public void processEventAsync(Event e, String senderID) throws org.apache.thrift.TException
     {
-      send_processEventAsync(e);
+      send_processEventAsync(e, senderID);
     }
 
-    public void send_processEventAsync(Event e) throws org.apache.thrift.TException
+    public void send_processEventAsync(Event e, String senderID) throws org.apache.thrift.TException
     {
       processEventAsync_args args = new processEventAsync_args();
       args.setE(e);
+      args.setSenderID(senderID);
       sendBase("processEventAsync", args);
     }
 
-    public Response processEventSync(Event e) throws org.apache.thrift.TException
+    public Response processEventSync(Event e, String senderID) throws org.apache.thrift.TException
     {
-      send_processEventSync(e);
+      send_processEventSync(e, senderID);
       return recv_processEventSync();
     }
 
-    public void send_processEventSync(Event e) throws org.apache.thrift.TException
+    public void send_processEventSync(Event e, String senderID) throws org.apache.thrift.TException
     {
       processEventSync_args args = new processEventSync_args();
       args.setE(e);
+      args.setSenderID(senderID);
       sendBase("processEventSync", args);
     }
 
@@ -106,7 +108,7 @@ public class GenericThriftConnector {
     }
 
   }
-  public static class AsyncClient extends org.apache.thrift.async.TAsyncClient implements AsyncIface {
+  public static class AsyncClient extends GenericThriftConnector.AsyncClient implements AsyncIface {
     public static class Factory implements org.apache.thrift.async.TAsyncClientFactory<AsyncClient> {
       private org.apache.thrift.async.TAsyncClientManager clientManager;
       private org.apache.thrift.protocol.TProtocolFactory protocolFactory;
@@ -123,24 +125,27 @@ public class GenericThriftConnector {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void processEventAsync(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void processEventAsync(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      processEventAsync_call method_call = new processEventAsync_call(e, resultHandler, this, ___protocolFactory, ___transport);
+      processEventAsync_call method_call = new processEventAsync_call(e, senderID, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class processEventAsync_call extends org.apache.thrift.async.TAsyncMethodCall {
       private Event e;
-      public processEventAsync_call(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String senderID;
+      public processEventAsync_call(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, true);
         this.e = e;
+        this.senderID = senderID;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("processEventAsync", org.apache.thrift.protocol.TMessageType.CALL, 0));
         processEventAsync_args args = new processEventAsync_args();
         args.setE(e);
+        args.setSenderID(senderID);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -154,24 +159,27 @@ public class GenericThriftConnector {
       }
     }
 
-    public void processEventSync(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void processEventSync(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      processEventSync_call method_call = new processEventSync_call(e, resultHandler, this, ___protocolFactory, ___transport);
+      processEventSync_call method_call = new processEventSync_call(e, senderID, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class processEventSync_call extends org.apache.thrift.async.TAsyncMethodCall {
       private Event e;
-      public processEventSync_call(Event e, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String senderID;
+      public processEventSync_call(Event e, String senderID, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.e = e;
+        this.senderID = senderID;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("processEventSync", org.apache.thrift.protocol.TMessageType.CALL, 0));
         processEventSync_args args = new processEventSync_args();
         args.setE(e);
+        args.setSenderID(senderID);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -188,7 +196,7 @@ public class GenericThriftConnector {
 
   }
 
-  public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
+  public static class Processor<I extends Iface> extends GenericThriftConnector.Processor<I> implements org.apache.thrift.TProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class.getName());
     public Processor(I iface) {
       super(iface, getProcessMap(new HashMap<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>>()));
@@ -218,7 +226,7 @@ public class GenericThriftConnector {
       }
 
       public org.apache.thrift.TBase getResult(I iface, processEventAsync_args args) throws org.apache.thrift.TException {
-        iface.processEventAsync(args.e);
+        iface.processEventAsync(args.e, args.senderID);
         return null;
       }
     }
@@ -238,14 +246,14 @@ public class GenericThriftConnector {
 
       public processEventSync_result getResult(I iface, processEventSync_args args) throws org.apache.thrift.TException {
         processEventSync_result result = new processEventSync_result();
-        result.success = iface.processEventSync(args.e);
+        result.success = iface.processEventSync(args.e, args.senderID);
         return result;
       }
     }
 
   }
 
-  public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
+  public static class AsyncProcessor<I extends AsyncIface> extends GenericThriftConnector.AsyncProcessor<I> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncProcessor.class.getName());
     public AsyncProcessor(I iface) {
       super(iface, getProcessMap(new HashMap<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>>()));
@@ -285,7 +293,7 @@ public class GenericThriftConnector {
       }
 
       public void start(I iface, processEventAsync_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
-        iface.processEventAsync(args.e,resultHandler);
+        iface.processEventAsync(args.e, args.senderID,resultHandler);
       }
     }
 
@@ -336,7 +344,7 @@ public class GenericThriftConnector {
       }
 
       public void start(I iface, processEventSync_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-        iface.processEventSync(args.e,resultHandler);
+        iface.processEventSync(args.e, args.senderID,resultHandler);
       }
     }
 
@@ -346,6 +354,7 @@ public class GenericThriftConnector {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("processEventAsync_args");
 
     private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+    private static final org.apache.thrift.protocol.TField SENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("senderID", org.apache.thrift.protocol.TType.STRING, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -354,10 +363,12 @@ public class GenericThriftConnector {
     }
 
     public Event e; // required
+    public String senderID; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      E((short)1, "e");
+      E((short)1, "e"),
+      SENDER_ID((short)2, "senderID");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -374,6 +385,8 @@ public class GenericThriftConnector {
         switch(fieldId) {
           case 1: // E
             return E;
+          case 2: // SENDER_ID
+            return SENDER_ID;
           default:
             return null;
         }
@@ -419,6 +432,8 @@ public class GenericThriftConnector {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Event.class)));
+      tmpMap.put(_Fields.SENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("senderID", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(processEventAsync_args.class, metaDataMap);
     }
@@ -427,10 +442,12 @@ public class GenericThriftConnector {
     }
 
     public processEventAsync_args(
-      Event e)
+      Event e,
+      String senderID)
     {
       this();
       this.e = e;
+      this.senderID = senderID;
     }
 
     /**
@@ -439,6 +456,9 @@ public class GenericThriftConnector {
     public processEventAsync_args(processEventAsync_args other) {
       if (other.isSetE()) {
         this.e = new Event(other.e);
+      }
+      if (other.isSetSenderID()) {
+        this.senderID = other.senderID;
       }
     }
 
@@ -449,6 +469,7 @@ public class GenericThriftConnector {
     @Override
     public void clear() {
       this.e = null;
+      this.senderID = null;
     }
 
     public Event getE() {
@@ -475,6 +496,30 @@ public class GenericThriftConnector {
       }
     }
 
+    public String getSenderID() {
+      return this.senderID;
+    }
+
+    public processEventAsync_args setSenderID(String senderID) {
+      this.senderID = senderID;
+      return this;
+    }
+
+    public void unsetSenderID() {
+      this.senderID = null;
+    }
+
+    /** Returns true if field senderID is set (has been assigned a value) and false otherwise */
+    public boolean isSetSenderID() {
+      return this.senderID != null;
+    }
+
+    public void setSenderIDIsSet(boolean value) {
+      if (!value) {
+        this.senderID = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case E:
@@ -485,6 +530,14 @@ public class GenericThriftConnector {
         }
         break;
 
+      case SENDER_ID:
+        if (value == null) {
+          unsetSenderID();
+        } else {
+          setSenderID((String)value);
+        }
+        break;
+
       }
     }
 
@@ -492,6 +545,9 @@ public class GenericThriftConnector {
       switch (field) {
       case E:
         return getE();
+
+      case SENDER_ID:
+        return getSenderID();
 
       }
       throw new IllegalStateException();
@@ -506,6 +562,8 @@ public class GenericThriftConnector {
       switch (field) {
       case E:
         return isSetE();
+      case SENDER_ID:
+        return isSetSenderID();
       }
       throw new IllegalStateException();
     }
@@ -529,6 +587,15 @@ public class GenericThriftConnector {
         if (!(this_present_e && that_present_e))
           return false;
         if (!this.e.equals(that.e))
+          return false;
+      }
+
+      boolean this_present_senderID = true && this.isSetSenderID();
+      boolean that_present_senderID = true && that.isSetSenderID();
+      if (this_present_senderID || that_present_senderID) {
+        if (!(this_present_senderID && that_present_senderID))
+          return false;
+        if (!this.senderID.equals(that.senderID))
           return false;
       }
 
@@ -558,6 +625,16 @@ public class GenericThriftConnector {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetSenderID()).compareTo(other.isSetSenderID());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSenderID()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.senderID, other.senderID);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -583,6 +660,14 @@ public class GenericThriftConnector {
         sb.append("null");
       } else {
         sb.append(this.e);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("senderID:");
+      if (this.senderID == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.senderID);
       }
       first = false;
       sb.append(")");
@@ -640,6 +725,14 @@ public class GenericThriftConnector {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 2: // SENDER_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.senderID = iprot.readString();
+                struct.setSenderIDIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -658,6 +751,11 @@ public class GenericThriftConnector {
         if (struct.e != null) {
           oprot.writeFieldBegin(E_FIELD_DESC);
           struct.e.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.senderID != null) {
+          oprot.writeFieldBegin(SENDER_ID_FIELD_DESC);
+          oprot.writeString(struct.senderID);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -681,20 +779,30 @@ public class GenericThriftConnector {
         if (struct.isSetE()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSenderID()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetE()) {
           struct.e.write(oprot);
+        }
+        if (struct.isSetSenderID()) {
+          oprot.writeString(struct.senderID);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, processEventAsync_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.e = new Event();
           struct.e.read(iprot);
           struct.setEIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.senderID = iprot.readString();
+          struct.setSenderIDIsSet(true);
         }
       }
     }
@@ -705,6 +813,7 @@ public class GenericThriftConnector {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("processEventSync_args");
 
     private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+    private static final org.apache.thrift.protocol.TField SENDER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("senderID", org.apache.thrift.protocol.TType.STRING, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -713,10 +822,12 @@ public class GenericThriftConnector {
     }
 
     public Event e; // required
+    public String senderID; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      E((short)1, "e");
+      E((short)1, "e"),
+      SENDER_ID((short)2, "senderID");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -733,6 +844,8 @@ public class GenericThriftConnector {
         switch(fieldId) {
           case 1: // E
             return E;
+          case 2: // SENDER_ID
+            return SENDER_ID;
           default:
             return null;
         }
@@ -778,6 +891,8 @@ public class GenericThriftConnector {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Event.class)));
+      tmpMap.put(_Fields.SENDER_ID, new org.apache.thrift.meta_data.FieldMetaData("senderID", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(processEventSync_args.class, metaDataMap);
     }
@@ -786,10 +901,12 @@ public class GenericThriftConnector {
     }
 
     public processEventSync_args(
-      Event e)
+      Event e,
+      String senderID)
     {
       this();
       this.e = e;
+      this.senderID = senderID;
     }
 
     /**
@@ -798,6 +915,9 @@ public class GenericThriftConnector {
     public processEventSync_args(processEventSync_args other) {
       if (other.isSetE()) {
         this.e = new Event(other.e);
+      }
+      if (other.isSetSenderID()) {
+        this.senderID = other.senderID;
       }
     }
 
@@ -808,6 +928,7 @@ public class GenericThriftConnector {
     @Override
     public void clear() {
       this.e = null;
+      this.senderID = null;
     }
 
     public Event getE() {
@@ -834,6 +955,30 @@ public class GenericThriftConnector {
       }
     }
 
+    public String getSenderID() {
+      return this.senderID;
+    }
+
+    public processEventSync_args setSenderID(String senderID) {
+      this.senderID = senderID;
+      return this;
+    }
+
+    public void unsetSenderID() {
+      this.senderID = null;
+    }
+
+    /** Returns true if field senderID is set (has been assigned a value) and false otherwise */
+    public boolean isSetSenderID() {
+      return this.senderID != null;
+    }
+
+    public void setSenderIDIsSet(boolean value) {
+      if (!value) {
+        this.senderID = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case E:
@@ -844,6 +989,14 @@ public class GenericThriftConnector {
         }
         break;
 
+      case SENDER_ID:
+        if (value == null) {
+          unsetSenderID();
+        } else {
+          setSenderID((String)value);
+        }
+        break;
+
       }
     }
 
@@ -851,6 +1004,9 @@ public class GenericThriftConnector {
       switch (field) {
       case E:
         return getE();
+
+      case SENDER_ID:
+        return getSenderID();
 
       }
       throw new IllegalStateException();
@@ -865,6 +1021,8 @@ public class GenericThriftConnector {
       switch (field) {
       case E:
         return isSetE();
+      case SENDER_ID:
+        return isSetSenderID();
       }
       throw new IllegalStateException();
     }
@@ -888,6 +1046,15 @@ public class GenericThriftConnector {
         if (!(this_present_e && that_present_e))
           return false;
         if (!this.e.equals(that.e))
+          return false;
+      }
+
+      boolean this_present_senderID = true && this.isSetSenderID();
+      boolean that_present_senderID = true && that.isSetSenderID();
+      if (this_present_senderID || that_present_senderID) {
+        if (!(this_present_senderID && that_present_senderID))
+          return false;
+        if (!this.senderID.equals(that.senderID))
           return false;
       }
 
@@ -917,6 +1084,16 @@ public class GenericThriftConnector {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetSenderID()).compareTo(other.isSetSenderID());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSenderID()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.senderID, other.senderID);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -942,6 +1119,14 @@ public class GenericThriftConnector {
         sb.append("null");
       } else {
         sb.append(this.e);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("senderID:");
+      if (this.senderID == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.senderID);
       }
       first = false;
       sb.append(")");
@@ -999,6 +1184,14 @@ public class GenericThriftConnector {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 2: // SENDER_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.senderID = iprot.readString();
+                struct.setSenderIDIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -1017,6 +1210,11 @@ public class GenericThriftConnector {
         if (struct.e != null) {
           oprot.writeFieldBegin(E_FIELD_DESC);
           struct.e.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.senderID != null) {
+          oprot.writeFieldBegin(SENDER_ID_FIELD_DESC);
+          oprot.writeString(struct.senderID);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -1040,20 +1238,30 @@ public class GenericThriftConnector {
         if (struct.isSetE()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSenderID()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetE()) {
           struct.e.write(oprot);
+        }
+        if (struct.isSetSenderID()) {
+          oprot.writeString(struct.senderID);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, processEventSync_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.e = new Event();
           struct.e.read(iprot);
           struct.setEIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.senderID = iprot.readString();
+          struct.setSenderIDIsSet(true);
         }
       }
     }
