@@ -2,6 +2,13 @@ package de.tum.in.i22.pdp;
 
 import java.io.IOException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Guice;
@@ -24,6 +31,11 @@ public class PdpController {
 
 	private IIncoming _pdpHandler;
 
+	private final static Options _commandLineOptions = createCommandLineOptions();
+
+	private final static String OPTION_HELP = "h";
+	private final static String OPTION_PDP_PROPS = "pp";
+
 	/**
 	 * Use dependency injection to inject pdpHandler.
 	 * 
@@ -33,6 +45,7 @@ public class PdpController {
 	public PdpController(IIncoming pdpHandler) {
 		_pdpHandler = pdpHandler;
 	}
+
 
 	public void start() {
 		if (_isStarted)
@@ -70,9 +83,60 @@ public class PdpController {
 		return PdpSettings.getInstance();
 	}
 
-	public static void main(String[] args) {
+	private static Options createCommandLineOptions() {
+		// Build available command line options
+		OptionBuilder.withArgName("file");
+		OptionBuilder.withLongOpt("pdp-properties");
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("the file containing the PDP's properties");
+		Option pdpProps = OptionBuilder.create(OPTION_PDP_PROPS);
+
+		OptionBuilder.withLongOpt("help");
+		OptionBuilder.withDescription("shows this help");
+		Option help = OptionBuilder.create(OPTION_HELP);
+
+		// assemble all options
+		Options options = new Options();
+		options.addOption(pdpProps);
+
+		options.addOption(help);
+
+		return options;
+	}
+
+	private static CommandLine parseCommandLineOptions(String[] args) {
+		CommandLine line = null;
+		HelpFormatter formatter = new HelpFormatter();
+
 		try {
-			PdpSettings.getInstance().loadProperties();
+	        // parse the command line arguments
+	        line = new GnuParser().parse(_commandLineOptions, args );
+	    }
+	    catch( ParseException exp ) {
+	        System.err.println("Parsing of command line options failed.  Reason: " + exp.getMessage());
+	    }
+
+		if (line == null || line.hasOption(OPTION_HELP)) {
+			formatter.printHelp("PdpController", _commandLineOptions);
+			System.exit(0);
+		}
+
+		return line;
+	}
+
+
+	public static void main(String[] args) {
+		// parse command line arguments
+		CommandLine cl = parseCommandLineOptions(args);
+
+		// load PDP properties
+		try {
+			if (cl.hasOption(OPTION_PDP_PROPS)) {
+				PdpSettings.getInstance(cl.getOptionValue(OPTION_PDP_PROPS)).loadProperties();
+			}
+			else {
+				PdpSettings.getInstance().loadProperties();
+			}
 		} catch (IOException e) {
 			_logger.fatal("Properties cannot be loaded.	", e);
 			return;
