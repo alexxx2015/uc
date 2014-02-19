@@ -12,7 +12,7 @@ public class ThriftServer {
 	
 	public static void createListener(int thriftServerPort, int pepPort){
 		ThriftServerHandler handler = new ThriftServerHandler(pepPort);
-		PDPThriftConnector.Processor processor = new PDPThriftConnector.Processor(handler);
+		ExtendedThriftConnector.Processor processor = new ExtendedThriftConnector.Processor(handler);
 		TServerTransport serverTransport;
 		try {
 			serverTransport = new TServerSocket(thriftServerPort);
