@@ -9,18 +9,22 @@ import de.tum.in.i22.uc.cm.SettingsLoader;
 
 /**
  * 
- * @author Stoimenov
- * Settings are read from properties file named "pdp.properties".
- * Singleton. 
+ * @author Stoimenov, Florian Kelbert
+ * Settings are read from the specified properties file.
+ * If no file is specified, file "pdp.properties" is used.
+ *
+ * Only the first invocation of getInstance(...) might carry the filename parameter.
  *
  */
 public class PdpSettings {
 	
 	private static Logger _logger = Logger.getLogger(PdpSettings.class);
 	
-	private final static PdpSettings _instance = new PdpSettings();
-	
-	private final String PROPERTIES_FILE_NAME = "pdp.properties";
+	private static PdpSettings _instance;
+
+	private static final String DEFAULT_PROPERTIES_FILE_NAME = "pdp.properties";
+
+	private String propertiesFilename;
 	
 	// default values will be overridden with the values from the properties file
 	private int _pepGPBListenerPortNum = 10001;
@@ -31,14 +35,33 @@ public class PdpSettings {
 	private int _pipPortNum;
 	private int _queueSize = 100;
 	
-	private PdpSettings() {}
+	private PdpSettings() {
+		this(DEFAULT_PROPERTIES_FILE_NAME);
+	}
+
+	private PdpSettings(String propertiesFilename) {
+		this.propertiesFilename = propertiesFilename;
+	}
 	
 	public static PdpSettings getInstance() {
+		return (_instance != null)
+			? _instance
+			: getInstance(DEFAULT_PROPERTIES_FILE_NAME);
+	}
+
+	public static PdpSettings getInstance(String propertiesFilename) {
+		if (_instance != null) {
+			throw new IllegalStateException("PDP properties have already been initialized and loaded. "
+					+ "Only the first invocation of " + PdpSettings.class + ".getInstance() might be invoked with a parameter.");
+		}
+
+		_instance = new PdpSettings(propertiesFilename);
+
 		return _instance;
 	}
 
 	public void loadProperties() throws IOException {
-		Properties props = SettingsLoader.loadProperties(PROPERTIES_FILE_NAME);
+		Properties props = SettingsLoader.loadProperties(propertiesFilename);
 		
 		try {
 			_pepGPBListenerPortNum = Integer.valueOf((String)props.get("pep_GPB_listener_port_num"));
@@ -87,7 +110,7 @@ public class PdpSettings {
 
 
 	public String getPropertiesFileName() {
-		return PROPERTIES_FILE_NAME;
+		return propertiesFilename;
 	}
 
 	public int getPepGPBListenerPortNum() {
