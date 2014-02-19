@@ -44,6 +44,10 @@ public class SettingsLoader {
 						propertiesFileName);
 			}
 
+			if (is == null) {
+				throw new IOException("Properties file not found.");
+			}
+
 			// load a properties file
 			Properties props = new Properties();
 			// load all the properties from this file
