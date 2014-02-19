@@ -52,7 +52,7 @@ public class PdpHandlerTestPip implements IIncoming {
 			_logger.info("JavaPDP started");
 			//_lpdp.deployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
 			//FIXME:Hardcoded policy file
-			_lpdp.deployPolicy("/home/uc/pdp/PdpCore/src/main/resources/testTUM.xml");
+			_lpdp.deployPolicy(System.getProperty("user.dir")+"/../PdpCore/src/main/resources/testTUM.xml");
 			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());
