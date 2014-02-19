@@ -17,7 +17,11 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
 public class ThriftServerHandler extends ClientConnectionHandler implements
+<<<<<<< HEAD
+		ExtendedThriftConnector.Iface {
+=======
 ExtendedThriftConnector.Iface {
+>>>>>>> 2cccf75f150dbf65bcdf0ddea21c01c7d4307adf
 
 	private static RequestHandler requestHandler = RequestHandler.getInstance();
 	private static final String IP = "localhost";
@@ -147,15 +151,24 @@ ExtendedThriftConnector.Iface {
 
 	@Override
 	public void processEventAsync(Event e, String senderID) throws TException {
-		//TODO: senderID ignored for the time being
+<<<<<<< HEAD
+		//TODO: senderID ignroed for the time being
 		processEventAsync(e);
+=======
+		// TODO Auto-generated method stub
+>>>>>>> 2cccf75f150dbf65bcdf0ddea21c01c7d4307adf
 		
 	}
 
 	@Override
 	public Response processEventSync(Event e, String senderID)
 			throws TException {
-		//TODO: senderID ignored for the time being
+<<<<<<< HEAD
+		//TODO: senderID ignroed for the time being
 		return processEventSync(e);
+=======
+		// TODO Auto-generated method stub
+		return null;
+>>>>>>> 2cccf75f150dbf65bcdf0ddea21c01c7d4307adf
 	}
 }
