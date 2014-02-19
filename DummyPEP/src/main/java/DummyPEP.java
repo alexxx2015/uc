@@ -16,25 +16,33 @@ public class DummyPEP extends Thread {
 	public DummyPEP(Pep2PdpFastImp pdpCon) {
 		this.pdpCon = pdpCon;
 	}
-	
-	@Override
-	public void run() {				
-		Map<String,String> eventParams = new HashMap<String,String>();
-        eventParams.put("InFileName", "/tmp/ucfoobar");
-                
-		IEvent event = new EventBasic("DoDelete", eventParams, true);
-		
-		IResponse resp = pdpCon.notifyEvent(event);
-		System.out.println(resp);
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		resp = pdpCon.notifyEvent(new EventBasic("Delete", eventParams, true));
-		System.out.println(resp);
-		
+
+	public Pep2PdpFastImp getPdpCon() {
+		return pdpCon;
 	}
+	
+	
+	
+//	@Override
+//	public void run() {				
+//		Map<String,String> eventParams = new HashMap<String,String>();
+//        eventParams.put("InFileName", "/tmp/ucfoobar");
+//                
+//		IEvent event = new EventBasic("DoDelete", eventParams, true);
+//		
+//		IResponse resp = pdpCon.notifyEvent(event);
+//		System.out.println(resp);
+//		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		resp = pdpCon.notifyEvent(new EventBasic("Delete", eventParams, true));
+//		System.out.println(resp);
+//		
+//	}
+	
+	
 }
