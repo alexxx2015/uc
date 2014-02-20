@@ -173,7 +173,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
-		String action = event.getName();
+		String action = event.getPrefixedName();
 		_logger.debug("Action name: " + action);
 		IEventHandler actionHandler = null;
 		try {
@@ -249,7 +249,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		_logger.debug("refreshing cache with event "+e);
 
 		if (!e.isActual()){
-			_logger.debug("event " + e.getName() + " is a desired event. Simulating new state.");
+			_logger.debug("event " + e.getPrefixedName() + " is a desired event. Simulating new state.");
 			if (!isSimulating()){
 				startSimulation();
 			} else {
@@ -257,9 +257,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				return null;
 			}
 		} else {
-			_logger.debug("event " + e.getName() + " is an actual event");
+			_logger.debug("event " + e.getPrefixedName() + " is an actual event");
 		}
-		_logger.debug("Updating PIP with event " + e.getName() );
+		_logger.debug("Updating PIP with event " + e.getPrefixedName() );
 		notifyActualEvent(e);			
 		_logger.debug("Creating cache response");
 		for (String key : _predicatesToEvaluate.keySet()){
@@ -335,7 +335,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		_logger.info("Saving PIP current state");
 		if (_ifModel.push()) {
 			_logger.trace("Updating PIP semantics with current event ("
-					+ (event == null ? "null" : event.getName()) + ")");
+					+ (event == null ? "null" : event.getPrefixedName()) + ")");
 			notifyActualEvent(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");

@@ -10,6 +10,8 @@ import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
 
 public class EventHandlerManager implements IEventHandlerCreator {
 
+	private static final String EVENT_HANDLER_SUFFIX = "EventHandler";
+
 	private static final Logger _logger = Logger.getLogger(EventHandlerManager.class);
 
 	private Map<String, PipClassLoader> _classLoaderMap = null;
@@ -22,7 +24,7 @@ public class EventHandlerManager implements IEventHandlerCreator {
 	public IEventHandler createEventHandler(String actionName) throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
 
-		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + "EventHandler";
+		String className = "de.tum.in.i22.pip.core.eventdef." + actionName + EVENT_HANDLER_SUFFIX;
 
 		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
 		if (pipClassLoader != null) {

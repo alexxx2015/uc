@@ -11,7 +11,13 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry;
 
 public class EventBasic implements IEvent {
+	
+	public static final String PEP_PARAMETER_KEY = "PEP";
+	
+	public static final String PREFIX_SEPARATOR = "_";
+	
 	private String _name = null;
+	private String _pep = null;
 	private boolean _isActual = false;
 	private Map<String, String> _map = null;
 	private long _timestamp;
@@ -23,6 +29,7 @@ public class EventBasic implements IEvent {
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
 		_map = map;
+		_pep = map.get(PEP_PARAMETER_KEY);
 	}
 	
 	public EventBasic(String name, Map<String, String> map, boolean isActual) {
@@ -50,7 +57,9 @@ public class EventBasic implements IEvent {
 				_map.put(entry.getKey(), entry.getValue());
 			}
 		}
-		
+
+		_pep = _map.get(PEP_PARAMETER_KEY);
+
 		// Insert timestamp
 		if (gpEvent.hasTimestamp() && gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
 			_timestamp = Long.valueOf(gpEvent.getTimestamp());
@@ -66,12 +75,25 @@ public class EventBasic implements IEvent {
 	public long getTimestamp() {
 		return _timestamp;
 	}
-
+	
 	@Override
+	public String getPrefixedName() {
+		if (_pep == null) {
+			return _name;
+		}
+		
+		return _pep + PREFIX_SEPARATOR + _name;
+	}
+
 	public String getName() {
 		return _name;
 	}
 	
+	@Override
+	public String getPep() {
+		return _pep;
+	}
+
 	public void setName(String name) {
 		_name = name;
 	}
@@ -104,7 +126,7 @@ public class EventBasic implements IEvent {
 			return null;
 		
 		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
-		if (e.getName() != null)
+		if (e.getPrefixedName() != null)
 			gpEvent.setName(e.getName());
 		
 		gpEvent.setIsActual(e.isActual());
@@ -127,7 +149,7 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventBasic [_name=" + _name + ", _isActual=" + _isActual
+		return "EventBasic [_name=" + _name + ", _pep=" + _pep + ", _isActual=" + _isActual
 				+ ", _map=" + _map + ", _timestamp=" + _timestamp + "]";
 	}
 
@@ -137,10 +159,10 @@ public class EventBasic implements IEvent {
 		if (obj != null && this.getClass() == obj.getClass()) {
 			EventBasic o = (EventBasic)obj;
 			//TODO check if timestamp should be checked
-			isEqual = CompareUtil.areObjectsEqual(_name, o.getName())
+			isEqual = CompareUtil.areObjectsEqual(_name, o.getPrefixedName())
 					&& _isActual == o.isActual()
 					&& CompareUtil.areMapsEqual(_map, o.getParameters());
 		}
 		return isEqual;
-	}
+	}	
 }
