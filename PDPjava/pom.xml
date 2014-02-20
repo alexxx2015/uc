@@ -83,6 +83,13 @@
 			<artifactId>PdpEvalEngine</artifactId>
 			<version>1.0</version>
 		</dependency>
+		
+		
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>PipCacher</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
