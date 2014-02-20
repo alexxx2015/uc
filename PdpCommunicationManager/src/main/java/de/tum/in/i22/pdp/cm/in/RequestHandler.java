@@ -45,7 +45,9 @@ public class RequestHandler implements Runnable {
 	private static IPipCacher2Pip _pipHandler = null;
 
 	public void initializeAll() {
-		_pipHandler = new PipHandler();
+		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
+		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
+
 		// 1 implementation for 2 interfaces
 		_core2pip = new PipCacherImpl(_pipHandler);
 		_engine2pip = (PipCacherImpl) _core2pip;

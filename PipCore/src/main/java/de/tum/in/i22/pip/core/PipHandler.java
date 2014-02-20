@@ -38,9 +38,13 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	private Map<String, IKey> _predicatesToEvaluate;
 
 	public PipHandler() {
+		this(0);
+	}
+	
+	public PipHandler(int pipPersistenceID) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize();
+		pipManager.initialize(pipPersistenceID);
 
 		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;

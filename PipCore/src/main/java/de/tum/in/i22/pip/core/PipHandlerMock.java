@@ -38,9 +38,13 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 	private IPipManager _pipManager; 
 	
 	public PipHandlerMock() {
+		this(0);
+	}
+	
+	public PipHandlerMock(int pipPersistenceID) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize();
+		pipManager.initialize(pipPersistenceID);
 		
 		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;
