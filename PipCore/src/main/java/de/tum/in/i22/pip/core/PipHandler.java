@@ -57,7 +57,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		// parameter1, parameter2) should be separated by separator1, while list
 		// of elements (containers or data) should be separated by separator2
 		final String separator1 = "\\|";
-		final String separator2 = ":";
+		final String separator2 = "#";
 		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
 		
 		

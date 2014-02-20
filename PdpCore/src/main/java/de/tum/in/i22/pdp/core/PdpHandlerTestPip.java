@@ -52,7 +52,8 @@ public class PdpHandlerTestPip implements IIncoming {
 			_logger.info("JavaPDP started");
 			//_lpdp.deployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
 			//FIXME:Hardcoded policy file
-			_lpdp.deployPolicy(System.getProperty("user.dir")+"/../PdpCore/src/main/resources/testTUM.xml");
+//			_lpdp.deployPolicy(System.getProperty("user.dir")+"/../PdpCore/src/main/resources/testTUM.xml");
+			_lpdp.deployPolicy("/home/alex/Policies/DontSendSmartMeterData.xml");
 			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());
@@ -135,7 +136,9 @@ public class PdpHandlerTestPip implements IIncoming {
 			_logger.error("Parameter engine2cacher is null. Error");
 			return new StatusBasic(EStatus.ERROR, "Parameter engine2cacher is null. Error");
 		}
+		_logger.info("Set PDP Engine.");
 		_engine2pip=engine2cacher;
+		_lpdp.setIPdpEngine2Pip(_engine2pip);
 		return new StatusBasic(EStatus.OKAY);
 	}
 	
