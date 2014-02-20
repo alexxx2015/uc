@@ -55,6 +55,26 @@ public class JNICommunicatorFromOldPdp
     return ret;
   }
 
+
+//	public int evaluatePredicate(String predicate, Event event) {
+//		int result=-1;
+//		
+//		System.err.println("Saving PIP current state");
+//		if (pipModel.push()) {
+//			System.err.println("Updating PIP semantics with current event (" + (event==null?"null":event.getEventAction())+")");
+//			pipSemantics.processEvent(event, pipModel);
+//			System.err.println("Evaluate predicate in new updated state (" + predicate+")");
+//			result = evaluatePredicateInSimulatedState(predicate);
+//			System.err.print("Restoring PIP previous state...");
+//			pipModel.pop();
+//			System.err.println("done!");
+//			return result;
+//		}
+//		System.err.println("Failed! Stack not empty!");
+//		
+//		return -1;
+//	}
+
   /*
    * return -1 -> error 0 -> false 1 -> true
    */

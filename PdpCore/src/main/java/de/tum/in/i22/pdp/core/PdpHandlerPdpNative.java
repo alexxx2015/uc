@@ -52,7 +52,7 @@ public class PdpHandlerPdpNative implements IIncoming {
 			_logger.info("Start native PDP ..");
 			_lpdp.pdpStart();
 			_logger.info("Native PDP started");
-			_lpdp.pdpDeployPolicy("/home/uc/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
+			_lpdp.pdpDeployPolicy("/home/alex/Policies/DontSendSmartMeterData.xml");
 			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());

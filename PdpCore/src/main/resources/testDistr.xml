@@ -34,18 +34,35 @@
 		/> <modify> <parameter name="name1" value="modified2" /> </modify> <executeSyncAction 
 		name="blub"> <a:parameter name="file" value="bla.xml" /> </executeSyncAction> 
 		</allow> </authorizationAction> </preventiveMechanism> -->
-	<preventiveMechanism name="blockWrite">
+	<preventiveMechanism name="DoDelete -> Delete">
 		<description>...</description>
-		<timestep amount="5" unit="SECONDS" />
-		<trigger action="DoDelete" tryEvent="false">
+		<timestep amount="1" unit="SECONDS" />
+<!--		<trigger action="Delete" tryEvent="false">
 			<paramMatch name="InFileName" value="/tmp/ucfoobar" />
-		</trigger>
+		</trigger>-->
+		<trigger />
 		<condition>
+			<!--
 			<within amount="5" unit="SECONDS">
-				<eventMatch action="Delete" tryEvent="false">
+				<eventMatch action="DoDelete" tryEvent="false">
 					<paramMatch name="InFileName" value="/tmp/ucfoobar" />
 				</eventMatch>
-			</within>
+			</within>-->
+			<and>
+				<before amount="5" unit="SECONDS">
+					<eventMatch action="DoDelete" tryEvent="false">
+						<paramMatch name="InFileName" value="/tmp/ucfoobar" />
+					</eventMatch>					
+				</before>
+				<during amount="5" unit="SECONDS">
+					<not>
+						<eventMatch action="Delete" tryEvent="false">
+							<paramMatch name="InFileName" value="/tmp/ucfoobar" />
+						</eventMatch>					
+					</not>
+				</during>				
+			</and>
+			
 		</condition>
 		<authorizationAction name="default" start="true"
 			fallback="fallback">

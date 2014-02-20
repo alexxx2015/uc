@@ -3,9 +3,11 @@ package de.tum.in.i22.cm.pdp.internal.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.internal.Event;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.cm.pdp.xsd.StateBasedOperatorType;
+import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 
 public class StateBasedOperator extends StateBasedOperatorType
 {
@@ -35,10 +37,18 @@ public class StateBasedOperator extends StateBasedOperatorType
   }
 
   @Override
+
   public boolean evaluate(Event curEvent)
   {
     log.debug("eval StateBasedFormula");
     // TODO: stateBasedFormula evaluation NYI: forward to PIP for evaluation 
-    return true;
+    IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
+    if(engine2PipCacher != null){
+	    if(curEvent == null)
+	    	return engine2PipCacher.evaluatePredicateCurrentState(this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
+	    
+	    return engine2PipCacher.evaluatePredicateSimulatingNextState(curEvent.toIEvent(), this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
+    }
+    return false;
   }
 }
