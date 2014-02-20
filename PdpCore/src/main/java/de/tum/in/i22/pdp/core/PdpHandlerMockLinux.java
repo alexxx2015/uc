@@ -1,5 +1,9 @@
 package de.tum.in.i22.pdp.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -51,6 +55,24 @@ public class PdpHandlerMockLinux implements IIncoming {
 
 	@Override
 	public IStatus setPdpEngine2PipCacher(IPdpEngine2PipCacher engine2cacher) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus deployPolicy(String policyFilePath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus revokeMechanism(String policyName, String mechName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

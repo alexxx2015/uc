@@ -2,9 +2,12 @@ package de.tum.in.i22.pmp2pdp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -94,5 +97,23 @@ public class Pmp2PdpFastImp extends FastConnector
 			_logger.error("Revoke mechanism failed.", ex);
 			return null;
 		}
+	}
+
+	@Override
+	public IStatus deployPolicy(String policyFilePath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus revokeMechanism(String policyName, String mechName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

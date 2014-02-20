@@ -177,4 +177,8 @@ public class PdpController {
 			}
 		}
 	}
+	
+	public IIncoming getPdpHandler(){
+		return this._pdpHandler;
+	}
 }

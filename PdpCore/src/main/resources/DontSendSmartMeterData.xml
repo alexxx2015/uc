@@ -3,7 +3,8 @@
     xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
     xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
     xmlns:e="http://www.iese.fhg.de/pef/1.0/event"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	name="SmartGridPolicy">
 	
 	<actionDescriptions>
 		<actionDescription name="java/io/OutputStreamWriter/write">
