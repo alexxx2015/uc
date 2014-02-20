@@ -30,7 +30,7 @@ public class Event implements Serializable {
 	 */
 	public Event(IEvent ev) {
 		if (ev != null) {
-			this.eventAction = ev.getName();
+			this.eventAction = ev.getPrefixedName();
 
 			// NOTE that TUM events have isActual() while IESE events have
 			// isTry()

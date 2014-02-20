@@ -52,7 +52,7 @@ public class PdpHandlerTestPip implements IIncoming {
 			_logger.info("JavaPDP started");
 			//_lpdp.deployPolicy("/home/uc/pdpNew/pdp/OldCPdp/src/main/xml/examples/testTUM.xml");
 			//FIXME:Hardcoded policy file
-			_lpdp.deployPolicy(System.getProperty("user.dir")+"/../PdpCore/src/main/resources/testTUM.xml");
+			_lpdp.deployPolicy(System.getProperty("user.dir")+"/../PdpCore/src/main/resources/testDistr.xml");
 //			_lpdp.deployPolicy("/home/alex/Policies/DontSendSmartMeterData.xml");
 			_logger.info("Test policy deployed");
 		} catch (Exception e) {
@@ -90,7 +90,7 @@ public class PdpHandlerTestPip implements IIncoming {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR,"null event received"), null, null);
 		}
 		// TODO implement
-		_logger.debug("Notify event "+event.getName()+" invoked.");
+		_logger.debug("Notify event "+event.getPrefixedName()+" invoked.");
 
 		_logger.debug("Refreshing the cache");
 		if (event!=null) _core2pip.refresh(event);

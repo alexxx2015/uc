@@ -38,7 +38,7 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
      */
 	@Override
 	public IStatus refresh(IEvent desiredEvent) {
-		if (desiredEvent!= null) _logger.debug("refresh ("+desiredEvent.getName()+") invoked");
+		if (desiredEvent!= null) _logger.debug("refresh ("+desiredEvent.getPrefixedName()+") invoked");
 		else _logger.debug("refresh (null) invoked");
 
 		ICacheUpdate newCache=_pip.refresh(desiredEvent);

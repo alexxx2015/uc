@@ -77,7 +77,7 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
-		String action = event.getName();
+		String action = event.getPrefixedName();
 		_logger.debug("Action name: " + action);
 		IEventHandler actionHandler = null;
 		try {

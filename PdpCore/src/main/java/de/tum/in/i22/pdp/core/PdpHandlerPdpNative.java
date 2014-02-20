@@ -87,7 +87,7 @@ public class PdpHandlerPdpNative implements IIncoming {
 
 		_logger.debug("Prapere to invoke old PDP");
 		// convert IEvent to de.fraunhofer.iese.ind2uce.Event
-		Event curEvent = new Event(event.getName(), !event.isActual(),
+		Event curEvent = new Event(event.getPrefixedName(), !event.isActual(),
 				event.getTimestamp());
 
 		Map<String, String> map = event.getParameters();
@@ -113,7 +113,7 @@ public class PdpHandlerPdpNative implements IIncoming {
 
 		_logger.debug("Create modified event");
 		EventBasic modifiedEvent = new EventBasic();
-		modifiedEvent.setName(event.getName());
+		modifiedEvent.setName(event.getPrefixedName());
 		// only attempted event can be modified
 		modifiedEvent.setActual(false);
 		modifiedEvent.setTimestamp(event.getTimestamp());
