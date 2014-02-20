@@ -43,10 +43,12 @@ public class StateBasedOperator extends StateBasedOperatorType
     log.debug("eval StateBasedFormula");
     // TODO: stateBasedFormula evaluation NYI: forward to PIP for evaluation 
     IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
-    if(curEvent == null)
-    	return engine2PipCacher.evaluatePredicateCurrentState(this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
-    
-    return engine2PipCacher.evaluatePredicateSimulatingNextState(curEvent.toIEvent(), this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
-//    return true;
+    if(engine2PipCacher != null){
+	    if(curEvent == null)
+	    	return engine2PipCacher.evaluatePredicateCurrentState(this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
+	    
+	    return engine2PipCacher.evaluatePredicateSimulatingNextState(curEvent.toIEvent(), this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
+    }
+    return false;
   }
 }
