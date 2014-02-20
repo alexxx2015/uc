@@ -40,7 +40,7 @@ public class JNICommunicatorFromOldPdp {
 	 */
 	private	static void initializeLocalPip(){
 		_logger.info("Initialize Local PIP...");
-		IPipCacher2Pip _pipHandler = new PipHandler();
+		IPipCacher2Pip _pipHandler = new PipHandler(0);
 		_pip=new PipCacherImpl(_pipHandler);
 	}
 

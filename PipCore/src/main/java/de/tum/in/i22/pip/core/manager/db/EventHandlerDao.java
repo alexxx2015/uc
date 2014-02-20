@@ -1,6 +1,8 @@
 package de.tum.in.i22.pip.core.manager.db;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -20,18 +22,26 @@ public class EventHandlerDao {
 	private static final Logger _logger = Logger
 			.getLogger(EventHandlerDao.class);
 	
-	private static final String PERSISTENCE_UNIT_NAME = "PIP";
-	private EntityManagerFactory _emFactory;
+	private static final String PERSISTENCE_UNIT_NAME = "PipDb";
+
+	private final String persistenceUnitName;
+
 	private EntityManager _entityManager;
-	
-	public EventHandlerDao() {
-		// TODO Auto-generated constructor stub
+
+	public EventHandlerDao(int pipPersistenceID) {
+		this.persistenceUnitName = PERSISTENCE_UNIT_NAME + pipPersistenceID;		
 	}
 	
 	public void initialize() {
-		_logger.debug("Create entity manager for: " + PERSISTENCE_UNIT_NAME);
-		_emFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		_logger.debug("Create entity manager for: " + persistenceUnitName);
+
+		// configure this PIP's database ID
+		Map<String,String> connectProps1 = new HashMap<String,String>();
+		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + persistenceUnitName + ";create=true");
+
+		EntityManagerFactory _emFactory = Persistence.createEntityManagerFactory("PIP", connectProps1);
 		_entityManager = _emFactory.createEntityManager();
+
 		_logger.debug("Entity manager created.");
 	}
 	

@@ -45,9 +45,9 @@ public class PipManager implements IPipManager {
 		_eventHandlerManager = eventHandlerManager;
 	}
 	
-	public void initialize() {
+	public void initialize(int pipPersistenceID) {
 		_logger.info("Create data access object");
-		_eventHandlerDao = new EventHandlerDao();
+		_eventHandlerDao = new EventHandlerDao(pipPersistenceID);
 		_eventHandlerDao.initialize();
 		
 		// read the database and store class definitions in the event handler manager
