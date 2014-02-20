@@ -7,4 +7,5 @@ public interface IPmp2Pdp {
 	public IStatus deployMechanism(IMechanism mechanism);
 	public IMechanism exportMechanism(String par);
 	public IStatus revokeMechanism(String par);
+//	public IStatus deployPolicy(String policyFilePath);
 }
