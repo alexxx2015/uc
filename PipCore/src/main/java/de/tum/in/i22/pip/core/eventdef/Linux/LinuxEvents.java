@@ -2,8 +2,10 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 
 /**
@@ -14,25 +16,102 @@ import de.tum.in.i22.pip.core.Name;
  */
 public class LinuxEvents {
 
+	/* TODO: Implement
+	 * Calls to remote PIP in accept() and shutdown()
+	 * fork()
+	 * read()
+	 * write()
+	 * open()
+	 * unlink()
+	 * kill()
+	 * dup()
+	 * execve()
+	 * rename()
+	 * mmap()
+	 * truncate()
+	 */
+
+
 	static final String IP_UNSPEC = "unspec";
+
+	static enum Shut {
+		SHUT_RDWR,
+		SHUT_RD,
+		SHUT_WR
+	}
 
 	static final Set<String> SUPPORTED_SOCKET_FAMILIES = new HashSet<String>(Arrays.asList("AF_INET"));
 
-	private static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(Arrays.asList(
+	static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(Arrays.asList(
 														"127.0.0.1",
 														"localhost",
 														"0000:0000:0000:0000:0000:0000:0000:0001",
 														"::1"));
 
-	static Name createFiledescrIdentifier(String host, String pid, String fd) {
-		return new Name(host + "x" + pid + "x" + fd);
+	static void close(Name name) {
+		if (name instanceof SocketName) {
+			LinuxEvents.closeSocket(name);
+		}
+		InformationFlowModel.getInstance().removeName(name);
 	}
 
-	static Name createSocketIdentifier(String host, String pid, String localIP, String localPort, String remoteIP, String remotePort) {
-		if (LOCAL_IP_ADDRESSES.contains(localIP) || LOCAL_IP_ADDRESSES.contains(remoteIP)) {
-			return new Name(host + "x" + pid + ";" + localIP + ":" + localPort + "x" + remoteIP + ":" + remotePort);
+	private static void closeSocket(Name name) {
+		InformationFlowModel ifModel = InformationFlowModel.getInstance();
+
+		String containerId = ifModel.getContainerIdByName(name);
+
+		int count = 0;
+
+		if (containerId != null) {
+			for (Name n : ifModel.getAllNames(containerId)) {
+				if (!(n instanceof SocketName)) {
+					count++;
+				}
+			}
 		}
 
-		return new Name(localIP + ":" + localPort + "x" + remoteIP + ":" + remotePort);
+		if (count == 1) {
+			shutdown(name, Shut.SHUT_RDWR);
+		}
+	}
+
+	static void shutdown(Name name, Shut mode) {
+		InformationFlowModel ifModel = InformationFlowModel.getInstance();
+
+		String containerId = ifModel.getContainerIdByName(name);
+
+		if (containerId != null) {
+			List<Name> allNames = ifModel.getAllNames(containerId);
+
+			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
+				// disallow reception
+				ifModel.emptyContainer(containerId);
+				ifModel.removeAllAliasesTo(containerId);
+			}
+
+			if (mode == Shut.SHUT_WR || mode == Shut.SHUT_RDWR) {
+				// disallow transmission
+				ifModel.removeAllAliasesFrom(containerId);
+			}
+
+			if (mode == Shut.SHUT_RDWR) {
+				// disallow transmission and reception,
+				// therefore delete all socket identifiers
+				for (Name n : allNames) {
+					if (n instanceof SocketName) {
+						ifModel.removeName(n);
+					}
+				}
+			}
+
+			for (Name n : allNames) {
+				if (n instanceof SocketName) {
+					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
+					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {
+						// TODO
+					}
+				}
+			}
+		}
 	}
 }

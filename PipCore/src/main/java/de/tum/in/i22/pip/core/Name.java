@@ -7,7 +7,7 @@ package de.tum.in.i22.pip.core;
  *
  */
 public class Name {
-	public String _name;
+	private final String _name ;
 
 	public Name(String name) {
 		this._name = name;

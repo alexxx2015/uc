@@ -3,6 +3,7 @@ import java.util.Map;
 
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 
 
@@ -31,49 +32,72 @@ public class Main {
 		new DummyPEP(pdp1) {
 			@Override
 			public void run() {
-				Map<String,String> eventParams = new HashMap<String,String>();
-		        eventParams.put("host", "machine1");
-		        eventParams.put("pid", "4251");
-		        eventParams.put("fd", "4");
-		        eventParams.put("PEP", "Linux");
+				IEvent ev;
+				IResponse resp;
 
-		        IResponse resp = getPdpCon().notifyEvent(new EventBasic("Socket", eventParams, true));
+		        ev = createSocketEvent("H1", "1000", "4");
+		        resp = getPdpCon().notifyEvent(ev);
 				System.out.println(resp);
 
+		        ev = createSocketEvent("H2", "2000", "5");
+		        resp = getPdpCon().notifyEvent(ev);
+				System.out.println(resp);
 
-				eventParams.clear();
-		        eventParams.put("localIP", "192.168.0.1");
-		        eventParams.put("localPort", "234");
-		        eventParams.put("remoteIP", "192.168.0.2");
-		        eventParams.put("remotePort", "345");
-		        eventParams.put("family", "AF_INET");
-		        eventParams.put("host", "machine1");
-		        eventParams.put("pid", "4251");
-		        eventParams.put("fd", "4");
-		        eventParams.put("PEP", "Linux");
+				/**
+				 * Important note:
+				 * The PEP must enforce that the connect() happens before the corresponding accept!
+				 */
 
-				resp = getPdpCon().notifyEvent(new EventBasic("Connect", eventParams, true));
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(resp);
+
+				ev = createAcceptEvent("H2", "2000", "192.168.0.1", "5005", "192.168.0.1", "5000", "AF_INET", "6");
+				resp = getPdpCon().notifyEvent(ev);
 				System.out.println(resp);
 			}
 		}.start();
-
-//		new DummyPEP(pdp2) {
-//			@Override
-//			public void run() {
-//				Map<String,String> eventParams = new HashMap<String,String>();
-//		        eventParams.put("InFileName", "/tmp/ucfoobar");
-//
-//
-//				try {
-//					Thread.sleep(6000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//
-//				IResponse resp = getPdpCon().notifyEvent(new EventBasic("Delete", eventParams, true));
-//				System.out.println(resp);
-//			}
-//		}.start();
 	}
 
+	private static EventBasic createEvent(String name, Map<String,String> params) {
+        params.put("PEP", "Linux");
+        return new EventBasic(name, params, true);
+	}
+
+	private static IEvent createAcceptEvent(String host, String pid, String localIP, String localPort, String remoteIp, String remotePort, String family, String newfd) {
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("localIP", localIP);
+		params.put("localPort", localPort);
+		params.put("remoteIP", remoteIp);
+		params.put("remotePort", remotePort);
+		params.put("family", family);
+        params.put("host", host);
+        params.put("pid", pid);
+        params.put("newfd", newfd);
+
+		return createEvent("Accept", params);
+	}
+
+	private static IEvent createConnectEvent(String host, String pid, String fd, String localIP, String localPort, String remoteIp, String remotePort, String family) {
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("localIP", localIP);
+		params.put("localPort", localPort);
+		params.put("remoteIP", remoteIp);
+		params.put("remotePort", remotePort);
+		params.put("family", family);
+        params.put("host", host);
+        params.put("pid", pid);
+        params.put("fd", fd);
+
+		return createEvent("Connect", params);
+	}
+
+	private static IEvent createSocketEvent(String host, String pid, String fd) {
+		Map<String,String> params = new HashMap<String,String>();
+        params.put("host", host);
+        params.put("pid", pid);
+        params.put("fd", fd);
+
+        return createEvent("Socket", params);
+	}
 }
