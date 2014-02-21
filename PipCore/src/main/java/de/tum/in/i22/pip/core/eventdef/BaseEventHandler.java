@@ -25,16 +25,16 @@ public abstract class BaseEventHandler implements IEventHandler {
 	private IEvent _event;
 
 	/*
-	 * scopes affected bz the current event execution
+	 * scopes affected by the current event execution
 	 */
 	protected static final String _delimiterName = "delimiter";
 	protected static final String _openDelimiter = "start";
 	protected static final String _closeDelimiter = "end";
-	
+
 	protected static final String _directionName = "direction";
 	protected static final String _genericInDirection = "IN";
 	protected static final String _genericOutDirection = "OUT";
-	
+
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 
@@ -103,7 +103,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * This function takes the scope object to be closed as parameter, check if
 	 * it is still in the list of active scopes and if that is the case, closes
 	 * it. It returns OKAY if everything went fine, ERROR otherwise.
-	 * 
+	 *
 	 * It should be final.
 	 */
 	protected final IStatus closeScope(Scope scope) {
@@ -144,7 +144,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * Secondly, we open all the scopes that needs to be opened. Thirdly, we
 	 * update the rest of the IF semantics. Finally, we close all the scopes
 	 * that needs to be closed.
-	 * 
+	 *
 	 * @see de.tum.in.i22.pip.core.IActionHandler#execute_event()
 	 */
 	@Override
@@ -240,7 +240,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	/**
 	 * Checks if the process with given PID already exists, if not create a
 	 * container, crate a name, and make a relation between them.
-	 * 
+	 *
 	 * @param processId
 	 *            Process ID (PID)
 	 * @return
