@@ -43,6 +43,13 @@ public class RequestHandler implements Runnable {
 	private static IPdpCore2PipCacher _core2pip = null;
 	private static IPdpEngine2PipCacher _engine2pip = null;
 	private static IPipCacher2Pip _pipHandler = null;
+	
+	public IPdpCore2PipCacher getCore2Pip(){
+		return _core2pip ;
+	}
+	public IPipCacher2Pip getPipHandler(){
+		return _pipHandler;
+	}
 
 	public void initializeAll() {
 		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
@@ -75,7 +82,7 @@ public class RequestHandler implements Runnable {
 		IEvent initEvent = _messageFactory.createActualEvent(
 				"SchemaInitializer", new HashMap<String, String>());
 		_pipHandler.notifyActualEvent(initEvent);
-	}
+	}	
 
 	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
@@ -219,7 +226,7 @@ public class RequestHandler implements Runnable {
 			_pdp2PipProxy = new Pdp2PipImp(pipAddress, pipPort);
 		}
 		return _pdp2PipProxy;
-	}
+	}		
 
 	private IStatus notifyEventToPip(IEvent event) {
 		try {
