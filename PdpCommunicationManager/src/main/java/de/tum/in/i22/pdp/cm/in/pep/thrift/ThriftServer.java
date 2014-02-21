@@ -25,9 +25,13 @@ public class ThriftServer {
 		System.out.println("Server initialized on port "+thriftServerPort);
 	}
 
-	public static void startListener(){
+	public static void start(){
 		System.out.println("Starting the simple server...");
 		server.serve();
+	}
+	
+	public static void stop(){
+		server.stop();
 	}
 	
 }

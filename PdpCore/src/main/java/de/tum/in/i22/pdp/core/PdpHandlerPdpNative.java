@@ -1,6 +1,7 @@
 package de.tum.in.i22.pdp.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,7 @@ import de.fraunhofer.iese.pef.pdp.internal.Decision;
 import de.fraunhofer.iese.pef.pdp.internal.Event;
 import de.fraunhofer.iese.pef.pdp.internal.ExecuteAction;
 import de.fraunhofer.iese.pef.pdp.internal.Param;
+import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
@@ -87,7 +89,7 @@ public class PdpHandlerPdpNative implements IIncoming {
 
 		_logger.debug("Prapere to invoke old PDP");
 		// convert IEvent to de.fraunhofer.iese.ind2uce.Event
-		Event curEvent = new Event(event.getName(), !event.isActual(),
+		Event curEvent = new Event(event.getPrefixedName(), !event.isActual(),
 				event.getTimestamp());
 
 		Map<String, String> map = event.getParameters();
@@ -113,7 +115,7 @@ public class PdpHandlerPdpNative implements IIncoming {
 
 		_logger.debug("Create modified event");
 		EventBasic modifiedEvent = new EventBasic();
-		modifiedEvent.setName(event.getName());
+		modifiedEvent.setName(event.getPrefixedName());
 		// only attempted event can be modified
 		modifiedEvent.setActual(false);
 		modifiedEvent.setTimestamp(event.getTimestamp());
@@ -199,6 +201,30 @@ public class PdpHandlerPdpNative implements IIncoming {
 
 	@Override
 	public IStatus setPdpEngine2PipCacher(IPdpEngine2PipCacher engine2cacher) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus deployPolicy(String policyFilePath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus revokeMechanism(String policyName, String mechName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return null;
 	}

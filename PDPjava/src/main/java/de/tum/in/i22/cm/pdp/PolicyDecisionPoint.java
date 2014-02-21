@@ -95,11 +95,10 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 			List<MechanismBaseType> mechanisms = curPolicy
 					.getDetectiveMechanismOrPreventiveMechanism();
-
+			
 			if (this.policyTable.containsKey(curPolicy.getName())) {
-				log.error("Policy [{}] already deployed! Aborting...",
-						curPolicy.getName());
-				return false;
+//				log.error("Policy [{}] already deployed! Aborting...", curPolicy.getName());
+//				return false;
 			}
 
 			for (MechanismBaseType mech : mechanisms) {
@@ -192,6 +191,26 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return ret;
 	}
 
+	public boolean revokePolicy(String policyName, String mechName) {
+		boolean ret = false;
+		ArrayList<Mechanism> mechanisms = this.policyTable.get(policyName);
+		if (mechanisms != null) {
+			Mechanism mech = null;
+			for (Mechanism m : mechanisms) {
+				if (m.getMechanismName().equals(mechName)) {
+					log.info("Revoking mechanism: {}", m.getMechanismName());
+					ret = m.revoke();
+					mech = m;
+					break;
+				}
+			}
+			if (mech != null) {
+				mechanisms.remove(mech);
+			}
+		}
+		return ret;
+	}
+
 	public Decision notifyEvent(Event event) {
 		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
 				.getEventList(event.getEventAction());
@@ -223,13 +242,14 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return d;
 	}
 
-	public ArrayList<String> listDeployedMechanisms() {
-		ArrayList<String> mechanismList = new ArrayList<String>();
-		for (String policyName : this.policyTable.keySet()) {
-			mechanismList.add(policyName + this.policyTable.get(policyName));
-		}
-
-		return mechanismList;
+	public HashMap<String, ArrayList<Mechanism>> listDeployedMechanisms() {
+		// ArrayList<Mechanism> mechanismList = new ArrayList<Mechanism>();
+		// for (String policyName : this.policyTable.keySet()) {
+		// mechanismList.add(policyName+this.policyTable.get(policyName));
+		// }
+		//
+		// return mechanismList;
+		return this.policyTable;
 	}
 
 	private String readFile(String file) throws IOException {

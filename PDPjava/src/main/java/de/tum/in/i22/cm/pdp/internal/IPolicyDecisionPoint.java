@@ -1,6 +1,7 @@
 package de.tum.in.i22.cm.pdp.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface IPolicyDecisionPoint
 {
@@ -9,7 +10,8 @@ public interface IPolicyDecisionPoint
   
   public boolean  deployPolicy(String filename);
   public boolean  revokePolicy(String policyName);
-  
-  public ArrayList<String> listDeployedMechanisms();
+  public boolean  revokePolicy(String policyName, String mechName);
+
+  public HashMap<String, ArrayList<Mechanism>> listDeployedMechanisms();
   
 }

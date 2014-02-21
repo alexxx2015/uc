@@ -36,6 +36,8 @@ public class PdpController {
 
 	private final static String OPTION_HELP = "h";
 	private final static String OPTION_PDP_PROPS = "pp";
+	
+	private Thread threadRequestHandler, threadPmpFastServiceHandler, threadPepGPBFastServiceHandler;
 
 	/**
 	 * Use dependency injection to inject pdpHandler.
@@ -59,25 +61,32 @@ public class PdpController {
 		RequestHandler eventHandler = RequestHandler.getInstance();
 		// PDP handler is injected when PdpController is created
 		eventHandler.setPdpHandler(_pdpHandler);
-		Thread thread = new Thread(eventHandler);
-		thread.start();
+		this.threadRequestHandler = new Thread(eventHandler);
+		this.threadRequestHandler.start();
 
 		int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
 		_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
 		FastServiceHandler pmpFastServiceHandler = new PmpFastServiceHandler(pmpListenerPort);
-		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
-		threadPmpFastServiceHandler.start();
+		this.threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
+		this.threadPmpFastServiceHandler.start();
 
 		int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
 		_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
 		FastServiceHandler pepGPBFastServiceHandler = new PepFastServiceHandler(pepGPBListenerPort);
-		Thread threadPepGPBFastServiceHandler = new Thread(pepGPBFastServiceHandler);
-		threadPepGPBFastServiceHandler.start();
+		this.threadPepGPBFastServiceHandler = new Thread(pepGPBFastServiceHandler);
+		this.threadPepGPBFastServiceHandler.start();
 		
 		int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
 		_logger.info("Start PepThriftFastServiceHandler on port: " + pepThriftListenerPort);
 		ThriftServer.createListener(pepThriftListenerPort, pepGPBListenerPort);
-		ThriftServer.startListener();
+		ThriftServer.start();
+	}
+	
+	public void stop(){
+		this.threadPepGPBFastServiceHandler.stop();
+		this.threadPmpFastServiceHandler.stop();
+		this.threadRequestHandler.stop();
+		ThriftServer.stop();
 	}
 
 	public PdpSettings getPdpSettings() {
@@ -167,5 +176,9 @@ public class PdpController {
 				_logger.error("EventHandler thread interrupted.", e);
 			}
 		}
+	}
+	
+	public IIncoming getPdpHandler(){
+		return this._pdpHandler;
 	}
 }

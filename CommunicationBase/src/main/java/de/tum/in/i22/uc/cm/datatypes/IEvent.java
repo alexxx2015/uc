@@ -4,11 +4,23 @@ import java.util.Map;
 
 public interface IEvent {
 	/**
-	 * Event name
-	 * @return The name of the event.
+	 * This event's name, prefixed with the PEP that issued this event (if any).
+	 * @return the PEP-prefixed event name
+	 */
+	public String getPrefixedName();
+	
+	/**
+	 * This event's name. 
+	 * @return
 	 */
 	public String getName();
 	
+	/**
+	 * The PEP that issued this event
+	 * @return the identifier of the PEP that issued this event
+	 */
+	public String getPep();
+
 	/**
 	 * Event parameters.
 	 * @return Empty or non-empty map containing the parameters.
