@@ -33,14 +33,14 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	private static IEventHandlerCreator _actionHandlerCreator;
 	private static  IPipManager _pipManager;
 	private static InformationFlowModel _ifModel;
-	
+
 	//info for PipCacher
 	private Map<String, IKey> _predicatesToEvaluate;
 
 	public PipHandler() {
 		this(0);
 	}
-	
+
 	public PipHandler(int pipPersistenceID) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(eventHandlerManager);
@@ -55,6 +55,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 
 
+	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
 		// TODO: add code to evaluate generic predicate
 		// Note that the three parameters of the predicate (State-based formula,
@@ -63,12 +64,12 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		final String separator1 = "\\|";
 		final String separator2 = "#";
 		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
-		
-		
+
+
 		///BEGINNING OF TEST BLOCK
 		String contId = _ifModel.getContainerIdByName(new Name(
 				"TEST_C"));
-		
+
 		if (contId!=null){
 			_logger.debug("number of data elements in container TEST_C = "+_ifModel.getDataInContainer(contId).size());
 		} else {
@@ -76,23 +77,23 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		}
 		///END OF TEST BLOCK
 
-		
-		
+
+
 		//System.err.println(_ifModel.printModel());
 		String[] st = predicate.split(separator1);
 		_logger.debug("st.length="+st.length);
-		
+
 		if (st.length == 4) {
 			String formula = st[0];
 			String par1 = st[1];
 			String par2 = st[2];
 			int par3 = Integer.parseInt(st[3]);  //to be used for quantitative formulae
-			
+
 			String[] containers;
 			Set<String> s;
-			
+
 			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
-			
+
 			switch (formula) {
 			case "isNotIn":  //par1 is data, par2 is list of containers
 				containers= par2.split(separator2);
@@ -117,7 +118,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				for (String cont : s){
 					Name pname= new Name(cont);
 					//_logger.debug("..in loop("+cont+")..");
-					if (!(limit.contains(_ifModel.getContainerIdByNameRelaxed(pname)))) {	
+					if (!(limit.contains(_ifModel.getContainerIdByNameRelaxed(pname)))) {
 						_logger.trace(out+"=false");
 						return false;
 					}
@@ -137,8 +138,8 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				}
 				_logger.trace(out+"=false");
 				return false;
-				
-				
+
+
 			default:
 				_logger.trace(out+"=null");
 				return null;
@@ -149,6 +150,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			return null;
 	}
 
+	@Override
 	public Set<IContainer> getContainerForData(IData arg0) {
 		if (arg0==null) return null;
 		Set<String> contIds= _ifModel.getContainersForData(arg0.getId());
@@ -160,6 +162,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		return result;
 	}
 
+	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
 		if (container==null) return null;
 		Set<String> sd= _ifModel.getDataInContainer(container.getId());
@@ -178,7 +181,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		IEventHandler actionHandler = null;
 		try {
 			_logger.trace("Create event handler");
-			actionHandler = _actionHandlerCreator.createEventHandler(action);
+			actionHandler = _actionHandlerCreator.createEventHandler(event);
 		} catch (IllegalAccessException | InstantiationException e) {
 			_logger.error(
 					"Failed to create event handler for action " + action, e);
@@ -241,10 +244,10 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		Map<IKey,Boolean> map=new HashMap<IKey,Boolean>();
 
 		//TODO: fix missing getScopeId. requires implementation of XBEHAV.
-			
+
 		res.setMap(map);
 		res.setScopeId("<GET SCOPE ID STILL NOT IMPLEMENTED>");
-		
+
 		int counter=0;
 		_logger.debug("refreshing cache with event "+e);
 
@@ -260,7 +263,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			_logger.debug("event " + e.getPrefixedName() + " is an actual event");
 		}
 		_logger.debug("Updating PIP with event " + e.getPrefixedName() );
-		notifyActualEvent(e);			
+		notifyActualEvent(e);
 		_logger.debug("Creating cache response");
 		for (String key : _predicatesToEvaluate.keySet()){
 			Boolean b = evaluatePredicatCurrentState(key);
@@ -329,8 +332,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	/**
 	 * Evaluate the predicate in the state obtained simulating the execution of event.
-	 * @return the result of the formula 
+	 * @return the result of the formula
 	 */
+	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
 		_logger.info("Saving PIP current state");
 		if (_ifModel.push()) {
@@ -348,13 +352,13 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		_logger.error("Failed! Stack not empty!");
 		return null;
 	}
-	
-	
+
+
 	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event,
 			IKey predicate) {
 		_logger.info("retrieveing predicate with key "+ predicate);
-		
+
 		if (_predicatesToEvaluate.containsValue(predicate)){
 			String pred=null;
 			for (String s : _predicatesToEvaluate.keySet()){
@@ -366,7 +370,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				_logger.error("impossible to evaluate key "+ predicate +" because it doesn't exists in the PIP. returning null.");
 				return null;
 			}
-			
+
 			return evaluatePredicateSimulatingNextState(event, pred);
 		}
 		_logger.error("impossible to evaluate key "+ predicate +" because it doesn't exists in the PIP. returning null.");
@@ -378,5 +382,5 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		// TODO Auto-generated method stub
 		return this._ifModel.toString();
 	}
-	
+
 }

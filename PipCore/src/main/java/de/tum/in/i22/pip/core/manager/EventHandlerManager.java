@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
 
 public class EventHandlerManager implements IEventHandlerCreator {
 
@@ -22,10 +23,13 @@ public class EventHandlerManager implements IEventHandlerCreator {
 	}
 
 	@Override
-	public IEventHandler createEventHandler(String actionName) throws IllegalAccessException, InstantiationException,
+	public IEventHandler createEventHandler(IEvent event) throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
 
-		String className =  EVENT_HANDLER_PACKAGE + actionName + EVENT_HANDLER_SUFFIX;
+		String className =  EVENT_HANDLER_PACKAGE
+				+ ((event.getPep() != null) ? event.getPep() + "." : "")
+				+ event.getName()
+				+ EVENT_HANDLER_SUFFIX;
 
 		PipClassLoader pipClassLoader = _classLoaderMap.get(className);
 		if (pipClassLoader != null) {
