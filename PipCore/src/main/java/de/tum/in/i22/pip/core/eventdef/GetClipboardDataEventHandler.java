@@ -12,22 +12,20 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class GetClipboardDataEventHandler extends BaseEventHandler {
-	
+
 	private static final Logger _logger = Logger
 			.getLogger(GetClipboardDataEventHandler.class);
 
-	
+
 	public GetClipboardDataEventHandler() {
 		super();
 	}
-	
+
 	@Override
 	public IStatus execute() {
-		_logger.info("GetClipboardData event handler execute");
-		
 		String pid = null;
 		String processName = null;
-		
+
 		try {
 			 pid = getParameterValue("PID");
 	         processName = getParameterValue("ProcessName");
@@ -53,7 +51,7 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
          {
              ifModel.addDataToContainerMappings(ifModel.getDataInContainer(clipboardContainerId), tempContainerId);
          }
-         
+
          return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

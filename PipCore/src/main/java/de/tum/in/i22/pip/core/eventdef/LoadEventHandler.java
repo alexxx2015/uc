@@ -19,8 +19,6 @@ public class LoadEventHandler extends BaseEventHandler {
 
 	@Override
 	public int createScope() {
-		_logger.info("Load action handler execute");
-
 		try {
 			_delimiter = getParameterValue(_delimiterName);
 			getFilename();
@@ -35,7 +33,7 @@ public class LoadEventHandler extends BaseEventHandler {
 		attributes.put("app", "Thunderbird");
 		attributes.put("filename", _filename);
 
-		
+
 		Scope scope = new Scope("TB loading file " + _filename + " OPEN",
 				Scope.scopeType.GENERIC_IN, attributes);
 

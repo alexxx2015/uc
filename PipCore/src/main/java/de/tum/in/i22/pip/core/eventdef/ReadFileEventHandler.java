@@ -23,14 +23,12 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("ReadFile event handler execute");
-		
 		String fileName = null;
 		String pid = null;
-		
+
 		// currently not used
 		String processName = null;
-		
+
 		try {
 			fileName = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
@@ -57,7 +55,7 @@ public class ReadFileEventHandler extends BaseEventHandler {
 		for (String tempContainerID : transitiveReflexiveClosure) {
 			ifModel.addDataToContainerMappings(dataSet, tempContainerID);
 		}
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

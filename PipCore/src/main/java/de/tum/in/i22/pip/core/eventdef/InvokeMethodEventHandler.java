@@ -8,15 +8,13 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public class InvokeMethodEventHandler extends BaseEventHandler {
 	private static final Logger _logger = Logger
 			.getLogger(InvokeMethodEventHandler.class);
-	
+
 	public InvokeMethodEventHandler() {
 		super();
 	}
-	
+
 	@Override
 	public IStatus execute() {
-		_logger.info("InvokeMethod event handler execute");
-		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

@@ -12,30 +12,28 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class CreateProcessEventHandler extends BaseEventHandler {
-	
+
 	private static final Logger _logger = Logger
 			.getLogger(CreateProcessEventHandler.class);
-	
+
 	public CreateProcessEventHandler() {
 		super();
 	}
-	
+
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateProcess event handler execute");
-		
 		String pid = null;
 		String parentPid = null;
 		String visibleWindows = null;
 		// currently not used
 		String processName = null;
 		String parentProcessName = null;
-		
+
 		try {
 			pid = getParameterValue("PID_Child");
 	        parentPid = getParameterValue("PID");
 	        visibleWindows = getParameterValue("VisibleWindows");
-	
+
 	        processName = getParameterValue("ChildProcessName");
 	        parentProcessName = getParameterValue("ParentProcessName");
 		} catch (ParameterNotFoundException e) {
@@ -57,7 +55,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
         for (String handle : visibleWindowsArray)
         {
             String windowContainerId = ifModel.getContainerIdByName(new Name(handle));
-            
+
             if(windowContainerId == null)
             {
             	IContainer container = _messageFactory.createContainer();
@@ -68,7 +66,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
             ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), windowContainerId);
 
             ifModel.addAlias(processContainerId, windowContainerId);
-        }    
+        }
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

@@ -23,10 +23,9 @@ public class KillProcessEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("KillProcess event handler execute");
 		String pid = null;
 //		String processName = null;
-		
+
 		try {
 			pid = getParameterValue("PID_Child");
 //			processName = getParameterValue("ChildProcessName");
