@@ -1,7 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
@@ -9,9 +7,6 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class SocketEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(SocketEventHandler.class);
 
 	@Override
 	public IStatus execute() {
