@@ -20,7 +20,6 @@ import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.injection.PdpModule;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
