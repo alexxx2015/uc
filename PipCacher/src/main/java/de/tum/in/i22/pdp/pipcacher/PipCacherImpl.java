@@ -175,8 +175,7 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	@Override
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
-		this._pip.getCurrentPipModel();
-		return null;
+		return this._pip.getCurrentPipModel();
 	}
 
 }
