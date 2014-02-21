@@ -22,8 +22,6 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateWindow event handler execute");
-
 		String pid = null;
 		String processName = null;
 		String windowHandle = null;

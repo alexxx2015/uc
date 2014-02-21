@@ -12,17 +12,15 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class SetClipboardDataEventHandler extends BaseEventHandler {
-	
+
 	private static final Logger _logger = Logger.getLogger(SetClipboardDataEventHandler.class);
-	
+
 	public SetClipboardDataEventHandler() {
 		super();
 	}
-	
+
 	@Override
 	public IStatus execute() {
-		_logger.info("SetClipboardData event handler execute");
-		
 		String pid = null;
 		String processName = null;
 		try {

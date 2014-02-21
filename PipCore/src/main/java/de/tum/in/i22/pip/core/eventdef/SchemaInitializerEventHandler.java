@@ -23,13 +23,12 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 
 		//This event is used only during tests to initialize the information flow schema to a specific state
-				
-		_logger.info("SchemaInitializer event handler execute");
+
 		InformationFlowModel ifModel = getInformationFlowModel();
-		
+
 		String contName="TEST_C";
 		String dataName="TEST_D";
-		
+
 
 		String contId = ifModel.getContainerIdByName(new Name(
 				contName));
@@ -38,10 +37,10 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 
 		if (contId == null) {
 			IContainer container = _messageFactory.createContainer("TestContainer",contName);
-			
+
 			contId = ifModel.addContainer(container);
 			ifModel.addName(new Name(contName), contId);
-		
+
 			IData d= _messageFactory.createData(dataName);
 			ifModel.addData(d);
 			ifModel.addDataToContainerMapping(dataName, contId);
@@ -50,7 +49,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			_logger.error("contID = " + contId+" Already exists!!!! IMPOSSIBRU!!!");
 		_logger.debug(ifModel.toString());
 		}
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

@@ -189,6 +189,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 		 * 3) Update the ifModel according to the single event semantics
 		 */
 
+		_logger.info(this.getClass().getSimpleName() + " event handler execute");
 		execute();
 
 		/*

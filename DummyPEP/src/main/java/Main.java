@@ -32,7 +32,9 @@ public class Main {
 			@Override
 			public void run() {
 				Map<String,String> eventParams = new HashMap<String,String>();
-		        eventParams.put("InFileName", "/tmp/ucfoobar");
+		        eventParams.put("host", "machine1");
+		        eventParams.put("pid", "4251");
+		        eventParams.put("fd", "4");
 		        eventParams.put("PEP", "Linux");
 
 				IResponse resp = getPdpCon().notifyEvent(new EventBasic("Socket", eventParams, true));

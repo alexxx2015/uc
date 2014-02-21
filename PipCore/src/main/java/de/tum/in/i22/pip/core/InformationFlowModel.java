@@ -81,15 +81,15 @@ public class InformationFlowModel {
 		return _instance;
 	}
 
-	
+
 	public boolean isSimulating(){
 		return !((_containerSetBackup == null) && (_dataSetBackup == null)
 				&& (_dataToContainerMapBackup == null)
 				&& (_containerAliasesMapBackup == null)
 				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
 	}
-	
-	
+
+
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
 	 * @return true if the state has been successfully pushed, false otherwise
@@ -151,11 +151,11 @@ public class InformationFlowModel {
 
 	/**
 	 * Adds a new scope to the set.
-	 * 
+	 *
 	 * @param scope
 	 * @return true if the scope is not already present in the set. false
 	 *         otherwise.
-	 * 
+	 *
 	 */
 	public boolean addScope(Scope scope) {
 		assert (scope != null);
@@ -164,11 +164,11 @@ public class InformationFlowModel {
 
 	/**
 	 * opens a new scope.
-	 * 
+	 *
 	 * @param the
 	 *            new scope to open
 	 * @return true if the scope is not already opened. false otherwise.
-	 * 
+	 *
 	 */
 	public boolean openScope(Scope scope) {
 		return addScope(scope);
@@ -176,10 +176,10 @@ public class InformationFlowModel {
 
 	/**
 	 * Removes a scope from the set.
-	 * 
+	 *
 	 * @param scope
 	 * @return true if the scope is successfully removed. false otherwise.
-	 * 
+	 *
 	 */
 	public boolean removeScope(Scope scope) {
 		assert (scope != null);
@@ -188,11 +188,11 @@ public class InformationFlowModel {
 
 	/**
 	 * Close a specific scope.
-	 * 
+	 *
 	 * @param the
 	 *            scope to be closed
 	 * @return true if the scope is successfully closed. false otherwise.
-	 * 
+	 *
 	 */
 	public boolean closeScope(Scope scope) {
 		return removeScope(scope);
@@ -201,11 +201,11 @@ public class InformationFlowModel {
 	/**
 	 * Checks whether a specific scope has been opened. Note that the scope can
 	 * be under-specified with respect to the matching element in the set.
-	 * 
+	 *
 	 * @param the
 	 *            (possibly under-specified) scope to be found
 	 * @return true if the scope is in the set. false otherwise.
-	 * 
+	 *
 	 */
 	public boolean isScopeOpened(Scope scope) {
 		return _scopeSet.contains(scope);
@@ -217,15 +217,15 @@ public class InformationFlowModel {
 	 * active (i.e. opened but not closed) scope matches the parameter, the
 	 * method returns null. Similarly, if no scope is found, the method returns
 	 * null.
-	 * 
+	 *
 	 * There must exists only one matching otherwise the information about the
 	 * scope are not enough to identify to which scope a certain event belongs
-	 * 
+	 *
 	 * @param the
 	 *            (possibly under-specified) scope to be found
 	 * @return the opened scope, if found. null if more than one match or no
 	 *         match is found.
-	 * 
+	 *
 	 */
 	public Scope getOpenedScope(Scope scope) {
 		// if at least one matching exists...
@@ -264,7 +264,7 @@ public class InformationFlowModel {
 	 * Adds data object to a set. If the set already contains the data object,
 	 * the method will return null. Otherwise, it will return the id of the data
 	 * object.
-	 * 
+	 *
 	 * @param data
 	 * @return Id of the data object if set does not contain the data object,
 	 *         otherwise null.
@@ -283,7 +283,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Removes data object form an internal set.
-	 * 
+	 *
 	 * @param data
 	 * @return true if the data object is successfully removed.
 	 */
@@ -292,24 +292,24 @@ public class InformationFlowModel {
 		return _dataSet.remove(data);
 	}
 
-	
+
 	/**
 	 * Removes data object form an internal set.
-	 * 
+	 *
 	 * @param dataId
 	 * @return true if the data object is successfully removed.
 	 */
 	public boolean removeData(String dataId) {
 		assert (dataId != null);
-		
+
 		return _dataSet.remove(dataId);
 	}
 
-	
-	
+
+
 	/**
 	 * Searches for data object by id.
-	 * 
+	 *
 	 * @param id
 	 * @return Data object if it is present in the set, otherwise null.
 	 */
@@ -319,7 +319,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Checks if the model contains a data object with given id.
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -330,9 +330,9 @@ public class InformationFlowModel {
 
 	/**
 	 * Inserts container into the model.
-	 * 
+	 *
 	 * @param container
-	 * @return Id )of the container.
+	 * @return Id of the container.
 	 */
 	public String addContainer(IContainer container) {
 		if (_containerSet.contains(container)) {
@@ -368,12 +368,12 @@ public class InformationFlowModel {
 		if (hasContainerWithId(id)) {
 			Set<String> set = _dataToContainerMap.get(id);
 			if (set != null) {
-				
+
 				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
 				//JUST WASTED HOURS FINDING THE BUG
 				_dataToContainerMap.remove(id);
-				
-				
+
+
 				res = true;
 			}
 		}
@@ -383,7 +383,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Adds an alias relation from one container to another.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean addAlias(String fromContainerId, String toContainerId) {
@@ -404,7 +404,7 @@ public class InformationFlowModel {
 	/**
 	 * Removes the alias relation identified by the tuple (fromContainerId,
 	 * toContainerId)
-	 * 
+	 *
 	 * @param fromContainerId
 	 * @param toContainerId
 	 * @return
@@ -420,7 +420,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Fins all aliases of a container given by its id.
-	 * 
+	 *
 	 * @param id
 	 * @return All aliases of a container given by its id, empty set if the
 	 *         container has no aliases.
@@ -437,7 +437,7 @@ public class InformationFlowModel {
 	/**
 	 * Returns the reflexive, transitive closure of the alias function for
 	 * container with id containerId.
-	 * 
+	 *
 	 * @param containerId
 	 * @return
 	 */
@@ -451,7 +451,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Removes all aliases that start from the container with given id.
-	 * 
+	 *
 	 * @param fromContainerId
 	 * @return
 	 */
@@ -467,7 +467,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Removes all aliases that end in the container with the given id.
-	 * 
+	 *
 	 * @param toContainerId
 	 * @return
 	 */
@@ -489,7 +489,7 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param toContainerId
 	 * @return All aliases that go to the container with the given id.
 	 */
@@ -544,7 +544,7 @@ public class InformationFlowModel {
 			res = dataSet.add(dataId);
 		} else {
 			Set<String> newDataSet = new HashSet<>();
-			
+
 			//TODO: check if dataId corresponds to a valid data element
 			newDataSet.add(dataId);
 
@@ -580,7 +580,7 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dataId
 	 * @return All container ids as a set for the data with the given id.
 	 */
@@ -619,7 +619,7 @@ public class InformationFlowModel {
 	/**
 	 * Adds an entry to the naming mapping for container contID, with the
 	 * naming/representation name.
-	 * 
+	 *
 	 * @param name
 	 * @param containerId
 	 * @return
@@ -635,7 +635,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Removes the naming/representation name from the naming set.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -650,7 +650,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Returns the container that is referenced by the naming name.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -673,7 +673,7 @@ public class InformationFlowModel {
 	 * Returns the container that is referenced by the naming name. The search
 	 * is done in a less strict way; it is enough that the name only partially
 	 * fits an entry in the naming mapping.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -695,7 +695,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Return all re that refer to the container with containerId.
-	 * 
+	 *
 	 * @param containerId
 	 * @return
 	 */
@@ -714,7 +714,7 @@ public class InformationFlowModel {
 
 	/**
 	 * Returns all representations that correspond to the process with pid.
-	 * 
+	 *
 	 */
 	public List<Name> getAllNamingsFrom(String pid) {
 		List<Name> result = new ArrayList<Name>();
