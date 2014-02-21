@@ -1,8 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
@@ -13,9 +10,6 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class WriteFileEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(WriteFileEventHandler.class);
 
 	public WriteFileEventHandler() {
 		super();

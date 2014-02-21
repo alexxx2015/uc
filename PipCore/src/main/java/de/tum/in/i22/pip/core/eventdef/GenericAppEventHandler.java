@@ -5,14 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pip.core.Scope;
 import de.tum.in.i22.pip.core.Scope.scopeType;
 
 public abstract class GenericAppEventHandler extends BaseEventHandler {
-	private static final Logger _logger = Logger
-			.getLogger(GenericAppEventHandler.class);
 	/*
 	 * This function should be overridden by single events class
 	 */
@@ -23,14 +19,14 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 	/*
 	 * For this generic action the scope is only one and the "direction"
 	 * (open/close) is given as a parameter
-	 * 
+	 *
 	 * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
 	 */
 	@Override
 	public int createScope() {
 		String delimiter = null;
 		String direction = null;
-		
+
 		try {
 			delimiter = getParameterValue(_delimiterName);
 			getFilename();
@@ -45,7 +41,7 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("filename", _filename);
 
-		
+
 		try {
 			direction= getParameterValue(_directionName);
 			getFilename();
@@ -53,10 +49,10 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return 0;
 		}
-		
-		
+
+
 		Scope.scopeType type=null;
-		
+
 		switch (direction){
 		case _genericInDirection:
 			type=scopeType.GENERIC_IN;
@@ -69,7 +65,7 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 			//no scope with this value should be opened
 			type=scopeType.EMPTY;
 		}
-		
+
 		if (delimiter.equals(_openDelimiter)) {
 			Scope scope = new Scope(HRscope + _filename,
 					type, attributes);
