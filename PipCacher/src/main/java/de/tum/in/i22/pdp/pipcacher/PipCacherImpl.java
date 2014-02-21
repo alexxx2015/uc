@@ -172,4 +172,11 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 		return DummyMessageGen.createOkStatus();
 		}
 
+	@Override
+	public String getCurrentPipModel() {
+		// TODO Auto-generated method stub
+		this._pip.getCurrentPipModel();
+		return null;
+	}
+
 }

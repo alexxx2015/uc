@@ -57,7 +57,7 @@ public class PdpHandlerTestPip implements IIncoming {
 //			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());
-		}
+		}		
 	}
 	
 	
@@ -165,6 +165,12 @@ public class PdpHandlerTestPip implements IIncoming {
 		// TODO Auto-generated method stub
 		HashMap<String, ArrayList<Mechanism>> _return = this._lpdp.listDeployedMechanisms();
 		return _return;
+	}
+
+	@Override
+	public String getCurrentPipModel() {
+		// TODO Auto-generated method stub
+		return this._engine2pip.getCurrentPipModel();
 	}
 	
 }

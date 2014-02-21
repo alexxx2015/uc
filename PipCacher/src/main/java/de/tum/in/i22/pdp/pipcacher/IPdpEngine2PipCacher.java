@@ -24,4 +24,6 @@ public interface IPdpEngine2PipCacher {
     public Boolean 	  evaluatePredicateSimulatingNextState(IEvent event, IKey key);
     public Boolean    eval(IKey key, IEvent event2Simulate);
     
+    public String getCurrentPipModel();
+    
 }

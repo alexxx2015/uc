@@ -98,4 +98,10 @@ public class PdpHandlerMock implements IIncoming {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getCurrentPipModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

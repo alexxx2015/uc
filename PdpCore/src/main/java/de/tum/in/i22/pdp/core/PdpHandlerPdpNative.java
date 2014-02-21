@@ -223,4 +223,10 @@ public class PdpHandlerPdpNative implements IIncoming {
 		return null;
 	}
 
+	@Override
+	public String getCurrentPipModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

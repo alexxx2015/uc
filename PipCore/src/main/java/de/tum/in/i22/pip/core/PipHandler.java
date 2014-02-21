@@ -372,5 +372,11 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 		_logger.error("impossible to evaluate key "+ predicate +" because it doesn't exists in the PIP. returning null.");
 		return null;
 	}
+
+	@Override
+	public String getCurrentPipModel() {
+		// TODO Auto-generated method stub
+		return this._ifModel.toString();
+	}
 	
 }

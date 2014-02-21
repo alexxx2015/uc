@@ -34,5 +34,7 @@ public interface IPipCacher2Pip extends IPipManager {
 	public Set<IContainer> getContainerForData(IData data);
 	public Set<IData> getDataInContainer(IContainer container);
 	public IStatus notifyActualEvent(IEvent event);
+	
+    public String getCurrentPipModel();
            
 }
