@@ -12,18 +12,17 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class TakeScreenshotEventHandler extends BaseEventHandler {
-	
-	
+
+
 	private static final Logger _logger = Logger
 			.getLogger(TakeScreenshotEventHandler.class);
-	
+
 	public TakeScreenshotEventHandler() {
 		super();
 	}
 
 	@Override
 	public IStatus execute() {
-		_logger.info("TakeScreenshot event handler execute");
         String visibleWindow = null;
         try {
         	visibleWindow = getParameterValue("VisibleWindow");
@@ -32,7 +31,7 @@ public class TakeScreenshotEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
         }
-        
+
         InformationFlowModel ifModel = getInformationFlowModel();
         String clipboardContainerId = ifModel.getContainerIdByName(new Name("clipboard"));
 

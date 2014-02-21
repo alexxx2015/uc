@@ -13,9 +13,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * Print event
- * 
+ *
  * @author Stoimenov
- * 
+ *
  */
 public class CreateDcEventHandler extends BaseEventHandler {
 
@@ -28,7 +28,6 @@ public class CreateDcEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		_logger.info("CreateDC event handler execute");
 		String pid = null;
 		String processName = null;
 		String deviceName = null;

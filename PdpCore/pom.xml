@@ -31,42 +31,11 @@
 			<artifactId>PipCacher</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>de.fraunhofer.iese.ind2uce</groupId>
-			<artifactId>PdpNativeSource</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 	
 	<build>
 	<!-- <pluginManagement> -->
 	<plugins>
-	<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>de.fraunhofer.iese.ind2uce</groupId>
-                  <artifactId>PdpNativeSource</artifactId>
-                  <version>0.0.3-SNAPSHOT</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory> ${project.build.directory}/natives
-                    </outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       </plugins>
       <!-- </pluginManagement> -->
 	</build>
