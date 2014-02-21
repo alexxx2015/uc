@@ -29,18 +29,18 @@ public class PdpController {
 
 	private boolean _isStarted = false;
 
-	private IIncoming _pdpHandler;
+	private final IIncoming _pdpHandler;
 
 	private final static Options _commandLineOptions = createCommandLineOptions();
 
 	private final static String OPTION_HELP = "h";
 	private final static String OPTION_PDP_PROPS = "pp";
-	
+
 	private Thread threadRequestHandler, threadPmpFastServiceHandler, threadPepGPBFastServiceHandler;
 
 	/**
 	 * Use dependency injection to inject pdpHandler.
-	 * 
+	 *
 	 * @param pdpHandler
 	 */
 	@Inject
@@ -74,13 +74,13 @@ public class PdpController {
 		FastServiceHandler pepGPBFastServiceHandler = new PepFastServiceHandler(pepGPBListenerPort);
 		this.threadPepGPBFastServiceHandler = new Thread(pepGPBFastServiceHandler);
 		this.threadPepGPBFastServiceHandler.start();
-		
+
 		int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
 		_logger.info("Start PepThriftFastServiceHandler on port: " + pepThriftListenerPort);
 		ThriftServer.createListener(pepThriftListenerPort, pepGPBListenerPort);
 		ThriftServer.start();
 	}
-	
+
 	public void stop(){
 		this.threadPepGPBFastServiceHandler.stop();
 		this.threadPmpFastServiceHandler.stop();
@@ -176,7 +176,7 @@ public class PdpController {
 			}
 		}
 	}
-	
+
 	public IIncoming getPdpHandler(){
 		return this._pdpHandler;
 	}

@@ -25,7 +25,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	private IEvent _event;
 
 	/*
-	 * scopes affected bz the current event execution
+	 * scopes affected by the current event execution
 	 */
 	protected static final String _delimiterName = "delimiter";
 	protected static final String _openDelimiter = "start";

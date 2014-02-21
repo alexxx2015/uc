@@ -29,32 +29,34 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  * @author Stoimenov
  *
  */
-public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip 
+public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 {
-	
+
 	private static final Logger _logger = Logger.getLogger(PipHandlerMock.class);
-	
-	private IEventHandlerCreator _actionHandlerCreator;
-	private IPipManager _pipManager; 
-	
+
+	private final IEventHandlerCreator _actionHandlerCreator;
+	private final IPipManager _pipManager;
+
 	public PipHandlerMock() {
 		this(0);
 	}
-	
+
 	public PipHandlerMock(int pipPersistenceID) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
 		PipManager pipManager = new PipManager(eventHandlerManager);
 		pipManager.initialize(pipPersistenceID);
-		
+
 		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;
 	}
 
+	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
 		// returns always true, for testing purposes only
 		return true;
 	}
 
+	@Override
 	public Set<IContainer> getContainerForData(IData arg0) {
 		// returns dummy list, for testing purposes only
 		Set<IContainer> set = new HashSet<IContainer>();
@@ -65,6 +67,7 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 		return set;
 	}
 
+	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
 		// returns dummy list, for testing purposes only
 		Set<IData> set = new HashSet<IData>();
@@ -82,30 +85,30 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 		IEventHandler actionHandler = null;
 		try {
 			_logger.trace("Create event handler");
-			actionHandler = _actionHandlerCreator.createEventHandler(action);
+			actionHandler = _actionHandlerCreator.createEventHandler(event);
 		} catch (IllegalAccessException | InstantiationException e) {
 			_logger.error("Failed to create event handler for action " + action, e);
 		} catch (ClassNotFoundException e ){
 			_logger.error("Class not found for event handler " + action, e);
 		}
-		
+
 		if (actionHandler == null) {
 			_logger.trace("Create default event handler");
 			actionHandler = new DefaultEventHandler();
 		}
-		
+
 		actionHandler.setEvent(event);
-		
+
 		IStatus status =  actionHandler.executeEvent();
 		_logger.trace("Status to return: " + status);
-		
+
 		return status;
 	}
 
 	@Override
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
 			File jarFile, EConflictResolution flagForTheConflictResolution) {
-		
+
 		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 
