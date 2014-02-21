@@ -4,13 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pip.core.Scope;
 
 public class LoadEventHandler extends BaseEventHandler {
-	private static final Logger _logger = Logger
-			.getLogger(LoadEventHandler.class);
 	private String _delimiter = null;
 
 	public LoadEventHandler() {

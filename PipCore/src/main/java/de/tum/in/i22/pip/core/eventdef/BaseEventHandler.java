@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator
 			.createMessageFactory();
-	private static final Logger _logger = Logger
+	protected static final Logger _logger = Logger
 			.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
