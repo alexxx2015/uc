@@ -5,6 +5,7 @@ import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class SchemaInitializerEventHandler extends BaseEventHandler {
@@ -22,6 +23,9 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 
 		String contName="TEST_C";
 		String dataName="TEST_D";
+		
+
+		IEvent e = getEvent();
 
 
 		String contId = ifModel.getContainerIdByName(new Name(
