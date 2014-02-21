@@ -7,7 +7,7 @@ package de.tum.in.i22.pip.core;
  *
  */
 public class Name {
-	public String _name;
+	private final String _name ;
 
 	public Name(String name) {
 		this._name = name;
@@ -20,5 +20,15 @@ public class Name {
 	@Override
 	public String toString() {
 		return _name;
+	}
+
+	@Override
+	public int hashCode() {
+		return _name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return _name.equals(obj);
 	}
 }
