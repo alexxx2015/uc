@@ -21,4 +21,14 @@ public class Name {
 	public String toString() {
 		return _name;
 	}
+
+	@Override
+	public int hashCode() {
+		return _name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return _name.equals(obj);
+	}
 }
