@@ -37,7 +37,22 @@ public class Main {
 		        eventParams.put("fd", "4");
 		        eventParams.put("PEP", "Linux");
 
-				IResponse resp = getPdpCon().notifyEvent(new EventBasic("Socket", eventParams, true));
+		        IResponse resp = getPdpCon().notifyEvent(new EventBasic("Socket", eventParams, true));
+				System.out.println(resp);
+
+
+				eventParams.clear();
+		        eventParams.put("localIP", "192.168.0.1");
+		        eventParams.put("localPort", "234");
+		        eventParams.put("remoteIP", "192.168.0.2");
+		        eventParams.put("remotePort", "345");
+		        eventParams.put("family", "AF_INET");
+		        eventParams.put("host", "machine1");
+		        eventParams.put("pid", "4251");
+		        eventParams.put("fd", "4");
+		        eventParams.put("PEP", "Linux");
+
+				resp = getPdpCon().notifyEvent(new EventBasic("Connect", eventParams, true));
 				System.out.println(resp);
 			}
 		}.start();

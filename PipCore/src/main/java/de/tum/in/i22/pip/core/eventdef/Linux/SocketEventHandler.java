@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -33,7 +32,7 @@ public class SocketEventHandler extends BaseEventHandler {
 
 		String socketContainerId = ifModel.addContainer(_messageFactory.createContainer());
 
-		ifModel.addName(new Name(host + pid + fd), socketContainerId);
+		ifModel.addName(LinuxEvents.createFiledescrIdentifier(host, pid, fd), socketContainerId);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
