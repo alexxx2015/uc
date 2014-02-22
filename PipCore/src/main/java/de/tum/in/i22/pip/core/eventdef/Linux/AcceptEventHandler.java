@@ -1,6 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
@@ -8,31 +7,32 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class ConnectEventHandler extends BaseEventHandler {
+public class AcceptEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
 		String pid = null;
-		String fd = null;
 		String family = null;
 		String localIP = null;
 		String localPort = null;
 		String remoteIP = null;
 		String remotePort = null;
-		Name socketFD = null;
+		String newFd = null;
 		Name localSocketName = null;
+		Name remoteSocketName = null;
 		String localContainerId = null;
+		String remoteContainerId = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = getParameterValue("pid");
-			fd = getParameterValue("fd");
 			family = getParameterValue("family");
 			localIP = getParameterValue("localIP");
 			localPort = getParameterValue("localPort");
 			remoteIP = getParameterValue("remoteIP");
 			remotePort = getParameterValue("remotePort");
+			newFd = getParameterValue("newfd");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
@@ -51,23 +51,55 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		InformationFlowModel ifModel = getInformationFlowModel();
 
-		// localSocketName := (sn(e),(a,x))
+		// local_socket_name := (sn(e),(a,x))
 		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
 
-		// c := f((pid,sfd))
-		socketFD = FiledescrName.create(host, pid, fd);
-		localContainerId = ifModel.getContainerIdByName(socketFD);
+		// remote_socket_name := ((a,x),sn(e))
+		remoteSocketName = SocketName.create(host, pid, remoteIP, remotePort, localIP, localPort);
+
+		// create new container c
+		localContainerId = ifModel.addContainer(_messageFactory.createContainer());
 
 		if (localContainerId == null) {
-			_logger.fatal("Container with identifier " + socketFD + " should exist due to "
-					+ "previous socket() call. But it did not.");
-			return _messageFactory.createStatus(EStatus.OKAY);
+			_logger.fatal("Unable to create container.");
 		}
+		else {
+			// f[(p,(sn(e),(a,x))) <- c]
+			ifModel.addName(localSocketName, localContainerId);
 
-		// f[(p,(sn(e),(a,x))) <- c]
-		ifModel.addName(localSocketName, localContainerId);
+			// f[((p,e)) <- c]
+			ifModel.addName(FiledescrName.create(host, pid, newFd), localContainerId);
+
+			if (!localIP.equals(remoteIP)) {
+				// client is remote
+
+				// get remote container id from remote host for creating the alias
+				// TODO: remoteContainerId = ...
+
+				ifModel.addAlias(localContainerId, remoteContainerId);
+			}
+			else {
+				// client is local
+
+				// this assumes that the corresponding connect() already happened.
+				// This needs to be enforced by the PEP.
+				remoteContainerId = ifModel.getContainerIdByName(remoteSocketName);
+
+				if (remoteContainerId == null) {
+					_logger.fatal("accept() happened, but corresponding connect() did not happen before. "
+							+ "The order of these events must be enforced by the PEP.");
+				}
+
+				ifModel.addAlias(localContainerId, remoteContainerId);
+				ifModel.addAlias(remoteContainerId, localContainerId);
+			}
+
+			// add name of remote container
+			ifModel.addName(remoteSocketName, remoteContainerId);
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
 }
+
