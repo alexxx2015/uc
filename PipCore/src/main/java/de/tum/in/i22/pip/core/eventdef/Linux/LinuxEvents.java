@@ -32,7 +32,6 @@ public class LinuxEvents {
 	 */
 
 
-	static final String IP_UNSPEC = "unspec";
 
 	static enum Shut {
 		SHUT_RDWR,
@@ -40,13 +39,7 @@ public class LinuxEvents {
 		SHUT_WR
 	}
 
-	static final Set<String> SUPPORTED_SOCKET_FAMILIES = new HashSet<String>(Arrays.asList("AF_INET"));
 
-	static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(Arrays.asList(
-														"127.0.0.1",
-														"localhost",
-														"0000:0000:0000:0000:0000:0000:0000:0001",
-														"::1"));
 
 	static void close(Name name) {
 		if (name instanceof SocketName) {

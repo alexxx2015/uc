@@ -1,6 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.uc.distr.Network;;
 
 
 
@@ -27,7 +28,7 @@ class SocketName extends Name {
 	}
 
 	public static SocketName create(String host, String pid, String localIP, String localPort, String remoteIP, String remotePort) {
-		if (LinuxEvents.LOCAL_IP_ADDRESSES.contains(localIP) || LinuxEvents.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
+		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
 			return new SocketName(host, pid, localIP, localPort, remoteIP, remotePort,
 					PREFIX_SOCKET + host + "x" + pid + ";" + localIP + ":" + localPort + "x" + remoteIP + ":" + remotePort);
 		}

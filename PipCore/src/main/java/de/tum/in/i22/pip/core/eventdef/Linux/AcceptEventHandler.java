@@ -6,6 +6,7 @@ import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.distr.Network;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
@@ -38,13 +39,13 @@ public class AcceptEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		if (!LinuxEvents.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
+		if (!Network.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
 			_logger.info("Socket family " + family + " is not handled.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
 		// no IP address assigned. Syscall fails
-		if (localIP.equals(LinuxEvents.IP_UNSPEC)) {
+		if (localIP.equals(Network.IP_UNSPEC)) {
 			_logger.info("No local IP address was assigned. Syscall fails.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
