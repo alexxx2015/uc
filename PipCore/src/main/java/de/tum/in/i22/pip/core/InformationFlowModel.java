@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
@@ -45,8 +46,8 @@ public class InformationFlowModel {
 	// [Container.identifier -> List[Container.identifier]]
 	private Map<String, Set<String>> _containerAliasesMap = null;
 
-	// the naming set [name -> List[Container.identifier]]
-	private Map<Name, String> _namingSet = null;
+	// the naming set [name -> Container.identifier]
+	private Map<ContainerName, String> _namingSet = null;
 
 	// list of currently opened scopes
 	private Set<Scope> _scopeSet = null;
@@ -56,7 +57,7 @@ public class InformationFlowModel {
 	private Set<IData> _dataSetBackup;
 	private Map<String, Set<String>> _dataToContainerMapBackup;
 	private Map<String, Set<String>> _containerAliasesMapBackup;
-	private Map<Name, String> _namingSetBackup;
+	private Map<ContainerName, String> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
@@ -113,7 +114,7 @@ public class InformationFlowModel {
 				_containerAliasesMapBackup.put(e.getKey(), s);
 			}
 
-			_namingSetBackup = new HashMap<Name, String>(_namingSet);
+			_namingSetBackup = new HashMap<ContainerName, String>(_namingSet);
 			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
 			return true;
 		}
@@ -364,21 +365,26 @@ public class InformationFlowModel {
 	}
 
 	public boolean emptyContainer(String id) {
-		boolean res = false;
-		if (hasContainerWithId(id)) {
-			Set<String> set = _dataToContainerMap.get(id);
-			if (set != null) {
+//		boolean res = false;
+//
+//		// TODO, FK: deleted this code. Can be done in one line (below).
+//		// If you agree, delete this comment.
+//		if (hasContainerWithId(id)) {
+//			Set<String> set = _dataToContainerMap.get(id);
+//			if (set != null) {
+//
+//				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
+//				//JUST WASTED HOURS FINDING THE BUG
+//				_dataToContainerMap.remove(id);
+//
+//
+//				res = true;
+//			}
+//		}
+//
+//		return res;
 
-				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
-				//JUST WASTED HOURS FINDING THE BUG
-				_dataToContainerMap.remove(id);
-
-
-				res = true;
-			}
-		}
-
-		return res;
+		return _dataToContainerMap.remove(id) != null;
 	}
 
 	/**
@@ -624,7 +630,7 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public boolean addName(Name name, String containerId) {
+	public boolean addName(ContainerName name, String containerId) {
 		boolean res = false;
 		if (name != null && !name.getName().isEmpty()) {
 			_namingSet.put(name, containerId);
@@ -639,7 +645,7 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(Name name) {
+	public boolean removeName(ContainerName name) {
 		boolean res = false;
 		if (name != null) {
 			String removedEntry = _namingSet.remove(name);
@@ -654,21 +660,27 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByName(Name name) {
+	public String getContainerIdByName(ContainerName name) {
 		String containerId = null;
-		if (name != null && name.getName() != null) {
-			Set<Name> pipNameSet = _namingSet.keySet();
-			for (Name nm : pipNameSet) {
-				String representationName = nm.getName();
-				if (name.getName().equals(representationName)) {
-					containerId = _namingSet.get(nm);
-					break;
-				}
-			}
+		if (_namingSet != null && name != null && name.getName() != null) {
+//			// FK: Malte's old code. The single line below should do the job as well
+//			// If you (anyone) agree, please delete
+//			Set<Name> pipNameSet = _namingSet.keySet();
+//			for (Name nm : pipNameSet) {
+//				String representationName = nm.getName();
+//				if (name.getName().equals(representationName)) {
+//					containerId = _namingSet.get(nm);
+//					break;
+//				}
+//			}
+
+			return _namingSet.get(name);
 		}
 		return containerId;
 	}
 
+// 	FK:  Why would it be useful???
+//		If there is someone who agrees: Please delete this code.
 	/**
 	 * Returns the container that is referenced by the naming name. The search
 	 * is done in a less strict way; it is enough that the name only partially
@@ -677,11 +689,11 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByNameRelaxed(Name name) {
+	public String getContainerIdByNameRelaxed(ContainerName name) {
 		String containerId = null;
 		if (name != null && name.getName() != null) {
 			String representationName = name.getName();
-			for (Name nm : _namingSet.keySet()) {
+			for (ContainerName nm : _namingSet.keySet()) {
 				if (nm.getName() != null
 						&& nm.getName().contains(representationName)) {
 
@@ -694,21 +706,32 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Return all re that refer to the container with containerId.
+	 * Return all names that refer to the container with containerId.
 	 *
 	 * @param containerId
 	 * @return
 	 */
-	public List<Name> getAllNames(String containerId) {
-		List<Name> result = new ArrayList<Name>();
+	public List<ContainerName> getAllNames(String containerId) {
+		List<ContainerName> result = new ArrayList<ContainerName>();
 
-		if (_namingSet.containsValue(containerId)) {
-			for (Entry<Name, String> entry : _namingSet.entrySet()) {
-				if (entry.getValue() == containerId) {
-					result.add(entry.getKey());
+//		// FK: Malte's old code. The (more efficient) code below should do the job as well
+//		// If you (anyone) agree, please delete
+//		if (_namingSet.containsValue(containerId)) {
+//			for (Entry<Name, String> entry : _namingSet.entrySet()) {
+//				if (entry.getValue() == containerId) {
+//					result.add(entry.getKey());
+//				}
+//			}
+//		}
+
+		if (_namingSet != null) {
+			for (ContainerName name : _namingSet.keySet()) {
+				if (_namingSet.get(name).equals(containerId)) {
+					result.add(name);
 				}
 			}
 		}
+
 		return result;
 	}
 
@@ -716,10 +739,10 @@ public class InformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
-	public List<Name> getAllNamingsFrom(String pid) {
-		List<Name> result = new ArrayList<Name>();
+	public List<ContainerName> getAllNamingsFrom(String pid) {
+		List<ContainerName> result = new ArrayList<ContainerName>();
 
-		for (Entry<Name, String> entry : _namingSet.entrySet()) {
+		for (Entry<ContainerName, String> entry : _namingSet.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
 				result.add(entry.getKey());
 		}

@@ -3,7 +3,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import java.util.List;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -38,14 +38,14 @@ public class LinuxEvents {
 
 
 
-	static void close(Name name) {
+	static void close(ContainerName name) {
 		if (name instanceof SocketName) {
 			LinuxEvents.closeSocket(name);
 		}
 		InformationFlowModel.getInstance().removeName(name);
 	}
 
-	private static void closeSocket(Name name) {
+	private static void closeSocket(ContainerName name) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
 		String containerId = ifModel.getContainerIdByName(name);
@@ -53,7 +53,7 @@ public class LinuxEvents {
 		int count = 0;
 
 		if (containerId != null) {
-			for (Name n : ifModel.getAllNames(containerId)) {
+			for (ContainerName n : ifModel.getAllNames(containerId)) {
 				if (!(n instanceof SocketName)) {
 					count++;
 				}
@@ -65,13 +65,13 @@ public class LinuxEvents {
 		}
 	}
 
-	static void shutdown(Name name, Shut mode) {
+	static void shutdown(ContainerName name, Shut mode) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
 		String containerId = ifModel.getContainerIdByName(name);
 
 		if (containerId != null) {
-			List<Name> allNames = ifModel.getAllNames(containerId);
+			List<ContainerName> allNames = ifModel.getAllNames(containerId);
 
 			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
 				// disallow reception
@@ -87,14 +87,14 @@ public class LinuxEvents {
 			if (mode == Shut.SHUT_RDWR) {
 				// disallow transmission and reception,
 				// therefore delete all socket identifiers
-				for (Name n : allNames) {
+				for (ContainerName n : allNames) {
 					if (n instanceof SocketName) {
 						ifModel.removeName(n);
 					}
 				}
 			}
 
-			for (Name n : allNames) {
+			for (ContainerName n : allNames) {
 				if (n instanceof SocketName) {
 					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
 					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {

@@ -1,32 +1,20 @@
-package de.tum.in.i22.uc.distr;
-
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 
-/**
- *
- * @author Florian Kelbert
- *
- */
-public class Network {
-
-	public static final String IP_UNSPEC = "unspec";
-
-	public static final Set<String> SUPPORTED_SOCKET_FAMILIES = new HashSet<String>(
-			Arrays.asList("AF_INET"));
-
-	public static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(
-			Arrays.asList("127.0.0.1", "localhost",
-					"0000:0000:0000:0000:0000:0000:0000:0001", "::1"));
-	protected static final Logger _logger = Logger.getLogger(Network.class);
-
+public class Tester {
+	public static void main(String[] args) throws SocketException {
+		System.out.println(getInetAddresses(Inet4Address.class));
+		System.out.println(getInetAddresses(Inet6Address.class));
+		System.out.println(getInetAddresses(InetAddress.class));
+	}
 
 
 	/**
@@ -68,7 +56,6 @@ public class Network {
 
 						try {
 							clazz.cast(current_addr);
-							/// This cast is good! We have just checked for it!
 							result.add((T) current_addr);
 						}
 						catch (ClassCastException e) {

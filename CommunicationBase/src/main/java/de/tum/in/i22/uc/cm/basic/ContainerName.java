@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.core;
+package de.tum.in.i22.uc.cm.basic;
 
 /**
  * A container can have several representations.
@@ -6,10 +6,10 @@ package de.tum.in.i22.pip.core;
  * @author Stoimenov
  *
  */
-public class Name {
+public class ContainerName {
 	private final String _name ;
 
-	public Name(String name) {
+	public ContainerName(String name) {
 		this._name = name;
 	}
 

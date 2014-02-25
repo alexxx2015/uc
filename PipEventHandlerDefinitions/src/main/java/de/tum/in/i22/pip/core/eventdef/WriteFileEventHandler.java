@@ -4,9 +4,9 @@ package de.tum.in.i22.pip.core.eventdef;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -44,7 +44,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 
 		InformationFlowModel ifModel = getInformationFlowModel();
 		String fileContainerId = ifModel
-				.getContainerIdByName(new Name(fileName));
+				.getContainerIdByName(new ContainerName(fileName));
 
 		// check if container for filename exists and create new container if
 		// not
@@ -56,7 +56,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 
 			ifModel.addDataToContainerMapping(fileDataId, fileContainerId);
 
-			ifModel.addName(new Name(fileName), fileContainerId);
+			ifModel.addName(new ContainerName(fileName), fileContainerId);
 		}
 
 		ifModel.addDataToContainerMappings(

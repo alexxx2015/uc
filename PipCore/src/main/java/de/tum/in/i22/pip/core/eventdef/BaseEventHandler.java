@@ -7,10 +7,10 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.Scope;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -248,14 +248,14 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	protected String instantiateProcess(String processId, String processName) {
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerID = ifModel.getContainerIdByName(new Name(processId));
+		String containerID = ifModel.getContainerIdByName(new ContainerName(processId));
 
 		// check if container for process exists and create new container if not
 		if (containerID == null) {
 			IContainer container = _messageFactory.createContainer();
 			containerID = ifModel.addContainer(container);
-			ifModel.addName(new Name(processId), containerID);
-			ifModel.addName(new Name(processName), containerID);
+			ifModel.addName(new ContainerName(processId), containerID);
+			ifModel.addName(new ContainerName(processName), containerID);
 		}
 
 		return containerID;

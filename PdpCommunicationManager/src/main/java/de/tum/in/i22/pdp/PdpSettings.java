@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.uc.cm.SettingsLoader;
 
 /**
- * 
+ *
  * @author Stoimenov, Florian Kelbert
  * Settings are read from the specified properties file.
  * If no file is specified, file "pdp.properties" is used.
@@ -17,24 +17,25 @@ import de.tum.in.i22.uc.cm.SettingsLoader;
  *
  */
 public class PdpSettings {
-	
+
 	private static Logger _logger = Logger.getLogger(PdpSettings.class);
-	
+
 	private static PdpSettings _instance;
 
 	private static final String DEFAULT_PROPERTIES_FILE_NAME = "pdp.properties";
 
-	private String propertiesFilename;
-	
+	private final String propertiesFilename;
+
 	// default values will be overridden with the values from the properties file
 	private int _pepGPBListenerPortNum = 10001;
 	private int _pepThriftListenerPortNum=20001;
 	private int _pmpListenerPortNum = 10002;
-	
+	private int _pipListenerPortNum = 10003;
+
 	private String _pipAddress;
 	private int _pipPortNum;
 	private int _queueSize = 100;
-	
+
 	private PdpSettings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);
 	}
@@ -42,7 +43,7 @@ public class PdpSettings {
 	private PdpSettings(String propertiesFilename) {
 		this.propertiesFilename = propertiesFilename;
 	}
-	
+
 	public static PdpSettings getInstance() {
 		return (_instance != null)
 			? _instance
@@ -62,7 +63,7 @@ public class PdpSettings {
 
 	public void loadProperties() throws IOException {
 		Properties props = SettingsLoader.loadProperties(propertiesFilename);
-		
+
 		try {
 			_pepGPBListenerPortNum = Integer.valueOf((String)props.get("pep_GPB_listener_port_num"));
 		} catch (Exception e) {
@@ -76,30 +77,37 @@ public class PdpSettings {
 			_logger.warn("Cannot read Thrift pep listener port number.", e);
 			_logger.info("Default port of Thrift pep listener: " + _pepGPBListenerPortNum);
 		}
-		
+
 		try {
-			_pmpListenerPortNum = Integer.valueOf((String)props.getProperty("pmp_listener_port_num"));
+			_pmpListenerPortNum = Integer.valueOf(props.getProperty("pmp_listener_port_num"));
 		} catch (Exception e) {
 			_logger.warn("Cannot read pmp listener port number.", e);
 			_logger.info("Default port of pmp listener: " + _pmpListenerPortNum);
 		}
-		
+
 		try {
-			_pipAddress = (String)props.getProperty("pip_address");
+			_pipListenerPortNum = Integer.valueOf(props.getProperty("pip_listener_port_num"));
+		} catch (Exception e) {
+			_logger.warn("Cannot read pip listener port number.", e);
+			_logger.info("Default port of pip listener: " + _pipListenerPortNum);
+		}
+
+		try {
+			_pipAddress = props.getProperty("pip_address");
 		} catch (Exception e) {
 			_logger.fatal("Cannot read pip address.", e);
 			_logger.debug("Killing the app.");
 			System.exit(1);
 		}
-		
+
 		try {
-			_pipPortNum = Integer.valueOf((String)props.getProperty("pip_port_num"));
+			_pipPortNum = Integer.valueOf(props.getProperty("pip_port_num"));
 		} catch (Exception e) {
 			_logger.fatal("Cannot read pip port number.", e);
 			_logger.debug("Killing the app.");
 			System.exit(1);
 		}
-		
+
 		try {
 			_queueSize = Integer.valueOf((String)props.get("queue_size"));
 		} catch (Exception e) {
@@ -116,7 +124,7 @@ public class PdpSettings {
 	public int getPepGPBListenerPortNum() {
 		return _pepGPBListenerPortNum;
 	}
-	
+
 	public int getPepThriftListenerPortNum() {
 		return _pepThriftListenerPortNum;
 	}
@@ -124,11 +132,15 @@ public class PdpSettings {
 	public int getPmpListenerPortNum() {
 		return _pmpListenerPortNum;
 	}
-	
+
+	public int getPipListenerPortNum() {
+		return _pipListenerPortNum;
+	}
+
 	public String getPipAddress() {
 		return _pipAddress;
 	}
-	
+
 	public int getPipPortNum() {
 		return _pipPortNum;
 	}
@@ -140,7 +152,7 @@ public class PdpSettings {
 	public void setPepGPBListenerPortNum(int pepGPBListenerPortNum) {
 		_pepGPBListenerPortNum = pepGPBListenerPortNum;
 	}
-	
+
 	public void setPepThriftListenerPortNum(int pepThriftListenerPortNum) {
 		_pepThriftListenerPortNum = pepThriftListenerPortNum;
 	}
@@ -160,6 +172,6 @@ public class PdpSettings {
 	public void setQueueSize(int queueSize) {
 		_queueSize = queueSize;
 	}
-	
+
 }
 
