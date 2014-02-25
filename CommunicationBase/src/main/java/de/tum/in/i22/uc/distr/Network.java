@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.distr;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

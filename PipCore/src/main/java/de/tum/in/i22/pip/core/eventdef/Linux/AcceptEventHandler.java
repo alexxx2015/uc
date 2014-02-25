@@ -4,8 +4,10 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.ContainerRemote;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.distr.IPLocation;
 import de.tum.in.i22.uc.distr.Network;
 
 public class AcceptEventHandler extends BaseEventHandler {
@@ -76,6 +78,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 				// get remote container id from remote host for creating the alias
 				// TODO: remoteContainerId = ...
+//				remoteContainerId = new ContainerRemote(remoteSocketName, IPLocation.createIPLocation(remoteIP));
 
 				ifModel.addAlias(localContainerId, remoteContainerId);
 			}
