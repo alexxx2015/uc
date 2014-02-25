@@ -679,31 +679,31 @@ public class InformationFlowModel {
 		return containerId;
 	}
 
-// 	FK: Commented this. Why would it be useful???
+// 	FK:  Why would it be useful???
 //		If there is someone who agrees: Please delete this code.
-//	/**
-//	 * Returns the container that is referenced by the naming name. The search
-//	 * is done in a less strict way; it is enough that the name only partially
-//	 * fits an entry in the naming mapping.
-//	 *
-//	 * @param name
-//	 * @return
-//	 */
-//	public String getContainerIdByNameRelaxed(Name name) {
-//		String containerId = null;
-//		if (name != null && name.getName() != null) {
-//			String representationName = name.getName();
-//			for (Name nm : _namingSet.keySet()) {
-//				if (nm.getName() != null
-//						&& nm.getName().contains(representationName)) {
-//
-//					containerId = _namingSet.get(nm);
-//					break;
-//				}
-//			}
-//		}
-//		return containerId;
-//	}
+	/**
+	 * Returns the container that is referenced by the naming name. The search
+	 * is done in a less strict way; it is enough that the name only partially
+	 * fits an entry in the naming mapping.
+	 *
+	 * @param name
+	 * @return
+	 */
+	public String getContainerIdByNameRelaxed(ContainerName name) {
+		String containerId = null;
+		if (name != null && name.getName() != null) {
+			String representationName = name.getName();
+			for (ContainerName nm : _namingSet.keySet()) {
+				if (nm.getName() != null
+						&& nm.getName().contains(representationName)) {
+
+					containerId = _namingSet.get(nm);
+					break;
+				}
+			}
+		}
+		return containerId;
+	}
 
 	/**
 	 * Return all names that refer to the container with containerId.
