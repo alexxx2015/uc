@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.PdpSettings;
+import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
@@ -43,7 +44,7 @@ public class RequestHandler implements Runnable {
 	private static IPdpCore2PipCacher _core2pip = null;
 	private static IPdpEngine2PipCacher _engine2pip = null;
 	private static IPipCacher2Pip _pipHandler = null;
-	
+
 	public IPdpCore2PipCacher getCore2Pip(){
 		return _core2pip ;
 	}
@@ -82,9 +83,9 @@ public class RequestHandler implements Runnable {
 		IEvent initEvent = _messageFactory.createActualEvent(
 				"SchemaInitializer", new HashMap<String, String>());
 		_pipHandler.notifyActualEvent(initEvent);
-	}	
+	}
 
-	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
+	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
 	public static RequestHandler getInstance() {
 		if (_instance == null) {
@@ -114,6 +115,15 @@ public class RequestHandler implements Runnable {
 		_requestQueue.put(obj);
 	}
 
+	public void addPipRequest(PipRequest request, IForwarder forwarder)
+			throws InterruptedException {
+		// add pipRequest to the tail of the queue
+		// put method blocks until the space in the queue becomes available
+		RequestWrapper obj = new PipRequestWrapper(forwarder, request);
+		_logger.debug("Add " + obj + "  to the queue.");
+		_requestQueue.put(obj);
+	}
+
 	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
 			throws InterruptedException {
 		// add pmpRequest to the tail of the queue
@@ -138,6 +148,7 @@ public class RequestHandler implements Runnable {
 		_requestQueue.put(request);
 	}
 
+	@Override
 	public void run() {
 		_logger.debug("Request handler run method");
 		while (!Thread.interrupted()) {
@@ -154,16 +165,16 @@ public class RequestHandler implements Runnable {
 				IEvent event = ((PepNotifyEventRequestWrapper) request)
 						.getEvent();
 				/***
-				 * 
+				 *
 				 * This code has been removed because redundant with the
 				 * CACHER2PIP communication
-				 * 
+				 *
 				 * if (event.isActual()) {
-				 * 
+				 *
 				 * // event is actual, send it to PIP notifyEventToPip(event); }
-				 * 
+				 *
 				 */
-				
+
 				response = pdpHandler.notifyEvent(event);
 			} else if (request instanceof PmpRequestWrapper) {
 				PmpRequest pmpRequest = ((PmpRequestWrapper) request)
@@ -172,9 +183,11 @@ public class RequestHandler implements Runnable {
 			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
 				UpdateIfFlowSemanticsRequestWrapper updateIfFlowRequest = (UpdateIfFlowSemanticsRequestWrapper) request;
 				response = delegeteUpdateIfFlowToPip(updateIfFlowRequest);
-			} else {
-				throw new RuntimeException("Queue element " + request
-						+ " must be either event or PmpRequest!");
+			} else if (request instanceof PipRequestWrapper) {
+				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
+			}
+			else {
+				throw new RuntimeException("Unknown queue element " + request);
 			}
 
 			_logger.trace("event " + request.toString()
@@ -211,9 +224,35 @@ public class RequestHandler implements Runnable {
 	}
 
 	/**
+	 * For handling remote PIP requests.
+	 *
+	 * @param pipRequest the request to process
+	 * @return
+	 */
+	private Object processPipRequest(PipRequest pipRequest) {
+		_logger.debug("Process PIP request " + pipRequest);
+
+		Object result = null;
+
+		switch (pipRequest.getMethod()) {
+			case HAS_CONTAINER:
+				// TODO Florian Kelbert.
+				break;
+			case HAS_DATA:
+				// TODO Florian Kelbert.
+				break;
+			case NOTIFY_EVENT:
+				result = _pipHandler.notifyActualEvent(pipRequest.getEvent());
+				break;
+		}
+
+		return result;
+	}
+
+	/**
 	 * The proxy object will be created only if needed on the first invocation
 	 * of this method.
-	 * 
+	 *
 	 * @return
 	 */
 	private IPdp2PipFast getPdp2PipProxy() throws Exception {
@@ -226,7 +265,7 @@ public class RequestHandler implements Runnable {
 			_pdp2PipProxy = new Pdp2PipImp(pipAddress, pipPort);
 		}
 		return _pdp2PipProxy;
-	}		
+	}
 
 	private IStatus notifyEventToPip(IEvent event) {
 		try {
@@ -237,9 +276,9 @@ public class RequestHandler implements Runnable {
 			// TODO:
 
 			/****
-			 * 
+			 *
 			 * REMOTE PIP SOLUTION: original code from Alexander Stoimenov
-			 * 
+			 *
 			 */
 
 			/*
@@ -252,18 +291,18 @@ public class RequestHandler implements Runnable {
 			 */
 
 			/***
-			 * 
+			 *
 			 * LOCAL PIP SOLUTION by Enrico Lovat
-			 * 
-			 * 
+			 *
+			 *
 			 * The pip object and the respective cacher component will be
 			 * created only if needed on the first invocation of this method.
-			 * 
+			 *
 			 * REQ_HANDLER ---------------------| | | V | PDP_CORE ----| V |
 			 * |---> PIPCACHER --> PIP PDP_ENGINE---| (PDPjava)
-			 * 
+			 *
 			 * The current requestHandler is the PDP_CORE in the picture above
-			 * 
+			 *
 			 */
 
 			if (_pipHandler == null)
@@ -305,7 +344,7 @@ public class RequestHandler implements Runnable {
 
 	private class RequestWrapper {
 		// Forwarder is the thread that will send back the response
-		private IForwarder _forwarder;
+		private final IForwarder _forwarder;
 
 		public RequestWrapper(IForwarder forwarder) {
 			super();
@@ -319,7 +358,7 @@ public class RequestHandler implements Runnable {
 	}
 
 	private class PmpRequestWrapper extends RequestWrapper {
-		private PmpRequest _pmpRequest;
+		private final PmpRequest _pmpRequest;
 
 		public PmpRequestWrapper(IForwarder forwarder, PmpRequest pmpRequest) {
 			super(forwarder);
@@ -337,7 +376,7 @@ public class RequestHandler implements Runnable {
 	}
 
 	private class PepNotifyEventRequestWrapper extends RequestWrapper {
-		private IEvent _event;
+		private final IEvent _event;
 
 		public PepNotifyEventRequestWrapper(IForwarder forwarder, IEvent event) {
 			super(forwarder);
@@ -354,12 +393,37 @@ public class RequestHandler implements Runnable {
 		}
 	}
 
+
+	/**
+	 *
+	 * @author Florian Kelbert
+	 *
+	 */
+	private class PipRequestWrapper extends RequestWrapper {
+		PipRequest _pipRequest;
+
+		public PipRequestWrapper(IForwarder forwarder, PipRequest pipRequest) {
+			super(forwarder);
+			_pipRequest = pipRequest;
+		}
+
+		@Override
+		public String toString() {
+			return "PipRequestWrapper [_pipRequest=" + _pipRequest + "]";
+		}
+
+		public PipRequest getPipRequest() {
+			return _pipRequest;
+		}
+	}
+
+
 	/**
 	 * Update information flow semantics request wrapper. Used for placing
 	 * requests in the queue.
-	 * 
+	 *
 	 * @author Stoimenov
-	 * 
+	 *
 	 */
 	private class UpdateIfFlowSemanticsRequestWrapper extends RequestWrapper {
 		private IPipDeployer _pipDeployer;

@@ -4,9 +4,9 @@ package de.tum.in.i22.pip.core.eventdef;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -45,14 +45,14 @@ public class CreateDCEventHandler extends BaseEventHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new Name(
+		String deviceContainerId = ifModel.getContainerIdByName(new ContainerName(
 				deviceName));
 
 		// check if container for device exists and create new container if not
 		if (deviceContainerId == null) {
 			IContainer container = _messageFactory.createContainer();
 			deviceContainerId = ifModel.addContainer(container);
-			ifModel.addName(new Name(deviceName), deviceContainerId);
+			ifModel.addName(new ContainerName(deviceName), deviceContainerId);
 		}
 
 		ifModel.addDataToContainerMappings(

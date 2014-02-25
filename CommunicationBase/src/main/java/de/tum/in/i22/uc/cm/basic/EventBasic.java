@@ -172,4 +172,7 @@ public class EventBasic implements IEvent {
 		}
 		return isEqual;
 	}
+
+
+	// TODO, FK: if equals() is implemented, also hashCode() should be implemented
 }

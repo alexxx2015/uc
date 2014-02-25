@@ -1,11 +1,14 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.ContainerRemote;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.distr.IPLocation;
+import de.tum.in.i22.uc.distr.Network;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
@@ -19,8 +22,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 		String remoteIP = null;
 		String remotePort = null;
 		String newFd = null;
-		Name localSocketName = null;
-		Name remoteSocketName = null;
+		ContainerName localSocketName = null;
+		ContainerName remoteSocketName = null;
 		String localContainerId = null;
 		String remoteContainerId = null;
 
@@ -38,13 +41,13 @@ public class AcceptEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		if (!LinuxEvents.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
+		if (!Network.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
 			_logger.info("Socket family " + family + " is not handled.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
 		// no IP address assigned. Syscall fails
-		if (localIP.equals(LinuxEvents.IP_UNSPEC)) {
+		if (localIP.equals(Network.IP_UNSPEC)) {
 			_logger.info("No local IP address was assigned. Syscall fails.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
@@ -75,6 +78,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 				// get remote container id from remote host for creating the alias
 				// TODO: remoteContainerId = ...
+//				remoteContainerId = new ContainerRemote(remoteSocketName, IPLocation.createIPLocation(remoteIP));
 
 				ifModel.addAlias(localContainerId, remoteContainerId);
 			}

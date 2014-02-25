@@ -1,9 +1,9 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 
 
-class ProcessName extends Name {
+class ProcessName extends ContainerName {
 
 	private static final String PREFIX_PROCESS = "PROC_";
 

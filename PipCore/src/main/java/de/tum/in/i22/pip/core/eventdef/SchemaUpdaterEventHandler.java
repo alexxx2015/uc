@@ -4,7 +4,7 @@ package de.tum.in.i22.pip.core.eventdef;
 import java.util.Set;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -25,7 +25,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 
 		String contName="TEST_C";
 
-		String contId = ifModel.getContainerIdByName(new Name(
+		String contId = ifModel.getContainerIdByName(new ContainerName(
 				contName));
 		//this should contain TEST_D
 

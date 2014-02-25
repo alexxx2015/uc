@@ -2,11 +2,12 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.distr.Network;
 
 public class ConnectEventHandler extends BaseEventHandler {
 
@@ -20,8 +21,8 @@ public class ConnectEventHandler extends BaseEventHandler {
 		String localPort = null;
 		String remoteIP = null;
 		String remotePort = null;
-		Name socketFD = null;
-		Name localSocketName = null;
+		ContainerName socketFD = null;
+		ContainerName localSocketName = null;
 		String localContainerId = null;
 
 		try {
@@ -38,13 +39,13 @@ public class ConnectEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		if (!LinuxEvents.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
+		if (!Network.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
 			_logger.info("Socket family " + family + " is not handled.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
 		// no IP address assigned. Syscall fails
-		if (localIP.equals(LinuxEvents.IP_UNSPEC)) {
+		if (localIP.equals(Network.IP_UNSPEC)) {
 			_logger.info("No local IP address was assigned. Syscall fails.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}

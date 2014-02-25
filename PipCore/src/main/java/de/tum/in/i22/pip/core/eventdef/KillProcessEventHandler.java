@@ -4,9 +4,9 @@ package de.tum.in.i22.pip.core.eventdef;
 import java.util.Set;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -30,7 +30,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 		}
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String processContainerId = ifModel.getContainerIdByName(new Name(pid));
+		String processContainerId = ifModel.getContainerIdByName(new ContainerName(pid));
 
 		// check if container for process exists
 		if (processContainerId != null) {
@@ -46,7 +46,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			ifModel.removeAllAliasesTo(processContainerId);
 			ifModel.removeContainer(processContainerId);
 
-			for (Name nm : ifModel.getAllNamingsFrom(processContainerId)) {
+			for (ContainerName nm : ifModel.getAllNamingsFrom(processContainerId)) {
 				ifModel.removeName(nm);
 			}
 		}
