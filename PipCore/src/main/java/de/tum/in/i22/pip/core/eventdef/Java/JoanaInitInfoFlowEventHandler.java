@@ -41,18 +41,20 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		
 		String delim = ":";				
 		
+		String prefix = "";
+		if(type.toLowerCase().equals("source")){
+			prefix = "src_";
+		} else if(type.toLowerCase().equals("sink")){
+			prefix = "snk_";
+		}
+		
 		//Version 1: signature is used as naming identifier for a container
 		//Version 2: signature+location is used as naming identifier for a container
 		//Version 3: ignature+location+parampos is used as naming identifier for a container
 		String[] infoConts = new String[]{signature, location+delim+offset+delim+signature, location+delim+offset+delim+signature+delim+parampos};
 		for(String infoCont : infoConts){
-			if(type.toLowerCase().equals("source")){
-				infoCont = "src_"+infoCont;
-			} else if(type.toLowerCase().equals("sink")){
-				infoCont = "snk_"+infoCont;
-			}
-			
 			String infoContId = ifModel.getContainerIdByName(new Name(infoCont));
+			infoCont = prefix + infoCont;
 	
 			_logger.debug("contID = " + infoContId);
 	
@@ -73,9 +75,9 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		}
 		
 //		Process alias relationship
-		String id1 = ifModel.getContainerIdByName(new Name(infoConts[0]));
-		String id2 = ifModel.getContainerIdByName(new Name(infoConts[1]));
-		String id3 = ifModel.getContainerIdByName(new Name(infoConts[2]));
+		String id1 = ifModel.getContainerIdByName(new Name(prefix+infoConts[0]));
+		String id2 = ifModel.getContainerIdByName(new Name(prefix+infoConts[1]));
+		String id3 = ifModel.getContainerIdByName(new Name(prefix+infoConts[2]));
 		
 		if(type.toLowerCase().equals("source")){
 			ifModel.addAlias(id1, id2);
