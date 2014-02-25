@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 
 /**
- * For handling remote PIP requests
+ * Class for handling remote PIP requests.
  * @author Florian Kelbert
  *
  */

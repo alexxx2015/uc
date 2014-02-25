@@ -43,6 +43,8 @@ public class Main {
 		        resp = getPdpCon().notifyEvent(ev);
 				System.out.println(resp);
 
+//				getPdpCon().
+
 				/**
 				 * Important note:
 				 * The PEP must enforce that the connect() happens before the corresponding accept!

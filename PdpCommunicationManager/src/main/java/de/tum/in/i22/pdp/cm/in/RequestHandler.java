@@ -115,6 +115,15 @@ public class RequestHandler implements Runnable {
 		_requestQueue.put(obj);
 	}
 
+	public void addPipRequest(PipRequest request, IForwarder forwarder)
+			throws InterruptedException {
+		// add pipRequest to the tail of the queue
+		// put method blocks until the space in the queue becomes available
+		RequestWrapper obj = new PipRequestWrapper(forwarder, request);
+		_logger.debug("Add " + obj + "  to the queue.");
+		_requestQueue.put(obj);
+	}
+
 	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
 			throws InterruptedException {
 		// add pmpRequest to the tail of the queue
@@ -175,8 +184,7 @@ public class RequestHandler implements Runnable {
 				UpdateIfFlowSemanticsRequestWrapper updateIfFlowRequest = (UpdateIfFlowSemanticsRequestWrapper) request;
 				response = delegeteUpdateIfFlowToPip(updateIfFlowRequest);
 			} else if (request instanceof PipRequestWrapper) {
-				PipRequest pipRequest = ((PipRequestWrapper) request).getPipRequest();
-				response = processPipRequest(pipRequest);
+				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
 			}
 			else {
 				throw new RuntimeException("Unknown queue element " + request);

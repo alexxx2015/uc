@@ -3,7 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pip;
 
 
 /**
- * For handling remote PIP requests
+ * For defining the kind of remote PIP request.
  * @author Florian Kelbert
  *
  */
