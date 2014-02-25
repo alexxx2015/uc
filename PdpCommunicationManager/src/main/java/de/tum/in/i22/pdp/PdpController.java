@@ -18,6 +18,7 @@ import com.google.inject.Injector;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
+import de.tum.in.i22.pdp.cm.in.pip.PipFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
@@ -36,7 +37,10 @@ public class PdpController {
 	private final static String OPTION_HELP = "h";
 	private final static String OPTION_PDP_PROPS = "pp";
 
-	private Thread threadRequestHandler, threadPmpFastServiceHandler, threadPepGPBFastServiceHandler;
+	private Thread threadRequestHandler;
+	private Thread threadPmpFastServiceHandler;
+	private Thread threadPepGPBFastServiceHandler;
+	private Thread threadPipFastServiceHandler;
 
 	/**
 	 * Use dependency injection to inject pdpHandler.
@@ -69,6 +73,12 @@ public class PdpController {
 		this.threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
 		this.threadPmpFastServiceHandler.start();
 
+		int pipListenerPort = getPdpSettings().getPipListenerPortNum();
+		_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
+		FastServiceHandler pipFastServiceHandler = new PipFastServiceHandler(pipListenerPort);
+		this.threadPipFastServiceHandler = new Thread(pipFastServiceHandler);
+		this.threadPipFastServiceHandler.start();
+
 		int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
 		_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
 		FastServiceHandler pepGPBFastServiceHandler = new PepFastServiceHandler(pepGPBListenerPort);
@@ -82,8 +92,10 @@ public class PdpController {
 	}
 
 	public void stop(){
+		// TODO These methods are deprecated for a good reason... Get rid of them.
 		this.threadPepGPBFastServiceHandler.stop();
 		this.threadPmpFastServiceHandler.stop();
+		this.threadPipFastServiceHandler.stop();
 		this.threadRequestHandler.stop();
 		ThriftServer.stop();
 	}
