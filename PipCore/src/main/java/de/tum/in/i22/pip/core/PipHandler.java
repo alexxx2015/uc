@@ -380,7 +380,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	@Override
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
-		return this._ifModel.toString();
+		return _ifModel.toString();
 	}
 
 }
