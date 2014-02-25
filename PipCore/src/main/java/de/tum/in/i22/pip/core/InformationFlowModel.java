@@ -25,11 +25,11 @@ public class InformationFlowModel {
 
 	@Override
 	public String toString() {
-		return "InformationFlowModel [_containerSet=" + _containerSet
-				+ ", _dataSet=" + _dataSet + ", _dataToContainerMap="
-				+ _dataToContainerMap + ", _containerAliasesMap="
-				+ _containerAliasesMap + ", _namingSet=" + _namingSet
-				+ ", _scopeSet=" + _scopeSet + " IS_SIMULATING="+isSimulating()+"]";
+		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
+				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
+				+ _dataToContainerMap + System.getProperty("line.separator")+", _containerAliasesMap="
+				+ _containerAliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingSet+System.getProperty("line.separator")
+				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
 	}
 
 	private static InformationFlowModel _instance = new InformationFlowModel();

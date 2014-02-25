@@ -57,6 +57,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
+		// TODO: evaluatePredicateCurrentState 
 		// TODO: add code to evaluate generic predicate
 		// Note that the three parameters of the predicate (State-based formula,
 		// parameter1, parameter2) should be separated by separator1, while list
@@ -67,14 +68,14 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 
 		///BEGINNING OF TEST BLOCK
-		String contId = _ifModel.getContainerIdByName(new Name(
-				"TEST_C"));
-
-		if (contId!=null){
-			_logger.debug("number of data elements in container TEST_C = "+_ifModel.getDataInContainer(contId).size());
-		} else {
-			_logger.debug("TEST_C contains no data or no container TEST_C found");
-		}
+//		String contId = _ifModel.getContainerIdByName(new Name(
+//				"TEST_C"));
+//
+//		if (contId!=null){
+//			_logger.debug("number of data elements in container TEST_C = "+_ifModel.getDataInContainer(contId).size());
+//		} else {
+//			_logger.debug("TEST_C contains no data or no container TEST_C found");
+//		}
 		///END OF TEST BLOCK
 
 
@@ -99,17 +100,21 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				containers= par2.split(separator2);
 				s= _ifModel.getContainersForData(par1);
 				//_logger.debug("size of s: "+s.size());
-				for (String cont : containers){
-					Name pname= new Name(cont);
-					//_logger.debug("..in loop("+cont+")..");
-					if (s.contains(_ifModel.getContainerIdByNameRelaxed(pname))) {
-						_logger.trace(out+"=false");
-						return false;
+				if(s.size() > 0){
+					for (String cont : containers){
+						Name pname= new Name(cont);
+						//_logger.debug("..in loop("+cont+")..");
+						if (s.contains(_ifModel.getContainerIdByNameRelaxed(pname))) {
+							_logger.trace(out+"=false");
+							return false;
+						}
 					}
+					//_logger.trace("..no match found, returning true");
+					_logger.trace(out+"=true");
+					return true;
+				} else{
+					return false;
 				}
-				//_logger.trace("..no match found, returning true");
-				_logger.trace(out+"=true");
-				return true;
 			case "isOnlyIn":
 				containers= par2.split(separator2);
 				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
