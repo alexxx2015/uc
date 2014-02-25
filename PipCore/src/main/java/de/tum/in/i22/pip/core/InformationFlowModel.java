@@ -45,7 +45,7 @@ public class InformationFlowModel {
 	// [Container.identifier -> List[Container.identifier]]
 	private Map<String, Set<String>> _containerAliasesMap = null;
 
-	// the naming set [name -> List[Container.identifier]]
+	// the naming set [name -> Container.identifier]
 	private Map<Name, String> _namingSet = null;
 
 	// list of currently opened scopes
@@ -364,21 +364,26 @@ public class InformationFlowModel {
 	}
 
 	public boolean emptyContainer(String id) {
-		boolean res = false;
-		if (hasContainerWithId(id)) {
-			Set<String> set = _dataToContainerMap.get(id);
-			if (set != null) {
+//		boolean res = false;
+//
+//		// TODO, FK: deleted this code. Can be done in one line (below).
+//		// If you agree, delete this comment.
+//		if (hasContainerWithId(id)) {
+//			Set<String> set = _dataToContainerMap.get(id);
+//			if (set != null) {
+//
+//				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
+//				//JUST WASTED HOURS FINDING THE BUG
+//				_dataToContainerMap.remove(id);
+//
+//
+//				res = true;
+//			}
+//		}
+//
+//		return res;
 
-				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
-				//JUST WASTED HOURS FINDING THE BUG
-				_dataToContainerMap.remove(id);
-
-
-				res = true;
-			}
-		}
-
-		return res;
+		return _dataToContainerMap.remove(id) != null;
 	}
 
 	/**
@@ -656,45 +661,51 @@ public class InformationFlowModel {
 	 */
 	public String getContainerIdByName(Name name) {
 		String containerId = null;
-		if (name != null && name.getName() != null) {
-			Set<Name> pipNameSet = _namingSet.keySet();
-			for (Name nm : pipNameSet) {
-				String representationName = nm.getName();
-				if (name.getName().equals(representationName)) {
-					containerId = _namingSet.get(nm);
-					break;
-				}
-			}
+		if (_namingSet != null && name != null && name.getName() != null) {
+//			// FK: Malte's old code. The single line below should do the job as well
+//			// If you (anyone) agree, please delete
+//			Set<Name> pipNameSet = _namingSet.keySet();
+//			for (Name nm : pipNameSet) {
+//				String representationName = nm.getName();
+//				if (name.getName().equals(representationName)) {
+//					containerId = _namingSet.get(nm);
+//					break;
+//				}
+//			}
+
+			return _namingSet.get(name);
 		}
 		return containerId;
 	}
 
-	/**
-	 * Returns the container that is referenced by the naming name. The search
-	 * is done in a less strict way; it is enough that the name only partially
-	 * fits an entry in the naming mapping.
-	 *
-	 * @param name
-	 * @return
-	 */
-	public String getContainerIdByNameRelaxed(Name name) {
-		String containerId = null;
-		if (name != null && name.getName() != null) {
-			String representationName = name.getName();
-			for (Name nm : _namingSet.keySet()) {
-				if (nm.getName() != null
-						&& nm.getName().contains(representationName)) {
+// 	FK: Commented this. Why would it be useful???
+//		If there is someone who agrees: Please delete this code.
+//	/**
+//	 * Returns the container that is referenced by the naming name. The search
+//	 * is done in a less strict way; it is enough that the name only partially
+//	 * fits an entry in the naming mapping.
+//	 *
+//	 * @param name
+//	 * @return
+//	 */
+//	public String getContainerIdByNameRelaxed(Name name) {
+//		String containerId = null;
+//		if (name != null && name.getName() != null) {
+//			String representationName = name.getName();
+//			for (Name nm : _namingSet.keySet()) {
+//				if (nm.getName() != null
+//						&& nm.getName().contains(representationName)) {
+//
+//					containerId = _namingSet.get(nm);
+//					break;
+//				}
+//			}
+//		}
+//		return containerId;
+//	}
 
-					containerId = _namingSet.get(nm);
-					break;
-				}
-			}
-		}
-		return containerId;
-	}
-
 	/**
-	 * Return all re that refer to the container with containerId.
+	 * Return all names that refer to the container with containerId.
 	 *
 	 * @param containerId
 	 * @return
@@ -702,13 +713,24 @@ public class InformationFlowModel {
 	public List<Name> getAllNames(String containerId) {
 		List<Name> result = new ArrayList<Name>();
 
-		if (_namingSet.containsValue(containerId)) {
-			for (Entry<Name, String> entry : _namingSet.entrySet()) {
-				if (entry.getValue() == containerId) {
-					result.add(entry.getKey());
+//		// FK: Malte's old code. The (more efficient) code below should do the job as well
+//		// If you (anyone) agree, please delete
+//		if (_namingSet.containsValue(containerId)) {
+//			for (Entry<Name, String> entry : _namingSet.entrySet()) {
+//				if (entry.getValue() == containerId) {
+//					result.add(entry.getKey());
+//				}
+//			}
+//		}
+
+		if (_namingSet != null) {
+			for (Name name : _namingSet.keySet()) {
+				if (_namingSet.get(name).equals(containerId)) {
+					result.add(name);
 				}
 			}
 		}
+
 		return result;
 	}
 
