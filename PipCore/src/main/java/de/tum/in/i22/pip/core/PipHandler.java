@@ -17,6 +17,7 @@ import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
@@ -92,14 +93,14 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			int par3 = Integer.parseInt(st[3]);  //to be used for quantitative formulae
 
 			String[] containers;
-			Set<String> s;
+			Set<IContainer> s;
 
 			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
 
 			switch (formula) {
 			case "isNotIn":  //par1 is data, par2 is list of containers
 				containers= par2.split(separator2);
-				s= _ifModel.getContainersForData(par1);
+				s= _ifModel.getContainersForData(new DataBasic(par1));
 				//_logger.debug("size of s: "+s.size());
 				if(s.size() > 0){
 					for (String cont : containers){
@@ -119,10 +120,10 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			case "isOnlyIn":
 				containers= par2.split(separator2);
 				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
-				s= _ifModel.getContainersForData(par1);
+				s= _ifModel.getContainersForData(new DataBasic(par1));
 				//_logger.debug("size of s: "+s.size());
-				for (String cont : s){
-					NameBasic pname= new NameBasic(cont);
+				for (IContainer cont : s){
+					NameBasic pname= new NameBasic(cont.getId());//TODO: not sure if it is correct
 					//_logger.debug("..in loop("+cont+")..");
 					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
 						_logger.trace(out+"=false");
@@ -134,9 +135,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				return true;
 
 			case "isCombinedWith":
-				Set<String> s1= _ifModel.getContainersForData(par1);
-				Set<String> s2=_ifModel.getContainersForData(par2);
-				for (String cont : s1){
+				Set<IContainer> s1= _ifModel.getContainersForData(new DataBasic(par1));
+				Set<IContainer> s2=_ifModel.getContainersForData(new DataBasic(par2));
+				for (IContainer cont : s1){
 					if (s2.contains(cont)) {
 						_logger.trace(out+"=true");
 						return true;
