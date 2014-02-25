@@ -17,6 +17,7 @@ import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -67,7 +68,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 
 		///BEGINNING OF TEST BLOCK
-		String contId = _ifModel.getContainerIdByName(new Name(
+		String contId = _ifModel.getContainerIdByName(new ContainerName(
 				"TEST_C"));
 
 		if (contId!=null){
@@ -100,7 +101,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				s= _ifModel.getContainersForData(par1);
 				//_logger.debug("size of s: "+s.size());
 				for (String cont : containers){
-					Name pname= new Name(cont);
+					ContainerName pname= new ContainerName(cont);
 					//_logger.debug("..in loop("+cont+")..");
 					if (s.contains(_ifModel.getContainerIdByNameRelaxed(pname))) {
 						_logger.trace(out+"=false");
@@ -116,7 +117,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				s= _ifModel.getContainersForData(par1);
 				//_logger.debug("size of s: "+s.size());
 				for (String cont : s){
-					Name pname= new Name(cont);
+					ContainerName pname= new ContainerName(cont);
 					//_logger.debug("..in loop("+cont+")..");
 					if (!(limit.contains(_ifModel.getContainerIdByNameRelaxed(pname)))) {
 						_logger.trace(out+"=false");

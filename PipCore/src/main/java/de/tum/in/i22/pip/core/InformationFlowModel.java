@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
@@ -46,7 +47,7 @@ public class InformationFlowModel {
 	private Map<String, Set<String>> _containerAliasesMap = null;
 
 	// the naming set [name -> Container.identifier]
-	private Map<Name, String> _namingSet = null;
+	private Map<ContainerName, String> _namingSet = null;
 
 	// list of currently opened scopes
 	private Set<Scope> _scopeSet = null;
@@ -56,7 +57,7 @@ public class InformationFlowModel {
 	private Set<IData> _dataSetBackup;
 	private Map<String, Set<String>> _dataToContainerMapBackup;
 	private Map<String, Set<String>> _containerAliasesMapBackup;
-	private Map<Name, String> _namingSetBackup;
+	private Map<ContainerName, String> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
@@ -113,7 +114,7 @@ public class InformationFlowModel {
 				_containerAliasesMapBackup.put(e.getKey(), s);
 			}
 
-			_namingSetBackup = new HashMap<Name, String>(_namingSet);
+			_namingSetBackup = new HashMap<ContainerName, String>(_namingSet);
 			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
 			return true;
 		}
@@ -629,7 +630,7 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public boolean addName(Name name, String containerId) {
+	public boolean addName(ContainerName name, String containerId) {
 		boolean res = false;
 		if (name != null && !name.getName().isEmpty()) {
 			_namingSet.put(name, containerId);
@@ -644,7 +645,7 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(Name name) {
+	public boolean removeName(ContainerName name) {
 		boolean res = false;
 		if (name != null) {
 			String removedEntry = _namingSet.remove(name);
@@ -659,7 +660,7 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByName(Name name) {
+	public String getContainerIdByName(ContainerName name) {
 		String containerId = null;
 		if (_namingSet != null && name != null && name.getName() != null) {
 //			// FK: Malte's old code. The single line below should do the job as well
@@ -710,8 +711,8 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public List<Name> getAllNames(String containerId) {
-		List<Name> result = new ArrayList<Name>();
+	public List<ContainerName> getAllNames(String containerId) {
+		List<ContainerName> result = new ArrayList<ContainerName>();
 
 //		// FK: Malte's old code. The (more efficient) code below should do the job as well
 //		// If you (anyone) agree, please delete
@@ -724,7 +725,7 @@ public class InformationFlowModel {
 //		}
 
 		if (_namingSet != null) {
-			for (Name name : _namingSet.keySet()) {
+			for (ContainerName name : _namingSet.keySet()) {
 				if (_namingSet.get(name).equals(containerId)) {
 					result.add(name);
 				}
@@ -738,10 +739,10 @@ public class InformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
-	public List<Name> getAllNamingsFrom(String pid) {
-		List<Name> result = new ArrayList<Name>();
+	public List<ContainerName> getAllNamingsFrom(String pid) {
+		List<ContainerName> result = new ArrayList<ContainerName>();
 
-		for (Entry<Name, String> entry : _namingSet.entrySet()) {
+		for (Entry<ContainerName, String> entry : _namingSet.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
 				result.add(entry.getKey());
 		}

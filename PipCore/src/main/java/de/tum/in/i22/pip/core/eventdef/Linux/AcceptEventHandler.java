@@ -1,9 +1,9 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.distr.Network;
@@ -20,8 +20,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 		String remoteIP = null;
 		String remotePort = null;
 		String newFd = null;
-		Name localSocketName = null;
-		Name remoteSocketName = null;
+		ContainerName localSocketName = null;
+		ContainerName remoteSocketName = null;
 		String localContainerId = null;
 		String remoteContainerId = null;
 

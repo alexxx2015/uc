@@ -4,9 +4,9 @@ package de.tum.in.i22.pip.core.eventdef;
 import java.util.Set;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.Name;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.cm.basic.ContainerName;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -36,12 +36,12 @@ public class ReadFileEventHandler extends BaseEventHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String fileContainerId = ifModel.getContainerIdByName(new Name(fileName));
+		String fileContainerId = ifModel.getContainerIdByName(new ContainerName(fileName));
 
 		// check if container for filename exists and create new container
 		if (fileContainerId == null) {
 			fileContainerId = ifModel.addContainer(_messageFactory.createContainer());
-			ifModel.addName(new Name(fileName), fileContainerId);
+			ifModel.addName(new ContainerName(fileName), fileContainerId);
 		}
 
 		// add data to transitive reflexive closure of process container
