@@ -33,12 +33,12 @@ public class InformationFlowModel {
 				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
 	}
 
-	private static InformationFlowModel _instance = new InformationFlowModel();
+	private final static InformationFlowModel _instance = new InformationFlowModel();
 
 	// list of containers
-	private Set<IContainer> _containerSet = null;
+	private Set<IContainer> _containerSet;
 	// list of data
-	private Set<IData> _dataSet = null;
+	private Set<IData> _dataSet;
 
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> containerToDataMap = null;
@@ -55,8 +55,8 @@ public class InformationFlowModel {
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IContainer> _containerSetBackup;
 	private Set<IData> _dataSetBackup;
-	private Map<IContainer, Set<IData>> _dataToContainerMapBackup;
-	private Map<IContainer, Set<IContainer>> _containerAliasesMapBackup;
+	private Map<IContainer, Set<IData>> containerToDataMapBackup;
+	private Map<IContainer, Set<IContainer>> _aliasesMapBackup;
 	private Map<IName, IContainer> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
@@ -70,23 +70,22 @@ public class InformationFlowModel {
 
 		_containerSetBackup = null;
 		_dataSetBackup = null;
-		_dataToContainerMapBackup = null;
-		_containerAliasesMapBackup = null;
+		containerToDataMapBackup = null;
+		_aliasesMapBackup = null;
 		_namingSetBackup = null;
 		_scopeSetBackup = null;
 
 	}
 
 	public static InformationFlowModel getInstance() {
-		if (_instance==null) _instance = new InformationFlowModel();
 		return _instance;
 	}
 
 
 	public boolean isSimulating(){
 		return !((_containerSetBackup == null) && (_dataSetBackup == null)
-				&& (_dataToContainerMapBackup == null)
-				&& (_containerAliasesMapBackup == null)
+				&& (containerToDataMapBackup == null)
+				&& (_aliasesMapBackup == null)
 				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
 	}
 
@@ -102,16 +101,16 @@ public class InformationFlowModel {
 			_containerSetBackup = _containerSet;
 			_dataSetBackup = new HashSet<>(_dataSet);
 
-			_dataToContainerMapBackup = new HashMap<IContainer, Set<IData>>();
+			containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
 			for (Entry<IContainer, Set<IData>> e : containerToDataMap.entrySet()) {
 				Set<IData> s = new HashSet<IData>(e.getValue());
-				_dataToContainerMapBackup.put(e.getKey(), s);
+				containerToDataMapBackup.put(e.getKey(), s);
 			}
 
-			_containerAliasesMapBackup = new HashMap<>();
+			_aliasesMapBackup = new HashMap<>();
 			for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
 				Set<IContainer> s = new HashSet<IContainer>(e.getValue());
-				_containerAliasesMapBackup.put(e.getKey(), s);
+				_aliasesMapBackup.put(e.getKey(), s);
 			}
 
 			_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
@@ -132,15 +131,15 @@ public class InformationFlowModel {
 			_logger.info("..done!");
 			_containerSet = _containerSetBackup;
 			_dataSet = _dataSetBackup;
-			containerToDataMap = _dataToContainerMapBackup;
-			_aliasesMap = _containerAliasesMapBackup;
+			containerToDataMap = containerToDataMapBackup;
+			_aliasesMap = _aliasesMapBackup;
 			_namingMap = _namingSetBackup;
 			_scopeSet = _scopeSetBackup;
 
 			_containerSetBackup = null;
 			_dataSetBackup = null;
-			_dataToContainerMapBackup = null;
-			_containerAliasesMapBackup = null;
+			containerToDataMapBackup = null;
+			_aliasesMapBackup = null;
 			_namingSetBackup = null;
 			_scopeSetBackup = null;
 
@@ -262,52 +261,43 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Adds data object to a set. If the set already contains the data object,
-	 * the method will return null. Otherwise, it will return the id of the data
-	 * object.
+	 * Adds data object.
 	 *
 	 * @param data
-	 * @return Id of the data object if set does not contain the data object,
-	 *         otherwise null.
 	 */
-	public void addData(IData data) {
+	public void add(IData data) {
 		if (data != null) {
 			_dataSet.add(data);
 		}
 	}
 
 	/**
-	 * Removes data object form an internal set.
+	 * Removes data object.
 	 *
 	 * @param data
-	 * @return true if the data object is successfully removed.
 	 */
-	public boolean removeData(IData data) {
-		assert (data != null);
-		return _dataSet.remove(data);
+	public void remove(IData data) {
+		if (data != null) {
+			_dataSet.remove(data);
+		}
 	}
 
 
-	/**
-	 * Removes data object form an internal set.
-	 *
-	 * @param dataId
-	 * @return true if the data object is successfully removed.
-	 */
-	public boolean removeData(String dataId) {
-		assert (dataId != null);
+//	/**
+//	 * Removes data object form an internal set.
+//	 *
+//	 * @param dataId
+//	 * @return true if the data object is successfully removed.
+//	 */
+//	public boolean removeData(String dataId) {
+//		assert (dataId != null);
+//
+//		return _dataSet.remove(dataId);
+//	}
 
-		return _dataSet.remove(dataId);
-	}
 
 
 
-	/**
-	 * Searches for data object by id.
-	 *
-	 * @param id
-	 * @return Data object if it is present in the set, otherwise null.
-	 */
 	public IData getDataById(IData id) {
 		return (IData) getElementFromSet(id, _dataSet);
 	}

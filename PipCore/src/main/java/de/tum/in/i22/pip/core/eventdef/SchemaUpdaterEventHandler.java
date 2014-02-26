@@ -48,7 +48,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		ifModel.emptyContainer(cont);
 
 		_logger.debug("deleting data d from ifModel... ");
-		ifModel.removeData((IData)dataIds.toArray()[0]);
+		ifModel.remove((IData)dataIds.toArray()[0]);
 
 
 		_logger.debug("number of data elements in container TEST_C = "+ ifModel.getDataInContainer(cont).size());

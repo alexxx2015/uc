@@ -39,7 +39,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			ifModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
-			ifModel.addData(d);
+			ifModel.add(d);
 			ifModel.addDataToContainerMapping(d, cont);
 			_logger.debug(ifModel.toString());
 		} else {

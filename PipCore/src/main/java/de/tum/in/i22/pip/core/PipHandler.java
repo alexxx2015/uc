@@ -95,61 +95,61 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			Set<String> s;
 
 			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
-
-			switch (formula) {
-			case "isNotIn":  //par1 is data, par2 is list of containers
-				containers= par2.split(separator2);
-				s= _ifModel.getContainersForData(par1);
-				//_logger.debug("size of s: "+s.size());
-				if(s.size() > 0){
-					for (String cont : containers){
-						NameBasic pname= new NameBasic(cont);
-						//_logger.debug("..in loop("+cont+")..");
-						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
-							_logger.trace(out+"=false");
-							return false;
-						}
-					}
-					//_logger.trace("..no match found, returning true");
-					_logger.trace(out+"=true");
-					return true;
-				} else{
-					return false;
-				}
-			case "isOnlyIn":
-				containers= par2.split(separator2);
-				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
-				s= _ifModel.getContainersForData(par1);
-				//_logger.debug("size of s: "+s.size());
-				for (String cont : s){
-					NameBasic pname= new NameBasic(cont);
-					//_logger.debug("..in loop("+cont+")..");
-					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
-						_logger.trace(out+"=false");
-						return false;
-					}
-				}
-				//_logger.trace("..no match found, returning true");
-				_logger.trace(out+"=false");
-				return true;
-
-			case "isCombinedWith":
-				Set<String> s1= _ifModel.getContainersForData(par1);
-				Set<String> s2=_ifModel.getContainersForData(par2);
-				for (String cont : s1){
-					if (s2.contains(cont)) {
-						_logger.trace(out+"=true");
-						return true;
-					}
-				}
-				_logger.trace(out+"=false");
-				return false;
-
-
-			default:
-				_logger.trace(out+"=null");
-				return null;
-			}
+//
+//			switch (formula) {
+//			case "isNotIn":  //par1 is data, par2 is list of containers
+//				containers= par2.split(separator2);
+//				s= _ifModel.getContainersForData(par1);
+//				//_logger.debug("size of s: "+s.size());
+//				if(s.size() > 0){
+//					for (String cont : containers){
+//						NameBasic pname= new NameBasic(cont);
+//						//_logger.debug("..in loop("+cont+")..");
+//						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
+//							_logger.trace(out+"=false");
+//							return false;
+//						}
+//					}
+//					//_logger.trace("..no match found, returning true");
+//					_logger.trace(out+"=true");
+//					return true;
+//				} else{
+//					return false;
+//				}
+//			case "isOnlyIn":
+//				containers= par2.split(separator2);
+//				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
+//				s= _ifModel.getContainersForData(par1);
+//				//_logger.debug("size of s: "+s.size());
+//				for (String cont : s){
+//					NameBasic pname= new NameBasic(cont);
+//					//_logger.debug("..in loop("+cont+")..");
+//					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
+//						_logger.trace(out+"=false");
+//						return false;
+//					}
+//				}
+//				//_logger.trace("..no match found, returning true");
+//				_logger.trace(out+"=false");
+//				return true;
+//
+//			case "isCombinedWith":
+//				Set<String> s1= _ifModel.getContainersForData(par1);
+//				Set<String> s2=_ifModel.getContainersForData(par2);
+//				for (String cont : s1){
+//					if (s2.contains(cont)) {
+//						_logger.trace(out+"=true");
+//						return true;
+//					}
+//				}
+//				_logger.trace(out+"=false");
+//				return false;
+//
+//
+//			default:
+//				_logger.trace(out+"=null");
+//				return null;
+//			}
 
 		} else
 			_logger.trace("returning null");
@@ -157,27 +157,13 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 	@Override
-	public Set<IContainer> getContainerForData(IData arg0) {
-		if (arg0==null) return null;
-		Set<String> contIds= _ifModel.getContainersForData(arg0.getId());
-		Set<IContainer> result = new HashSet<IContainer>();
-		for (String s: contIds){
-			IContainer c = _ifModel.getContainerById(s);
-			if (s!=null) result.add(c);
-		}
-		return result;
+	public Set<IContainer> getContainerForData(IData data) {
+		return _ifModel.getContainersForData(data);
 	}
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
-		if (container==null) return null;
-		Set<String> sd= _ifModel.getDataInContainer(container.getId());
-		Set<IData> result = new HashSet<IData>();
-		for (String s : sd){
-			IData d = _ifModel.getDataById(s);
-			if (d!=null) result.add(d);
-		}
-		return result;
+		return _ifModel.getDataInContainer(container);
 	}
 
 	@Override
