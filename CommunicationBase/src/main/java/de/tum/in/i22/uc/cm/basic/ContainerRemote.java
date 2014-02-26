@@ -11,15 +11,15 @@ import de.tum.in.i22.uc.distr.ILocation;
  *
  */
 public class ContainerRemote implements IContainer {
-	private final ContainerName _name;
+	private final NameBasic _name;
 	private final ILocation _location;
 
-	public ContainerRemote(ContainerName name, ILocation location) {
+	public ContainerRemote(NameBasic name, ILocation location) {
 		_name = name;
 		_location = location;
 	}
 
-	public ContainerName getName() {
+	public NameBasic getName() {
 		return _name;
 	}
 
