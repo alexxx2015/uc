@@ -57,7 +57,7 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 			if (infoContId == null) {
 				IContainer signatureCont = _messageFactory.createContainer();
 
-				ifModel.addContainer(signatureCont);
+				ifModel.add(signatureCont);
 				ifModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();

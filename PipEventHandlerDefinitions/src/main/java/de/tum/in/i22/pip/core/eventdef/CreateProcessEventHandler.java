@@ -61,7 +61,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
             if(windowContainer == null)
             {
             	windowContainer = _messageFactory.createContainer();
-                ifModel.addContainer(windowContainer);
+                ifModel.add(windowContainer);
                 ifModel.addName(new NameBasic(handle), windowContainer);
             }
 

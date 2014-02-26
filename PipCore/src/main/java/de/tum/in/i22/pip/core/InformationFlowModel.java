@@ -1,10 +1,8 @@
 package de.tum.in.i22.pip.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
@@ -282,27 +279,12 @@ public class InformationFlowModel {
 		}
 	}
 
-//	public IData getDataById(IData id) {
-//		return (IData) getElementFromSet(id, _dataSet);
-//	}
-//
-//	/**
-//	 * Checks if the model contains a data object with given id.
-//	 *
-//	 * @param id
-//	 * @return
-//	 */
-//	public boolean hasData(IData id) {
-//		IData data = getDataById(id);
-//		return data != null ? true : false;
-//	}
-
 	/**
 	 * Inserts container into the model.
 	 *
 	 * @param container
 	 */
-	public void addContainer(IContainer container) {
+	public void add(IContainer container) {
 		if (container != null) {
 			_containerSet.add(container);
 		}
@@ -315,12 +297,14 @@ public class InformationFlowModel {
 	}
 
 	public boolean contains(IContainer cont) {
-		return _containerSet.contains(cont);
+		return cont != null ? _containerSet.contains(cont) : false;
 	}
 
 
-	public void emptyContainer(IContainer id) {
-		_containerToDataMap.remove(id);
+	public void emptyContainer(IContainer cont) {
+		if (cont != null) {
+			_containerToDataMap.remove(cont);
+		}
 	}
 
 	/**
@@ -342,7 +326,6 @@ public class InformationFlowModel {
 	 *
 	 * @param fromContainer
 	 * @param toContainer
-	 * @return
 	 */
 	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
@@ -352,17 +335,17 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Fins all aliases of a container given by its id.
+	 * Finds all aliases from the specified container.
 	 *
-	 * @param id
-	 * @return All aliases of a container given by its id, empty set if the
-	 *         container has no aliases.
+	 * @param cont
+	 * @return All aliases from the container or an empty set.
 	 */
-	public Set<IContainer> getAliasesForContainer(IContainer id) {
-		Set<IContainer> result = _aliasesMap.get(id);
-		// if no such element is present, return an empty set
-		if (result == null)
+	public Set<IContainer> getAliasesFromContainer(IContainer cont) {
+		Set<IContainer> result = _aliasesMap.get(cont);
+
+		if (result == null) {
 			result = new HashSet<>();
+		}
 
 		return result;
 	}
@@ -388,14 +371,8 @@ public class InformationFlowModel {
 	 * @param fromContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesFrom(IContainer fromContainer) {
-		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainer)) {
-			Set<IContainer> set = _aliasesMap.get(fromContainer);
-			set.clear();
-			res = true;
-		}
-		return res;
+	public void removeAllAliasesFrom(IContainer fromContainer) {
+		_aliasesMap.remove(fromContainer);
 	}
 
 	/**
@@ -404,21 +381,26 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesTo(IContainer toContainer) {
+	public void removeAllAliasesTo(IContainer toContainer) {
 		// TODO This method seems to have a bug.
-		boolean res = false;
-		Set<IContainer> aliasesToContainer = getAliasesTo(toContainer);
-		if (aliasesToContainer.size() > 0) {
-			Collection<Set<IContainer>> aliasesCollection = _aliasesMap
-					.values();
-			for (Set<IContainer> aliases : aliasesCollection) {
-				if (aliases.contains(toContainer)) {
-					_aliasesMap.remove(toContainer);
-				}
+//		boolean res = false;
+//		Set<IContainer> aliasesToContainer = getAliasesTo(toContainer);
+//		if (aliasesToContainer.size() > 0) {
+//			Collection<Set<IContainer>> aliasesCollection = _aliasesMap
+//					.values();
+//			for (Set<IContainer> aliases : aliasesCollection) {
+//				if (aliases.contains(toContainer)) {
+//					_aliasesMap.remove(toContainer);
+//				}
+//			}
+//			res = true;
+//		}
+//		return res;
+		if (toContainer != null) {
+			for (IContainer from : _aliasesMap.keySet()) {
+				_aliasesMap.get(from).remove(toContainer);
 			}
-			res = true;
 		}
-		return res;
 	}
 
 	/**
@@ -428,12 +410,19 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getAliasesTo(IContainer toContainer) {
 		Set<IContainer> result = new HashSet<IContainer>();
-		Set<Entry<IContainer, Set<IContainer>>> entrySet = _aliasesMap
-				.entrySet();
-		for (Entry<IContainer, Set<IContainer>> entry : entrySet) {
-			Set<IContainer> aliasesSet = entry.getValue();
-			if (aliasesSet.contains(toContainer)) {
-				result.add(entry.getKey());
+//		Set<Entry<IContainer, Set<IContainer>>> entrySet = _aliasesMap
+//				.entrySet();
+//		for (Entry<IContainer, Set<IContainer>> entry : entrySet) {
+//			Set<IContainer> aliasesSet = entry.getValue();
+//			if (aliasesSet.contains(toContainer)) {
+//				result.add(entry.getKey());
+//			}
+//		}
+		if (toContainer != null) {
+			for (IContainer from : _aliasesMap.keySet()) {
+				if (_aliasesMap.get(from).contains(toContainer)) {
+					result.add(from);
+				}
 			}
 		}
 		return result;
@@ -447,7 +436,7 @@ public class InformationFlowModel {
 
 	private void getAliasClosureExcludeStartId(IContainer container,
 			Set<IContainer> visitedContainers) {
-		Set<IContainer> containerAliasesSet = getAliasesForContainer(container);
+		Set<IContainer> containerAliasesSet = getAliasesFromContainer(container);
 		for (IContainer id : containerAliasesSet) {
 			if (visitedContainers.add(id)) {
 				getAliasClosureExcludeStartId(id, visitedContainers);
@@ -455,20 +444,6 @@ public class InformationFlowModel {
 		}
 	}
 
-	private IIdentifiable getElementFromSet(IIdentifiable id,
-			Set<? extends IIdentifiable> set) {
-		if (set==null) return null;
-		Iterator<? extends IIdentifiable> it = set.iterator();
-		IIdentifiable element = null;
-		boolean found = false;
-		while (!found && it.hasNext()) {
-			element = it.next();
-			if (element.getId().equals(id)) {
-				found = true;
-			}
-		}
-		return element;
-	}
 
 	public boolean addDataToContainerMapping(IData data, IContainer container) {
 		boolean res = false;

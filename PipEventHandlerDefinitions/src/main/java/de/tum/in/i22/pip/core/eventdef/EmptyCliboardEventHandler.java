@@ -29,7 +29,7 @@ public class EmptyCliboardEventHandler extends BaseEventHandler {
 		// check if container for clipboard exists and create new container if not
 		if (clipboardContainer == null) {
 			clipboardContainer = _messageFactory.createContainer();
-			ifModel.addContainer(clipboardContainer);
+			ifModel.add(clipboardContainer);
 			ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
 		}
 		;

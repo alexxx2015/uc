@@ -43,7 +43,7 @@ public class ReadFileEventHandler extends BaseEventHandler {
 		// check if container for filename exists and create new container
 		if (fileContainer == null) {
 			fileContainer = _messageFactory.createContainer();
-			ifModel.addContainer(fileContainer);
+			ifModel.add(fileContainer);
 			ifModel.addName(new NameBasic(fileName), fileContainer);
 		}
 

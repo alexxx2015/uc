@@ -30,7 +30,7 @@ public class PipeEventHandler extends BaseEventHandler {
 		InformationFlowModel ifModel = getInformationFlowModel();
 
 		IContainer pipeContainer = _messageFactory.createContainer();
-		ifModel.addContainer(pipeContainer);
+		ifModel.add(pipeContainer);
 
 		if (pipeContainer != null) {
 			ifModel.addName(FiledescrName.create(host, pid, fdsrc), pipeContainer);
