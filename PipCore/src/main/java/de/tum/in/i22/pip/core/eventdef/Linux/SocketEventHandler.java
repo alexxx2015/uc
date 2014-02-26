@@ -27,7 +27,6 @@ public class SocketEventHandler extends BaseEventHandler {
 		InformationFlowModel ifModel = getInformationFlowModel();
 
 		IContainer socketContainer = _messageFactory.createContainer();
-		ifModel.add(socketContainer);
 
 		if (socketContainer != null) {
 			ifModel.addName(FiledescrName.create(host, pid, fd), socketContainer);

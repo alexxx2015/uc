@@ -253,7 +253,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 		// check if container for process exists and create new container if not
 		if (container == null) {
 			container = _messageFactory.createContainer();
-			ifModel.add(container);
 			ifModel.addName(new NameBasic(processId), container);
 			ifModel.addName(new NameBasic(processName), container);
 		}

@@ -35,11 +35,9 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 
 		if (cont == null) {
 			cont = _messageFactory.createContainer("TestContainer",contName);
-			ifModel.add(cont);
 			ifModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
-			ifModel.add(d);
 			ifModel.addDataToContainerMapping(d, cont);
 			_logger.debug(ifModel.toString());
 		} else {

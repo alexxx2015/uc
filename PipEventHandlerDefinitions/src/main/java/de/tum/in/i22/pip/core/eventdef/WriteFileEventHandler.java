@@ -50,9 +50,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 		// not
 		if (fileContainer == null) {
 			fileContainer = _messageFactory.createContainer();
-			ifModel.add(fileContainer);
 			IData data = _messageFactory.createData();
-			ifModel.add(data);
 
 			ifModel.addDataToContainerMapping(data, fileContainer);
 

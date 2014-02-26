@@ -38,7 +38,6 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 		// check if container for window exists and create new container if not
 		if (containerIdByWindowHandle == null) {
 			containerIdByWindowHandle = _messageFactory.createContainer();
-			ifModel.add(containerIdByWindowHandle);
 			ifModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 

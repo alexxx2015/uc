@@ -45,7 +45,6 @@ public class CreateDcEventHandler extends BaseEventHandler {
 		// check if container for device exists and create new container if not
 		if (deviceContainer == null) {
 			deviceContainer = _messageFactory.createContainer();
-			ifModel.add(deviceContainer);
 			ifModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 

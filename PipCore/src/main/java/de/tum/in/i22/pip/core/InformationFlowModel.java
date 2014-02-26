@@ -23,19 +23,15 @@ public class InformationFlowModel {
 
 	@Override
 	public String toString() {
-		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
-				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
-				+ _containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
-				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
-				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
+		return "InformationFlowModel ["+System.getProperty("line.separator")
+				+", _dataToContainerMap=" + _containerToDataMap + System.getProperty("line.separator")
+				+", _containerAliasesMap="+ _aliasesMap + System.getProperty("line.separator")
+				+ ", _namingSet=" + _namingMap+System.getProperty("line.separator")
+				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")
+				+" IS_SIMULATING="+isSimulating()+"]";
 	}
 
 	private final static InformationFlowModel _instance = new InformationFlowModel();
-
-	// list of containers
-	private Set<IContainer> _containerSet;
-	// list of data
-	private Set<IData> _dataSet;
 
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> _containerToDataMap = null;
@@ -58,8 +54,6 @@ public class InformationFlowModel {
 	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
-		_containerSet = new HashSet<>();
-		_dataSet = new HashSet<>();
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
@@ -95,8 +89,6 @@ public class InformationFlowModel {
 		_logger.info("Pushing current PIP state...");
 		if (!isSimulating()) {
 			_logger.info("..done!");
-			_containerSetBackup = _containerSet;
-			_dataSetBackup = new HashSet<>(_dataSet);
 
 			_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
 			for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
@@ -126,8 +118,6 @@ public class InformationFlowModel {
 		_logger.info("Popping current PIP state...");
 		if (isSimulating()) {
 			_logger.info("..done!");
-			_containerSet = _containerSetBackup;
-			_dataSet = _dataSetBackup;
 			_containerToDataMap = _containerToDataMapBackup;
 			_aliasesMap = _aliasesMapBackup;
 			_namingMap = _namingSetBackup;
@@ -257,16 +247,16 @@ public class InformationFlowModel {
 			return null;
 	}
 
-	/**
-	 * Adds data object.
-	 *
-	 * @param data
-	 */
-	public void add(IData data) {
-		if (data != null) {
-			_dataSet.add(data);
-		}
-	}
+//	/**
+//	 * Adds data object.
+//	 *
+//	 * @param data
+//	 */
+//	public void add(IData data) {
+//		if (data != null) {
+//			_dataSet.add(data);
+//		}
+//	}
 
 	/**
 	 * Removes data object.
@@ -275,31 +265,41 @@ public class InformationFlowModel {
 	 */
 	public void remove(IData data) {
 		if (data != null) {
-			_dataSet.remove(data);
+			for (IContainer cont : _containerToDataMap.keySet()) {
+				_containerToDataMap.get(cont).remove(data);
+			}
 		}
 	}
 
-	/**
-	 * Inserts container into the model.
-	 *
-	 * @param container
-	 */
-	public void add(IContainer container) {
-		if (container != null) {
-			_containerSet.add(container);
-		}
-	}
+//	/**
+//	 * Inserts container into the model.
+//	 *
+//	 * @param container
+//	 */
+//	public void add(IContainer container) {
+//		if (container != null) {
+//			_containerSet.add(container);
+//		}
+//	}
 
 	public void remove(IContainer cont) {
 		if (cont != null) {
-			_containerSet.remove(cont);
+			removeAllAliasesTo(cont);
+			removeAllAliasesFrom(cont);
+			removeAllNames(cont);
+			emptyContainer(cont);
 		}
 	}
 
-	public boolean contains(IContainer cont) {
-		return cont != null ? _containerSet.contains(cont) : false;
+	public void removeAllNames(IContainer cont) {
+		if (cont != null) {
+			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
+				if (entry.getValue().equals(cont)) {
+					_namingMap.remove(entry.getKey());
+				}
+			}
+		}
 	}
-
 
 	public void emptyContainer(IContainer cont) {
 		if (cont != null) {
@@ -382,20 +382,6 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public void removeAllAliasesTo(IContainer toContainer) {
-		// TODO This method seems to have a bug.
-//		boolean res = false;
-//		Set<IContainer> aliasesToContainer = getAliasesTo(toContainer);
-//		if (aliasesToContainer.size() > 0) {
-//			Collection<Set<IContainer>> aliasesCollection = _aliasesMap
-//					.values();
-//			for (Set<IContainer> aliases : aliasesCollection) {
-//				if (aliases.contains(toContainer)) {
-//					_aliasesMap.remove(toContainer);
-//				}
-//			}
-//			res = true;
-//		}
-//		return res;
 		if (toContainer != null) {
 			for (IContainer from : _aliasesMap.keySet()) {
 				_aliasesMap.get(from).remove(toContainer);
@@ -410,14 +396,6 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getAliasesTo(IContainer toContainer) {
 		Set<IContainer> result = new HashSet<IContainer>();
-//		Set<Entry<IContainer, Set<IContainer>>> entrySet = _aliasesMap
-//				.entrySet();
-//		for (Entry<IContainer, Set<IContainer>> entry : entrySet) {
-//			Set<IContainer> aliasesSet = entry.getValue();
-//			if (aliasesSet.contains(toContainer)) {
-//				result.add(entry.getKey());
-//			}
-//		}
 		if (toContainer != null) {
 			for (IContainer from : _aliasesMap.keySet()) {
 				if (_aliasesMap.get(from).contains(toContainer)) {
@@ -494,9 +472,7 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getContainersForData(IData data) {
 		Set<IContainer> result = new HashSet<>();
-		Set<Entry<IContainer, Set<IData>>> entrySet = _containerToDataMap
-				.entrySet();
-		for (Entry<IContainer, Set<IData>> entry : entrySet) {
+		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap.entrySet()) {
 			if (entry.getValue().contains(data)) {
 				result.add(entry.getKey());
 			}
@@ -559,17 +535,6 @@ public class InformationFlowModel {
 	 */
 	public IContainer getContainer(IName name) {
 		if (name != null && name.getName() != null) {
-//			// FK: Malte's old code. The single line below should do the job as well
-//			// If you (anyone) agree, please delete
-//			Set<Name> pipNameSet = _namingSet.keySet();
-//			for (Name nm : pipNameSet) {
-//				String representationName = nm.getName();
-//				if (name.getName().equals(representationName)) {
-//					containerId = _namingSet.get(nm);
-//					break;
-//				}
-//			}
-
 			return _namingMap.get(name);
 		}
 		return null;
@@ -610,21 +575,9 @@ public class InformationFlowModel {
 	public List<IName> getAllNames(IContainer container) {
 		List<IName> result = new ArrayList<IName>();
 
-//		// FK: Malte's old code. The (more efficient) code below should do the job as well
-//		// If you (anyone) agree, please delete
-//		if (_namingSet.containsValue(containerId)) {
-//			for (Entry<Name, String> entry : _namingSet.entrySet()) {
-//				if (entry.getValue() == containerId) {
-//					result.add(entry.getKey());
-//				}
-//			}
-//		}
-
-		if (_namingMap != null) {
-			for (IName name : _namingMap.keySet()) {
-				if (_namingMap.get(name).equals(container)) {
-					result.add(name);
-				}
+		for (IName name : _namingMap.keySet()) {
+			if (_namingMap.get(name).equals(container)) {
+				result.add(name);
 			}
 		}
 

@@ -36,7 +36,6 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
          if (clipboardContainer == null)
          {
         	 clipboardContainer = _messageFactory.createContainer();
-             ifModel.add(clipboardContainer);
              ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
          };
 

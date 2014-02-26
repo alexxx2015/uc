@@ -63,7 +63,6 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 		// create new container c
 		localContainer = _messageFactory.createContainer();
-		ifModel.add(localContainer);
 
 		if (localContainer == null) {
 			_logger.fatal("Unable to create container.");
