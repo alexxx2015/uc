@@ -12,10 +12,11 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
  * Information flow model Singleton.
@@ -28,8 +29,8 @@ public class InformationFlowModel {
 	public String toString() {
 		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
 				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
-				+ _dataToContainerMap + System.getProperty("line.separator")+", _containerAliasesMap="
-				+ _containerAliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingSet+System.getProperty("line.separator")
+				+ containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
+				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
 				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
 	}
 
@@ -41,13 +42,13 @@ public class InformationFlowModel {
 	private Set<IData> _dataSet = null;
 
 	// [Container.identifier -> List[Data.identifier]]
-	private Map<String, Set<String>> _dataToContainerMap = null;
+	private Map<String, Set<String>> containerToDataMap = null;
 
 	// [Container.identifier -> List[Container.identifier]]
-	private Map<String, Set<String>> _containerAliasesMap = null;
+	private Map<String, Set<String>> _aliasesMap = null;
 
 	// the naming set [name -> Container.identifier]
-	private Map<ContainerName, String> _namingSet = null;
+	private Map<IName, String> _namingMap = null;
 
 	// list of currently opened scopes
 	private Set<Scope> _scopeSet = null;
@@ -57,15 +58,15 @@ public class InformationFlowModel {
 	private Set<IData> _dataSetBackup;
 	private Map<String, Set<String>> _dataToContainerMapBackup;
 	private Map<String, Set<String>> _containerAliasesMapBackup;
-	private Map<ContainerName, String> _namingSetBackup;
+	private Map<IName, String> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
 		_containerSet = new HashSet<>();
 		_dataSet = new HashSet<>();
-		_dataToContainerMap = new HashMap<>();
-		_containerAliasesMap = new HashMap<>();
-		_namingSet = new HashMap<>();
+		containerToDataMap = new HashMap<>();
+		_aliasesMap = new HashMap<>();
+		_namingMap = new HashMap<>();
 		_scopeSet = new HashSet<>();
 
 		_containerSetBackup = null;
@@ -103,18 +104,18 @@ public class InformationFlowModel {
 			_dataSetBackup = new HashSet<>(_dataSet);
 
 			_dataToContainerMapBackup = new HashMap<String, Set<String>>();
-			for (Entry<String, Set<String>> e : _dataToContainerMap.entrySet()) {
+			for (Entry<String, Set<String>> e : containerToDataMap.entrySet()) {
 				Set<String> s = new HashSet<String>(e.getValue());
 				_dataToContainerMapBackup.put(e.getKey(), s);
 			}
 
 			_containerAliasesMapBackup = new HashMap<>();
-			for (Entry<String, Set<String>> e : _containerAliasesMap.entrySet()) {
+			for (Entry<String, Set<String>> e : _aliasesMap.entrySet()) {
 				Set<String> s = new HashSet<String>(e.getValue());
 				_containerAliasesMapBackup.put(e.getKey(), s);
 			}
 
-			_namingSetBackup = new HashMap<ContainerName, String>(_namingSet);
+			_namingSetBackup = new HashMap<IName, String>(_namingMap);
 			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
 			return true;
 		}
@@ -132,9 +133,9 @@ public class InformationFlowModel {
 			_logger.info("..done!");
 			_containerSet = _containerSetBackup;
 			_dataSet = _dataSetBackup;
-			_dataToContainerMap = _dataToContainerMapBackup;
-			_containerAliasesMap = _containerAliasesMapBackup;
-			_namingSet = _namingSetBackup;
+			containerToDataMap = _dataToContainerMapBackup;
+			_aliasesMap = _containerAliasesMapBackup;
+			_namingMap = _namingSetBackup;
 			_scopeSet = _scopeSetBackup;
 
 			_containerSetBackup = null;
@@ -384,7 +385,7 @@ public class InformationFlowModel {
 //
 //		return res;
 
-		return _dataToContainerMap.remove(id) != null;
+		return containerToDataMap.remove(id) != null;
 	}
 
 	/**
@@ -394,14 +395,14 @@ public class InformationFlowModel {
 	 */
 	public boolean addAlias(String fromContainerId, String toContainerId) {
 		boolean res = false;
-		if (_containerAliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _containerAliasesMap.get(fromContainerId);
+		if (_aliasesMap.containsKey(fromContainerId)) {
+			Set<String> set = _aliasesMap.get(fromContainerId);
 			res = set.add(toContainerId);
 		} else {
 			// Create new set and add it to the map
 			Set<String> newSet = new HashSet<>();
 			newSet.add(toContainerId);
-			_containerAliasesMap.put(fromContainerId, newSet);
+			_aliasesMap.put(fromContainerId, newSet);
 			res = true;
 		}
 		return res;
@@ -417,8 +418,8 @@ public class InformationFlowModel {
 	 */
 	public boolean removeAlias(String fromContainerId, String toContainerId) {
 		boolean res = false;
-		if (_containerAliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _containerAliasesMap.get(fromContainerId);
+		if (_aliasesMap.containsKey(fromContainerId)) {
+			Set<String> set = _aliasesMap.get(fromContainerId);
 			res = set.remove(fromContainerId);
 		}
 		return res;
@@ -432,7 +433,7 @@ public class InformationFlowModel {
 	 *         container has no aliases.
 	 */
 	public Set<String> getAliasesForContainer(String id) {
-		Set<String> result = _containerAliasesMap.get(id);
+		Set<String> result = _aliasesMap.get(id);
 		// if no such element is present, return an empty set
 		if (result == null)
 			result = new HashSet<>();
@@ -463,8 +464,8 @@ public class InformationFlowModel {
 	 */
 	public boolean removeAllAliasesFrom(String fromContainerId) {
 		boolean res = false;
-		if (_containerAliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _containerAliasesMap.get(fromContainerId);
+		if (_aliasesMap.containsKey(fromContainerId)) {
+			Set<String> set = _aliasesMap.get(fromContainerId);
 			set.clear();
 			res = true;
 		}
@@ -482,11 +483,11 @@ public class InformationFlowModel {
 		boolean res = false;
 		Set<String> aliasesToContainer = getAliasesTo(toContainerId);
 		if (aliasesToContainer.size() > 0) {
-			Collection<Set<String>> aliasesCollection = _containerAliasesMap
+			Collection<Set<String>> aliasesCollection = _aliasesMap
 					.values();
 			for (Set<String> aliases : aliasesCollection) {
 				if (aliases.contains(toContainerId)) {
-					_containerAliasesMap.remove(toContainerId);
+					_aliasesMap.remove(toContainerId);
 				}
 			}
 			res = true;
@@ -501,7 +502,7 @@ public class InformationFlowModel {
 	 */
 	public Set<String> getAliasesTo(String toContainerId) {
 		Set<String> result = new HashSet<String>();
-		Set<Entry<String, Set<String>>> entrySet = _containerAliasesMap
+		Set<Entry<String, Set<String>>> entrySet = _aliasesMap
 				.entrySet();
 		for (Entry<String, Set<String>> entry : entrySet) {
 			Set<String> aliasesSet = entry.getValue();
@@ -545,8 +546,8 @@ public class InformationFlowModel {
 
 	public boolean addDataToContainerMapping(String dataId, String containerId) {
 		boolean res = false;
-		if (_dataToContainerMap.containsKey(containerId)) {
-			Set<String> dataSet = _dataToContainerMap.get(containerId);
+		if (containerToDataMap.containsKey(containerId)) {
+			Set<String> dataSet = containerToDataMap.get(containerId);
 			res = dataSet.add(dataId);
 		} else {
 			Set<String> newDataSet = new HashSet<>();
@@ -554,7 +555,7 @@ public class InformationFlowModel {
 			//TODO: check if dataId corresponds to a valid data element
 			newDataSet.add(dataId);
 
-			_dataToContainerMap.put(containerId, newDataSet);
+			containerToDataMap.put(containerId, newDataSet);
 			res = true;
 		}
 		return res;
@@ -563,8 +564,8 @@ public class InformationFlowModel {
 	public boolean removeContainerToDataMapping(String containerId,
 			String dataId) {
 		boolean res = false;
-		if (_dataToContainerMap.containsKey(containerId)) {
-			Set<String> dataSet = _dataToContainerMap.get(containerId);
+		if (containerToDataMap.containsKey(containerId)) {
+			Set<String> dataSet = containerToDataMap.get(containerId);
 			dataSet.remove(dataId);
 			res = true;
 		}
@@ -578,7 +579,7 @@ public class InformationFlowModel {
 	 *         set.
 	 */
 	public Set<String> getDataInContainer(String containerId) {
-		Set<String> result = _dataToContainerMap.get(containerId);
+		Set<String> result = containerToDataMap.get(containerId);
 		if (result == null) {
 			result = new HashSet<>();
 		}
@@ -592,7 +593,7 @@ public class InformationFlowModel {
 	 */
 	public Set<String> getContainersForData(String dataId) {
 		Set<String> result = new HashSet<>();
-		Set<Entry<String, Set<String>>> entrySet = _dataToContainerMap
+		Set<Entry<String, Set<String>>> entrySet = containerToDataMap
 				.entrySet();
 		for (Entry<String, Set<String>> entry : entrySet) {
 			if (entry.getValue().contains(dataId)) {
@@ -610,10 +611,10 @@ public class InformationFlowModel {
 
 		boolean res = false;
 
-		Set<String> existingDataSet = _dataToContainerMap.get(containerId);
+		Set<String> existingDataSet = containerToDataMap.get(containerId);
 		if (existingDataSet == null) {
 			Set<String> newDataSet = new HashSet<>(dataSet);
-			_dataToContainerMap.put(containerId, newDataSet);
+			containerToDataMap.put(containerId, newDataSet);
 			res = true;
 		} else {
 			res = existingDataSet.addAll(dataSet);
@@ -630,10 +631,10 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public boolean addName(ContainerName name, String containerId) {
+	public boolean addName(IName name, String containerId) {
 		boolean res = false;
 		if (name != null && !name.getName().isEmpty()) {
-			_namingSet.put(name, containerId);
+			_namingMap.put(name, containerId);
 			res = true;
 		}
 		return res;
@@ -645,10 +646,10 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(ContainerName name) {
+	public boolean removeName(IName name) {
 		boolean res = false;
 		if (name != null) {
-			String removedEntry = _namingSet.remove(name);
+			String removedEntry = _namingMap.remove(name);
 			res = removedEntry != null ? true : false;
 		}
 		return res;
@@ -660,9 +661,9 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByName(ContainerName name) {
+	public String getContainerIdByName(IName name) {
 		String containerId = null;
-		if (_namingSet != null && name != null && name.getName() != null) {
+		if (_namingMap != null && name != null && name.getName() != null) {
 //			// FK: Malte's old code. The single line below should do the job as well
 //			// If you (anyone) agree, please delete
 //			Set<Name> pipNameSet = _namingSet.keySet();
@@ -674,7 +675,7 @@ public class InformationFlowModel {
 //				}
 //			}
 
-			return _namingSet.get(name);
+			return _namingMap.get(name);
 		}
 		return containerId;
 	}
@@ -689,15 +690,15 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByNameRelaxed(ContainerName name) {
+	public String getContainerIdByNameRelaxed(IName name) {
 		String containerId = null;
 		if (name != null && name.getName() != null) {
 			String representationName = name.getName();
-			for (ContainerName nm : _namingSet.keySet()) {
+			for (IName nm : _namingMap.keySet()) {
 				if (nm.getName() != null
 						&& nm.getName().contains(representationName)) {
 
-					containerId = _namingSet.get(nm);
+					containerId = _namingMap.get(nm);
 					break;
 				}
 			}
@@ -711,8 +712,8 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public List<ContainerName> getAllNames(String containerId) {
-		List<ContainerName> result = new ArrayList<ContainerName>();
+	public List<IName> getAllNames(String containerId) {
+		List<IName> result = new ArrayList<IName>();
 
 //		// FK: Malte's old code. The (more efficient) code below should do the job as well
 //		// If you (anyone) agree, please delete
@@ -724,9 +725,9 @@ public class InformationFlowModel {
 //			}
 //		}
 
-		if (_namingSet != null) {
-			for (ContainerName name : _namingSet.keySet()) {
-				if (_namingSet.get(name).equals(containerId)) {
+		if (_namingMap != null) {
+			for (IName name : _namingMap.keySet()) {
+				if (_namingMap.get(name).equals(containerId)) {
 					result.add(name);
 				}
 			}
@@ -739,10 +740,10 @@ public class InformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
-	public List<ContainerName> getAllNamingsFrom(String pid) {
-		List<ContainerName> result = new ArrayList<ContainerName>();
+	public List<IName> getAllNamingsFrom(String pid) {
+		List<IName> result = new ArrayList<IName>();
 
-		for (Entry<ContainerName, String> entry : _namingSet.entrySet()) {
+		for (Entry<IName, String> entry : _namingMap.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
 				result.add(entry.getKey());
 		}

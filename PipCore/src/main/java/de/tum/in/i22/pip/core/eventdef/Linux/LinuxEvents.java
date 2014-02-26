@@ -3,7 +3,8 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import java.util.List;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -38,14 +39,14 @@ public class LinuxEvents {
 
 
 
-	static void close(ContainerName name) {
+	static void close(IName name) {
 		if (name instanceof SocketName) {
 			LinuxEvents.closeSocket(name);
 		}
 		InformationFlowModel.getInstance().removeName(name);
 	}
 
-	private static void closeSocket(ContainerName name) {
+	private static void closeSocket(IName name) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
 		String containerId = ifModel.getContainerIdByName(name);
@@ -53,7 +54,7 @@ public class LinuxEvents {
 		int count = 0;
 
 		if (containerId != null) {
-			for (ContainerName n : ifModel.getAllNames(containerId)) {
+			for (IName n : ifModel.getAllNames(containerId)) {
 				if (!(n instanceof SocketName)) {
 					count++;
 				}
@@ -65,13 +66,13 @@ public class LinuxEvents {
 		}
 	}
 
-	static void shutdown(ContainerName name, Shut mode) {
+	static void shutdown(IName name, Shut mode) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
 		String containerId = ifModel.getContainerIdByName(name);
 
 		if (containerId != null) {
-			List<ContainerName> allNames = ifModel.getAllNames(containerId);
+			List<IName> allNames = ifModel.getAllNames(containerId);
 
 			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
 				// disallow reception
@@ -87,14 +88,14 @@ public class LinuxEvents {
 			if (mode == Shut.SHUT_RDWR) {
 				// disallow transmission and reception,
 				// therefore delete all socket identifiers
-				for (ContainerName n : allNames) {
+				for (IName n : allNames) {
 					if (n instanceof SocketName) {
 						ifModel.removeName(n);
 					}
 				}
 			}
 
-			for (ContainerName n : allNames) {
+			for (IName n : allNames) {
 				if (n instanceof SocketName) {
 					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
 					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {

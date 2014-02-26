@@ -1,10 +1,10 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 
 
-class FiledescrName extends ContainerName {
+class FiledescrName extends NameBasic {
 
 	private static final String PREFIX_FILE = "FILE_";
 

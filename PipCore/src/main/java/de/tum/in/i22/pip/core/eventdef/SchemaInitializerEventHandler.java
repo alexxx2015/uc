@@ -1,7 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -28,7 +28,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		IEvent e = getEvent();
 
 
-		String contId = ifModel.getContainerIdByName(new ContainerName(
+		String contId = ifModel.getContainerIdByName(new NameBasic(
 				contName));
 
 		_logger.debug("contID = " + contId);
@@ -37,7 +37,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			IContainer container = _messageFactory.createContainer("TestContainer",contName);
 
 			contId = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(contName), contId);
+			ifModel.addName(new NameBasic(contName), contId);
 
 			IData d= _messageFactory.createData(dataName);
 			ifModel.addData(d);

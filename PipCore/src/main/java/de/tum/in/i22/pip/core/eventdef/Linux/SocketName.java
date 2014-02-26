@@ -1,11 +1,11 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.distr.Network;;
 
 
 
-class SocketName extends ContainerName {
+class SocketName extends NameBasic {
 
 	static final String PREFIX_SOCKET = "SOCK_";
 

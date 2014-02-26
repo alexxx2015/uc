@@ -8,8 +8,9 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class KillProcessEventHandler extends BaseEventHandler {
@@ -26,7 +27,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 		_logger.info("KillProcess event handler execute");
 		String pid = null;
 //		String processName = null;
-		
+
 		try {
 			pid = getParameterValue("PID_Child");
 //			processName = getParameterValue("ChildProcessName");
@@ -36,7 +37,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 		}
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String processContainerId = ifModel.getContainerIdByName(new ContainerName(pid));
+		String processContainerId = ifModel.getContainerIdByName(new NameBasic(pid));
 
 		// check if container for process exists
 		if (processContainerId != null) {
@@ -52,7 +53,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			ifModel.removeAllAliasesTo(processContainerId);
 			ifModel.removeContainer(processContainerId);
 
-			for (ContainerName nm : ifModel.getAllNamingsFrom(processContainerId)) {
+			for (IName nm : ifModel.getAllNamingsFrom(processContainerId)) {
 				ifModel.removeName(nm);
 			}
 		}

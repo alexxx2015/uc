@@ -4,7 +4,7 @@ package de.tum.in.i22.pip.core.eventdef;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -33,13 +33,13 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 		String processContainerId = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerIdByWindowHandle = ifModel.getContainerIdByName(new ContainerName(windowHandle));
+		String containerIdByWindowHandle = ifModel.getContainerIdByName(new NameBasic(windowHandle));
 
 		// check if container for window exists and create new container if not
 		if (containerIdByWindowHandle == null) {
 			IContainer container = _messageFactory.createContainer();
 			containerIdByWindowHandle = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(windowHandle), containerIdByWindowHandle);
+			ifModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 
 		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), containerIdByWindowHandle);
