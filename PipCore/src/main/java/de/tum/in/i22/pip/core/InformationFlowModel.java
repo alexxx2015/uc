@@ -247,17 +247,6 @@ public class InformationFlowModel {
 			return null;
 	}
 
-//	/**
-//	 * Adds data object.
-//	 *
-//	 * @param data
-//	 */
-//	public void add(IData data) {
-//		if (data != null) {
-//			_dataSet.add(data);
-//		}
-//	}
-
 	/**
 	 * Removes data object.
 	 *
@@ -271,16 +260,6 @@ public class InformationFlowModel {
 		}
 	}
 
-//	/**
-//	 * Inserts container into the model.
-//	 *
-//	 * @param container
-//	 */
-//	public void add(IContainer container) {
-//		if (container != null) {
-//			_containerSet.add(container);
-//		}
-//	}
 
 	public void remove(IContainer cont) {
 		if (cont != null) {
