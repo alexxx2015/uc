@@ -28,7 +28,7 @@ public class InformationFlowModel {
 	public String toString() {
 		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
 				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
-				+ containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
+				+ _containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
 				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
 				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
 	}
@@ -41,7 +41,7 @@ public class InformationFlowModel {
 	private Set<IData> _dataSet;
 
 	// [Container.identifier -> List[Data.identifier]]
-	private Map<IContainer, Set<IData>> containerToDataMap = null;
+	private Map<IContainer, Set<IData>> _containerToDataMap = null;
 
 	// [Container.identifier -> List[Container.identifier]]
 	private Map<IContainer, Set<IContainer>> _aliasesMap = null;
@@ -55,7 +55,7 @@ public class InformationFlowModel {
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IContainer> _containerSetBackup;
 	private Set<IData> _dataSetBackup;
-	private Map<IContainer, Set<IData>> containerToDataMapBackup;
+	private Map<IContainer, Set<IData>> _containerToDataMapBackup;
 	private Map<IContainer, Set<IContainer>> _aliasesMapBackup;
 	private Map<IName, IContainer> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
@@ -63,14 +63,14 @@ public class InformationFlowModel {
 	public InformationFlowModel() {
 		_containerSet = new HashSet<>();
 		_dataSet = new HashSet<>();
-		containerToDataMap = new HashMap<>();
+		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
 		_scopeSet = new HashSet<>();
 
 		_containerSetBackup = null;
 		_dataSetBackup = null;
-		containerToDataMapBackup = null;
+		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
 		_scopeSetBackup = null;
@@ -84,7 +84,7 @@ public class InformationFlowModel {
 
 	public boolean isSimulating(){
 		return !((_containerSetBackup == null) && (_dataSetBackup == null)
-				&& (containerToDataMapBackup == null)
+				&& (_containerToDataMapBackup == null)
 				&& (_aliasesMapBackup == null)
 				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
 	}
@@ -101,10 +101,10 @@ public class InformationFlowModel {
 			_containerSetBackup = _containerSet;
 			_dataSetBackup = new HashSet<>(_dataSet);
 
-			containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
-			for (Entry<IContainer, Set<IData>> e : containerToDataMap.entrySet()) {
+			_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
+			for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
 				Set<IData> s = new HashSet<IData>(e.getValue());
-				containerToDataMapBackup.put(e.getKey(), s);
+				_containerToDataMapBackup.put(e.getKey(), s);
 			}
 
 			_aliasesMapBackup = new HashMap<>();
@@ -131,14 +131,14 @@ public class InformationFlowModel {
 			_logger.info("..done!");
 			_containerSet = _containerSetBackup;
 			_dataSet = _dataSetBackup;
-			containerToDataMap = containerToDataMapBackup;
+			_containerToDataMap = _containerToDataMapBackup;
 			_aliasesMap = _aliasesMapBackup;
 			_namingMap = _namingSetBackup;
 			_scopeSet = _scopeSetBackup;
 
 			_containerSetBackup = null;
 			_dataSetBackup = null;
-			containerToDataMapBackup = null;
+			_containerToDataMapBackup = null;
 			_aliasesMapBackup = null;
 			_namingSetBackup = null;
 			_scopeSetBackup = null;
@@ -282,42 +282,25 @@ public class InformationFlowModel {
 		}
 	}
 
-
-//	/**
-//	 * Removes data object form an internal set.
-//	 *
-//	 * @param dataId
-//	 * @return true if the data object is successfully removed.
-//	 */
-//	public boolean removeData(String dataId) {
-//		assert (dataId != null);
-//
-//		return _dataSet.remove(dataId);
+//	public IData getDataById(IData id) {
+//		return (IData) getElementFromSet(id, _dataSet);
 //	}
-
-
-
-
-	public IData getDataById(IData id) {
-		return (IData) getElementFromSet(id, _dataSet);
-	}
-
-	/**
-	 * Checks if the model contains a data object with given id.
-	 *
-	 * @param id
-	 * @return
-	 */
-	public boolean hasData(IData id) {
-		IData data = getDataById(id);
-		return data != null ? true : false;
-	}
+//
+//	/**
+//	 * Checks if the model contains a data object with given id.
+//	 *
+//	 * @param id
+//	 * @return
+//	 */
+//	public boolean hasData(IData id) {
+//		IData data = getDataById(id);
+//		return data != null ? true : false;
+//	}
 
 	/**
 	 * Inserts container into the model.
 	 *
 	 * @param container
-	 * @return Id of the container.
 	 */
 	public void addContainer(IContainer container) {
 		if (container != null) {
@@ -325,47 +308,19 @@ public class InformationFlowModel {
 		}
 	}
 
-	public boolean removeContainer(IContainer id) {
-		IContainer container = (IContainer) getElementFromSet(id, _containerSet);
-		boolean res = false;
-		if (container == null) {
-			res = false;
-		} else {
-			res = _containerSet.remove(container);
+	public void remove(IContainer cont) {
+		if (cont != null) {
+			_containerSet.remove(cont);
 		}
-		return res;
 	}
 
-	public boolean hasContainerWithId(IContainer id) {
-		IContainer container = getContainerById(id);
-		return container != null ? true : false;
+	public boolean contains(IContainer cont) {
+		return _containerSet.contains(cont);
 	}
 
-	public IContainer getContainerById(IContainer id) {
-		return (IContainer) getElementFromSet(id, _containerSet);
-	}
 
-	public boolean emptyContainer(IContainer id) {
-//		boolean res = false;
-//
-//		// TODO, FK: deleted this code. Can be done in one line (below).
-//		// If you agree, delete this comment.
-//		if (hasContainerWithId(id)) {
-//			Set<String> set = _dataToContainerMap.get(id);
-//			if (set != null) {
-//
-//				//WELL DONE TO WHOMEVER WROTE SET.clear(); INSTEAD Of THE FOLLOWING LINE
-//				//JUST WASTED HOURS FINDING THE BUG
-//				_dataToContainerMap.remove(id);
-//
-//
-//				res = true;
-//			}
-//		}
-//
-//		return res;
-
-		return containerToDataMap.remove(id) != null;
+	public void emptyContainer(IContainer id) {
+		_containerToDataMap.remove(id);
 	}
 
 	/**
@@ -373,36 +328,27 @@ public class InformationFlowModel {
 	 *
 	 * @return
 	 */
-	public boolean addAlias(IContainer fromContainer, IContainer toContainer) {
-		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainer)) {
-			Set<IContainer> set = _aliasesMap.get(fromContainer);
-			res = set.add(toContainer);
-		} else {
-			// Create new set and add it to the map
-			Set<IContainer> newSet = new HashSet<>();
-			newSet.add(toContainer);
-			_aliasesMap.put(fromContainer, newSet);
-			res = true;
+	public void addAlias(IContainer fromContainer, IContainer toContainer) {
+		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
+		if (aliases == null) {
+			aliases = new HashSet<IContainer>();
+			_aliasesMap.put(fromContainer, aliases);
 		}
-		return res;
+		aliases.add(toContainer);
 	}
 
 	/**
-	 * Removes the alias relation identified by the tuple (fromContainerId,
-	 * toContainerId)
+	 * Removes the alias relation identified
 	 *
-	 * @param fromContainerId
-	 * @param toContainerId
+	 * @param fromContainer
+	 * @param toContainer
 	 * @return
 	 */
-	public boolean removeAlias(IContainer fromContainer, IContainer toContainer) {
-		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainer)) {
-			Set<IContainer> set = _aliasesMap.get(fromContainer);
-			res = set.remove(fromContainer);
+	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
+		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
+		if (aliases != null) {
+			aliases.remove(toContainer);
 		}
-		return res;
 	}
 
 	/**
@@ -526,8 +472,8 @@ public class InformationFlowModel {
 
 	public boolean addDataToContainerMapping(IData data, IContainer container) {
 		boolean res = false;
-		if (containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = containerToDataMap.get(container);
+		if (_containerToDataMap.containsKey(container)) {
+			Set<IData> dataSet = _containerToDataMap.get(container);
 			res = dataSet.add(data);
 		} else {
 			Set<IData> newDataSet = new HashSet<>();
@@ -535,7 +481,7 @@ public class InformationFlowModel {
 			//TODO: check if dataId corresponds to a valid data element
 			newDataSet.add(data);
 
-			containerToDataMap.put(container, newDataSet);
+			_containerToDataMap.put(container, newDataSet);
 			res = true;
 		}
 		return res;
@@ -544,8 +490,8 @@ public class InformationFlowModel {
 	public boolean removeContainerToDataMapping(IContainer container,
 			IData data) {
 		boolean res = false;
-		if (containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = containerToDataMap.get(container);
+		if (_containerToDataMap.containsKey(container)) {
+			Set<IData> dataSet = _containerToDataMap.get(container);
 			dataSet.remove(data);
 			res = true;
 		}
@@ -559,7 +505,7 @@ public class InformationFlowModel {
 	 *         set.
 	 */
 	public Set<IData> getDataInContainer(IContainer container) {
-		Set<IData> result = containerToDataMap.get(container);
+		Set<IData> result = _containerToDataMap.get(container);
 		if (result == null) {
 			result = new HashSet<>();
 		}
@@ -573,7 +519,7 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getContainersForData(IData data) {
 		Set<IContainer> result = new HashSet<>();
-		Set<Entry<IContainer, Set<IData>>> entrySet = containerToDataMap
+		Set<Entry<IContainer, Set<IData>>> entrySet = _containerToDataMap
 				.entrySet();
 		for (Entry<IContainer, Set<IData>> entry : entrySet) {
 			if (entry.getValue().contains(data)) {
@@ -591,10 +537,10 @@ public class InformationFlowModel {
 
 		boolean res = false;
 
-		Set<IData> existingDataSet = containerToDataMap.get(container);
+		Set<IData> existingDataSet = _containerToDataMap.get(container);
 		if (existingDataSet == null) {
 			Set<IData> newDataSet = new HashSet<>(dataSet);
-			containerToDataMap.put(container, newDataSet);
+			_containerToDataMap.put(container, newDataSet);
 			res = true;
 		} else {
 			res = existingDataSet.addAll(dataSet);

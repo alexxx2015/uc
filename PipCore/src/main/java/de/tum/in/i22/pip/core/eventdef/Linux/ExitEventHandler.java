@@ -38,12 +38,12 @@ public class ExitEventHandler extends BaseEventHandler {
 			// also remove all depending containers
 			Set<IContainer> closureSet = ifModel.getAliasTransitiveReflexiveClosure(processContainer);
 			for (IContainer cont : closureSet) {
-				ifModel.removeContainer(cont);
+				ifModel.remove(cont);
 			}
 
 			ifModel.removeAllAliasesFrom(processContainer);
 			ifModel.removeAllAliasesTo(processContainer);
-			ifModel.removeContainer(processContainer);
+			ifModel.remove(processContainer);
 
 			for (IName nm : ifModel.getAllNamingsFrom(processContainer)) {
 				LinuxEvents.close(nm);
