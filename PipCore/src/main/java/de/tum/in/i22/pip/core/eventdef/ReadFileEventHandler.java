@@ -8,6 +8,8 @@ import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class ReadFileEventHandler extends BaseEventHandler {
@@ -33,22 +35,23 @@ public class ReadFileEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String fileContainerId = ifModel.getContainerIdByName(new NameBasic(fileName));
+		IContainer fileContainer = ifModel.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container
-		if (fileContainerId == null) {
-			fileContainerId = ifModel.addContainer(_messageFactory.createContainer());
-			ifModel.addName(new NameBasic(fileName), fileContainerId);
+		if (fileContainer == null) {
+			fileContainer = _messageFactory.createContainer();
+			ifModel.addContainer(fileContainer);
+			ifModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
 		// add data to transitive reflexive closure of process container
-		Set<String> transitiveReflexiveClosure = ifModel.getAliasTransitiveReflexiveClosure(processContainerId);
-		Set<String> dataSet = ifModel.getDataInContainer(fileContainerId);
-		for (String tempContainerID : transitiveReflexiveClosure) {
-			ifModel.addDataToContainerMappings(dataSet, tempContainerID);
+		Set<IContainer> transitiveReflexiveClosure = ifModel.getAliasTransitiveReflexiveClosure(processContainer);
+		Set<IData> dataSet = ifModel.getDataInContainer(fileContainer);
+		for (IContainer tempContainer : transitiveReflexiveClosure) {
+			ifModel.addDataToContainerMappings(dataSet, tempContainer);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

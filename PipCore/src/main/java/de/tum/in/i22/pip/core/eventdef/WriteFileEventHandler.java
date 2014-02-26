@@ -32,27 +32,27 @@ public class WriteFileEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String fileContainerId = ifModel
-				.getContainerIdByName(new NameBasic(fileName));
+		IContainer fileContainer = ifModel
+				.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container if
 		// not
-		if (fileContainerId == null) {
-			IContainer container = _messageFactory.createContainer();
-			fileContainerId = ifModel.addContainer(container);
+		if (fileContainer == null) {
+			fileContainer = _messageFactory.createContainer();
+			ifModel.addContainer(fileContainer);
 			IData data = _messageFactory.createData();
-			String fileDataId = ifModel.addData(data);
+			ifModel.addData(data);
 
-			ifModel.addDataToContainerMapping(fileDataId, fileContainerId);
+			ifModel.addDataToContainerMapping(data, fileContainer);
 
-			ifModel.addName(new NameBasic(fileName), fileContainerId);
+			ifModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId), fileContainerId);
+				ifModel.getDataInContainer(processContainer), fileContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

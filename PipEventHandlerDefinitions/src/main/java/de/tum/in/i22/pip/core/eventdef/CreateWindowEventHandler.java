@@ -37,20 +37,20 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerIdByWindowHandle = ifModel.getContainerIdByName(new NameBasic(windowHandle));
+		IContainer containerIdByWindowHandle = ifModel.getContainer(new NameBasic(windowHandle));
 
 		// check if container for window exists and create new container if not
 		if (containerIdByWindowHandle == null) {
-			IContainer container = _messageFactory.createContainer();
-			containerIdByWindowHandle = ifModel.addContainer(container);
+			containerIdByWindowHandle = _messageFactory.createContainer();
+			ifModel.addContainer(containerIdByWindowHandle);
 			ifModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 
-		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainerId), containerIdByWindowHandle);
-		ifModel.addAlias(processContainerId, containerIdByWindowHandle);
+		ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainer), containerIdByWindowHandle);
+		ifModel.addAlias(processContainer, containerIdByWindowHandle);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

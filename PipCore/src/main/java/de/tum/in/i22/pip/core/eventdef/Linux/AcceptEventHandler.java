@@ -6,6 +6,7 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.basic.ContainerRemote;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.distr.IPLocation;
 import de.tum.in.i22.uc.distr.Network;
@@ -24,8 +25,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 		String newFd = null;
 		NameBasic localSocketName = null;
 		NameBasic remoteSocketName = null;
-		String localContainerId = null;
-		String remoteContainerId = null;
+		IContainer localContainer = null;
+		IContainer remoteContainer = null;
 
 		try {
 			host = getParameterValue("host");
@@ -61,17 +62,18 @@ public class AcceptEventHandler extends BaseEventHandler {
 		remoteSocketName = SocketName.create(host, pid, remoteIP, remotePort, localIP, localPort);
 
 		// create new container c
-		localContainerId = ifModel.addContainer(_messageFactory.createContainer());
+		localContainer = _messageFactory.createContainer();
+		ifModel.addContainer(localContainer);
 
-		if (localContainerId == null) {
+		if (localContainer == null) {
 			_logger.fatal("Unable to create container.");
 		}
 		else {
 			// f[(p,(sn(e),(a,x))) <- c]
-			ifModel.addName(localSocketName, localContainerId);
+			ifModel.addName(localSocketName, localContainer);
 
 			// f[((p,e)) <- c]
-			ifModel.addName(FiledescrName.create(host, pid, newFd), localContainerId);
+			ifModel.addName(FiledescrName.create(host, pid, newFd), localContainer);
 
 			if (!localIP.equals(remoteIP)) {
 				// client is remote
@@ -80,26 +82,26 @@ public class AcceptEventHandler extends BaseEventHandler {
 				// TODO: remoteContainerId = ...
 //				remoteContainerId = new ContainerRemote(remoteSocketName, IPLocation.createIPLocation(remoteIP));
 
-				ifModel.addAlias(localContainerId, remoteContainerId);
+				ifModel.addAlias(localContainer, remoteContainer);
 			}
 			else {
 				// client is local
 
 				// this assumes that the corresponding connect() already happened.
 				// This needs to be enforced by the PEP.
-				remoteContainerId = ifModel.getContainerIdByName(remoteSocketName);
+				remoteContainer = ifModel.getContainer(remoteSocketName);
 
-				if (remoteContainerId == null) {
+				if (remoteContainer == null) {
 					_logger.fatal("accept() happened, but corresponding connect() did not happen before. "
 							+ "The order of these events must be enforced by the PEP.");
 				}
 
-				ifModel.addAlias(localContainerId, remoteContainerId);
-				ifModel.addAlias(remoteContainerId, localContainerId);
+				ifModel.addAlias(localContainer, remoteContainer);
+				ifModel.addAlias(remoteContainer, localContainer);
 			}
 
 			// add name of remote container
-			ifModel.addName(remoteSocketName, remoteContainerId);
+			ifModel.addName(remoteSocketName, remoteContainer);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

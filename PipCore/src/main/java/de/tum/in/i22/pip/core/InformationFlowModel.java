@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
@@ -42,13 +41,13 @@ public class InformationFlowModel {
 	private Set<IData> _dataSet = null;
 
 	// [Container.identifier -> List[Data.identifier]]
-	private Map<String, Set<String>> containerToDataMap = null;
+	private Map<IContainer, Set<IData>> containerToDataMap = null;
 
 	// [Container.identifier -> List[Container.identifier]]
-	private Map<String, Set<String>> _aliasesMap = null;
+	private Map<IContainer, Set<IContainer>> _aliasesMap = null;
 
 	// the naming set [name -> Container.identifier]
-	private Map<IName, String> _namingMap = null;
+	private Map<IName, IContainer> _namingMap = null;
 
 	// list of currently opened scopes
 	private Set<Scope> _scopeSet = null;
@@ -56,9 +55,9 @@ public class InformationFlowModel {
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IContainer> _containerSetBackup;
 	private Set<IData> _dataSetBackup;
-	private Map<String, Set<String>> _dataToContainerMapBackup;
-	private Map<String, Set<String>> _containerAliasesMapBackup;
-	private Map<IName, String> _namingSetBackup;
+	private Map<IContainer, Set<IData>> _dataToContainerMapBackup;
+	private Map<IContainer, Set<IContainer>> _containerAliasesMapBackup;
+	private Map<IName, IContainer> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
 	public InformationFlowModel() {
@@ -103,19 +102,19 @@ public class InformationFlowModel {
 			_containerSetBackup = _containerSet;
 			_dataSetBackup = new HashSet<>(_dataSet);
 
-			_dataToContainerMapBackup = new HashMap<String, Set<String>>();
-			for (Entry<String, Set<String>> e : containerToDataMap.entrySet()) {
-				Set<String> s = new HashSet<String>(e.getValue());
+			_dataToContainerMapBackup = new HashMap<IContainer, Set<IData>>();
+			for (Entry<IContainer, Set<IData>> e : containerToDataMap.entrySet()) {
+				Set<IData> s = new HashSet<IData>(e.getValue());
 				_dataToContainerMapBackup.put(e.getKey(), s);
 			}
 
 			_containerAliasesMapBackup = new HashMap<>();
-			for (Entry<String, Set<String>> e : _aliasesMap.entrySet()) {
-				Set<String> s = new HashSet<String>(e.getValue());
+			for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
+				Set<IContainer> s = new HashSet<IContainer>(e.getValue());
 				_containerAliasesMapBackup.put(e.getKey(), s);
 			}
 
-			_namingSetBackup = new HashMap<IName, String>(_namingMap);
+			_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
 			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
 			return true;
 		}
@@ -271,16 +270,10 @@ public class InformationFlowModel {
 	 * @return Id of the data object if set does not contain the data object,
 	 *         otherwise null.
 	 */
-	public String addData(IData data) {
-		assert (data != null);
-
-		if (_dataSet.contains(data)) {
-			return null;
+	public void addData(IData data) {
+		if (data != null) {
+			_dataSet.add(data);
 		}
-
-		_dataSet.add(data);
-
-		return data.getId();
 	}
 
 	/**
@@ -315,7 +308,7 @@ public class InformationFlowModel {
 	 * @param id
 	 * @return Data object if it is present in the set, otherwise null.
 	 */
-	public IData getDataById(String id) {
+	public IData getDataById(IData id) {
 		return (IData) getElementFromSet(id, _dataSet);
 	}
 
@@ -325,7 +318,7 @@ public class InformationFlowModel {
 	 * @param id
 	 * @return
 	 */
-	public boolean hasData(String id) {
+	public boolean hasData(IData id) {
 		IData data = getDataById(id);
 		return data != null ? true : false;
 	}
@@ -336,16 +329,13 @@ public class InformationFlowModel {
 	 * @param container
 	 * @return Id of the container.
 	 */
-	public String addContainer(IContainer container) {
-		if (_containerSet.contains(container)) {
-			return null;
+	public void addContainer(IContainer container) {
+		if (container != null) {
+			_containerSet.add(container);
 		}
-
-		_containerSet.add(container);
-		return container.getId();
 	}
 
-	public boolean removeContainer(String id) {
+	public boolean removeContainer(IContainer id) {
 		IContainer container = (IContainer) getElementFromSet(id, _containerSet);
 		boolean res = false;
 		if (container == null) {
@@ -356,16 +346,16 @@ public class InformationFlowModel {
 		return res;
 	}
 
-	public boolean hasContainerWithId(String id) {
+	public boolean hasContainerWithId(IContainer id) {
 		IContainer container = getContainerById(id);
 		return container != null ? true : false;
 	}
 
-	public IContainer getContainerById(String id) {
+	public IContainer getContainerById(IContainer id) {
 		return (IContainer) getElementFromSet(id, _containerSet);
 	}
 
-	public boolean emptyContainer(String id) {
+	public boolean emptyContainer(IContainer id) {
 //		boolean res = false;
 //
 //		// TODO, FK: deleted this code. Can be done in one line (below).
@@ -393,16 +383,16 @@ public class InformationFlowModel {
 	 *
 	 * @return
 	 */
-	public boolean addAlias(String fromContainerId, String toContainerId) {
+	public boolean addAlias(IContainer fromContainer, IContainer toContainer) {
 		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _aliasesMap.get(fromContainerId);
-			res = set.add(toContainerId);
+		if (_aliasesMap.containsKey(fromContainer)) {
+			Set<IContainer> set = _aliasesMap.get(fromContainer);
+			res = set.add(toContainer);
 		} else {
 			// Create new set and add it to the map
-			Set<String> newSet = new HashSet<>();
-			newSet.add(toContainerId);
-			_aliasesMap.put(fromContainerId, newSet);
+			Set<IContainer> newSet = new HashSet<>();
+			newSet.add(toContainer);
+			_aliasesMap.put(fromContainer, newSet);
 			res = true;
 		}
 		return res;
@@ -416,11 +406,11 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public boolean removeAlias(String fromContainerId, String toContainerId) {
+	public boolean removeAlias(IContainer fromContainer, IContainer toContainer) {
 		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _aliasesMap.get(fromContainerId);
-			res = set.remove(fromContainerId);
+		if (_aliasesMap.containsKey(fromContainer)) {
+			Set<IContainer> set = _aliasesMap.get(fromContainer);
+			res = set.remove(fromContainer);
 		}
 		return res;
 	}
@@ -432,8 +422,8 @@ public class InformationFlowModel {
 	 * @return All aliases of a container given by its id, empty set if the
 	 *         container has no aliases.
 	 */
-	public Set<String> getAliasesForContainer(String id) {
-		Set<String> result = _aliasesMap.get(id);
+	public Set<IContainer> getAliasesForContainer(IContainer id) {
+		Set<IContainer> result = _aliasesMap.get(id);
 		// if no such element is present, return an empty set
 		if (result == null)
 			result = new HashSet<>();
@@ -448,10 +438,10 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public Set<String> getAliasTransitiveReflexiveClosure(String containerId) {
-		Set<String> closureSet = getAliasClosureExcludeStartId(containerId);
+	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
+		Set<IContainer> closureSet = getAliasClosureExcludeStartId(container);
 		// add self to set ==> reflexive
-		closureSet.add(containerId);
+		closureSet.add(container);
 
 		return closureSet;
 	}
@@ -462,10 +452,10 @@ public class InformationFlowModel {
 	 * @param fromContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesFrom(String fromContainerId) {
+	public boolean removeAllAliasesFrom(IContainer fromContainer) {
 		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainerId)) {
-			Set<String> set = _aliasesMap.get(fromContainerId);
+		if (_aliasesMap.containsKey(fromContainer)) {
+			Set<IContainer> set = _aliasesMap.get(fromContainer);
 			set.clear();
 			res = true;
 		}
@@ -478,16 +468,16 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesTo(String toContainerId) {
+	public boolean removeAllAliasesTo(IContainer toContainer) {
 		// TODO This method seems to have a bug.
 		boolean res = false;
-		Set<String> aliasesToContainer = getAliasesTo(toContainerId);
+		Set<IContainer> aliasesToContainer = getAliasesTo(toContainer);
 		if (aliasesToContainer.size() > 0) {
-			Collection<Set<String>> aliasesCollection = _aliasesMap
+			Collection<Set<IContainer>> aliasesCollection = _aliasesMap
 					.values();
-			for (Set<String> aliases : aliasesCollection) {
-				if (aliases.contains(toContainerId)) {
-					_aliasesMap.remove(toContainerId);
+			for (Set<IContainer> aliases : aliasesCollection) {
+				if (aliases.contains(toContainer)) {
+					_aliasesMap.remove(toContainer);
 				}
 			}
 			res = true;
@@ -500,36 +490,36 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return All aliases that go to the container with the given id.
 	 */
-	public Set<String> getAliasesTo(String toContainerId) {
-		Set<String> result = new HashSet<String>();
-		Set<Entry<String, Set<String>>> entrySet = _aliasesMap
+	public Set<IContainer> getAliasesTo(IContainer toContainer) {
+		Set<IContainer> result = new HashSet<IContainer>();
+		Set<Entry<IContainer, Set<IContainer>>> entrySet = _aliasesMap
 				.entrySet();
-		for (Entry<String, Set<String>> entry : entrySet) {
-			Set<String> aliasesSet = entry.getValue();
-			if (aliasesSet.contains(toContainerId)) {
+		for (Entry<IContainer, Set<IContainer>> entry : entrySet) {
+			Set<IContainer> aliasesSet = entry.getValue();
+			if (aliasesSet.contains(toContainer)) {
 				result.add(entry.getKey());
 			}
 		}
 		return result;
 	}
 
-	private Set<String> getAliasClosureExcludeStartId(String containerId) {
-		Set<String> result = new HashSet<>();
-		getAliasClosureExcludeStartId(containerId, result);
+	private Set<IContainer> getAliasClosureExcludeStartId(IContainer container) {
+		Set<IContainer> result = new HashSet<>();
+		getAliasClosureExcludeStartId(container, result);
 		return result;
 	}
 
-	private void getAliasClosureExcludeStartId(String containerId,
-			Set<String> visitedContainers) {
-		Set<String> containerAliasesSet = getAliasesForContainer(containerId);
-		for (String id : containerAliasesSet) {
+	private void getAliasClosureExcludeStartId(IContainer container,
+			Set<IContainer> visitedContainers) {
+		Set<IContainer> containerAliasesSet = getAliasesForContainer(container);
+		for (IContainer id : containerAliasesSet) {
 			if (visitedContainers.add(id)) {
 				getAliasClosureExcludeStartId(id, visitedContainers);
 			}
 		}
 	}
 
-	private IIdentifiable getElementFromSet(String id,
+	private IIdentifiable getElementFromSet(IIdentifiable id,
 			Set<? extends IIdentifiable> set) {
 		if (set==null) return null;
 		Iterator<? extends IIdentifiable> it = set.iterator();
@@ -544,29 +534,29 @@ public class InformationFlowModel {
 		return element;
 	}
 
-	public boolean addDataToContainerMapping(String dataId, String containerId) {
+	public boolean addDataToContainerMapping(IData data, IContainer container) {
 		boolean res = false;
-		if (containerToDataMap.containsKey(containerId)) {
-			Set<String> dataSet = containerToDataMap.get(containerId);
-			res = dataSet.add(dataId);
+		if (containerToDataMap.containsKey(container)) {
+			Set<IData> dataSet = containerToDataMap.get(container);
+			res = dataSet.add(data);
 		} else {
-			Set<String> newDataSet = new HashSet<>();
+			Set<IData> newDataSet = new HashSet<>();
 
 			//TODO: check if dataId corresponds to a valid data element
-			newDataSet.add(dataId);
+			newDataSet.add(data);
 
-			containerToDataMap.put(containerId, newDataSet);
+			containerToDataMap.put(container, newDataSet);
 			res = true;
 		}
 		return res;
 	}
 
-	public boolean removeContainerToDataMapping(String containerId,
-			String dataId) {
+	public boolean removeContainerToDataMapping(IContainer container,
+			IData data) {
 		boolean res = false;
-		if (containerToDataMap.containsKey(containerId)) {
-			Set<String> dataSet = containerToDataMap.get(containerId);
-			dataSet.remove(dataId);
+		if (containerToDataMap.containsKey(container)) {
+			Set<IData> dataSet = containerToDataMap.get(container);
+			dataSet.remove(data);
 			res = true;
 		}
 		return res;
@@ -578,8 +568,8 @@ public class InformationFlowModel {
 	 *         there are no data for the given data container, returns empty
 	 *         set.
 	 */
-	public Set<String> getDataInContainer(String containerId) {
-		Set<String> result = containerToDataMap.get(containerId);
+	public Set<IData> getDataInContainer(IContainer container) {
+		Set<IData> result = containerToDataMap.get(container);
 		if (result == null) {
 			result = new HashSet<>();
 		}
@@ -591,30 +581,30 @@ public class InformationFlowModel {
 	 * @param dataId
 	 * @return All container ids as a set for the data with the given id.
 	 */
-	public Set<String> getContainersForData(String dataId) {
-		Set<String> result = new HashSet<>();
-		Set<Entry<String, Set<String>>> entrySet = containerToDataMap
+	public Set<IContainer> getContainersForData(IData data) {
+		Set<IContainer> result = new HashSet<>();
+		Set<Entry<IContainer, Set<IData>>> entrySet = containerToDataMap
 				.entrySet();
-		for (Entry<String, Set<String>> entry : entrySet) {
-			if (entry.getValue().contains(dataId)) {
+		for (Entry<IContainer, Set<IData>> entry : entrySet) {
+			if (entry.getValue().contains(data)) {
 				result.add(entry.getKey());
 			}
 		}
 		return result;
 	}
 
-	public boolean addDataToContainerMappings(Set<String> dataSet,
-			String containerId) {
+	public boolean addDataToContainerMappings(Set<IData> dataSet,
+			IContainer container) {
 		if (dataSet == null) {
 			return true;
 		}
 
 		boolean res = false;
 
-		Set<String> existingDataSet = containerToDataMap.get(containerId);
+		Set<IData> existingDataSet = containerToDataMap.get(container);
 		if (existingDataSet == null) {
-			Set<String> newDataSet = new HashSet<>(dataSet);
-			containerToDataMap.put(containerId, newDataSet);
+			Set<IData> newDataSet = new HashSet<>(dataSet);
+			containerToDataMap.put(container, newDataSet);
 			res = true;
 		} else {
 			res = existingDataSet.addAll(dataSet);
@@ -631,10 +621,10 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public boolean addName(IName name, String containerId) {
+	public boolean addName(IName name, IContainer container) {
 		boolean res = false;
 		if (name != null && !name.getName().isEmpty()) {
-			_namingMap.put(name, containerId);
+			_namingMap.put(name, container);
 			res = true;
 		}
 		return res;
@@ -647,12 +637,7 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public boolean removeName(IName name) {
-		boolean res = false;
-		if (name != null) {
-			String removedEntry = _namingMap.remove(name);
-			res = removedEntry != null ? true : false;
-		}
-		return res;
+		return _namingMap.remove(name) != null;
 	}
 
 	/**
@@ -661,9 +646,8 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByName(IName name) {
-		String containerId = null;
-		if (_namingMap != null && name != null && name.getName() != null) {
+	public IContainer getContainer(IName name) {
+		if (name != null && name.getName() != null) {
 //			// FK: Malte's old code. The single line below should do the job as well
 //			// If you (anyone) agree, please delete
 //			Set<Name> pipNameSet = _namingSet.keySet();
@@ -677,7 +661,7 @@ public class InformationFlowModel {
 
 			return _namingMap.get(name);
 		}
-		return containerId;
+		return null;
 	}
 
 // 	FK:  Why would it be useful???
@@ -690,20 +674,20 @@ public class InformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public String getContainerIdByNameRelaxed(IName name) {
-		String containerId = null;
+	public IContainer getContainerRelaxed(IName name) {
+		IContainer container = null;
 		if (name != null && name.getName() != null) {
 			String representationName = name.getName();
 			for (IName nm : _namingMap.keySet()) {
 				if (nm.getName() != null
 						&& nm.getName().contains(representationName)) {
 
-					containerId = _namingMap.get(nm);
+					container = _namingMap.get(nm);
 					break;
 				}
 			}
 		}
-		return containerId;
+		return container;
 	}
 
 	/**
@@ -712,7 +696,7 @@ public class InformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public List<IName> getAllNames(String containerId) {
+	public List<IName> getAllNames(IContainer container) {
 		List<IName> result = new ArrayList<IName>();
 
 //		// FK: Malte's old code. The (more efficient) code below should do the job as well
@@ -727,7 +711,7 @@ public class InformationFlowModel {
 
 		if (_namingMap != null) {
 			for (IName name : _namingMap.keySet()) {
-				if (_namingMap.get(name).equals(containerId)) {
+				if (_namingMap.get(name).equals(container)) {
 					result.add(name);
 				}
 			}
@@ -740,10 +724,10 @@ public class InformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
-	public List<IName> getAllNamingsFrom(String pid) {
+	public List<IName> getAllNamingsFrom(IContainer pid) {
 		List<IName> result = new ArrayList<IName>();
 
-		for (Entry<IName, String> entry : _namingMap.entrySet()) {
+		for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
 				result.add(entry.getKey());
 		}

@@ -105,7 +105,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 					for (String cont : containers){
 						NameBasic pname= new NameBasic(cont);
 						//_logger.debug("..in loop("+cont+")..");
-						if (s.contains(_ifModel.getContainerIdByNameRelaxed(pname))) {
+						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
 							_logger.trace(out+"=false");
 							return false;
 						}
@@ -124,7 +124,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				for (String cont : s){
 					NameBasic pname= new NameBasic(cont);
 					//_logger.debug("..in loop("+cont+")..");
-					if (!(limit.contains(_ifModel.getContainerIdByNameRelaxed(pname)))) {
+					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
 						_logger.trace(out+"=false");
 						return false;
 					}

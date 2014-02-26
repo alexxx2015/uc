@@ -26,21 +26,21 @@ public class TakeScreenshotEventHandler extends BaseEventHandler {
         }
 
         InformationFlowModel ifModel = getInformationFlowModel();
-        String clipboardContainerId = ifModel.getContainerIdByName(new NameBasic("clipboard"));
+        IContainer clipboardContainer = ifModel.getContainer(new NameBasic("clipboard"));
 
         //check if container for clipboard exists and create new container if not
-        if (clipboardContainerId == null)
+        if (clipboardContainer == null)
         {
-        	IContainer container = _messageFactory.createContainer();
-            clipboardContainerId = ifModel.addContainer(container);
-            ifModel.addName(new NameBasic("clipboard"), clipboardContainerId);
+        	clipboardContainer = _messageFactory.createContainer();
+            ifModel.addContainer(clipboardContainer);
+            ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
         };
 
         //do not empty as take screenshot events are split to one screenshot event per visible window
         //ifModel.emptyContainer(clipboardContainerID);
 
-        String windowContainerId = ifModel.getContainerIdByName(new NameBasic(visibleWindow));
-        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(windowContainerId), clipboardContainerId);
+        IContainer windowContainer = ifModel.getContainer(new NameBasic(visibleWindow));
+        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(windowContainer), clipboardContainer);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

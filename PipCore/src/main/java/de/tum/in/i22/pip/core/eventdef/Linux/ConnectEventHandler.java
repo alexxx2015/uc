@@ -6,6 +6,7 @@ import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.distr.Network;
 
@@ -23,7 +24,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		String remotePort = null;
 		NameBasic socketFD = null;
 		NameBasic localSocketName = null;
-		String localContainerId = null;
+		IContainer localContainer = null;
 
 		try {
 			host = getParameterValue("host");
@@ -57,16 +58,16 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		// c := f((pid,sfd))
 		socketFD = FiledescrName.create(host, pid, fd);
-		localContainerId = ifModel.getContainerIdByName(socketFD);
+		localContainer = ifModel.getContainer(socketFD);
 
-		if (localContainerId == null) {
+		if (localContainer == null) {
 			_logger.fatal("Container with identifier " + socketFD + " should exist due to "
 					+ "previous socket() call. But it did not.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
 		// f[(p,(sn(e),(a,x))) <- c]
-		ifModel.addName(localSocketName, localContainerId);
+		ifModel.addName(localSocketName, localContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

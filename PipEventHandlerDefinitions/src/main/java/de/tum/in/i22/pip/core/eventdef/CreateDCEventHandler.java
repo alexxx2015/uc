@@ -13,9 +13,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * Print event
- * 
+ *
  * @author Stoimenov
- * 
+ *
  */
 public class CreateDCEventHandler extends BaseEventHandler {
 
@@ -42,22 +42,22 @@ public class CreateDCEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new NameBasic(
+		IContainer deviceContainer = ifModel.getContainer(new NameBasic(
 				deviceName));
 
 		// check if container for device exists and create new container if not
-		if (deviceContainerId == null) {
-			IContainer container = _messageFactory.createContainer();
-			deviceContainerId = ifModel.addContainer(container);
-			ifModel.addName(new NameBasic(deviceName), deviceContainerId);
+		if (deviceContainer == null) {
+			deviceContainer = _messageFactory.createContainer();
+			ifModel.addContainer(deviceContainer);
+			ifModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId),
-				deviceContainerId);
+				ifModel.getDataInContainer(processContainer),
+				deviceContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

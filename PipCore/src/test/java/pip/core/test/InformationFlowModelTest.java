@@ -14,13 +14,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 
 public class InformationFlowModelTest {
-	
-	
+	protected final IMessageFactory _messageFactory = MessageFactoryCreator
+			.createMessageFactory();
+
 	private static final Logger _logger = Logger
 			.getLogger(InformationFlowModelTest.class);
-	
+
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 
 	@BeforeClass
@@ -42,19 +47,35 @@ public class InformationFlowModelTest {
 
 	@Test
 	public void test() {
-		_ifModel.addAlias("A", "B");
-		_ifModel.addAlias("B", "C");
-		_ifModel.addAlias("B", "D");
-		_ifModel.addAlias("E", "H");
-		_ifModel.addAlias("B", "H");
-		_ifModel.addAlias("C", "K");
-		_ifModel.addAlias("B", "A");
-		
-		Set<String> expectedClosure = new HashSet<>(Arrays.asList("A", "B", "C", "D", "H", "K"));
-		
-		Set<String> aliasClosure = _ifModel.getAliasTransitiveReflexiveClosure("A");
+		IContainer a = _messageFactory.createContainer();
+		IContainer b = _messageFactory.createContainer();
+		IContainer c = _messageFactory.createContainer();
+		IContainer d = _messageFactory.createContainer();
+		IContainer e = _messageFactory.createContainer();
+		IContainer h = _messageFactory.createContainer();
+		IContainer k = _messageFactory.createContainer();
+
+		_ifModel.addContainer(a);
+		_ifModel.addContainer(b);
+		_ifModel.addContainer(c);
+		_ifModel.addContainer(d);
+		_ifModel.addContainer(e);
+		_ifModel.addContainer(h);
+		_ifModel.addContainer(k);
+
+		_ifModel.addAlias(a, b);
+		_ifModel.addAlias(b, c);
+		_ifModel.addAlias(b, d);
+		_ifModel.addAlias(e, h);
+		_ifModel.addAlias(b, h);
+		_ifModel.addAlias(c, k);
+		_ifModel.addAlias(b, a);
+
+		Set<IContainer> expectedClosure = new HashSet<>(Arrays.asList(a, b, c, d, h, k));
+
+		Set<IContainer> aliasClosure = _ifModel.getAliasTransitiveReflexiveClosure(a);
 		_logger.debug(Arrays.toString(aliasClosure.toArray()));
-		
+
 		Assert.assertEquals(expectedClosure, aliasClosure);
 	}
 

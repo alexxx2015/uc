@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
@@ -49,12 +50,12 @@ public class LinuxEvents {
 	private static void closeSocket(IName name) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
-		String containerId = ifModel.getContainerIdByName(name);
+		IContainer container = ifModel.getContainer(name);
 
 		int count = 0;
 
-		if (containerId != null) {
-			for (IName n : ifModel.getAllNames(containerId)) {
+		if (container != null) {
+			for (IName n : ifModel.getAllNames(container)) {
 				if (!(n instanceof SocketName)) {
 					count++;
 				}
@@ -69,20 +70,20 @@ public class LinuxEvents {
 	static void shutdown(IName name, Shut mode) {
 		InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
-		String containerId = ifModel.getContainerIdByName(name);
+		IContainer container = ifModel.getContainer(name);
 
-		if (containerId != null) {
-			List<IName> allNames = ifModel.getAllNames(containerId);
+		if (container != null) {
+			List<IName> allNames = ifModel.getAllNames(container);
 
 			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
 				// disallow reception
-				ifModel.emptyContainer(containerId);
-				ifModel.removeAllAliasesTo(containerId);
+				ifModel.emptyContainer(container);
+				ifModel.removeAllAliasesTo(container);
 			}
 
 			if (mode == Shut.SHUT_WR || mode == Shut.SHUT_RDWR) {
 				// disallow transmission
-				ifModel.removeAllAliasesFrom(containerId);
+				ifModel.removeAllAliasesFrom(container);
 			}
 
 			if (mode == Shut.SHUT_RDWR) {

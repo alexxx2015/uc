@@ -23,28 +23,27 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 
 		String contName="TEST_C";
 		String dataName="TEST_D";
-		
+
 
 		IEvent e = getEvent();
 
 
-		String contId = ifModel.getContainerIdByName(new NameBasic(
+		IContainer cont = ifModel.getContainer(new NameBasic(
 				contName));
 
-		_logger.debug("contID = " + contId);
+		_logger.debug("cont = " + cont);
 
-		if (contId == null) {
-			IContainer container = _messageFactory.createContainer("TestContainer",contName);
-
-			contId = ifModel.addContainer(container);
-			ifModel.addName(new NameBasic(contName), contId);
+		if (cont == null) {
+			cont = _messageFactory.createContainer("TestContainer",contName);
+			ifModel.addContainer(cont);
+			ifModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
 			ifModel.addData(d);
-			ifModel.addDataToContainerMapping(dataName, contId);
+			ifModel.addDataToContainerMapping(d, cont);
 			_logger.debug(ifModel.toString());
 		} else {
-			_logger.error("contID = " + contId+" Already exists!!!! IMPOSSIBRU!!!");
+			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
 		_logger.debug(ifModel.toString());
 		}
 

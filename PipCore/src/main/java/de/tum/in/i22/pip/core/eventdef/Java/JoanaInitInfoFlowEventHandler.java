@@ -49,7 +49,7 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		//Version 3: ignature+location+parampos is used as naming identifier for a container
 		String[] infoConts = new String[]{signature, location+delim+offset+delim+signature, location+delim+offset+delim+signature+delim+parampos};
 		for(String infoCont : infoConts){
-			String infoContId = ifModel.getContainerIdByName(new NameBasic(infoCont));
+			String infoContId = ifModel.getContainer(new NameBasic(infoCont));
 			infoCont = prefix + infoCont;
 
 			_logger.debug("contID = " + infoContId);
@@ -71,9 +71,9 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		}
 
 //		Process alias relationship
-		String id1 = ifModel.getContainerIdByName(new NameBasic(prefix+infoConts[0]));
-		String id2 = ifModel.getContainerIdByName(new NameBasic(prefix+infoConts[1]));
-		String id3 = ifModel.getContainerIdByName(new NameBasic(prefix+infoConts[2]));
+		String id1 = ifModel.getContainer(new NameBasic(prefix+infoConts[0]));
+		String id2 = ifModel.getContainer(new NameBasic(prefix+infoConts[1]));
+		String id3 = ifModel.getContainer(new NameBasic(prefix+infoConts[2]));
 
 		if(type.toLowerCase().equals("source")){
 			ifModel.addAlias(id1, id2);

@@ -27,23 +27,23 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-        String  processContainerId = instantiateProcess(pid, processName);
+        IContainer  processContainer = instantiateProcess(pid, processName);
 
         InformationFlowModel ifModel = getInformationFlowModel();
-        String clipboardContainerId = ifModel.getContainerIdByName(new NameBasic("clipboard"));
+        IContainer clipboardContainer = ifModel.getContainer(new NameBasic("clipboard"));
 
          //check if container for clipboard exists and create new container if not
-         if (clipboardContainerId == null)
+         if (clipboardContainer == null)
          {
-        	 IContainer container = _messageFactory.createContainer();
-             clipboardContainerId = ifModel.addContainer(container);
-             ifModel.addName(new NameBasic("clipboard"), clipboardContainerId);
+        	 clipboardContainer = _messageFactory.createContainer();
+             ifModel.addContainer(clipboardContainer);
+             ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
          };
 
          //add data to transitive reflexive closure of process container
-         for (String tempContainerId : ifModel.getAliasTransitiveReflexiveClosure(processContainerId))
+         for (IContainer tempContainer : ifModel.getAliasTransitiveReflexiveClosure(processContainer))
          {
-             ifModel.addDataToContainerMappings(ifModel.getDataInContainer(clipboardContainerId), tempContainerId);
+             ifModel.addDataToContainerMappings(ifModel.getDataInContainer(clipboardContainer), tempContainer);
          }
 
          return _messageFactory.createStatus(EStatus.OKAY);
