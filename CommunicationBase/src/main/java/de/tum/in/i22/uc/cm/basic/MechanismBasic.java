@@ -160,9 +160,13 @@ public class MechanismBasic implements IMechanism {
 
 	@Override
 	public String toString() {
-		return "MechanismBasic [_condition=" + _condition + ", _mechanismName="
-				+ _mechanismName + ", _response=" + _response + ", _state="
-				+ _state + ", _triggerEvent=" + _triggerEvent + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_condition", _condition)
+				.add("_mechanismName", _mechanismName)
+				.add("_response", _response)
+				.add("_state", _state)
+				.add("_triggerEvent", _triggerEvent)
+				.toString();
 	}
 
 

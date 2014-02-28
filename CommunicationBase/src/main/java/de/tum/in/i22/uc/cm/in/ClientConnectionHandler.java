@@ -18,11 +18,11 @@ import org.apache.log4j.Logger;
 public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
 	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
-	private Socket _socket;
+	private final Socket _socket;
 	private InputStream _inputStream;
 	private OutputStream _outputStream;
 	private boolean _shouldContinue;
-	
+
 	private Object _response = null;
 
 	protected ClientConnectionHandler(Socket socket) {
@@ -36,7 +36,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 		try {
 			_inputStream = _socket.getInputStream();
 			_outputStream = _socket.getOutputStream();
-			
+
 			try {
 				while (_shouldContinue) {
 					doProcessing();
@@ -49,8 +49,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 			catch (EOFException eof) {
 				_logger.debug("End of stream reached.");
 				_shouldContinue = false;
-			}	
-			/* connection either terminated by the client or lost due to 
+			}
+			/* connection either terminated by the client or lost due to
 			 * network problems*/
 			catch (IOException ex) {
 				_logger.error("Connection lost.", ex);
@@ -61,7 +61,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 				_logger.info("The connection to the client will be interrupted.");
 				_shouldContinue = false;
 			}
-			
+
 		}
 		catch (IOException ioe) {
 			_logger.error("Connection could not be established!", ioe);
@@ -77,7 +77,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 			}
 		}
 	}
-	
+
 	protected Object waitForResponse() throws InterruptedException {
 		synchronized (this) {
 			while (_response == null) {
@@ -87,7 +87,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 			return _response;
 		}
 	}
-	
+
 	@Override
 	public void forwardResponse(Object response) {
 		_logger.debug("Response to forward: " + response + ". Wake up the thread.");
@@ -96,34 +96,33 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 			notifyAll();
 		}
 	}
-	
+
 	protected Object getResponse() {
 		return _response;
 	}
-	
+
 	/**
 	 * Sets response to null
 	 */
 	protected void throwAwayResponse() {
 		_response = null;
 	}
-	
+
 	protected OutputStream getOutputStream() {
 		return _outputStream;
 	}
-	
+
 	public DataInputStream getDataInputStream() {
 		return new DataInputStream(_inputStream);
 	}
-	
+
 	protected abstract void doProcessing() throws IOException,
 		EOFException, InterruptedException, MessageTooLargeException;
-	
+
 	@Override
 	public String toString() {
-		String string = _socket.getInetAddress().getHostName() + " on port "
+		return _socket.getInetAddress().getHostName() + " on port "
 				+ _socket.getPort();
-		return string;
 	}
 
 }

@@ -78,6 +78,9 @@ public class PipDeployerBasic implements IPipDeployer {
 
 	@Override
 	public String toString() {
-		return "PipDeployerBasic [_id=" + _id + ", _name=" + _name + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_id", _id)
+				.add("_name", _name)
+				.toString();
 	}
 }

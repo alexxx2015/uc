@@ -79,8 +79,10 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public String toString() {
-		return "ContainerBasic [_classValue=" + _classValue + ", _id=" + _id
-				+ "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_id", _id)
+				.add("_classValue", _classValue)
+				.toString();
 	}
 
 }

@@ -4,12 +4,12 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.cm.basic.ContainerRemote;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.distr.IPLocation;
-import de.tum.in.i22.uc.distr.Network;
+import de.tum.in.i22.uc.distribution.ContainerRemote;
+import de.tum.in.i22.uc.distribution.IPLocation;
+import de.tum.in.i22.uc.distribution.Network;
 
 public class AcceptEventHandler extends BaseEventHandler {
 

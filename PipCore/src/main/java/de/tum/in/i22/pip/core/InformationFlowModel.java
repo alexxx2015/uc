@@ -23,12 +23,13 @@ public class InformationFlowModel {
 
 	@Override
 	public String toString() {
-		return "InformationFlowModel ["+System.getProperty("line.separator")
-				+", _dataToContainerMap=" + _containerToDataMap + System.getProperty("line.separator")
-				+", _containerAliasesMap="+ _aliasesMap + System.getProperty("line.separator")
-				+ ", _namingSet=" + _namingMap+System.getProperty("line.separator")
-				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")
-				+" IS_SIMULATING="+isSimulating()+"]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_containerToDataMap", _containerToDataMap)
+				.add("_aliasesMap", _aliasesMap)
+				.add("_namingMap", _namingMap)
+				.add("_scopeSet", _scopeSet)
+				.add("_isSimulating", isSimulating())
+				.toString();
 	}
 
 	private final static InformationFlowModel _instance = new InformationFlowModel();

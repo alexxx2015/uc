@@ -91,8 +91,10 @@ public class StatusBasic implements IStatus {
 
 	@Override
 	public String toString() {
-		return "StatusBasic [_eStatus=" + _eStatus + ", _errorMessage="
-				+ _errorMessage + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_eStatus", _eStatus)
+				.add("_errorMessage", _errorMessage)
+				.toString();
 	}
 
 	@Override

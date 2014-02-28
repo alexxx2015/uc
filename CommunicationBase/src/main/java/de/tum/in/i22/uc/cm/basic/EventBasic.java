@@ -157,8 +157,13 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventBasic [_name=" + _name + ", _pep=" + _pep + ", _isActual=" + _isActual
-				+ ", _parameters=" + _parameters + ", _timestamp=" + _timestamp + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_name", _name)
+				.add("_pep", _pep)
+				.add("_isActual", _isActual)
+				.add("_parameters", _parameters)
+				.add("_timestamp", _timestamp)
+				.toString();
 	}
 
 	@Override

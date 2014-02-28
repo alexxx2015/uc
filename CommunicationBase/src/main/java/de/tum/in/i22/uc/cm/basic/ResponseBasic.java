@@ -108,9 +108,11 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public String toString() {
-		return "ResponseBasic [_authorizationAction=" + _authorizationAction
-				+ ", _executeActions=" + _executeActions + ", _modifiedEvent="
-				+ _modifiedEvent + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_authorizationAction", _authorizationAction)
+				.add("_executeAction", _executeActions)
+				.add("_modifiedEvent", _modifiedEvent)
+				.toString();
 	}
 
 	@Override

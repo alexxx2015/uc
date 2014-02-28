@@ -63,7 +63,9 @@ public class DataBasic implements IData {
 
 	@Override
 	public String toString() {
-		return "DataBasic [_id=" + _id + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_id", _id)
+				.toString();
 	}
 
 }

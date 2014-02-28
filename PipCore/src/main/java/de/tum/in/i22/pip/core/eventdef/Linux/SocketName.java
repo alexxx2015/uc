@@ -1,7 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.distr.Network;;
+import de.tum.in.i22.uc.distribution.Network;
 
 
 
@@ -59,10 +59,5 @@ class SocketName extends NameBasic {
 
 	public String getRemotePort() {
 		return _remotePort;
-	}
-
-	@Override
-	public String toString() {
-		return super.toString();
 	}
 }

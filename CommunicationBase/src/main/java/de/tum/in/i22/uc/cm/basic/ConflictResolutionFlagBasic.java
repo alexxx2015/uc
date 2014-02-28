@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.Objects.ToStringHelper;
+
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IConflictResolutionFlag;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag;
@@ -48,8 +50,9 @@ public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 
 	@Override
 	public String toString() {
-		return "ConflictResolutionFlagBasic [_eConflictResolution="
-				+ _eConflictResolution + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_eConflictResolution", _eConflictResolution)
+				.toString();
 	}
 
 

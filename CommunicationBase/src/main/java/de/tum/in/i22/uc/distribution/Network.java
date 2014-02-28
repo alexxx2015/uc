@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.distr;
+package de.tum.in.i22.uc.distribution;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

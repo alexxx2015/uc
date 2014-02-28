@@ -1,9 +1,10 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.distribution;
 
 import java.util.Objects;
 
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.distr.ILocation;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
  * Represents a remote container of which we only know a name and its location.
@@ -12,16 +13,16 @@ import de.tum.in.i22.uc.distr.ILocation;
  * @author Florian Kelbert
  *
  */
-public class ContainerRemote implements IContainer {
-	private final NameBasic _name;
+public class ContainerRemote extends ContainerBasic implements IContainer {
+	private final IName _name;
 	private final ILocation _location;
 
-	public ContainerRemote(NameBasic name, ILocation location) {
+	public ContainerRemote(IName name, ILocation location) {
 		_name = name;
 		_location = location;
 	}
 
-	public NameBasic getName() {
+	public IName getName() {
 		return _name;
 	}
 
@@ -53,4 +54,5 @@ public class ContainerRemote implements IContainer {
 	public int hashCode() {
 		return Objects.hash(_name, _location);
 	}
+
 }

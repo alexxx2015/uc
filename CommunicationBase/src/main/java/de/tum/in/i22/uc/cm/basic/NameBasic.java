@@ -24,7 +24,9 @@ public class NameBasic implements IName {
 
 	@Override
 	public String toString() {
-		return _name;
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_name", _name)
+				.toString();
 	}
 
 	@Override
