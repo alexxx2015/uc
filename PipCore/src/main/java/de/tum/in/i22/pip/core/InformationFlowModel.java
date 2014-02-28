@@ -272,10 +272,14 @@ public class InformationFlowModel {
 
 	public void removeAllNames(IContainer cont) {
 		if (cont != null) {
+			Set<IName> toRemove = new HashSet<IName>();
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-				if (entry.getValue().equals(cont)) {
-					_namingMap.remove(entry.getKey());
+				if (cont.equals(entry.getValue())) {
+					toRemove.add(entry.getKey());
 				}
+			}
+			for (IName key : toRemove) {
+				_namingMap.remove(key);
 			}
 		}
 	}
