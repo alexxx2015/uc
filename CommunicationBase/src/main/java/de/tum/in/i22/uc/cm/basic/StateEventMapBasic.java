@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.basic;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -12,9 +13,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStateEventMap;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap.GpStateEventMapEntry;
 
-public class StateEventMapBasic 
+public class StateEventMapBasic
 	implements IStateEventMap {
-	
+
 	private static final Logger _logger = Logger
 			.getLogger(StateEventMapBasic.class);
 	private Map<String, IEvent> _map;
@@ -23,22 +24,22 @@ public class StateEventMapBasic
 		super();
 		_map = map;
 	}
-	
+
 	public StateEventMapBasic(GpStateEventMap gpStateEventMap) {
 		if (gpStateEventMap == null) {
 			return;
 		}
-		
+
 		List<GpStateEventMapEntry> list = gpStateEventMap.getMapEntryList();
 		if (list != null && !list.isEmpty()) {
 			_map = new HashMap<>();
-			
+
 			for (GpStateEventMapEntry entry:list) {
 				String key = entry.getKey();
 				IEvent event = new EventBasic(entry.getValue());
 				_map.put(key, event);
 			}
-		} 
+		}
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class StateEventMapBasic
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Google Protocol Buffer object corresponding to IStateEventMap
 	 */
 	public static GpStateEventMap createGpbStateEventMap(
@@ -68,15 +69,19 @@ public class StateEventMapBasic
 		}
 		return gp.build();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
-		if (obj != null && this.getClass() == obj.getClass()) {
-			StateEventMapBasic o = (StateEventMapBasic)obj;
-			isEqual = CompareUtil.areMapsEqual(_map, o.getMap());
+		if (obj instanceof StateEventMapBasic) {
+			isEqual = Objects.equals(_map, ((StateEventMapBasic)obj)._map);
 		}
 		return isEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_map);
 	}
 
 }

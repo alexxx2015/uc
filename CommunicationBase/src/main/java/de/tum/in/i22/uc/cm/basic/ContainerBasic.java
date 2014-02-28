@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -64,8 +65,8 @@ public class ContainerBasic implements IContainer {
 		boolean isEqual = false;
 		if (obj instanceof ContainerBasic) {
 			ContainerBasic o = (ContainerBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_id, o.getId()) &&
-					CompareUtil.areObjectsEqual(_classValue, o.getClassValue());
+			isEqual = Objects.equals(_id, o._id) &&
+					Objects.equals(_classValue, o._classValue);
 		}
 
 		return isEqual;
@@ -73,7 +74,7 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return Objects.hash(_id, _classValue);
 	}
 
 	@Override

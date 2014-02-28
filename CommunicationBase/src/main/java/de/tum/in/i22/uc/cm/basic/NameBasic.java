@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
@@ -15,6 +17,7 @@ public class NameBasic implements IName {
 		this._name = name;
 	}
 
+	@Override
 	public String getName() {
 		return _name;
 	}
@@ -26,11 +29,14 @@ public class NameBasic implements IName {
 
 	@Override
 	public int hashCode() {
-		return _name.hashCode();
+		return Objects.hash(_name);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return _name.equals(obj);
+		if (obj instanceof NameBasic) {
+			return Objects.equals(_name, ((NameBasic) obj)._name);
+		}
+		return false;
 	}
 }

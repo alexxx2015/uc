@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.ICondition;
@@ -21,24 +23,24 @@ public class MechanismBasic implements IMechanism {
 	private IHistory _state;
 	private IEvent _triggerEvent;
 	private String _xml;
-	
+
 	public MechanismBasic() {
 	}
-	
+
 	public MechanismBasic(String xml) {
 		_xml = xml;
 		//TODO implement: create mechanism from xml
 	}
-	
+
 	@Override
 	public String toXML() {
 		return _xml;
 	}
-	
+
 	public MechanismBasic(GpMechanism gpM) {
 		if (gpM == null)
 			return;
-		
+
 		if (gpM.hasMechanismName())
 			_mechanismName = gpM.getMechanismName();
 		if (gpM.hasCondition())
@@ -97,58 +99,63 @@ public class MechanismBasic implements IMechanism {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
 	 * @return Google Protocol Buffer object corresponding to IMechanism
 	 */
 	public static GpMechanism createGpbMechanism(IMechanism m) {
 		_logger.trace("Build GpMechanism");
 		GpMechanism.Builder gp = GpMechanism.newBuilder();
-		
+
 		_logger.trace("Build condition");
-		
+
 		GpCondition gpCondition = ConditionBasic.createGpbCondition(
 				m.getCondition());
 		if (gpCondition != null)
 			gp.setCondition(gpCondition);
-		
+
 		String mechanismName = m.getMechanismName();
 		if (mechanismName != null)
 			gp.setMechanismName(mechanismName);
-		
+
 		_logger.trace("Build response");
 		GpResponse gpResponse = ResponseBasic.createGpbResponse(
 				m.getResponse());
 		if (gpResponse != null)
 			gp.setResponse(gpResponse);
-		
+
 		_logger.trace("Build state");
 		GpHistory gpHistory = HistoryBasic.createGpbHistory(
 				m.getState());
 		if (gpHistory != null)
 			gp.setState(gpHistory);
-		
+
 		_logger.trace("Build trigger event");
 		GpEvent gpEvent = EventBasic.createGpbEvent(
 				m.getTriggerEvent());
 		if (gpEvent != null)
 			gp.setTriggerEvent(gpEvent);
-		
+
 		return gp.build();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
-		if (obj != null && this.getClass() == obj.getClass()) {
+		if (obj instanceof MechanismBasic) {
 			MechanismBasic o = (MechanismBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_condition, o.getCondition())
-				&& CompareUtil.areObjectsEqual(_mechanismName, o.getMechanismName())
-				&& CompareUtil.areObjectsEqual(_response, o.getResponse())
-				&& CompareUtil.areObjectsEqual(_state, o.getState())
-				&& CompareUtil.areObjectsEqual(_triggerEvent, o.getTriggerEvent());
+			isEqual = Objects.equals(_condition, o._condition)
+				&& Objects.equals(_mechanismName, o._mechanismName)
+				&& Objects.equals(_response, o._response)
+				&& Objects.equals(_state, o._state)
+				&& Objects.equals(_triggerEvent, o._triggerEvent);
 		}
 		return isEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_condition, _mechanismName, _response, _state, _triggerEvent);
 	}
 
 	@Override
@@ -157,7 +164,7 @@ public class MechanismBasic implements IMechanism {
 				+ _mechanismName + ", _response=" + _response + ", _state="
 				+ _state + ", _triggerEvent=" + _triggerEvent + "]";
 	}
-	
-	
-	
+
+
+
 }

@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -49,8 +50,7 @@ public class DataBasic implements IData {
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
 		if (obj instanceof DataBasic) {
-			DataBasic o = (DataBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_id, o.getId());
+			isEqual = Objects.equals(_id, ((DataBasic) obj)._id);
 		}
 
 		return isEqual;
@@ -58,7 +58,7 @@ public class DataBasic implements IData {
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return Objects.hash(_id);
 	}
 
 	@Override
