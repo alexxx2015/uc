@@ -14,16 +14,10 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
  *
  */
 public class ContainerRemote extends ContainerBasic implements IContainer {
-	private final IName _name;
 	private final ILocation _location;
 
 	public ContainerRemote(IName name, ILocation location) {
-		_name = name;
 		_location = location;
-	}
-
-	public IName getName() {
-		return _name;
 	}
 
 	public ILocation getLocation() {
@@ -44,7 +38,7 @@ public class ContainerRemote extends ContainerBasic implements IContainer {
 	public boolean equals(Object obj) {
 		if (obj instanceof ContainerRemote) {
 			ContainerRemote o = (ContainerRemote) obj;
-			return Objects.equals(_name, o._name)
+			return super.equals(obj)
 					&& Objects.equals(_location, o._location);
 		}
 		return super.equals(obj);
@@ -52,7 +46,7 @@ public class ContainerRemote extends ContainerBasic implements IContainer {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_name, _location);
+		return Objects.hash(super.getId(), super.getClass(), _location);
 	}
 
 }

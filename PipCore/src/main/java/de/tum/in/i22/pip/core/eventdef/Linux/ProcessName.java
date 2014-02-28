@@ -31,6 +31,9 @@ class ProcessName extends NameBasic {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_host", _host)
+				.add("_pid", _pid)
+				.toString();
 	}
 }

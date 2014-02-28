@@ -78,8 +78,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 				// client is remote
 
 				// get remote container id from remote host for creating the alias
-				// TODO: remoteContainerId = ...
-//				remoteContainerId = new ContainerRemote(remoteSocketName, IPLocation.createIPLocation(remoteIP));
+				remoteContainer = new ContainerRemote(SocketName.create(host, newFd, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
 
 				ifModel.addAlias(localContainer, remoteContainer);
 			}

@@ -60,4 +60,16 @@ class SocketName extends NameBasic {
 	public String getRemotePort() {
 		return _remotePort;
 	}
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_host", _host)
+				.add("_pid", _pid)
+				.add("_localIP", _localIP)
+				.add("_localPort", _localPort)
+				.add("_remoteIP", _remoteIP)
+				.add("_remotePort", _remotePort)
+				.toString();
+	}
 }

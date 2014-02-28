@@ -100,7 +100,9 @@ public class LinuxEvents {
 				if (n instanceof SocketName) {
 					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
 					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {
-						// TODO
+						IContainer remoteContainer = ifModel.getContainer(n);
+
+						// TODO remote call
 					}
 				}
 			}
