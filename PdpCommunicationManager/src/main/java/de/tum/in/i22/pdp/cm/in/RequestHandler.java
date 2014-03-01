@@ -9,7 +9,6 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
@@ -19,7 +18,6 @@ import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -35,7 +33,7 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
 
 public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
-	private static RequestHandler _instance = null;
+	private final static RequestHandler _instance = new RequestHandler();
 	private BlockingQueue<RequestWrapper> _requestQueue = null;
 
 	private IIncoming pdpHandler;
@@ -88,9 +86,6 @@ public class RequestHandler implements Runnable {
 	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
 	public static RequestHandler getInstance() {
-		if (_instance == null) {
-			_instance = new RequestHandler();
-		}
 		return _instance;
 	}
 
