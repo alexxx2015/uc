@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.in;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -34,8 +36,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	@Override
 	public void run() {
 		try {
-			_inputStream = _socket.getInputStream();
-			_outputStream = _socket.getOutputStream();
+			_inputStream = new BufferedInputStream(_socket.getInputStream());
+			_outputStream = new BufferedOutputStream(_socket.getOutputStream());
 
 			try {
 				while (_shouldContinue) {

@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.out;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,11 +12,11 @@ import org.apache.log4j.Logger;
 import com.google.protobuf.MessageLite;
 
 public abstract class FastConnector implements IFastConnector {
-	
+
 	private static final Logger _logger = Logger.getLogger(FastConnector.class);
-	
-	private String _address;
-	private int _port;
+
+	private final String _address;
+	private final int _port;
 	private Socket _clientSocket;
 	private OutputStream _outputStream;
  	private InputStream _inputStream;
@@ -28,11 +30,11 @@ public abstract class FastConnector implements IFastConnector {
 	public void connect() throws Exception {
 		_logger.debug("Establish connection to " + _address + ":" + _port);
 		_clientSocket = new Socket(_address, _port);
-		
+
 		try {
 			_logger.debug("Get i/o streams.");
-			_outputStream = _clientSocket.getOutputStream();
-			_inputStream = _clientSocket.getInputStream();
+			_outputStream = new BufferedOutputStream(_clientSocket.getOutputStream());
+			_inputStream = new BufferedInputStream(_clientSocket.getInputStream());
 			_logger.debug("Connection established.");
 		} catch(Exception e) {
 			_logger.debug("Failed to establish connection.", e);
@@ -55,7 +57,7 @@ public abstract class FastConnector implements IFastConnector {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is currently not used. The idea was to use it instead of
 	 *  Google Protocol Buffer method writeDelimitedTo().
@@ -66,14 +68,14 @@ public abstract class FastConnector implements IFastConnector {
 	 * @param messages
 	 * @throws IOException
 	 */
-	protected void sendData(byte operationType, MessageLite... messages) 
+	protected void sendData(byte operationType, MessageLite... messages)
 			throws IOException {
 		_logger.trace("Write operation type. Byte representation: " + operationType);
 		getOutputStream().write(operationType);
 		sendData(messages);
 		getOutputStream().flush();
 	}
-	
+
 	private void sendData(MessageLite... messages) throws IOException {
 		_logger.trace("Send GPB message/s");
 		if (messages != null && messages.length > 0) {
@@ -87,7 +89,7 @@ public abstract class FastConnector implements IFastConnector {
 			}
 		}
 	}
-	
+
 	/**
 	 * Currently not used.
 	 * Writes 4 bytes (int as 4 bytes, Big Endian format, most significant byte first)
@@ -95,22 +97,22 @@ public abstract class FastConnector implements IFastConnector {
 	 * @param value int value
 	 * @throws IOException
 	 */
-	private void writeInt(OutputStream out, int value) 
+	private void writeInt(OutputStream out, int value)
 			throws IOException {
-		
+
 		_logger.trace("Writing int value (" + value + ") as 4 bytes in Big Endian format");
-		
+
 		int ibyte;
         ibyte = ((value >>> 24) & 0xff); out.write(ibyte);
         ibyte = ((value >>> 16) & 0xff); out.write(ibyte);
         ibyte = ((value >>> 8) & 0xff); out.write(ibyte);
         ibyte = (value & 0xff); out.write(ibyte);
 	}
-	
+
 	protected OutputStream getOutputStream() {
 		return _outputStream;
 	}
-	
+
 	protected InputStream getInputStream() {
 		return _inputStream;
 	}
