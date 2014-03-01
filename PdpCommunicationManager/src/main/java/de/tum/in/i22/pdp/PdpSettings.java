@@ -36,6 +36,9 @@ public class PdpSettings {
 	private int _pipPortNum;
 	private int _queueSize = 100;
 
+	private String _pepPipeIn = "/tmp/pep2pdp";
+	private String _pepPipeOut = "/tmp/pdp2pep";
+
 	private PdpSettings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);
 	}
@@ -76,6 +79,18 @@ public class PdpSettings {
 		} catch (Exception e) {
 			_logger.warn("Cannot read Thrift pep listener port number.", e);
 			_logger.info("Default port of Thrift pep listener: " + _pepGPBListenerPortNum);
+		}
+
+		String tmpInPipe = (String) props.get("pep_pipe_in");
+		String tmpOutPipe = (String) props.get("pep_pipe_out");
+
+		if (tmpInPipe == null || tmpOutPipe == null) {
+			_logger.info("Cannot read pipe information.");
+			_logger.info("Default pipes: " + _pepPipeIn + " and " + _pepPipeOut);
+		}
+		else {
+			_pepPipeIn = tmpInPipe;
+			_pepPipeOut = tmpOutPipe;
 		}
 
 		try {
@@ -127,6 +142,14 @@ public class PdpSettings {
 
 	public int getPepThriftListenerPortNum() {
 		return _pepThriftListenerPortNum;
+	}
+
+	public String getPepPipeIn() {
+		return _pepPipeIn;
+	}
+
+	public String getPepPipeOut() {
+		return _pepPipeOut;
 	}
 
 	public int getPmpListenerPortNum() {
