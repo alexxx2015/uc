@@ -98,7 +98,7 @@ public abstract class ClientPipeHandler implements Runnable, IForwarder {
 		_logger.debug("Response to forward: " + response + ". Wake up the thread.");
 		synchronized (this) {
 			_response = response;
-			notifyAll();
+			notify();
 		}
 	}
 

@@ -21,7 +21,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
 	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
 	private final Socket _socket;
-	private InputStream _inputStream;
+	private DataInputStream _inputStream;
 	private OutputStream _outputStream;
 	private boolean _shouldContinue;
 
@@ -36,7 +36,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	@Override
 	public void run() {
 		try {
-			_inputStream = new BufferedInputStream(_socket.getInputStream());
+			_inputStream = new DataInputStream(new BufferedInputStream(_socket.getInputStream()));
 			_outputStream = new BufferedOutputStream(_socket.getOutputStream());
 
 			try {
@@ -115,7 +115,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	}
 
 	public DataInputStream getDataInputStream() {
-		return new DataInputStream(_inputStream);
+		return _inputStream;
 	}
 
 	protected abstract void doProcessing() throws IOException,
