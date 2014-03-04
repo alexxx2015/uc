@@ -1,10 +1,19 @@
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Stopwatch;
+
+import de.tum.in.i22.pdp.core.IPep2Pdp;
+import de.tum.in.i22.pep2pdp.IPep2PdpFast;
+import de.tum.in.i22.pep2pdp.IPep2PdpPipe;
 import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.out.IFastConnector;
 
 
 public class Main {
@@ -14,8 +23,8 @@ public class Main {
 	public static final String PDP2_HOST = "localhost";
 	public static final int PDP2_PORT = 52001;
 
-	public static Pep2PdpFastImp connectPDP(String host, int port) {
-		Pep2PdpFastImp pdp = new Pep2PdpFastImp(host, port); try {
+	public static IPep2Pdp connectPDP(String host, int port) {
+		IPep2PdpFast pdp = new Pep2PdpFastImp(host, port); try {
 			pdp.connect();
 		} catch (Exception e) {
 			System.err.println("Unable to connect to PDP(" + host + "," + port + "). Exiting.");
@@ -25,8 +34,21 @@ public class Main {
 		return pdp;
 	}
 
+	public static Pep2PdpPipeImp connectPipePDP(String inPipe, String outPipe) {
+		Pep2PdpPipeImp pdp = new Pep2PdpPipeImp(new File(inPipe), new File(outPipe));
+		try {
+			pdp.connect();
+		} catch (Exception e) {
+			System.err.println("Unable to connect to PDP(" + inPipe + "," + outPipe + "). Exiting.");
+			System.exit(0);
+		}
+
+		return pdp;
+	}
+
 	public static void main(String[] args) {
-		Pep2PdpFastImp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
+//		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
+		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 
 		new DummyPEP(pdp1) {
@@ -37,26 +59,104 @@ public class Main {
 
 		        ev = createSocketEvent("H1", "1000", "4");
 		        resp = getPdpCon().notifyEvent(ev);
-				System.out.println(resp);
 
 		        ev = createSocketEvent("H2", "2000", "5");
 		        resp = getPdpCon().notifyEvent(ev);
-				System.out.println(resp);
-
-//				getPdpCon().
 
 				/**
 				 * Important note:
 				 * The PEP must enforce that the connect() happens before the corresponding accept!
 				 */
 
+		        Stopwatch w = Stopwatch.createUnstarted();
+		        w.start();
 				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
 				resp = getPdpCon().notifyEvent(ev);
-				System.out.println(resp);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();
+				w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();
+				w.start();
+
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
 
 				ev = createAcceptEvent("H2", "2000", "192.168.0.1", "5005", "192.168.0.1", "5000", "AF_INET", "6");
 				resp = getPdpCon().notifyEvent(ev);
-				System.out.println(resp);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+				w.reset();w.start();
+
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+				w.reset();w.start();
+				ev = createConnectEvent("H1", "1000", "4", "192.168.0.1", "5000", "192.168.0.1", "5005", "AF_INET");
+				resp = getPdpCon().notifyEvent(ev);
+				System.out.println(w.stop().elapsed(TimeUnit.MICROSECONDS));
+
+
+				IPep2Pdp con = this.getPdpCon();
+				if (con instanceof IFastConnector) {
+					((IFastConnector) con).disconnect();
+				}
 			}
 		}.start();
 	}
