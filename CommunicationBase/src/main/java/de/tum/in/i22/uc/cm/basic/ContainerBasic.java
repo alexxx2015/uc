@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -9,10 +10,14 @@ public class ContainerBasic implements IContainer {
 	private String _classValue;
 	private String _id;
 
-	public ContainerBasic() {}
+	public ContainerBasic() {
+		this(null, null);
+	}
 
 	public ContainerBasic(String classValue, String id) {
-		super();
+		if (id == null) {
+			id = UUID.randomUUID().toString();
+		}
 		_classValue = classValue;
 		_id = id;
 	}
@@ -38,9 +43,6 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public String getId() {
-		if (_id == null) {
-			_id = UUID.randomUUID().toString();
-		}
 		return _id;
 	}
 
@@ -64,8 +66,8 @@ public class ContainerBasic implements IContainer {
 		boolean isEqual = false;
 		if (obj instanceof ContainerBasic) {
 			ContainerBasic o = (ContainerBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_id, o.getId()) &&
-					CompareUtil.areObjectsEqual(_classValue, o.getClassValue());
+			isEqual = Objects.equals(_id, o._id) &&
+					Objects.equals(_classValue, o._classValue);
 		}
 
 		return isEqual;
@@ -73,13 +75,15 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return Objects.hash(_id, _classValue);
 	}
 
 	@Override
 	public String toString() {
-		return "ContainerBasic [_classValue=" + _classValue + ", _id=" + _id
-				+ "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_id", _id)
+				.add("_classValue", _classValue)
+				.toString();
 	}
 
 }

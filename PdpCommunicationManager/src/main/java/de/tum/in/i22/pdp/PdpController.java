@@ -1,5 +1,6 @@
 package de.tum.in.i22.pdp;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
@@ -16,19 +17,20 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
+import de.tum.in.i22.pdp.cm.in.pep.PepClientNativeHandler;
+import de.tum.in.i22.pdp.cm.in.pep.PepClientPipeHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
 import de.tum.in.i22.pdp.cm.in.pip.PipFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 public class PdpController {
 
 	private static Logger _logger = Logger.getLogger(PdpController.class);
 
-	private boolean _isStarted = false;
+	private static boolean _isStarted = false;
 
 	private final IIncoming _pdpHandler;
 
@@ -41,6 +43,13 @@ public class PdpController {
 	private Thread threadPmpFastServiceHandler;
 	private Thread threadPepGPBFastServiceHandler;
 	private Thread threadPipFastServiceHandler;
+	private Thread threadPepPipeHandler;
+	private Thread threadThriftServer;
+
+	// FK: Although this class attribute is never used locally:
+	// DO NOT REMOVE IT!!!
+	// It will be used by native PEPs for dispatch events using JNI
+	private static final PepClientNativeHandler nativePepHandler = new PepClientNativeHandler();
 
 	/**
 	 * Use dependency injection to inject pdpHandler.
@@ -54,9 +63,9 @@ public class PdpController {
 
 
 	public void start() {
-		if (_isStarted)
+		if (_isStarted) {
 			return;
-		_isStarted = true;
+		}
 
 		_logger.info("Start pdp");
 
@@ -67,29 +76,72 @@ public class PdpController {
 		this.threadRequestHandler = new Thread(eventHandler);
 		this.threadRequestHandler.start();
 
-		int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
-		_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
-		FastServiceHandler pmpFastServiceHandler = new PmpFastServiceHandler(pmpListenerPort);
-		this.threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
-		this.threadPmpFastServiceHandler.start();
+		startPmpListener();
+		startPipListener();
+		startPepGpbListener();
+		startPepPipeListener();
+		startPepThriftListener();
 
-		int pipListenerPort = getPdpSettings().getPipListenerPortNum();
-		_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
-		FastServiceHandler pipFastServiceHandler = new PipFastServiceHandler(pipListenerPort);
-		this.threadPipFastServiceHandler = new Thread(pipFastServiceHandler);
-		this.threadPipFastServiceHandler.start();
 
-		int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
-		_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
-		FastServiceHandler pepGPBFastServiceHandler = new PepFastServiceHandler(pepGPBListenerPort);
-		this.threadPepGPBFastServiceHandler = new Thread(pepGPBFastServiceHandler);
-		this.threadPepGPBFastServiceHandler.start();
-
-		int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
-		_logger.info("Start PepThriftFastServiceHandler on port: " + pepThriftListenerPort);
-		ThriftServer.createListener(pepThriftListenerPort, pepGPBListenerPort);
-		ThriftServer.start();
+		// Important: Do this at the very end.
+		_isStarted = true;
 	}
+
+	private void startPepThriftListener() {
+		if (getPdpSettings().isPepThriftListenerEnabled()) {
+			int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
+			_logger.info("Start ThriftServer on port: " + pepThriftListenerPort);
+			threadThriftServer = new Thread (new ThriftServer(pepThriftListenerPort, getPdpSettings().getPepGPBListenerPortNum()));
+			threadThriftServer.start();
+		}
+	}
+
+
+	private void startPepPipeListener() {
+		if (getPdpSettings().isPepPipeListenerEnabled()) {
+			File pepPipeIn = new File(getPdpSettings().getPepPipeIn());
+			File pepPipeOut = new File(getPdpSettings().getPepPipeOut());
+			if (pepPipeIn.exists() && !pepPipeIn.isDirectory() && pepPipeOut.exists() && !pepPipeOut.isDirectory()) {
+				_logger.info("Start PepPipeHandler using pipes " + pepPipeIn + " and " + pepPipeOut);
+				this.threadPepPipeHandler = new Thread(new PepClientPipeHandler(pepPipeIn, pepPipeOut));
+				this.threadPepPipeHandler.start();
+			}
+			else {
+				_logger.info("Did not start PepPipeHandler. Pipes " + pepPipeIn + " and " + pepPipeOut + " did not exist.");
+			}
+		}
+	}
+
+
+	private void startPepGpbListener() {
+		if (getPdpSettings().isPepGPBListenerEnabled()) {
+			int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
+			_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
+			this.threadPepGPBFastServiceHandler = new Thread(new PepFastServiceHandler(pepGPBListenerPort));
+			this.threadPepGPBFastServiceHandler.start();
+		}
+	}
+
+
+	private void startPipListener() {
+		if (getPdpSettings().isPipListenerEnabled()) {
+			int pipListenerPort = getPdpSettings().getPipListenerPortNum();
+			_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
+			this.threadPipFastServiceHandler = new Thread(new PipFastServiceHandler(pipListenerPort));
+			this.threadPipFastServiceHandler.start();
+		}
+	}
+
+
+	private void startPmpListener() {
+		if (getPdpSettings().isPmpListenerEnabled()) {
+			int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
+			_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
+			this.threadPmpFastServiceHandler = new Thread(new PmpFastServiceHandler(pmpListenerPort));
+			this.threadPmpFastServiceHandler.start();
+		}
+	}
+
 
 	public void stop(){
 		// TODO These methods are deprecated for a good reason... Get rid of them.
@@ -97,7 +149,8 @@ public class PdpController {
 		this.threadPmpFastServiceHandler.stop();
 		this.threadPipFastServiceHandler.stop();
 		this.threadRequestHandler.stop();
-		ThriftServer.stop();
+		this.threadPepPipeHandler.stop();
+		this.threadThriftServer.stop();
 	}
 
 	public PdpSettings getPdpSettings() {
@@ -145,7 +198,6 @@ public class PdpController {
 		return line;
 	}
 
-
 	public static void main(String[] args) {
 		// parse command line arguments
 		CommandLine cl = parseCommandLineOptions(args);
@@ -171,11 +223,8 @@ public class PdpController {
 		Injector injector = Guice.createInjector(new PdpModuleMockTestPip());
 //		Injector injector = Guice.createInjector(new PdpModule());
 
-		/*
-		 * Now that we've got the injector, we can build objects.
-		 */
-		PdpController pdp = injector.getInstance(PdpController.class);
-		pdp.start();
+		// build a PdpController object
+		injector.getInstance(PdpController.class).start();
 
 		// EventHandler thread loops forever, this stops the main thread,
 		// otherwise the app will be closed
@@ -189,7 +238,11 @@ public class PdpController {
 		}
 	}
 
-	public IIncoming getPdpHandler(){
+	public static boolean isStarted() {
+		return _isStarted;
+	}
+
+	IIncoming getPdpHandler(){
 		return this._pdpHandler;
 	}
 }

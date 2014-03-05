@@ -9,7 +9,6 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
@@ -19,7 +18,6 @@ import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -35,8 +33,11 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
 
 public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
-	private static RequestHandler _instance = null;
-	private BlockingQueue<RequestWrapper> _requestQueue = null;
+	private final static RequestHandler _instance = new RequestHandler();
+
+	// The queue. Watch out to synchronize access to it: synchronized (_requestQueue).
+	private final BlockingQueue<RequestWrapper> _requestQueue =
+			new ArrayBlockingQueue<RequestWrapper>(PdpSettings.getInstance().getQueueSize(), true);
 
 	private IIncoming pdpHandler;
 	private IPdp2PipFast _pdp2PipProxy = null;
@@ -44,6 +45,7 @@ public class RequestHandler implements Runnable {
 	private static IPdpCore2PipCacher _core2pip = null;
 	private static IPdpEngine2PipCacher _engine2pip = null;
 	private static IPipCacher2Pip _pipHandler = null;
+
 
 	public IPdpCore2PipCacher getCore2Pip(){
 		return _core2pip ;
@@ -88,9 +90,6 @@ public class RequestHandler implements Runnable {
 	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
 	public static RequestHandler getInstance() {
-		if (_instance == null) {
-			_instance = new RequestHandler();
-		}
 		return _instance;
 	}
 
@@ -101,36 +100,30 @@ public class RequestHandler implements Runnable {
 		this.pdpHandler.setPdpEngine2PipCacher(_engine2pip);
 	}
 
-	private RequestHandler() {
-		int queueSize = PdpSettings.getInstance().getQueueSize();
-		_requestQueue = new ArrayBlockingQueue<RequestWrapper>(queueSize, true);
+	/**
+	 * Helper method to synchronize access to the queue.
+	 * @param obj the object to add to the queue.
+	 */
+	private void add(RequestWrapper obj) {
+		// put method blocks until the space in the queue becomes available
+		_logger.debug("Add " + obj + " to the queue.");
+		_requestQueue.add(obj);
 	}
 
 	public void addEvent(IEvent event, IForwarder forwarder)
 			throws InterruptedException {
-		// add event to the tail of the queue
-		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PepNotifyEventRequestWrapper(forwarder, event);
-		_logger.debug("Add " + obj + " to the queue.");
-		_requestQueue.put(obj);
+		add(new PepNotifyEventRequestWrapper(forwarder, event));
 	}
 
 	public void addPipRequest(PipRequest request, IForwarder forwarder)
 			throws InterruptedException {
 		// add pipRequest to the tail of the queue
-		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PipRequestWrapper(forwarder, request);
-		_logger.debug("Add " + obj + "  to the queue.");
-		_requestQueue.put(obj);
+		add(new PipRequestWrapper(forwarder, request));
 	}
 
 	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
 			throws InterruptedException {
-		// add pmpRequest to the tail of the queue
-		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PmpRequestWrapper(forwarder, request);
-		_logger.debug("Add " + obj + "  to the queue.");
-		_requestQueue.put(obj);
+		add(new PmpRequestWrapper(forwarder, request));
 	}
 
 	public void addUpdateIfFlowRequest(IPipDeployer pipDeployer,
@@ -144,8 +137,7 @@ public class RequestHandler implements Runnable {
 		request.setJarBytes(jarBytes);
 		request.setConflictResolution(conflictResolutionFlag);
 
-		_logger.debug("Add " + request + " to the queue.");
-		_requestQueue.put(request);
+		add(request);
 	}
 
 	@Override

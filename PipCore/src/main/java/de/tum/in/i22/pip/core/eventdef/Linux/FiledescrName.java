@@ -1,10 +1,10 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 
 
-class FiledescrName extends ContainerName {
+class FiledescrName extends NameBasic {
 
 	private static final String PREFIX_FILE = "FILE_";
 
@@ -38,6 +38,10 @@ class FiledescrName extends ContainerName {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_host", _host)
+				.add("_pid", _pid)
+				.add("_fd", _fd)
+				.toString();
 	}
 }

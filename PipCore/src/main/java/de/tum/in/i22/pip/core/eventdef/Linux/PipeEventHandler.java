@@ -5,6 +5,7 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class PipeEventHandler extends BaseEventHandler {
@@ -28,11 +29,11 @@ public class PipeEventHandler extends BaseEventHandler {
 
 		InformationFlowModel ifModel = getInformationFlowModel();
 
-		String pipeContainerId = ifModel.addContainer(_messageFactory.createContainer());
+		IContainer pipeContainer = _messageFactory.createContainer();
 
-		if (pipeContainerId != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fdsrc), pipeContainerId);
-			ifModel.addName(FiledescrName.create(host, pid, fddst), pipeContainerId);
+		if (pipeContainer != null) {
+			ifModel.addName(FiledescrName.create(host, pid, fdsrc), pipeContainer);
+			ifModel.addName(FiledescrName.create(host, pid, fddst), pipeContainer);
 		}
 		else {
 			_logger.fatal("Unable to create pipe container.");

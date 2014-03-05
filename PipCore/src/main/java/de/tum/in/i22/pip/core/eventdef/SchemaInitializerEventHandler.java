@@ -1,7 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -23,28 +23,25 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 
 		String contName="TEST_C";
 		String dataName="TEST_D";
-		
+
 
 		IEvent e = getEvent();
 
 
-		String contId = ifModel.getContainerIdByName(new ContainerName(
+		IContainer cont = ifModel.getContainer(new NameBasic(
 				contName));
 
-		_logger.debug("contID = " + contId);
+		_logger.debug("cont = " + cont);
 
-		if (contId == null) {
-			IContainer container = _messageFactory.createContainer("TestContainer",contName);
-
-			contId = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(contName), contId);
+		if (cont == null) {
+			cont = _messageFactory.createContainer("TestContainer",contName);
+			ifModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
-			ifModel.addData(d);
-			ifModel.addDataToContainerMapping(dataName, contId);
+			ifModel.addDataToContainerMapping(d, cont);
 			_logger.debug(ifModel.toString());
 		} else {
-			_logger.error("contID = " + contId+" Already exists!!!! IMPOSSIBRU!!!");
+			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
 		_logger.debug(ifModel.toString());
 		}
 

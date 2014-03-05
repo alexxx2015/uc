@@ -2,39 +2,44 @@ package de.tum.in.i22.uc.cm.out;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
 import com.google.protobuf.MessageLite;
 
-public abstract class FastConnector implements IFastConnector {
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
+public abstract class PipeConnector implements IFastConnector {
 
-	private static final Logger _logger = Logger.getLogger(FastConnector.class);
+	private static final Logger _logger = Logger.getLogger(PipeConnector.class);
 
-	private final String _address;
-	private final int _port;
-	private Socket _clientSocket;
+	private final File _inPipe;
+	private final File _outPipe;
 	private OutputStream _outputStream;
  	private InputStream _inputStream;
 
- 	public FastConnector(String address, int port) {
-		_address = address;
-		_port = port;
+ 	public PipeConnector(File inPipe, File outPipe) {
+		_inPipe = inPipe;
+		_outPipe = outPipe;
 	}
 
 	@Override
 	public void connect() throws Exception {
-		_logger.debug("Establish connection to " + _address + ":" + _port);
-		_clientSocket = new Socket(_address, _port);
+		_logger.debug("Establish connection to pipes " + _inPipe + " and " + _outPipe);
 
 		try {
 			_logger.debug("Get i/o streams.");
-			_outputStream = new BufferedOutputStream(_clientSocket.getOutputStream());
-			_inputStream = new BufferedInputStream(_clientSocket.getInputStream());
+			_outputStream = new BufferedOutputStream(new FileOutputStream(_outPipe));
+			_inputStream = new BufferedInputStream(new FileInputStream(_inPipe));
 			_logger.debug("Connection established.");
 		} catch(Exception e) {
 			_logger.debug("Failed to establish connection.", e);
@@ -45,17 +50,13 @@ public abstract class FastConnector implements IFastConnector {
 	@Override
 	public void disconnect() {
 		_logger.info("Tear down the connection");
-		if (_clientSocket != null) {
-			try {
-				_inputStream.close();
-				_outputStream.close();
-				_clientSocket.close();
-				_clientSocket = null;
-				_logger.info("Connection closed!");
-			} catch (IOException e) {
-				_logger.error("Error occurred when closing the connection.", e);
-			}
-		}
+		try {
+			_inputStream.close();
+			_outputStream.close();
+		_logger.info("Connection closed!");
+	} catch (IOException e) {
+		_logger.error("Error occurred when closing the connection.", e);
+	}
 	}
 
 	/**

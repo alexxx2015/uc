@@ -6,8 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({ 
-	CompareUtilTest.class,
+@SuiteClasses({
 	GpConversionTest.class,
 	EventHandlerTest.class
 	})

@@ -1,11 +1,11 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
-import de.tum.in.i22.uc.distr.Network;;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.uc.distribution.Network;
 
 
 
-class SocketName extends ContainerName {
+class SocketName extends NameBasic {
 
 	static final String PREFIX_SOCKET = "SOCK_";
 
@@ -63,6 +63,13 @@ class SocketName extends ContainerName {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_host", _host)
+				.add("_pid", _pid)
+				.add("_localIP", _localIP)
+				.add("_localPort", _localPort)
+				.add("_remoteIP", _remoteIP)
+				.add("_remotePort", _remotePort)
+				.toString();
 	}
 }

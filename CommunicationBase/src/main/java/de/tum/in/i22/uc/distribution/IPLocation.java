@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.distr;
+package de.tum.in.i22.uc.distribution;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -34,6 +34,8 @@ public class IPLocation implements ILocation {
 
 	@Override
 	public String toString() {
-		return "IPLocation [_address=" + _address + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_address", _address)
+				.toString();
 	}
 }

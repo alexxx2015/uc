@@ -1,9 +1,9 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 
-class ProcessName extends ContainerName {
+class ProcessName extends NameBasic {
 
 	private static final String PREFIX_PROCESS = "PROC_";
 
@@ -31,6 +31,9 @@ class ProcessName extends ContainerName {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_host", _host)
+				.add("_pid", _pid)
+				.toString();
 	}
 }

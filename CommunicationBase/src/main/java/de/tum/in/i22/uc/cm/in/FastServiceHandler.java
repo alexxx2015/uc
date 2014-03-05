@@ -24,7 +24,7 @@ public abstract class FastServiceHandler implements
 	/**
 	 * Constructs a Server object which listens to connection attempts at the
 	 * given port.
-	 * 
+	 *
 	 * @param port
 	 *            a port number which the Server is listening to in order to
 	 *            establish a socket connection to a client. The port number
@@ -35,7 +35,7 @@ public abstract class FastServiceHandler implements
 		this._port = port;
 	}
 
-	
+
 	protected boolean isRunning() {
 		return this._running;
 	}
@@ -54,7 +54,6 @@ public abstract class FastServiceHandler implements
 	}
 
 	private boolean initializeServer() {
-		_logger.info("Initialize server");
 		try {
 			_serverSocket = new ServerSocket(_port);
 			_logger.info("Server " + getServerInfo() + " listening on port: "
@@ -68,7 +67,7 @@ public abstract class FastServiceHandler implements
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Loops until the the server should be closed.
 	 */
@@ -88,7 +87,7 @@ public abstract class FastServiceHandler implements
 					_logger.error("Error! "
 							+ "Unable to establish connection. \n", e);
 				}
-				
+
 				if (client != null) {
 					_logger.info("Handle client connection");
 					doHandleClientConnection(client);
@@ -97,9 +96,9 @@ public abstract class FastServiceHandler implements
 		}
 		_logger.info("Server stopped.");
 	}
-	
+
 	protected abstract void doHandleClientConnection(Socket client);
-	
+
 	protected abstract String getServerInfo();
-	
+
 }

@@ -4,40 +4,46 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.base.Objects;
 
 
 /**
  * Template class
- * @author Stoimenov
+ * @author Florian Kelbert
  *
  */
-public abstract class ClientConnectionHandler implements Runnable, IForwarder {
+public abstract class ClientPipeHandler implements Runnable, IForwarder {
 
-	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
-	private final Socket _socket;
-	private DataInputStream _inputStream;
+	protected static Logger _logger = Logger.getLogger(ClientPipeHandler.class);
+	private final File _inPipe;
+	private final File _outPipe;
+	private InputStream _inputStream;
 	private OutputStream _outputStream;
 	private boolean _shouldContinue;
 
 	private Object _response = null;
 
-	protected ClientConnectionHandler(Socket socket) {
+	protected ClientPipeHandler(File inPipe, File outPipe) {
 		super();
-		_socket = socket;
+		_inPipe = inPipe;
+		_outPipe = outPipe;
 		_shouldContinue = true;
 	}
 
 	@Override
 	public void run() {
 		try {
-			_inputStream = new DataInputStream(new BufferedInputStream(_socket.getInputStream()));
-			_outputStream = new BufferedOutputStream(_socket.getOutputStream());
+			_inputStream = new BufferedInputStream(new FileInputStream(_inPipe));
+			_outputStream = new BufferedOutputStream(new FileOutputStream(_outPipe));
 
 			try {
 				while (_shouldContinue) {
@@ -69,11 +75,8 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 			_logger.error("Connection could not be established!", ioe);
 		} finally {
 			try {
-				if (_socket != null) {
-					_inputStream.close();
-					_outputStream.close();
-					_socket.close();
-				}
+				_inputStream.close();
+				_outputStream.close();
 			} catch (IOException ioe) {
 				_logger.debug("Unable to tear down connection!", ioe);
 			}
@@ -95,7 +98,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 		_logger.debug("Response to forward: " + response + ". Wake up the thread.");
 		synchronized (this) {
 			_response = response;
-			notifyAll();
+			notify();
 		}
 	}
 
@@ -115,7 +118,7 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	}
 
 	public DataInputStream getDataInputStream() {
-		return _inputStream;
+		return new DataInputStream(_inputStream);
 	}
 
 	protected abstract void doProcessing() throws IOException,
@@ -123,8 +126,12 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
 	@Override
 	public String toString() {
-		return _socket.getInetAddress().getHostName() + " on port "
-				+ _socket.getPort();
+		return Objects.toStringHelper(this)
+			.add("_inPipe", _inPipe)
+			.add("_outPipe", _outPipe)
+			.add("_shouldContinue", _shouldContinue)
+			.add("_response", _response)
+			.toString();
 	}
 
 }

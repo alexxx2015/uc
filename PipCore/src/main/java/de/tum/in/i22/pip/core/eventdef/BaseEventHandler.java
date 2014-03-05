@@ -10,7 +10,7 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Scope;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -246,18 +246,17 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 *            Process ID (PID)
 	 * @return
 	 */
-	protected String instantiateProcess(String processId, String processName) {
+	protected IContainer instantiateProcess(String processId, String processName) {
 		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerID = ifModel.getContainerIdByName(new ContainerName(processId));
+		IContainer container = ifModel.getContainer(new NameBasic(processId));
 
 		// check if container for process exists and create new container if not
-		if (containerID == null) {
-			IContainer container = _messageFactory.createContainer();
-			containerID = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(processId), containerID);
-			ifModel.addName(new ContainerName(processName), containerID);
+		if (container == null) {
+			container = _messageFactory.createContainer();
+			ifModel.addName(new NameBasic(processId), container);
+			ifModel.addName(new NameBasic(processName), container);
 		}
 
-		return containerID;
+		return container;
 	}
 }

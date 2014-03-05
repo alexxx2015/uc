@@ -72,7 +72,11 @@ public class PipRequest {
 
 	@Override
 	public String toString() {
-		return "PipRequest [_method=" + _method + ", _data=" + _data
-				+ ", _container=" + _container + ", _event=" + _event + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_method", _method)
+				.add("_data", _data)
+				.add("_container", _container)
+				.add("_event", _event)
+				.toString();
 	}
 }

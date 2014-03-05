@@ -4,6 +4,7 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class SocketEventHandler extends BaseEventHandler {
@@ -25,10 +26,10 @@ public class SocketEventHandler extends BaseEventHandler {
 
 		InformationFlowModel ifModel = getInformationFlowModel();
 
-		String socketContainerId = ifModel.addContainer(_messageFactory.createContainer());
+		IContainer socketContainer = _messageFactory.createContainer();
 
-		if (socketContainerId != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fd), socketContainerId);
+		if (socketContainer != null) {
+			ifModel.addName(FiledescrName.create(host, pid, fd), socketContainer);
 		}
 		else {
 			_logger.fatal("Unable to create socket container.");
