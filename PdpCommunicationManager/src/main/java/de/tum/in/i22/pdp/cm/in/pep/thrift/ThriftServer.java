@@ -8,12 +8,12 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class ThriftServer {
+public class ThriftServer implements Runnable {
 	protected static Logger _logger = Logger.getLogger(ThriftServer.class);
 
-	private static TServer server = null;
+	private TServer _server = null;
 
-	public static void createListener(int thriftServerPort, int pepPort){
+	public ThriftServer(int thriftServerPort, int pepPort){
 		ThriftServerHandler handler = new ThriftServerHandler(pepPort);
 		ExtendedThriftConnector.Processor<ThriftServerHandler> processor =
 				new ExtendedThriftConnector.Processor<ThriftServerHandler>(handler);
@@ -24,17 +24,18 @@ public class ThriftServer {
 			serverTransport = null;
 			e.printStackTrace();
 		}
-		server = new TSimpleServer(new Args(serverTransport).processor(processor));
+		_server = new TSimpleServer(new Args(serverTransport).processor(processor));
 
-		_logger.info("Server ThriftServer listening on port: "+thriftServerPort);
+		_logger.info("Server ThriftServer listening on port: " + pepPort);
 	}
 
-	public static void start(){
-		server.serve();
+	public void stop(){
+		_server.stop();
 	}
 
-	public static void stop(){
-		server.stop();
+	@Override
+	public void run() {
+		_server.serve();
 	}
 
 }
