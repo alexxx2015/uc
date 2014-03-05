@@ -15,7 +15,7 @@ public class DataBasic implements IData {
 	}
 
 	public DataBasic(String id) {
-		super();
+		this();
 		_id = id;
 	}
 

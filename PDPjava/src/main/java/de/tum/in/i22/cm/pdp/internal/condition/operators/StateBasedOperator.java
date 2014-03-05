@@ -28,6 +28,13 @@ public class StateBasedOperator extends StateBasedOperatorType
   @Override
   public void initOperatorForMechanism(Mechanism mech)
   {
+	  //TODO
+	  IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
+	  if(engine2PipCacher != null){
+		  engine2PipCacher.populatePip(this.getParam1());
+		  engine2PipCacher.populatePip(this.getParam2());
+		  engine2PipCacher.populatePip(this.getParam3());
+	  }
   }
   
   @Override 

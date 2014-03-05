@@ -36,5 +36,7 @@ public interface IPipCacher2Pip extends IPipManager {
 	public IStatus notifyActualEvent(IEvent event);
 	
     public String getCurrentPipModel();
+    
+    public void populate(String predicate);
            
 }

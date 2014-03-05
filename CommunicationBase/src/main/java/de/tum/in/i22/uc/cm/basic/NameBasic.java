@@ -31,6 +31,12 @@ public class NameBasic implements IName {
 
 	@Override
 	public boolean equals(Object obj) {
-		return _name.equals(obj);
+		if(obj instanceof IName){
+			IName nameCmp = (IName)obj;
+			return nameCmp.getName().equals(this.getName());
+				
+		}
+		return false;
+//		return _name.equals(obj);
 	}
 }

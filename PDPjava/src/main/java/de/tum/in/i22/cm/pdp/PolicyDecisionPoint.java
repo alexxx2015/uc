@@ -206,6 +206,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			}
 			if (mech != null) {
 				mechanisms.remove(mech);
+				this.actionDescriptionStore.removeMechanism(mech.getTriggerEvent().getAction());
 			}
 		}
 		return ret;

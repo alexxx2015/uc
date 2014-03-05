@@ -26,11 +26,21 @@ public class InformationFlowModel {
 
 	@Override
 	public String toString() {
-		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
-				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
-				+ _containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
-				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
-				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
+		String newline = System.getProperty("line.separator");
+		StringBuilder sb = new StringBuilder("InformationFlowModel[").append(newline);
+		sb.append("_containerSet=[").append(_containerSet).append(newline).append("]").append(newline);
+		sb.append("_dataSet=[").append(_dataSet).append(newline).append("]").append(newline);
+		sb.append("_namingSet=[").append(_namingMap).append(newline).append("]").append(newline);
+		sb.append("_scopeSet=[").append(_scopeSet).append(" IS_SIMULATING="+isSimulating()).append("]").append(newline);
+		sb.append("_dataToContainerMap=[").append(_containerToDataMap).append("]").append(newline);
+		sb.append("_containerAliasesMap=[").append(_aliasesMap).append("]").append(newline);
+		sb.append("]").append(newline);
+		return sb.toString();
+//		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
+//				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
+//				+ _containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
+//				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
+//				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
 	}
 
 	private final static InformationFlowModel _instance = new InformationFlowModel();
