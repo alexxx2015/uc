@@ -105,11 +105,9 @@ public class RequestHandler implements Runnable {
 	 * @param obj the object to add to the queue.
 	 */
 	private void add(RequestWrapper obj) {
-		synchronized(_requestQueue) {
-			// put method blocks until the space in the queue becomes available
-			_logger.debug("Add " + obj + " to the queue.");
-			_requestQueue.add(obj);
-		}
+		// put method blocks until the space in the queue becomes available
+		_logger.debug("Add " + obj + " to the queue.");
+		_requestQueue.add(obj);
 	}
 
 	public void addEvent(IEvent event, IForwarder forwarder)
@@ -148,9 +146,7 @@ public class RequestHandler implements Runnable {
 		while (!Thread.interrupted()) {
 			RequestWrapper request = null;
 			try {
-				synchronized (_requestQueue) {
-					request = _requestQueue.take();
-				}
+				request = _requestQueue.take();
 			} catch (InterruptedException e) {
 				_logger.error("Event handler interrupted.", e);
 				return;
