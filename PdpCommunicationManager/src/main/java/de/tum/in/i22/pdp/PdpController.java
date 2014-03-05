@@ -76,40 +76,72 @@ public class PdpController {
 		this.threadRequestHandler = new Thread(eventHandler);
 		this.threadRequestHandler.start();
 
-		int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
-		_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
-		this.threadPmpFastServiceHandler = new Thread(new PmpFastServiceHandler(pmpListenerPort));
-		this.threadPmpFastServiceHandler.start();
+		startPmpListener();
+		startPipListener();
+		startPepGpbListener();
+		startPepPipeListener();
+		startPepThriftListener();
 
-		int pipListenerPort = getPdpSettings().getPipListenerPortNum();
-		_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
-		this.threadPipFastServiceHandler = new Thread(new PipFastServiceHandler(pipListenerPort));
-		this.threadPipFastServiceHandler.start();
-
-		int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
-		_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
-		this.threadPepGPBFastServiceHandler = new Thread(new PepFastServiceHandler(pepGPBListenerPort));
-		this.threadPepGPBFastServiceHandler.start();
-
-		File pepPipeIn = new File(getPdpSettings().getPepPipeIn());
-		File pepPipeOut = new File(getPdpSettings().getPepPipeOut());
-		if (pepPipeIn.exists() && !pepPipeIn.isDirectory() && pepPipeOut.exists() && !pepPipeOut.isDirectory()) {
-			_logger.info("Start PepPipeHandler using pipes " + pepPipeIn + " and " + pepPipeOut);
-			this.threadPepPipeHandler = new Thread(new PepClientPipeHandler(pepPipeIn, pepPipeOut));
-			this.threadPepPipeHandler.start();
-		}
-		else {
-			_logger.info("Did not start PepPipeHandler. Pipes " + pepPipeIn + " and " + pepPipeOut + " did not exist.");
-		}
-
-		int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
-		_logger.info("Start ThriftServer on port: " + pepThriftListenerPort);
-		threadThriftServer = new Thread (new ThriftServer(pepThriftListenerPort, pepGPBListenerPort));
-		threadThriftServer.start();
 
 		// Important: Do this at the very end.
 		_isStarted = true;
 	}
+
+	private void startPepThriftListener() {
+		if (getPdpSettings().isPepThriftListenerEnabled()) {
+			int pepThriftListenerPort = getPdpSettings().getPepThriftListenerPortNum();
+			_logger.info("Start ThriftServer on port: " + pepThriftListenerPort);
+			threadThriftServer = new Thread (new ThriftServer(pepThriftListenerPort, getPdpSettings().getPepGPBListenerPortNum()));
+			threadThriftServer.start();
+		}
+	}
+
+
+	private void startPepPipeListener() {
+		if (getPdpSettings().isPepPipeListenerEnabled()) {
+			File pepPipeIn = new File(getPdpSettings().getPepPipeIn());
+			File pepPipeOut = new File(getPdpSettings().getPepPipeOut());
+			if (pepPipeIn.exists() && !pepPipeIn.isDirectory() && pepPipeOut.exists() && !pepPipeOut.isDirectory()) {
+				_logger.info("Start PepPipeHandler using pipes " + pepPipeIn + " and " + pepPipeOut);
+				this.threadPepPipeHandler = new Thread(new PepClientPipeHandler(pepPipeIn, pepPipeOut));
+				this.threadPepPipeHandler.start();
+			}
+			else {
+				_logger.info("Did not start PepPipeHandler. Pipes " + pepPipeIn + " and " + pepPipeOut + " did not exist.");
+			}
+		}
+	}
+
+
+	private void startPepGpbListener() {
+		if (getPdpSettings().isPepGPBListenerEnabled()) {
+			int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
+			_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
+			this.threadPepGPBFastServiceHandler = new Thread(new PepFastServiceHandler(pepGPBListenerPort));
+			this.threadPepGPBFastServiceHandler.start();
+		}
+	}
+
+
+	private void startPipListener() {
+		if (getPdpSettings().isPipListenerEnabled()) {
+			int pipListenerPort = getPdpSettings().getPipListenerPortNum();
+			_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
+			this.threadPipFastServiceHandler = new Thread(new PipFastServiceHandler(pipListenerPort));
+			this.threadPipFastServiceHandler.start();
+		}
+	}
+
+
+	private void startPmpListener() {
+		if (getPdpSettings().isPmpListenerEnabled()) {
+			int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
+			_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
+			this.threadPmpFastServiceHandler = new Thread(new PmpFastServiceHandler(pmpListenerPort));
+			this.threadPmpFastServiceHandler.start();
+		}
+	}
+
 
 	public void stop(){
 		// TODO These methods are deprecated for a good reason... Get rid of them.

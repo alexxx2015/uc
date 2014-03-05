@@ -39,6 +39,12 @@ public class PdpSettings {
 	private String _pepPipeIn = "/tmp/pep2pdp";
 	private String _pepPipeOut = "/tmp/pdp2pep";
 
+	private boolean _pmpListenerEnabled = true;
+	private boolean _pepGPBListenerEnabled = true;
+	private boolean _pepThriftListenerEnabled = true;
+	private boolean _pipListenerEnabled = true;
+	private boolean _pepPipeListenerEnabled = true;
+
 	private PdpSettings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);
 	}
@@ -67,45 +73,11 @@ public class PdpSettings {
 	public void loadProperties() throws IOException {
 		Properties props = SettingsLoader.loadProperties(propertiesFilename);
 
-		try {
-			_pepGPBListenerPortNum = Integer.valueOf((String)props.get("pep_GPB_listener_port_num"));
-		} catch (Exception e) {
-			_logger.warn("Cannot read GPB pep listener port number.", e);
-			_logger.info("Default port of GPB pep listener: " + _pepGPBListenerPortNum);
-		}
-
-		try {
-			_pepThriftListenerPortNum = Integer.valueOf((String)props.get("pep_Thrift_listener_port_num"));
-		} catch (Exception e) {
-			_logger.warn("Cannot read Thrift pep listener port number.", e);
-			_logger.info("Default port of Thrift pep listener: " + _pepGPBListenerPortNum);
-		}
-
-		String tmpInPipe = (String) props.get("pep_pipe_in");
-		String tmpOutPipe = (String) props.get("pep_pipe_out");
-
-		if (tmpInPipe == null || tmpOutPipe == null) {
-			_logger.info("Cannot read pipe information.");
-			_logger.info("Default pipes: " + _pepPipeIn + " and " + _pepPipeOut);
-		}
-		else {
-			_pepPipeIn = tmpInPipe;
-			_pepPipeOut = tmpOutPipe;
-		}
-
-		try {
-			_pmpListenerPortNum = Integer.valueOf(props.getProperty("pmp_listener_port_num"));
-		} catch (Exception e) {
-			_logger.warn("Cannot read pmp listener port number.", e);
-			_logger.info("Default port of pmp listener: " + _pmpListenerPortNum);
-		}
-
-		try {
-			_pipListenerPortNum = Integer.valueOf(props.getProperty("pip_listener_port_num"));
-		} catch (Exception e) {
-			_logger.warn("Cannot read pip listener port number.", e);
-			_logger.info("Default port of pip listener: " + _pipListenerPortNum);
-		}
+		loadPepGpbListenerProperties(props);
+		loadPepThriftListenerProperties(props);
+		loadPepPipeListenerProperties(props);
+		loadPmpListenerProperties(props);
+		loadPipListenerProperties(props);
 
 		try {
 			_pipAddress = props.getProperty("pip_address");
@@ -131,6 +103,116 @@ public class PdpSettings {
 		}
 	}
 
+
+	private void loadPepPipeListenerProperties(Properties props) {
+		try {
+			String s = props.getProperty("pep_pipe_listener_enabled");
+			if (s != null) {
+				_pepPipeListenerEnabled = Boolean.valueOf(s);
+			}
+		} catch (Exception e) {
+			_logger.warn("Cannot read whether to enable pep pipe listener.", e);
+			_logger.info("Enabling pep pipe listener by default: " + _pepPipeListenerEnabled);
+		}
+
+		if (_pepPipeListenerEnabled) {
+			String tmpInPipe = (String) props.get("pep_pipe_in");
+			String tmpOutPipe = (String) props.get("pep_pipe_out");
+
+			if (tmpInPipe == null || tmpOutPipe == null) {
+				_logger.info("Cannot read pipe information.");
+				_logger.info("Default pipes: " + _pepPipeIn + " and " + _pepPipeOut);
+			}
+			else {
+				_pepPipeIn = tmpInPipe;
+				_pepPipeOut = tmpOutPipe;
+			}
+		}
+	}
+
+	private void loadPipListenerProperties(Properties props) {
+		try {
+			String s = props.getProperty("pip_listener_enabled");
+			if (s != null) {
+				_pipListenerEnabled = Boolean.valueOf(s);
+			}
+		} catch (Exception e) {
+			_logger.warn("Cannot read whether to enable pip listener.", e);
+			_logger.info("Enabling pip listener by default: " + _pipListenerEnabled);
+		}
+
+		if (_pipListenerEnabled) {
+			try {
+				_pipListenerPortNum = Integer.valueOf(props.getProperty("pip_listener_port_num"));
+			} catch (Exception e) {
+				_logger.warn("Cannot read pip listener port number.", e);
+				_logger.info("Default port of pip listener: " + _pipListenerPortNum);
+			}
+		}
+	}
+
+	private void loadPepThriftListenerProperties(Properties props) {
+		try {
+			String s = props.getProperty("pep_Thrift_listener_enabled");
+			if (s != null) {
+				_pepThriftListenerEnabled  = Boolean.valueOf(s);
+			}
+		} catch (Exception e) {
+			_logger.warn("Cannot read whether to enable pep Thrift listener.", e);
+			_logger.info("Enabling pep Thrift listener by default: " + _pepThriftListenerEnabled);
+		}
+
+		if (_pepThriftListenerEnabled) {
+			try {
+				_pepThriftListenerPortNum = Integer.valueOf((String)props.get("pep_Thrift_listener_port_num"));
+			} catch (Exception e) {
+				_logger.warn("Cannot read Thrift pep listener port number.", e);
+				_logger.info("Default port of Thrift pep listener: " + _pepGPBListenerPortNum);
+			}
+		}
+	}
+
+	private void loadPepGpbListenerProperties(Properties props) {
+		try {
+			String s = props.getProperty("pep_GPB_listener_enabled");
+			if (s != null) {
+				_pepGPBListenerEnabled  = Boolean.valueOf(s);
+			}
+		} catch (Exception e) {
+			_logger.warn("Cannot read whether to enable pep GPB listener.", e);
+			_logger.info("Enabling pep GPB listener by default: " + _pepGPBListenerEnabled);
+		}
+
+		if (_pepGPBListenerEnabled) {
+			try {
+				_pepGPBListenerPortNum = Integer.valueOf((String)props.get("pep_GPB_listener_port_num"));
+			} catch (Exception e) {
+				_logger.warn("Cannot read GPB pep listener port number.", e);
+				_logger.info("Default port of GPB pep listener: " + _pepGPBListenerPortNum);
+			}
+		}
+	}
+
+	private void loadPmpListenerProperties(Properties props) {
+		try {
+			String s = props.getProperty("pmp_listener_enabled");
+			if (s != null) {
+				_pmpListenerEnabled  = Boolean.valueOf(s);
+			}
+		} catch (Exception e) {
+			_logger.warn("Cannot read whether to enable pmp listener.", e);
+			_logger.info("Enabling pmp listener by default: " + _pmpListenerEnabled);
+		}
+
+		if (_pmpListenerEnabled) {
+			try {
+				_pmpListenerPortNum = Integer.valueOf(props.getProperty("pmp_listener_port_num"));
+			} catch (Exception e) {
+				_logger.warn("Cannot read pmp listener port number.", e);
+				_logger.info("Default port of pmp listener: " + _pmpListenerPortNum);
+			}
+		}
+	}
 
 	public String getPropertiesFileName() {
 		return propertiesFilename;
@@ -170,6 +252,26 @@ public class PdpSettings {
 
 	public int getQueueSize() {
 		return _queueSize;
+	}
+
+	public boolean isPmpListenerEnabled() {
+		return _pmpListenerEnabled;
+	}
+
+	public boolean isPepGPBListenerEnabled() {
+		return _pepGPBListenerEnabled;
+	}
+
+	public boolean isPepThriftListenerEnabled() {
+		return _pepThriftListenerEnabled;
+	}
+
+	public boolean isPipListenerEnabled() {
+		return _pipListenerEnabled;
+	}
+
+	public boolean isPepPipeListenerEnabled() {
+		return _pepPipeListenerEnabled;
 	}
 
 	public void setPepGPBListenerPortNum(int pepGPBListenerPortNum) {
