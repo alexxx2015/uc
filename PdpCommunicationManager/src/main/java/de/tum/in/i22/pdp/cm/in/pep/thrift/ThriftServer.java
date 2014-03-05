@@ -26,7 +26,7 @@ public class ThriftServer implements Runnable {
 		}
 		_server = new TSimpleServer(new Args(serverTransport).processor(processor));
 
-		_logger.info("Server ThriftServer listening on port: " + pepPort);
+		_logger.info("Server ThriftServer listening on port: " + thriftServerPort);
 	}
 
 	public void stop(){
