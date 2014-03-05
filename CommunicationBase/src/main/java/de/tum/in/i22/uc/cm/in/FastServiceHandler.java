@@ -90,14 +90,18 @@ public abstract class FastServiceHandler implements
 
 				if (client != null) {
 					_logger.info("Handle client connection");
-					doHandleClientConnection(client);
+					try {
+						doHandleClientConnection(client);
+					} catch (IOException e) {
+						_logger.warn("Unable to handle the connection", e);
+					}
 				}
 			}
 		}
 		_logger.info("Server stopped.");
 	}
 
-	protected abstract void doHandleClientConnection(Socket client);
+	protected abstract void doHandleClientConnection(Socket client) throws IOException;
 
 	protected abstract String getServerInfo();
 

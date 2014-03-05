@@ -3,7 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pep;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.Socket;
+import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -25,10 +25,10 @@ import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
-public class PepClientConnectionHandler extends ClientConnectionHandler {
+public abstract class PepClientConnectionHandler extends ClientConnectionHandler {
 
-	public PepClientConnectionHandler(Socket socket) {
-		super(socket);
+	public PepClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) {
+		super(inputStream, outputStream);
 	}
 
 	@Override
@@ -57,24 +57,24 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 
 	}
 
-	private void doUpdateInformationFlowSemantics() 
+	private void doUpdateInformationFlowSemantics()
 			throws IOException, InterruptedException {
-		
+
 		_logger.debug("Do update information flow semantics");
 		GpPipDeployer gpPipDeployer = GpPipDeployer.parseDelimitedFrom(getDataInputStream());
 		GpByteArray gpByteArray = GpByteArray.parseDelimitedFrom(getDataInputStream());
 		GpConflictResolutionFlag gpFlag = GpConflictResolutionFlag.parseDelimitedFrom(getDataInputStream());
 		_logger.trace("Parameteres parsed");
-		
+
 		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		IPipDeployer pipDeployer = mf.createPipDeployer(gpPipDeployer);
 		byte[] jarBytes = gpByteArray.getByteArray().toByteArray();
 		EConflictResolution conflictResolutionFlag = EConflictResolution.convertFromGpEConflictResolution(gpFlag.getValue());
 		_logger.trace("Parameters: " + pipDeployer + " " + conflictResolutionFlag);
-		
+
 		RequestHandler requestHandler = RequestHandler.getInstance();
 		requestHandler.addUpdateIfFlowRequest(pipDeployer, jarBytes, conflictResolutionFlag, this);
-	
+
 		Object responseObj = waitForResponse();
 
 		if (responseObj instanceof IStatus) {
@@ -94,7 +94,7 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 
 	private void doNotifyEvent()
 			throws IOException, InterruptedException {
-		
+
 		_logger.debug("Do notify event");
 		GpEvent gpEvent = GpEvent.parseDelimitedFrom(getDataInputStream());
 		if (gpEvent != null) {

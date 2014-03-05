@@ -30,9 +30,6 @@ public class DataBasic implements IData {
 
 	@Override
 	public String getId() {
-		if (_id == null) {
-			_id = UUID.randomUUID().toString();
-		}
 		return _id;
 	}
 

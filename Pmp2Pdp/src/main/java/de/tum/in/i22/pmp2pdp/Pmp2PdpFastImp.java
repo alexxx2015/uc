@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.out.FastConnector;
+import de.tum.in.i22.uc.cm.out.TcpConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
 /**
@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  * @author Stoimenov
  *
  */
-public class Pmp2PdpFastImp extends FastConnector
+public class Pmp2PdpFastImp extends TcpConnector
 		implements IPmp2PdpFast {
 
 	

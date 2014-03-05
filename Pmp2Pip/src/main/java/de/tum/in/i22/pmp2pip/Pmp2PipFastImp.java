@@ -14,9 +14,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.out.FastConnector;
+import de.tum.in.i22.uc.cm.out.TcpConnector;
 
-public class Pmp2PipFastImp extends FastConnector implements IPmp2PipFast {
+public class Pmp2PipFastImp extends TcpConnector implements IPmp2PipFast {
 
 	
 	private static final Logger _logger = Logger

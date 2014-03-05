@@ -1,44 +1,37 @@
 package de.tum.in.i22.uc.cm.in;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-
 /**
- * Template class
- * @author Stoimenov
+ *
+ * @author Florian Kelbert
  *
  */
-public abstract class ClientConnectionHandler implements Runnable, IForwarder {
+public abstract class ClientConnectionHandler implements IForwarder, Runnable {
 
 	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
-	private final Socket _socket;
-	private DataInputStream _inputStream;
-	private OutputStream _outputStream;
-	private boolean _shouldContinue;
 
-	private Object _response = null;
+	private final DataInputStream _inputStream;
+	private final OutputStream _outputStream;
 
-	protected ClientConnectionHandler(Socket socket) {
-		super();
-		_socket = socket;
-		_shouldContinue = true;
+	protected boolean _shouldContinue = true;
+
+	protected Object _response = null;
+
+	public ClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) {
+		_inputStream = inputStream;
+		_outputStream = outputStream;
 	}
+
 
 	@Override
 	public void run() {
 		try {
-			_inputStream = new DataInputStream(new BufferedInputStream(_socket.getInputStream()));
-			_outputStream = new BufferedOutputStream(_socket.getOutputStream());
-
 			try {
 				while (_shouldContinue) {
 					doProcessing();
@@ -64,18 +57,17 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 				_shouldContinue = false;
 			}
 
-		}
-		catch (IOException ioe) {
-			_logger.error("Connection could not be established!", ioe);
 		} finally {
 			try {
-				if (_socket != null) {
+				disconnect();
+				if (_inputStream != null) {
 					_inputStream.close();
+				}
+				if (_outputStream != null) {
 					_outputStream.close();
-					_socket.close();
 				}
 			} catch (IOException ioe) {
-				_logger.debug("Unable to tear down connection!", ioe);
+				_logger.debug("Unable to close connection!", ioe);
 			}
 		}
 	}
@@ -121,10 +113,5 @@ public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 	protected abstract void doProcessing() throws IOException,
 		EOFException, InterruptedException, MessageTooLargeException;
 
-	@Override
-	public String toString() {
-		return _socket.getInetAddress().getHostName() + " on port "
-				+ _socket.getPort();
-	}
-
+	protected abstract void disconnect();
 }

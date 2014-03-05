@@ -13,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pep2pdp.IPep2PdpFast;
-import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.pep2pdp.IPep2PdpTcp;
+import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
 import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -39,7 +39,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public class PdpTest {
 
 	private static Logger _logger = Logger.getRootLogger();
-	private static IPep2PdpFast _pdpProxy;
+	private static IPep2PdpTcp _pdpProxy;
 
 	// num of calls from pep thread
 	private final static int NUM_OF_CALLS_FROM_PEP = 10;
@@ -61,7 +61,7 @@ public class PdpTest {
 		startPepClient();
 		startPmpClient();
 
-		_pdpProxy = new Pep2PdpFastImp("localhost", PEP_LISTENER_PORT_NUM);
+		_pdpProxy = new Pep2PdpTcpImp("localhost", PEP_LISTENER_PORT_NUM);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class PdpTest {
 
 			@Override
 			public void run() {
-				IPep2PdpFast pdpProxyOne = new Pep2PdpFastImp("localhost",
+				IPep2PdpTcp pdpProxyOne = new Pep2PdpTcpImp("localhost",
 						PEP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyOne.connect();

@@ -1,61 +1,27 @@
 package de.tum.in.i22.uc.cm.out;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
 import com.google.protobuf.MessageLite;
 
-public abstract class FastConnector implements IFastConnector {
 
-	private static final Logger _logger = Logger.getLogger(FastConnector.class);
+public abstract class Connector implements IFastConnector {
 
-	private final String _address;
-	private final int _port;
-	private Socket _clientSocket;
-	private OutputStream _outputStream;
- 	private InputStream _inputStream;
+	protected static final Logger _logger = Logger.getLogger(Connector.class);
 
- 	public FastConnector(String address, int port) {
-		_address = address;
-		_port = port;
+	protected OutputStream _outputStream;
+ 	protected InputStream _inputStream;
+
+	public OutputStream getOutputStream() {
+		return _outputStream;
 	}
 
-	@Override
-	public void connect() throws Exception {
-		_logger.debug("Establish connection to " + _address + ":" + _port);
-		_clientSocket = new Socket(_address, _port);
-
-		try {
-			_logger.debug("Get i/o streams.");
-			_outputStream = new BufferedOutputStream(_clientSocket.getOutputStream());
-			_inputStream = new BufferedInputStream(_clientSocket.getInputStream());
-			_logger.debug("Connection established.");
-		} catch(Exception e) {
-			_logger.debug("Failed to establish connection.", e);
-			throw e;
-		}
-	}
-
-	@Override
-	public void disconnect() {
-		_logger.info("Tear down the connection");
-		if (_clientSocket != null) {
-			try {
-				_inputStream.close();
-				_outputStream.close();
-				_clientSocket.close();
-				_clientSocket = null;
-				_logger.info("Connection closed!");
-			} catch (IOException e) {
-				_logger.error("Error occurred when closing the connection.", e);
-			}
-		}
+	public InputStream getInputStream() {
+		return _inputStream;
 	}
 
 	/**
@@ -107,13 +73,5 @@ public abstract class FastConnector implements IFastConnector {
         ibyte = ((value >>> 16) & 0xff); out.write(ibyte);
         ibyte = ((value >>> 8) & 0xff); out.write(ibyte);
         ibyte = (value & 0xff); out.write(ibyte);
-	}
-
-	protected OutputStream getOutputStream() {
-		return _outputStream;
-	}
-
-	protected InputStream getInputStream() {
-		return _inputStream;
 	}
 }

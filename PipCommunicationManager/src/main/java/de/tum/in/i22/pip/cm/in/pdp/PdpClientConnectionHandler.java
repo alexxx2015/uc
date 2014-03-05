@@ -34,14 +34,14 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public class PdpClientConnectionHandler extends ClientConnectionHandler {
-	private IPdp2Pip _pdp2pip;
+public class PdpClientConnectionHandler extends ClientTcpConnectionHandler {
+	private final IPdp2Pip _pdp2pip;
 
-	protected PdpClientConnectionHandler(Socket socket, IPdp2Pip pdp2Pip) {
+	protected PdpClientConnectionHandler(Socket socket, IPdp2Pip pdp2Pip) throws IOException {
 		super(socket);
 		_pdp2pip = pdp2Pip;
 	}
@@ -49,17 +49,17 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 	@Override
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
-		
+
 		// first determine the method (operation) by reading the first byte
 		DataInputStream dataInputStream = getDataInputStream();
 		byte methodCodeBytes[] = new byte[1];
 		dataInputStream.readFully(methodCodeBytes);
-		
+
 		EPdp2PipMethod method = EPdp2PipMethod.fromByte(methodCodeBytes[0]);
 		_logger.trace("Method to invoke: " + method);
-		
+
 		switch (method) {
-			case EVALUATE_PREDICATE: 
+			case EVALUATE_PREDICATE:
 				doEvaluatePredicate();
 				break;
 			case GET_CONTAINER_FOR_DATA:
@@ -79,16 +79,16 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		}
 	}
 
-	private void doGetContainerForData() 
+	private void doGetContainerForData()
 			throws IOException {
 		_logger.debug("Do get container for data");
 		GpData gpData = GpData.parseDelimitedFrom(getDataInputStream());
 		assert(gpData != null);
-		
+
 		_logger.trace("Received data parameter: " + gpData);
-		
+
 		IData data = new DataBasic(gpData);
-		
+
 		Set<IContainer> containerForDataList = _pdp2pip.getContainerForData(data);
 		_logger.trace("Return the list of containers for data");
 		GpContainerList gpContainerList = GpUtil.convertToGpContainerList(new ArrayList<IContainer>(containerForDataList));
@@ -96,16 +96,16 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		getOutputStream().flush();
 	}
 
-	private void doGetDataInContainer() 
+	private void doGetDataInContainer()
 			throws IOException {
 		_logger.debug("Do get data in container");
 		GpContainer gpContainer = GpContainer.parseDelimitedFrom(getDataInputStream());
 		assert(gpContainer != null);
-		
+
 		_logger.trace("Received container parameter: " + gpContainer);
-		
+
 		IContainer container = new ContainerBasic(gpContainer);
-		
+
 		Set<IData> dataInContainerList = _pdp2pip.getDataInContainer(container);
 		_logger.trace("Return the list of data in container");
 		GpDataList gpDataList = GpUtil.convertToGpList(new ArrayList<IData>(dataInContainerList));
@@ -113,67 +113,67 @@ public class PdpClientConnectionHandler extends ClientConnectionHandler {
 		getOutputStream().flush();
 	}
 
-	private void doEvaluatePredicate() 
+	private void doEvaluatePredicate()
 			throws IOException {
 		_logger.debug("Do evaluate predicate");
 		GpEvent gpEvent = GpEvent.parseDelimitedFrom(getDataInputStream());
 		GpString gpPredicate = GpString.parseDelimitedFrom(getDataInputStream());
 		assert(gpEvent != null);
 		assert(gpPredicate != null);
-		
+
 		_logger.trace("Received event parameter: " + gpEvent);
 		_logger.trace("Received predicate parameter: " + gpPredicate);
-		
+
 		IEvent event = new EventBasic(gpEvent);
 		boolean result = _pdp2pip.evaluatePredicateSimulatingNextState(event, gpPredicate.getValue());
 		GpBoolean gpResult = GpUtil.createGpBoolean(result);
 		gpResult.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}
-	
-	private void doNotifyActualEvent() 
+
+	private void doNotifyActualEvent()
 			throws IOException {
 		_logger.debug("Do notify actual event");
 		GpEvent gpEvent = GpEvent.parseDelimitedFrom(getDataInputStream());
 		assert(gpEvent != null);
-		
+
 		_logger.trace("Received event parameter: " + gpEvent);
-		
+
 		IEvent event = new EventBasic(gpEvent);
 		IStatus status = _pdp2pip.notifyActualEvent(event);
 		GpStatus gpStatus = StatusBasic.createGpbStatus(status);
 		gpStatus.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}
-	
-	private void doUpdateInformationFlowSemantics() 
+
+	private void doUpdateInformationFlowSemantics()
 			throws IOException {
-		
+
 		_logger.debug("Do update information flow semantics");
 		GpPipDeployer gpPipDeployer = GpPipDeployer.parseDelimitedFrom(getDataInputStream());
 		GpByteArray gpByteArray = GpByteArray.parseDelimitedFrom(getDataInputStream());
 		GpConflictResolutionFlag gpFlag = GpConflictResolutionFlag.parseDelimitedFrom(getDataInputStream());
 		_logger.trace("Parameteres parsed");
-		
+
 		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		IPipDeployer pipDeployer = mf.createPipDeployer(gpPipDeployer);
 		byte[] jarBytes = gpByteArray.getByteArray().toByteArray();
-		
+
 		EConflictResolution conflictResolutionFlag = EConflictResolution.convertFromGpEConflictResolution(gpFlag.getValue());
 		_logger.trace("Parameters: " + pipDeployer + " " + conflictResolutionFlag);
-		
+
 		String fileName = "piptemp" + System.currentTimeMillis() + ".jar";
-		
+
 		File file = new File(FileUtils.getTempDirectory(), fileName);
 		FileUtils.writeByteArrayToFile(file, jarBytes);
 		_logger.trace("File name: " + file.getAbsolutePath());
 		IStatus status = _pdp2pip.updateInformationFlowSemantics(pipDeployer, file, conflictResolutionFlag);
 		file.delete();
-		
+
 		_logger.debug("Send status back to PDP. Status: " + status);
 		GpStatus gpStatus = StatusBasic.createGpbStatus(status);
 		gpStatus.writeDelimitedTo(getOutputStream());
 		getOutputStream().flush();
 	}
-	
+
 }

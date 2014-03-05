@@ -12,14 +12,14 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
-public class PipClientConnectionHandler extends ClientConnectionHandler {
+public class PipClientConnectionHandler extends ClientTcpConnectionHandler {
 
 	private final RequestHandler _requestHandler = RequestHandler.getInstance();
 
-	public PipClientConnectionHandler(Socket socket) {
+	public PipClientConnectionHandler(Socket socket) throws IOException {
 		super(socket);
 	}
 

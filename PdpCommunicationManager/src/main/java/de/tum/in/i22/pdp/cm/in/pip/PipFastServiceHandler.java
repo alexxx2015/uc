@@ -1,4 +1,5 @@
 package de.tum.in.i22.pdp.cm.in.pip;
+import java.io.IOException;
 import java.net.Socket;
 
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
@@ -11,7 +12,7 @@ public class PipFastServiceHandler extends FastServiceHandler {
 	}
 
 	@Override
-	protected void doHandleClientConnection(Socket client) {
+	protected void doHandleClientConnection(Socket client) throws IOException {
 		PipClientConnectionHandler pipClientConnHandler =
 				new PipClientConnectionHandler(client);
 		//TODO improve this code, use new features introduced in java 1.7, thread pools

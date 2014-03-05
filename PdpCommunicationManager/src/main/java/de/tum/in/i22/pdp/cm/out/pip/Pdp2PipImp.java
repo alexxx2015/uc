@@ -35,10 +35,10 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.out.FastConnector;
+import de.tum.in.i22.uc.cm.out.TcpConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
+public class Pdp2PipImp extends TcpConnector implements IPdp2PipFast {
 
 	
 	private static final Logger _logger = Logger.getLogger(Pdp2PipImp.class);

@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pep2pdp.IPep2PdpFast;
-import de.tum.in.i22.pep2pdp.Pep2PdpFastImp;
+import de.tum.in.i22.pep2pdp.IPep2PdpTcp;
+import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
@@ -28,11 +28,11 @@ public class TestPep2PdpCommunication {
 	
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPep2PdpFast _pdpProxy;
+	private static IPep2PdpTcp _pdpProxy;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdpProxy = new Pep2PdpFastImp("localhost", TestSettings.PEP_LISTENER_PORT_NUM);
+		_pdpProxy = new Pep2PdpTcpImp("localhost", TestSettings.PEP_LISTENER_PORT_NUM);
 	}
 	
 	@Test

@@ -23,12 +23,13 @@ ExtendedThriftConnector.Iface {
 	private static final String IP = "localhost";
 	private static int PORT = 8090;
 
+	private static final Logger _logger = Logger
+			.getLogger(ThriftServerHandler.class);
+
 	public ThriftServerHandler(int pepPort) {
-		// TODO Auto-generated constructor stub
 		// we should start it on this port
-		super(null);
+		super(null, null);
 		PORT = pepPort;
-		requestHandler = RequestHandler.getInstance();
 
 	}
 
@@ -38,13 +39,9 @@ ExtendedThriftConnector.Iface {
 		return "ThriftServer: " + IP + ":" + PORT;
 	}
 
-	private static final Logger _logger = Logger
-			.getLogger(ThriftServerHandler.class);
-
 	private IResponse processEvent(IEvent ev) {
 		if (ev == null)
 			return null;
-		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 
 		Object responseObj;
 		try {
@@ -72,7 +69,7 @@ ExtendedThriftConnector.Iface {
 	@Override
 	/****
 	 * Async events are not blocking on the PEP side, therefore they can only be actual events.
-	 * 
+	 *
 	 */
 	public void processEventAsync(Event e) throws TException {
 		if (e == null) {
@@ -140,7 +137,7 @@ ExtendedThriftConnector.Iface {
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
 		_logger.debug("Thrift doProcessing invoked");
-		
+
 		// TODO Auto-generated method stub
 
 	}
@@ -149,7 +146,7 @@ ExtendedThriftConnector.Iface {
 	public void processEventAsync(Event e, String senderID) throws TException {
 		//TODO: senderID ignored for the time being
 		processEventAsync(e);
-		
+
 	}
 
 	@Override
@@ -157,5 +154,9 @@ ExtendedThriftConnector.Iface {
 			throws TException {
 		//TODO: senderID ignored for the time being
 		return processEventSync(e);
+	}
+
+	@Override
+	protected void disconnect() {
 	}
 }
