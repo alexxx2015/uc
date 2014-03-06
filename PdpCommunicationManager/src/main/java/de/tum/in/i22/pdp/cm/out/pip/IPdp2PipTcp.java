@@ -3,6 +3,6 @@ package de.tum.in.i22.pdp.cm.out.pip;
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.uc.cm.out.IConnector;
 
-public interface IPdp2PipFast extends IPdp2Pip, IConnector{
+public interface IPdp2PipTcp extends IPdp2Pip, IConnector{
 
 }

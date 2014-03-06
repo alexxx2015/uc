@@ -1,11 +1,11 @@
 package de.tum.in.i22.pdp.cm.in.pmp;
 
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
 
 
 /**
- * Used in {@link FastServiceHandler} to distinguish between methods.
- * See {@link FastServiceHandler} implementation.
+ * Used in {@link TcpServiceHandler} to distinguish between methods.
+ * See {@link TcpServiceHandler} implementation.
  * @author Stoimenov
  *
  */

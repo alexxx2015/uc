@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 import de.tum.in.i22.pip.core.IPdp2Pip;
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
 
-public class PdpFastServiceHandler extends FastServiceHandler {
+public class PdpTcpServiceHandler extends TcpServiceHandler {
 	private final IPdp2Pip _pdp2Pip;
 
-	public PdpFastServiceHandler(int port, IPdp2Pip pdp2Pip) {
+	public PdpTcpServiceHandler(int port, IPdp2Pip pdp2Pip) {
 		super(port);
 		_pdp2Pip = pdp2Pip;
 	}

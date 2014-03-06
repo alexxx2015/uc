@@ -2,10 +2,10 @@ package de.tum.in.i22.pdp.cm.in.pmp;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
 
 
-public class PmpTcpServiceHandler extends FastServiceHandler {
+public class PmpTcpServiceHandler extends TcpServiceHandler {
 
 	public PmpTcpServiceHandler(int port) {
 		super(port);

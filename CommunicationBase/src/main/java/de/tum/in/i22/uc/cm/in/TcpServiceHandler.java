@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  * @author Stoimenov
  *
  */
-public abstract class FastServiceHandler implements
+public abstract class TcpServiceHandler implements
 		Runnable {
 
 	protected static Logger _logger = Logger.getRootLogger();
@@ -31,7 +31,7 @@ public abstract class FastServiceHandler implements
 	 *            should reside in the range of dynamic ports, i.e 49152 -
 	 *            65535.
 	 */
-	public FastServiceHandler(int port) {
+	public TcpServiceHandler(int port) {
 		this._port = port;
 	}
 

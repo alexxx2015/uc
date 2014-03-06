@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
+import de.tum.in.i22.pdp.core.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -29,7 +30,7 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  * @author Stoimenov
  *
  */
-public abstract class Pmp2PdpImp extends AbstractConnection implements IPmp2PdpTcp, IConnector {
+public abstract class Pmp2PdpImp extends AbstractConnection implements IPmp2Pdp, IConnector {
 
 	protected static final Logger _logger = Logger.getLogger(Pmp2PdpImp.class);
 

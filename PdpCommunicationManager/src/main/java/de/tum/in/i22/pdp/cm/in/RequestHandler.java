@@ -12,8 +12,9 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
+import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
+import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
@@ -40,7 +41,7 @@ public class RequestHandler implements Runnable {
 			new ArrayBlockingQueue<RequestWrapper>(PdpSettings.getInstance().getQueueSize(), true);
 
 	private IIncoming pdpHandler;
-	private IPdp2PipFast _pdp2PipProxy = null;
+	private IPdp2PipTcp _pdp2PipProxy = null;
 
 	private static IPdpCore2PipCacher _core2pip = null;
 	private static IPdpEngine2PipCacher _engine2pip = null;
@@ -247,14 +248,14 @@ public class RequestHandler implements Runnable {
 	 *
 	 * @return
 	 */
-	private IPdp2PipFast getPdp2PipProxy() throws Exception {
+	private IPdp2PipTcp getPdp2PipProxy() throws Exception {
 		if (_pdp2PipProxy == null) {
 			String pipAddress = PdpSettings.getInstance().getPipAddress();
 			int pipPort = PdpSettings.getInstance().getPipPortNum();
 
 			_logger.debug("Create proxy object to connect to PIP listener "
 					+ pipAddress + ":" + pipPort);
-			_pdp2PipProxy = new Pdp2PipImp(pipAddress, pipPort);
+			_pdp2PipProxy = new Pdp2PipTcpImp(pipAddress, pipPort);
 		}
 		return _pdp2PipProxy;
 	}
@@ -315,7 +316,7 @@ public class RequestHandler implements Runnable {
 			UpdateIfFlowSemanticsRequestWrapper request) {
 		_logger.debug("Delegate update if flow to PIP");
 		try {
-			IPdp2PipFast pipProxy = getPdp2PipProxy();
+			IPdp2PipTcp pipProxy = getPdp2PipProxy();
 			_logger.debug("Establish connection to PIP");
 			pipProxy.connect();
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"

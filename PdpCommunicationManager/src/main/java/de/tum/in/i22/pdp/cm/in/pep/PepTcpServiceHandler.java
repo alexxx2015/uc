@@ -3,11 +3,11 @@ package de.tum.in.i22.pdp.cm.in.pep;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
 
-public class PepFastServiceHandler extends FastServiceHandler {
+public class PepTcpServiceHandler extends TcpServiceHandler {
 
-	public PepFastServiceHandler(int port) {
+	public PepTcpServiceHandler(int port) {
 		super(port);
 	}
 

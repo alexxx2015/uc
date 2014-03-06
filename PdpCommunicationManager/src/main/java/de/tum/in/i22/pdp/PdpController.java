@@ -20,9 +20,9 @@ import com.google.inject.Injector;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepClientNativeHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepClientPipeConnectionHandler;
-import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.pep.PepTcpServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
-import de.tum.in.i22.pdp.cm.in.pip.PipFastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.pip.PipTcpServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpTcpServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
@@ -129,7 +129,7 @@ public class PdpController {
 		if (getPdpSettings().isPepGPBListenerEnabled()) {
 			int pepGPBListenerPort = getPdpSettings().getPepGPBListenerPortNum();
 			_logger.info("Start PepGPBFastServiceHandler on port: " + pepGPBListenerPort);
-			_threadPepGPBFastServiceHandler = new Thread(new PepFastServiceHandler(pepGPBListenerPort));
+			_threadPepGPBFastServiceHandler = new Thread(new PepTcpServiceHandler(pepGPBListenerPort));
 			_threadPepGPBFastServiceHandler.start();
 			_startedPepGPBFastServiceHandler = true;
 		}
@@ -140,7 +140,7 @@ public class PdpController {
 		if (getPdpSettings().isPipListenerEnabled()) {
 			int pipListenerPort = getPdpSettings().getPipListenerPortNum();
 			_logger.info("Start PipFastServiceHandler on port: " + pipListenerPort);
-			_threadPipFastServiceHandler = new Thread(new PipFastServiceHandler(pipListenerPort));
+			_threadPipFastServiceHandler = new Thread(new PipTcpServiceHandler(pipListenerPort));
 			_threadPipFastServiceHandler.start();
 			_startedPipFastServiceHandler = true;
 		}

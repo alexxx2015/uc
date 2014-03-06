@@ -2,12 +2,12 @@ package de.tum.in.i22.pdp.cm.in.pip;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
 
 
-public class PipFastServiceHandler extends FastServiceHandler {
+public class PipTcpServiceHandler extends TcpServiceHandler {
 
-	public PipFastServiceHandler(int port) {
+	public PipTcpServiceHandler(int port) {
 		super(port);
 	}
 
