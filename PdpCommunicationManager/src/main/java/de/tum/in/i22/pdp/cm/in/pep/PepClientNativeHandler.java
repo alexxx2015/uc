@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
  */
 public class PepClientNativeHandler {
 
-	public static void notifyEvent(String name, String[] paramKeys, String[] paramValues) throws InterruptedException {
+	public static void notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		System.out.println("strt: " + System.nanoTime());
 		if (name == null || paramKeys == null || paramValues == null
 				|| paramKeys.length != paramValues.length || name.isEmpty()) {
@@ -31,7 +31,7 @@ public class PepClientNativeHandler {
 		}
 
 		// TODO: is actual?! -> Y/N
-		IEvent event = new EventBasic(name, params, true);
+		IEvent event = new EventBasic(name, params, isActual);
 		requestHandler.addEvent(event, new IForwarder() {
 
 			@Override
@@ -40,6 +40,6 @@ public class PepClientNativeHandler {
 			}
 		});
 
-		System.out.println(" end:" + System.nanoTime());
+		System.out.println(" end: " + System.nanoTime());
 	}
 }
