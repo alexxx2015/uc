@@ -46,8 +46,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
-//		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
+//		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
+		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 
 		new DummyPEP(pdp1) {

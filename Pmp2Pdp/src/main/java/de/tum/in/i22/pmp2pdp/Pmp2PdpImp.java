@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
+import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -28,14 +29,12 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  * @author Stoimenov
  *
  */
-public abstract class Pmp2PdpImp implements IPmp2PdpTcp, IConnector {
+public abstract class Pmp2PdpImp extends AbstractConnection implements IPmp2PdpTcp, IConnector {
 
 	protected static final Logger _logger = Logger.getLogger(Pmp2PdpImp.class);
 
-	private final Connector _connector;
-
  	public Pmp2PdpImp(Connector connector) {
- 		_connector = connector;
+ 		super(connector);
 	}
 
 	@Override
@@ -45,14 +44,14 @@ public abstract class Pmp2PdpImp implements IPmp2PdpTcp, IConnector {
 		GpMechanism gpMechanism = MechanismBasic.createGpbMechanism(mechanism);
 
 		try {
-			OutputStream out = _connector.getOutputStream();
+			OutputStream out = getOutputStream();
 			out.write(EPmp2PdpMethod.DEPLOY_MECHANISM.getValue());
 			gpMechanism.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpMechanism written to OutputStream");
 
 			_logger.trace("Wait for GpStatus message");
-			GpStatus gpStatus = GpStatus.parseDelimitedFrom(_connector.getInputStream());
+			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
 			return new StatusBasic(gpStatus);
 		} catch (IOException ex) {
 			_logger.error("Deploy mechanism failed.", ex);
@@ -66,14 +65,14 @@ public abstract class Pmp2PdpImp implements IPmp2PdpTcp, IConnector {
 		_logger.trace("Create Google Protocol Buffer GpString");
 		GpString gpString = GpUtil.createGpString(par);
 		try {
-			OutputStream out = _connector.getOutputStream();
+			OutputStream out = getOutputStream();
 			out.write(EPmp2PdpMethod.EXPORT_MECHANISM.getValue());
 			gpString.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpString written to OutputStream");
 
 			_logger.trace("Wait for GpMechanism message");
-			GpMechanism gpMechanism = GpMechanism.parseDelimitedFrom(_connector.getInputStream());
+			GpMechanism gpMechanism = GpMechanism.parseDelimitedFrom(getInputStream());
 			return new MechanismBasic(gpMechanism);
 		} catch (IOException ex) {
 			_logger.error("Export mechanism failed.", ex);
@@ -87,14 +86,14 @@ public abstract class Pmp2PdpImp implements IPmp2PdpTcp, IConnector {
 		_logger.trace("Create Google Protocol Buffer GpString");
 		GpString gpString = GpUtil.createGpString(par);
 		try {
-			OutputStream out = _connector.getOutputStream();
+			OutputStream out = getOutputStream();
 			out.write(EPmp2PdpMethod.REVOKE_MECHANISM.getValue());
 			gpString.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpString written to OutputStream");
 
 			_logger.trace("Wait for GpStatus message");
-			GpStatus gpStatus = GpStatus.parseDelimitedFrom(_connector.getInputStream());
+			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
 			return new StatusBasic(gpStatus);
 		} catch (IOException ex) {
 			_logger.error("Revoke mechanism failed.", ex);
@@ -118,15 +117,5 @@ public abstract class Pmp2PdpImp implements IPmp2PdpTcp, IConnector {
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void connect() throws Exception {
-		_connector.connect();
-	}
-
-	@Override
-	public void disconnect() {
-		_connector.disconnect();
 	}
 }
