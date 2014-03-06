@@ -8,10 +8,15 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 
+/**
+ * This class will be used via JNI to dispatch events.
+ * @author Florian Kelbert
+ *
+ */
 public class PepClientNativeHandler {
 
-	public void notifyEvent(String name, String[] paramKeys, String[] paramValues) throws InterruptedException {
-		System.out.println(System.nanoTime());
+	public static void notifyEvent(String name, String[] paramKeys, String[] paramValues) throws InterruptedException {
+		System.out.println("strt: " + System.nanoTime());
 		if (name == null || paramKeys == null || paramValues == null
 				|| paramKeys.length != paramValues.length || name.isEmpty()) {
 			// TODO rather send an immediate response
@@ -35,6 +40,6 @@ public class PepClientNativeHandler {
 			}
 		});
 
-		System.out.println(System.nanoTime());
+		System.out.println(" end:" + System.nanoTime());
 	}
 }

@@ -18,7 +18,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
-import de.tum.in.i22.pdp.cm.in.pep.PepClientNativeHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepClientPipeConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepTcpServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
@@ -53,11 +52,6 @@ public class PdpController {
 	private static boolean _startedPipFastServiceHandler = false;
 	private static boolean _startedPepPipeHandler = false;
 	private static boolean _startedThriftServer = false;
-
-	// FK: Although this class attribute is never used locally:
-	// DO NOT REMOVE IT!!!
-	// It will be used by native PEPs for dispatch events using JNI
-	private static final PepClientNativeHandler nativePepHandler = new PepClientNativeHandler();
 
 	/**
 	 * Use dependency injection to inject pdpHandler.
