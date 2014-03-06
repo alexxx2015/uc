@@ -1,5 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
+import java.util.Objects;
+
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 
@@ -27,6 +29,23 @@ class ProcessName extends NameBasic {
 
 	public String getPid() {
 		return _pid;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ProcessName) {
+			ProcessName o = (ProcessName) obj;
+			return Objects.equals(_host, o._host)
+					&& Objects.equals(_pid, o._pid);
+		}
+		return super.equals(obj);
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_host, _pid);
 	}
 
 	@Override
