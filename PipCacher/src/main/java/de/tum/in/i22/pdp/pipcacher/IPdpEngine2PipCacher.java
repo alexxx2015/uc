@@ -26,4 +26,6 @@ public interface IPdpEngine2PipCacher {
     
     public String getCurrentPipModel();
     
+    public void populatePip(String predicate);
+    
 }

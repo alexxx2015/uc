@@ -17,6 +17,7 @@ import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -25,6 +26,7 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -99,22 +101,45 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 			switch (formula) {
 			case "isNotIn":  //par1 is data, par2 is list of containers
+//				containers= par2.split(separator2);
+//				s= _ifModel.getContainersForData(new DataBasic(par1));
+//				//_logger.debug("size of s: "+s.size());
+//				if(s.size() > 0){
+//					for (String cont : containers){
+//						NameBasic pname= new NameBasic(cont);
+//						//_logger.debug("..in loop("+cont+")..");
+//						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
+//							_logger.trace(out+"=false");
+//							return false;
+//						}
+//					}
+//					//_logger.trace("..no match found, returning true");
+//					_logger.trace(out+"=true");
+//					return true;
+//				} else{
+//					return false;
+//				}
+				IContainer par1Container = _ifModel.getContainerRelaxed(new NameBasic(par1));
+				Set<IData> par1DataSet = _ifModel.getDataInContainer(par1Container);
 				containers= par2.split(separator2);
-				s= _ifModel.getContainersForData(new DataBasic(par1));
-				//_logger.debug("size of s: "+s.size());
-				if(s.size() > 0){
-					for (String cont : containers){
-						NameBasic pname= new NameBasic(cont);
-						//_logger.debug("..in loop("+cont+")..");
-						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
-							_logger.trace(out+"=false");
-							return false;
+				for(IData par1Data : par1DataSet){
+					s= _ifModel.getContainersForData(par1Data);
+					//_logger.debug("size of s: "+s.size());
+					if(s.size() > 0){
+						for (String cont : containers){
+							NameBasic pname= new NameBasic(cont);
+							//_logger.debug("..in loop("+cont+")..");
+							if (s.contains(_ifModel.getContainerRelaxed(pname))) {
+								_logger.trace(out+"=false");
+								return false;
+							}
 						}
+						//_logger.trace("..no match found, returning true");
+						_logger.trace(out+"=true");
+						return true;
 					}
-					//_logger.trace("..no match found, returning true");
-					_logger.trace(out+"=true");
-					return true;
-				} else{
+				}
+				if(par1DataSet.size() == 0){
 					return false;
 				}
 			case "isOnlyIn":
@@ -374,6 +399,22 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return _ifModel.toString();
+	}
+
+	@Override
+	public void populate(String predicate) {
+		_logger.info("Populating "+predicate+ " in PIP");
+
+		Set<IContainer> s;
+
+		IName name = new NameBasic(predicate);
+		IContainer container = _ifModel.getContainer(name);
+		if(container == null){
+			IData data = new DataBasic(predicate);
+			container = new ContainerBasic();
+			_ifModel.addName(name, container);
+			_ifModel.addDataToContainerMapping(data, container);
+		}
 	}
 
 }

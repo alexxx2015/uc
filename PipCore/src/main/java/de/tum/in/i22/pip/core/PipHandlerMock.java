@@ -166,4 +166,10 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void populate(String predicate) {
+		// TODO Auto-generated method stub
+		
+	}
 }

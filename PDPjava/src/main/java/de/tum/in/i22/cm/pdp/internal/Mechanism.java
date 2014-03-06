@@ -144,6 +144,8 @@ public class Mechanism extends Thread
     this.lastUpdate = System.currentTimeMillis();
     this.updateThread = new Thread(this);
     this.updateThread.start();
+    //Populate pip depending on the current condition
+    this.condition.operator.initOperatorForMechanism(this);
     isStarted = true;
     return isStarted;
   }
@@ -272,7 +274,7 @@ public class Mechanism extends Thread
     long sleepValue = this.timestepSize / 1000;
     log.info("Started mechanism update thread usleep={} ms", sleepValue);
     
-    while(true)
+    while(!isInterrupted())
     {
       try
       {

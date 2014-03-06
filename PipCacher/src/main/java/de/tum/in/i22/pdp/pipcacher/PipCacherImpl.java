@@ -178,4 +178,10 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 		return this._pip.getCurrentPipModel();
 	}
 
+	@Override
+	public void populatePip(String predicate) {
+		// TODO Auto-generated method stub
+		this._pip.populate(predicate);
+	}
+
 }

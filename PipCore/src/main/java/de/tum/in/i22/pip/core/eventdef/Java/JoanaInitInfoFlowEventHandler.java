@@ -7,9 +7,11 @@ import java.util.Map;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -18,6 +20,8 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 	public JoanaInitInfoFlowEventHandler() {
 		super();
 	}
+
+	static IData data = null;
 
 	@Override
 	public IStatus execute() {
@@ -50,6 +54,9 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		String[] infoConts = new String[]{signature, location+delim+offset+delim+signature, location+delim+offset+delim+signature+delim+parampos};
 		for(String infoCont : infoConts){
 			infoCont = prefix + infoCont;
+			if(data == null){
+				data = new DataBasic();//DataBasic(infoCont);
+			}
 			IContainer infoContId = ifModel.getContainer(new NameBasic(infoCont));
 
 			_logger.debug("contID = " + infoContId);
@@ -60,8 +67,7 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 				ifModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-//				ifModel.addData(d);
-//				ifModel.addDataToContainerMapping(d.getId(), infoContId);
+				ifModel.addDataToContainerMapping(data, signatureCont);
 				_logger.debug(ifModel.toString());
 			} else {
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");
