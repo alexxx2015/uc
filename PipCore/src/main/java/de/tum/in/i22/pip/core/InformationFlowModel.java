@@ -493,9 +493,13 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public boolean addName(IName name, IContainer container) {
+		_logger.info("addName: " + name + " -> " + container);
 		boolean res = false;
+		IContainer oldAssigned;
 		if (name != null && !name.getName().isEmpty()) {
-			_namingMap.put(name, container);
+			if ((oldAssigned = _namingMap.put(name, container)) != null) {
+				_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". This mapping has been removed.");
+			}
 			res = true;
 		}
 		return res;
