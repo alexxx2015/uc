@@ -3,13 +3,8 @@ package de.tum.in.i22.pdp.cm.in.pep;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
-
-import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
-import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
-import de.tum.in.i22.uc.cm.out.TcpConnector;
 
 public class PepClientTcpConnectionHandler extends PepClientConnectionHandler {
 	private final Socket _socket;

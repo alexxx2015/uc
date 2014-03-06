@@ -23,10 +23,10 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.out.Connector;
-import de.tum.in.i22.uc.cm.out.IFastConnector;
+import de.tum.in.i22.uc.cm.out.IConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public abstract class Pep2PdpImp implements IPep2Pdp, IFastConnector {
+public abstract class Pep2PdpImp implements IPep2Pdp, IConnector {
 
 	protected static final Logger _logger = Logger.getLogger(Pep2PdpImp.class);
 

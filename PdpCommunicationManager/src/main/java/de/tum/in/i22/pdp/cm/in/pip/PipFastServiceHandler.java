@@ -13,8 +13,8 @@ public class PipFastServiceHandler extends FastServiceHandler {
 
 	@Override
 	protected void doHandleClientConnection(Socket client) throws IOException {
-		PipClientConnectionHandler pipClientConnHandler =
-				new PipClientConnectionHandler(client);
+		PipClientTcpConnectionHandler pipClientConnHandler =
+				new PipClientTcpConnectionHandler(client);
 		//TODO improve this code, use new features introduced in java 1.7, thread pools
 		Thread thread = new Thread(pipClientConnHandler);
 		thread.start();

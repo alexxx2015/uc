@@ -9,7 +9,12 @@ import org.apache.log4j.Logger;
 import com.google.protobuf.MessageLite;
 
 
-public abstract class Connector implements IFastConnector {
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
+public abstract class Connector implements IConnector {
 
 	protected static final Logger _logger = Logger.getLogger(Connector.class);
 

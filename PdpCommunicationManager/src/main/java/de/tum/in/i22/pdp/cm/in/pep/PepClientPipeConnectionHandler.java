@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -35,8 +36,6 @@ public class PepClientPipeConnectionHandler extends PepClientConnectionHandler {
 		_outPipe = outPipe;
 	}
 
-
-
 	@Override
 	public void run() {
 		try {
@@ -61,5 +60,15 @@ public class PepClientPipeConnectionHandler extends PepClientConnectionHandler {
 
 	@Override
 	protected void disconnect() {
+		try {
+			if (_inputStream != null) {
+				_inputStream.close();
+			}
+			if (_outputStream != null) {
+				_outputStream.close();
+			}
+		} catch (IOException e) {
+			_logger.warn("Unablet to close stream", e);
+		}
 	}
 }
