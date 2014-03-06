@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -14,16 +15,13 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.out.TcpConnector;
+import de.tum.in.i22.uc.cm.out.Connector;
 
-public class Pmp2PipFastImp extends TcpConnector implements IPmp2PipFast {
+public abstract class Pmp2PipImp extends AbstractConnection implements IPmp2PipTcp {
+	private static final Logger _logger = Logger.getLogger(Pmp2PipImp.class);
 
-	
-	private static final Logger _logger = Logger
-			.getLogger(Pmp2PipFastImp.class);
-	
-	public Pmp2PipFastImp(String address, int port) {
-		super(address, port);
+	public Pmp2PipImp(Connector connector) {
+		super(connector);
 	}
 
 	@Override
@@ -41,7 +39,7 @@ public class Pmp2PipFastImp extends TcpConnector implements IPmp2PipFast {
 			gpData.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpContainer and GpData written to OutputStream");
-			
+
 			_logger.trace("Wait for GpStatus message");
 			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
 			return new StatusBasic(gpStatus);
