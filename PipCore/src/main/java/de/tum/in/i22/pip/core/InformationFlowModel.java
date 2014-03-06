@@ -449,6 +449,58 @@ public class InformationFlowModel {
 		return result;
 	}
 
+
+	/**
+	 * Returns the data contained in the container identified by the given name.
+	 * @param containerName
+	 * @return
+	 */
+	public Set<IData> getDataInContainer(IName containerName) {
+		IContainer cont;
+		if (containerName != null) {
+			cont = _namingMap.get(containerName);
+
+			if (cont != null) {
+				return _containerToDataMap.get(cont);
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * Copies all data contained in the container identified by srcContainerName to
+	 * the container identified by dstContainerName.
+	 *
+	 * @param srcContainerName
+	 * @param dstContainerName
+	 * @return true if both containers existed and data (possibly none, if fromContainer was empty) was copied.
+	 */
+	public boolean copyData(IName srcContainerName, IName dstContainerName) {
+		if (srcContainerName == null || dstContainerName == null) {
+			return false;
+		}
+
+		IContainer srcContainer = _namingMap.get(srcContainerName);
+		IContainer dstContainer = _namingMap.get(dstContainerName);
+
+		if (srcContainer == null || dstContainer == null) {
+			return false;
+		}
+
+		Set<IData> srcData = _containerToDataMap.get(srcContainer);
+		if (srcData != null) {
+			Set<IData> dstData = _containerToDataMap.get(dstContainer);
+			if (dstData == null) {
+				dstData = new HashSet<IData>();
+				_containerToDataMap.put(dstContainer, dstData);
+			}
+			dstData.addAll(srcData);
+		}
+		return true;
+	}
+
+
 	/**
 	 *
 	 * @param dataId
