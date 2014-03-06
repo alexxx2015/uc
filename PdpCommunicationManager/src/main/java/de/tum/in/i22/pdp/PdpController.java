@@ -256,11 +256,11 @@ public class PdpController {
 	public static boolean isStarted() {
 		return _wasStarted
 				&& _startedRequestHandler
-				&& _startedPepGPBFastServiceHandler || !getPdpSettings().isPepGPBListenerEnabled()
-				&& _startedPepPipeHandler || !getPdpSettings().isPepPipeListenerEnabled()
-				&& _startedPipFastServiceHandler || !getPdpSettings().isPipListenerEnabled()
-				&& _startedPmpFastServiceHandler || !getPdpSettings().isPmpListenerEnabled()
-				&& _startedThriftServer || !getPdpSettings().isPepThriftListenerEnabled();
+				&& (_startedPepGPBFastServiceHandler || !getPdpSettings().isPepGPBListenerEnabled())
+				&& (_startedPepPipeHandler || !getPdpSettings().isPepPipeListenerEnabled())
+				&& (_startedPipFastServiceHandler || !getPdpSettings().isPipListenerEnabled())
+				&& (_startedPmpFastServiceHandler || !getPdpSettings().isPmpListenerEnabled())
+				&& (_startedThriftServer || !getPdpSettings().isPepThriftListenerEnabled());
 	}
 
 	IIncoming getPdpHandler(){
