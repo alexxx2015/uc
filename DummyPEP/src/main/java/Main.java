@@ -12,7 +12,7 @@ import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.out.IFastConnector;
+import de.tum.in.i22.uc.cm.out.IConnector;
 
 
 public class Main {
@@ -46,8 +46,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-//		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
-		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
+		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
+//		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 
 		new DummyPEP(pdp1) {
@@ -156,8 +156,8 @@ public class Main {
 
 
 				IPep2Pdp con = this.getPdpCon();
-				if (con instanceof IFastConnector) {
-					((IFastConnector) con).disconnect();
+				if (con instanceof IConnector) {
+					((IConnector) con).disconnect();
 				}
 			}
 		}.start();

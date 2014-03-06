@@ -3,7 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pmp;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.Socket;
+import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
@@ -13,15 +13,15 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
+import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
-public class PmpClientConnectionHandler extends ClientTcpConnectionHandler {
+public abstract class PmpClientConnectionHandler extends ClientConnectionHandler {
 
 	private final RequestHandler _requestHandler = RequestHandler.getInstance();
 
-	public PmpClientConnectionHandler(Socket socket) throws IOException {
-		super(socket);
+	public PmpClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) throws IOException {
+		super(inputStream, outputStream);
 	}
 
 	@Override
@@ -143,5 +143,4 @@ public class PmpClientConnectionHandler extends ClientTcpConnectionHandler {
 		}
 
 	}
-
 }

@@ -5,16 +5,15 @@ import java.net.Socket;
 import de.tum.in.i22.uc.cm.in.FastServiceHandler;
 
 
-public class PmpFastServiceHandler extends FastServiceHandler {
+public class PmpTcpServiceHandler extends FastServiceHandler {
 
-	public PmpFastServiceHandler(int port) {
+	public PmpTcpServiceHandler(int port) {
 		super(port);
 	}
 
 	@Override
 	protected void doHandleClientConnection(Socket client) throws IOException {
-		PmpClientConnectionHandler pmpClientConnHandler =
-				new PmpClientConnectionHandler(client);
+		PmpClientConnectionHandler pmpClientConnHandler = new PmpClientTcpConnectionHandler(client);
 		//TODO improve this code, use new features introduced in java 1.7, thread pools
 		Thread thread = new Thread(pmpClientConnHandler);
 		thread.start();
@@ -24,5 +23,4 @@ public class PmpFastServiceHandler extends FastServiceHandler {
 	protected String getServerInfo() {
 		return "PMPlistener";
 	}
-
 }

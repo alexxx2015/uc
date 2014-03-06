@@ -15,8 +15,8 @@ import org.junit.Test;
 import testutil.DummyMessageGen;
 import de.tum.in.i22.pep2pdp.IPep2PdpTcp;
 import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
-import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
-import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
+import de.tum.in.i22.pmp2pdp.IPmp2PdpTcp;
+import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
@@ -178,7 +178,7 @@ public class PdpTest {
 		_threadPmp = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IPmp2PdpFast pdpProxyTwo = new Pmp2PdpFastImp("localhost", PMP_LISTENER_PORT_NUM);
+				IPmp2PdpTcp pdpProxyTwo = new Pmp2PdpTcpImp("localhost", PMP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyTwo.connect();
 				} catch (Exception e) {

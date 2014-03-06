@@ -23,7 +23,7 @@ import de.tum.in.i22.pdp.cm.in.pep.PepClientPipeConnectionHandler;
 import de.tum.in.i22.pdp.cm.in.pep.PepFastServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
 import de.tum.in.i22.pdp.cm.in.pip.PipFastServiceHandler;
-import de.tum.in.i22.pdp.cm.in.pmp.PmpFastServiceHandler;
+import de.tum.in.i22.pdp.cm.in.pmp.PmpTcpServiceHandler;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
 
@@ -151,7 +151,7 @@ public class PdpController {
 		if (getPdpSettings().isPmpListenerEnabled()) {
 			int pmpListenerPort = getPdpSettings().getPmpListenerPortNum();
 			_logger.info("Start PmpFastServiceHandler on port: " + pmpListenerPort);
-			_threadPmpFastServiceHandler = new Thread(new PmpFastServiceHandler(pmpListenerPort));
+			_threadPmpFastServiceHandler = new Thread(new PmpTcpServiceHandler(pmpListenerPort));
 			_threadPmpFastServiceHandler.start();
 			_startedPmpFastServiceHandler = true;
 		}

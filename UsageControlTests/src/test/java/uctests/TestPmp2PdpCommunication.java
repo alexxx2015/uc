@@ -8,8 +8,8 @@ import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pmp2pdp.IPmp2PdpFast;
-import de.tum.in.i22.pmp2pdp.Pmp2PdpFastImp;
+import de.tum.in.i22.pmp2pdp.IPmp2PdpTcp;
+import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
@@ -26,11 +26,11 @@ public class TestPmp2PdpCommunication {
 
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPmp2PdpFast _pdpProxy;
+	private static IPmp2PdpTcp _pdpProxy;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdpProxy = new Pmp2PdpFastImp("localhost", TestSettings.PMP_LISTENER_PORT_NUM);
+		_pdpProxy = new Pmp2PdpTcpImp("localhost", TestSettings.PMP_LISTENER_PORT_NUM);
 	}
 
 	@Test
