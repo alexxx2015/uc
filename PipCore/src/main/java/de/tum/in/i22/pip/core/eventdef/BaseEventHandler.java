@@ -24,6 +24,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	private IEvent _event;
 
+	protected InformationFlowModel ifModel = getInformationFlowModel();
+
 	/*
 	 * scopes affected by the current event execution
 	 */

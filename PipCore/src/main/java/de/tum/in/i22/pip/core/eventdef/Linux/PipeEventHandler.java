@@ -1,7 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -26,8 +24,6 @@ public class PipeEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-
-		InformationFlowModel ifModel = getInformationFlowModel();
 
 		IContainer pipeContainer = _messageFactory.createContainer();
 

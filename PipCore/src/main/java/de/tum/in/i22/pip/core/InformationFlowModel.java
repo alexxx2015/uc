@@ -540,7 +540,7 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Removes the naming/representation name from the naming set.
+	 * Removes the naming and its associated containers.
 	 *
 	 * @param name
 	 * @return

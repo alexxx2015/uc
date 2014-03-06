@@ -1,7 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -51,8 +49,6 @@ public class ConnectEventHandler extends BaseEventHandler {
 			_logger.info("No local IP address was assigned. Syscall fails.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
-
-		InformationFlowModel ifModel = getInformationFlowModel();
 
 		// localSocketName := (sn(e),(a,x))
 		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);

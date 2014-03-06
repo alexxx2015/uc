@@ -1,9 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -25,8 +23,6 @@ public class ExitEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-
-		InformationFlowModel ifModel = getInformationFlowModel();
 
 		IContainer processContainer = ifModel.getContainer(ProcessName.create(host, pid));
 
