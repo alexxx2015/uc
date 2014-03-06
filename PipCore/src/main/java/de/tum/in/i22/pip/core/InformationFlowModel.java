@@ -407,21 +407,9 @@ public class InformationFlowModel {
 	}
 
 
-	public boolean addDataToContainerMapping(IData data, IContainer container) {
-		boolean res = false;
-		if (_containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = _containerToDataMap.get(container);
-			res = dataSet.add(data);
-		} else {
-			Set<IData> newDataSet = new HashSet<>();
-
-			//TODO: check if dataId corresponds to a valid data element
-			newDataSet.add(data);
-
-			_containerToDataMap.put(container, newDataSet);
-			res = true;
-		}
-		return res;
+	public void addDataToContainerMapping(IData data, IContainer container) {
+		Set<IData> s = new HashSet<IData>();
+		addDataToContainerMappings(s, container);
 	}
 
 	public boolean removeContainerToDataMapping(IContainer container,
@@ -516,23 +504,17 @@ public class InformationFlowModel {
 		return result;
 	}
 
-	public boolean addDataToContainerMappings(Set<IData> dataSet,
-			IContainer container) {
-		if (dataSet == null) {
-			return true;
+	public void addDataToContainerMappings(Set<IData> data, IContainer container) {
+		if (data == null || container == null) {
+			return;
 		}
 
-		boolean res = false;
-
-		Set<IData> existingDataSet = _containerToDataMap.get(container);
-		if (existingDataSet == null) {
-			Set<IData> newDataSet = new HashSet<>(dataSet);
-			_containerToDataMap.put(container, newDataSet);
-			res = true;
-		} else {
-			res = existingDataSet.addAll(dataSet);
+		Set<IData> dstData = _containerToDataMap.get(container);
+		if (dstData == null) {
+			dstData = new HashSet<IData>();
+			_containerToDataMap.put(container, dstData);
 		}
-		return res;
+		dstData.addAll(data);
 	}
 
 	// Naming set manipulation functions:
