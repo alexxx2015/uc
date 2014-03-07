@@ -40,8 +40,6 @@ public class ProcessName extends NameBasic {
 		return super.equals(obj);
 	}
 
-
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(_host, _pid);
