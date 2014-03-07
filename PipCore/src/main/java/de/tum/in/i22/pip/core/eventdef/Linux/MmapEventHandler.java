@@ -1,11 +1,14 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import org.apache.derby.impl.sql.catalog.SYSUSERSRowFactory;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 
 /**
@@ -33,16 +36,43 @@ public class MmapEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
-		System.out.println("=================");
-		System.out.println(host);
-		System.out.println(pid);
-		System.out.println(fd);
-		System.out.println(prot);
-		System.out.println(flags);
-		System.out.println("=================");
 
+		Set<Prot> protSet = new HashSet<Prot>();
+		for (String s : prot.split("\\|")) {
+			Prot p = Prot.from(s);
+			if (p != null) {
+				protSet.add(p);
+			}
+		}
 		
+		Set<Flag> flagSet = new HashSet<Flag>();
+		for (String s : flags.split("\\|")) {
+			Flag f = Flag.from(s);
+			if (f != null) {
+				flagSet.add(f);
+			}
+		}
+		
+		IName procName = ProcessName.create(host, pid);
+		IName fileName = FiledescrName.create(host, pid, fd);
+		
+		/* Aliases based on the following table:
+		 * --------------------------------------*
+		 *            | MAP_PRIVATE | MAP_SHARED *
+		 * -----------+-------------+------------*
+		 * PROT_READ  |   r         |  r         *
+		 * -----------+-------------+------------*
+		 * PROT_WRITE |   r         |  w         *
+		 * --------------------------------------*
+		 */
+		
+		if (protSet.contains(Prot.PROT_WRITE) && flagSet.contains(Flag.MAP_SHARED)) {
+			ifModel.addAlias(procName, fileName);
+		}
+		
+		if (protSet.contains(Prot.PROT_READ) || flagSet.contains(Flag.MAP_PRIVATE)) {
+			ifModel.addAlias(fileName, procName);
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
@@ -56,12 +86,12 @@ public class MmapEventHandler extends BaseEventHandler {
 		
 		static Prot from(String s) {
 			switch(s) {
-				case "PROT_EXEC":
-					return PROT_EXEC;
 				case "PROT_READ":
 					return PROT_READ;
 				case "PROT_WRITE":
 					return PROT_WRITE;
+				case "PROT_EXEC":
+					return PROT_EXEC;
 				default:
 					return PROT_NONE;
 			}

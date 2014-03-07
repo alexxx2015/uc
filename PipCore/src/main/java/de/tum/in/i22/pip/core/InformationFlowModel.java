@@ -310,6 +310,16 @@ public class InformationFlowModel {
 		}
 		aliases.add(toContainer);
 	}
+	
+	
+	public void addAlias(IName fromContainerName, IName toContainerName) {
+		if (fromContainerName == null || toContainerName == null) {
+			return;
+		}
+		
+		addAlias(_namingMap.get(fromContainerName), _namingMap.get(toContainerName));
+	}
+	
 
 	/**
 	 * Removes the alias relation identified
