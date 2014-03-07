@@ -297,6 +297,12 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public void addAlias(IContainer fromContainer, IContainer toContainer) {
+		if (fromContainer == null || toContainer == null || fromContainer.equals(toContainer)) {
+			return;
+		}
+		
+		_logger.info("addAlias from " + fromContainer + " to " + toContainer);
+		
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
 			aliases = new HashSet<IContainer>();
