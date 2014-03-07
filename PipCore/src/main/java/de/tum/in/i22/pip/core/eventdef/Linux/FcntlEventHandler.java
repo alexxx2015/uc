@@ -6,32 +6,36 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-/**
- *
- * @author Florian Kelbert
- *
- */
-public class ReadEventHandler extends BaseEventHandler {
+public class FcntlEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
 		String pid = null;
-		String fd = null;
+		String operation = null;
+		String oldfd = null;
+		String newfd = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = getParameterValue("pid");
-			fd = getParameterValue("fd");
+			operation = getParameterValue("operation");
+			oldfd = getParameterValue("oldfd");
+			newfd = getParameterValue("newfd");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
+		
+		switch (operation) {
+		case "dupfd":
+			IName oldName = FiledescrName.create(host, pid, oldfd);
+			IName newName = FiledescrName.create(host, pid, newfd);
+			ifModel.addName(oldName, newName);
+			break;
+		}
 
-		IName file = FiledescrName.create(host, pid, fd);
-		IName proc = ProcessName.create(host, pid);
-
-		ifModel.copyData(file, proc);
+		
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

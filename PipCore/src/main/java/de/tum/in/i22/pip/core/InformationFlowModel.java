@@ -475,6 +475,8 @@ public class InformationFlowModel {
 		if (srcContainer == null || dstContainer == null) {
 			return false;
 		}
+		
+		_logger.info("copyData() from " + srcContainer + " to " + dstContainer);
 
 		Set<IData> srcData = _containerToDataMap.get(srcContainer);
 		if (srcData != null) {
@@ -527,16 +529,33 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public boolean addName(IName name, IContainer container) {
-		_logger.info("addName: " + name + " -> " + container);
-		boolean res = false;
-		IContainer oldAssigned;
-		if (name != null && !name.getName().isEmpty()) {
-			if ((oldAssigned = _namingMap.put(name, container)) != null) {
-				_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". This mapping has been removed.");
-			}
-			res = true;
+		if (name == null) {
+			return false;
 		}
-		return res;
+		
+		_logger.info("addName: " + name + " -> " + container);
+		
+		IContainer oldAssigned;
+		if ((oldAssigned = _namingMap.put(name, container)) != null) {
+			_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". This mapping has been removed.");
+		}
+		return true;
+	}
+	
+	/**
+	 * Adds an additional name, newName, for to the container that is already identified by another name, oldName.
+	 * @param oldName
+	 * @param newName
+	 * @return
+	 */
+	public boolean addName(IName oldName, IName newName) {
+		if (oldName == null || newName == null) {
+			return false;
+		}
+		
+		IContainer cont = getContainer(oldName);
+		
+		return (cont != null) ? addName(newName, cont) : false;
 	}
 
 	/**
@@ -559,7 +578,7 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public IContainer getContainer(IName name) {
-		if (name != null && name.getName() != null) {
+		if (name != null) {
 			return _namingMap.get(name);
 		}
 		return null;

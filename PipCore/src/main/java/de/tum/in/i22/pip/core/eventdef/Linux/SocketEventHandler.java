@@ -13,11 +13,17 @@ public class SocketEventHandler extends BaseEventHandler {
 		String host = null;
 		String pid = null;
 		String fd = null;
+		
+		// TODO We get those parameters, but do we actually need them??
+		String domain = null;
+		String type = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = getParameterValue("pid");
 			fd = getParameterValue("fd");
+			domain = getParameterValue("domain");
+			type = getParameterValue("type");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
