@@ -50,6 +50,15 @@ public class LinuxEvents {
 	}
 
 
+	static String getAbsolutePath(File f) {
+		try {
+			return f.getCanonicalPath();
+		} catch (IOException e) {
+			return f.getAbsolutePath();
+		}	
+	}
+	
+	
 	/**
 	 * Used by both open() and openat().
 	 * @param host
@@ -80,12 +89,7 @@ public class LinuxEvents {
 			else {
 				File path = new File(((FilenameName) names.get(0)).getFilename());
 				
-				String pathStr;
-				try {
-					pathStr = path.getCanonicalPath();
-				} catch (IOException e) {
-					pathStr = path.getAbsolutePath();
-				}
+				String pathStr = LinuxEvents.getAbsolutePath(path);
 				
 				if (path.isDirectory()) {
 					file = new File(pathStr, filename);
@@ -96,12 +100,7 @@ public class LinuxEvents {
 			}
 		}
 		
-		try {
-			fnName = FilenameName.create(host, file.getCanonicalPath());
-		} catch (IOException e) {
-			fnName = FilenameName.create(host, file.getAbsolutePath());
-		}
-		
+		fnName = FilenameName.create(host, LinuxEvents.getAbsolutePath(file));		
 	
 		// get the file's container (if present)
 		IContainer cont = ifModel.getContainer(fnName);

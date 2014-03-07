@@ -20,7 +20,7 @@ public class Network {
 	public static final String IP_UNSPEC = "unspec";
 
 	public static final Set<String> SUPPORTED_SOCKET_FAMILIES = new HashSet<String>(
-			Arrays.asList("AF_INET"));
+			Arrays.asList("AF_INET", "AF_UNIX"));
 
 	public static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(
 			Arrays.asList("127.0.0.1", "localhost",

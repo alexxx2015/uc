@@ -348,10 +348,9 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
-		Set<IContainer> closureSet = getAliasClosureExcludeStartId(container);
+		Set<IContainer> closureSet = getAliasTransitiveClosure(container);
 		// add self to set ==> reflexive
 		closureSet.add(container);
-
 		return closureSet;
 	}
 
@@ -396,18 +395,23 @@ public class InformationFlowModel {
 		return result;
 	}
 
-	private Set<IContainer> getAliasClosureExcludeStartId(IContainer container) {
+	/**
+	 * Returns the non-reflexive transitive alias closure of the specified container.
+	 * The resulting set will NOT contain the specified container.
+	 * @param container
+	 * @return
+	 */
+	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
-		getAliasClosureExcludeStartId(container, result);
+		getAliasTransitiveClosure(container, result);
+		result.remove(container);
 		return result;
 	}
 
-	private void getAliasClosureExcludeStartId(IContainer container,
-			Set<IContainer> visitedContainers) {
-		Set<IContainer> containerAliasesSet = getAliasesFromContainer(container);
-		for (IContainer id : containerAliasesSet) {
+	private void getAliasTransitiveClosure(IContainer container, Set<IContainer> visitedContainers) {
+		for (IContainer id : getAliasesFromContainer(container)) {
 			if (visitedContainers.add(id)) {
-				getAliasClosureExcludeStartId(id, visitedContainers);
+				getAliasTransitiveClosure(id, visitedContainers);
 			}
 		}
 	}
@@ -475,9 +479,11 @@ public class InformationFlowModel {
 			return false;
 		}
 
-		IContainer srcContainer = _namingMap.get(srcContainerName);
-		IContainer dstContainer = _namingMap.get(dstContainerName);
-
+		return copyData(_namingMap.get(srcContainerName), _namingMap.get(dstContainerName));
+	}
+	
+	
+	public boolean copyData(IContainer srcContainer, IContainer dstContainer) {
 		if (srcContainer == null || dstContainer == null) {
 			return false;
 		}
@@ -493,7 +499,7 @@ public class InformationFlowModel {
 			}
 			dstData.addAll(srcData);
 		}
-		return true;
+		return true;		
 	}
 
 

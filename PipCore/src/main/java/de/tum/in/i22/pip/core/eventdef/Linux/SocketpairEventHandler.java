@@ -5,6 +5,9 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.distribution.SocketContainer;
+import de.tum.in.i22.uc.distribution.SocketContainer.Domain;
+import de.tum.in.i22.uc.distribution.SocketContainer.Type;
 
 public class SocketpairEventHandler extends BaseEventHandler {
 
@@ -14,8 +17,6 @@ public class SocketpairEventHandler extends BaseEventHandler {
 		String pid = null;
 		String fd1 = null;
 		String fd2 = null;
-		
-		// TODO We get those parameters, but do we actually need them??
 		String domain = null;
 		String type = null;
 
@@ -31,8 +32,8 @@ public class SocketpairEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer sock1Container = _messageFactory.createContainer();
-		IContainer sock2Container = _messageFactory.createContainer();
+		IContainer sock1Container = new SocketContainer(Domain.from(domain), Type.from(type));
+		IContainer sock2Container = new SocketContainer(Domain.from(domain), Type.from(type));
 
 		if (sock1Container != null && sock2Container != null) {
 			ifModel.addName(FiledescrName.create(host, pid, fd1), sock1Container);
