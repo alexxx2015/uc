@@ -540,13 +540,16 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Removes the naming and its associated containers.
+	 * Removes the name.
 	 *
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(IName name) {
-		return _namingMap.remove(name) != null;
+	public void removeName(IName name) {
+		if (name != null) {
+			_logger.info("removeName() " + name);
+			_namingMap.remove(name);
+		}
 	}
 
 	/**
@@ -600,6 +603,37 @@ public class InformationFlowModel {
 		for (IName name : _namingMap.keySet()) {
 			if (_namingMap.get(name).equals(container)) {
 				result.add(name);
+			}
+		}
+
+		return result;
+	}
+	
+	
+	/**
+	 * Get all names of the container identified by the given containerName.
+	 * It is ensured that all names within the result are of the specified type.
+	 * @param containerName
+	 * @param type
+	 * @return
+	 */
+	public <T extends IName> List<IName> getAllNames(IName containerName, Class<T> type) {		
+		List<IName> result = new ArrayList<IName>();
+		IContainer cont;
+		
+		if (containerName == null) {
+			return result;
+		}
+		
+		if ((cont = _namingMap.get(containerName)) == null) {
+			return result;
+		}
+
+		for (IName name : _namingMap.keySet()) {
+			if (type.isInstance(name)) {
+				if (_namingMap.get(name).equals(cont)) {
+					result.add(name);
+				}
 			}
 		}
 
