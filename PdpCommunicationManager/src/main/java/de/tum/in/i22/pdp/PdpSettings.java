@@ -43,7 +43,7 @@ public class PdpSettings {
 	private boolean _pepGPBListenerEnabled = true;
 	private boolean _pepThriftListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
-	private boolean _pepPipeListenerEnabled = true;
+	private boolean _pepPipeListenerEnabled = false;
 
 	private PdpSettings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);

@@ -102,6 +102,7 @@ public class PdpController {
 		if (getPdpSettings().isPepPipeListenerEnabled()) {
 			File pepPipeIn = new File(getPdpSettings().getPepPipeIn());
 			File pepPipeOut = new File(getPdpSettings().getPepPipeOut());
+			
 			if (pepPipeIn.exists() && !pepPipeIn.isDirectory() && pepPipeOut.exists() && !pepPipeOut.isDirectory()) {
 				_logger.info("Start PepPipeHandler using pipes " + pepPipeIn + " and " + pepPipeOut);
 				try {
@@ -114,7 +115,7 @@ public class PdpController {
 				_startedPepPipeHandler = true;
 			}
 			else {
-				_logger.info("Did not start PepPipeHandler. Pipes " + pepPipeIn + " and " + pepPipeOut + " did not exist.");
+				_logger.fatal("Did not start PepPipeHandler. Pipes " + pepPipeIn + " and " + pepPipeOut + " did not exist. Create them first or disable the PEP pipe handler.");
 			}
 		}
 	}
