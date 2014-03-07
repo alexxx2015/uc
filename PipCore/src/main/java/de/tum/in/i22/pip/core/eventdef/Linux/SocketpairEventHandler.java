@@ -5,9 +5,10 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.distribution.SocketContainer;
-import de.tum.in.i22.uc.distribution.SocketContainer.Domain;
-import de.tum.in.i22.uc.distribution.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
 
 public class SocketpairEventHandler extends BaseEventHandler {
 

@@ -1,11 +1,10 @@
-package de.tum.in.i22.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-
-class ProcessName extends NameBasic {
+public class ProcessName extends NameBasic {
 
 	private static final String PREFIX_PROCESS = "PROC_";
 

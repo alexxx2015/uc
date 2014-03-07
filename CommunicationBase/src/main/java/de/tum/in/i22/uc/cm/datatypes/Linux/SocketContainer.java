@@ -1,9 +1,8 @@
-package de.tum.in.i22.uc.distribution;
+package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
 
-public class SocketContainer extends ContainerBasic implements IContainer {
+public class SocketContainer extends ContainerBasic {
 	private Domain _domain;
 	private Type _type;
 	

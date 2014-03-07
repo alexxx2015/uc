@@ -6,10 +6,12 @@ import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.distribution.ContainerRemote;
+import de.tum.in.i22.uc.cm.datatypes.Linux.RemoteContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.distribution.IPLocation;
 import de.tum.in.i22.uc.distribution.Network;
-import de.tum.in.i22.uc.distribution.SocketContainer;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
@@ -77,7 +79,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// client is remote
 
 			// get remote container id from remote host for creating the alias
-			remoteContainer = new ContainerRemote(SocketName.create(host, newFd, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
+			remoteContainer = new RemoteContainer(SocketName.create(host, newFd, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
 
 			ifModel.addAlias(localContainer, remoteContainer);
 		}

@@ -5,6 +5,8 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 
 /**
  *

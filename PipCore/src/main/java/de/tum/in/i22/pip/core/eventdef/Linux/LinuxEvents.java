@@ -14,6 +14,10 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -30,15 +34,12 @@ public class LinuxEvents {
 	/* TODO: Implement
 	 * Calls to remote PIP in accept() and shutdown()
 	 * fork()
-	 * read()
-	 * write()
-	 * unlink()
 	 * kill()
-	 * dup()
 	 * execve()
-	 * rename()
 	 * mmap()
 	 * truncate()
+	 * 
+		TODO: Remember man 2 open and fcntl: some file descriptors close automatically on execve()
 	 */
 
 

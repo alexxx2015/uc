@@ -1,12 +1,10 @@
-package de.tum.in.i22.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-
-
-class FiledescrName extends NameBasic {
+public class FiledescrName extends NameBasic {
 
 	private static final String PREFIX_FILE = "FILE_";
 
