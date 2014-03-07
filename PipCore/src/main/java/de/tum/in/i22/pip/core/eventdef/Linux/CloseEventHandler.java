@@ -27,7 +27,7 @@ public class CloseEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.removeName(FiledescrName.create(host, pid, fd));
+		LinuxEvents.close(FiledescrName.create(host, pid, fd));
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

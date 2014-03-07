@@ -1,14 +1,8 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
@@ -41,58 +35,7 @@ public class OpenAtEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		IName newfdName = FiledescrName.create(host, pid, newfd);
-		IName dirfdName = FiledescrName.create(host, pid, dirfd);
-		IName fnName;
-		
-		File file = new File(filename);
-		
-		if (!file.isAbsolute() && !at_fdcwd) {
-			List<IName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
-			
-			// the resulting list should always be of size 1.
-			if (names.size() != 1) {
-				_logger.error("There was not exactly one filename for " + dirfdName);
-			}
-			else {
-				File path = new File(((FilenameName) names.get(0)).getFilename());
-				
-				String pathStr;
-				try {
-					pathStr = path.getCanonicalPath();
-				} catch (IOException e) {
-					pathStr = path.getAbsolutePath();
-				}
-				
-				if (path.isDirectory()) {
-					file = new File(pathStr, filename);
-				}
-				else {
-					file = new File(path.getParent(), filename);
-				}
-			}
-		}
-		
-		try {
-			fnName = FilenameName.create(host, file.getCanonicalPath());
-		} catch (IOException e) {
-			fnName = FilenameName.create(host, file.getAbsolutePath());
-		}
-		
-	
-		// get the file's container (if present)
-		IContainer cont = ifModel.getContainer(fnName);
-
-		if (cont != null) {
-			if (truncate) {
-				ifModel.emptyContainer(cont);
-			}
-		}
-		else {
-			cont = _messageFactory.createContainer();
-			ifModel.addName(fnName, cont);
-		}
-		ifModel.addName(newfdName, cont);
+		LinuxEvents.open(host, pid, newfd, dirfd, filename, at_fdcwd, truncate);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
