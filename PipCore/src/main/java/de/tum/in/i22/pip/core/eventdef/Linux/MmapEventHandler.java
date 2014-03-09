@@ -6,9 +6,12 @@ import java.util.Set;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.MmapName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 
 /**
@@ -23,6 +26,7 @@ public class MmapEventHandler extends BaseEventHandler {
 		String host = null;
 		String pid = null;
 		String fd = null;
+		String addr = null;
 		String prot = null;
 		String flags = null;
 
@@ -30,6 +34,7 @@ public class MmapEventHandler extends BaseEventHandler {
 			host = getParameterValue("host");
 			pid = getParameterValue("pid");
 			fd = getParameterValue("fd");
+			addr = getParameterValue("addr");
 			prot = getParameterValue("prot");
 			flags = getParameterValue("flags");
 		} catch (ParameterNotFoundException e) {
@@ -53,26 +58,48 @@ public class MmapEventHandler extends BaseEventHandler {
 			}
 		}
 		
+		// Using an additional intermediate MmapContainer will
+		// allow us to remove the mapping/aliases upon munmap.
+		
+		IName mmapName = MmapName.create(host, pid, addr);
+		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
+
 		IName procName = ProcessName.create(host, pid);
 		IName fileName = FiledescrName.create(host, pid, fd);
 		
-		/* Aliases based on the following table:
-		 * --------------------------------------*
-		 *            | MAP_PRIVATE | MAP_SHARED *
-		 * -----------+-------------+------------*
-		 * PROT_READ  |   r         |  r         *
-		 * -----------+-------------+------------*
-		 * PROT_WRITE |   r         |  w         *
-		 * --------------------------------------*
-		 */
+		ifModel.addName(mmapName, mmapCont);
 		
-		if (protSet.contains(Prot.PROT_WRITE) && flagSet.contains(Flag.MAP_SHARED)) {
-			ifModel.addAlias(procName, fileName);
+		ifModel.addAlias(fileName, mmapName);
+		
+		if (flagSet.contains(Flag.MAP_SHARED)) {
+			ifModel.addAlias(mmapName, fileName);
 		}
 		
-		if (protSet.contains(Prot.PROT_READ) || flagSet.contains(Flag.MAP_PRIVATE)) {
-			ifModel.addAlias(fileName, procName);
+		if (protSet.contains(Prot.PROT_READ)) {
+			ifModel.addAlias(mmapName, procName);
 		}
+		
+		if (protSet.contains(Prot.PROT_WRITE)) {
+			ifModel.addAlias(procName, mmapName);
+		}
+			
+//		/* Aliases based on the following table:
+//		 * --------------------------------------*
+//		 *            | MAP_PRIVATE | MAP_SHARED *
+//		 * -----------+-------------+------------*
+//		 * PROT_READ  |   r         |  r         *
+//		 * -----------+-------------+------------*
+//		 * PROT_WRITE |   r         |  w         *
+//		 * --------------------------------------*
+//		 */
+//		
+//		if (protSet.contains(Prot.PROT_WRITE) && flagSet.contains(Flag.MAP_SHARED)) {
+//			ifModel.addAlias(procName, fileName);
+//		}
+//		
+//		if (protSet.contains(Prot.PROT_READ) || flagSet.contains(Flag.MAP_PRIVATE)) {
+//			ifModel.addAlias(fileName, procName);
+//		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
