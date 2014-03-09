@@ -11,11 +11,11 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 
@@ -34,9 +34,7 @@ public class LinuxEvents {
 	/* TODO: Implement
 	 * Calls to remote PIP in accept() and shutdown()
 	 * fork()
-	 * kill()
 	 * execve()
-	 * mmap()
 	 * truncate()
 	 * 
 		TODO: Remember man 2 open and fcntl: some file descriptors close automatically on execve()
@@ -119,26 +117,31 @@ public class LinuxEvents {
 	}
 	
 	
-	static void exit(String host, String pid) {
+	static void exit(String host, String pid) {	
 		IContainer processContainer = ifModel.getContainer(ProcessName.create(host, pid));
-
-		// check if container for process exists
-		if (processContainer != null) {
-			ifModel.emptyContainer(processContainer);
-
-			// also remove all depending containers
-			Set<IContainer> closureSet = ifModel.getAliasTransitiveReflexiveClosure(processContainer);
-			for (IContainer cont : closureSet) {
-				ifModel.remove(cont);
+		if (processContainer == null) {
+			return;
+		}
+		
+		// all mapped files are unmapped upon process termination, cf. man 2 mmap
+		for (IContainer c : ifModel.getAliasesFromContainer(processContainer)) {
+			if (c instanceof MmapContainer) {
+				ifModel.remove(c);
 			}
-
-			ifModel.removeAllAliasesFrom(processContainer);
-			ifModel.removeAllAliasesTo(processContainer);
-			ifModel.remove(processContainer);
-
-			for (IName nm : ifModel.getAllNamingsFrom(processContainer)) {
-				LinuxEvents.close(nm);
+		}
+		for (IContainer c : ifModel.getAliasesTo(processContainer)) {
+			if (c instanceof MmapContainer) {
+				ifModel.remove(c);
 			}
+		}
+
+		ifModel.emptyContainer(processContainer);
+		ifModel.removeAllAliasesFrom(processContainer);
+		ifModel.removeAllAliasesTo(processContainer);
+		ifModel.remove(processContainer);
+
+		for (IName nm : ifModel.getAllNamingsFrom(processContainer)) {
+			LinuxEvents.close(nm);
 		}
 	}
 	

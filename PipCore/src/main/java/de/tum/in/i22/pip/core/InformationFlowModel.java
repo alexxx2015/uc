@@ -264,6 +264,7 @@ public class InformationFlowModel {
 
 	public void remove(IContainer cont) {
 		if (cont != null) {
+			_logger.info("remove container: " + cont);
 			removeAllAliasesTo(cont);
 			removeAllAliasesFrom(cont);
 			removeAllNames(cont);

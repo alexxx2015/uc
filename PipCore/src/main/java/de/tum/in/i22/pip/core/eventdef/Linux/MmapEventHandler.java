@@ -69,6 +69,8 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * |                  |------------>|                  |------------>|                  |
 		 * +------------------+  PROT_WRITE +------------------+ MAP_SHARED  +------------------+
 		 * 
+		 * mmap events with flags PROT_NONE or MAP_ANONYMOUS will not be signalled. 
+		 * They are not interesting.
 		 */
 		
 		IName mmapName = MmapName.create(host, pid, addr);
