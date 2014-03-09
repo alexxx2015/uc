@@ -288,7 +288,14 @@ public class InformationFlowModel {
 
 	public void emptyContainer(IContainer cont) {
 		if (cont != null) {
+			_logger.info("Emptying container " + cont);
 			_containerToDataMap.remove(cont);
+		}
+	}
+	
+	public void emptyContainer(IName containerName) {
+		if (containerName != null) {
+			emptyContainer(_namingMap.get(containerName));
 		}
 	}
 
