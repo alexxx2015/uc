@@ -341,9 +341,9 @@ public class InformationFlowModel {
 	 * @return All aliases from the container or an empty set.
 	 */
 	public Set<IContainer> getAliasesFromContainer(IContainer cont) {
-		Set<IContainer> result = _aliasesMap.get(cont);
+		Set<IContainer> result;
 
-		if (result == null) {
+		if (cont == null || (result = _aliasesMap.get(cont)) == null) {
 			result = new HashSet<>();
 		}
 
@@ -428,7 +428,12 @@ public class InformationFlowModel {
 
 
 	public void addDataToContainerMapping(IData data, IContainer container) {
+		if (data == null || container == null) {
+			return;
+		}
+		
 		Set<IData> s = new HashSet<IData>();
+		s.add(data);
 		addDataToContainerMappings(s, container);
 	}
 
@@ -450,9 +455,9 @@ public class InformationFlowModel {
 	 *         set.
 	 */
 	public Set<IData> getDataInContainer(IContainer container) {
-		Set<IData> result = _containerToDataMap.get(container);
-		if (result == null) {
-			result = new HashSet<>();
+		Set<IData> result;
+		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
+			result = new HashSet<IData>();
 		}
 		return result;
 	}
@@ -512,6 +517,21 @@ public class InformationFlowModel {
 		return true;		
 	}
 
+	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
+		if (data == null || dstContainerName == null) {
+			return;
+		}
+		
+		IContainer dstContainer = getContainer(dstContainerName);
+		
+		if (dstContainer != null) {
+			addDataToContainerMappings(data, dstContainer);
+			for (IContainer c : getAliasesFromContainer(dstContainer)) {
+				addDataToContainerMappings(data, c);
+			}
+		}
+	}
+	
 
 	/**
 	 *

@@ -58,8 +58,18 @@ public class MmapEventHandler extends BaseEventHandler {
 			}
 		}
 		
-		// Using an additional intermediate MmapContainer will
-		// allow us to remove the mapping/aliases upon munmap.
+		/*
+		 * Using an additional intermediate MmapContainer will
+		 * allow us to remove the mapping/aliases upon munmap.
+		 * The following aliases will be created depending on mmap's parameters:
+		 * 
+		 * +------------------+  PROT_READ  +------------------+   ALWAYS    +------------------+
+		 * |                  |<------------|                  |<------------|                  |	
+		 * |     process      |             |      mmap        |             |       file       |
+		 * |                  |------------>|                  |------------>|                  |
+		 * +------------------+  PROT_WRITE +------------------+ MAP_SHARED  +------------------+
+		 * 
+		 */
 		
 		IName mmapName = MmapName.create(host, pid, addr);
 		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
@@ -82,24 +92,9 @@ public class MmapEventHandler extends BaseEventHandler {
 		if (protSet.contains(Prot.PROT_WRITE)) {
 			ifModel.addAlias(procName, mmapName);
 		}
-			
-//		/* Aliases based on the following table:
-//		 * --------------------------------------*
-//		 *            | MAP_PRIVATE | MAP_SHARED *
-//		 * -----------+-------------+------------*
-//		 * PROT_READ  |   r         |  r         *
-//		 * -----------+-------------+------------*
-//		 * PROT_WRITE |   r         |  w         *
-//		 * --------------------------------------*
-//		 */
-//		
-//		if (protSet.contains(Prot.PROT_WRITE) && flagSet.contains(Flag.MAP_SHARED)) {
-//			ifModel.addAlias(procName, fileName);
-//		}
-//		
-//		if (protSet.contains(Prot.PROT_READ) || flagSet.contains(Flag.MAP_PRIVATE)) {
-//			ifModel.addAlias(fileName, procName);
-//		}
+		
+		// now copy data from file to mmap container and its aliases
+		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileName), mmapName);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
