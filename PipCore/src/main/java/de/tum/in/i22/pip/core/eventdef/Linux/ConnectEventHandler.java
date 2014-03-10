@@ -8,7 +8,6 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
-import de.tum.in.i22.uc.distribution.Network;
 
 
 public class ConnectEventHandler extends BaseEventHandler {
@@ -18,7 +17,6 @@ public class ConnectEventHandler extends BaseEventHandler {
 		String host = null;
 		String pid = null;
 		String fd = null;
-		String family = null;
 		String localIP = null;
 		String localPort = null;
 		String remoteIP = null;
@@ -31,7 +29,6 @@ public class ConnectEventHandler extends BaseEventHandler {
 			host = getParameterValue("host");
 			pid = getParameterValue("pid");
 			fd = getParameterValue("fd");
-			family = getParameterValue("family");
 			localIP = getParameterValue("localIP");
 			localPort = getParameterValue("localPort");
 			remoteIP = getParameterValue("remoteIP");
@@ -41,16 +38,11 @@ public class ConnectEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		if (!Network.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
-			_logger.info("Socket family " + family + " is not handled.");
-			return _messageFactory.createStatus(EStatus.OKAY);
-		}
-
-		// no IP address assigned. Syscall fails
-		if (localIP.equals(Network.IP_UNSPEC)) {
-			_logger.info("No local IP address was assigned. Syscall fails.");
-			return _messageFactory.createStatus(EStatus.OKAY);
-		}
+//		// no IP address assigned. Syscall fails
+//		if (localIP.equals(Network.IP_UNSPEC)) {
+//			_logger.info("No local IP address was assigned. Syscall fails.");
+//			return _messageFactory.createStatus(EStatus.OKAY);
+//		}
 
 		// localSocketName := (sn(e),(a,x))
 		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);

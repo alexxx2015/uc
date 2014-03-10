@@ -6,6 +6,7 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.PipeContainer;
 
 public class PipeEventHandler extends BaseEventHandler {
 
@@ -26,16 +27,11 @@ public class PipeEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer pipeContainer = _messageFactory.createContainer();
+		IContainer pipeContainer = new PipeContainer();
 
-		if (pipeContainer != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
-			ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
-		}
-		else {
-			_logger.fatal("Unable to create pipe container.");
-		}
-
+		ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
+		ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
+			
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

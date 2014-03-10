@@ -37,5 +37,4 @@ public class SocketEventHandler extends BaseEventHandler {
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
 }

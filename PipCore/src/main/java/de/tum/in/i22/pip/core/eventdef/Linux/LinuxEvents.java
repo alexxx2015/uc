@@ -3,16 +3,14 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
-import de.tum.in.i22.uc.cm.IMessageFactory;
-import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
@@ -28,14 +26,12 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 public class LinuxEvents {
 
 	private final static InformationFlowModel ifModel = InformationFlowModel.getInstance();
-	private final static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 	
 	/* TODO: Implement
 	 * Calls to remote PIP in accept() and shutdown()
 	 * fork()
 	 * execve()
-	 * truncate()
 	 * 
 		TODO: Remember man 2 open and fcntl: some file descriptors close automatically on execve()
 	 */
@@ -110,7 +106,7 @@ public class LinuxEvents {
 			}
 		}
 		else {
-			cont = _messageFactory.createContainer();
+			cont = new FileContainer();
 			ifModel.addName(fnName, cont);
 		}
 		ifModel.addName(fdName, cont);

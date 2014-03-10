@@ -16,7 +16,6 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
 public class PepClientNativeHandler {
 
 	public static void notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
-		System.out.println("strt: " + System.nanoTime());
 		if (name == null || paramKeys == null || paramValues == null
 				|| paramKeys.length != paramValues.length || name.isEmpty()) {
 			// TODO rather send an immediate response
@@ -39,7 +38,5 @@ public class PepClientNativeHandler {
 				// TODO Implement callback
 			}
 		});
-
-		System.out.println(" end: " + System.nanoTime());
 	}
 }
