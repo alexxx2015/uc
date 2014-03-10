@@ -47,6 +47,11 @@ public class LinuxEvents {
 		}
 	}
 
+	/*
+	 * TODO CHeck: probably we might need to get the traced processes'
+	 * current working directory.
+	 */
+
 	static String toAbsoluteFilename(String filename) {
 		return getAbsolutePath(new File(filename));
 	}
