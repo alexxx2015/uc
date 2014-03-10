@@ -1,5 +1,6 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,6 @@ public class MmapEventHandler extends BaseEventHandler {
 		String pid = null;
 		String fd = null;
 		String addr = null;
-		String prot = null;
 		String flags = null;
 
 		try {
@@ -35,29 +35,12 @@ public class MmapEventHandler extends BaseEventHandler {
 			pid = getParameterValue("pid");
 			fd = getParameterValue("fd");
 			addr = getParameterValue("addr");
-			prot = getParameterValue("prot");
 			flags = getParameterValue("flags");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		Set<Prot> protSet = new HashSet<Prot>();
-		for (String s : prot.split("\\|")) {
-			Prot p = Prot.from(s);
-			if (p != null) {
-				protSet.add(p);
-			}
-		}
-		
-		Set<Flag> flagSet = new HashSet<Flag>();
-		for (String s : flags.split("\\|")) {
-			Flag f = Flag.from(s);
-			if (f != null) {
-				flagSet.add(f);
-			}
-		}
-		
 		/*
 		 * Using an additional intermediate MmapContainer will
 		 * allow us to remove the mapping/aliases upon munmap.
@@ -73,6 +56,8 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * They are not interesting.
 		 */
 		
+		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|"))); 
+		
 		IName mmapName = MmapName.create(host, pid, addr);
 		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
 
@@ -83,15 +68,15 @@ public class MmapEventHandler extends BaseEventHandler {
 		
 		ifModel.addAlias(fileName, mmapName);
 		
-		if (flagSet.contains(Flag.MAP_SHARED)) {
+		if (flagSet.contains("MAP_SHARED")) {
 			ifModel.addAlias(mmapName, fileName);
 		}
 		
-		if (protSet.contains(Prot.PROT_READ)) {
+		if (flagSet.contains("PROT_READ")) {
 			ifModel.addAlias(mmapName, procName);
 		}
 		
-		if (protSet.contains(Prot.PROT_WRITE)) {
+		if (flagSet.contains("PROT_WRITE")) {
 			ifModel.addAlias(procName, mmapName);
 		}
 		
@@ -99,46 +84,5 @@ public class MmapEventHandler extends BaseEventHandler {
 		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileName), mmapName);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
-	}
-	
-	
-	enum Prot {
-		PROT_EXEC,
-		PROT_READ,
-		PROT_WRITE,
-		PROT_NONE;
-		
-		static Prot from(String s) {
-			switch(s) {
-				case "PROT_READ":
-					return PROT_READ;
-				case "PROT_WRITE":
-					return PROT_WRITE;
-				case "PROT_EXEC":
-					return PROT_EXEC;
-				default:
-					return PROT_NONE;
-			}
-		}
-	}
-	
-	enum Flag {
-		MAP_SHARED,
-		MAP_PRIVATE,
-		MAP_ANONYMOUS;
-		
-		static Flag from(String s) {
-			switch(s) {
-			case "MAP_SHARED":
-				return MAP_SHARED;
-			case "MAP_PRIVATE":
-				return MAP_PRIVATE;
-			case "MAP_ANON":
-			case "MAP_ANONYMOUS":
-				return MAP_ANONYMOUS;
-			default:
-				return null;
-			}
-		}
 	}
 }
