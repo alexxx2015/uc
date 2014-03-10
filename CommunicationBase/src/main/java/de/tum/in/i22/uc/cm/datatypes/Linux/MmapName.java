@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-public class MmapName extends NameBasic {
+public class MmapName extends NameBasic implements IProcessRelativeName {
 
 	private static final String PREFIX_MMAP = "MMAP_";
 
@@ -28,10 +28,11 @@ public class MmapName extends NameBasic {
 		return _host;
 	}
 
+	@Override
 	public String getPid() {
 		return _pid;
 	}
-	
+
 	public String getAddr() {
 		return _addr;
 	}

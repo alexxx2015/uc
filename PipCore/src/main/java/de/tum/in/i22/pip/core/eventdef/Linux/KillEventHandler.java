@@ -3,6 +3,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 
@@ -28,7 +29,14 @@ public class KillEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.copyData(ProcessName.create(host, srcPid), ProcessName.create(host, dstPid));
+		IContainer srcCont = ifModel.getContainer(ProcessName.create(host, srcPid));
+		IContainer dstCont = ifModel.getContainer(ProcessName.create(host, dstPid));
+
+		if (srcCont != null) {
+			for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
+				ifModel.copyData(srcCont, c);
+			}
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

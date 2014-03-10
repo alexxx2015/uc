@@ -59,10 +59,10 @@ public class AcceptEventHandler extends BaseEventHandler {
 		}
 
 		// local_socket_name := (sn(e),(a,x))
-		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
+		localSocketName = SocketName.create(host, localIP, localPort, remoteIP, remotePort);
 
 		// remote_socket_name := ((a,x),sn(e))
-		remoteSocketName = SocketName.create(host, pid, remoteIP, remotePort, localIP, localPort);
+		remoteSocketName = SocketName.create(host, remoteIP, remotePort, localIP, localPort);
 
 		// create new container c
 		localContainer = new SocketContainer(oldContainer.getDomain(), oldContainer.getType());
@@ -77,7 +77,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// client is remote
 
 			// create remote container for creating the alias
-			remoteContainer = new RemoteContainer(SocketName.create(host, newFd, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
+			remoteContainer = new RemoteContainer(SocketName.create(host, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
 
 			ifModel.addAlias(localContainer, remoteContainer);
 

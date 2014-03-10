@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 
@@ -38,12 +39,16 @@ public class LinuxEvents {
 
 
 
-	static String getAbsolutePath(File f) {
+	private static String getAbsolutePath(File f) {
 		try {
 			return f.getCanonicalPath();
 		} catch (IOException e) {
 			return f.getAbsolutePath();
 		}
+	}
+
+	static String toAbsoluteFilename(String filename) {
+		return getAbsolutePath(new File(filename));
 	}
 
 
@@ -107,29 +112,29 @@ public class LinuxEvents {
 
 
 	static void exit(String host, String pid) {
-		IContainer processContainer = ifModel.getContainer(ProcessName.create(host, pid));
-		if (processContainer == null) {
+		ProcessContainer procCont = (ProcessContainer) ifModel.getContainer(ProcessName.create(host, pid));
+		if (procCont == null) {
 			return;
 		}
 
 		// all mapped files are unmapped upon process termination, cf. man 2 mmap
-		for (IContainer c : ifModel.getAliasesFromContainer(processContainer)) {
+		for (IContainer c : ifModel.getAliasesFromContainer(procCont)) {
 			if (c instanceof MmapContainer) {
 				ifModel.remove(c);
 			}
 		}
-		for (IContainer c : ifModel.getAliasesTo(processContainer)) {
+		for (IContainer c : ifModel.getAliasesTo(procCont)) {
 			if (c instanceof MmapContainer) {
 				ifModel.remove(c);
 			}
 		}
 
-		ifModel.emptyContainer(processContainer);
-		ifModel.removeAllAliasesFrom(processContainer);
-		ifModel.removeAllAliasesTo(processContainer);
-		ifModel.remove(processContainer);
+		ifModel.emptyContainer(procCont);
+		ifModel.removeAllAliasesFrom(procCont);
+		ifModel.removeAllAliasesTo(procCont);
+		ifModel.remove(procCont);
 
-		for (IName nm : ifModel.getAllNamingsFrom(processContainer)) {
+		for (IName nm : ifModel.getAllProcessRelativeNames(procCont)) {
 			LinuxEvents.close(nm);
 		}
 	}
@@ -139,12 +144,10 @@ public class LinuxEvents {
 		if (name instanceof SocketName) {
 			LinuxEvents.closeSocket(name);
 		}
-		InformationFlowModel.getInstance().removeName(name);
+		ifModel.removeName(name);
 	}
 
 	private static void closeSocket(IName name) {
-		InformationFlowModel ifModel = InformationFlowModel.getInstance();
-
 		IContainer container = ifModel.getContainer(name);
 
 		int count = 0;

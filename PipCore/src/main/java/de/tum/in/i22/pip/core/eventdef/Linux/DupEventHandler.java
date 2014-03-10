@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 
@@ -25,10 +24,10 @@ public class DupEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
-		IName oldName = FiledescrName.create(host, pid, oldfd);
-		IName newName = FiledescrName.create(host, pid, newfd);
-		ifModel.addName(oldName, newName);
+
+		ifModel.addName(
+				FiledescrName.create(host, pid, oldfd),
+				FiledescrName.create(host, pid, newfd));
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

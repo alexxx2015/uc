@@ -3,7 +3,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
@@ -30,12 +30,15 @@ public class ReadEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName file = FiledescrName.create(host, pid, fd);
-		IName proc = ProcessName.create(host, pid);
+		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
 
-		ifModel.copyData(file, proc);
+		if (fileCont != null) {
+			for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(procCont)) {
+				ifModel.copyData(fileCont, c);
+			}
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
 }

@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
@@ -31,9 +30,9 @@ public class SocketEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer socketContainer = new SocketContainer(Domain.from(domain), Type.from(type));
-
-		ifModel.addName(FiledescrName.create(host, pid, fd), socketContainer);
+		ifModel.addName(
+				FiledescrName.create(host, pid, fd),
+				new SocketContainer(Domain.from(domain), Type.from(type)));
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

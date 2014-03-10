@@ -1,6 +1,4 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
-import java.io.File;
-
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -30,9 +28,9 @@ public class RenameEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName oldN = FilenameName.create(host, LinuxEvents.getAbsolutePath(new File(oldName)));
-		IName newN = FilenameName.create(host, LinuxEvents.getAbsolutePath(new File(newName)));
-		
+		IName oldN = FilenameName.create(host, LinuxEvents.toAbsoluteFilename(oldName));
+		IName newN = FilenameName.create(host, LinuxEvents.toAbsoluteFilename(newName));
+
 		ifModel.removeName(newN);
 		ifModel.addName(oldN, newN);
 		ifModel.removeName(oldN);

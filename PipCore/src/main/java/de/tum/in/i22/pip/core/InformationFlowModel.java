@@ -13,6 +13,8 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 
 /**
  * Information flow model Singleton.
@@ -272,7 +274,7 @@ public class InformationFlowModel {
 		}
 	}
 
-	public void removeAllNames(IContainer cont) {
+	private void removeAllNames(IContainer cont) {
 		if (cont != null) {
 			Set<IName> toRemove = new HashSet<IName>();
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
@@ -283,6 +285,9 @@ public class InformationFlowModel {
 			for (IName key : toRemove) {
 				_namingMap.remove(key);
 			}
+
+			// no more names, so we can also remove the container
+			remove(cont);
 		}
 	}
 
@@ -292,7 +297,7 @@ public class InformationFlowModel {
 			_containerToDataMap.remove(cont);
 		}
 	}
-	
+
 	public void emptyContainer(IName containerName) {
 		if (containerName != null) {
 			emptyContainer(_namingMap.get(containerName));
@@ -308,9 +313,9 @@ public class InformationFlowModel {
 		if (fromContainer == null || toContainer == null || fromContainer.equals(toContainer)) {
 			return;
 		}
-		
+
 		_logger.info("addAlias from " + fromContainer + " to " + toContainer);
-		
+
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
 			aliases = new HashSet<IContainer>();
@@ -318,16 +323,16 @@ public class InformationFlowModel {
 		}
 		aliases.add(toContainer);
 	}
-	
-	
+
+
 	public void addAlias(IName fromContainerName, IName toContainerName) {
 		if (fromContainerName == null || toContainerName == null) {
 			return;
 		}
-		
+
 		addAlias(_namingMap.get(fromContainerName), _namingMap.get(toContainerName));
 	}
-	
+
 
 	/**
 	 * Removes the alias relation identified
@@ -366,10 +371,13 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
-		Set<IContainer> closureSet = getAliasTransitiveClosure(container);
-		// add self to set ==> reflexive
-		closureSet.add(container);
-		return closureSet;
+		if (container == null) {
+			return null;
+		}
+
+		Set<IContainer> closure = getAliasTransitiveClosure(container);
+		closure.add(container);	// add self to set ==> reflexive
+		return closure;
 	}
 
 	/**
@@ -439,7 +447,7 @@ public class InformationFlowModel {
 		if (data == null || container == null) {
 			return;
 		}
-		
+
 		Set<IData> s = new HashSet<IData>();
 		s.add(data);
 		addDataToContainerMappings(s, container);
@@ -504,13 +512,13 @@ public class InformationFlowModel {
 
 		return copyData(_namingMap.get(srcContainerName), _namingMap.get(dstContainerName));
 	}
-	
-	
+
+
 	public boolean copyData(IContainer srcContainer, IContainer dstContainer) {
 		if (srcContainer == null || dstContainer == null) {
 			return false;
 		}
-		
+
 		_logger.info("copyData() from " + srcContainer + " to " + dstContainer);
 
 		Set<IData> srcData = _containerToDataMap.get(srcContainer);
@@ -522,16 +530,16 @@ public class InformationFlowModel {
 			}
 			dstData.addAll(srcData);
 		}
-		return true;		
+		return true;
 	}
 
 	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
 		if (data == null || dstContainerName == null) {
 			return;
 		}
-		
+
 		IContainer dstContainer = getContainer(dstContainerName);
-		
+
 		if (dstContainer != null) {
 			addDataToContainerMappings(data, dstContainer);
 			for (IContainer c : getAliasesFromContainer(dstContainer)) {
@@ -539,7 +547,7 @@ public class InformationFlowModel {
 			}
 		}
 	}
-	
+
 
 	/**
 	 *
@@ -582,16 +590,16 @@ public class InformationFlowModel {
 		if (name == null) {
 			return false;
 		}
-		
+
 		_logger.info("addName: " + name + " -> " + container);
-		
+
 		IContainer oldAssigned;
 		if ((oldAssigned = _namingMap.put(name, container)) != null) {
 			_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". This mapping has been removed.");
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Adds an additional name, newName, for to the container that is already identified by another name, oldName.
 	 * @param oldName
@@ -602,9 +610,9 @@ public class InformationFlowModel {
 		if (oldName == null || newName == null) {
 			return false;
 		}
-		
+
 		IContainer cont = getContainer(oldName);
-		
+
 		return (cont != null) ? addName(newName, cont) : false;
 	}
 
@@ -616,8 +624,16 @@ public class InformationFlowModel {
 	 */
 	public void removeName(IName name) {
 		if (name != null) {
+			IContainer cont = _namingMap.get(name);
+
 			_logger.info("removeName() " + name);
 			_namingMap.remove(name);
+
+			// if this was the last name, we can remove the container
+			List<IName> remainingNames = getAllNames(cont);
+			if (remainingNames == null || remainingNames.size() == 0) {
+				remove(cont);
+			}
 		}
 	}
 
@@ -677,8 +693,8 @@ public class InformationFlowModel {
 
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Get all names of the container identified by the given containerName.
 	 * It is ensured that all names within the result are of the specified type.
@@ -686,14 +702,14 @@ public class InformationFlowModel {
 	 * @param type
 	 * @return
 	 */
-	public <T extends IName> List<IName> getAllNames(IName containerName, Class<T> type) {		
+	public <T extends IName> List<IName> getAllNames(IName containerName, Class<T> type) {
 		List<IName> result = new ArrayList<IName>();
 		IContainer cont;
-		
+
 		if (containerName == null) {
 			return result;
 		}
-		
+
 		if ((cont = _namingMap.get(containerName)) == null) {
 			return result;
 		}
@@ -713,6 +729,7 @@ public class InformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
+	// TODO, FK: This method seems odd.
 	public List<IName> getAllNamingsFrom(IContainer pid) {
 		List<IName> result = new ArrayList<IName>();
 
@@ -724,4 +741,19 @@ public class InformationFlowModel {
 		return result;
 	}
 
+
+	public List<IProcessRelativeName> getAllProcessRelativeNames(ProcessContainer procCont) {
+		List<IProcessRelativeName> result = new ArrayList<IProcessRelativeName>();
+
+		for (IName name : _namingMap.keySet()) {
+			if (name instanceof IProcessRelativeName) {
+				IProcessRelativeName pname = (IProcessRelativeName) name;
+				if (pname.getPid().equals(procCont.getPid())) {
+					result.add(pname);
+				}
+			}
+		}
+
+		return result;
+	}
 }

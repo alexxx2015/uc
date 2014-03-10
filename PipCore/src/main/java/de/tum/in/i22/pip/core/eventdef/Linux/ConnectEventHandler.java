@@ -39,7 +39,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		}
 
 		// localSocketName := (sn(e),(a,x))
-		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
+		localSocketName = SocketName.create(host, localIP, localPort, remoteIP, remotePort);
 
 		// c := f((pid,sfd))
 		socketFD = FiledescrName.create(host, pid, fd);

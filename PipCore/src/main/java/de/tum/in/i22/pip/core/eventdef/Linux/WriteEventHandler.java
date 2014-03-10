@@ -4,7 +4,6 @@ import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
@@ -31,22 +30,21 @@ public class WriteEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
-		IName dstFd = FiledescrName.create(host, pid, fd);
-		IName srcPid = ProcessName.create(host, pid);
 
-		IContainer srcCont = ifModel.getContainer(srcPid);
-		IContainer dstCont = ifModel.getContainer(dstFd);		
-				
-		// copy the data into all aliased containers aliased from the destination container
-		for (IContainer dst : ifModel.getAliasTransitiveClosure(dstCont)) {
-			ifModel.copyData(srcCont, dst);
-		}
-		
-		// now, also copy into the actual (direct) destination container ...
-		// ... but only if it is not a socket.		
-		if (!(dstCont instanceof SocketContainer)) {
-			ifModel.copyData(srcCont, dstCont);
+		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
+		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
+
+		if (procCont != null) {
+			// copy the data into all containers aliased from the destination container
+			for (IContainer c : ifModel.getAliasTransitiveClosure(fileCont)) {
+				ifModel.copyData(procCont, c);
+			}
+
+			// now, also copy into the actual (direct) destination container ...
+			// ... but only if it is not a socket.
+			if (!(fileCont instanceof SocketContainer)) {
+				ifModel.copyData(procCont, fileCont);
+			}
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-public class ProcessName extends NameBasic {
+public class ProcessName extends NameBasic implements IProcessRelativeName {
 
 	private static final String PREFIX_PROCESS = "PROC_";
 
@@ -26,6 +26,7 @@ public class ProcessName extends NameBasic {
 		return _host;
 	}
 
+	@Override
 	public String getPid() {
 		return _pid;
 	}
