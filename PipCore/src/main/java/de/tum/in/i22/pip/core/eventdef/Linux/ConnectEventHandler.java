@@ -38,12 +38,6 @@ public class ConnectEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-//		// no IP address assigned. Syscall fails
-//		if (localIP.equals(Network.IP_UNSPEC)) {
-//			_logger.info("No local IP address was assigned. Syscall fails.");
-//			return _messageFactory.createStatus(EStatus.OKAY);
-//		}
-
 		// localSocketName := (sn(e),(a,x))
 		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
 
@@ -62,5 +56,4 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
 }

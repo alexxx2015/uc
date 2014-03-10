@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.distribution.IPLocation;
-import de.tum.in.i22.uc.distribution.Network;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
@@ -44,28 +43,27 @@ public class AcceptEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		// no IP address assigned. Syscall fails
-		if (localIP.equals(Network.IP_UNSPEC)) {
-			_logger.info("No local IP address was assigned. Syscall fails.");
-			return _messageFactory.createStatus(EStatus.OKAY);
-		}
-		
 		// get old container
-		SocketContainer oldContainer;
+		SocketContainer oldContainer = null;
 		try {
 			oldContainer = (SocketContainer) ifModel.getContainer(FiledescrName.create(host, pid, oldFd));
 		}
 		catch (ClassCastException e) {
-			_logger.fatal("Expected container did not exist or was of wrong type).");
-			return _messageFactory.createStatus(EStatus.OKAY);
+			_logger.fatal("Expected container did not exist or was of wrong type.");
+			return _messageFactory.createStatus(EStatus.ERROR);
 		}
-		
+
+		if (oldContainer == null) {
+			_logger.fatal("Expected container did not exist or was of wrong type.");
+			return _messageFactory.createStatus(EStatus.ERROR);
+		}
+
 		// local_socket_name := (sn(e),(a,x))
 		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
 
 		// remote_socket_name := ((a,x),sn(e))
 		remoteSocketName = SocketName.create(host, pid, remoteIP, remotePort, localIP, localPort);
-				
+
 		// create new container c
 		localContainer = new SocketContainer(oldContainer.getDomain(), oldContainer.getType());
 
@@ -78,10 +76,12 @@ public class AcceptEventHandler extends BaseEventHandler {
 		if (!localIP.equals(remoteIP)) {
 			// client is remote
 
-			// get remote container id from remote host for creating the alias
+			// create remote container for creating the alias
 			remoteContainer = new RemoteContainer(SocketName.create(host, newFd, remoteIP, remotePort, localIP, localPort), IPLocation.createIPLocation(remoteIP));
 
 			ifModel.addAlias(localContainer, remoteContainer);
+
+			// TODO remote call
 		}
 		else {
 			// client is local
@@ -93,6 +93,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 			if (remoteContainer == null) {
 				_logger.fatal("accept() happened, but corresponding connect() did not happen before. "
 						+ "The order of these events must be enforced by the PEP.");
+				return _messageFactory.createStatus(EStatus.ERROR);
 			}
 
 			ifModel.addAlias(localContainer, remoteContainer);
@@ -104,6 +105,5 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
 }
 

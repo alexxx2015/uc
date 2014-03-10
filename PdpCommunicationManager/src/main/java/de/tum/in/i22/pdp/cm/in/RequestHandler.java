@@ -13,7 +13,6 @@ import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
-import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
@@ -155,8 +154,6 @@ public class RequestHandler implements Runnable {
 
 			Object response = null;
 			if (request instanceof PepNotifyEventRequestWrapper) {
-				IEvent event = ((PepNotifyEventRequestWrapper) request)
-						.getEvent();
 				/***
 				 *
 				 * This code has been removed because redundant with the
@@ -168,27 +165,20 @@ public class RequestHandler implements Runnable {
 				 *
 				 */
 
-				response = pdpHandler.notifyEvent(event);
-			} else if (request instanceof PmpRequestWrapper) {
-				PmpRequest pmpRequest = ((PmpRequestWrapper) request)
-						.getPmpRequest();
-				response = processPmpRequest(pmpRequest);
-			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
-				UpdateIfFlowSemanticsRequestWrapper updateIfFlowRequest = (UpdateIfFlowSemanticsRequestWrapper) request;
-				response = delegeteUpdateIfFlowToPip(updateIfFlowRequest);
+				response = pdpHandler.notifyEvent(((PepNotifyEventRequestWrapper) request).getEvent());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
-			}
-			else {
+			} else if (request instanceof PmpRequestWrapper) {
+				response = processPmpRequest(((PmpRequestWrapper) request).getPmpRequest());
+			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
+				response = delegeteUpdateIfFlowToPip((UpdateIfFlowSemanticsRequestWrapper) request);
+			} else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}
 
-			_logger.trace("event " + request.toString()
-					+ " processed. forward response");
-			IForwarder forwarder = request.getForwarder();
-			forwarder.forwardResponse(response);
+			_logger.trace("event " + request.toString() + " processed. forward response");
+			request.getForwarder().forwardResponse(response);
 			_logger.trace("response forwarded");
-
 		}
 
 		// the thread is interrupted, stop processing the events

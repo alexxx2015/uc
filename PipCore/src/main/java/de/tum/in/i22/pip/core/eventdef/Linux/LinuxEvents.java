@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.eventdef.Linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
@@ -27,22 +28,14 @@ public class LinuxEvents {
 
 	private final static InformationFlowModel ifModel = InformationFlowModel.getInstance();
 	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
-	
-	/* TODO: Implement
-	 * Calls to remote PIP in accept() and shutdown()
-	 * fork()
-	 * execve()
-	 * 
-		TODO: Remember man 2 open and fcntl: some file descriptors close automatically on execve()
+
+	/*
+	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair: some file descriptors close automatically on execve()
 	 */
 
 
 
-	static enum Shut {
-		SHUT_RDWR,
-		SHUT_RD,
-		SHUT_WR
-	}
+
 
 
 	static String getAbsolutePath(File f) {
@@ -50,10 +43,10 @@ public class LinuxEvents {
 			return f.getCanonicalPath();
 		} catch (IOException e) {
 			return f.getAbsolutePath();
-		}	
+		}
 	}
-	
-	
+
+
 	/**
 	 * Used by both open() and openat().
 	 * @param host
@@ -67,25 +60,25 @@ public class LinuxEvents {
 	static void open(String host, String pid, String newfd, String dirfd, String filename, boolean at_fdcwd, boolean truncate) {
 		IName fdName = FiledescrName.create(host, pid, newfd);
 		IName fnName;
-		
+
 		File file = new File(filename);
-		
+
 		if (!file.isAbsolute() && !at_fdcwd) {
 			// all this part is for openat()
-			
+
 			IName dirfdName = FiledescrName.create(host, pid, dirfd);
-			
+
 			List<IName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
-			
+
 			// the resulting list should always be of size 1.
 			if (names.size() != 1) {
 				_logger.error("There was not exactly one filename for " + dirfdName);
 			}
 			else {
 				File path = new File(((FilenameName) names.get(0)).getFilename());
-				
+
 				String pathStr = LinuxEvents.getAbsolutePath(path);
-				
+
 				if (path.isDirectory()) {
 					file = new File(pathStr, filename);
 				}
@@ -94,9 +87,9 @@ public class LinuxEvents {
 				}
 			}
 		}
-		
-		fnName = FilenameName.create(host, LinuxEvents.getAbsolutePath(file));		
-	
+
+		fnName = FilenameName.create(host, LinuxEvents.getAbsolutePath(file));
+
 		// get the file's container (if present)
 		IContainer cont = ifModel.getContainer(fnName);
 
@@ -111,14 +104,14 @@ public class LinuxEvents {
 		}
 		ifModel.addName(fdName, cont);
 	}
-	
-	
-	static void exit(String host, String pid) {	
+
+
+	static void exit(String host, String pid) {
 		IContainer processContainer = ifModel.getContainer(ProcessName.create(host, pid));
 		if (processContainer == null) {
 			return;
 		}
-		
+
 		// all mapped files are unmapped upon process termination, cf. man 2 mmap
 		for (IContainer c : ifModel.getAliasesFromContainer(processContainer)) {
 			if (c instanceof MmapContainer) {
@@ -140,7 +133,7 @@ public class LinuxEvents {
 			LinuxEvents.close(nm);
 		}
 	}
-	
+
 
 	static void close(IName name) {
 		if (name instanceof SocketName) {
@@ -169,26 +162,28 @@ public class LinuxEvents {
 		}
 	}
 
-	static void shutdown(IName name, Shut mode) {
-		InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	static void shutdown(IName name, Shut how) {
+		if (name == null || how == null) {
+			return;
+		}
 
 		IContainer container = ifModel.getContainer(name);
 
 		if (container != null) {
 			List<IName> allNames = ifModel.getAllNames(container);
 
-			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
+			if (how == Shut.SHUT_RD || how == Shut.SHUT_RDWR) {
 				// disallow reception
 				ifModel.emptyContainer(container);
 				ifModel.removeAllAliasesTo(container);
 			}
 
-			if (mode == Shut.SHUT_WR || mode == Shut.SHUT_RDWR) {
+			if (how == Shut.SHUT_WR || how == Shut.SHUT_RDWR) {
 				// disallow transmission
 				ifModel.removeAllAliasesFrom(container);
 			}
 
-			if (mode == Shut.SHUT_RDWR) {
+			if (how == Shut.SHUT_RDWR) {
 				// disallow transmission and reception,
 				// therefore delete all socket identifiers
 				for (IName n : allNames) {
