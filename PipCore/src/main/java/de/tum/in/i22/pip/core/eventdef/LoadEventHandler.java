@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.tum.in.i22.pip.core.Scope;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class LoadEventHandler extends BaseEventHandler {
 	private String _delimiter = null;
@@ -44,6 +45,11 @@ public class LoadEventHandler extends BaseEventHandler {
 			return 1;
 		}
 		return -1;
+	}
+
+	@Override
+	public IStatus execute() {
+		return null;
 	}
 
 	// @Override

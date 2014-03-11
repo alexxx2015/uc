@@ -127,17 +127,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * except for the scope part, which is handled in a generic way by the
 	 * functions createScope, openScope and closeScope.
 	 */
-	public IStatus execute() {
-		// TODO: implement a body
-		IEvent e = getEvent();
-		if (e == null)
-			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters() == null)
-			return _messageFactory
-					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
-
-		return _messageFactory.createStatus(EStatus.OKAY);
-	}
+	public abstract IStatus execute();
 
 	/*
 	 * In this function, we describe what happens when a certain event is
