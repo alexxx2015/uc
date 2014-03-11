@@ -4,7 +4,21 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-public class MmapName extends NameBasic implements IProcessRelativeName {
+/**
+ * Class representing a mmap() mapping container, consisting of
+ * + a process id (i.e. the process that mapped a file) and
+ * + an address (i.e. the memory address to which the file has been mapped).
+ *
+ * This concept was not described in any paper, but it allows to conveniently
+ * remove corresponding mmap containers upon munmap() calls, thus reducing data flow
+ * tracking overapproximations after a munmap() call. Before, munmap() had been ignored.
+ *
+ * Also see class MmapContainer and the corresponding mmap() and munmap() event handlers.
+ *
+ * @author Florian Kelbert
+ *
+ */
+public class MmapName extends NameBasic implements IProcessRelativeName, IClonableForProcess {
 
 	private static final String PREFIX_MMAP = "MMAP_";
 
@@ -60,5 +74,10 @@ public class MmapName extends NameBasic implements IProcessRelativeName {
 				.add("_pid", _pid)
 				.add("_addr", _addr)
 				.toString();
+	}
+
+	@Override
+	public IClonableForProcess cloneFor(String pid) {
+		return MmapName.create(_host, pid, _addr);
 	}
 }

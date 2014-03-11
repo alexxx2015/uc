@@ -4,7 +4,14 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
-public class FiledescrName extends NameBasic implements IProcessRelativeName {
+/**
+ * Class representing file descriptors.
+ * Corresponds to set F_{dsc} in NSS'09 paper.
+ *
+ * @author Florian Kelbert
+ *
+ */
+public class FiledescrName extends NameBasic implements IProcessRelativeName, IClonableForProcess {
 
 	private static final String PREFIX_FILE = "FILE_";
 
@@ -60,5 +67,10 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName {
 				.add("_pid", _pid)
 				.add("_fd", _fd)
 				.toString();
+	}
+
+	@Override
+	public IClonableForProcess cloneFor(String pid) {
+		return FiledescrName.create(_host, pid, _fd);
 	}
 }

@@ -4,6 +4,15 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
+/**
+ * Class representing a filename.
+ * Notably, a filename is independent of processes,
+ * which is why no process id is involved here.
+ * This class corresponds to set F_{fn} in NSS'09 paper.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class FilenameName extends NameBasic {
 
 	private static final String PREFIX_FILE = "FILE_";

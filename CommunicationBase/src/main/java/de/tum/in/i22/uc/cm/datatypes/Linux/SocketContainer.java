@@ -2,20 +2,27 @@ package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 
+/**
+ * Class representing socket containers.
+ * Corresponds to set C_S in CODASPY'13 paper.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class SocketContainer extends ContainerBasic {
-	private Domain _domain;
-	private Type _type;
-	
+	private final Domain _domain;
+	private final Type _type;
+
 	public SocketContainer(Domain domain, Type type) {
 		super();
 		this._domain = domain;
 		this._type = type;
 	}
-	
+
 	public Domain getDomain() {
 		return _domain;
 	}
-	
+
 	public Type getType() {
 		return _type;
 	}
@@ -25,7 +32,7 @@ public class SocketContainer extends ContainerBasic {
 		AF_INET6,
 		AF_UNIX,
 		AF_LOCAL;
-		
+
 		public static Domain from(String s) {
 			switch (s) {
 				case "AF_INET":
@@ -40,17 +47,17 @@ public class SocketContainer extends ContainerBasic {
 				case "AF_LOCAL":
 				case "PF_LOCAL":
 					return AF_LOCAL;
-				default: 
+				default:
 					return null;
 			}
 		}
 	}
-	
+
 	public enum Type {
 		SOCK_STREAM,
 		SOCK_DGRAM,
 		SOCK_RAW;
-		
+
 		public static Type from(String s) {
 			switch(s) {
 				case "SOCK_STREAM":

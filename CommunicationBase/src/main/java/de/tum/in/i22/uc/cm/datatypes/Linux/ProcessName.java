@@ -4,6 +4,11 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
+/**
+ * Class representing a process name; basically a process id.
+ * @author Florian Kelbert
+ *
+ */
 public class ProcessName extends NameBasic implements IProcessRelativeName {
 
 	private static final String PREFIX_PROCESS = "PROC_";

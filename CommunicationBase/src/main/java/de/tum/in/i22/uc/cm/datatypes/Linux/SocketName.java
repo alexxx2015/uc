@@ -5,6 +5,13 @@ import java.util.Objects;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.distribution.Network;
 
+/**
+ * Class for naming sockets.
+ * Corresponds to set F_N x F_N in CODASPY'13 paper.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class SocketName extends NameBasic {
 
 	static final String PREFIX_SOCKET = "SOCK_";
