@@ -3,6 +3,9 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
@@ -56,32 +59,34 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * They are not interesting.
 		 */
 
-		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|")));
+		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		if (fileCont == null) {
+			return _messageFactory.createStatus(EStatus.OKAY);
+		}
 
-		IName mmapName = MmapName.create(host, pid, addr);
+		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
+		if (procCont == null) {
+			return _messageFactory.createStatus(EStatus.OKAY);
+		}
+
 		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
 
-		IName procName = ProcessName.create(host, pid);
-		IName fileName = FiledescrName.create(host, pid, fd);
+		ifModel.addName(MmapName.create(host, pid, addr), mmapCont);
 
-		ifModel.addName(mmapName, mmapCont);
+		ifModel.addAlias(fileCont, mmapCont);
 
-		ifModel.addAlias(fileName, mmapName);
-
-		if (flagSet.contains("MAP_SHARED")) {
-			ifModel.addAlias(mmapName, fileName);
+		if (flags.contains("s")) {		// MAP_SHARED
+			ifModel.addAlias(mmapCont, fileCont);
 		}
-
-		if (flagSet.contains("PROT_READ")) {
-			ifModel.addAlias(mmapName, procName);
+		if (flags.contains("r")) {		// PROT_READ
+			ifModel.addAlias(mmapCont, procCont);
 		}
-
-		if (flagSet.contains("PROT_WRITE")) {
-			ifModel.addAlias(procName, mmapName);
+		if (flags.contains("w")) {		// PROT_WRITE
+			ifModel.addAlias(procCont, mmapCont);
 		}
 
 		// now copy data from file to mmap container and its aliases
-		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileName), mmapName);
+		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileCont), mmapCont);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
