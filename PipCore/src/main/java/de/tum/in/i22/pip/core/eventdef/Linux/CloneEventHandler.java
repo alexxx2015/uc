@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.IClonableForProcess;
-import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 
@@ -57,7 +56,7 @@ public class CloneEventHandler extends BaseEventHandler {
 		ifModel.addName(newProcName, newProcCont);
 
 		// Copy all process relative names from the old parent process to the new child process
-		for (IProcessRelativeName name : ifModel.getAllProcessRelativeNames(oldProcCont)) {
+		for (IName name : LinuxEvents.getAllProcessRelativeNames(oldProcCont.getPid())) {
 			if (name instanceof IClonableForProcess) {
 				IClonableForProcess n = (IClonableForProcess) name;
 				ifModel.addName(n.cloneFor(childPid), ifModel.getContainer(n));
