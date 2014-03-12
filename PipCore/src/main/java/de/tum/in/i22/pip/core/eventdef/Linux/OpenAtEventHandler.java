@@ -15,7 +15,7 @@ public class OpenAtEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String newfd = null;
 		String dirfd = null;
 		String filename = null;
@@ -24,7 +24,7 @@ public class OpenAtEventHandler extends BaseEventHandler {
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			newfd = getParameterValue("newfd");
 			dirfd = getParameterValue("dirfd");
 			filename = getParameterValue("filename");
@@ -34,7 +34,7 @@ public class OpenAtEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
+
 		LinuxEvents.open(host, pid, newfd, dirfd, filename, at_fdcwd, truncate);
 
 		return _messageFactory.createStatus(EStatus.OKAY);

@@ -10,11 +10,11 @@ public class ExitEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

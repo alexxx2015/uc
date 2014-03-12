@@ -16,18 +16,18 @@ public class MunmapEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String addr = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			addr = getParameterValue("addr");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
+
 		ifModel.remove(ifModel.getContainer(MmapName.create(host, pid, addr)));
 
 		return _messageFactory.createStatus(EStatus.OKAY);

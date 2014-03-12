@@ -14,14 +14,14 @@ public class SocketEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd = null;
 		String domain = null;
 		String type = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd = getParameterValue("fd");
 			domain = getParameterValue("domain");
 			type = getParameterValue("type");

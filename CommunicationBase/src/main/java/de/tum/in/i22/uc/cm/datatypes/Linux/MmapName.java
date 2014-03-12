@@ -23,10 +23,10 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 	private static final String PREFIX_MMAP = "MMAP_";
 
 	private final String _host;
-	private final String _pid;
+	private final int _pid;
 	private final String _addr;
 
-	private MmapName(String host, String pid, String addr, String name) {
+	private MmapName(String host, int pid, String addr, String name) {
 		super(name);
 
 		_host = host;
@@ -34,8 +34,8 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 		_addr = addr;
 	}
 
-	public static MmapName create(String host, String pid, String addr) {
-		return new MmapName(host, pid, addr, PREFIX_MMAP + host + "x" + pid + "x" + addr);
+	public static MmapName create(String host, int pid, String addr) {
+		return new MmapName(host, pid, addr, PREFIX_MMAP + host + "." + pid + "." + addr);
 	}
 
 	public String getHost() {
@@ -43,7 +43,7 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 	}
 
 	@Override
-	public String getPid() {
+	public int getPid() {
 		return _pid;
 	}
 
@@ -77,7 +77,7 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 	}
 
 	@Override
-	public IClonableForProcess cloneFor(String pid) {
+	public IClonableForProcess cloneFor(int pid) {
 		return MmapName.create(_host, pid, _addr);
 	}
 }

@@ -19,13 +19,13 @@ public class SendfileEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String infd = null;
 		String outfd = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			outfd = getParameterValue("outfd");
 			infd = getParameterValue("infd");
 		} catch (ParameterNotFoundException e) {

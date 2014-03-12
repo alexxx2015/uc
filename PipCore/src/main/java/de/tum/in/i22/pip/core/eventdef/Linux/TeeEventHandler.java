@@ -17,13 +17,13 @@ public class TeeEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String srcfd = null;
 		String dstfd = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			srcfd = getParameterValue("srcfd");
 			dstfd = getParameterValue("dstfd");
 		} catch (ParameterNotFoundException e) {

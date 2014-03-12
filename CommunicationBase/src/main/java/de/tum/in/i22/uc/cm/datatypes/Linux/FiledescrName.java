@@ -16,10 +16,10 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 	private static final String PREFIX_FILE = "FILE_";
 
 	private final String _host;
-	private final String _pid;
+	private final int _pid;
 	private final String _fd;
 
-	private FiledescrName(String host, String pid, String fd, String name) {
+	private FiledescrName(String host, int pid, String fd, String name) {
 		super(name);
 
 		_host = host;
@@ -27,8 +27,8 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 		_fd = fd;
 	}
 
-	public static FiledescrName create(String host, String pid, String fd) {
-		return new FiledescrName(host, pid, fd, PREFIX_FILE + host + "x" + pid + "x" + fd);
+	public static FiledescrName create(String host, int pid, String fd) {
+		return new FiledescrName(host, pid, fd, PREFIX_FILE + host + "." + pid + "." + fd);
 	}
 
 	public String getHost() {
@@ -36,7 +36,7 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 	}
 
 	@Override
-	public String getPid() {
+	public int getPid() {
 		return _pid;
 	}
 
@@ -70,7 +70,7 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 	}
 
 	@Override
-	public IClonableForProcess cloneFor(String pid) {
+	public IClonableForProcess cloneFor(int pid) {
 		return FiledescrName.create(_host, pid, _fd);
 	}
 }

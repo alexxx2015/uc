@@ -20,12 +20,12 @@ public class ExecveEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String filename = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			filename = getParameterValue("filename");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

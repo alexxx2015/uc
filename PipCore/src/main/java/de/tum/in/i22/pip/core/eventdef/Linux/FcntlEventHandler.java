@@ -12,14 +12,14 @@ public class FcntlEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String operation = null;
 		String oldfd = null;
 		String newfd = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			operation = getParameterValue("operation");
 			oldfd = getParameterValue("oldfd");
 			newfd = getParameterValue("newfd");
@@ -27,7 +27,7 @@ public class FcntlEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
+
 		switch (operation) {
 		case "dupfd":
 			IName oldName = FiledescrName.create(host, pid, oldfd);
@@ -36,7 +36,7 @@ public class FcntlEventHandler extends BaseEventHandler {
 			break;
 		}
 
-		
+
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

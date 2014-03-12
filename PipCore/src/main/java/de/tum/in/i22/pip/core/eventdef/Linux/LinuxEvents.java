@@ -14,7 +14,6 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
@@ -67,7 +66,7 @@ public class LinuxEvents {
 	 * @param at_fdcwd
 	 * @param truncate
 	 */
-	static void open(String host, String pid, String newfd, String dirfd, String filename, boolean at_fdcwd, boolean truncate) {
+	static void open(String host, int pid, String newfd, String dirfd, String filename, boolean at_fdcwd, boolean truncate) {
 		IName fdName = FiledescrName.create(host, pid, newfd);
 		IName fnName;
 
@@ -116,22 +115,10 @@ public class LinuxEvents {
 	}
 
 
-	static void exit(String host, String pid) {
+	static void exit(String host, int pid) {
 		ProcessContainer procCont = (ProcessContainer) ifModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return;
-		}
-
-		// all mapped files are unmapped upon process termination, cf. man 2 mmap
-		for (IContainer c : ifModel.getAliasesFromContainer(procCont)) {
-			if (c instanceof MmapContainer) {
-				ifModel.remove(c);
-			}
-		}
-		for (IContainer c : ifModel.getAliasesTo(procCont)) {
-			if (c instanceof MmapContainer) {
-				ifModel.remove(c);
-			}
 		}
 
 		ifModel.emptyContainer(procCont);

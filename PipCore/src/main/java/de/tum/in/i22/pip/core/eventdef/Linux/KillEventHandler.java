@@ -17,13 +17,13 @@ public class KillEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String srcPid = null;
-		String dstPid = null;
+		int srcPid;
+		int dstPid;
 
 		try {
 			host = getParameterValue("host");
-			srcPid = getParameterValue("srcPid");
-			dstPid = getParameterValue("dstPid");
+			srcPid = Integer.valueOf(getParameterValue("srcPid"));
+			dstPid = Integer.valueOf(getParameterValue("dstPid"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

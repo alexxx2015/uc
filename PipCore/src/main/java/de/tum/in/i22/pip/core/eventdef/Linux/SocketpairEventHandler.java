@@ -15,7 +15,7 @@ public class SocketpairEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd1 = null;
 		String fd2 = null;
 		String domain = null;
@@ -23,7 +23,7 @@ public class SocketpairEventHandler extends BaseEventHandler {
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd1 = getParameterValue("fd1");
 			fd2 = getParameterValue("fd2");
 			domain = getParameterValue("domain");

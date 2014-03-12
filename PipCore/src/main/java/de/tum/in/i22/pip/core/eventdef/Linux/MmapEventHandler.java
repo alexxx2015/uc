@@ -25,14 +25,14 @@ public class MmapEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd = null;
 		String addr = null;
 		String flags = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd = getParameterValue("fd");
 			addr = getParameterValue("addr");
 			flags = getParameterValue("flags");
@@ -45,41 +45,41 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * Using an additional intermediate MmapContainer will
 		 * allow us to remove the mapping/aliases upon munmap.
 		 * The following aliases will be created depending on mmap's parameters:
-		 * 
+		 *
 		 * +------------------+  PROT_READ  +------------------+   ALWAYS    +------------------+
-		 * |                  |<------------|                  |<------------|                  |	
+		 * |                  |<------------|                  |<------------|                  |
 		 * |     process      |             |      mmap        |             |       file       |
 		 * |                  |------------>|                  |------------>|                  |
 		 * +------------------+  PROT_WRITE +------------------+ MAP_SHARED  +------------------+
-		 * 
-		 * mmap events with flags PROT_NONE or MAP_ANONYMOUS will not be signalled. 
+		 *
+		 * mmap events with flags PROT_NONE or MAP_ANONYMOUS will not be signalled.
 		 * They are not interesting.
 		 */
-		
-		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|"))); 
-		
+
+		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|")));
+
 		IName mmapName = MmapName.create(host, pid, addr);
 		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
 
 		IName procName = ProcessName.create(host, pid);
 		IName fileName = FiledescrName.create(host, pid, fd);
-		
+
 		ifModel.addName(mmapName, mmapCont);
-		
+
 		ifModel.addAlias(fileName, mmapName);
-		
+
 		if (flagSet.contains("MAP_SHARED")) {
 			ifModel.addAlias(mmapName, fileName);
 		}
-		
+
 		if (flagSet.contains("PROT_READ")) {
 			ifModel.addAlias(mmapName, procName);
 		}
-		
+
 		if (flagSet.contains("PROT_WRITE")) {
 			ifModel.addAlias(procName, mmapName);
 		}
-		
+
 		// now copy data from file to mmap container and its aliases
 		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileName), mmapName);
 

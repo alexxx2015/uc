@@ -20,14 +20,14 @@ public class CloneEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String childPid = null;
-		String parentPid = null;
+		int childPid;
+		int parentPid;
 		String flags = null;
 
 		try {
 			host = getParameterValue("host");
-			childPid = getParameterValue("cpid");
-			parentPid = getParameterValue("ppid");
+			childPid = Integer.valueOf(getParameterValue("cpid"));
+			parentPid = Integer.valueOf(getParameterValue("ppid"));
 			flags = getParameterValue("flags");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

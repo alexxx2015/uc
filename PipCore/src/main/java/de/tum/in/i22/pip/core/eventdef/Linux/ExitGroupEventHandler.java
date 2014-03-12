@@ -21,7 +21,7 @@ public class ExitGroupEventHandler extends BaseEventHandler {
 		}
 
 		for (String pid : pids.split(":")) {
-			LinuxEvents.exit(host, pid);
+			LinuxEvents.exit(host, Integer.valueOf(pid));
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

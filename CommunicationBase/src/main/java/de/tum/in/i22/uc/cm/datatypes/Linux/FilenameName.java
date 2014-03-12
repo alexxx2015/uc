@@ -28,7 +28,7 @@ public class FilenameName extends NameBasic {
 	}
 
 	public static FilenameName create(String host, String filename) {
-		return new FilenameName(host, filename, PREFIX_FILE + host + "x" + filename);
+		return new FilenameName(host, filename, PREFIX_FILE + host + "." + filename);
 	}
 
 	public String getHost() {

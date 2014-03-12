@@ -17,7 +17,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String localIP = null;
 		String localPort = null;
 		String remoteIP = null;
@@ -31,7 +31,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			localIP = getParameterValue("localIP");
 			localPort = getParameterValue("localPort");
 			remoteIP = getParameterValue("remoteIP");

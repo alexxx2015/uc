@@ -14,17 +14,17 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	private static final String PREFIX_PROCESS = "PROC_";
 
 	private final String _host;
-	private final String _pid;
+	private final int _pid;
 
-	private ProcessName(String host, String pid, String name) {
+	private ProcessName(String host, int pid, String name) {
 		super(name);
 
 		_host = host;
 		_pid = pid;
 	}
 
-	public static ProcessName create(String host, String pid) {
-		return new ProcessName(host, pid, PREFIX_PROCESS + host + "x" + pid);
+	public static ProcessName create(String host, int pid) {
+		return new ProcessName(host, pid, PREFIX_PROCESS + host + "." + pid);
 	}
 
 	public String getHost() {
@@ -32,7 +32,7 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	}
 
 	@Override
-	public String getPid() {
+	public int getPid() {
 		return _pid;
 	}
 

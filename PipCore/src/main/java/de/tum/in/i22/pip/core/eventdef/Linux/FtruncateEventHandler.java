@@ -15,12 +15,12 @@ public class FtruncateEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd = getParameterValue("fd");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

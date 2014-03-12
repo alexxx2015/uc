@@ -35,11 +35,11 @@ public class SocketName extends NameBasic {
 	public static SocketName create(String host, String localIP, String localPort, String remoteIP, String remotePort) {
 		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
 			return new SocketName(host, localIP, localPort, remoteIP, remotePort,
-					PREFIX_SOCKET + host + ";" + localIP + ":" + localPort + "x" + remoteIP + ":" + remotePort);
+					PREFIX_SOCKET + host + "." + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
 		}
 
 		return new SocketName(host, localIP, localPort, remoteIP, remotePort,
-				PREFIX_SOCKET + localIP + ":" + localPort + "x" + remoteIP + ":" + remotePort);
+				PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
 	}
 
 	public String getHost() {

@@ -16,5 +16,5 @@ public interface IClonableForProcess extends IProcessRelativeName {
 	 *
 	 * @param pid
 	 */
-	public IClonableForProcess cloneFor(String pid);
+	public IClonableForProcess cloneFor(int pid);
 }

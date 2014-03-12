@@ -11,13 +11,13 @@ public class DupEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String oldfd = null;
 		String newfd = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			oldfd = getParameterValue("oldfd");
 			newfd = getParameterValue("newfd");
 		} catch (ParameterNotFoundException e) {

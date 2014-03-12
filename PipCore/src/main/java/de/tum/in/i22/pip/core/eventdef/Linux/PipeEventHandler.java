@@ -13,13 +13,13 @@ public class PipeEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd1 = null;
 		String fd2 = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd1 = getParameterValue("fd1");
 			fd2 = getParameterValue("fd2");
 		} catch (ParameterNotFoundException e) {
@@ -31,7 +31,7 @@ public class PipeEventHandler extends BaseEventHandler {
 
 		ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
 		ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
-			
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

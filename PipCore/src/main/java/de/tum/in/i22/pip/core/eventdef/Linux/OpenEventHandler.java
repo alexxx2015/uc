@@ -14,14 +14,14 @@ public class OpenEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
+		int pid;
 		String fd = null;
 		String filename = null;
 		boolean truncate = false;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			fd = getParameterValue("fd");
 			filename = getParameterValue("filename");
 			truncate = Boolean.valueOf(getParameterValue("trunc"));
