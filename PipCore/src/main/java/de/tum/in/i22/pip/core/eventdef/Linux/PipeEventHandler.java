@@ -32,7 +32,7 @@ public class PipeEventHandler extends BaseEventHandler {
 		ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
 		ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

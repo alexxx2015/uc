@@ -29,7 +29,7 @@ public class DupEventHandler extends BaseEventHandler {
 				FiledescrName.create(host, pid, oldfd),
 				FiledescrName.create(host, pid, newfd));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

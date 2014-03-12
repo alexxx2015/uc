@@ -27,7 +27,7 @@ public class TruncateEventHandler extends BaseEventHandler {
 
 		ifModel.emptyContainer(FilenameName.create(host, LinuxEvents.toAbsoluteFilename(filename)));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

@@ -29,7 +29,7 @@ public class FtruncateEventHandler extends BaseEventHandler {
 
 		ifModel.emptyContainer(FiledescrName.create(host, pid, fd));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

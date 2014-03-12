@@ -32,7 +32,7 @@ public class Dup2EventHandler extends BaseEventHandler {
 		ifModel.removeName(newName);
 		ifModel.addName(oldName, newName);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

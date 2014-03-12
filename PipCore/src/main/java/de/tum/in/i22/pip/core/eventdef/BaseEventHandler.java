@@ -26,6 +26,9 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	protected InformationFlowModel ifModel = getInformationFlowModel();
 
+	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
+	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
+
 	/*
 	 * scopes affected by the current event execution
 	 */

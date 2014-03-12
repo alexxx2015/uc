@@ -43,7 +43,7 @@ public class ShutdownEventHandler extends BaseEventHandler {
 
 		LinuxEvents.shutdown(FiledescrName.create(host, pid, fd), how);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 	public static enum Shut {

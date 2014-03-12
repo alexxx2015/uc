@@ -22,7 +22,7 @@ public class ExitEventHandler extends BaseEventHandler {
 
 		LinuxEvents.exit(host, pid);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

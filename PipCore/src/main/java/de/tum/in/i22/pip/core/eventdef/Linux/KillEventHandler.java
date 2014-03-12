@@ -38,6 +38,6 @@ public class KillEventHandler extends BaseEventHandler {
 			}
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

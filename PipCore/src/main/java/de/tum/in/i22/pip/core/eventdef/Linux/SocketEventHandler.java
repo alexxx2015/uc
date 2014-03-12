@@ -34,6 +34,6 @@ public class SocketEventHandler extends BaseEventHandler {
 				FiledescrName.create(host, pid, fd),
 				new SocketContainer(Domain.from(domain), Type.from(type)));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

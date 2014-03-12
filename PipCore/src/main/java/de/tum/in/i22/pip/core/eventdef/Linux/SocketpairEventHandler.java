@@ -46,7 +46,7 @@ public class SocketpairEventHandler extends BaseEventHandler {
 			_logger.fatal("Unable to create socket containers.");
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

@@ -36,17 +36,17 @@ public class WriteEventHandler extends BaseEventHandler {
 
 		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		Set<IData> data = ifModel.getDataInContainer(procCont);
 		if (data == null || data.size() == 0) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		// copy into all containers aliased from the destination container
@@ -60,6 +60,6 @@ public class WriteEventHandler extends BaseEventHandler {
 			ifModel.addDataToContainerMappings(data, fileCont);
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

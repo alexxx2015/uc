@@ -49,7 +49,7 @@ public class CloneEventHandler extends BaseEventHandler {
 
 		if (flagSet.contains("CLONE_FILES")) {
 			_logger.fatal("CLONE_FILES was set, but is not implemented.");
-			return _messageFactory.createStatus(EStatus.ERROR);
+			return STATUS_ERROR;
 		}
 
 		// Add the container for the newly created child
@@ -76,7 +76,7 @@ public class CloneEventHandler extends BaseEventHandler {
 			ifModel.copyData(oldProcCont, cont);
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

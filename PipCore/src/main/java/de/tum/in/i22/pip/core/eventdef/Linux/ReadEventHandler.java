@@ -35,23 +35,23 @@ public class ReadEventHandler extends BaseEventHandler {
 
 		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		Set<IData> data = ifModel.getDataInContainer(fileCont);
 		if (data == null || data.size() == 0) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(procCont)) {
 			ifModel.addDataToContainerMappings(data, c);
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

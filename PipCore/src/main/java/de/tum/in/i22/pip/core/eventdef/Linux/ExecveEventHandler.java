@@ -52,7 +52,7 @@ public class ExecveEventHandler extends BaseEventHandler {
 
 		ifModel.copyData(fileName, procName);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }
 

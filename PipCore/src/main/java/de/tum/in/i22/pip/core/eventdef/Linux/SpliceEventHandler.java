@@ -36,7 +36,7 @@ public class SpliceEventHandler extends BaseEventHandler {
 
 		ifModel.copyData(srcName, dstName);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

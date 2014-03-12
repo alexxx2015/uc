@@ -32,7 +32,7 @@ public class OpenEventHandler extends BaseEventHandler {
 
 		LinuxEvents.open(host, pid, fd, null, filename, true, truncate);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

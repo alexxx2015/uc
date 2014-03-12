@@ -36,9 +36,7 @@ public class FcntlEventHandler extends BaseEventHandler {
 			break;
 		}
 
-
-
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

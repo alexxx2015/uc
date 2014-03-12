@@ -30,7 +30,7 @@ public class CloseEventHandler extends BaseEventHandler {
 
 		LinuxEvents.close(FiledescrName.create(host, pid, fd));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

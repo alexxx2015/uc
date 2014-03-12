@@ -50,6 +50,6 @@ public class SendfileEventHandler extends BaseEventHandler {
 			ifModel.copyData(srcCont, dstCont);
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

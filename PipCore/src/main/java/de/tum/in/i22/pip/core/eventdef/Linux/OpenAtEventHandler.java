@@ -37,7 +37,7 @@ public class OpenAtEventHandler extends BaseEventHandler {
 
 		LinuxEvents.open(host, pid, newfd, dirfd, filename, at_fdcwd, truncate);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

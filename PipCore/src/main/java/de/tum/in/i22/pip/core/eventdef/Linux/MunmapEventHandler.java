@@ -30,6 +30,6 @@ public class MunmapEventHandler extends BaseEventHandler {
 
 		ifModel.remove(ifModel.getContainer(MmapName.create(host, pid, addr)));
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

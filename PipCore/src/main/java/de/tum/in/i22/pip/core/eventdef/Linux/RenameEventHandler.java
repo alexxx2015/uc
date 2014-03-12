@@ -35,7 +35,7 @@ public class RenameEventHandler extends BaseEventHandler {
 		ifModel.addName(oldN, newN);
 		ifModel.removeName(oldN);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

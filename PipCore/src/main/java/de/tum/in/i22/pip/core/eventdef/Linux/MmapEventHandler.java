@@ -61,12 +61,12 @@ public class MmapEventHandler extends BaseEventHandler {
 
 		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
@@ -88,6 +88,6 @@ public class MmapEventHandler extends BaseEventHandler {
 		// now copy data from file to mmap container and its aliases
 		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileCont), mmapCont);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }

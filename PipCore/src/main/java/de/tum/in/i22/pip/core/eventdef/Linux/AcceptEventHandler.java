@@ -50,12 +50,12 @@ public class AcceptEventHandler extends BaseEventHandler {
 		}
 		catch (ClassCastException e) {
 			_logger.fatal("Expected container did not exist or was of wrong type.");
-			return _messageFactory.createStatus(EStatus.ERROR);
+			return STATUS_ERROR;
 		}
 
 		if (oldContainer == null) {
 			_logger.fatal("Expected container did not exist or was of wrong type.");
-			return _messageFactory.createStatus(EStatus.ERROR);
+			return STATUS_ERROR;
 		}
 
 		// local_socket_name := (sn(e),(a,x))
@@ -93,7 +93,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 			if (remoteContainer == null) {
 				_logger.fatal("accept() happened, but corresponding connect() did not happen before. "
 						+ "The order of these events must be enforced by the PEP.");
-				return _messageFactory.createStatus(EStatus.ERROR);
+				return STATUS_ERROR;
 			}
 
 			ifModel.addAlias(localContainer, remoteContainer);
@@ -103,7 +103,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 		// add name of remote container
 		ifModel.addName(remoteSocketName, remoteContainer);
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 }
 
