@@ -7,6 +7,8 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 
 public class SchemaInitializerEventHandler extends BaseEventHandler {
 
@@ -44,6 +46,14 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
 		_logger.debug(ifModel.toString());
 		}
+
+		/*
+		 * for FK.
+		 */
+		IContainer file = new FileContainer();
+		IData data = _messageFactory.createData("MY_DATA");
+		ifModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file);
+		ifModel.addDataToContainerMapping(data, file);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
