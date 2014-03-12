@@ -184,4 +184,8 @@ public class EventBasic implements IEvent {
 	public int hashCode() {
 		return Objects.hash(_name, _isActual, _parameters);
 	}
+
+	public String niceString() {
+		return _name + _parameters;
+	}
 }

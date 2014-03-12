@@ -1,6 +1,7 @@
 package de.tum.in.i22.pip.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -755,5 +756,82 @@ public class InformationFlowModel {
 		}
 
 		return result;
+	}
+
+	public String niceString() {
+		StringBuilder sb = new StringBuilder();
+
+		String nl = System.getProperty("line.separator");
+		String arrow = " ---> ";
+		String arrowL = " <--- ";
+
+		sb.append("  Storage:" + nl);
+		for (Entry<IContainer,Set<IData>> entry :_containerToDataMap.entrySet()) {
+			sb.append("    " + entry.getKey().getId() + arrow);
+			boolean first = true;
+			for (IData d : entry.getValue()) {
+				if (first) {
+					first = false;
+				}
+				else {
+					sb.append("    ");
+					for (int i = 0; i < entry.getKey().getId().length() + arrow.length(); i++) {
+						sb.append(" ");
+					}
+				}
+				sb.append(d.getId() + nl);
+			}
+		}
+		sb.append(nl);
+
+		sb.append("  Aliases:" + nl);
+		for (Entry<IContainer,Set<IContainer>> entry :_aliasesMap.entrySet()) {
+			sb.append("    " + entry.getKey().getId() + arrow);
+			boolean first = true;
+			for (IContainer c : entry.getValue()) {
+				if (first) {
+					first = false;
+				}
+				else {
+					sb.append("    ");
+					for (int i = 0; i < entry.getKey().getId().length() + arrow.length(); i++) {
+						sb.append(" ");
+					}
+				}
+				sb.append(c.getId() + nl);
+			}
+		}
+		sb.append(nl);
+
+		sb.append("  Naming:" + nl);
+		Set<IContainer> wasPrinted = new HashSet<IContainer>();
+		for (IContainer cont : _namingMap.values()) {
+			if (wasPrinted.contains(cont)) {
+				continue;
+			}
+
+			wasPrinted.add(cont);
+			sb.append("    " + cont.getId() + arrowL);
+			boolean first = true;
+			for (IName name : _namingMap.keySet()) {
+				if (_namingMap.get(name).equals(cont)) {
+					if (first) {
+						first = false;
+					}
+					else {
+						sb.append("    ");
+						for (int i = 0; i < cont.getId().length() + arrowL.length(); i++) {
+							sb.append(" ");
+						}
+					}
+					sb.append(name.getName() + nl);
+				}
+			}
+		}
+		sb.append(nl);
+
+		sb.append("-----------------------------------------------");
+
+		return sb.toString();
 	}
 }
