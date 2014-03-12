@@ -547,17 +547,21 @@ public class InformationFlowModel {
 	}
 
 	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
-		if (data == null || data.size() == 0|| dstContainerName == null) {
+		if (dstContainerName == null) {
 			return;
 		}
 
-		IContainer dstContainer = getContainer(dstContainerName);
+		addDataToContainerAndAliases(data, getContainer(dstContainerName));
+	}
 
-		if (dstContainer != null) {
-			addDataToContainerMappings(data, dstContainer);
-			for (IContainer c : getAliasesFromContainer(dstContainer)) {
-				addDataToContainerMappings(data, c);
-			}
+	public void addDataToContainerAndAliases(Set<IData> data, IContainer dstContainer) {
+		if (data == null || data.size() == 0 || dstContainer == null) {
+			return;
+		}
+
+		addDataToContainerMappings(data, dstContainer);
+		for (IContainer c : getAliasesFromContainer(dstContainer)) {
+			addDataToContainerMappings(data, c);
 		}
 	}
 
@@ -637,10 +641,8 @@ public class InformationFlowModel {
 	 */
 	public void removeName(IName name) {
 		if (name != null) {
-			IContainer cont = _namingMap.get(name);
-
 			_logger.info("removeName() " + name);
-			_namingMap.remove(name);
+			IContainer cont = _namingMap.remove(name);
 
 			// if this was the last name, we can remove the container
 			List<IName> remainingNames = getAllNames(cont);
