@@ -24,48 +24,35 @@ public class PepClientNativeHandler {
 		}
 	}
 
-	public static Object getResponse(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
+	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		if (event == null) {
-			// TODO rather: respond
-			return null;
-		}
-
 		Object response = null;
 
-		synchronized (responses) {
-			while (response == null) {
-				try {
-					responses.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					return null;
+		if (event != null) {
+			RequestHandler requestHandler = RequestHandler.getInstance();
+
+			if (isActual) {
+				requestHandler.addEvent(event, new IForwarder() {
+					@Override
+					public void forwardResponse(Object response) { }
+				});
+			}
+			else {
+				synchronized(responses) {
+					requestHandler.addEvent(event, new PepClientNativeForwarder(event));
 				}
-				response = responses.remove(event);
+
+				synchronized (responses) {
+					response = responses.remove(event);
+					while (response == null) {
+						responses.wait();
+						response = responses.remove(event);
+					}
+				}
 			}
 		}
 
 		return response;
-	}
-
-	public static void notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
-		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		if (event == null) {
-			// TODO rather: respond
-			return;
-		}
-
-		RequestHandler requestHandler = RequestHandler.getInstance();
-
-		if (isActual) {
-			requestHandler.addEvent(event, new IForwarder() {
-				@Override
-				public void forwardResponse(Object response) { }
-			});
-		}
-		else {
-			requestHandler.addEvent(event, new PepClientNativeForwarder(event));
-		}
 	}
 
 	private static IEvent assembleEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
