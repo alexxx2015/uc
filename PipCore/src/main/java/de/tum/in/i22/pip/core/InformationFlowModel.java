@@ -286,9 +286,6 @@ public class InformationFlowModel {
 			for (IName key : toRemove) {
 				_namingMap.remove(key);
 			}
-
-			// no more names, so we can also remove the container
-			remove(cont);
 		}
 	}
 
@@ -358,7 +355,7 @@ public class InformationFlowModel {
 		Set<IContainer> result;
 
 		if (cont == null || (result = _aliasesMap.get(cont)) == null) {
-			result = new HashSet<>();
+			result = Collections.emptySet();
 		}
 
 		return result;
@@ -373,7 +370,7 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
 		if (container == null) {
-			return null;
+			return Collections.emptySet();
 		}
 
 		Set<IContainer> closure = getAliasTransitiveClosure(container);
@@ -398,10 +395,23 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public void removeAllAliasesTo(IContainer toContainer) {
-		if (toContainer != null) {
-			for (IContainer from : _aliasesMap.keySet()) {
-				_aliasesMap.get(from).remove(toContainer);
+		if (toContainer == null) {
+			return;
+		}
+
+		List<IContainer> toRemove = new ArrayList<IContainer>();
+
+		for (IContainer from : _aliasesMap.keySet()) {
+			Set<IContainer> toSet = _aliasesMap.get(from) ;
+			if (toSet != null && toSet.remove(toContainer)) {
+				if (toSet.size() == 0) {
+					toRemove.add(from);
+				}
 			}
+		}
+
+		for (IContainer rem : toRemove) {
+			_aliasesMap.remove(rem);
 		}
 	}
 
@@ -474,7 +484,7 @@ public class InformationFlowModel {
 	public Set<IData> getDataInContainer(IContainer container) {
 		Set<IData> result;
 		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
-			result = new HashSet<IData>();
+			result = Collections.emptySet();
 		}
 		return result;
 	}
@@ -494,7 +504,7 @@ public class InformationFlowModel {
 				return _containerToDataMap.get(cont);
 			}
 		}
-		return null;
+		return Collections.emptySet();
 	}
 
 
@@ -535,7 +545,7 @@ public class InformationFlowModel {
 	}
 
 	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
-		if (data == null || dstContainerName == null) {
+		if (data == null || data.size() == 0|| dstContainerName == null) {
 			return;
 		}
 
@@ -580,15 +590,15 @@ public class InformationFlowModel {
 
 	// Naming set manipulation functions:
 	/**
-	 * Adds an entry to the naming mapping for container contID, with the
+	 * Adds an entry to the naming mapping for container, with the
 	 * naming/representation name.
 	 *
 	 * @param name
-	 * @param containerId
+	 * @param container
 	 * @return
 	 */
 	public boolean addName(IName name, IContainer container) {
-		if (name == null) {
+		if (name == null || container == null) {
 			return false;
 		}
 
@@ -749,7 +759,7 @@ public class InformationFlowModel {
 		for (IName name : _namingMap.keySet()) {
 			if (name instanceof IProcessRelativeName) {
 				IProcessRelativeName pname = (IProcessRelativeName) name;
-				if (pname.getPid().equals(procCont.getPid())) {
+				if (pname.getPid() == procCont.getPid()) {
 					result.add(pname);
 				}
 			}
