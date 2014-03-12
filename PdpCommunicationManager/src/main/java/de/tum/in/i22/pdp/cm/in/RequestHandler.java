@@ -3,8 +3,8 @@ package de.tum.in.i22.pdp.cm.in;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -19,9 +19,11 @@ import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
+import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -35,9 +37,9 @@ public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
 	private final static RequestHandler _instance = new RequestHandler();
 
-	// The queue. Watch out to synchronize access to it: synchronized (_requestQueue).
-	private final BlockingQueue<RequestWrapper> _requestQueue =
-			new ArrayBlockingQueue<RequestWrapper>(PdpSettings.getInstance().getQueueSize(), true);
+	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
+	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
+	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
 
 	private IIncoming pdpHandler;
 	private IPdp2PipTcp _pdp2PipProxy = null;
@@ -110,19 +112,15 @@ public class RequestHandler implements Runnable {
 		_requestQueue.add(obj);
 	}
 
-	public void addEvent(IEvent event, IForwarder forwarder)
-			throws InterruptedException {
+	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {
 		add(new PepNotifyEventRequestWrapper(forwarder, event));
 	}
 
-	public void addPipRequest(PipRequest request, IForwarder forwarder)
-			throws InterruptedException {
-		// add pipRequest to the tail of the queue
+	public void addPipRequest(PipRequest request, IForwarder forwarder) throws InterruptedException {
 		add(new PipRequestWrapper(forwarder, request));
 	}
 
-	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
-			throws InterruptedException {
+	public void addPmpRequest(PmpRequest request, IForwarder forwarder) throws InterruptedException {
 		add(new PmpRequestWrapper(forwarder, request));
 	}
 
