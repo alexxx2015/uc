@@ -2,6 +2,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
@@ -30,7 +32,8 @@ public class LinuxEvents {
 	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 
 	/*
-	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair: some file descriptors close automatically on execve()
+	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
+	 *some file descriptors close automatically on execve()
 	 */
 
 
@@ -126,7 +129,7 @@ public class LinuxEvents {
 		ifModel.removeAllAliasesTo(procCont);
 		ifModel.remove(procCont);
 
-		for (IName nm : ifModel.getAllProcessRelativeNames(procCont)) {
+		for (IName nm : getAllProcessRelativeNames(procCont.getPid())) {
 			LinuxEvents.close(nm);
 		}
 	}
@@ -199,5 +202,28 @@ public class LinuxEvents {
 				}
 			}
 		}
+	}
+
+
+
+	public static List<IName> getAllProcessRelativeNames(int pid) {
+		List<IName> result = new ArrayList<IName>();
+
+		for (IName name : ifModel.getAllNames()) {
+			if (name instanceof IProcessRelativeName) {
+				IProcessRelativeName pname = (IProcessRelativeName) name;
+				if (pname.getPid() == pid) {
+					result.add(pname);
+				}
+			}
+//			else if (name instanceof SharedFiledescrName) {
+//				SharedFiledescrName sname = (SharedFiledescrName) name;
+//				if (sname.isSharedWith(pid)) {
+//					result.add(sname);
+//				}
+//			}
+		}
+
+		return result;
 	}
 }
