@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.ImmutableSet;
+
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -687,6 +689,18 @@ public class InformationFlowModel {
 		return container;
 	}
 
+
+	/**
+	 * Returns the set of all names.
+	 * The returned set is unmodifiable as described in
+	 * Collections.unmodifiableSet()
+	 * @return
+	 */
+	public Set<IName> getAllNames() {
+		return Collections.unmodifiableSet(_namingMap.keySet());
+	}
+
+
 	/**
 	 * Return all names that refer to the container with containerId.
 	 *
@@ -753,20 +767,7 @@ public class InformationFlowModel {
 	}
 
 
-	public List<IProcessRelativeName> getAllProcessRelativeNames(ProcessContainer procCont) {
-		List<IProcessRelativeName> result = new ArrayList<IProcessRelativeName>();
 
-		for (IName name : _namingMap.keySet()) {
-			if (name instanceof IProcessRelativeName) {
-				IProcessRelativeName pname = (IProcessRelativeName) name;
-				if (pname.getPid() == procCont.getPid()) {
-					result.add(pname);
-				}
-			}
-		}
-
-		return result;
-	}
 
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
