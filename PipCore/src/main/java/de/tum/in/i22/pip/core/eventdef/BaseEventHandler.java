@@ -44,10 +44,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 		super();
 	}
 
-	public IEvent getEvent() {
-		return _event;
-	}
-
 	/*
 	 * Event-specific class that creates the scopes (usually only one) that are
 	 * opened/closed by the execution of the current event. The scopes to be
@@ -119,10 +115,9 @@ public abstract class BaseEventHandler implements IEventHandler {
 	@Override
 	public IStatus executeEvent() {
 
-		IEvent e = getEvent();
-		if (e == null)
+		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters().size() == 0)
+		if (_event.getParameters().size() == 0)
 			return _messageFactory
 					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 
@@ -189,7 +184,9 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	@Override
 	public void setEvent(IEvent event) {
-		_event = event;
+		if (event != null) {
+			_event = event;
+		}
 	}
 
 	protected String getParameterValue(String key) throws ParameterNotFoundException {
