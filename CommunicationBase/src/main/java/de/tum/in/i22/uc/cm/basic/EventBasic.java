@@ -177,6 +177,6 @@ public class EventBasic implements IEvent {
 	}
 
 	public String niceString() {
-		return _name + _parameters;
+		return _name + (_isActual ? "[Actual]" : "[Desired]") +_parameters;
 	}
 }
