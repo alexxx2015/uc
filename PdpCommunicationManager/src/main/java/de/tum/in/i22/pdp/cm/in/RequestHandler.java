@@ -175,7 +175,10 @@ public class RequestHandler implements Runnable {
 			}
 
 			_logger.trace("event " + request.toString() + " processed. forward response");
-			request.getForwarder().forwardResponse(response);
+			IForwarder forwarder = request.getForwarder();
+			if (forwarder != null) {
+				forwarder.forwardResponse(response);
+			}
 			_logger.trace("response forwarded");
 		}
 
