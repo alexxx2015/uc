@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 
 /**
@@ -80,14 +81,14 @@ public class LinuxEvents {
 
 			IName dirfdName = FiledescrName.create(host, pid, dirfd);
 
-			List<IName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
+			List<FilenameName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
 
 			// the resulting list should always be of size 1.
 			if (names.size() != 1) {
 				_logger.error("There was not exactly one filename for " + dirfdName);
 			}
 			else {
-				File path = new File(((FilenameName) names.get(0)).getFilename());
+				File path = new File(names.get(0).getFilename());
 
 				String pathStr = LinuxEvents.getAbsolutePath(path);
 
@@ -136,70 +137,45 @@ public class LinuxEvents {
 
 
 	static void close(IName name) {
-		if (name instanceof SocketName) {
-			LinuxEvents.closeSocket(name);
-		}
+		IContainer cont = ifModel.getContainer(name);
+
 		ifModel.removeName(name);
-	}
 
-	private static void closeSocket(IName name) {
-		IContainer container = ifModel.getContainer(name);
-
-		int count = 0;
-
-		if (container != null) {
-			for (IName n : ifModel.getAllNames(container)) {
-				if (!(n instanceof SocketName)) {
-					count++;
-				}
+		if (cont instanceof SocketContainer) {
+			if (ifModel.getAllNames(cont, FiledescrName.class).size() == 0) {
+				shutdownSocket((SocketContainer) cont, Shut.SHUT_RDWR);
 			}
-		}
-
-		if (count == 1) {
-			shutdown(name, Shut.SHUT_RDWR);
 		}
 	}
 
-	static void shutdown(IName name, Shut how) {
-		if (name == null || how == null) {
-			return;
+	static void shutdownSocket(SocketContainer cont, Shut how) {
+		List<SocketName> allSocketNames = ifModel.getAllNames(cont, SocketName.class);
+
+		if (how == Shut.SHUT_RD || how == Shut.SHUT_RDWR) {
+			// disallow reception
+			ifModel.emptyContainer(cont);
+			ifModel.removeAllAliasesTo(cont);
 		}
 
-		IContainer container = ifModel.getContainer(name);
+		if (how == Shut.SHUT_WR || how == Shut.SHUT_RDWR) {
+			// disallow transmission
+			ifModel.removeAllAliasesFrom(cont);
+		}
 
-		if (container != null) {
-			List<IName> allNames = ifModel.getAllNames(container);
-
-			if (how == Shut.SHUT_RD || how == Shut.SHUT_RDWR) {
-				// disallow reception
-				ifModel.emptyContainer(container);
-				ifModel.removeAllAliasesTo(container);
+		if (how == Shut.SHUT_RDWR) {
+			// disallow transmission and reception,
+			// therefore delete all socket identifiers
+			for (SocketName n : allSocketNames) {
+				ifModel.removeName(n);
 			}
+		}
 
-			if (how == Shut.SHUT_WR || how == Shut.SHUT_RDWR) {
-				// disallow transmission
-				ifModel.removeAllAliasesFrom(container);
-			}
+		for (SocketName n : allSocketNames) {
+			// if remote IP is in fact remote, then do a remote call to tell about connection teardown
+			if (!(n.getRemoteIP().equals(n.getLocalIP()))) {
+				IContainer remoteContainer = ifModel.getContainer(n);
 
-			if (how == Shut.SHUT_RDWR) {
-				// disallow transmission and reception,
-				// therefore delete all socket identifiers
-				for (IName n : allNames) {
-					if (n instanceof SocketName) {
-						ifModel.removeName(n);
-					}
-				}
-			}
-
-			for (IName n : allNames) {
-				if (n instanceof SocketName) {
-					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
-					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {
-						IContainer remoteContainer = ifModel.getContainer(n);
-
-						// TODO remote call
-					}
-				}
+				// TODO remote call
 			}
 		}
 	}

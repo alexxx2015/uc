@@ -16,41 +16,35 @@ public class SocketName extends NameBasic {
 
 	static final String PREFIX_SOCKET = "SOCK_";
 
-	private final String _host;
 	private final String _localIP;
-	private final String _localPort;
+	private final int _localPort;
 	private final String _remoteIP;
-	private final String _remotePort;
+	private final int _remotePort;
 
-	private SocketName(String host, String localIP, String localPort, String remoteIP, String remotePort, String name) {
+	private SocketName(String localIP, int localPort, String remoteIP, int remotePort, String name) {
 		super(name);
 
-		_host = host;
 		_localIP = localIP;
 		_localPort = localPort;
 		_remoteIP = remoteIP;
 		_remotePort = remotePort;
 	}
 
-	public static SocketName create(String host, String localIP, String localPort, String remoteIP, String remotePort) {
+	public static SocketName create(String localIP, int localPort, String remoteIP, int remotePort) {
 		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
-			return new SocketName(host, localIP, localPort, remoteIP, remotePort,
-					PREFIX_SOCKET + host + "." + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
+			return new SocketName(localIP, localPort, remoteIP, remotePort,
+					PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
 		}
 
-		return new SocketName(host, localIP, localPort, remoteIP, remotePort,
+		return new SocketName(localIP, localPort, remoteIP, remotePort,
 				PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
-	}
-
-	public String getHost() {
-		return _host;
 	}
 
 	public String getLocalIP() {
 		return _localIP;
 	}
 
-	public String getLocalPort() {
+	public int getLocalPort() {
 		return _localPort;
 	}
 
@@ -58,7 +52,7 @@ public class SocketName extends NameBasic {
 		return _remoteIP;
 	}
 
-	public String getRemotePort() {
+	public int getRemotePort() {
 		return _remotePort;
 	}
 
@@ -66,8 +60,7 @@ public class SocketName extends NameBasic {
 	public boolean equals(Object obj) {
 		if (obj instanceof SocketName) {
 			SocketName o = (SocketName) obj;
-			return Objects.equals(_host, o._host)
-					&& Objects.equals(_localIP, o._localIP)
+			return Objects.equals(_localIP, o._localIP)
 					&& Objects.equals(_localPort, o._localPort)
 					&& Objects.equals(_remoteIP, o._remoteIP)
 					&& Objects.equals(_remotePort, o._remotePort);
@@ -77,13 +70,12 @@ public class SocketName extends NameBasic {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_host, _localIP, _localPort, _remoteIP, _remotePort);
+		return Objects.hash(_localIP, _localPort, _remoteIP, _remotePort);
 	}
 
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_host", _host)
 				.add("_localIP", _localIP)
 				.add("_localPort", _localPort)
 				.add("_remoteIP", _remoteIP)

@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.cm.basic.NameBasic;
  */
 public class FiledescrName extends NameBasic implements IProcessRelativeName, IClonableForProcess {
 
-	private static final String PREFIX_FILE = "FILE_";
+	private static final String PREFIX_FILE = "FDSC_";
 
 	private final String _host;
 	private final int _pid;

@@ -4,6 +4,7 @@ import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 
 /**
  *
@@ -41,7 +42,8 @@ public class ShutdownEventHandler extends BaseEventHandler {
 			how = Shut.SHUT_RDWR;
 		}
 
-		LinuxEvents.shutdown(FiledescrName.create(host, pid, fd), how);
+		SocketContainer cont = (SocketContainer) ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		LinuxEvents.shutdownSocket(cont, how);
 
 		return STATUS_OKAY;
 	}

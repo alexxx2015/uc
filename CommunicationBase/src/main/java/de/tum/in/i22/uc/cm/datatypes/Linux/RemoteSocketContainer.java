@@ -2,8 +2,6 @@ package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.distribution.ILocation;
 
 /**
@@ -13,10 +11,11 @@ import de.tum.in.i22.uc.distribution.ILocation;
  * @author Florian Kelbert
  *
  */
-public class RemoteContainer extends ContainerBasic {
+public class RemoteSocketContainer extends SocketContainer {
 	private final ILocation _location;
 
-	public RemoteContainer(IName name, ILocation location) {
+	public RemoteSocketContainer(Domain domain, Type type, ILocation location) {
+		super(domain, type);
 		_location = location;
 	}
 
@@ -36,8 +35,8 @@ public class RemoteContainer extends ContainerBasic {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof RemoteContainer) {
-			RemoteContainer o = (RemoteContainer) obj;
+		if (obj instanceof RemoteSocketContainer) {
+			RemoteSocketContainer o = (RemoteSocketContainer) obj;
 			return super.equals(obj)
 					&& Objects.equals(_location, o._location);
 		}
