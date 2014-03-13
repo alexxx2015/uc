@@ -16,9 +16,11 @@ public class LoadEventHandler extends BaseEventHandler {
 
 	@Override
 	public int createScope() {
+		String filename;
+
 		try {
 			_delimiter = getParameterValue(_delimiterName);
-			getFilename();
+			filename = getParameterValue("filename");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -28,10 +30,10 @@ public class LoadEventHandler extends BaseEventHandler {
 		// check whether a scope with this loading have been already started
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("app", "Thunderbird");
-		attributes.put("filename", _filename);
+		attributes.put("filename", filename);
 
 
-		Scope scope = new Scope("TB loading file " + _filename + " OPEN",
+		Scope scope = new Scope("TB loading file " + filename + " OPEN",
 				Scope.scopeType.GENERIC_IN, attributes);
 
 		if (_delimiter.equals(_openDelimiter)) {

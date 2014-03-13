@@ -26,10 +26,12 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 	public int createScope() {
 		String delimiter = null;
 		String direction = null;
+		String filename = null;
 
 		try {
 			delimiter = getParameterValue(_delimiterName);
-			getFilename();
+			direction= getParameterValue(_directionName);
+			filename = getParameterValue("filename");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return 0;
@@ -39,16 +41,7 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 
 		// create the new scope
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("filename", _filename);
-
-
-		try {
-			direction= getParameterValue(_directionName);
-			getFilename();
-		} catch (ParameterNotFoundException e) {
-			_logger.error(e.getMessage());
-			return 0;
-		}
+		attributes.put("filename", filename);
 
 
 		Scope.scopeType type=null;
@@ -67,14 +60,14 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 		}
 
 		if (delimiter.equals(_openDelimiter)) {
-			Scope scope = new Scope(HRscope + _filename,
+			Scope scope = new Scope(HRscope + filename,
 					type, attributes);
 			// opening already handled at step 2 of executeEvent in BaseEventHandler
 			//			openScope(scope);
 			if (_scopesToBeOpened==null) _scopesToBeOpened=new HashSet<Scope>();
 			_scopesToBeOpened.add(scope);
 		} else if (delimiter.equals(_closeDelimiter)) {
-			Scope scope = new Scope(HRscope + _filename,
+			Scope scope = new Scope(HRscope + filename,
 					type, attributes);
 			// closing already handled at step 4 of executeEvent in BaseEventHandler
 			//			closeScope(scope);

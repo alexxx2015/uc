@@ -43,27 +43,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 
-	/*
-	 * Filename is a very common parameter, thus we write a small function to
-	 * retrieve it instead of duplicating code, and we store it as a class field
-	 */
-	protected String _filename = null;
-
-	/*
-	 * Auxiliary function to retrieve the parameter filename
-	 */
-	protected final IStatus getFilename() {
-		try {
-			_filename = getParameterValue("filename");
-			return _messageFactory.createStatus(EStatus.OKAY);
-
-		} catch (ParameterNotFoundException e) {
-			_logger.error(e.getMessage());
-			return _messageFactory.createStatus(
-					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
-		}
-	}
-
 	public BaseEventHandler() {
 		super();
 	}
@@ -206,8 +185,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 			}
 		}
 
-		if (finalStatus.isSameStatus(_messageFactory
-				.createStatus(EStatus.ERROR)))
+		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR)))
 			finalStatus.setErrorMessage(errorString);
 
 		return finalStatus;
@@ -241,6 +219,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 *            Process ID (PID)
 	 * @return
 	 */
+	// TODO, FK: This should _NOT_ be part of the *generic* BaseEventHandler
 	protected IContainer instantiateProcess(String processId, String processName) {
 		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer container = ifModel.getContainer(new NameBasic(processId));
