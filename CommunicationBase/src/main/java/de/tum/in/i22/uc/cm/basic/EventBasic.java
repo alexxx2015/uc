@@ -20,17 +20,15 @@ public class EventBasic implements IEvent {
 	private String _name = null;
 	private String _pep = null;
 	private boolean _isActual = false;
-	private Map<String, String> _parameters = null;
+	private final Map<String, String> _parameters = new HashMap<>();
 	private long _timestamp;
-
-	public EventBasic() {
-		_parameters = new HashMap<>();
-	}
 
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
-		_parameters = map;
-		setPep(map);
+		if (map != null) {
+			_parameters.putAll(map);
+			_pep = _parameters.get(PEP_PARAMETER_KEY);
+		}
 	}
 
 	public EventBasic(String name, Map<String, String> map, boolean isActual) {
@@ -51,7 +49,6 @@ public class EventBasic implements IEvent {
 		//number of elements in the map
 		int count = gpEvent.getMapEntryCount();
 		if (count > 0) {
-			_parameters = new HashMap<String, String>();
 			Iterator<GpMapEntry> it = gpEvent.getMapEntryList().iterator();
 			while (it.hasNext()) {
 				GpMapEntry entry = it.next();
@@ -59,7 +56,7 @@ public class EventBasic implements IEvent {
 			}
 		}
 
-		setPep(_parameters);
+		_pep = _parameters.get(PEP_PARAMETER_KEY);
 
 		// Insert timestamp
 		if (gpEvent.hasTimestamp() && gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
@@ -89,12 +86,6 @@ public class EventBasic implements IEvent {
 	@Override
 	public String getName() {
 		return _name;
-	}
-
-	private void setPep(Map<String,String> parameters) {
-		if (parameters != null) {
-			_pep = parameters.get(PEP_PARAMETER_KEY);
-		}
 	}
 
 	@Override

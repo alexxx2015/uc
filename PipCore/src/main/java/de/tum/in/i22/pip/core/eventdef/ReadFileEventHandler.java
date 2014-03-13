@@ -21,8 +21,6 @@ public class ReadFileEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String fileName = null;
 		String pid = null;
-
-		// currently not used
 		String processName = null;
 
 		try {

@@ -1,6 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -17,10 +16,8 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public abstract class BaseEventHandler implements IEventHandler {
-	protected final IMessageFactory _messageFactory = MessageFactoryCreator
-			.createMessageFactory();
-	protected static final Logger _logger = Logger
-			.getLogger(BaseEventHandler.class);
+	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
+	protected static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
 
@@ -125,7 +122,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 		IEvent e = getEvent();
 		if (e == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters() == null)
+		if (e.getParameters().size() == 0)
 			return _messageFactory
 					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 
@@ -196,12 +193,12 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	protected String getParameterValue(String key) throws ParameterNotFoundException {
-		Map<String, String> parameters = getEvent().getParameters();
-		if (parameters != null && parameters.containsKey(key)) {
-			return parameters.get(key);
-		} else {
+		String value = _event.getParameters().get(key);
+
+		if (value == null) {
 			throw new ParameterNotFoundException(key);
 		}
+		return value;
 	}
 
 	/**
