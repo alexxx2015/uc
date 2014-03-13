@@ -1,7 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -39,7 +37,6 @@ public class CreateProcessEventHandler extends BaseEventHandler {
         IContainer processContainer = instantiateProcess(pid, processName);
         IContainer parentProcessContainer = instantiateProcess(parentPid, parentProcessName);
 
-        InformationFlowModel ifModel = getInformationFlowModel();
         //add data of parent process container to child process container
         ifModel.addDataToContainerMappings(ifModel.getDataInContainer(parentProcessContainer), processContainer);
 
@@ -53,7 +50,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
 
             if(windowContainer == null)
             {
-            	IContainer container = _messageFactory.createContainer();
+            	windowContainer = _messageFactory.createContainer();
                 ifModel.addName(new NameBasic(handle), windowContainer);
             }
 

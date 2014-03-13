@@ -1,9 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import org.apache.log4j.Logger;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -18,10 +14,6 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  *
  */
 public class CreateDCEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(CreateDcEventHandler.class);
-
 	public CreateDCEventHandler() {
 		super();
 	}
@@ -44,7 +36,6 @@ public class CreateDCEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer deviceContainer = ifModel.getContainer(new NameBasic(
 				deviceName));
 

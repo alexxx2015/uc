@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -31,7 +30,6 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer processContainer = ifModel.getContainer(new NameBasic(pid));
 
 		// check if container for process exists

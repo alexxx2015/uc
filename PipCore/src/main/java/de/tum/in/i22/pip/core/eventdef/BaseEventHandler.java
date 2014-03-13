@@ -24,7 +24,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	private IEvent _event;
 
-	protected InformationFlowModel ifModel = getInformationFlowModel();
+	protected InformationFlowModel ifModel = InformationFlowModel.getInstance();
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
@@ -70,7 +70,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * final.
 	 */
 	protected final IStatus openScope(Scope scope) {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		boolean isOpen = ifModel.isScopeOpened(scope);
 
 		if (isOpen | !(ifModel.openScope(scope))) {
@@ -91,7 +90,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * It should be final.
 	 */
 	protected final IStatus closeScope(Scope scope) {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		boolean isOpen = ifModel.isScopeOpened(scope);
 
 		if (!(isOpen) | !(ifModel.closeScope(scope))) {
@@ -197,18 +195,13 @@ public abstract class BaseEventHandler implements IEventHandler {
 		_event = event;
 	}
 
-	protected String getParameterValue(String key)
-			throws ParameterNotFoundException {
+	protected String getParameterValue(String key) throws ParameterNotFoundException {
 		Map<String, String> parameters = getEvent().getParameters();
 		if (parameters != null && parameters.containsKey(key)) {
 			return parameters.get(key);
 		} else {
 			throw new ParameterNotFoundException(key);
 		}
-	}
-
-	protected InformationFlowModel getInformationFlowModel() {
-		return InformationFlowModel.getInstance();
 	}
 
 	/**
@@ -221,7 +214,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	// TODO, FK: This should _NOT_ be part of the *generic* BaseEventHandler
 	protected IContainer instantiateProcess(String processId, String processName) {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer container = ifModel.getContainer(new NameBasic(processId));
 
 		// check if container for process exists and create new container if not

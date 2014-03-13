@@ -1,9 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import org.apache.log4j.Logger;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -12,10 +8,6 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class CreateWindowEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(CreateWindowEventHandler.class);
-
 	public CreateWindowEventHandler() {
 		super();
 	}
@@ -39,7 +31,6 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer containerIdByWindowHandle = ifModel.getContainer(new NameBasic(windowHandle));
 
 		// check if container for window exists and create new container if not

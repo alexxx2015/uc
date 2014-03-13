@@ -5,7 +5,6 @@ package de.tum.in.i22.pip.core.eventdef.Java;
 
 import java.util.Map;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -27,8 +26,6 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 
 		//This event is used only during tests to initialize the information flow schema to a specific state
-
-		InformationFlowModel ifModel = getInformationFlowModel();
 
 		IEvent e = getEvent();
 		Map<String,String> param = e.getParameters();

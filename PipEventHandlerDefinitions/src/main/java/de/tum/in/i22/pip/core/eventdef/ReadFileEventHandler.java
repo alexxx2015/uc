@@ -1,11 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -15,9 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class ReadFileEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(ReadFileEventHandler.class);
 
 	public ReadFileEventHandler() {
 		super();
@@ -44,7 +37,6 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer fileContainer = ifModel.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container

@@ -1,6 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -15,7 +14,6 @@ public class EmptyCliboardEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer clipboardContainer = ifModel.getContainer(new NameBasic(
 				"clipboard"));
 

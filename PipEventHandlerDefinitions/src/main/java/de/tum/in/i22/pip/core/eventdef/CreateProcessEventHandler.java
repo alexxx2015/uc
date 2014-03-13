@@ -1,9 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import org.apache.log4j.Logger;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -12,9 +8,6 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class CreateProcessEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(CreateProcessEventHandler.class);
 
 	public CreateProcessEventHandler() {
 		super();
@@ -46,7 +39,6 @@ public class CreateProcessEventHandler extends BaseEventHandler {
         IContainer processContainer = instantiateProcess(pid, processName);
         IContainer parentProcessContainer = instantiateProcess(parentPid, parentProcessName);
 
-        InformationFlowModel ifModel = getInformationFlowModel();
         //add data of parent process container to child process container
         ifModel.addDataToContainerMappings(ifModel.getDataInContainer(parentProcessContainer), processContainer);
 
