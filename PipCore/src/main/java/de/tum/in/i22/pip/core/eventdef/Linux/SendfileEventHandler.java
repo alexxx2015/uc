@@ -20,14 +20,14 @@ public class SendfileEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String infd = null;
-		String outfd = null;
+		int infd;
+		int outfd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			outfd = getParameterValue("outfd");
-			infd = getParameterValue("infd");
+			outfd = Integer.valueOf(getParameterValue("outfd"));
+			infd = Integer.valueOf(getParameterValue("infd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

@@ -16,8 +16,8 @@ public class OpenAtEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String newfd = null;
-		String dirfd = null;
+		int newfd;
+		int dirfd;
 		String filename = null;
 		boolean at_fdcwd = false;
 		boolean truncate = false;
@@ -25,8 +25,8 @@ public class OpenAtEventHandler extends BaseEventHandler {
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			newfd = getParameterValue("newfd");
-			dirfd = getParameterValue("dirfd");
+			newfd = Integer.valueOf(getParameterValue("newfd"));
+			dirfd = Integer.valueOf(getParameterValue("dirfd"));
 			filename = getParameterValue("filename");
 			truncate = Boolean.valueOf(getParameterValue("trunc"));
 			at_fdcwd = Boolean.valueOf(getParameterValue("at_fdcwd"));

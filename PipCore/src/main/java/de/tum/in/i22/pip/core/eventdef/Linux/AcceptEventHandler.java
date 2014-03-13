@@ -22,8 +22,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 		String localPort = null;
 		String remoteIP = null;
 		String remotePort = null;
-		String newFd = null;
-		String oldFd = null;
+		int newFd;
+		int oldFd;
 		NameBasic localSocketName = null;
 		NameBasic remoteSocketName = null;
 		IContainer localContainer = null;
@@ -36,8 +36,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 			localPort = getParameterValue("localPort");
 			remoteIP = getParameterValue("remoteIP");
 			remotePort = getParameterValue("remotePort");
-			newFd = getParameterValue("newfd");
-			oldFd = getParameterValue("oldfd");
+			newFd = Integer.valueOf(getParameterValue("newfd"));
+			oldFd = Integer.valueOf(getParameterValue("oldfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

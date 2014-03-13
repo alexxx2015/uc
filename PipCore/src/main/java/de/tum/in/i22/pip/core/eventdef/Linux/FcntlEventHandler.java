@@ -14,15 +14,15 @@ public class FcntlEventHandler extends BaseEventHandler {
 		String host = null;
 		int pid;
 		String operation = null;
-		String oldfd = null;
-		String newfd = null;
+		int oldfd;
+		int newfd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
 			operation = getParameterValue("operation");
-			oldfd = getParameterValue("oldfd");
-			newfd = getParameterValue("newfd");
+			oldfd = Integer.valueOf(getParameterValue("oldfd"));
+			newfd = Integer.valueOf(getParameterValue("newfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

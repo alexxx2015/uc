@@ -1,17 +1,10 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.MmapContainer;
@@ -29,14 +22,14 @@ public class MmapEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 		String addr = null;
 		String flags = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 			addr = getParameterValue("addr");
 			flags = getParameterValue("flags");
 		} catch (ParameterNotFoundException e) {

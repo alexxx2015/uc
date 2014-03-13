@@ -22,12 +22,12 @@ public class ReadEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

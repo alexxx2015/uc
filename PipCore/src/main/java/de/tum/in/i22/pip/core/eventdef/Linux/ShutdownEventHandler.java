@@ -16,13 +16,13 @@ public class ShutdownEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 		String howStr = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 			howStr = getParameterValue("how");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

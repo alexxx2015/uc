@@ -15,14 +15,14 @@ public class OpenEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 		String filename = null;
 		boolean truncate = false;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 			filename = getParameterValue("filename");
 			truncate = Boolean.valueOf(getParameterValue("trunc"));
 		} catch (ParameterNotFoundException e) {
@@ -30,7 +30,7 @@ public class OpenEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		LinuxEvents.open(host, pid, fd, null, filename, true, truncate);
+		LinuxEvents.open(host, pid, fd, 0, filename, true, truncate);
 
 		return STATUS_OKAY;
 	}

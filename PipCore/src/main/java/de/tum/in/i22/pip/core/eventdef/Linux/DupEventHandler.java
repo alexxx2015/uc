@@ -12,14 +12,14 @@ public class DupEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String oldfd = null;
-		String newfd = null;
+		int oldfd;
+		int newfd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			oldfd = getParameterValue("oldfd");
-			newfd = getParameterValue("newfd");
+			oldfd = Integer.valueOf(getParameterValue("oldfd"));
+			newfd = Integer.valueOf(getParameterValue("newfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

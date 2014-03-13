@@ -16,7 +16,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 		String localIP = null;
 		String localPort = null;
 		String remoteIP = null;
@@ -28,7 +28,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 			localIP = getParameterValue("localIP");
 			localPort = getParameterValue("localPort");
 			remoteIP = getParameterValue("remoteIP");

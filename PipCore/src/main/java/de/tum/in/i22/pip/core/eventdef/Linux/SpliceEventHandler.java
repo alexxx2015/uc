@@ -18,14 +18,14 @@ public class SpliceEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String srcfd = null;
-		String dstfd = null;
+		int srcfd;
+		int dstfd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			srcfd = getParameterValue("srcfd");
-			dstfd = getParameterValue("dstfd");
+			srcfd = Integer.valueOf(getParameterValue("srcfd"));
+			dstfd = Integer.valueOf(getParameterValue("dstfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

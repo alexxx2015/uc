@@ -16,16 +16,16 @@ public class SocketpairEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd1 = null;
-		String fd2 = null;
+		int fd1;
+		int fd2;
 		String domain = null;
 		String type = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd1 = getParameterValue("fd1");
-			fd2 = getParameterValue("fd2");
+			fd1 = Integer.valueOf(getParameterValue("fd1"));
+			fd2 = Integer.valueOf(getParameterValue("fd2"));
 			domain = getParameterValue("domain");
 			type = getParameterValue("type");
 		} catch (ParameterNotFoundException e) {

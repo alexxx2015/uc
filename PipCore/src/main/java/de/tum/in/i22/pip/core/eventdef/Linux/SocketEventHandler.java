@@ -15,14 +15,14 @@ public class SocketEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		String fd = null;
+		int fd;
 		String domain = null;
 		String type = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = getParameterValue("fd");
+			fd = Integer.valueOf(getParameterValue("fd"));
 			domain = getParameterValue("domain");
 			type = getParameterValue("type");
 		} catch (ParameterNotFoundException e) {

@@ -69,7 +69,7 @@ public class LinuxEvents {
 	 * @param at_fdcwd
 	 * @param truncate
 	 */
-	static void open(String host, int pid, String newfd, String dirfd, String filename, boolean at_fdcwd, boolean truncate) {
+	static void open(String host, int pid, int newfd, int dirfd, String filename, boolean at_fdcwd, boolean truncate) {
 		IName fdName = FiledescrName.create(host, pid, newfd);
 		IName fnName;
 
