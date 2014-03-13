@@ -11,13 +11,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.collect.ImmutableSet;
-
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 
 /**
  * Information flow model Singleton.
@@ -718,7 +714,7 @@ public class InformationFlowModel {
 			}
 		}
 
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 
@@ -729,27 +725,35 @@ public class InformationFlowModel {
 	 * @param type
 	 * @return
 	 */
-	public <T extends IName> List<IName> getAllNames(IName containerName, Class<T> type) {
-		List<IName> result = new ArrayList<IName>();
+	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
 		IContainer cont;
 
-		if (containerName == null) {
-			return result;
+		if (containerName == null || (cont = _namingMap.get(containerName)) == null) {
+			return Collections.emptyList();
 		}
 
-		if ((cont = _namingMap.get(containerName)) == null) {
-			return result;
-		}
+		return getAllNames(cont, type);
+	}
+
+	/**
+	 * Get all names of the specified container
+	 * It is ensured that all names within the result are of the specified type.
+	 * @param containerName
+	 * @param type
+	 * @return
+	 */
+	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
+		List<T> result = new ArrayList<>();
 
 		for (IName name : _namingMap.keySet()) {
 			if (type.isInstance(name)) {
 				if (_namingMap.get(name).equals(cont)) {
-					result.add(name);
+					result.add(type.cast(name));
 				}
 			}
 		}
 
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 	/**
