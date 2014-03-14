@@ -45,7 +45,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 			fileContainer = _messageFactory.createContainer();
 			IData data = _messageFactory.createData();
 
-			ifModel.addDataToContainerMapping(data, fileContainer);
+			ifModel.addDataToContainer(data, fileContainer);
 
 			ifModel.addName(new NameBasic(fileName), fileContainer);
 		}

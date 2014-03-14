@@ -413,7 +413,7 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			IData data = new DataBasic(predicate);
 			container = new ContainerBasic();
 			_ifModel.addName(name, container);
-			_ifModel.addDataToContainerMapping(data, container);
+			_ifModel.addDataToContainer(data, container);
 		}
 	}
 

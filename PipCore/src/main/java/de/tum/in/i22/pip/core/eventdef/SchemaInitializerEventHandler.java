@@ -33,7 +33,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			ifModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
-			ifModel.addDataToContainerMapping(d, cont);
+			ifModel.addDataToContainer(d, cont);
 			_logger.debug(ifModel.toString());
 		} else {
 			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
@@ -46,7 +46,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		IContainer file = new FileContainer();
 		IData data = _messageFactory.createData("MY_DATA");
 		ifModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file);
-		ifModel.addDataToContainerMapping(data, file);
+		ifModel.addDataToContainer(data, file);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

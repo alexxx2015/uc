@@ -19,8 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
  * Information flow model Singleton.
  */
 public class InformationFlowModel {
-	private static final Logger _logger = Logger
-			.getLogger(InformationFlowModel.class);
+	private static final Logger _logger = Logger.getLogger(InformationFlowModel.class);
 
 	@Override
 	public String toString() {
@@ -263,6 +262,14 @@ public class InformationFlowModel {
 	}
 
 
+	/**
+	 * Removes the given container completely by deleting
+	 * associated names, aliases, and data.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param cont the container to be removed.
+	 */
 	public void remove(IContainer cont) {
 		if (cont != null) {
 			_logger.info("remove container: " + cont);
@@ -314,7 +321,7 @@ public class InformationFlowModel {
 
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
-			aliases = new HashSet<IContainer>();
+			aliases = new HashSet<>();
 			_aliasesMap.put(fromContainer, aliases);
 		}
 		aliases.add(toContainer);
@@ -452,57 +459,83 @@ public class InformationFlowModel {
 	}
 
 
-	public void addDataToContainerMapping(IData data, IContainer container) {
+	/**
+	 * Adds the given data to the given container. If data
+	 * or container is null, nothing will happen.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param data the data to add
+	 * @param container to which container the data is added.
+	 */
+	public void addDataToContainer(IData data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}
 
-		Set<IData> s = new HashSet<IData>();
-		s.add(data);
-		addDataToContainerMappings(s, container);
+		addDataToContainerMappings(Collections.singleton(data), container);
 	}
 
-	public boolean removeContainerToDataMapping(IContainer container,
-			IData data) {
-		boolean res = false;
-		if (_containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = _containerToDataMap.get(container);
-			dataSet.remove(data);
-			res = true;
+	/**
+	 * Removes the given data from the given container.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container from which the data will be removed
+	 * @param data the data to remove
+	 * @return true, if the data has been removed
+	 */
+	public boolean removeDataFromContainer(IContainer container, IData data) {
+		Set<IData> dataSet;
+
+		if (container == null || data == null || (dataSet = _containerToDataMap.get(container)) == null) {
+			return false;
 		}
+
+		boolean res = dataSet.remove(data);
+
+		if (dataSet.size() == 0) {
+			_containerToDataMap.remove(container);
+		}
+
 		return res;
 	}
 
 	/**
-	 * @param containerId
-	 * @return All data items that are stored in the given data container. If
-	 *         there are no data for the given data container, returns empty
-	 *         set.
+	 * Returns an immutable view onto the set of data within the given container.
+	 * In doubt, returns an empty set; never null.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container of which we want to get the data
+	 * @return an immutable view onto the set of data items stored in the given container
 	 */
 	public Set<IData> getDataInContainer(IContainer container) {
 		Set<IData> result;
 		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
 			result = Collections.emptySet();
 		}
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 
 
 	/**
-	 * Returns the data contained in the container identified by the given name.
-	 * @param containerName
-	 * @return
+	 * Returns the data contained in the container identified by the given name,
+	 * cf. {@link #getDataInContainer(IContainer)}.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param containerName a name of the container of which the containing data will be returned.
+	 * @return an immutable view onto the set of data within the container
 	 */
 	public Set<IData> getDataInContainer(IName containerName) {
 		IContainer cont;
-		if (containerName != null) {
-			cont = _namingMap.get(containerName);
 
-			if (cont != null) {
-				return _containerToDataMap.get(cont);
-			}
+		if (containerName == null || (cont = _namingMap.get(containerName)) == null) {
+			return Collections.emptySet();
 		}
-		return Collections.emptySet();
+
+		return getDataInContainer(cont);
 	}
 
 
