@@ -6,7 +6,6 @@ import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.distribution.ConnectionPool;
 import de.tum.in.i22.uc.distribution.Location;
 
 public class PipPushStrategy extends AbstractPipStrategy {

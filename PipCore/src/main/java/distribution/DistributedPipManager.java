@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.distribution.ConnectionPool;
 import de.tum.in.i22.uc.distribution.Location;
 
 /**
@@ -12,16 +11,16 @@ import de.tum.in.i22.uc.distribution.Location;
  * @author Florian Kelbert
  *
  */
-public class DistributedPip {
-	private static final DistributedPip _instance = new DistributedPip();
+public class DistributedPipManager {
+	private static final DistributedPipManager _instance = new DistributedPipManager();
 
 	private final IDistributedPipStrategy _strategy;
 
-	private DistributedPip() {
+	private DistributedPipManager() {
 		_strategy = new PipPushStrategy();
 	}
 
-	public static DistributedPip getInstance() {
+	public static DistributedPipManager getInstance() {
 		return _instance;
 	}
 

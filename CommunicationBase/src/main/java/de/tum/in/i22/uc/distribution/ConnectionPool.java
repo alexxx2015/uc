@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Florian Kelbert
  *
  */
-public class ConnectionPool {
+class ConnectionPool {
 	private static final int DEFAULT_MAX_ENTRIES = 20;
 
 	private static final ConnectionPool _instance = new ConnectionPool(DEFAULT_MAX_ENTRIES);
@@ -25,12 +25,12 @@ public class ConnectionPool {
 		pool = (PoolMap) Collections.synchronizedMap(new PoolMap(maxEntries));
 	}
 
-	public static ConnectionPool getInstance() {
+	static ConnectionPool getInstance() {
 		return _instance;
 	}
 
 
-	public Connection obtainConnection(Connection connection) throws IOException {
+	Connection obtainConnection(Connection connection) throws IOException {
 		if (connection == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -62,7 +62,7 @@ public class ConnectionPool {
 		return connection;
 	}
 
-	public void releaseConnection(Connection connection) throws IOException {
+	void releaseConnection(Connection connection) throws IOException {
 		synchronized (pool) {
 			if (pool.get(connection) == null) {
 				// It may be the case that the connection has been removed from the pool

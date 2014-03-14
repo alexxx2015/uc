@@ -40,12 +40,12 @@ public class TCPConnection extends Connection {
 	}
 
 	@Override
-	public void connect() throws IOException {
+	void connect() throws IOException {
 		_socket.connect(_address);
 	}
 
 	@Override
-	public void disconnect() throws IOException {
+	void disconnect() throws IOException {
 		_socket.close();
 		_socket = new Socket();
 	}
