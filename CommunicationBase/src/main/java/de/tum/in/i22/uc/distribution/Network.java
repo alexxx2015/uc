@@ -67,9 +67,8 @@ public class Network {
 						}
 
 						try {
-							clazz.cast(current_addr);
-							/// This cast is good! We have just checked for it!
-							result.add((T) current_addr);
+							T addr = clazz.cast(current_addr);
+							result.add(addr);
 						}
 						catch (ClassCastException e) {
 						}
