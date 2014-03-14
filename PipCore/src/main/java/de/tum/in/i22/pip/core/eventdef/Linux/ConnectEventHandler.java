@@ -93,7 +93,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 				IContainer tmpContainer = ifModel.getContainer(localSocketName);
 
 				// copy aliases
-				for (IContainer alias : ifModel.getAliasesFromContainer(tmpContainer)) {
+				for (IContainer alias : ifModel.getAliasesFrom(tmpContainer)) {
 					ifModel.addAlias(localConnectingSocket, alias);;
 				}
 				for (IContainer alias : ifModel.getAliasesTo(tmpContainer)) {

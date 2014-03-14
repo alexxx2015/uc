@@ -294,13 +294,27 @@ public class InformationFlowModel {
 		}
 	}
 
-	public void emptyContainer(IContainer cont) {
-		if (cont != null) {
-			_logger.info("Emptying container " + cont);
-			_containerToDataMap.remove(cont);
+	/**
+	 * Removes all data from the specified container
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container of which the data is to be removed.
+	 */
+	public void emptyContainer(IContainer container) {
+		if (container != null) {
+			_logger.info("Emptying container " + container);
+			_containerToDataMap.remove(container);
 		}
 	}
 
+	/**
+	 * Removes all data from the container identified by the given container name.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param containerName a name of the container that is to be emptied.
+	 */
 	public void emptyContainer(IName containerName) {
 		if (containerName != null) {
 			emptyContainer(_namingMap.get(containerName));
@@ -351,15 +365,17 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Finds all aliases from the specified container.
+	 * Returns an immutable view onto the set of all aliases *from* the specified container.
 	 *
-	 * @param cont
-	 * @return All aliases from the container or an empty set.
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose outgoing aliases will be returned.
+	 * @return An immutable view onto the set of all aliases *from* the specified container.
 	 */
-	public Set<IContainer> getAliasesFromContainer(IContainer cont) {
+	public Set<IContainer> getAliasesFrom(IContainer container) {
 		Set<IContainer> result;
 
-		if (cont == null || (result = _aliasesMap.get(cont)) == null) {
+		if (container == null || (result = _aliasesMap.get(container)) == null) {
 			result = Collections.emptySet();
 		}
 
@@ -421,20 +437,25 @@ public class InformationFlowModel {
 	}
 
 	/**
+	 * Returns an immutable view onto the set of all aliases *to* the specified container.
 	 *
-	 * @param toContainerId
-	 * @return All aliases that go to the container with the given id.
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose incoming aliases will be returned.
+	 * @return An immutable view onto the set of all aliases *to* the specified container.
 	 */
-	public Set<IContainer> getAliasesTo(IContainer toContainer) {
-		Set<IContainer> result = new HashSet<IContainer>();
-		if (toContainer != null) {
-			for (IContainer from : _aliasesMap.keySet()) {
-				if (_aliasesMap.get(from).contains(toContainer)) {
-					result.add(from);
+	public Set<IContainer> getAliasesTo(IContainer container) {
+		Set<IContainer> result = new HashSet<>();
+
+		if (container != null) {
+			for (Entry<IContainer,Set<IContainer>> aliasEntry : _aliasesMap.entrySet()) {
+				if (aliasEntry.getValue().contains(container)) {
+					result.add(aliasEntry.getKey());
 				}
 			}
 		}
-		return result;
+
+		return Collections.unmodifiableSet(result);
 	}
 
 	/**
@@ -451,7 +472,7 @@ public class InformationFlowModel {
 	}
 
 	private void getAliasTransitiveClosure(IContainer container, Set<IContainer> visitedContainers) {
-		for (IContainer id : getAliasesFromContainer(container)) {
+		for (IContainer id : getAliasesFrom(container)) {
 			if (visitedContainers.add(id)) {
 				getAliasTransitiveClosure(id, visitedContainers);
 			}
@@ -481,24 +502,21 @@ public class InformationFlowModel {
 	 *
 	 * ~ Double checked, 2014/03/14. FK.
 	 *
-	 * @param container the container from which the data will be removed
 	 * @param data the data to remove
+	 * @param container the container from which the data will be removed
 	 * @return true, if the data has been removed
 	 */
-	public boolean removeDataFromContainer(IContainer container, IData data) {
+	public void removeDataFromContainer(IData data, IContainer container) {
 		Set<IData> dataSet;
 
 		if (container == null || data == null || (dataSet = _containerToDataMap.get(container)) == null) {
-			return false;
+			return;
 		}
 
-		boolean res = dataSet.remove(data);
-
+		dataSet.remove(data);
 		if (dataSet.size() == 0) {
 			_containerToDataMap.remove(container);
 		}
-
-		return res;
 	}
 
 	/**
@@ -589,7 +607,7 @@ public class InformationFlowModel {
 		}
 
 		addDataToContainerMappings(data, dstContainer);
-		for (IContainer c : getAliasesFromContainer(dstContainer)) {
+		for (IContainer c : getAliasesFrom(dstContainer)) {
 			addDataToContainerMappings(data, c);
 		}
 	}

@@ -64,7 +64,7 @@ public class CloneEventHandler extends BaseEventHandler {
 		}
 
 		// Clone all aliases
-		for (IContainer cont : ifModel.getAliasesFromContainer(oldProcCont)) {
+		for (IContainer cont : ifModel.getAliasesFrom(oldProcCont)) {
 			ifModel.addAlias(newProcCont, cont);
 		}
 		for (IContainer cont : ifModel.getAliasesTo(oldProcCont)) {
