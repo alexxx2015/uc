@@ -55,7 +55,7 @@ public class InformationFlowModel {
 	private Map<IName, IContainer> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
-	public InformationFlowModel() {
+	private InformationFlowModel() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
@@ -384,7 +384,7 @@ public class InformationFlowModel {
 	 * @param container the container whose outgoing aliases will be returned.
 	 * @return An immutable view onto the set of all aliases *from* the specified container.
 	 */
-	public Set<IContainer> getAliasesFrom(IContainer container) {
+	public Collection<IContainer> getAliasesFrom(IContainer container) {
 		Set<IContainer> result;
 
 		if (container == null || (result = _aliasesMap.get(container)) == null) {
