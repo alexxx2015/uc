@@ -46,7 +46,7 @@ public class ExecveEventHandler extends BaseEventHandler {
 		}
 
 		if (procCont == null) {
-			procCont = new ProcessContainer(Integer.valueOf(pid));
+			procCont = new ProcessContainer(host, pid);
 			ifModel.addName(procName, procCont);
 		}
 

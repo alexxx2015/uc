@@ -38,12 +38,12 @@ public class CloneEventHandler extends BaseEventHandler {
 		IName newProcName = ProcessName.create(host, childPid);
 		IName oldProcName = ProcessName.create(host, parentPid);
 
-		IContainer newProcCont = new ProcessContainer(Integer.valueOf(childPid));
+		IContainer newProcCont = new ProcessContainer(host, childPid);
 		ProcessContainer oldProcCont = (ProcessContainer) ifModel.getContainer(oldProcName);
 
 		// Add a container for the old process, if it did not yet exist (should not happen).
 		if (oldProcCont == null) {
-			oldProcCont = new ProcessContainer(Integer.valueOf(parentPid));
+			oldProcCont = new ProcessContainer(host, parentPid);
 			ifModel.addName(oldProcName, oldProcCont);
 		}
 

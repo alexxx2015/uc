@@ -14,7 +14,6 @@ public class SocketContainer extends ContainerBasic {
 	private final Type _type;
 
 	public SocketContainer(Domain domain, Type type) {
-		super();
 		this._domain = domain;
 		this._type = type;
 	}

@@ -62,7 +62,7 @@ public class MmapEventHandler extends BaseEventHandler {
 			return STATUS_OKAY;
 		}
 
-		IContainer mmapCont = new MmapContainer(Integer.valueOf(pid), addr);
+		IContainer mmapCont = new MmapContainer(host, pid, addr);
 
 		ifModel.addName(MmapName.create(host, pid, addr), mmapCont);
 

@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.Linux;
 
+import java.util.Objects;
+
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 
 /**
@@ -12,13 +14,14 @@ import de.tum.in.i22.uc.cm.basic.ContainerBasic;
  *
  */
 public class MmapContainer extends ContainerBasic {
+	private final String _host;
 	private final int _pid;
 	private final String _addr;
 
-	public MmapContainer(int pid, String addr) {
-		super();
-		this._pid = pid;
-		this._addr = addr;
+	public MmapContainer(String host, int pid, String addr) {
+		_host = host;
+		_pid = pid;
+		_addr = addr;
 	}
 
 	public int getPid() {
@@ -27,5 +30,25 @@ public class MmapContainer extends ContainerBasic {
 
 	public String getAddr() {
 		return _addr;
+	}
+
+	public String getHost() {
+		return _host;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MmapContainer) {
+			MmapContainer o = (MmapContainer) obj;
+			return Objects.equals(_host, o._host)
+					&& Objects.equals(_pid, o._pid)
+					&& Objects.equals(_addr, o._addr);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_host, _pid, _addr);
 	}
 }
