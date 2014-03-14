@@ -1,9 +1,10 @@
 package de.tum.in.i22.pip.core;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -352,15 +353,26 @@ public class InformationFlowModel {
 
 
 	/**
-	 * Removes the alias relation identified
+	 * Removes the alias from fromContainer to toContainer.
 	 *
-	 * @param fromContainer
-	 * @param toContainer
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param fromContainer the container of which the alias is outgoing
+	 * @param toContainer the container of which the alias is incoming
 	 */
 	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
-		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
-		if (aliases != null) {
+		if (fromContainer == null || toContainer == null) {
+			return;
+		}
+
+		Set<IContainer> aliases;
+
+		if ((aliases = _aliasesMap.get(fromContainer)) != null) {
 			aliases.remove(toContainer);
+
+			if (aliases.size() == 0) {
+				_aliasesMap.remove(fromContainer);
+			}
 		}
 	}
 
@@ -379,7 +391,7 @@ public class InformationFlowModel {
 			result = Collections.emptySet();
 		}
 
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 
 	/**
@@ -420,7 +432,7 @@ public class InformationFlowModel {
 			return;
 		}
 
-		List<IContainer> toRemove = new ArrayList<IContainer>();
+		List<IContainer> toRemove = new LinkedList<IContainer>();
 
 		for (IContainer from : _aliasesMap.keySet()) {
 			Set<IContainer> toSet = _aliasesMap.get(from) ;
@@ -641,43 +653,55 @@ public class InformationFlowModel {
 		dstData.addAll(data);
 	}
 
-	// Naming set manipulation functions:
+
 	/**
-	 * Adds an entry to the naming mapping for container, with the
-	 * naming/representation name.
+	 * Makes the given name point to the given container.
 	 *
-	 * @param name
-	 * @param container
-	 * @return
+	 * If the given name was already assigned to another container,
+	 * this old name/container mapping is overwritten. If this was the
+	 * last name for that container, the corresponding container is deleted.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param name the new name for the given container.
+	 * @param container the container for which the new name applies.
 	 */
-	public boolean addName(IName name, IContainer container) {
+	public void addName(IName name, IContainer container) {
 		if (name == null || container == null) {
-			return false;
+			return;
 		}
 
 		_logger.info("addName: " + name + " -> " + container);
 
 		IContainer oldAssigned;
 		if ((oldAssigned = _namingMap.put(name, container)) != null) {
-			_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". This mapping has been removed.");
+			_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". "
+					+ "This mapping has been removed.");
+
+			if (getAllNames(oldAssigned).size() == 0) {
+				remove(oldAssigned);
+			}
 		}
-		return true;
 	}
 
 	/**
-	 * Adds an additional name, newName, for to the container that is already identified by another name, oldName.
-	 * @param oldName
-	 * @param newName
-	 * @return
+	 * Adds an additional name, newName, for the container that is
+	 * already identified by another name, oldName.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param oldName a name identifying an already existing container
+	 * @param newName the additional new name for the container identified by oldName.
 	 */
-	public boolean addName(IName oldName, IName newName) {
+	public void addName(IName oldName, IName newName) {
 		if (oldName == null || newName == null) {
-			return false;
+			return;
 		}
 
-		IContainer cont = getContainer(oldName);
-
-		return (cont != null) ? addName(newName, cont) : false;
+		IContainer cont;
+		if ((cont = getContainer(oldName)) != null) {
+			addName(newName, cont);
+		}
 	}
 
 	/**
@@ -692,7 +716,7 @@ public class InformationFlowModel {
 			IContainer cont = _namingMap.remove(name);
 
 			// if this was the last name, we can remove the container
-			List<IName> remainingNames = getAllNames(cont);
+			Collection<IName> remainingNames = getAllNames(cont);
 			if (remainingNames == null || remainingNames.size() == 0) {
 				remove(cont);
 			}
@@ -740,32 +764,36 @@ public class InformationFlowModel {
 
 
 	/**
-	 * Returns the set of all names.
-	 * The returned set is unmodifiable as described in
-	 * Collections.unmodifiableSet()
-	 * @return
+	 * Returns an unmodifiable view onto all names.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @return an unmodifiable view onto all names.
 	 */
-	public Set<IName> getAllNames() {
-		return Collections.unmodifiableSet(_namingMap.keySet());
+	public Collection<IName> getAllNames() {
+		return Collections.unmodifiableCollection(_namingMap.keySet());
 	}
 
 
 	/**
-	 * Return all names that refer to the container with containerId.
+	 * Returns an unmodifiable view onto all names
+	 * for the given container.
 	 *
-	 * @param containerId
-	 * @return
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose names are returned.
+	 * @return an unmodifiable view onto all names for the given container
 	 */
-	public List<IName> getAllNames(IContainer container) {
-		List<IName> result = new ArrayList<IName>();
+	public Collection<IName> getAllNames(IContainer container) {
+		Collection<IName> result = new LinkedList<>();
 
-		for (IName name : _namingMap.keySet()) {
-			if (_namingMap.get(name).equals(container)) {
-				result.add(name);
+		for (Entry<IName, IContainer> nameEntry : _namingMap.entrySet()) {
+			if (nameEntry.getValue().equals(container)) {
+				result.add(nameEntry.getKey());
 			}
 		}
 
-		return Collections.unmodifiableList(result);
+		return Collections.unmodifiableCollection(result);
 	}
 
 
@@ -794,7 +822,7 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
-		List<T> result = new ArrayList<>();
+		List<T> result = new LinkedList<>();
 
 		for (IName name : _namingMap.keySet()) {
 			if (type.isInstance(name)) {
@@ -813,7 +841,7 @@ public class InformationFlowModel {
 	 */
 	// TODO, FK: This method seems odd.
 	public List<IName> getAllNamingsFrom(IContainer pid) {
-		List<IName> result = new ArrayList<IName>();
+		List<IName> result = new LinkedList<>();
 
 		for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
