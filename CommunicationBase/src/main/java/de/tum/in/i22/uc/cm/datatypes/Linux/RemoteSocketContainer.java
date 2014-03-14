@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.distribution.ILocation;
+import de.tum.in.i22.uc.distribution.Location;
 
 /**
  * Represents a remote container of which we only know a name and its location.
@@ -12,14 +12,14 @@ import de.tum.in.i22.uc.distribution.ILocation;
  *
  */
 public class RemoteSocketContainer extends SocketContainer {
-	private final ILocation _location;
+	private final Location _location;
 
-	public RemoteSocketContainer(Domain domain, Type type, ILocation location) {
+	public RemoteSocketContainer(Domain domain, Type type, Location location) {
 		super(domain, type);
 		_location = location;
 	}
 
-	public ILocation getLocation() {
+	public Location getLocation() {
 		return _location;
 	}
 

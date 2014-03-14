@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
 
-public class IPLocation extends AbstractLocation {
+public class IPLocation extends Location {
 	private final InetAddress _address;
 
 	public IPLocation(InetAddress address) {

@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author Florian Kelbert
  *
  */
-public class TCPConnection extends AbstractConnection {
+public class TCPConnection extends Connection {
 	private final InetSocketAddress _address;
 	private Socket _socket;
 

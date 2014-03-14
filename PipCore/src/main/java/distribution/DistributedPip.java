@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.distribution.ConnectionPool;
-import de.tum.in.i22.uc.distribution.ILocation;
+import de.tum.in.i22.uc.distribution.Location;
 
 /**
  *
@@ -18,14 +18,14 @@ public class DistributedPip {
 	private final IDistributedPipStrategy _strategy;
 
 	private DistributedPip() {
-		_strategy = new PipPushStrategy(ConnectionPool.getInstance());
+		_strategy = new PipPushStrategy();
 	}
 
 	public static DistributedPip getInstance() {
 		return _instance;
 	}
 
-	public void notifyDataTransfer(ILocation location, IName containerName, Collection<IData> data) {
+	public void notifyDataTransfer(Location location, IName containerName, Collection<IData> data) {
 		_strategy.notifyDataTransfer(location, containerName, data);
 	}
 }
