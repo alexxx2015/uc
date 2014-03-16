@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pdp.core.IPep2Pdp;
-import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
@@ -26,6 +25,7 @@ import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.out.IConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
+import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 public abstract class Pep2PdpImp extends AbstractConnection implements IPep2Pdp, IConnector {
 

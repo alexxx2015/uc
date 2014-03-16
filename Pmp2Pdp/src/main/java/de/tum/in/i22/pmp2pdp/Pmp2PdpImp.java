@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.core.IPmp2Pdp;
-import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -21,6 +20,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.out.IConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
+import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 /**
  * Each method writes a message to the output stream.

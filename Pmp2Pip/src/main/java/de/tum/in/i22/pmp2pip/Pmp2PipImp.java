@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.cm.in.pmp.IPmp2Pip;
-import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -17,6 +16,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 public abstract class Pmp2PipImp extends AbstractConnection implements IPmp2Pip {
 	private static final Logger _logger = Logger.getLogger(Pmp2PipImp.class);

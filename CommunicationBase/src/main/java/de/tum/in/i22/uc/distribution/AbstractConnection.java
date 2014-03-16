@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm;
+package de.tum.in.i22.uc.distribution;
 
 import java.io.InputStream;
 import java.io.OutputStream;
