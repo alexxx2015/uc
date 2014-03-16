@@ -11,8 +11,8 @@ public abstract class Location  {
 		_connection = connection;
 	}
 
-	public final UnmodifiableConnection obtainConnection() throws IOException {
-		return new UnmodifiableConnection(_connectionPool.obtainConnection(_connection));
+	public final Connection obtainConnection() throws IOException {
+		return _connectionPool.obtainConnection(_connection);
 	}
 
 	public final void releaseConnection() throws IOException {
