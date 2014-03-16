@@ -36,9 +36,9 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
+import de.tum.in.i22.uc.cm.out.AbstractConnection;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
-import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 public abstract class Pdp2PipImp extends AbstractConnection implements IPdp2Pip {
 

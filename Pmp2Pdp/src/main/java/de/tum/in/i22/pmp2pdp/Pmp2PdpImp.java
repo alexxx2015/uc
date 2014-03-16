@@ -17,10 +17,10 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
+import de.tum.in.i22.uc.cm.out.AbstractConnection;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.out.IConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
-import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 /**
  * Each method writes a message to the output stream.

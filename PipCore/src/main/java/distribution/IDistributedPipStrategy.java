@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.distribution.Location;
+import de.tum.in.i22.uc.cm.out.Location;
 
 public interface IDistributedPipStrategy {
 	boolean hasAllData(Location location, Collection<IData> data);

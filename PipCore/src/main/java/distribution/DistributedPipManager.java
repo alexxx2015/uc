@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.distribution.Location;
+import de.tum.in.i22.uc.cm.out.Location;
 
 /**
  *

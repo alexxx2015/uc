@@ -15,8 +15,8 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.out.AbstractConnection;
 import de.tum.in.i22.uc.cm.out.Connector;
-import de.tum.in.i22.uc.distribution.AbstractConnection;
 
 public abstract class Pmp2PipImp extends AbstractConnection implements IPmp2Pip {
 	private static final Logger _logger = Logger.getLogger(Pmp2PipImp.class);

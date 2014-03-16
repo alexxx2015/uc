@@ -1,12 +1,9 @@
-package de.tum.in.i22.uc.distribution;
+package de.tum.in.i22.uc.cm.out;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
-
-import de.tum.in.i22.uc.cm.out.Connector;
-import de.tum.in.i22.uc.cm.out.IConnector;
 
 public abstract class AbstractConnection implements IConnector {
 	private final Connector _connector;
