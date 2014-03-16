@@ -17,7 +17,7 @@ public class TcpConnector extends Connector {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_logger.debug("Establish connection to " + _address + ":" + _port);
 		_clientSocket = new Socket(_address, _port);
 
@@ -34,8 +34,8 @@ public class TcpConnector extends Connector {
 
 	@Override
 	public void disconnect() {
-		_logger.info("Tear down the connection");
 		if (_clientSocket != null) {
+			_logger.info("Tear down the connection");
 			try {
 				_inputStream.close();
 				_outputStream.close();

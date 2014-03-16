@@ -1,7 +1,9 @@
 package de.tum.in.i22.uc.distribution;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.out.IConnector;
@@ -14,7 +16,7 @@ public abstract class AbstractConnection implements IConnector {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_connector.connect();
 	}
 
@@ -29,5 +31,20 @@ public abstract class AbstractConnection implements IConnector {
 
 	protected InputStream getInputStream() {
 		return _connector.getInputStream();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getClass(), _connector);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AbstractConnection) {
+			AbstractConnection o = (AbstractConnection) obj;
+			return Objects.equals(getClass(), o.getClass())
+					&& Objects.equals(_connector, o._connector);
+		}
+		return false;
 	}
 }

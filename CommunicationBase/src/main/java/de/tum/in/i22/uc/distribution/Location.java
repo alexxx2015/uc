@@ -5,13 +5,13 @@ import java.io.IOException;
 public abstract class Location  {
 	private static final ConnectionPool _connectionPool = ConnectionPool.getInstance();
 
-	private final Connection _connection;
+	private final AbstractConnection _connection;
 
-	public Location(Connection connection) {
+	public Location(AbstractConnection connection) {
 		_connection = connection;
 	}
 
-	public final Connection obtainConnection() throws IOException {
+	public final AbstractConnection obtainConnection() throws IOException {
 		return _connectionPool.obtainConnection(_connection);
 	}
 

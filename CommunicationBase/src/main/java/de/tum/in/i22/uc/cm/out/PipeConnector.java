@@ -23,7 +23,7 @@ public class PipeConnector extends Connector {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_logger.debug("Establish connection to pipes " + _inPipe + " and " + _outPipe);
 
 		try {

@@ -30,7 +30,7 @@ class ConnectionPool {
 	}
 
 
-	Connection obtainConnection(Connection connection) throws IOException {
+	AbstractConnection obtainConnection(AbstractConnection connection) throws IOException {
 		if (connection == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -62,7 +62,7 @@ class ConnectionPool {
 		return connection;
 	}
 
-	void releaseConnection(Connection connection) throws IOException {
+	void releaseConnection(AbstractConnection connection) throws IOException {
 		synchronized (pool) {
 			if (pool.get(connection) == null) {
 				// It may be the case that the connection has been removed from the pool
@@ -83,7 +83,7 @@ class ConnectionPool {
 	}
 
 
-	private class PoolMap extends LinkedHashMap<Connection, InUse> {
+	private class PoolMap extends LinkedHashMap<AbstractConnection, InUse> {
 		private static final long serialVersionUID = -6171984904678970780L;
 
 		private final int _maxEntries;
@@ -94,18 +94,14 @@ class ConnectionPool {
 		}
 
 		@Override
-		protected boolean removeEldestEntry(Map.Entry<Connection,InUse> eldest) {
+		protected boolean removeEldestEntry(Map.Entry<AbstractConnection,InUse> eldest) {
 			synchronized (pool) {
 				// When removing an entry, we need to disconnect the connection.
 				// Yet, we only do this if the connection is currently not used.
 				// If the connection is currently used, it will be disconnect as
 				// soon as it is released, cf. releaseConnection().
 				if (eldest.getValue() == InUse.NO) {
-					try {
-						eldest.getKey().disconnect();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					eldest.getKey().disconnect();
 				}
 			}
 			return size() > _maxEntries;
