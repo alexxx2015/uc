@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
 
 public class TcpConnector extends Connector {
 
@@ -46,5 +47,20 @@ public class TcpConnector extends Connector {
 				_logger.error("Error occurred when closing the connection.", e);
 			}
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_address, _port);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TcpConnector) {
+			TcpConnector o = (TcpConnector) obj;
+			return Objects.equals(_address, o._address)
+					&& Objects.equals(_port, o._port);
+		}
+		return false;
 	}
 }

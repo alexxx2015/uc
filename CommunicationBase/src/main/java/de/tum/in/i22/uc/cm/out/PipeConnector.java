@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  *
@@ -23,7 +24,7 @@ public class PipeConnector extends Connector {
 	}
 
 	@Override
-	public void connect() throws IOException {
+	void connect() throws IOException {
 		_logger.debug("Establish connection to pipes " + _inPipe + " and " + _outPipe);
 
 		try {
@@ -38,7 +39,7 @@ public class PipeConnector extends Connector {
 	}
 
 	@Override
-	public void disconnect() {
+	void disconnect() {
 		_logger.info("Tear down the connection");
 		try {
 			_inputStream.close();
@@ -47,5 +48,20 @@ public class PipeConnector extends Connector {
 		} catch (IOException e) {
 			_logger.error("Error occurred when closing the connection.", e);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_inPipe, _outPipe);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PipeConnector) {
+			PipeConnector o = (PipeConnector) obj;
+			return Objects.equals(_inPipe, o._inPipe)
+					&& Objects.equals(_outPipe, o._outPipe);
+		}
+		return false;
 	}
 }

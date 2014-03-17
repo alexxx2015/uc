@@ -14,7 +14,7 @@ import com.google.protobuf.MessageLite;
  * @author Florian Kelbert
  *
  */
-public abstract class Connector implements IConnector {
+public abstract class Connector {
 
 	protected static final Logger _logger = Logger.getLogger(Connector.class);
 
@@ -79,4 +79,14 @@ public abstract class Connector implements IConnector {
         ibyte = ((value >>> 8) & 0xff); out.write(ibyte);
         ibyte = (value & 0xff); out.write(ibyte);
 	}
+
+
+	abstract void connect() throws IOException;
+	abstract void disconnect();
+
+	@Override
+	public abstract int hashCode();
+
+	@Override
+	public abstract boolean equals(Object obj);
 }
