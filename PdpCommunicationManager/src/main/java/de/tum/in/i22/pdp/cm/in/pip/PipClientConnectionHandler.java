@@ -8,10 +8,13 @@ import java.io.OutputStream;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 import de.tum.in.i22.uc.cm.methods.EPipRequestMethod;
@@ -80,6 +83,13 @@ public abstract class PipClientConnectionHandler extends ClientConnectionHandler
 				// it will set response to null so that pause/resume thread works correctly
 				throwAwayResponse();
 				gpContainer.writeDelimitedTo(getOutputStream());
+				getOutputStream().flush();
+			}
+			else if (responseObj instanceof IStatus && responseType == EPipResponse.ISTATUS) {
+				IStatus responseStatus = (IStatus) responseObj;
+				GpStatus gpStatus = StatusBasic.createGpbStatus(responseStatus);
+				throwAwayResponse();
+				gpStatus.writeDelimitedTo(getOutputStream());
 				getOutputStream().flush();
 			}
 			else if (responseObj == null && responseType == EPipResponse.VOID) {

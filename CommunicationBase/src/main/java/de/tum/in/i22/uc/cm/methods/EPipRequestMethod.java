@@ -2,11 +2,6 @@ package de.tum.in.i22.uc.cm.methods;
 
 
 
-/**
- * For defining the kind of remote PIP request.
- * @author Florian Kelbert
- *
- */
 public enum EPipRequestMethod {
 	HAS_DATA((byte)1),
 	HAS_CONTAINER((byte)2),
