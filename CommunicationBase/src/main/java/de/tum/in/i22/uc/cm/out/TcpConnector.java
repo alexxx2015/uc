@@ -18,6 +18,7 @@ public class TcpConnector extends Connector {
 	@Override
 	public void connect() throws IOException {
 		_logger.debug("Establish connection to " + _address + ":" + _port);
+
 		_clientSocket = new Socket(_address, _port);
 
 		try {

@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.out.AbstractConnection;
+import de.tum.in.i22.uc.cm.out.Connection;
 
 /**
  * Represents a remote container of which we only know a name and its location.
@@ -12,14 +12,14 @@ import de.tum.in.i22.uc.cm.out.AbstractConnection;
  *
  */
 public class RemoteSocketContainer extends SocketContainer {
-	private final AbstractConnection _connection;
+	private final Connection _connection;
 
-	public RemoteSocketContainer(Domain domain, Type type, AbstractConnection connection) {
+	public RemoteSocketContainer(Domain domain, Type type, Connection connection) {
 		super(domain, type);
 		_connection = connection;
 	}
 
-	public AbstractConnection getConnection() {
+	public Connection getConnection() {
 		return _connection;
 	}
 

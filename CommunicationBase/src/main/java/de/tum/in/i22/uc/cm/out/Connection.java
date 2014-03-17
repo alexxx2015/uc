@@ -7,24 +7,20 @@ import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
-public abstract class AbstractConnection implements IConnector {
-//	private static final ConnectionPool _connectionPool = ConnectionPool.getInstance();
-
-	protected static final Logger _logger = Logger.getLogger(AbstractConnection.class);
+public abstract class Connection implements IConnection {
+	protected static final Logger _logger = Logger.getLogger(Connection.class);
 
 	private final Connector _connector;
 
-	public AbstractConnection(Connector connector) {
+	public Connection(Connector connector) {
 		_connector = connector;
 	}
 
-	@Override
-	public void connect() throws IOException {
+	final void connect() throws IOException {
 		_connector.connect();
 	}
 
-	@Override
-	public void disconnect() {
+	final void disconnect() {
 		_connector.disconnect();
 	}
 
@@ -36,14 +32,6 @@ public abstract class AbstractConnection implements IConnector {
 		return _connector.getInputStream();
 	}
 
-	public final AbstractConnection obtainConnection() throws IOException {
-		return ConnectionPool.obtainConnection(this);
-	}
-
-	public final void releaseConnection() throws IOException {
-		ConnectionPool.releaseConnection(this);
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(getClass(), _connector);
@@ -51,8 +39,8 @@ public abstract class AbstractConnection implements IConnector {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AbstractConnection) {
-			AbstractConnection o = (AbstractConnection) obj;
+		if (obj instanceof Connection) {
+			Connection o = (Connection) obj;
 			return Objects.equals(getClass(), o.getClass())
 					&& Objects.equals(_connector, o._connector);
 		}

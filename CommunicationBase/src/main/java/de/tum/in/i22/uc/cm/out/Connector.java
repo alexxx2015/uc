@@ -17,17 +17,16 @@ import com.google.protobuf.MessageLite;
  *
  */
 public abstract class Connector {
-
 	protected static final Logger _logger = Logger.getLogger(Connector.class);
 
 	private OutputStream _outputStream;
  	private InputStream _inputStream;
 
-	public UnclosableOutputStream getOutputStream() {
+	UnclosableOutputStream getOutputStream() {
 		return new UnclosableOutputStream(_outputStream);
 	}
 
-	public UnclosableInputStream getInputStream() {
+	UnclosableInputStream getInputStream() {
 		return new UnclosableInputStream(_inputStream);
 	}
 

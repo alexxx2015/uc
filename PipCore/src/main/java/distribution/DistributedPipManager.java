@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.out.AbstractConnection;
+import de.tum.in.i22.uc.cm.out.Connection;
 
 /**
  *
@@ -24,7 +24,7 @@ public class DistributedPipManager {
 		return _instance;
 	}
 
-	public void notifyDataTransfer(AbstractConnection connection, IName containerName, Collection<IData> data) {
+	public void notifyDataTransfer(Connection connection, IName containerName, Collection<IData> data) {
 		_strategy.notifyDataTransfer(connection, containerName, data);
 	}
 }

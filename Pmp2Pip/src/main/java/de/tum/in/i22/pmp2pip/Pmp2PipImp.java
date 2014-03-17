@@ -13,10 +13,10 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.out.AbstractConnection;
+import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 
-public abstract class Pmp2PipImp extends AbstractConnection implements IPmp2Pip {
+public abstract class Pmp2PipImp extends Connection implements IPmp2Pip {
 	public Pmp2PipImp(Connector connector) {
 		super(connector);
 	}

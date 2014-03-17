@@ -15,9 +15,8 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.out.AbstractConnection;
+import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
-import de.tum.in.i22.uc.cm.out.IConnector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
 /**
@@ -28,7 +27,7 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  * @author Stoimenov
  *
  */
-public abstract class Pmp2PdpImp extends AbstractConnection implements IPmp2Pdp, IConnector {
+public abstract class Pmp2PdpImp extends Connection implements IPmp2Pdp {
 
  	public Pmp2PdpImp(Connector connector) {
  		super(connector);

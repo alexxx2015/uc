@@ -33,7 +33,6 @@ public class PipeConnector extends Connector {
 			_logger.debug("Connection established.");
 		} catch(FileNotFoundException e) {
 			_logger.debug("File not found.", e);
-			throw e;
 		}
 	}
 

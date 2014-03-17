@@ -18,6 +18,7 @@ import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class PipTest {
 
@@ -37,12 +38,12 @@ public class PipTest {
 	@Before
 	public void setUp() throws Exception {
 		// connect pdp to pip
-		_pipProxy.connect();
+		ConnectionManager.obtainConnection(_pipProxy);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		_pipProxy.disconnect();
+		ConnectionManager.releaseConnection(_pipProxy);
 	}
 
 	@Test

@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,8 @@ import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.out.IConnector;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.cm.out.IConnection;
 
 
 public class Main {
@@ -23,32 +25,19 @@ public class Main {
 	public static final int PDP2_PORT = 52001;
 
 	public static IPep2Pdp connectPDP(String host, int port) {
-		IPep2PdpTcp pdp = new Pep2PdpTcpImp(host, port); try {
-			pdp.connect();
-		} catch (Exception e) {
-			System.err.println("Unable to connect to PDP(" + host + "," + port + "). Exiting.");
-			System.exit(0);
-		}
-
-		return pdp;
+		return new Pep2PdpTcpImp(host, port);
 	}
 
-	public static Pep2PdpPipeImp connectPipePDP(String inPipe, String outPipe) {
-		Pep2PdpPipeImp pdp = new Pep2PdpPipeImp(new File(inPipe), new File(outPipe));
-		try {
-			pdp.connect();
-		} catch (Exception e) {
-			System.err.println("Unable to connect to PDP(" + inPipe + "," + outPipe + "). Exiting.");
-			System.exit(0);
-		}
-
-		return pdp;
+	public static IPep2Pdp connectPipePDP(String inPipe, String outPipe) {
+		return new Pep2PdpPipeImp(new File(inPipe), new File(outPipe));
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 //		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
 		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
+
+		ConnectionManager.obtainConnection(pdp1);
 
 		new DummyPEP(pdp1) {
 			@Override
@@ -156,8 +145,11 @@ public class Main {
 
 
 				IPep2Pdp con = this.getPdpCon();
-				if (con instanceof IConnector) {
-					((IConnector) con).disconnect();
+				try {
+					ConnectionManager.releaseConnection(con);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}.start();

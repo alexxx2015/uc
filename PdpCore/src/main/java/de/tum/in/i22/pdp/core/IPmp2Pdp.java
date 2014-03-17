@@ -6,8 +6,9 @@ import java.util.HashMap;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.IConnection;
 
-public interface IPmp2Pdp {
+public interface IPmp2Pdp extends IConnection {
 	public IStatus deployMechanism(IMechanism mechanism);
 	public IMechanism exportMechanism(String par);
 	public IStatus revokeMechanism(String policyName);
