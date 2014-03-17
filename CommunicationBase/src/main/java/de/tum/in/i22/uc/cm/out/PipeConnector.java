@@ -1,9 +1,8 @@
 package de.tum.in.i22.uc.cm.out;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
@@ -29,24 +28,23 @@ public class PipeConnector extends Connector {
 
 		try {
 			_logger.debug("Get i/o streams.");
-			_outputStream = new BufferedOutputStream(new FileOutputStream(_outPipe));
-			_inputStream = new BufferedInputStream(new FileInputStream(_inPipe));
+			setOutputStream(new FileOutputStream(_outPipe));
+			setInputStream(new FileInputStream(_inPipe));
 			_logger.debug("Connection established.");
-		} catch(Exception e) {
-			_logger.debug("Failed to establish connection.", e);
+		} catch(FileNotFoundException e) {
+			_logger.debug("File not found.", e);
 			throw e;
 		}
 	}
 
 	@Override
 	void disconnect() {
-		_logger.info("Tear down the connection");
+		_logger.info("Tear down the pipe");
 		try {
-			_inputStream.close();
-			_outputStream.close();
-			_logger.info("Connection closed!");
+			close();
+			_logger.info("Pipe closed!");
 		} catch (IOException e) {
-			_logger.error("Error occurred when closing the connection.", e);
+			_logger.error("Error occurred when closing the pipe.", e);
 		}
 	}
 

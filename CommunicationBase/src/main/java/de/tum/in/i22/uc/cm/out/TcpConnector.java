@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.out;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
@@ -24,8 +22,8 @@ public class TcpConnector extends Connector {
 
 		try {
 			_logger.debug("Get i/o streams.");
-			_outputStream = new BufferedOutputStream(_clientSocket.getOutputStream());
-			_inputStream = new BufferedInputStream(_clientSocket.getInputStream());
+			setOutputStream(_clientSocket.getOutputStream());
+			setInputStream(_clientSocket.getInputStream());
 			_logger.debug("Connection established.");
 		} catch(Exception e) {
 			_logger.debug("Failed to establish connection.", e);
@@ -38,8 +36,7 @@ public class TcpConnector extends Connector {
 		if (_clientSocket != null) {
 			_logger.info("Tear down the connection");
 			try {
-				_inputStream.close();
-				_outputStream.close();
+				close();
 				_clientSocket.close();
 				_clientSocket = null;
 				_logger.info("Connection closed!");
