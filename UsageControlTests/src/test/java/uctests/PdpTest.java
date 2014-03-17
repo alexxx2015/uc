@@ -60,8 +60,8 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
-//		startPepClient();
-//		startPmpClient();
+		startPepClient();
+		startPmpClient();
 
 		_pdpProxy = new Pep2PdpTcpImp("localhost", PEP_LISTENER_PORT_NUM);
 	}

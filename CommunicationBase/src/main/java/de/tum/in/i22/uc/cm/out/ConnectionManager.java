@@ -28,7 +28,7 @@ public class ConnectionManager {
 
 		Connection connection = (Connection) iconnection;
 		connection.connect();
-//
+
 //		synchronized (pool) {
 //			InUse inuse = null;
 //
