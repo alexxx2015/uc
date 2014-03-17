@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.out;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,18 +10,11 @@ import java.io.InputStream;
  * @author Florian Kelbert
  *
  */
-public class UnclosableInputStream extends InputStream {
-	private final InputStream _stream;
+public class UnclosableInputStream extends FilterInputStream {
 
-	public UnclosableInputStream(InputStream stream) {
-		_stream = stream;
+	public UnclosableInputStream(InputStream in) {
+		super(in);
 	}
-
-	@Override
-	public int read() throws IOException {
-		return _stream.read();
-	}
-
 	@Override
 	public void close() throws IOException {
 		throw new UnsupportedOperationException();
