@@ -7,6 +7,8 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.methods.EPipRequestMethod;
+import de.tum.in.i22.uc.cm.methods.EPipResponse;
 
 /**
  * Class for handling remote PIP requests.

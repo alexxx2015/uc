@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.methods.EPmp2PdpMethod;
 
 public abstract class PmpClientConnectionHandler extends ClientConnectionHandler {
 
