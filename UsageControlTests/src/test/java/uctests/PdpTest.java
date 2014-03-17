@@ -14,9 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pep2pdp.IPep2PdpTcp;
+import de.tum.in.i22.pdp.core.IPep2Pdp;
+import de.tum.in.i22.pdp.core.IPmp2Pdp;
 import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
-import de.tum.in.i22.pmp2pdp.IPmp2PdpTcp;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -50,7 +50,7 @@ public class PdpTest {
 	private final static int PMP_LISTENER_PORT_NUM = 50008;
 	private final static int PEP_LISTENER_PORT_NUM = 50009;
 
-	private static IPep2PdpTcp _pdpProxy;
+	private static IPep2Pdp _pdpProxy;
 
 	private static Thread _threadPep;
 	private static Thread _threadPmp;
@@ -142,7 +142,7 @@ public class PdpTest {
 
 			@Override
 			public void run() {
-				IPep2PdpTcp pdpProxyOne = new Pep2PdpTcpImp("localhost",
+				IPep2Pdp pdpProxyOne = new Pep2PdpTcpImp("localhost",
 						PEP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyOne = ConnectionManager.obtain(pdpProxyOne);
@@ -185,7 +185,7 @@ public class PdpTest {
 		_threadPmp = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IPmp2PdpTcp pdpProxyTwo = new Pmp2PdpTcpImp("localhost", PMP_LISTENER_PORT_NUM);
+				IPmp2Pdp pdpProxyTwo = new Pmp2PdpTcpImp("localhost", PMP_LISTENER_PORT_NUM);
 				try {
 					pdpProxyTwo = ConnectionManager.obtain(pdpProxyTwo);
 				} catch (Exception e) {

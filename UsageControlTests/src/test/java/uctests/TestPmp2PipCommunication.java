@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pmp2pip.IPmp2PipTcp;
+import de.tum.in.i22.pip.cm.in.pmp.IPmp2Pip;
 import de.tum.in.i22.pmp2pip.Pmp2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -17,7 +17,7 @@ public class TestPmp2PipCommunication {
 
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPmp2PipTcp _pipProxy;
+	private static IPmp2Pip _pipProxy;
 
 
 	@BeforeClass
