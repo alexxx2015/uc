@@ -14,6 +14,8 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.methods.EPipRequestMethod;
+import de.tum.in.i22.uc.cm.methods.EPipResponse;
 
 public abstract class PipClientConnectionHandler extends ClientConnectionHandler {
 

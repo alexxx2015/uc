@@ -36,6 +36,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.methods.EPdp2PipMethod;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
 public class PdpClientConnectionHandler extends ClientTcpConnectionHandler {
