@@ -18,15 +18,15 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * This is just a stub for now
- * 
+ *
  * @author Stoimenov
- * 
+ *
  */
 public class PdpHandlerMock implements IIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
-	
-//	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference(); 
+
+//	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference();
 
 	public PdpHandlerMock() {
 	}

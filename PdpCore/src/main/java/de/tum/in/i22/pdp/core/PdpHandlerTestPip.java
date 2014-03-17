@@ -15,7 +15,6 @@ import de.tum.in.i22.cm.pdp.internal.Event;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
-import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -28,24 +27,18 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
  * This contains some tests to run the PIP "inside" the PDP
- * 
+ *
  * @author Lovat
- * 
+ *
  */
 public class PdpHandlerTestPip implements IIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerTestPip.class);
-	private static IPdpCore2PipCacher _core2pip;
-	private static IPdpEngine2PipCacher _engine2pip;
-	private static IMessageFactory _messageFactory;
-	
-	private static PolicyDecisionPoint _lpdp;
 
-	
-	public PdpHandlerTestPip() {
-	
-	}	
-	
+	private IPdpCore2PipCacher _core2pip;
+	private IPdpEngine2PipCacher _engine2pip;
+	private final PolicyDecisionPoint _lpdp;
+
 	@Inject
 	public PdpHandlerTestPip(PolicyDecisionPoint lpdp){
 		_lpdp = lpdp;
@@ -57,11 +50,11 @@ public class PdpHandlerTestPip implements IIncoming {
 //			_logger.info("Test policy deployed");
 		} catch (Exception e) {
 			_logger.fatal("Could not load native PDP library! " + e.getMessage());
-		}		
+		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public IStatus deployMechanism(IMechanism mechanism) {
 		// TODO implement
@@ -75,22 +68,22 @@ public class PdpHandlerTestPip implements IIncoming {
 		_logger.debug("Export mechanism called");
 		return DummyMessageGen.createMechanism();
 	}
-	
+
 
 	@Override
 	public IStatus revokeMechanism(String policyName) {
 		_logger.debug("Revoke mechanism called");
 		// TODO implement
-		this._lpdp.revokePolicy(policyName);
+		_lpdp.revokePolicy(policyName);
 		return DummyMessageGen.createOkStatus();
 	}
-	
+
 
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		_logger.debug("Revoke mechanism called");
 		// TODO implement
-		this._lpdp.revokePolicy(policyName, mechName);
+		_lpdp.revokePolicy(policyName, mechName);
 		return DummyMessageGen.createOkStatus();
 	}
 
@@ -105,18 +98,18 @@ public class PdpHandlerTestPip implements IIncoming {
 
 		_logger.debug("Refreshing the cache");
 		if (event!=null) _core2pip.refresh(event);
-		
+
 		_logger.debug("Converting event to be processed by pdp");
 		//Create a new IESE event out of the TUM event
 		Event ev = new Event(event);
-		
+
 		_logger.debug("Retrieved decision from pdp");
 		Decision d = _lpdp.notifyEvent(ev);
-		
+
 		_logger.debug("Converting decision [ +"+d+" ]into proper response");
 		//Convert (IESE) Decision into a (TUM) Response
 		IResponse res= d.getResponse();
-				
+
 		_logger.debug("Returning response");
 		return res;
 	}
@@ -156,21 +149,21 @@ public class PdpHandlerTestPip implements IIncoming {
 	@Override
 	public IStatus deployPolicy(String policyFilePath) {
 		// TODO Auto-generated method stub
-		this._lpdp.deployPolicy(policyFilePath);
+		_lpdp.deployPolicy(policyFilePath);
 		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
 	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
-		HashMap<String, ArrayList<Mechanism>> _return = this._lpdp.listDeployedMechanisms();
+		HashMap<String, ArrayList<Mechanism>> _return = _lpdp.listDeployedMechanisms();
 		return _return;
 	}
 
 	@Override
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
-		return this._engine2pip.getCurrentPipModel();
+		return _engine2pip.getCurrentPipModel();
 	}
-	
+
 }
