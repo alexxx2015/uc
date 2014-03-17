@@ -59,7 +59,12 @@
 			<artifactId>guava</artifactId>
 			<version>16.0.1</version>
 		</dependency>
-            
+
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>Pip2Pip</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 </project>
