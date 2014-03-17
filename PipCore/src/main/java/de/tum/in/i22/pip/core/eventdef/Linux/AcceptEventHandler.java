@@ -72,7 +72,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 		if (!localIP.equals(remoteIP)) {
 			// client is remote
-			remoteConnectedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003)); //TODO
+			remoteConnectedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003));
 
 			ifModel.addName(remoteSocketName, remoteConnectedSocket);
 			ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);

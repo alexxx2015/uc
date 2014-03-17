@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp.cm.out;
+package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.List;
 

@@ -4,6 +4,7 @@ import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
 
 public class Pmp2Pip implements IPmp2Pip {
 

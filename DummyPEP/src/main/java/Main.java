@@ -6,12 +6,12 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
-import de.tum.in.i22.pdp.core.IPep2Pdp;
 import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
 import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 

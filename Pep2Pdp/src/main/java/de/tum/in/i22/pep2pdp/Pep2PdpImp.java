@@ -3,7 +3,6 @@ package de.tum.in.i22.pep2pdp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.tum.in.i22.pdp.core.IPep2Pdp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
@@ -19,6 +18,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 import de.tum.in.i22.uc.cm.methods.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;

@@ -12,12 +12,12 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
+import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -45,7 +45,7 @@ public class RequestHandler implements Runnable {
 	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
 
 	private IIncoming _pdpHandler;
-	private IPdp2PipTcp _pdp2PipProxy;
+	private IPdp2Pip _pdp2PipProxy;
 
 	private final IPdpCore2PipCacher _core2pip;
 	private final IPdpEngine2PipCacher _engine2pip;

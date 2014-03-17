@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.cm.in.pmp;
+package de.tum.in.i22.uc.cm.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;

@@ -13,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
+import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -24,7 +24,7 @@ public class PipTest {
 
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPdp2PipTcp _pipProxy;
+	private static IPdp2Pip _pipProxy;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {

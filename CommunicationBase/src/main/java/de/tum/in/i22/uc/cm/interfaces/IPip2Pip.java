@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip2pip;
+package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.Collection;
 

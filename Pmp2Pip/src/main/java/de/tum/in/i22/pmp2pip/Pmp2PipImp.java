@@ -3,7 +3,6 @@ package de.tum.in.i22.pmp2pip;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.tum.in.i22.pip.cm.in.pmp.IPmp2Pip;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -13,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 

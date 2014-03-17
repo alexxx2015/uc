@@ -1,5 +1,4 @@
-import de.tum.in.i22.pdp.core.IPep2Pdp;
-
+import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 
 public class DummyPEP extends Thread {
 

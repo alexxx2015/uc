@@ -2,6 +2,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.pip2pip.Pip2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -66,7 +67,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		if (!localIP.equals(remoteIP)) {
 			// server is remote
-			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, null); //TODO
+			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003));
 			ifModel.addName(remoteSocketName, remoteAcceptedSocket);
 			ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
 		}
