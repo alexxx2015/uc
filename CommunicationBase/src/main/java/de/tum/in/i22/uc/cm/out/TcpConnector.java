@@ -1,9 +1,8 @@
 package de.tum.in.i22.uc.cm.out;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
 
 public class TcpConnector extends Connector {
 
@@ -17,14 +16,15 @@ public class TcpConnector extends Connector {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_logger.debug("Establish connection to " + _address + ":" + _port);
+
 		_clientSocket = new Socket(_address, _port);
 
 		try {
 			_logger.debug("Get i/o streams.");
-			_outputStream = new BufferedOutputStream(_clientSocket.getOutputStream());
-			_inputStream = new BufferedInputStream(_clientSocket.getInputStream());
+			setOutputStream(_clientSocket.getOutputStream());
+			setInputStream(_clientSocket.getInputStream());
 			_logger.debug("Connection established.");
 		} catch(Exception e) {
 			_logger.debug("Failed to establish connection.", e);
@@ -34,11 +34,10 @@ public class TcpConnector extends Connector {
 
 	@Override
 	public void disconnect() {
-		_logger.info("Tear down the connection");
 		if (_clientSocket != null) {
+			_logger.info("Tear down the connection");
 			try {
-				_inputStream.close();
-				_outputStream.close();
+				close();
 				_clientSocket.close();
 				_clientSocket = null;
 				_logger.info("Connection closed!");
@@ -46,5 +45,20 @@ public class TcpConnector extends Connector {
 				_logger.error("Error occurred when closing the connection.", e);
 			}
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_address, _port);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TcpConnector) {
+			TcpConnector o = (TcpConnector) obj;
+			return Objects.equals(_address, o._address)
+					&& Objects.equals(_port, o._port);
+		}
+		return false;
 	}
 }

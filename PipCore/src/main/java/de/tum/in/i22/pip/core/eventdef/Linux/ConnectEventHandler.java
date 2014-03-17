@@ -12,7 +12,6 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
-import de.tum.in.i22.uc.distribution.IPLocation;
 
 
 public class ConnectEventHandler extends BaseEventHandler {
@@ -67,7 +66,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		if (!localIP.equals(remoteIP)) {
 			// server is remote
-			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, IPLocation.createIPLocation(remoteIP));
+			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, null); //TODO
 			ifModel.addName(remoteSocketName, remoteAcceptedSocket);
 			ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
 		}

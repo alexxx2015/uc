@@ -5,15 +5,15 @@ import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.distribution.Location;
+import de.tum.in.i22.uc.cm.out.Connection;
 
 public interface IDistributedPipStrategy {
-	boolean hasAllData(Location location, Collection<IData> data);
-	boolean hasAnyData(Location location, Collection<IData> data);
+	boolean hasAllData(Connection connection, Collection<IData> data);
+	boolean hasAnyData(Connection connection, Collection<IData> data);
 
-	boolean hasAllContainers(Location location, Collection<IContainer> containers);
-	boolean hasAnyContainer(Location location, Collection<IContainer> containers);
+	boolean hasAllContainers(Connection connection, Collection<IContainer> containers);
+	boolean hasAnyContainer(Connection connection, Collection<IContainer> containers);
 
-	void notifyDataTransfer(Location location, IName containerName, Collection<IData> data);
-	void notifyConnectionShutdown(Location location, IName connectionName);
+	void notifyDataTransfer(Connection connection, IName containerName, Collection<IData> data);
+	void notifyConnectionShutdown(Connection connection, IName connectionName);
 }

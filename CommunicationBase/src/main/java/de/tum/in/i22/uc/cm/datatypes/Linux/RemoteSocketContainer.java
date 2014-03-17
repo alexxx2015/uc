@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.datatypes.Linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.distribution.Location;
+import de.tum.in.i22.uc.cm.out.Connection;
 
 /**
  * Represents a remote container of which we only know a name and its location.
@@ -12,15 +12,15 @@ import de.tum.in.i22.uc.distribution.Location;
  *
  */
 public class RemoteSocketContainer extends SocketContainer {
-	private final Location _location;
+	private final Connection _connection;
 
-	public RemoteSocketContainer(Domain domain, Type type, Location location) {
+	public RemoteSocketContainer(Domain domain, Type type, Connection connection) {
 		super(domain, type);
-		_location = location;
+		_connection = connection;
 	}
 
-	public Location getLocation() {
-		return _location;
+	public Connection getConnection() {
+		return _connection;
 	}
 
 	@Override
@@ -38,14 +38,14 @@ public class RemoteSocketContainer extends SocketContainer {
 		if (obj instanceof RemoteSocketContainer) {
 			RemoteSocketContainer o = (RemoteSocketContainer) obj;
 			return super.equals(obj)
-					&& Objects.equals(_location, o._location);
+					&& Objects.equals(_connection, o._connection);
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.getId(), super.getClass(), _location);
+		return Objects.hash(super.getId(), super.getClass(), _connection);
 	}
 
 }

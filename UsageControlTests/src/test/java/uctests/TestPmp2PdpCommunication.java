@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class TestPmp2PdpCommunication {
 
@@ -36,7 +37,7 @@ public class TestPmp2PdpCommunication {
 	@Test
 	public void testDeployMechanism() throws Exception {
 		// connect to pdp
-		_pdpProxy.connect();
+		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
 
 		// deploy mechanism
 		IMechanism m = createMechanism();
@@ -44,16 +45,16 @@ public class TestPmp2PdpCommunication {
 		_logger.debug("Received status: " + status);
 
 		// disconnect from pdp
-		_pdpProxy.disconnect();
+		ConnectionManager.release(_pdpProxy);
 
 		// check if status is not null
 		Assert.assertNotNull(status);
 	}
-	
+
 	@Test
 	public void testDeployTwoMechanisms() throws Exception {
 		// connect to pdp
-		_pdpProxy.connect();
+		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
 
 		// deploy mechanism
 		IMechanism m = createMechanism();
@@ -61,16 +62,16 @@ public class TestPmp2PdpCommunication {
 		_logger.debug("Received status: " + status);
 		// check if status is not null
 		Assert.assertNotNull(status);
-		
+
 		m = createMechanism();
-		
+
 		status = _pdpProxy.deployMechanism(m);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);
-		
+
 
 		// disconnect from pdp
-		_pdpProxy.disconnect();
+		ConnectionManager.release(_pdpProxy);
 
 
 	}
@@ -78,14 +79,14 @@ public class TestPmp2PdpCommunication {
 	@Test
 	public void testExportMechanism() throws Exception {
 		// connect to pdp
-		_pdpProxy.connect();
+		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
 
 		// revoke
 		IMechanism mechanism = _pdpProxy.exportMechanism("param2");
 		_logger.debug("Received mechanism: " + mechanism);
 
 		// disconnect from pdp
-		_pdpProxy.disconnect();
+		ConnectionManager.release(_pdpProxy);
 
 		// check if status is not null
 		Assert.assertNotNull(mechanism);
@@ -94,19 +95,19 @@ public class TestPmp2PdpCommunication {
 	@Test
 	public void testRevokeMechanism() throws Exception {
 		// connect to pdp
-		_pdpProxy.connect();
+		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
 
 		// revoke
 		IStatus status = _pdpProxy.revokeMechanism("param1");
 		_logger.debug("Received status: " + status);
 
 		// disconnect from pdp
-		_pdpProxy.disconnect();
+		ConnectionManager.release(_pdpProxy);
 
 		// check if status is not null
 		Assert.assertNotNull(status);
 	}
-	
+
 	@Test
 	public void testMultipleInvocations() throws Exception {
 		for (int i = 0; i < 100; i++) {

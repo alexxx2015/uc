@@ -19,11 +19,9 @@ import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -32,6 +30,7 @@ import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class RequestHandler implements Runnable {
 	private static Logger _logger = Logger.getRootLogger();
@@ -309,7 +308,9 @@ public class RequestHandler implements Runnable {
 		try {
 			IPdp2PipTcp pipProxy = getPdp2PipProxy();
 			_logger.debug("Establish connection to PIP");
-			pipProxy.connect();
+
+			pipProxy = ConnectionManager.obtain(pipProxy);
+
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
 					+ System.currentTimeMillis());
 			FileUtils.writeByteArrayToFile(jarFile, request.getJarBytes());
@@ -317,7 +318,9 @@ public class RequestHandler implements Runnable {
 					request.getPipDeployer(), jarFile,
 					request.getConflictResolution());
 			jarFile.delete();
-			pipProxy.disconnect();
+
+			ConnectionManager.release(pipProxy);
+
 			return status;
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);

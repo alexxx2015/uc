@@ -3,10 +3,7 @@ package de.tum.in.i22.pep2pdp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pdp.core.IPep2Pdp;
-import de.tum.in.i22.uc.cm.AbstractConnection;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
@@ -23,13 +20,12 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
+import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
-import de.tum.in.i22.uc.cm.out.IConnector;
+import de.tum.in.i22.uc.cm.out.IConnection;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public abstract class Pep2PdpImp extends AbstractConnection implements IPep2Pdp, IConnector {
-
-	protected static final Logger _logger = Logger.getLogger(Pep2PdpImp.class);
+public abstract class Pep2PdpImp extends Connection implements IPep2Pdp {
 
 	protected Pep2PdpImp(Connector connector) {
 		super(connector);

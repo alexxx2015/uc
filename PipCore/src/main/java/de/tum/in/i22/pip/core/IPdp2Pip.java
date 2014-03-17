@@ -7,8 +7,9 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.IConnection;
 
-public interface IPdp2Pip extends IPipManager {
+public interface IPdp2Pip extends IPipManager, IConnection {
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
 	public Boolean evaluatePredicatCurrentState(String predicate);
 	public Set<IContainer> getContainerForData(IData data);
