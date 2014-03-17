@@ -7,14 +7,12 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.pdp.core.IPep2Pdp;
-import de.tum.in.i22.pep2pdp.IPep2PdpTcp;
 import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
 import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
-import de.tum.in.i22.uc.cm.out.IConnection;
 
 
 public class Main {
@@ -37,7 +35,7 @@ public class Main {
 		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 
-		ConnectionManager.obtainConnection(pdp1);
+		pdp1 = ConnectionManager.obtain(pdp1);
 
 		new DummyPEP(pdp1) {
 			@Override
@@ -146,7 +144,7 @@ public class Main {
 
 				IPep2Pdp con = this.getPdpCon();
 				try {
-					ConnectionManager.releaseConnection(con);
+					ConnectionManager.release(con);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
