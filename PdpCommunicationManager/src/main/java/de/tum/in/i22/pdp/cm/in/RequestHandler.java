@@ -33,36 +33,42 @@ import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class RequestHandler implements Runnable {
+
 	private static Logger _logger = Logger.getRootLogger();
+
 	private final static RequestHandler _instance = new RequestHandler();
+
+	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
 
-	private IIncoming pdpHandler;
-	private IPdp2PipTcp _pdp2PipProxy = null;
+	private IIncoming _pdpHandler;
+	private IPdp2PipTcp _pdp2PipProxy;
 
-	private static IPdpCore2PipCacher _core2pip = null;
-	private static IPdpEngine2PipCacher _engine2pip = null;
-	private static IPipCacher2Pip _pipHandler = null;
+	private final IPdpCore2PipCacher _core2pip;
+	private final IPdpEngine2PipCacher _engine2pip;
+	private final IPipCacher2Pip _pipHandler;
 
+
+	private RequestHandler() {
+		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
+		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
+
+		_pdp2PipProxy = new Pdp2PipTcpImp(PdpSettings.getInstance().getPipAddress(), PdpSettings.getInstance().getPipPortNum());
+
+		// 1 implementation for 2 interfaces
+		_core2pip = new PipCacherImpl(_pipHandler);
+		_engine2pip = (PipCacherImpl) _core2pip;
+		populate();
+	}
 
 	public IPdpCore2PipCacher getCore2Pip(){
 		return _core2pip ;
 	}
 	public IPipCacher2Pip getPipHandler(){
 		return _pipHandler;
-	}
-
-	public void initializeAll() {
-		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
-		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
-
-		// 1 implementation for 2 interfaces
-		_core2pip = new PipCacherImpl(_pipHandler);
-		_engine2pip = (PipCacherImpl) _core2pip;
-		populate();
 	}
 
 	/***
@@ -88,17 +94,14 @@ public class RequestHandler implements Runnable {
 		_pipHandler.notifyActualEvent(initEvent);
 	}
 
-	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
-
 	public static RequestHandler getInstance() {
 		return _instance;
 	}
 
 	public void setPdpHandler(IIncoming pdpHandler) {
-		this.pdpHandler = pdpHandler;
-		initializeAll();
-		this.pdpHandler.setPdpCore2PipCacher(_core2pip);
-		this.pdpHandler.setPdpEngine2PipCacher(_engine2pip);
+		_pdpHandler = pdpHandler;
+		_pdpHandler.setPdpCore2PipCacher(_core2pip);
+		_pdpHandler.setPdpEngine2PipCacher(_engine2pip);
 	}
 
 	/**
@@ -162,7 +165,7 @@ public class RequestHandler implements Runnable {
 				 *
 				 */
 
-				response = pdpHandler.notifyEvent(((PepNotifyEventRequestWrapper) request).getEvent());
+				response = _pdpHandler.notifyEvent(((PepNotifyEventRequestWrapper) request).getEvent());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
 			} else if (request instanceof PmpRequestWrapper) {
@@ -189,15 +192,13 @@ public class RequestHandler implements Runnable {
 		Object result = null;
 		switch (pmpRequest.getMethod()) {
 		case DEPLOY_MECHANISM:
-			result = pdpHandler.deployMechanism(pmpRequest.getMechanism());
+			result = _pdpHandler.deployMechanism(pmpRequest.getMechanism());
 			break;
 		case EXPORT_MECHANISM:
-			result = pdpHandler
-					.exportMechanism(pmpRequest.getStringParameter());
+			result = _pdpHandler.exportMechanism(pmpRequest.getStringParameter());
 			break;
 		case REVOKE_MECHANISM:
-			result = pdpHandler
-					.revokeMechanism(pmpRequest.getStringParameter());
+			result = _pdpHandler.revokeMechanism(pmpRequest.getStringParameter());
 			break;
 		default:
 			throw new RuntimeException("Method " + pmpRequest.getMethod()
@@ -232,23 +233,6 @@ public class RequestHandler implements Runnable {
 		return result;
 	}
 
-	/**
-	 * The proxy object will be created only if needed on the first invocation
-	 * of this method.
-	 *
-	 * @return
-	 */
-	private IPdp2PipTcp getPdp2PipProxy() throws Exception {
-		if (_pdp2PipProxy == null) {
-			String pipAddress = PdpSettings.getInstance().getPipAddress();
-			int pipPort = PdpSettings.getInstance().getPipPortNum();
-
-			_logger.debug("Create proxy object to connect to PIP listener "
-					+ pipAddress + ":" + pipPort);
-			_pdp2PipProxy = new Pdp2PipTcpImp(pipAddress, pipPort);
-		}
-		return _pdp2PipProxy;
-	}
 
 	private IStatus notifyEventToPip(IEvent event) {
 		try {
@@ -288,17 +272,12 @@ public class RequestHandler implements Runnable {
 			 *
 			 */
 
-			if (_pipHandler == null)
-				initializeAll();
-
-			IStatus status = _pipHandler.notifyActualEvent(event);
-			return status;
+			return _pipHandler.notifyActualEvent(event);
 
 			// / return _mf.createStatus(EStatus.OKAY);
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);
-			return _mf.createStatus(EStatus.ERROR,
-					"Error at PDP: " + e.getMessage());
+			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
 		}
 	}
 
@@ -306,26 +285,24 @@ public class RequestHandler implements Runnable {
 			UpdateIfFlowSemanticsRequestWrapper request) {
 		_logger.debug("Delegate update if flow to PIP");
 		try {
-			IPdp2PipTcp pipProxy = getPdp2PipProxy();
 			_logger.debug("Establish connection to PIP");
 
-			pipProxy = ConnectionManager.obtain(pipProxy);
+			_pdp2PipProxy = ConnectionManager.obtain(_pdp2PipProxy);
 
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
 					+ System.currentTimeMillis());
 			FileUtils.writeByteArrayToFile(jarFile, request.getJarBytes());
-			IStatus status = pipProxy.updateInformationFlowSemantics(
+			IStatus status = _pdp2PipProxy.updateInformationFlowSemantics(
 					request.getPipDeployer(), jarFile,
 					request.getConflictResolution());
 			jarFile.delete();
 
-			ConnectionManager.release(pipProxy);
+			ConnectionManager.release(_pdp2PipProxy);
 
 			return status;
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);
-			return _mf.createStatus(EStatus.ERROR,
-					"Error at PDP: " + e.getMessage());
+			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
 		}
 	}
 
