@@ -10,7 +10,15 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * This connection manager consolidate connections.
+ * Manages and synchronizes connections.
+ *
+ * This manager keeps a fixed amount of connections open, closing connections
+ * that have been least-recently-used. Using this manager, {@link Connection}s
+ * can safely be shared across threads.
+ *
+ * For this reason, this managers methods {@link ConnectionManager#obtain(IConnection)}
+ * and {@link ConnectionManager#release(IConnection)} must be used.
+ *
  *
  * @author Florian Kelbert
  *
@@ -30,12 +38,29 @@ public class ConnectionManager {
 	private static final Map<PoolMapEntry, PoolMapEntry> toClose = new HashMap<>();
 
 	/**
+	 * Connects and reserves the specified connection for the caller.
 	 *
+	 * Note, that the returned connection might be different from the one that has been
+	 * passed as an argument. In any case, the caller must use the _returned_ connection.
+	 * The returned connection is connected and ready to be used by the caller.
+	 *
+	 * If the connection was not known to the {@link ConnectionManager} before,
+	 * it gets (1) added to its internal pool of connections,
+	 * (2) physically connected, (3) reserved for the caller.
+	 *
+	 * If the connection was already known, then:
+	 * (a) if currently in use: this method blocks until the connection gets available,
+	 * then reserves it for the caller.
+	 * (b) if not currently in use: reserves the connection for the caller.
+	 *
+	 * Once no longer needed, the caller must "free" the reserved connection
+	 * by calling method {@link ConnectionManager#release(IConnection)}.
 	 *
 	 * @param iconnection
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	public static <C extends IConnection> C obtain(C iconnection) throws IOException {
 		if (iconnection == null) {
 			throw new NullPointerException("No connection provided.");
@@ -74,6 +99,16 @@ public class ConnectionManager {
 		return (C) entry.connection;
 	}
 
+	/**
+	 * Returns the specified connection to the connection pool and
+	 * makes it available to other threads.
+	 *
+	 * After returning the connection, the caller must no longer
+	 * use the connection, as this would lead to unspecified results.
+	 *
+	 * @param iconnection
+	 * @throws IOException
+	 */
 	public static void release(IConnection iconnection) throws IOException {
 		if (iconnection == null) {
 			throw new NullPointerException("No connection provided.");
