@@ -15,6 +15,8 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
+import de.tum.in.i22.pip.core.eventdef.Linux.*;
+
 public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 	protected static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
@@ -117,9 +119,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (_event.getParameters().size() == 0)
-			return _messageFactory
-					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 
 		IStatus finalStatus = _messageFactory.createStatus(EStatus.OKAY);
 		String errorString = "";

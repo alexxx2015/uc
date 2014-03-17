@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 
 /**
@@ -51,7 +52,12 @@ public class WriteEventHandler extends BaseEventHandler {
 
 		// copy into all containers aliased from the destination container
 		for (IContainer c : ifModel.getAliasTransitiveClosure(fileCont)) {
-			ifModel.addDataToContainerMappings(data, c);
+			if (c instanceof RemoteSocketContainer) {
+				System.out.println("Remote data transfer to " + c);
+			}
+			else {
+				ifModel.addDataToContainerMappings(data, c);
+			}
 		}
 
 		// now, also copy into the actual (direct) destination container ...

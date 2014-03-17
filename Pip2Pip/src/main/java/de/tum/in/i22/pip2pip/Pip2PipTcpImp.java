@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.cm.out.pip;
+package de.tum.in.i22.pip2pip;
 
 import de.tum.in.i22.uc.cm.out.TcpConnector;
 
