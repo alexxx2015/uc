@@ -23,11 +23,11 @@ public abstract class Connector {
 	private OutputStream _outputStream;
  	private InputStream _inputStream;
 
-	public OutputStream getOutputStream() {
+	public UnclosableOutputStream getOutputStream() {
 		return new UnclosableOutputStream(_outputStream);
 	}
 
-	public InputStream getInputStream() {
+	public UnclosableInputStream getInputStream() {
 		return new UnclosableInputStream(_inputStream);
 	}
 

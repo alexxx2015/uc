@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.cm.in.pdp.EPdp2PipMethod;
 import de.tum.in.i22.pip.core.IPdp2Pip;
@@ -41,8 +40,6 @@ import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
 public abstract class Pdp2PipImp extends AbstractConnection implements IPdp2Pip {
-
-	private static final Logger _logger = Logger.getLogger(Pdp2PipImp.class);
 
 	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 

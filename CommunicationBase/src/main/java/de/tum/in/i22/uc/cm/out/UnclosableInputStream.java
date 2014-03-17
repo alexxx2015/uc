@@ -15,6 +15,7 @@ public class UnclosableInputStream extends FilterInputStream {
 	public UnclosableInputStream(InputStream in) {
 		super(in);
 	}
+
 	@Override
 	public void close() throws IOException {
 		throw new UnsupportedOperationException();

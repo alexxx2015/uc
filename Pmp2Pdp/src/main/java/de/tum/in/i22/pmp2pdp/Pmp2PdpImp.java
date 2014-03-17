@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.cm.in.pmp.EPmp2PdpMethod;
 import de.tum.in.i22.pdp.core.IPmp2Pdp;
@@ -31,8 +29,6 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  *
  */
 public abstract class Pmp2PdpImp extends AbstractConnection implements IPmp2Pdp, IConnector {
-
-	protected static final Logger _logger = Logger.getLogger(Pmp2PdpImp.class);
 
  	public Pmp2PdpImp(Connector connector) {
  		super(connector);

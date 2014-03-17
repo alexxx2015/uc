@@ -5,7 +5,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
+import org.apache.log4j.Logger;
+
 public abstract class AbstractConnection implements IConnector {
+//	private static final ConnectionPool _connectionPool = ConnectionPool.getInstance();
+
+	protected static final Logger _logger = Logger.getLogger(AbstractConnection.class);
+
 	private final Connector _connector;
 
 	public AbstractConnection(Connector connector) {
@@ -28,6 +34,14 @@ public abstract class AbstractConnection implements IConnector {
 
 	protected InputStream getInputStream() {
 		return _connector.getInputStream();
+	}
+
+	public final AbstractConnection obtainConnection() throws IOException {
+		return ConnectionPool.obtainConnection(this);
+	}
+
+	public final void releaseConnection() throws IOException {
+		ConnectionPool.releaseConnection(this);
 	}
 
 	@Override
