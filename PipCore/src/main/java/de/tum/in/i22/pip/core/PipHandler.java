@@ -41,6 +41,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	//info for PipCacher
 	private Map<String, IKey> _predicatesToEvaluate;
 
+	// this is to include classes within the jar file
+	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
+
 	public PipHandler() {
 		this(0);
 	}
