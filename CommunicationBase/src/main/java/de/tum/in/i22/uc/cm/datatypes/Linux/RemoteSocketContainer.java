@@ -24,16 +24,6 @@ public class RemoteSocketContainer extends SocketContainer {
 	}
 
 	@Override
-	public String getId() {
-		return null;
-	}
-
-	@Override
-	public String getClassValue() {
-		return null;
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RemoteSocketContainer) {
 			RemoteSocketContainer o = (RemoteSocketContainer) obj;
