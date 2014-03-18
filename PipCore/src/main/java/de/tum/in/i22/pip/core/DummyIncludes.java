@@ -13,7 +13,6 @@ import de.tum.in.i22.pip.core.eventdef.Linux.ExitGroupEventHandler;
 import de.tum.in.i22.pip.core.eventdef.Linux.FcntlEventHandler;
 import de.tum.in.i22.pip.core.eventdef.Linux.FtruncateEventHandler;
 import de.tum.in.i22.pip.core.eventdef.Linux.KillEventHandler;
-import de.tum.in.i22.pip.core.eventdef.Linux.LinuxEvents;
 import de.tum.in.i22.pip.core.eventdef.Linux.MmapEventHandler;
 import de.tum.in.i22.pip.core.eventdef.Linux.MunmapEventHandler;
 import de.tum.in.i22.pip.core.eventdef.Linux.OpenAtEventHandler;
@@ -54,7 +53,6 @@ class DummyIncludes {
 		new FcntlEventHandler();
 		new FtruncateEventHandler();
 		new KillEventHandler();
-		new LinuxEvents();
 		new MmapEventHandler();
 		new MunmapEventHandler();
 		new OpenAtEventHandler();
