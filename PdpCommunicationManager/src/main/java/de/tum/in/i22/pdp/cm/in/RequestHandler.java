@@ -19,6 +19,7 @@ import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
+import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -165,7 +166,10 @@ public class RequestHandler implements Runnable {
 				 *
 				 */
 
-				response = _pdpHandler.notifyEvent(((PepNotifyEventRequestWrapper) request).getEvent());
+				IEvent event = ((PepNotifyEventRequestWrapper) request).getEvent();
+				_logger.debug("Processing " + event);
+				response = _pdpHandler.notifyEvent(event);
+				_logger.debug(System.lineSeparator() + InformationFlowModel.getInstance().niceString());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
 			} else if (request instanceof PmpRequestWrapper) {

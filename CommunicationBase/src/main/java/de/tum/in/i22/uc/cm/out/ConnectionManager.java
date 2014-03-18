@@ -168,12 +168,13 @@ public class ConnectionManager {
 				connectionPool.remove(pme.connection);
 			}
 
-			connectionPool.notifyAll();
-		}
 
-		for (PoolMapEntry pme : toClose.keySet()) {
-			pme.connection.disconnect();
-			toClose.remove(pme.connection);
+			for (PoolMapEntry pme : toClose.keySet()) {
+				pme.connection.disconnect();
+				toClose.remove(pme.connection);
+			}
+
+			connectionPool.notifyAll();
 		}
 	}
 
@@ -329,7 +330,7 @@ public class ConnectionManager {
 	/**
 	 * Groups a connection and its current state, i.e. whether it is currently in use.
 	 */
-	private static class PoolMapEntry {
+	private class PoolMapEntry {
 		Connection connection;
 		boolean inuse;
 
