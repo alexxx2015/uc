@@ -4,43 +4,37 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-
-import de.tum.in.i22.pip.cm.in.pdp.PdpFastServiceHandler;
-import de.tum.in.i22.pip.cm.in.pmp.Pmp2PipFastServiceHandler;
-import de.tum.in.i22.pip.core.IPdp2Pip;
-import de.tum.in.i22.pip.injection.PipModule;
-import de.tum.in.i22.uc.cm.in.FastServiceHandler;
+import de.tum.in.i22.pip.cm.in.pdp.PdpTcpServiceHandler;
+import de.tum.in.i22.pip.cm.in.pmp.Pmp2PipTcpServiceHandler;
+import de.tum.in.i22.pip.core.PipHandler;
+import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class PipController {
 	private static Logger _logger = Logger.getLogger(PipController.class);
-	
+
 	private boolean _isStarted = false;
-	
-	private IPdp2Pip _pipHandler;
-	
-	@Inject
+
+	private static PipSettings _pipSettings = PipSettings.getInstance();
+
+	private final IPdp2Pip _pipHandler;
+
 	public PipController(IPdp2Pip pipHandler) {
 		_pipHandler = pipHandler;
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		try {
-			PipSettings.getInstance().loadProperties();
+			_pipSettings.loadProperties();
 		} catch (IOException e) {
 			_logger.fatal("Properties cannot be loaded.", e);
 			return;
 		}
-		
-		Injector injector = Guice.createInjector(new PipModule());
-		
-		PipController pip = injector.getInstance(PipController.class);
-		
-		pip.start();
-		
+
+		new PipController(new PipHandler(_pipSettings.getPipRemotePortNum())).start();
+
 //		 EventHandler thread loops forever, this stops the main thread,
 //		 otherwise the app will be closed
 		Object lock = new Object();
@@ -52,29 +46,24 @@ public class PipController {
 			}
 		}
 	}
-	
+
 	public void start() {
-		if (_isStarted)
+		if (_isStarted) {
 			return;
-		_isStarted = true;
+		}
+
 		_logger.info("Start pip");
-		
-		_logger.info("Start PdpFastServiceHandler");
-		PipSettings settings = getPipSettings();
-		int pdpListenerPortNum = settings.getPdpListenerPortNum();
-		
-		FastServiceHandler pdpFastServiceHandler = new PdpFastServiceHandler(pdpListenerPortNum, _pipHandler);
+
+		int pdpListenerPortNum = _pipSettings.getPdpListenerPortNum();
+		TcpServiceHandler pdpFastServiceHandler = new PdpTcpServiceHandler(pdpListenerPortNum, _pipHandler);
 		Thread threadPdpFastServiceHandler = new Thread(pdpFastServiceHandler);
 		threadPdpFastServiceHandler.start();
-		
-		
-		int pmpListenerPortNum = settings.getPmpListenerPortNum();
-		FastServiceHandler pmpFastServiceHandler = new Pmp2PipFastServiceHandler(pmpListenerPortNum);
+
+		int pmpListenerPortNum = _pipSettings.getPmpListenerPortNum();
+		TcpServiceHandler pmpFastServiceHandler = new Pmp2PipTcpServiceHandler(pmpListenerPortNum);
 		Thread threadPmpFastServiceHandler = new Thread(pmpFastServiceHandler);
 		threadPmpFastServiceHandler.start();
-	}
-	
-	public PipSettings getPipSettings() {
-		return PipSettings.getInstance();
+
+		_isStarted = true;
 	}
 }

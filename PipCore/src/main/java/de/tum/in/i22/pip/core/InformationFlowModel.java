@@ -1,10 +1,10 @@
 package de.tum.in.i22.pip.core;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,41 +14,26 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IIdentifiable;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
 /**
  * Information flow model Singleton.
  */
 public class InformationFlowModel {
-	private static final Logger _logger = Logger
-			.getLogger(InformationFlowModel.class);
+	private static final Logger _logger = Logger.getLogger(InformationFlowModel.class);
 
 	@Override
 	public String toString() {
-		String newline = System.getProperty("line.separator");
-		StringBuilder sb = new StringBuilder("InformationFlowModel[").append(newline);
-		sb.append("_containerSet=[").append(_containerSet).append(newline).append("]").append(newline);
-		sb.append("_dataSet=[").append(_dataSet).append(newline).append("]").append(newline);
-		sb.append("_namingSet=[").append(_namingMap).append(newline).append("]").append(newline);
-		sb.append("_scopeSet=[").append(_scopeSet).append(" IS_SIMULATING="+isSimulating()).append("]").append(newline);
-		sb.append("_dataToContainerMap=[").append(_containerToDataMap).append("]").append(newline);
-		sb.append("_containerAliasesMap=[").append(_aliasesMap).append("]").append(newline);
-		sb.append("]").append(newline);
-		return sb.toString();
-//		return "InformationFlowModel ["+System.getProperty("line.separator")+"_containerSet=" + _containerSet
-//				+ System.getProperty("line.separator")+", _dataSet=" + _dataSet + System.getProperty("line.separator")+", _dataToContainerMap="
-//				+ _containerToDataMap + System.getProperty("line.separator")+", _containerAliasesMap="
-//				+ _aliasesMap + System.getProperty("line.separator")+", _namingSet=" + _namingMap+System.getProperty("line.separator")
-//				+ ", _scopeSet=" + _scopeSet + System.getProperty("line.separator")+" IS_SIMULATING="+isSimulating()+"]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_containerToDataMap", _containerToDataMap)
+				.add("_aliasesMap", _aliasesMap)
+				.add("_namingMap", _namingMap)
+				.add("_scopeSet", _scopeSet)
+				.add("_isSimulating", isSimulating())
+				.toString();
 	}
 
 	private final static InformationFlowModel _instance = new InformationFlowModel();
-
-	// list of containers
-	private Set<IContainer> _containerSet;
-	// list of data
-	private Set<IData> _dataSet;
 
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> _containerToDataMap = null;
@@ -70,9 +55,7 @@ public class InformationFlowModel {
 	private Map<IName, IContainer> _namingSetBackup;
 	private Set<Scope> _scopeSetBackup;
 
-	public InformationFlowModel() {
-		_containerSet = new HashSet<>();
-		_dataSet = new HashSet<>();
+	private InformationFlowModel() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
@@ -108,8 +91,6 @@ public class InformationFlowModel {
 		_logger.info("Pushing current PIP state...");
 		if (!isSimulating()) {
 			_logger.info("..done!");
-			_containerSetBackup = _containerSet;
-			_dataSetBackup = new HashSet<>(_dataSet);
 
 			_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
 			for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
@@ -139,8 +120,6 @@ public class InformationFlowModel {
 		_logger.info("Popping current PIP state...");
 		if (isSimulating()) {
 			_logger.info("..done!");
-			_containerSet = _containerSetBackup;
-			_dataSet = _dataSetBackup;
 			_containerToDataMap = _containerToDataMapBackup;
 			_aliasesMap = _aliasesMapBackup;
 			_namingMap = _namingSetBackup;
@@ -271,66 +250,76 @@ public class InformationFlowModel {
 	}
 
 	/**
-	 * Adds data object.
-	 *
-	 * @param data
-	 */
-	public void add(IData data) {
-		if (data != null) {
-			_dataSet.add(data);
-		}
-	}
-
-	/**
 	 * Removes data object.
 	 *
 	 * @param data
 	 */
 	public void remove(IData data) {
 		if (data != null) {
-			_dataSet.remove(data);
+			for (IContainer cont : _containerToDataMap.keySet()) {
+				_containerToDataMap.get(cont).remove(data);
+			}
 		}
 	}
 
-//	public IData getDataById(IData id) {
-//		return (IData) getElementFromSet(id, _dataSet);
-//	}
-//
-//	/**
-//	 * Checks if the model contains a data object with given id.
-//	 *
-//	 * @param id
-//	 * @return
-//	 */
-//	public boolean hasData(IData id) {
-//		IData data = getDataById(id);
-//		return data != null ? true : false;
-//	}
 
 	/**
-	 * Inserts container into the model.
+	 * Removes the given container completely by deleting
+	 * associated names, aliases, and data.
 	 *
-	 * @param container
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param cont the container to be removed.
 	 */
-	public void addContainer(IContainer container) {
-		if (container != null) {
-			_containerSet.add(container);
-		}
-	}
-
 	public void remove(IContainer cont) {
 		if (cont != null) {
-			_containerSet.remove(cont);
+			_logger.info("remove container: " + cont);
+			removeAllAliasesTo(cont);
+			removeAllAliasesFrom(cont);
+			removeAllNames(cont);
+			emptyContainer(cont);
 		}
 	}
 
-	public boolean contains(IContainer cont) {
-		return _containerSet.contains(cont);
+	private void removeAllNames(IContainer cont) {
+		if (cont != null) {
+			Set<IName> toRemove = new HashSet<IName>();
+			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
+				if (cont.equals(entry.getValue())) {
+					toRemove.add(entry.getKey());
+				}
+			}
+			for (IName key : toRemove) {
+				_namingMap.remove(key);
+			}
+		}
 	}
 
+	/**
+	 * Removes all data from the specified container
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container of which the data is to be removed.
+	 */
+	public void emptyContainer(IContainer container) {
+		if (container != null) {
+			_logger.info("Emptying container " + container);
+			_containerToDataMap.remove(container);
+		}
+	}
 
-	public void emptyContainer(IContainer id) {
-		_containerToDataMap.remove(id);
+	/**
+	 * Removes all data from the container identified by the given container name.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param containerName a name of the container that is to be emptied.
+	 */
+	public void emptyContainer(IName containerName) {
+		if (containerName != null) {
+			emptyContainer(_namingMap.get(containerName));
+		}
 	}
 
 	/**
@@ -339,42 +328,70 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public void addAlias(IContainer fromContainer, IContainer toContainer) {
+		if (fromContainer == null || toContainer == null || fromContainer.equals(toContainer)) {
+			return;
+		}
+
+		_logger.info("addAlias from " + fromContainer + " to " + toContainer);
+
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
-			aliases = new HashSet<IContainer>();
+			aliases = new HashSet<>();
 			_aliasesMap.put(fromContainer, aliases);
 		}
 		aliases.add(toContainer);
 	}
 
+
+	public void addAlias(IName fromContainerName, IName toContainerName) {
+		if (fromContainerName == null || toContainerName == null) {
+			return;
+		}
+
+		addAlias(_namingMap.get(fromContainerName), _namingMap.get(toContainerName));
+	}
+
+
 	/**
-	 * Removes the alias relation identified
+	 * Removes the alias from fromContainer to toContainer.
 	 *
-	 * @param fromContainer
-	 * @param toContainer
-	 * @return
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param fromContainer the container of which the alias is outgoing
+	 * @param toContainer the container of which the alias is incoming
 	 */
 	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
-		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
-		if (aliases != null) {
+		if (fromContainer == null || toContainer == null) {
+			return;
+		}
+
+		Set<IContainer> aliases;
+
+		if ((aliases = _aliasesMap.get(fromContainer)) != null) {
 			aliases.remove(toContainer);
+
+			if (aliases.size() == 0) {
+				_aliasesMap.remove(fromContainer);
+			}
 		}
 	}
 
 	/**
-	 * Fins all aliases of a container given by its id.
+	 * Returns an immutable view onto the set of all aliases *from* the specified container.
 	 *
-	 * @param id
-	 * @return All aliases of a container given by its id, empty set if the
-	 *         container has no aliases.
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose outgoing aliases will be returned.
+	 * @return An immutable view onto the set of all aliases *from* the specified container.
 	 */
-	public Set<IContainer> getAliasesForContainer(IContainer id) {
-		Set<IContainer> result = _aliasesMap.get(id);
-		// if no such element is present, return an empty set
-		if (result == null)
-			result = new HashSet<>();
+	public Collection<IContainer> getAliasesFrom(IContainer container) {
+		Set<IContainer> result;
 
-		return result;
+		if (container == null || (result = _aliasesMap.get(container)) == null) {
+			result = Collections.emptySet();
+		}
+
+		return Collections.unmodifiableSet(result);
 	}
 
 	/**
@@ -385,11 +402,13 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
-		Set<IContainer> closureSet = getAliasClosureExcludeStartId(container);
-		// add self to set ==> reflexive
-		closureSet.add(container);
+		if (container == null) {
+			return Collections.emptySet();
+		}
 
-		return closureSet;
+		Set<IContainer> closure = getAliasTransitiveClosure(container);
+		closure.add(container);	// add self to set ==> reflexive
+		return closure;
 	}
 
 	/**
@@ -398,14 +417,8 @@ public class InformationFlowModel {
 	 * @param fromContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesFrom(IContainer fromContainer) {
-		boolean res = false;
-		if (_aliasesMap.containsKey(fromContainer)) {
-			Set<IContainer> set = _aliasesMap.get(fromContainer);
-			set.clear();
-			res = true;
-		}
-		return res;
+	public void removeAllAliasesFrom(IContainer fromContainer) {
+		_aliasesMap.remove(fromContainer);
 	}
 
 	/**
@@ -414,113 +427,203 @@ public class InformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public boolean removeAllAliasesTo(IContainer toContainer) {
-		// TODO This method seems to have a bug.
-		boolean res = false;
-		Set<IContainer> aliasesToContainer = getAliasesTo(toContainer);
-		if (aliasesToContainer.size() > 0) {
-			Collection<Set<IContainer>> aliasesCollection = _aliasesMap
-					.values();
-			for (Set<IContainer> aliases : aliasesCollection) {
-				if (aliases.contains(toContainer)) {
-					_aliasesMap.remove(toContainer);
+	public void removeAllAliasesTo(IContainer toContainer) {
+		if (toContainer == null) {
+			return;
+		}
+
+		List<IContainer> toRemove = new LinkedList<IContainer>();
+
+		for (IContainer from : _aliasesMap.keySet()) {
+			Set<IContainer> toSet = _aliasesMap.get(from) ;
+			if (toSet != null && toSet.remove(toContainer)) {
+				if (toSet.size() == 0) {
+					toRemove.add(from);
 				}
 			}
-			res = true;
 		}
-		return res;
+
+		for (IContainer rem : toRemove) {
+			_aliasesMap.remove(rem);
+		}
 	}
 
 	/**
+	 * Returns an immutable view onto the set of all aliases *to* the specified container.
 	 *
-	 * @param toContainerId
-	 * @return All aliases that go to the container with the given id.
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose incoming aliases will be returned.
+	 * @return An immutable view onto the set of all aliases *to* the specified container.
 	 */
-	public Set<IContainer> getAliasesTo(IContainer toContainer) {
-		Set<IContainer> result = new HashSet<IContainer>();
-		Set<Entry<IContainer, Set<IContainer>>> entrySet = _aliasesMap
-				.entrySet();
-		for (Entry<IContainer, Set<IContainer>> entry : entrySet) {
-			Set<IContainer> aliasesSet = entry.getValue();
-			if (aliasesSet.contains(toContainer)) {
-				result.add(entry.getKey());
-			}
-		}
-		return result;
-	}
-
-	private Set<IContainer> getAliasClosureExcludeStartId(IContainer container) {
+	public Set<IContainer> getAliasesTo(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
-		getAliasClosureExcludeStartId(container, result);
-		return result;
-	}
 
-	private void getAliasClosureExcludeStartId(IContainer container,
-			Set<IContainer> visitedContainers) {
-		Set<IContainer> containerAliasesSet = getAliasesForContainer(container);
-		for (IContainer id : containerAliasesSet) {
-			if (visitedContainers.add(id)) {
-				getAliasClosureExcludeStartId(id, visitedContainers);
+		if (container != null) {
+			for (Entry<IContainer,Set<IContainer>> aliasEntry : _aliasesMap.entrySet()) {
+				if (aliasEntry.getValue().contains(container)) {
+					result.add(aliasEntry.getKey());
+				}
 			}
 		}
-	}
 
-	private IIdentifiable getElementFromSet(IIdentifiable id,
-			Set<? extends IIdentifiable> set) {
-		if (set==null) return null;
-		Iterator<? extends IIdentifiable> it = set.iterator();
-		IIdentifiable element = null;
-		boolean found = false;
-		while (!found && it.hasNext()) {
-			element = it.next();
-			if (element.getId().equals(id)) {
-				found = true;
-			}
-		}
-		return element;
-	}
-
-	public boolean addDataToContainerMapping(IData data, IContainer container) {
-		boolean res = false;
-		if (_containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = _containerToDataMap.get(container);
-			res = dataSet.add(data);
-		} else {
-			Set<IData> newDataSet = new HashSet<>();
-
-			//TODO: check if dataId corresponds to a valid data element
-			newDataSet.add(data);
-
-			_containerToDataMap.put(container, newDataSet);
-			res = true;
-		}
-		return res;
-	}
-
-	public boolean removeContainerToDataMapping(IContainer container,
-			IData data) {
-		boolean res = false;
-		if (_containerToDataMap.containsKey(container)) {
-			Set<IData> dataSet = _containerToDataMap.get(container);
-			dataSet.remove(data);
-			res = true;
-		}
-		return res;
+		return Collections.unmodifiableSet(result);
 	}
 
 	/**
-	 * @param containerId
-	 * @return All data items that are stored in the given data container. If
-	 *         there are no data for the given data container, returns empty
-	 *         set.
+	 * Returns the non-reflexive transitive alias closure of the specified container.
+	 * The resulting set will NOT contain the specified container.
+	 * @param container
+	 * @return
+	 */
+	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
+		Set<IContainer> result = new HashSet<>();
+		getAliasTransitiveClosure(container, result);
+		result.remove(container);
+		return result;
+	}
+
+	private void getAliasTransitiveClosure(IContainer container, Set<IContainer> visitedContainers) {
+		for (IContainer id : getAliasesFrom(container)) {
+			if (visitedContainers.add(id)) {
+				getAliasTransitiveClosure(id, visitedContainers);
+			}
+		}
+	}
+
+
+	/**
+	 * Adds the given data to the given container. If data
+	 * or container is null, nothing will happen.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param data the data to add
+	 * @param container to which container the data is added.
+	 */
+	public void addDataToContainer(IData data, IContainer container) {
+		if (data == null || container == null) {
+			return;
+		}
+
+		addDataToContainerMappings(Collections.singleton(data), container);
+	}
+
+	/**
+	 * Removes the given data from the given container.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param data the data to remove
+	 * @param container the container from which the data will be removed
+	 * @return true, if the data has been removed
+	 */
+	public void removeDataFromContainer(IData data, IContainer container) {
+		Set<IData> dataSet;
+
+		if (container == null || data == null || (dataSet = _containerToDataMap.get(container)) == null) {
+			return;
+		}
+
+		dataSet.remove(data);
+		if (dataSet.size() == 0) {
+			_containerToDataMap.remove(container);
+		}
+	}
+
+	/**
+	 * Returns an immutable view onto the set of data within the given container.
+	 * In doubt, returns an empty set; never null.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container of which we want to get the data
+	 * @return an immutable view onto the set of data items stored in the given container
 	 */
 	public Set<IData> getDataInContainer(IContainer container) {
-		Set<IData> result = _containerToDataMap.get(container);
-		if (result == null) {
-			result = new HashSet<>();
+		Set<IData> result;
+		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
+			result = Collections.emptySet();
 		}
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
+
+
+	/**
+	 * Returns the data contained in the container identified by the given name,
+	 * cf. {@link #getDataInContainer(IContainer)}.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param containerName a name of the container of which the containing data will be returned.
+	 * @return an immutable view onto the set of data within the container
+	 */
+	public Set<IData> getDataInContainer(IName containerName) {
+		IContainer cont;
+
+		if (containerName == null || (cont = _namingMap.get(containerName)) == null) {
+			return Collections.emptySet();
+		}
+
+		return getDataInContainer(cont);
+	}
+
+
+	/**
+	 * Copies all data contained in the container identified by srcContainerName to
+	 * the container identified by dstContainerName.
+	 *
+	 * @param srcContainerName
+	 * @param dstContainerName
+	 * @return true if both containers existed and data (possibly none, if fromContainer was empty) was copied.
+	 */
+	public boolean copyData(IName srcContainerName, IName dstContainerName) {
+		if (srcContainerName == null || dstContainerName == null) {
+			return false;
+		}
+
+		return copyData(_namingMap.get(srcContainerName), _namingMap.get(dstContainerName));
+	}
+
+
+	public boolean copyData(IContainer srcContainer, IContainer dstContainer) {
+		if (srcContainer == null || dstContainer == null) {
+			return false;
+		}
+
+		_logger.info("copyData() from " + srcContainer + " to " + dstContainer);
+
+		Set<IData> srcData = _containerToDataMap.get(srcContainer);
+		if (srcData != null) {
+			Set<IData> dstData = _containerToDataMap.get(dstContainer);
+			if (dstData == null) {
+				dstData = new HashSet<IData>();
+				_containerToDataMap.put(dstContainer, dstData);
+			}
+			dstData.addAll(srcData);
+		}
+		return true;
+	}
+
+	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
+		if (dstContainerName == null) {
+			return;
+		}
+
+		addDataToContainerAndAliases(data, getContainer(dstContainerName));
+	}
+
+	public void addDataToContainerAndAliases(Set<IData> data, IContainer dstContainer) {
+		if (data == null || data.size() == 0 || dstContainer == null) {
+			return;
+		}
+
+		addDataToContainerMappings(data, dstContainer);
+		for (IContainer c : getAliasesFrom(dstContainer)) {
+			addDataToContainerMappings(data, c);
+		}
+	}
+
 
 	/**
 	 *
@@ -529,9 +632,7 @@ public class InformationFlowModel {
 	 */
 	public Set<IContainer> getContainersForData(IData data) {
 		Set<IContainer> result = new HashSet<>();
-		Set<Entry<IContainer, Set<IData>>> entrySet = _containerToDataMap
-				.entrySet();
-		for (Entry<IContainer, Set<IData>> entry : entrySet) {
+		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap.entrySet()) {
 			if (entry.getValue().contains(data)) {
 				result.add(entry.getKey());
 			}
@@ -539,51 +640,87 @@ public class InformationFlowModel {
 		return result;
 	}
 
-	public boolean addDataToContainerMappings(Set<IData> dataSet,
-			IContainer container) {
-		if (dataSet == null) {
-			return true;
+	public void addDataToContainerMappings(Set<IData> data, IContainer container) {
+		if (data == null || container == null) {
+			return;
 		}
 
-		boolean res = false;
-
-		Set<IData> existingDataSet = _containerToDataMap.get(container);
-		if (existingDataSet == null) {
-			Set<IData> newDataSet = new HashSet<>(dataSet);
-			_containerToDataMap.put(container, newDataSet);
-			res = true;
-		} else {
-			res = existingDataSet.addAll(dataSet);
+		Set<IData> dstData = _containerToDataMap.get(container);
+		if (dstData == null) {
+			dstData = new HashSet<IData>();
+			_containerToDataMap.put(container, dstData);
 		}
-		return res;
+		dstData.addAll(data);
 	}
 
-	// Naming set manipulation functions:
+
 	/**
-	 * Adds an entry to the naming mapping for container contID, with the
-	 * naming/representation name.
+	 * Makes the given name point to the given container.
 	 *
-	 * @param name
-	 * @param containerId
-	 * @return
+	 * If the given name was already assigned to another container,
+	 * this old name/container mapping is overwritten. If this was the
+	 * last name for that container, the corresponding container is deleted.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param name the new name for the given container.
+	 * @param container the container for which the new name applies.
 	 */
-	public boolean addName(IName name, IContainer container) {
-		boolean res = false;
-		if (name != null && !name.getName().isEmpty()) {
-			_namingMap.put(name, container);
-			res = true;
+	public void addName(IName name, IContainer container) {
+		if (name == null || container == null) {
+			return;
 		}
-		return res;
+
+		_logger.info("addName: " + name + " -> " + container);
+
+		IContainer oldAssigned;
+		if ((oldAssigned = _namingMap.put(name, container)) != null) {
+			_logger.info("A container (" + oldAssigned + ") was already assigned to name " + name + ". "
+					+ "This mapping has been removed.");
+
+			if (getAllNames(oldAssigned).size() == 0) {
+				remove(oldAssigned);
+			}
+		}
 	}
 
 	/**
-	 * Removes the naming/representation name from the naming set.
+	 * Adds an additional name, newName, for the container that is
+	 * already identified by another name, oldName.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param oldName a name identifying an already existing container
+	 * @param newName the additional new name for the container identified by oldName.
+	 */
+	public void addName(IName oldName, IName newName) {
+		if (oldName == null || newName == null) {
+			return;
+		}
+
+		IContainer cont;
+		if ((cont = getContainer(oldName)) != null) {
+			addName(newName, cont);
+		}
+	}
+
+	/**
+	 * Removes the name.
 	 *
 	 * @param name
 	 * @return
 	 */
-	public boolean removeName(IName name) {
-		return _namingMap.remove(name) != null;
+	public void removeName(IName name) {
+		if (name != null) {
+			_logger.info("removeName() " + name);
+			IContainer cont = _namingMap.remove(name);
+
+			// if this was the last name, we can remove the container
+			Collection<IName> remainingNames = getAllNames(cont);
+			if (remainingNames == null || remainingNames.size() == 0) {
+				remove(cont);
+			}
+		}
 	}
 
 	/**
@@ -593,18 +730,7 @@ public class InformationFlowModel {
 	 * @return
 	 */
 	public IContainer getContainer(IName name) {
-		if (name != null && name.getName() != null) {
-//			// FK: Malte's old code. The single line below should do the job as well
-//			// If you (anyone) agree, please delete
-//			Set<Name> pipNameSet = _namingSet.keySet();
-//			for (Name nm : pipNameSet) {
-//				String representationName = nm.getName();
-//				if (name.getName().equals(representationName)) {
-//					containerId = _namingSet.get(nm);
-//					break;
-//				}
-//			}
-
+		if (name != null) {
 			return _namingMap.get(name);
 		}
 		return null;
@@ -636,42 +762,86 @@ public class InformationFlowModel {
 		return container;
 	}
 
+
 	/**
-	 * Return all names that refer to the container with containerId.
+	 * Returns an unmodifiable view onto all names.
 	 *
-	 * @param containerId
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @return an unmodifiable view onto all names.
+	 */
+	public Collection<IName> getAllNames() {
+		return Collections.unmodifiableCollection(_namingMap.keySet());
+	}
+
+
+	/**
+	 * Returns an unmodifiable view onto all names
+	 * for the given container.
+	 *
+	 * ~ Double checked, 2014/03/14. FK.
+	 *
+	 * @param container the container whose names are returned.
+	 * @return an unmodifiable view onto all names for the given container
+	 */
+	public Collection<IName> getAllNames(IContainer container) {
+		Collection<IName> result = new LinkedList<>();
+
+		for (Entry<IName, IContainer> nameEntry : _namingMap.entrySet()) {
+			if (nameEntry.getValue().equals(container)) {
+				result.add(nameEntry.getKey());
+			}
+		}
+
+		return Collections.unmodifiableCollection(result);
+	}
+
+
+	/**
+	 * Get all names of the container identified by the given containerName.
+	 * It is ensured that all names within the result are of the specified type.
+	 * @param containerName
+	 * @param type
 	 * @return
 	 */
-	public List<IName> getAllNames(IContainer container) {
-		List<IName> result = new ArrayList<IName>();
+	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
+		IContainer cont;
 
-//		// FK: Malte's old code. The (more efficient) code below should do the job as well
-//		// If you (anyone) agree, please delete
-//		if (_namingSet.containsValue(containerId)) {
-//			for (Entry<Name, String> entry : _namingSet.entrySet()) {
-//				if (entry.getValue() == containerId) {
-//					result.add(entry.getKey());
-//				}
-//			}
-//		}
+		if (containerName == null || (cont = _namingMap.get(containerName)) == null) {
+			return Collections.emptyList();
+		}
 
-		if (_namingMap != null) {
-			for (IName name : _namingMap.keySet()) {
-				if (_namingMap.get(name).equals(container)) {
-					result.add(name);
+		return getAllNames(cont, type);
+	}
+
+	/**
+	 * Get all names of the specified container
+	 * It is ensured that all names within the result are of the specified type.
+	 * @param containerName
+	 * @param type
+	 * @return
+	 */
+	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
+		List<T> result = new LinkedList<>();
+
+		for (IName name : _namingMap.keySet()) {
+			if (type.isInstance(name)) {
+				if (_namingMap.get(name).equals(cont)) {
+					result.add(type.cast(name));
 				}
 			}
 		}
 
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 	/**
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
+	// TODO, FK: This method seems odd.
 	public List<IName> getAllNamingsFrom(IContainer pid) {
-		List<IName> result = new ArrayList<IName>();
+		List<IName> result = new LinkedList<>();
 
 		for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 			if (entry.getKey().getName().equals(pid))
@@ -681,4 +851,83 @@ public class InformationFlowModel {
 		return result;
 	}
 
+
+
+
+	public String niceString() {
+		StringBuilder sb = new StringBuilder();
+
+		String nl = System.getProperty("line.separator");
+		String arrow = " ---> ";
+		String arrowL = " <--- ";
+
+		sb.append("  Storage:" + nl);
+		for (Entry<IContainer,Set<IData>> entry :_containerToDataMap.entrySet()) {
+			sb.append("    " + entry.getKey().getId() + arrow);
+			boolean first = true;
+			for (IData d : entry.getValue()) {
+				if (first) {
+					first = false;
+				}
+				else {
+					sb.append("    ");
+					for (int i = 0; i < entry.getKey().getId().length() + arrow.length(); i++) {
+						sb.append(" ");
+					}
+				}
+				sb.append(d.getId() + nl);
+			}
+		}
+		sb.append(nl);
+
+		sb.append("  Aliases:" + nl);
+		for (Entry<IContainer,Set<IContainer>> entry :_aliasesMap.entrySet()) {
+			sb.append("    " + entry.getKey().getId() + arrow);
+			boolean first = true;
+			for (IContainer c : entry.getValue()) {
+				if (first) {
+					first = false;
+				}
+				else {
+					sb.append("    ");
+					for (int i = 0; i < entry.getKey().getId().length() + arrow.length(); i++) {
+						sb.append(" ");
+					}
+				}
+				sb.append(c.getId() + nl);
+			}
+		}
+		sb.append(nl);
+
+		sb.append("  Naming:" + nl);
+		Set<IContainer> wasPrinted = new HashSet<IContainer>();
+		for (IContainer cont : _namingMap.values()) {
+			if (wasPrinted.contains(cont)) {
+				continue;
+			}
+
+			wasPrinted.add(cont);
+			sb.append("    " + cont.getId() + arrowL);
+			boolean first = true;
+			for (IName name : _namingMap.keySet()) {
+				if (_namingMap.get(name).equals(cont)) {
+					if (first) {
+						first = false;
+					}
+					else {
+						sb.append("    ");
+						for (int i = 0; i < cont.getId().length() + arrowL.length(); i++) {
+							sb.append(" ");
+						}
+					}
+					sb.append(name.getName() + nl);
+				}
+			}
+		}
+		sb.append(nl);
+
+		sb.append("-----------------------------------------------");
+
+		return sb.toString();
+	}
 }

@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -22,8 +21,6 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		//This event is used only during tests to update the information flow schema to a specific state
 		// It assumes the state contains a container TEST_C containing TEST_D (see SchemaInitializer) and removes it
 
-
-		InformationFlowModel ifModel = getInformationFlowModel();
 
 		String contName="TEST_C";
 

@@ -23,7 +23,7 @@ public class Event implements Serializable {
 		this.timestamp = System.currentTimeMillis();
 	}
 
-	
+
 	/***
 	 * Generate an (IESE) event out of a given (TUM) event
 	 * @param ev
@@ -212,6 +212,7 @@ public class Event implements Serializable {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		String str = "Event      action='" + eventAction + "' isTry='"
 				+ tryEvent + "' timestamp='" + timestamp + "': [";
@@ -228,5 +229,5 @@ public class Event implements Serializable {
 		}
 		return new EventBasic(this.eventAction, m, !isTryEvent());
 	}
-	
+
 }

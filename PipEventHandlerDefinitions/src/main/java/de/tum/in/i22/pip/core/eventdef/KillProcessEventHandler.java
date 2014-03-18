@@ -1,11 +1,7 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -15,9 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class KillProcessEventHandler extends BaseEventHandler {
-
-	private static final Logger _logger = Logger
-			.getLogger(KillProcessEventHandler.class);
 
 	public KillProcessEventHandler() {
 		super();
@@ -37,7 +30,6 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer processContainer = ifModel.getContainer(new NameBasic(pid));
 
 		// check if container for process exists

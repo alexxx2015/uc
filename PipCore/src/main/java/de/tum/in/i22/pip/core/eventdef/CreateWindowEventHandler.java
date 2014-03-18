@@ -1,7 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -32,13 +30,11 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer containerIdByWindowHandle = ifModel.getContainer(new NameBasic(windowHandle));
 
 		// check if container for window exists and create new container if not
 		if (containerIdByWindowHandle == null) {
 			containerIdByWindowHandle = _messageFactory.createContainer();
-			ifModel.addContainer(containerIdByWindowHandle);
 			ifModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 

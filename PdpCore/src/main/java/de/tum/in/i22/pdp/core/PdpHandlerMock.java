@@ -6,28 +6,29 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.cm.pdp.internal.Mechanism;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 
 /**
  * This is just a stub for now
- * 
+ *
  * @author Stoimenov
- * 
+ *
  */
-public class PdpHandlerMock implements IIncoming {
+public class PdpHandlerMock implements IPdpIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
-	
-//	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference(); 
+
+//	private IPdpCore2PipCacher _pipCacher = PipCacherImpl.getReference();
 
 	public PdpHandlerMock() {
 	}
@@ -89,7 +90,7 @@ public class PdpHandlerMock implements IIncoming {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+	public HashMap<String, ArrayList<IPdpMechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
 		return null;
 	}

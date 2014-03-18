@@ -3,7 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pep;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.Socket;
+import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -27,13 +27,13 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpRegPxp;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.methods.EPep2PdpMethod;
 
-public class PepClientConnectionHandler extends ClientConnectionHandler {
+public abstract class PepClientConnectionHandler extends ClientConnectionHandler {
 
-	public PepClientConnectionHandler(Socket socket) {
-		super(socket);
+	public PepClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) {
+		super(inputStream, outputStream);
 	}
 
 	@Override
@@ -65,24 +65,24 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 
 	}
 
-	private void doUpdateInformationFlowSemantics() 
+	private void doUpdateInformationFlowSemantics()
 			throws IOException, InterruptedException {
-		
+
 		_logger.debug("Do update information flow semantics");
 		GpPipDeployer gpPipDeployer = GpPipDeployer.parseDelimitedFrom(getDataInputStream());
 		GpByteArray gpByteArray = GpByteArray.parseDelimitedFrom(getDataInputStream());
 		GpConflictResolutionFlag gpFlag = GpConflictResolutionFlag.parseDelimitedFrom(getDataInputStream());
 		_logger.trace("Parameteres parsed");
-		
+
 		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		IPipDeployer pipDeployer = mf.createPipDeployer(gpPipDeployer);
 		byte[] jarBytes = gpByteArray.getByteArray().toByteArray();
 		EConflictResolution conflictResolutionFlag = EConflictResolution.convertFromGpEConflictResolution(gpFlag.getValue());
 		_logger.trace("Parameters: " + pipDeployer + " " + conflictResolutionFlag);
-		
+
 		RequestHandler requestHandler = RequestHandler.getInstance();
 		requestHandler.addUpdateIfFlowRequest(pipDeployer, jarBytes, conflictResolutionFlag, this);
-	
+
 		Object responseObj = waitForResponse();
 
 		if (responseObj instanceof IStatus) {
@@ -102,7 +102,7 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 
 	private void doNotifyEvent()
 			throws IOException, InterruptedException {
-		
+
 		_logger.debug("Do notify event");
 		GpEvent gpEvent = GpEvent.parseDelimitedFrom(getDataInputStream());
 		if (gpEvent != null) {
@@ -134,10 +134,10 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 			_logger.debug("Received event is null.");
 		}
 	}
-	
+
 	private void doRegPxp()
 		throws IOException, InterruptedException {
-			
+
 			_logger.debug("Do register PXP");
 			GpRegPxp gpRegPxpEvent = GpRegPxp.parseDelimitedFrom(getDataInputStream());
 			if (gpRegPxpEvent != null) {
@@ -149,9 +149,9 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 				IPxpSpec pxp = new PxpSpec(ip,port,id,desc);
 
 				RequestHandler requestHandler = RequestHandler.getInstance();
-				_logger.info("Register PXP {}", gpRegPxpEvent.getId());
+				_logger.info("Register PXP {} " + gpRegPxpEvent.getId());
 				requestHandler.addPxpRegEvent(pxp, this);
-				
+
 				Object responseObj = waitForResponse();
 				if(responseObj instanceof Boolean){
 					PdpProtos.GpBoolean.Builder gpResponse = PdpProtos.GpBoolean.newBuilder();
@@ -163,7 +163,7 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 					throwAwayResponse();
 					response.writeDelimitedTo(getOutputStream());
 					getOutputStream().flush();
-					_logger.trace("Response to PXP reg {}",response);
+					_logger.trace("Response to PXP reg {}" + response);
 				}
 
 //				IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
@@ -190,5 +190,5 @@ public class PepClientConnectionHandler extends ClientConnectionHandler {
 				_logger.debug("Received event is null.");
 			}
 	}
-	
+
 }

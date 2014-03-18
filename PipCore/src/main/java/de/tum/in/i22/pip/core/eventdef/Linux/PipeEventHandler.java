@@ -1,46 +1,38 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.PipeContainer;
 
 public class PipeEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
-		String fdsrc = null;
-		String fddst = null;
+		int pid;
+		int fd1;
+		int fd2;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
-			fdsrc = getParameterValue("fdsrc");
-			fddst = getParameterValue("fddst");
+			pid = Integer.valueOf(getParameterValue("pid"));
+			fd1 = Integer.valueOf(getParameterValue("fd1"));
+			fd2 = Integer.valueOf(getParameterValue("fd2"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		InformationFlowModel ifModel = getInformationFlowModel();
+		IContainer pipeContainer = new PipeContainer();
 
-		IContainer pipeContainer = _messageFactory.createContainer();
-		ifModel.addContainer(pipeContainer);
+		ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
+		ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
 
-		if (pipeContainer != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fdsrc), pipeContainer);
-			ifModel.addName(FiledescrName.create(host, pid, fddst), pipeContainer);
-		}
-		else {
-			_logger.fatal("Unable to create pipe container.");
-		}
-
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
 
 }

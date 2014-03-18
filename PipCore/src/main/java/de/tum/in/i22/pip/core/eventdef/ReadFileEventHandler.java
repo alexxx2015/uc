@@ -3,7 +3,6 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
@@ -22,8 +21,6 @@ public class ReadFileEventHandler extends BaseEventHandler {
 	public IStatus execute() {
 		String fileName = null;
 		String pid = null;
-
-		// currently not used
 		String processName = null;
 
 		try {
@@ -37,13 +34,11 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
 		IContainer fileContainer = ifModel.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container
 		if (fileContainer == null) {
 			fileContainer = _messageFactory.createContainer();
-			ifModel.addContainer(fileContainer);
 			ifModel.addName(new NameBasic(fileName), fileContainer);
 		}
 

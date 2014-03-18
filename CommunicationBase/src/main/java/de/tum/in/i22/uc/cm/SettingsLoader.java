@@ -9,17 +9,17 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 public class SettingsLoader {
-	
-	
+
+
 	private static final Logger _logger = Logger
 			.getLogger(SettingsLoader.class);
-	
+
 	/**
-	 * Tries to load <code>propertiesFileName</code> from the directory where the jar file is executed. 
-	 * If the file is not present there, it will be loaded from the jar file itself. 
+	 * Tries to load <code>propertiesFileName</code> from the directory where the jar file is executed.
+	 * If the file is not present there, it will be loaded from the jar file itself.
 	 * This enables to easily override default properties which are specified in the file which
 	 * is placed in the resource folder in the jar.
-	 * 
+	 *
 	 * @param propertiesFileName Name of the properties file to be loaded.
 	 * @return Properties object with loaded properties.
 	 * @throws IOException In case the file cannot be loaded.
@@ -28,20 +28,27 @@ public class SettingsLoader {
 		_logger.debug("Loading properties file: " + propertiesFileName);
 
 		InputStream is = null;
+		File file = null;
+		boolean fileFound = false;
 		try {
-			_logger.debug("Searching properties file " + propertiesFileName
-					+ " in jar parent directory ...");
-			File file = new File(new File("."), propertiesFileName);
-			
-			if (file.exists()) {
-				_logger.debug("File found. Loading file ...");
+			file = new File(propertiesFileName);
+			fileFound = file.exists();
+			_logger.debug("Searching properties file " + propertiesFileName + " ... " + (fileFound ? "Found" : "Not found") + ".");
 
+			if (!fileFound) {
+				file = new File(new File("."), propertiesFileName);
+				fileFound = file.exists();
+				_logger.debug("Searching properties file " + propertiesFileName	+ " in jar parent directory ... "  + (fileFound ? "Found" : "Not found") + ".");
+			}
+
+			if (!fileFound) {
+				_logger.debug("Searching properties file " + propertiesFileName	+ " in resources ... ");
+				is = SettingsLoader.class.getClassLoader().getResourceAsStream(propertiesFileName);
+			}
+
+
+			if (fileFound && is == null) {
 				is = new FileInputStream(file);
-
-			} else {
-				_logger.debug("File not found. Loading file from resources ...");
-				is = SettingsLoader.class.getClassLoader().getResourceAsStream(
-						propertiesFileName);
 			}
 
 			if (is == null) {
@@ -53,9 +60,9 @@ public class SettingsLoader {
 			// load all the properties from this file
 			props.load(is);
 			_logger.debug("Properties file '" + propertiesFileName + "' loaded.");
-			
+
 			return props;
-			
+
 		} finally {
 			if (is != null) {
 				// we have loaded the properties, so close the file handler

@@ -7,9 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pip.cm.in.pdp.EPdp2PipMethod;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -35,18 +33,18 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
-import de.tum.in.i22.uc.cm.out.FastConnector;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.methods.EPdp2PipMethod;
+import de.tum.in.i22.uc.cm.out.Connection;
+import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
+public abstract class Pdp2PipImp extends Connection implements IPdp2Pip {
 
-	
-	private static final Logger _logger = Logger.getLogger(Pdp2PipImp.class);
-	
-	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
-	
-	public Pdp2PipImp(String address, int port) {
-		super(address, port);
+	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
+
+	public Pdp2PipImp(Connector connector) {
+		super(connector);
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			gpPredicate.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpEvent and GpPredicate written to OutputStream");
-			
+
 			_logger.trace("Wait for boolean result");
 			GpBoolean gpBoolean = GpBoolean.parseDelimitedFrom(getInputStream());
 			return gpBoolean.getValue();
@@ -84,7 +82,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			gpData.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpData written to OutputStream");
-			
+
 			_logger.trace("Wait for containers");
 			GpContainerList gpContainerList = GpContainerList.parseDelimitedFrom(getInputStream());
 			return new HashSet<IContainer>(GpUtil.convertToList(gpContainerList));
@@ -105,7 +103,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			gpContainer.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpContainer written to OutputStream");
-			
+
 			_logger.trace("Wait for data list");
 			GpDataList gpDataList = GpDataList.parseDelimitedFrom(getInputStream());
 			return new HashSet<IData>(GpUtil.convertToList(gpDataList));
@@ -114,7 +112,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		_logger.debug("Notify actual event invoked");
@@ -126,7 +124,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			gpEvent.writeDelimitedTo(out);
 			out.flush();
 			_logger.trace("GpEvent written to OutputStream");
-			
+
 			_logger.trace("Wait for status");
 			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
 			return new StatusBasic(gpStatus);
@@ -135,18 +133,18 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
 			File jarFile, EConflictResolution flagForTheConflictResolution) {
 		_logger.debug("Update information flow semantics invoked");
- 		
+
  		try {
  			_logger.trace("Create Google Protocol Buffer intances");
  	 		GpPipDeployer gpPipDeployer = PipDeployerBasic.createGpPipDeployer(deployer);
  	 		GpByteArray gpByteArray = GpUtil.createGpByteString(FileUtils.readFileToByteArray(jarFile));
  	 		GpConflictResolutionFlag gpFlag = GpUtil.createGpConflictResolutionFlag(flagForTheConflictResolution);
- 	 		
+
  			OutputStream out = getOutputStream();
  			out.write(EPdp2PipMethod.UPDATE_INFORMATION_FLOW_SEMANTICS.getValue());
  			gpPipDeployer.writeDelimitedTo(out);
@@ -154,7 +152,7 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
  			gpFlag.writeDelimitedTo(out);
  			out.flush();
  			_logger.trace("deployer, jarFileBytes and flag written to OutputStream");
- 			
+
  			_logger.trace("Wait for Status");
  			GpStatus gpStatus = GpStatus.parseDelimitedFrom(getInputStream());
  			return new StatusBasic(gpStatus);
@@ -169,5 +167,4 @@ public class Pdp2PipImp extends FastConnector implements IPdp2PipFast {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

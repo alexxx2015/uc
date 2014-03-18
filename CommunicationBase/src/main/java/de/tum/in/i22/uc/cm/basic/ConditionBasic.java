@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.ICondition;
@@ -16,20 +18,20 @@ public class ConditionBasic implements ICondition {
 
 	public ConditionBasic() {
 	}
-	
+
 	public ConditionBasic(GpCondition gpCondition) {
 		if (gpCondition == null)
 			return;
-		
+
 		if (gpCondition.hasCondition())
 			_condition = new OslFormulaBasic(gpCondition.getCondition());
-		
+
 		if (gpCondition.hasConditionSimp())
-			_conditionSimp = 
+			_conditionSimp =
 					new SimplifiedTemporalLogicBasic(
 							gpCondition.getConditionSimp());
 	}
-	
+
 	public ConditionBasic(IOslFormula condition,
 			ISimplifiedTemporalLogic conditionSimp) {
 		super();
@@ -46,7 +48,7 @@ public class ConditionBasic implements ICondition {
 	public ISimplifiedTemporalLogic getConditionSimp() {
 		return _conditionSimp;
 	}
-	
+
 	public void setCondition(IOslFormula condition) {
 		_condition = condition;
 	}
@@ -56,39 +58,44 @@ public class ConditionBasic implements ICondition {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Google Protocol Buffer object corresponding to ICondition
 	 */
 	public static GpCondition createGpbCondition(ICondition condition) {
-		if (condition == null) 
+		if (condition == null)
 			return null;
 		_logger.trace("Build condition");
-		
+
 		GpCondition.Builder gp = GpCondition.newBuilder();
-		GpOslFormula gpOslFormula = 
+		GpOslFormula gpOslFormula =
 				OslFormulaBasic.createGpbOslFormula(
 						condition.getCondition());
 		if (gpOslFormula != null)
 			gp.setCondition(gpOslFormula);
-		
-		GpSimplifiedTemporalLogic gpSimplifiedTemporalLogic = 
+
+		GpSimplifiedTemporalLogic gpSimplifiedTemporalLogic =
 		SimplifiedTemporalLogicBasic.createGpbSimplifiedTemporalLogic(
 				condition.getConditionSimp());
-		
+
 		if (gpSimplifiedTemporalLogic != null)
 			gp.setConditionSimp(gpSimplifiedTemporalLogic);
-		
+
 		return gp.build();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
-		if (obj != null && this.getClass() == obj.getClass()) {
+		if (obj instanceof ConditionBasic) {
 			ConditionBasic o = (ConditionBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_condition, o.getCondition())
-					&& CompareUtil.areObjectsEqual(_conditionSimp, o.getConditionSimp());
+			isEqual = Objects.equals(_condition, o._condition)
+					&& Objects.equals(_conditionSimp, o._conditionSimp);
 		}
 		return isEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_condition, _conditionSimp);
 	}
 }

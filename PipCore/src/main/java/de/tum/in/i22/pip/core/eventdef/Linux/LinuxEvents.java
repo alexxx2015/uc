@@ -1,11 +1,32 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.eventdef.Linux.ShutdownEventHandler.Shut;
+import de.tum.in.i22.uc.cm.IMessageFactory;
+import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.RemoteSocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -13,97 +34,213 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
  * @author Florian Kelbert
  *
  */
-public class LinuxEvents {
+class LinuxEvents {
 
-	/* TODO: Implement
-	 * Calls to remote PIP in accept() and shutdown()
-	 * fork()
-	 * read()
-	 * write()
-	 * open()
-	 * unlink()
-	 * kill()
-	 * dup()
-	 * execve()
-	 * rename()
-	 * mmap()
-	 * truncate()
+	private static final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
+
+	private static final InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
+
+	private final static IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
+	private final static IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
+
+	/*
+	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
+	 *some file descriptors close automatically on execve()
 	 */
 
 
 
-	static enum Shut {
-		SHUT_RDWR,
-		SHUT_RD,
-		SHUT_WR
+
+
+
+	private static String getAbsolutePath(File f) {
+		try {
+			return f.getCanonicalPath();
+		} catch (IOException e) {
+			return f.getAbsolutePath();
+		}
 	}
 
+	/*
+	 * TODO CHeck: probably we might need to get the traced processes'
+	 * current working directory.
+	 */
+
+	static String toAbsoluteFilename(String filename) {
+		return getAbsolutePath(new File(filename));
+	}
+
+
+	/**
+	 * Used by both open() and openat().
+	 * @param host
+	 * @param pid
+	 * @param newfd
+	 * @param dirfd
+	 * @param filename
+	 * @param at_fdcwd
+	 * @param truncate
+	 */
+	static void open(String host, int pid, int newfd, int dirfd, String filename, boolean at_fdcwd, boolean truncate) {
+		IName fdName = FiledescrName.create(host, pid, newfd);
+		IName fnName;
+
+		File file = new File(filename);
+
+		if (!file.isAbsolute() && !at_fdcwd) {
+			// all this part is for openat()
+
+			IName dirfdName = FiledescrName.create(host, pid, dirfd);
+
+			List<FilenameName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
+
+			// the resulting list should always be of size 1.
+			if (names.size() != 1) {
+				_logger.error("There was not exactly one filename for " + dirfdName);
+			}
+			else {
+				File path = new File(names.get(0).getFilename());
+
+				String pathStr = LinuxEvents.getAbsolutePath(path);
+
+				if (path.isDirectory()) {
+					file = new File(pathStr, filename);
+				}
+				else {
+					file = new File(path.getParent(), filename);
+				}
+			}
+		}
+
+		fnName = FilenameName.create(host, LinuxEvents.getAbsolutePath(file));
+
+		// get the file's container (if present)
+		IContainer cont = ifModel.getContainer(fnName);
+
+		if (cont != null) {
+			if (truncate) {
+				ifModel.emptyContainer(cont);
+			}
+		}
+		else {
+			cont = new FileContainer();
+			ifModel.addName(fnName, cont);
+		}
+		ifModel.addName(fdName, cont);
+	}
+
+
+	static void exit(String host, int pid) {
+		ProcessContainer procCont = (ProcessContainer) ifModel.getContainer(ProcessName.create(host, pid));
+		if (procCont == null) {
+			return;
+		}
+
+		ifModel.emptyContainer(procCont);
+		ifModel.removeAllAliasesFrom(procCont);
+		ifModel.removeAllAliasesTo(procCont);
+		ifModel.remove(procCont);
+
+		for (IName nm : getAllProcessRelativeNames(procCont.getPid())) {
+			LinuxEvents.close(nm);
+		}
+	}
 
 
 	static void close(IName name) {
-		if (name instanceof SocketName) {
-			LinuxEvents.closeSocket(name);
-		}
-		InformationFlowModel.getInstance().removeName(name);
-	}
+		IContainer cont = ifModel.getContainer(name);
 
-	private static void closeSocket(IName name) {
-		InformationFlowModel ifModel = InformationFlowModel.getInstance();
+		ifModel.removeName(name);
 
-		IContainer container = ifModel.getContainer(name);
-
-		int count = 0;
-
-		if (container != null) {
-			for (IName n : ifModel.getAllNames(container)) {
-				if (!(n instanceof SocketName)) {
-					count++;
-				}
+		if (cont instanceof SocketContainer) {
+			if (ifModel.getAllNames(cont, FiledescrName.class).size() == 0) {
+				shutdownSocket((SocketContainer) cont, Shut.SHUT_RDWR);
 			}
-		}
-
-		if (count == 1) {
-			shutdown(name, Shut.SHUT_RDWR);
 		}
 	}
 
-	static void shutdown(IName name, Shut mode) {
-		InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	static void shutdownSocket(SocketContainer cont, Shut how) {
+		List<SocketName> allSocketNames = ifModel.getAllNames(cont, SocketName.class);
 
-		IContainer container = ifModel.getContainer(name);
+		if (how == Shut.SHUT_RD || how == Shut.SHUT_RDWR) {
+			// disallow reception
+			ifModel.emptyContainer(cont);
+			ifModel.removeAllAliasesTo(cont);
+		}
 
-		if (container != null) {
-			List<IName> allNames = ifModel.getAllNames(container);
+		if (how == Shut.SHUT_WR || how == Shut.SHUT_RDWR) {
+			// disallow transmission
+			ifModel.removeAllAliasesFrom(cont);
+		}
 
-			if (mode == Shut.SHUT_RD || mode == Shut.SHUT_RDWR) {
-				// disallow reception
-				ifModel.emptyContainer(container);
-				ifModel.removeAllAliasesTo(container);
-			}
-
-			if (mode == Shut.SHUT_WR || mode == Shut.SHUT_RDWR) {
-				// disallow transmission
-				ifModel.removeAllAliasesFrom(container);
-			}
-
-			if (mode == Shut.SHUT_RDWR) {
-				// disallow transmission and reception,
-				// therefore delete all socket identifiers
-				for (IName n : allNames) {
-					if (n instanceof SocketName) {
-						ifModel.removeName(n);
-					}
-				}
-			}
-
-			for (IName n : allNames) {
-				if (n instanceof SocketName) {
-					// if remote IP is in fact remote, then do a remote call to tell about connection teardown
-					if (!(((SocketName) n).getRemoteIP().equals(((SocketName) n).getLocalIP()))) {
-						// TODO
-					}
-				}
+		if (how == Shut.SHUT_RDWR) {
+			// disallow transmission and reception,
+			// therefore delete all socket identifiers
+			for (SocketName n : allSocketNames) {
+				ifModel.removeName(n);
 			}
 		}
+
+		for (SocketName n : allSocketNames) {
+			// if remote IP is in fact remote, then do a remote call to tell about connection teardown
+			if (!(n.getRemoteIP().equals(n.getLocalIP()))) {
+				IContainer remoteContainer = ifModel.getContainer(n);
+
+				// TODO remote call
+			}
+		}
+	}
+
+
+	static IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
+		if (srcCont == null || dstCont == null) {
+			return STATUS_OKAY;
+		}
+
+		Set<IData> data = ifModel.getDataInContainer(srcCont);
+		if (data == null || data.size() == 0) {
+			return _messageFactory.createStatus(EStatus.OKAY);
+		}
+
+		// copy into all containers aliased from the destination container
+		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
+			if (c instanceof RemoteSocketContainer) {
+				System.out.println("Remote data transfer to " + c);
+			}
+			else {
+				ifModel.addDataToContainerMappings(data, c);
+			}
+		}
+
+		// now, also copy into the actual (direct) destination container ...
+		// ... but only if it is not a socket.
+		if (!(dstCont instanceof SocketContainer)) {
+			ifModel.addDataToContainerMappings(data, dstCont);
+		}
+
+		return STATUS_OKAY;
+	}
+
+
+	static List<IName> getAllProcessRelativeNames(int pid) {
+		List<IName> result = new ArrayList<IName>();
+
+		for (IName name : ifModel.getAllNames()) {
+			if (name instanceof IProcessRelativeName) {
+				IProcessRelativeName pname = (IProcessRelativeName) name;
+				if (pname.getPid() == pid) {
+					result.add(pname);
+				}
+			}
+//			else if (name instanceof SharedFiledescrName) {
+//				SharedFiledescrName sname = (SharedFiledescrName) name;
+//				if (sname.isSharedWith(pid)) {
+//					result.add(sname);
+//				}
+//			}
+		}
+
+		return result;
 	}
 }

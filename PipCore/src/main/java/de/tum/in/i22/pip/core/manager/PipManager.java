@@ -28,28 +28,28 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
 
 
 public class PipManager implements IPipManager {
-	
-	
+
+
 	private static final Logger _logger = Logger.getLogger(PipManager.class);
-	
-	
+
+
 	private EventHandlerManager _eventHandlerManager = null;
 	private EventHandlerDao _eventHandlerDao = null;
-	
-	private IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
-	
-	public PipManager(EventHandlerManager eventHandlerManager) {
+
+	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
+
+	public PipManager(EventHandlerManager eventHandlerManager, int pipPort) {
 		_eventHandlerManager = eventHandlerManager;
-	}
-	
-	public void initialize(int pipPersistenceID) {
+
 		_logger.info("Create data access object");
-		_eventHandlerDao = new EventHandlerDao(pipPersistenceID);
-		_eventHandlerDao.initialize();
-		
+
+		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
+		_eventHandlerDao = new EventHandlerDao(pipPort);
+
 		// read the database and store class definitions in the event handler manager
 		List<EventHandlerDefinition> eventHandlerDefinitions = _eventHandlerDao.getCurrentEventHandlerDefinitions();
 		for (EventHandlerDefinition eventHandlerDefinition : eventHandlerDefinitions) {
@@ -61,36 +61,36 @@ public class PipManager implements IPipManager {
 	public IStatus updateInformationFlowSemantics(
 			IPipDeployer deployer, File jarFile,
 			EConflictResolution flagForTheConflictResolution) {
-		
+
 		_logger.debug("Update information flow semantics");
 
 		// class name to EventHandlerDefinition
 		Map<String, EventHandlerDefinition> map = new HashMap<String, EventHandlerDefinition>();
-		
+
 		try {
 			Path destination = Files.createTempDirectory("PipTemp");
 		   _logger.trace("Temporary dir: " + destination.toAbsolutePath().toString());
-		    
+
 		    ZipFile zipFile = new ZipFile(jarFile);
 		    zipFile.extractAll(destination.toString());
-		    
+
 		    IOFileFilter javaFileFilter = new JavaFilesFileFilter();
 		    Collection<File> fileList = FileUtils.listFiles(destination.toFile(), javaFileFilter, TrueFileFilter.INSTANCE);
-		    
+
 		    Iterator<File> iterator = fileList.iterator();
 		    while (iterator.hasNext()) {
 		    	File file = iterator.next();
 		    	// package name + class name
 		    	String fullClassName = convertToFullClassName(file, destination);
 		    	_logger.trace("Class: " + fullClassName);
-		    	
+
 		    	if (file.getName().endsWith(".class")) {
 		    		updateMapWithClassDefinition(map, fullClassName, file);
 		    	} else if (file.getName().endsWith(".java")) {
 		    		updateMapWithSrcDefinition(map, fullClassName, file);
 		    	}
 		    }
-		    
+
 		    Set<String> keySet = map.keySet();
 			switch (flagForTheConflictResolution) {
 				case OVERWRITE:
@@ -104,16 +104,16 @@ public class PipManager implements IPipManager {
 				case IGNORE_UPDATES: break; // currently not used
 				case KEEP_ALL: break; // currently not used
 				}
-		    
-		    
+
+
 			try {
 				// delete temporary folder
 				FileUtils.deleteDirectory(destination.toFile());
 			} catch (IOException e) {
 				_logger.warn("Failed to delete temporary dir: " + destination);
 			}
-		    
-		    
+
+
 		} catch (ZipException e) {
 			_logger.error(e.toString());
 			return _mf.createStatus(EStatus.ERROR, "Error when unzipping jar file: " + e.getMessage());
@@ -121,27 +121,27 @@ public class PipManager implements IPipManager {
 			_logger.error(e1.toString());
 			return _mf.createStatus(EStatus.ERROR, e1.getMessage());
 		}
-		
+
 		return _mf.createStatus(EStatus.OKAY);
 	}
-	
+
 	private void updateMapWithSrcDefinition(
 			Map<String, EventHandlerDefinition> map, String fullClassName,
-			File file) 
+			File file)
 		throws IOException {
-		
+
 		EventHandlerDefinition definition = getMapEntry(map, fullClassName);
 		definition.setSourceFile(FileUtils.readFileToString(file));
 	}
-	
+
 	private void updateMapWithClassDefinition(
 			Map<String, EventHandlerDefinition> map, String fullClassName,
-			File file) 
+			File file)
 		throws IOException {
-		
+
 		EventHandlerDefinition definition = getMapEntry(map, fullClassName);
 		definition.setClassFile(FileUtils.readFileToByteArray(file));
-		
+
 		definition.setClassFileLastModified(new Timestamp(file.lastModified()));
 		java.util.Date today = new java.util.Date();
 		definition.setDateReceived(new Timestamp(today.getTime()));
@@ -149,14 +149,14 @@ public class PipManager implements IPipManager {
 
 	private EventHandlerDefinition getMapEntry(Map<String, EventHandlerDefinition> map,
 			String fullClassName) {
-		
+
 		EventHandlerDefinition eventHandlerDefinition = map.get(fullClassName);
 		if (eventHandlerDefinition == null) {
 			eventHandlerDefinition = new EventHandlerDefinition();
 			eventHandlerDefinition.setClassName(fullClassName);
 			map.put(fullClassName, eventHandlerDefinition);
 		}
-		
+
 		return eventHandlerDefinition;
 	}
 

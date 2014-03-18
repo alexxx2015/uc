@@ -1,42 +1,39 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
 
 public class SocketEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
-		String fd = null;
+		int pid;
+		int fd;
+		String domain = null;
+		String type = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
-			fd = getParameterValue("fd");
+			pid = Integer.valueOf(getParameterValue("pid"));
+			fd = Integer.valueOf(getParameterValue("fd"));
+			domain = getParameterValue("domain");
+			type = getParameterValue("type");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		InformationFlowModel ifModel = getInformationFlowModel();
+		ifModel.addName(
+				FiledescrName.create(host, pid, fd),
+				new SocketContainer(Domain.from(domain), Type.from(type)));
 
-		IContainer socketContainer = _messageFactory.createContainer();
-		ifModel.addContainer(socketContainer);
-
-		if (socketContainer != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fd), socketContainer);
-		}
-		else {
-			_logger.fatal("Unable to create socket container.");
-		}
-
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return STATUS_OKAY;
 	}
-
 }

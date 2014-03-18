@@ -11,21 +11,12 @@
 	<artifactId>PdpCore</artifactId>
 
 	<dependencies>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>PdpEvalEngine</artifactId>
-			<version>1.0</version>
-		</dependency>
+
 		<dependency>
 			<groupId>de.fraunhofer.iese.ind2uce</groupId>
 			<artifactId>PDPjava</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
-<!--  		<dependency>
-			<groupId>de.fraunhofer.iese.ind2uce</groupId>
-			<artifactId>internals</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency> -->
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>PipCacher</artifactId>

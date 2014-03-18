@@ -55,14 +55,6 @@ public class InformationFlowModelTest {
 		IContainer h = _messageFactory.createContainer();
 		IContainer k = _messageFactory.createContainer();
 
-		_ifModel.addContainer(a);
-		_ifModel.addContainer(b);
-		_ifModel.addContainer(c);
-		_ifModel.addContainer(d);
-		_ifModel.addContainer(e);
-		_ifModel.addContainer(h);
-		_ifModel.addContainer(k);
-
 		_ifModel.addAlias(a, b);
 		_ifModel.addAlias(b, c);
 		_ifModel.addAlias(b, d);

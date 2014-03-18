@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
@@ -23,13 +22,16 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 /**
  * Mock class, used for testing only
  * @author Stoimenov
  *
  */
-public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
+public class PipHandlerMock implements IPdp2Pip, IPipCacher2Pip
 {
 
 	private static final Logger _logger = Logger.getLogger(PipHandlerMock.class);
@@ -38,16 +40,13 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 	private final IPipManager _pipManager;
 
 	public PipHandlerMock() {
-		this(0);
+		this(PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandlerMock(int pipPersistenceID) {
+	public PipHandlerMock(int pipPort) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize(pipPersistenceID);
-
+		_pipManager = new PipManager(eventHandlerManager, pipPort);
 		_actionHandlerCreator = eventHandlerManager;
-		_pipManager = pipManager;
 	}
 
 	@Override
@@ -170,6 +169,6 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 	@Override
 	public void populate(String predicate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

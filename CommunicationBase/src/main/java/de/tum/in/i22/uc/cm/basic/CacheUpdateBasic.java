@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.basic;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
@@ -13,14 +14,14 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCacheUpdate.GpCacheUpdateEntry;
 public class CacheUpdateBasic implements ICacheUpdate {
 	private String _scopeId;
 	private HashMap<IKey,Boolean> _map;
-	
+
 
 	@Override
 	public Map<IKey,Boolean> getMap() {
 		return _map;
 	}
-	
-	
+
+
 	@Override
 	public boolean getVal(IKey k) {
 		return false;
@@ -31,13 +32,13 @@ public class CacheUpdateBasic implements ICacheUpdate {
 	public String getScopeId() {
 		return _scopeId;
 	}
-	
-	
+
+
 	public CacheUpdateBasic(){
 		_scopeId="<scope not initialized>";
 		_map=null;
 	}
-	
+
 	public CacheUpdateBasic(GpCacheUpdate gpCU) {
 		 if (gpCU.isInitialized()) {
 			 //read scope
@@ -46,7 +47,7 @@ public class CacheUpdateBasic implements ICacheUpdate {
 			 } else {
 				 _scopeId="<scope not initialized>";
 			 }
-			 
+
 			 //read map
 			int count = gpCU.getMapCount();
 			if (count > 0) {
@@ -57,20 +58,35 @@ public class CacheUpdateBasic implements ICacheUpdate {
 					_map.put(new KeyBasic(entry.getKey()), entry.getValue().getValue());
 				}
 			}
-				
+
 		 }
-		 
+
 	}
 
+	@Override
 	public void setScopeId(String _scopeId) {
 		this._scopeId = _scopeId;
 	}
 
 
+	@Override
 	public void setMap(Map<IKey, Boolean> _map) {
 		this._map = new HashMap<IKey, Boolean>(_map);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof CacheUpdateBasic) {
+			CacheUpdateBasic o = (CacheUpdateBasic) obj;
+			return Objects.equals(_map, o._map)
+					&& Objects.equals(_scopeId, o._scopeId);
+		}
+		return super.equals(obj);
+	}
 
-	
+	@Override
+	public int hashCode() {
+		return Objects.hash(_map, _scopeId);
+	}
+
 }

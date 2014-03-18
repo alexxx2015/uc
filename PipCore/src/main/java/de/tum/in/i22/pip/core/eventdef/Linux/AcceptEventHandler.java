@@ -1,111 +1,130 @@
 package de.tum.in.i22.pip.core.eventdef.Linux;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.cm.basic.ContainerRemote;
+import de.tum.in.i22.pip2pip.Pip2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.distr.IPLocation;
-import de.tum.in.i22.uc.distr.Network;
+import de.tum.in.i22.uc.cm.datatypes.Linux.RemoteSocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String pid = null;
-		String family = null;
+		int pid;
 		String localIP = null;
-		String localPort = null;
+		int localPort;
 		String remoteIP = null;
-		String remotePort = null;
-		String newFd = null;
-		NameBasic localSocketName = null;
-		NameBasic remoteSocketName = null;
-		IContainer localContainer = null;
-		IContainer remoteContainer = null;
+		int remotePort;
+		int newFd;
+		int oldFd;
+		IName localSocketName = null;
+		IName remoteSocketName = null;
+		IContainer localAcceptedSocket = null;
+		IContainer remoteConnectedSocket = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = getParameterValue("pid");
-			family = getParameterValue("family");
+			pid = Integer.valueOf(getParameterValue("pid"));
 			localIP = getParameterValue("localIP");
-			localPort = getParameterValue("localPort");
+			localPort = Integer.valueOf(getParameterValue("localPort"));
 			remoteIP = getParameterValue("remoteIP");
-			remotePort = getParameterValue("remotePort");
-			newFd = getParameterValue("newfd");
+			remotePort = Integer.valueOf(getParameterValue("remotePort"));
+			newFd = Integer.valueOf(getParameterValue("newfd"));
+			oldFd = Integer.valueOf(getParameterValue("oldfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		if (!Network.SUPPORTED_SOCKET_FAMILIES.contains(family)) {
-			_logger.info("Socket family " + family + " is not handled.");
-			return _messageFactory.createStatus(EStatus.OKAY);
+		// get old container
+		SocketContainer listeningSocket = null;
+		try {
+			listeningSocket = (SocketContainer) ifModel.getContainer(FiledescrName.create(host, pid, oldFd));
+		}
+		catch (ClassCastException e) {
+			_logger.fatal("Expected container did not exist or was of wrong type.");
+			return STATUS_ERROR;
 		}
 
-		// no IP address assigned. Syscall fails
-		if (localIP.equals(Network.IP_UNSPEC)) {
-			_logger.info("No local IP address was assigned. Syscall fails.");
-			return _messageFactory.createStatus(EStatus.OKAY);
+		if (listeningSocket == null) {
+			_logger.fatal("Expected container did not exist or was of wrong type.");
+			return STATUS_ERROR;
 		}
 
-		InformationFlowModel ifModel = getInformationFlowModel();
+		Domain domain = listeningSocket.getDomain();
+		Type type = listeningSocket.getType();
 
 		// local_socket_name := (sn(e),(a,x))
-		localSocketName = SocketName.create(host, pid, localIP, localPort, remoteIP, remotePort);
+		localSocketName = SocketName.create(localIP, localPort, remoteIP, remotePort);
 
 		// remote_socket_name := ((a,x),sn(e))
-		remoteSocketName = SocketName.create(host, pid, remoteIP, remotePort, localIP, localPort);
+		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
-		// create new container c
-		localContainer = _messageFactory.createContainer();
-		ifModel.addContainer(localContainer);
 
-		if (localContainer == null) {
-			_logger.fatal("Unable to create container.");
+		if (!localIP.equals(remoteIP)) {
+			// client is remote
+
+			// create a 'proxy' container and name it.
+			remoteConnectedSocket = new RemoteSocketContainer(domain, type,
+					new Pip2PipTcpImp(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
+			ifModel.addName(remoteSocketName, remoteConnectedSocket);
+
+			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
+			localAcceptedSocket = new SocketContainer(domain, type);
+			ifModel.addName(localSocketName, localAcceptedSocket);
+
+			// add alias from new local container to remote proxy container
+			ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
 		}
 		else {
-			// f[(p,(sn(e),(a,x))) <- c]
-			ifModel.addName(localSocketName, localContainer);
+			// client is local
 
-			// f[((p,e)) <- c]
-			ifModel.addName(FiledescrName.create(host, pid, newFd), localContainer);
+			// see whether local container was already created
+			// which is the case if connect() already happened
+			localAcceptedSocket = ifModel.getContainer(localSocketName);
 
-			if (!localIP.equals(remoteIP)) {
-				// client is remote
+			if (localAcceptedSocket == null) {
+				// accept() happens before connect().
 
-				// get remote container id from remote host for creating the alias
-				// TODO: remoteContainerId = ...
-//				remoteContainerId = new ContainerRemote(remoteSocketName, IPLocation.createIPLocation(remoteIP));
+				// create new container c and name it, f[(p,(sn(e),(a,x))) <- c]
+				localAcceptedSocket = new SocketContainer(domain, type);
+				ifModel.addName(localSocketName, localAcceptedSocket);
 
-				ifModel.addAlias(localContainer, remoteContainer);
+				/*
+				 * We create a temporary remote socket container.
+				 *
+				 * The problem here is that we do not know the remote process id and the corresponding file descriptor.
+				 * Yet, it may be the case that our side writes to the socket while we did not yet observe
+				 * the remote connect().
+				 *
+				 * This temporary container will be deleted upon connect().
+				 * The container can be identified upon connect() using the socket name that
+				 * is called 'remoteSocketName' and that will be called 'localSocketName' upon connect().
+				 */
+				remoteConnectedSocket = new SocketContainer(domain, type);
+				ifModel.addName(remoteSocketName, remoteConnectedSocket);
+
+				// add aliases in both directions
+				ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+				ifModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
 			}
-			else {
-				// client is local
-
-				// this assumes that the corresponding connect() already happened.
-				// This needs to be enforced by the PEP.
-				remoteContainer = ifModel.getContainer(remoteSocketName);
-
-				if (remoteContainer == null) {
-					_logger.fatal("accept() happened, but corresponding connect() did not happen before. "
-							+ "The order of these events must be enforced by the PEP.");
-				}
-
-				ifModel.addAlias(localContainer, remoteContainer);
-				ifModel.addAlias(remoteContainer, localContainer);
-			}
-
-			// add name of remote container
-			ifModel.addName(remoteSocketName, remoteContainer);
+			// else: connect() happened before accept(); it created the container and both aliases
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
-	}
+		// f[((p,e)) <- c]
+		ifModel.addName(FiledescrName.create(host, pid, newFd), localAcceptedSocket);
 
+		return STATUS_OKAY;
+	}
 }
 

@@ -7,6 +7,8 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.methods.EPipRequestMethod;
+import de.tum.in.i22.uc.cm.methods.EPipResponse;
 
 /**
  * Class for handling remote PIP requests.
@@ -72,7 +74,11 @@ public class PipRequest {
 
 	@Override
 	public String toString() {
-		return "PipRequest [_method=" + _method + ", _data=" + _data
-				+ ", _container=" + _container + ", _event=" + _event + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_method", _method)
+				.add("_data", _data)
+				.add("_container", _container)
+				.add("_event", _event)
+				.toString();
 	}
 }

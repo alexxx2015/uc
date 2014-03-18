@@ -45,6 +45,8 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
 import edu.tum.XMLtools.OffsetNode;
 import edu.tum.XMLtools.OffsetParameter;
 import edu.tum.XMLtools.OffsetTable;
@@ -54,7 +56,7 @@ public class MyUCCockpit {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private LinkedList<String> deployedPolicies = new LinkedList<String>();
+	private final LinkedList<String> deployedPolicies = new LinkedList<String>();
 
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
@@ -66,16 +68,16 @@ public class MyUCCockpit {
 	private JButton policyDeployBtn;
 	private JButton pipPopulateBtn;
 	private JTable deployedPolicyTable;
-	private JPopupMenu deployedPolicyPopup = new JPopupMenu();
+	private final JPopupMenu deployedPolicyPopup = new JPopupMenu();
 	private JLabel pdpInfoLabel;
 	private JLabel pipInfoLabel;
 	private JTextArea pipTextArea;
 	private JTextArea pipTextFormula;
-	
+
 	private static Logger _logger = Logger.getLogger(PdpController.class);
-	
+
 	private Thread pdpThread;
-	
+
 	private PdpController pdpCtrl;
 
 	// -Djava.rmi.server.hostname=172.16.195.143
@@ -156,7 +158,7 @@ public class MyUCCockpit {
 						public void mouseExited(MouseEvent e) {
 						}
 					});
-					
+
 					deployedPolicyTable.setEnabled(true);
 					policyDeployBtn.setEnabled(true);
 
@@ -263,7 +265,7 @@ public class MyUCCockpit {
 					if (sod == JFileChooser.APPROVE_OPTION) {
 						String policy = jfc.getSelectedFile().getName();
 						pipInfoLabel.setText(policy + " deployed");
-						
+
 						populate(jfc.getSelectedFile());
 					}
 				}
@@ -294,16 +296,16 @@ public class MyUCCockpit {
 //		this.pipTextFormula.setText("isNotIn|D3|c0|2");
 
 //		gbc.fill = GridBagConstraints.HORIZONTAL;
-//		gbc.gridwidth = 5;	
+//		gbc.gridwidth = 5;
 //		_return.add(new JScrollPane(this.pipTextFormula), gbc);
 //		gbc.gridwidth = 1;
-		
+
 		gbc.gridy = 0;
 		gbc.gridx = 1;
 		this.pipRefresh = new JButton("Refresh");
 		this.pipRefresh.setEnabled(false);
 		_return.add(this.pipRefresh, gbc);
-		
+
 
 //		JButton pipNotifyInitEvent = new JButton("Add Data");
 //		gbc.gridx = 2;
@@ -418,7 +420,7 @@ public class MyUCCockpit {
 		_return.add(new JScrollPane(this.pipTextArea), gbc);
 		// _return.add(jta,gbc);
 
-		
+
 		this.pipInfoLabel = new JLabel("Start UC");
 		gbc.gridy = 2;
 		gbc.gridx = 0;
@@ -428,13 +430,13 @@ public class MyUCCockpit {
 
 		return _return;
 	}
-	
-	protected void populate(File f){	
-		
+
+	protected void populate(File f){
+
 		RequestHandler req = RequestHandler.getInstance();
-		
-		StaticAnalysis.importXML(f.getAbsolutePath());							
-		
+
+		StaticAnalysis.importXML(f.getAbsolutePath());
+
 //		IKey _test_predicate_key = KeyBasic.createNewKey();
 //		String _test_predicate = "isNotIn|TEST_D|TEST_C|0";
 		IMessageFactory _messageFactory = MessageFactoryCreator
@@ -449,17 +451,17 @@ public class MyUCCockpit {
 		_logger.debug("Initialize PIP with sources and sinkes from "+f.getAbsolutePath());
 
 
-//		Map<String, OffsetTable> sinks = StaticAnalysis.getSinksMap();			
+//		Map<String, OffsetTable> sinks = StaticAnalysis.getSinksMap();
 //		Map<String, String> param = new HashMap<String, String>();
 //		//add a special key named "PEP" with the packagename where the corresponding pip event is located in PIP-core project...
-//		param.put("PEP", "Java");	
-//		param.put("type", "sink");	
-//		Iterator keyIt = sinks.keySet().iterator();		
+//		param.put("PEP", "Java");
+//		param.put("type", "sink");
+//		Iterator keyIt = sinks.keySet().iterator();
 //		while(keyIt.hasNext()){
 //			String key = (String)keyIt.next();
 //			param.put("location", key);
-//			
-//			OffsetTable offTab = sinks.get(key);		
+//
+//			OffsetTable offTab = sinks.get(key);
 //
 //			Map<Integer, OffsetParameter> mapTab = offTab.getSet();
 //			Iterator keyMapTabIt = mapTab.keySet().iterator();
@@ -468,30 +470,30 @@ public class MyUCCockpit {
 //				OffsetParameter offParam = mapTab.get(keyMapTab);
 //				String signature = offParam.getSignature();
 //				param.put("signature", signature);
-//				
+//
 //				Map<Integer,OffsetNode> offParamNode = offParam.getType();
 //				Iterator keyOffParamNodeIt = offParamNode.keySet().iterator();
 //				while(keyOffParamNodeIt.hasNext()){
 //					int keyOffParamNode = (int)keyOffParamNodeIt.next();
 //					OffsetNode offSetNode = offParamNode.get(keyOffParamNode);
-//					param.put("parampos",String.valueOf(keyOffParamNode));					
+//					param.put("parampos",String.valueOf(keyOffParamNode));
 //					String id = offSetNode.getId();
 //					param.put("id", id);
 //					IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
 //					req.getPipHandler().notifyActualEvent(initEvent);
 //				}
-//			}			
+//			}
 //		}
 
-//		Map<String, OffsetTable> sources = StaticAnalysis.getSourcesMap();	
-//		param.put("PEP", "Java");		
+//		Map<String, OffsetTable> sources = StaticAnalysis.getSourcesMap();
+//		param.put("PEP", "Java");
 //		param.put("type", "source");
-//		keyIt = sources.keySet().iterator();		
+//		keyIt = sources.keySet().iterator();
 //		while(keyIt.hasNext()){
 //			String key = (String)keyIt.next();
 //			param.put("location", key);
-//			
-//			OffsetTable offTab = sinks.get(key);		
+//
+//			OffsetTable offTab = sinks.get(key);
 //
 //			Map<Integer, OffsetParameter> mapTab = offTab.getSet();
 //			Iterator keyMapTabIt = mapTab.keySet().iterator();
@@ -500,26 +502,26 @@ public class MyUCCockpit {
 //				OffsetParameter offParam = mapTab.get(keyMapTab);
 //				String signature = offParam.getSignature();
 //				param.put("signature", signature);
-//				
+//
 //				Map<Integer,OffsetNode> offParamNode = offParam.getType();
 //				Iterator keyOffParamNodeIt = offParamNode.keySet().iterator();
 //				while(keyOffParamNodeIt.hasNext()){
 //					int keyOffParamNode = (int)keyOffParamNodeIt.next();
 //					OffsetNode offSetNode = offParamNode.get(keyOffParamNode);
-//					param.put("parampos",String.valueOf(keyOffParamNode));					
+//					param.put("parampos",String.valueOf(keyOffParamNode));
 //					String id = offSetNode.getId();
 //					param.put("id", id);
 //					IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
 //					req.getPipHandler().notifyActualEvent(initEvent);
 //				}
-//			}			
-//		}	
-		
-		
-		Map<String, String> param = new HashMap<String, String>();	
-		param.put("PEP", "Java");	
-		
-		
+//			}
+//		}
+
+
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("PEP", "Java");
+
+
 		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
 		Map<String, String[]> flowsMap = StaticAnalysis.getFlowsMap();
@@ -529,7 +531,7 @@ public class MyUCCockpit {
 		 */
 
 		try {
-			param.put("type", "source");	
+			param.put("type", "source");
 			for (String source : sourcesMap.keySet()) {
 				OffsetTable ot = sourcesMap.get(source);
 				for (int offset : ot.getSet().keySet()) {
@@ -540,7 +542,7 @@ public class MyUCCockpit {
 					param.put("location", source);
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
-						String id = on.getIdOfPar(parameter); 
+						String id = on.getIdOfPar(parameter);
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
@@ -553,12 +555,12 @@ public class MyUCCockpit {
 			System.err.println("Error while pasrsing sources. ");
 			e.printStackTrace();
 		}
-				
+
 //		/*
 //		 * generate sinks
 //		 */
 		try {
-			param.put("type", "sink");	
+			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
 				OffsetTable ot = sinksMap.get(sink);
 				for (int offset : ot.getSet().keySet()) {
@@ -569,7 +571,7 @@ public class MyUCCockpit {
 					param.put("location", sink);
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
-						String id = on.getIdOfPar(parameter); 
+						String id = on.getIdOfPar(parameter);
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
@@ -621,7 +623,7 @@ public class MyUCCockpit {
 //		}
 //		this.pdpRmiServerField = new JTextField(hostAddress);
 //		_return.add(this.pdpRmiServerField, gbc);
-		
+
 
 
 		JLabel deployedPolicyLab = new JLabel("Deployed Mechanisms");
@@ -681,12 +683,12 @@ public class MyUCCockpit {
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
 
-						HashMap<String, ArrayList<Mechanism>> ar = pdpCtrl.getPdpHandler().listMechanisms();
-						Iterator arIt = ar.keySet().iterator();
+						HashMap<String, ArrayList<IPdpMechanism>> ar = pdpCtrl.getPdpHandler().listMechanisms();
+						Iterator<String> arIt = ar.keySet().iterator();
 						while (arIt.hasNext()) {
-							String policyName = (String) arIt.next();
-							ArrayList<Mechanism> mechanism = ar.get(policyName);
-							Iterator mechIt = mechanism.iterator();
+							String policyName = arIt.next();
+							ArrayList<IPdpMechanism> mechanism = ar.get(policyName);
+							Iterator<IPdpMechanism> mechIt = mechanism.iterator();
 							while(mechIt.hasNext()){
 								Mechanism m = (Mechanism) mechIt.next();
 								((DefaultTableModel) deployedPolicyTable
@@ -807,7 +809,7 @@ public class MyUCCockpit {
 	public void stopPDP() {
 		if (this.ucIsRunning) {
 			pdpThread.stop();
-			
+
 			this.pdpCtrl.stop();
 			this.ucIsRunning = false;
 		}
@@ -816,9 +818,9 @@ public class MyUCCockpit {
 	public void deployPolicy(String policyFile) {
 		this.pdpCtrl.getPdpHandler().deployPolicy(policyFile);
 	}
-	
+
 	public class Runpdp implements Runnable{
-		
+
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
@@ -855,8 +857,8 @@ public class MyUCCockpit {
 //					_logger.error("EventHandler thread interrupted.", e);
 //				}
 //			}
-			
+
 		}
-		
+
 	}
 }

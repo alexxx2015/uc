@@ -3,16 +3,13 @@ package de.tum.in.i22.pip.core.eventdef.Java;
  * This class initializes all sinks and sources according to the joana output
  */
 
-import java.util.Map;
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
@@ -28,16 +25,24 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 
 		//This event is used only during tests to initialize the information flow schema to a specific state
 
-		InformationFlowModel ifModel = getInformationFlowModel();
+		String id;
+		String signature;
+		String location;
+		String parampos;
+		String type;
+		String offset;
 
-		IEvent e = getEvent();
-		Map<String,String> param = e.getParameters();
-		String id = param.get("id");
-		String signature = param.get("signature");
-		String location = param.get("location");
-		String parampos = param.get("parampos");
-		String type = param.get("type");
-		String offset = param.get("offset");
+		try {
+			id = getParameterValue("id");
+			signature = getParameterValue("signature");
+			location = getParameterValue("location");
+			parampos = getParameterValue("parampos");
+			type = getParameterValue("type");
+			offset = getParameterValue("offset");
+		} catch (ParameterNotFoundException e) {
+			_logger.error(e.getMessage());
+			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+		}
 
 		String delim = ":";
 
@@ -64,12 +69,10 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 			if (infoContId == null) {
 				IContainer signatureCont = _messageFactory.createContainer();
 
-				ifModel.addContainer(signatureCont);
 				ifModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-				ifModel.add(data);
-				ifModel.addDataToContainerMapping(data, signatureCont);
+				ifModel.addDataToContainer(data, signatureCont);
 				_logger.debug(ifModel.toString());
 			} else {
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");

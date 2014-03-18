@@ -27,26 +27,18 @@
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
-		</dependency><!-- 
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>PdpCommunicationManager</artifactId>
-			<version>1.0</version>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
-		</dependency>
-		
+		</dependency>		
 		<dependency>
 			<groupId>org.apache.thrift</groupId>
 			<artifactId>libthrift</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
-			<version>1.2.14</version> </dependency> -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -80,9 +72,6 @@
 			<artifactId>jaxb2-basics-runtime</artifactId>
 			<version>0.6.4</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.projectlombok</groupId> <artifactId>lombok</artifactId> 
-			<version>0.9.2</version> </dependency> -->
 
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
