@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -38,6 +39,7 @@ import de.tum.in.i22.cm.pdp.internal.exceptions.InvalidOperatorException;
 import de.tum.in.i22.cm.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.cm.pdp.xsd.PolicyType;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 
 public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static Logger log = LoggerFactory
@@ -46,7 +48,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	private static IPolicyDecisionPoint instance = null;
 	private ActionDescriptionStore actionDescriptionStore = null;
-	private HashMap<String, ArrayList<Mechanism>> policyTable = new HashMap<String, ArrayList<Mechanism>>();
+	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 
 	private static IPdpEngine2PipCacher _engine2PipCacher;
 
@@ -61,6 +63,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return instance;
 	}
 
+	@Override
 	public boolean deployPolicy(String policyFilename) {
 		if (policyFilename.endsWith(".xml"))
 			return deployXML(policyFilename);
@@ -95,7 +98,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 			List<MechanismBaseType> mechanisms = curPolicy
 					.getDetectiveMechanismOrPreventiveMechanism();
-			
+
 			if (this.policyTable.containsKey(curPolicy.getName())) {
 //				log.error("Policy [{}] already deployed! Aborting...", curPolicy.getName());
 //				return false;
@@ -105,11 +108,10 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				try {
 					log.debug("Processing mechanism: {}", mech.getName());
 
-					Mechanism curMechanism = new Mechanism(mech);
-					ArrayList<Mechanism> mechanismList = this.policyTable
-							.get(curPolicy.getName());
+					IPdpMechanism curMechanism = new Mechanism(mech);
+					ArrayList<IPdpMechanism> mechanismList = this.policyTable.get(curPolicy.getName());
 					if (mechanismList == null)
-						mechanismList = new ArrayList<Mechanism>();
+						mechanismList = new ArrayList<IPdpMechanism>();
 					if (mechanismList.contains(curMechanism)) {
 						log.error(
 								"Mechanism [{}] is already deployed for policy [{}]",
@@ -155,10 +157,9 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			log.debug("Processing mechanism: {}", mech.getName());
 			try {
 				Mechanism curMechanism = new Mechanism(mech);
-				ArrayList<Mechanism> mechanismList = this.policyTable
-						.get(curPolicy.getName());
+				ArrayList<IPdpMechanism> mechanismList = this.policyTable.get(curPolicy.getName());
 				if (mechanismList == null)
-					mechanismList = new ArrayList<Mechanism>();
+					mechanismList = new ArrayList<IPdpMechanism>();
 				if (mechanismList.contains(curMechanism)) {
 					log.error(
 							"Mechanism [{}] is already deployed for policy [{}]",
@@ -182,21 +183,23 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return true;
 	}
 
+	@Override
 	public boolean revokePolicy(String policyName) {
 		boolean ret = false;
-		for (Mechanism mech : this.policyTable.get(policyName)) {
+		for (IPdpMechanism mech : this.policyTable.get(policyName)) {
 			log.info("Revoking mechanism: {}", mech.getMechanismName());
 			ret = mech.revoke();
 		}
 		return ret;
 	}
 
+	@Override
 	public boolean revokePolicy(String policyName, String mechName) {
 		boolean ret = false;
-		ArrayList<Mechanism> mechanisms = this.policyTable.get(policyName);
+		ArrayList<IPdpMechanism> mechanisms = this.policyTable.get(policyName);
 		if (mechanisms != null) {
-			Mechanism mech = null;
-			for (Mechanism m : mechanisms) {
+			IPdpMechanism mech = null;
+			for (IPdpMechanism m : mechanisms) {
 				if (m.getMechanismName().equals(mechName)) {
 					log.info("Revoking mechanism: {}", m.getMechanismName());
 					ret = m.revoke();
@@ -206,12 +209,15 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			}
 			if (mech != null) {
 				mechanisms.remove(mech);
-				this.actionDescriptionStore.removeMechanism(mech.getTriggerEvent().getAction());
+				if (mech instanceof Mechanism) {
+					this.actionDescriptionStore.removeMechanism(((Mechanism) mech).getTriggerEvent().getAction());
+				}
 			}
 		}
 		return ret;
 	}
 
+	@Override
 	public Decision notifyEvent(Event event) {
 		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
 				.getEventList(event.getEventAction());
@@ -243,7 +249,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return d;
 	}
 
-	public HashMap<String, ArrayList<Mechanism>> listDeployedMechanisms() {
+	@Override
+	public HashMap<String, ArrayList<IPdpMechanism>> listDeployedMechanisms() {
 		// ArrayList<Mechanism> mechanismList = new ArrayList<Mechanism>();
 		// for (String policyName : this.policyTable.keySet()) {
 		// mechanismList.add(policyName+this.policyTable.get(policyName));

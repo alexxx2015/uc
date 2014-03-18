@@ -19,11 +19,12 @@ import de.tum.in.i22.cm.pdp.xsd.PreventiveMechanismType;
 import de.tum.in.i22.cm.pdp.xsd.action.ExecuteAsyncActionType;
 import de.tum.in.i22.cm.pxp.IPolicyExecutionPoint;
 import de.tum.in.i22.cm.pxp.PXPStub;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 
-public class Mechanism extends Thread
+public class Mechanism extends Thread implements IPdpMechanism
 {
   private static Logger log = LoggerFactory.getLogger(Mechanism.class);
-  
+
   private String              mechanismName       =null;
   private String              description         =null;
   private long                lastUpdate          =0;
@@ -33,13 +34,13 @@ public class Mechanism extends Thread
   private Condition           condition           =null;
   private AuthorizationAction authorizationAction =null;
   private List<ExecuteAction> executeAsyncActions =new ArrayList<ExecuteAction>();
-  
+
   public boolean isStarted = false;
   private Thread updateThread = null;
 
   public Mechanism()
   {}
-  
+
   public Mechanism(MechanismBaseType mech) throws InvalidMechanismException
   {
     log.debug("Preparing mechanism from MechanismBaseType");
@@ -52,17 +53,17 @@ public class Mechanism extends Thread
     {
       PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
       log.debug("Processing PreventiveMechanism");
-      
+
       this.triggerEvent = new EventMatch(curMech.getTrigger(), this);
-      
+
       ActionDescriptionStore ads = ActionDescriptionStore.getInstance();
       ads.addMechanism(this);
-      
+
       // TODO: subscription to PEP?!
-      
+
       log.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech.getAuthorizationAction().size());
       HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
-      
+
       for(AuthorizationActionType auth : curMech.getAuthorizationAction())
       {
         log.debug("Found authAction {}", auth.getName());
@@ -70,10 +71,10 @@ public class Mechanism extends Thread
           authActions.put("start", new AuthorizationAction(auth));
         else authActions.put(auth.getName(), new AuthorizationAction(auth));
       }
-      
+
       log.debug("Preparing hierarchy of authorizationActions (list: {})", authActions.size());
       this.authorizationAction = authActions.get("start");
-      
+
       if(curMech.getAuthorizationAction().size()>1)
       {
         AuthorizationAction curAuth = this.authorizationAction;
@@ -117,7 +118,7 @@ public class Mechanism extends Thread
       this.executeAsyncActions.add(new ExecuteAction(execAction));
     }
   }
-  
+
   public Mechanism(PbMechanismOrBuilder pbMechanism) throws InvalidOperatorException
   {
     if(pbMechanism == null) return;
@@ -128,7 +129,7 @@ public class Mechanism extends Thread
     if(pbMechanism.hasTriggerEvent()) triggerEvent=new EventMatch(pbMechanism.getTriggerEvent());
     if(pbMechanism.hasCondition()) condition=new Condition(pbMechanism.getCondition(), this);
     if(pbMechanism.hasAuthorizationAction()) authorizationAction=new AuthorizationAction(pbMechanism.getAuthorizationAction());
-    
+
     if(pbMechanism.getExecuteAsyncActionCount()>0)
     {
       for(PbExecuteAction execAction : pbMechanism.getExecuteAsyncActionList())
@@ -136,7 +137,7 @@ public class Mechanism extends Thread
         executeAsyncActions.add(new ExecuteAction(execAction));
       }
     }
-  }  
+  }
 
   public boolean init()
   {
@@ -149,7 +150,7 @@ public class Mechanism extends Thread
     isStarted = true;
     return isStarted;
   }
-  
+
   public String getMechanismName()
   {
     return mechanismName;
@@ -169,7 +170,7 @@ public class Mechanism extends Thread
   {
     this.description=description;
   }
-  
+
   public AuthorizationAction getAuthorizationAction()
   {
     return authorizationAction;
@@ -199,7 +200,7 @@ public class Mechanism extends Thread
   {
     this.triggerEvent=triggerEvent;
   }
-  
+
   public long getTimestepSize()
   {
     return timestepSize;
@@ -215,14 +216,14 @@ public class Mechanism extends Thread
     this.updateThread.interrupt();
     return true;
   }
-  
+
   public synchronized Decision notifyEvent(Event curEvent, Decision d)
   {
     log.debug("updating mechanism [{}]", this.getMechanismName());
     if(this.triggerEvent.eventMatches(curEvent))
     {
       log.info("Event matches -> evaluating condition");
-      boolean ret = this.condition.evaluate(curEvent);      
+      boolean ret = this.condition.evaluate(curEvent);
       if(ret)
       {
         log.info("Condition satisfied; merging mechanism into decision");
@@ -232,21 +233,21 @@ public class Mechanism extends Thread
     }
 
     return d;
-  }  
+  }
 
   private synchronized boolean mechanismUpdate()
-  { // TODO improve accuracy to microseconds?  
+  { // TODO improve accuracy to microseconds?
     long now = System.currentTimeMillis();
     long elapsedLastUpdate = now - this.lastUpdate;
     long difference = elapsedLastUpdate - (this.timestepSize/1000);
-    
+
     if(difference<0)
     { // Aborting update because the timestep has not yet passed
       log.trace("[{}] Timestep remaining {} -> timestep has not yet passed", this.mechanismName, difference);
       log.trace("##############################################################################################################");
       return false;
     }
-    
+
     // Correct time substracting possible delay in the execution because difference between timestep and last time
     // mechanism was updated will not be exactly the timestepSize
     this.lastUpdate = now-difference;
@@ -254,7 +255,7 @@ public class Mechanism extends Thread
     {
       log.warn("[{}] Timestep difference is larger than mechanism's timestep size => we missed to evaluate at least one timestep!!", this.mechanismName);
       log.warn("--------------------------------------------------------------------------------------------------------------");
-    }      
+    }
 
     timestep++;
     log.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
@@ -263,17 +264,17 @@ public class Mechanism extends Thread
     boolean conditionValue=this.condition.evaluate(null);
     log.debug("conditionValue: {}", conditionValue);
     log.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
-    
+
     return conditionValue;
   }
-  
+
 
   @Override
   public void run()
   {
     long sleepValue = this.timestepSize / 1000;
     log.info("Started mechanism update thread usleep={} ms", sleepValue);
-    
+
     while(!isInterrupted())
     {
       try
@@ -296,12 +297,12 @@ public class Mechanism extends Thread
           }
         }
 
-        if(interrupted()) 
+        if(interrupted())
         {
           log.info("Mechanism thread was interrupted. terminating...");
           return;
         }
-        
+
         sleep(sleepValue);
       }
       catch(InterruptedException e)
@@ -311,8 +312,9 @@ public class Mechanism extends Thread
       }
     }
   }
-  
-  public String toString()
+
+  @Override
+public String toString()
   {
     String str = "\nMechanism: name=[" + this.mechanismName + "]\n   description=[" + this.description + "]";
     str += "\n   timestepSize=["+timestepSize+"]";

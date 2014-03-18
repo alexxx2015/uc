@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -154,9 +155,9 @@ public class PdpHandlerTestPip implements IIncoming {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+	public HashMap<String, ArrayList<IPdpMechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
-		HashMap<String, ArrayList<Mechanism>> _return = _lpdp.listDeployedMechanisms();
+		HashMap<String, ArrayList<IPdpMechanism>> _return = _lpdp.listDeployedMechanisms();
 		return _return;
 	}
 

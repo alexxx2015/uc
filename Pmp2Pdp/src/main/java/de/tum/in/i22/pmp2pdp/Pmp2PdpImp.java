@@ -5,11 +5,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.core.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
@@ -104,7 +104,7 @@ public abstract class Pmp2PdpImp extends Connection implements IPmp2Pdp {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<Mechanism>> listMechanisms() {
+	public HashMap<String, ArrayList<IPdpMechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
 		return null;
 	}
