@@ -13,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class AcceptEventHandler extends BaseEventHandler {
 
@@ -74,7 +75,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// client is remote
 
 			// create a 'proxy' container and name it.
-			remoteConnectedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003));
+			remoteConnectedSocket = new RemoteSocketContainer(domain, type,
+					new Pip2PipTcpImp(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
 			ifModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
