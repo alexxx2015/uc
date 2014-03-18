@@ -1,15 +1,10 @@
 package de.tum.in.i22.uc.cm.methods;
 
 
-
-/**
- * For defining the expected PIP response.
- * @author Florian Kelbert
- *
- */
 public enum EPipResponse {
 	VOID((byte)1),
-	ICONTAINER((byte)2);
+	ICONTAINER((byte)2),
+	ISTATUS((byte)3);
 
     private final byte value;
 

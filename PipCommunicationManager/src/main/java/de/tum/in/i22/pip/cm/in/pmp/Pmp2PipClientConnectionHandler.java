@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
 
 public class Pmp2PipClientConnectionHandler extends ClientTcpConnectionHandler {
 	private final IPmp2Pip _pmp2pip = Pmp2Pip.getInstance();

@@ -9,28 +9,32 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
-import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
+import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
 public class RequestHandler implements Runnable {
 
@@ -44,8 +48,8 @@ public class RequestHandler implements Runnable {
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
 
-	private IIncoming _pdpHandler;
-	private IPdp2PipTcp _pdp2PipProxy;
+	private IPdpIncoming _pdpHandler;
+	private IPdp2Pip _pdp2PipProxy;
 
 	private final IPdpCore2PipCacher _core2pip;
 	private final IPdpEngine2PipCacher _engine2pip;
@@ -53,7 +57,7 @@ public class RequestHandler implements Runnable {
 
 
 	private RequestHandler() {
-		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
+		// tell the PIP about the port being used.
 		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
 
 		_pdp2PipProxy = new Pdp2PipTcpImp(PdpSettings.getInstance().getPipAddress(), PdpSettings.getInstance().getPipPortNum());
@@ -98,7 +102,7 @@ public class RequestHandler implements Runnable {
 		return _instance;
 	}
 
-	public void setPdpHandler(IIncoming pdpHandler) {
+	public void setPdpHandler(IPdpIncoming pdpHandler) {
 		_pdpHandler = pdpHandler;
 		_pdpHandler.setPdpCore2PipCacher(_core2pip);
 		_pdpHandler.setPdpEngine2PipCacher(_engine2pip);
@@ -112,6 +116,11 @@ public class RequestHandler implements Runnable {
 		// put method blocks until the space in the queue becomes available
 		_logger.debug("Add " + obj + " to the queue.");
 		_requestQueue.add(obj);
+	}
+
+	public void addPxpRegEvent(IPxpSpec pxpSpec, IForwarder forwarder) throws InterruptedException {
+		RequestWrapper obj = new PdpRegPxpWrapper(pxpSpec,forwarder);
+		_requestQueue.put(obj);
 	}
 
 	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {
@@ -165,14 +174,20 @@ public class RequestHandler implements Runnable {
 				 *
 				 */
 
-				response = _pdpHandler.notifyEvent(((PepNotifyEventRequestWrapper) request).getEvent());
+				IEvent event = ((PepNotifyEventRequestWrapper) request).getEvent();
+				_logger.debug("Processing " + event);
+				response = _pdpHandler.notifyEvent(event);
+				_logger.debug(System.lineSeparator() + InformationFlowModel.getInstance().niceString());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
+			} else if (request instanceof PdpRegPxpWrapper){
+				response = processPdpRegPxp(((PdpRegPxpWrapper) request).getPxpSpec());
 			} else if (request instanceof PmpRequestWrapper) {
 				response = processPmpRequest(((PmpRequestWrapper) request).getPmpRequest());
 			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
 				response = delegeteUpdateIfFlowToPip((UpdateIfFlowSemanticsRequestWrapper) request);
-			} else {
+			}
+			else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}
 
@@ -233,6 +248,16 @@ public class RequestHandler implements Runnable {
 		return result;
 	}
 
+	private Object processPdpRegPxp(IPxpSpec pxp){
+		_logger.debug("Process PXP registration");
+		Boolean b = _pdpHandler.registerPxp(pxp);
+		return b;
+//		Object response = new ResponseBasic(new StatusBasic(EStatus.ALLOW),null,null);
+//		if(_res == false)
+//			response = new ResponseBasic(new StatusBasic(EStatus.INHIBIT),null,null);
+//		return response;
+	}
+
 
 	private IStatus notifyEventToPip(IEvent event) {
 		try {
@@ -287,7 +312,7 @@ public class RequestHandler implements Runnable {
 		try {
 			_logger.debug("Establish connection to PIP");
 
-			_pdp2PipProxy = ConnectionManager.obtain(_pdp2PipProxy);
+			_pdp2PipProxy = ConnectionManager.MAIN.obtain(_pdp2PipProxy);
 
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
 					+ System.currentTimeMillis());
@@ -297,7 +322,7 @@ public class RequestHandler implements Runnable {
 					request.getConflictResolution());
 			jarFile.delete();
 
-			ConnectionManager.release(_pdp2PipProxy);
+			ConnectionManager.MAIN.release(_pdp2PipProxy);
 
 			return status;
 		} catch (Exception e) {
@@ -354,6 +379,27 @@ public class RequestHandler implements Runnable {
 
 		public IEvent getEvent() {
 			return _event;
+		}
+	}
+
+	/**
+	 * @author SuperStar
+	 */
+	private class PdpRegPxpWrapper extends RequestWrapper {
+		private final IPxpSpec _pxpSpec;
+
+		public PdpRegPxpWrapper(IPxpSpec pxpSpec, IForwarder forwarder){
+			super(forwarder);
+			_pxpSpec = pxpSpec;
+		}
+
+		@Override
+		public String toString(){
+			return "PdpRegPxpWrapper [_event="+_pxpSpec+"]";
+		}
+
+		public IPxpSpec getPxpSpec(){
+			return _pxpSpec;
 		}
 	}
 

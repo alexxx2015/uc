@@ -3,21 +3,27 @@ package de.tum.in.i22.uc.cm.out;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages and synchronizes connections.
  *
- * This manager keeps a fixed amount of connections open, closing connections
+ * While in most cases this class ought to be used as a singleton
+ * (using {@link ConnectionManager#MAIN}), there might be situations
+ * in which a developer intentionally wants open multiple connections
+ * to the same location at the same time. For this reason, additional
+ * instances of this manager can be created using the constructors.
+ *
+ * Any manager instance keeps a fixed amount of connections open, closing connections
  * that have been least-recently-used. Using this manager, {@link Connection}s
  * can safely be shared across threads.
  *
- * For this reason, this managers methods {@link ConnectionManager#obtain(IConnection)}
- * and {@link ConnectionManager#release(IConnection)} must be used.
+ * For this reason, this manager's methods {@link ConnectionManager#obtain(IConnection)}
+ * and {@link ConnectionManager#release(IConnection)} must be used (see their documentation).
  *
  *
  * @author Florian Kelbert
@@ -26,7 +32,9 @@ import java.util.Set;
 public class ConnectionManager {
 	private static final int DEFAULT_MAX_ENTRIES = 20;
 
-	private static final PoolMap connectionPool = new PoolMap(DEFAULT_MAX_ENTRIES);
+	public static final ConnectionManager MAIN = new ConnectionManager();
+
+	private final PoolMap connectionPool;;
 
 	/**
 	 * Connections that have been removed from the connection pool but that still need to be closed.
@@ -35,23 +43,38 @@ public class ConnectionManager {
 	 *   (2) they have not yet been released.
 	 * A map is used intentionally. Reason: From a set we cannot easily retrieve a value.
 	 */
-	private static final Map<PoolMapEntry, PoolMapEntry> toClose = new HashMap<>();
+	private final Map<PoolMapEntry, PoolMapEntry> toClose = new ConcurrentHashMap<>();
+
+
+	public ConnectionManager() {
+		this(DEFAULT_MAX_ENTRIES);
+	}
+
+
+	public ConnectionManager(int maxEntries) {
+		connectionPool = new PoolMap(DEFAULT_MAX_ENTRIES);
+	}
+
 
 	/**
 	 * Connects and reserves the specified connection for the caller.
 	 *
-	 * Note, that the returned connection might be different from the one that has been
-	 * passed as an argument. In any case, the caller must use the _returned_ connection.
+	 * Note, that the returned connection might be different instance than the one that has been
+	 * passed as an argument. The reason is, that another ("similar") instance might have been
+	 * opened before, is still available, and thus returned.
+	 * In any case, the caller must use the _returned_ connection.
 	 * The returned connection is connected and ready to be used by the caller.
 	 *
 	 * If the connection was not known to the {@link ConnectionManager} before,
-	 * it gets (1) added to its internal pool of connections,
-	 * (2) physically connected, (3) reserved for the caller.
+	 * it gets
+	 *   (1) added to its internal pool of connections,
+	 *   (2) physically connected,
+	 *   (3) reserved for the caller.
 	 *
 	 * If the connection was already known, then:
-	 * (a) if currently in use: this method blocks until the connection gets available,
-	 * then reserves it for the caller.
-	 * (b) if not currently in use: reserves the connection for the caller.
+	 *   (a) if currently in use: this method blocks until the connection gets available,
+	 *     then reserves it for the caller.
+	 *   (b) if not currently in use: reserves the connection for the caller.
 	 *
 	 * Once no longer needed, the caller must "free" the reserved connection
 	 * by calling method {@link ConnectionManager#release(IConnection)}.
@@ -61,7 +84,7 @@ public class ConnectionManager {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <C extends IConnection> C obtain(C iconnection) throws IOException {
+	public <C extends IConnection> C obtain(C iconnection) throws IOException {
 		if (iconnection == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -99,17 +122,73 @@ public class ConnectionManager {
 		return (C) entry.connection;
 	}
 
+
 	/**
 	 * Returns the specified connection to the connection pool and
-	 * makes it available to other threads.
+	 * makes it available to other threads. The connection is *not*
+	 * closed (at least not immediately; it might get closed after
+	 * some time, though).
 	 *
 	 * After returning the connection, the caller must no longer
 	 * use the connection, as this would lead to unspecified results.
 	 *
+	 * Method {@link ConnectionManager#close(IConnection)} might be
+	 * used to force closing of a connection.
+	 *
 	 * @param iconnection
 	 * @throws IOException
 	 */
-	public static void release(IConnection iconnection) throws IOException {
+	public void release(IConnection iconnection) throws IOException {
+		release(iconnection, false);
+	}
+
+
+	/**
+	 * Returns and closes the specified connection, irrespective of whether
+	 * it might still be in use by other threads.
+	 *
+	 * After returning the connection, the caller must no longer
+	 * use the connection, as this would lead to unspecified results.
+	 *
+	 * Also consider calling {@link ConnectionManager#release(IConnection)}
+	 * instead, which will also return the connection to the connection
+	 * manager but allow other threads to reuse the same connection.
+	 *
+	 * @param iconnection
+	 * @throws IOException
+	 */
+	public void close(IConnection iconnection) throws IOException {
+		release(iconnection, true);
+	}
+
+	public void closeAll() {
+		synchronized (connectionPool) {
+			for (PoolMapEntry pme : connectionPool.values()) {
+				pme.connection.disconnect();
+				connectionPool.remove(pme.connection);
+			}
+
+
+			for (PoolMapEntry pme : toClose.keySet()) {
+				pme.connection.disconnect();
+				toClose.remove(pme.connection);
+			}
+
+			connectionPool.notifyAll();
+		}
+	}
+
+	/**
+	 * Returns the specified connection to the connection pool.
+	 * If forceClose is true, then the connection is forced to be
+	 * close, irrespective of whether it might still be in use by
+	 * other threads.
+	 *
+	 * @param iconnection
+	 * @param forceClose
+	 * @throws IOException
+	 */
+	private void release(IConnection iconnection, boolean forceClose) throws IOException {
 		if (iconnection == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -121,24 +200,37 @@ public class ConnectionManager {
 		Connection connection = (Connection) iconnection;
 
 		synchronized (connectionPool) {
-			if (connectionPool.get(connection) == null) {
+			PoolMapEntry pme = connectionPool.get(connection);
+
+			if (pme == null) {
 				// It may be the case that the connection has been removed from the pool
 				// while it was in use. In this case we get the connection from the 'toClose' map
 				// and close it.
-				PoolMapEntry pme;
 				if ((pme = toClose.remove(connection)) != null) {
 					pme.connection.disconnect();
 				}
 			}
 			else {
-				connectionPool.get(connection).inuse = false;
+				if (forceClose) {
+					// force the connection to be closed
+					pme.connection.disconnect();
+					connectionPool.remove(pme.connection);
+				}
+				else {
+					// set the connection to be reusable
+					pme.inuse = false;
+				}
 				connectionPool.notifyAll();
 			}
 		}
 	}
 
 
-	private static class PoolMap implements Map<Connection, PoolMapEntry> {
+
+
+
+
+	private class PoolMap implements Map<Connection, PoolMapEntry> {
 		private final int _maxEntries;
 
 		private final Map<Connection, PoolMapEntry> _backMap;
@@ -238,7 +330,7 @@ public class ConnectionManager {
 	/**
 	 * Groups a connection and its current state, i.e. whether it is currently in use.
 	 */
-	private static class PoolMapEntry {
+	private class PoolMapEntry {
 		Connection connection;
 		boolean inuse;
 

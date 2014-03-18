@@ -3,28 +3,27 @@ package uctests;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assert;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipTcp;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class PipTest {
 
 	private static Logger _logger = Logger.getRootLogger();
 
-	private static IPdp2PipTcp _pipProxy;
+	private static IPdp2Pip _pipProxy;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -38,12 +37,12 @@ public class PipTest {
 	@Before
 	public void setUp() throws Exception {
 		// connect pdp to pip
-		_pipProxy = ConnectionManager.obtain(_pipProxy);
+		_pipProxy = ConnectionManager.MAIN.obtain(_pipProxy);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		ConnectionManager.release(_pipProxy);
+		ConnectionManager.MAIN.release(_pipProxy);
 	}
 
 	@Test

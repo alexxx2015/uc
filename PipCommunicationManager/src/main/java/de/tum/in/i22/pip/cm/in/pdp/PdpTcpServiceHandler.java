@@ -3,8 +3,8 @@ package de.tum.in.i22.pip.cm.in.pdp;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.uc.cm.in.TcpServiceHandler;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 
 public class PdpTcpServiceHandler extends TcpServiceHandler {
 	private final IPdp2Pip _pdp2Pip;

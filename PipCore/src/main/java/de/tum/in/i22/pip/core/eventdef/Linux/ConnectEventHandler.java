@@ -2,6 +2,7 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.pip2pip.Pip2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -12,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 
 public class ConnectEventHandler extends BaseEventHandler {
@@ -54,8 +56,8 @@ public class ConnectEventHandler extends BaseEventHandler {
 		}
 
 		if (localConnectingSocket == null) {
-			_logger.fatal("Container with identifier " + FiledescrName.create(host, pid, fd) + " should exist due to "
-					+ "previous socket() call. But it did not.");
+			_logger.fatal("Container with identifier " + FiledescrName.create(host, pid, fd)
+					+ " should exist due to previous socket() call. But it did not.");
 			return STATUS_ERROR;
 		}
 
@@ -66,7 +68,8 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		if (!localIP.equals(remoteIP)) {
 			// server is remote
-			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, null); //TODO
+			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP,
+					PipSettings.getInstance().getPipRemotePortNum()));
 			ifModel.addName(remoteSocketName, remoteAcceptedSocket);
 			ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
 		}

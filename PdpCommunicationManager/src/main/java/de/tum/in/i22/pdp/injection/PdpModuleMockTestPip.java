@@ -3,8 +3,8 @@ package de.tum.in.i22.pdp.injection;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.core.PdpHandlerTestPip;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 
 public class PdpModuleMockTestPip extends AbstractModule {
 
@@ -12,7 +12,7 @@ public class PdpModuleMockTestPip extends AbstractModule {
 	protected void configure() {
 //		bind(IIncoming.class).to(PdpHandlerMockLinux.class).in(Singleton.class);
 
-		bind(IIncoming.class).to(PdpHandlerTestPip.class).in(Singleton.class);
+		bind(IPdpIncoming.class).to(PdpHandlerTestPip.class).in(Singleton.class);
 	}
 
 }

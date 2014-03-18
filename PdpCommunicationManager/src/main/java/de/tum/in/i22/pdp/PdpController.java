@@ -23,14 +23,15 @@ import de.tum.in.i22.pdp.cm.in.pep.PepTcpServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pep.thrift.ThriftServer;
 import de.tum.in.i22.pdp.cm.in.pip.PipTcpServiceHandler;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpTcpServiceHandler;
-import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
 public class PdpController {
 
 	private static Logger _logger = Logger.getLogger(PdpController.class);
 
-	private final IIncoming _pdpHandler;
+	private final IPdpIncoming _pdpHandler;
 
 	private final static Options _commandLineOptions = createCommandLineOptions();
 
@@ -59,7 +60,7 @@ public class PdpController {
 	 * @param pdpHandler
 	 */
 	@Inject
-	public PdpController(IIncoming pdpHandler) {
+	public PdpController(IPdpIncoming pdpHandler) {
 		_pdpHandler = pdpHandler;
 	}
 
@@ -258,7 +259,7 @@ public class PdpController {
 				&& (_startedThriftServer || !getPdpSettings().isPepThriftListenerEnabled());
 	}
 
-	IIncoming getPdpHandler(){
+	IPdpIncoming getPdpHandler(){
 		return this._pdpHandler;
 	}
 }

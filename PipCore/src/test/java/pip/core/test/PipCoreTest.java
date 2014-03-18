@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -22,27 +21,28 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class PipCoreTest {
 	private static final Logger _logger = Logger.getLogger(PipCoreTest.class);
-	
+
 	private static IPdp2Pip _pipHandler;
-	private static IMessageFactory _messageFactory;
+	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
-		_pipHandler = new PipHandlerMock();
-		_messageFactory = MessageFactoryCreator.createMessageFactory();
+
+		_pipHandler = new PipHandlerMock(PipSettings.getInstance().getPipRemotePortNum());
 		File file = getJarFile();
-		
+
 		if (file != null && file.exists()) {
 			_logger.debug("File file " + file.getAbsolutePath() + " found.");
 			_pipHandler.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
 		} else {
 			_logger.fatal("Zip file not found.");
 		}
-		
+
 	}
 
 	@AfterClass
@@ -62,9 +62,9 @@ public class PipCoreTest {
 	public void testReadFileActionMissingParameters() {
 		IEvent event = _messageFactory.createActualEvent("ReadFile", null);
 		IStatus status = _pipHandler.notifyActualEvent(event);
-		Assert.assertEquals(EStatus.ERROR_EVENT_PARAMETER_MISSING, status.getEStatus());
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-	
+
 	@Test
 	public void testReadFileAction() {
 		Map<String, String> map = new HashMap<>();
@@ -75,7 +75,7 @@ public class PipCoreTest {
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-	
+
 	@Test
 	public void testWriteFileAction() {
 		Map<String, String> map = new HashMap<>();
@@ -86,7 +86,7 @@ public class PipCoreTest {
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-	
+
 	@Test
 	public void testCreateProcessAction() {
 		Map<String, String> map = new HashMap<>();
@@ -100,7 +100,7 @@ public class PipCoreTest {
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 		_pipHandler.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
-	
+
 	@Test
 	public void testKillProcessAction() {
 		Map<String, String> map = new HashMap<>();
@@ -109,7 +109,7 @@ public class PipCoreTest {
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-	
+
 	@Test
 	public void testSetClipboardDataAction() {
 		Map<String, String> map = new HashMap<>();
@@ -119,7 +119,7 @@ public class PipCoreTest {
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-	
+
 	private static File getJarFile() {
 		File file = FileUtils.toFile(PipCoreTest.class.getResource("/test.jar"));
 		return file;

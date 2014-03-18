@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
+
 public abstract class Connection implements IConnection {
 	protected static final Logger _logger = Logger.getLogger(Connection.class);
 
