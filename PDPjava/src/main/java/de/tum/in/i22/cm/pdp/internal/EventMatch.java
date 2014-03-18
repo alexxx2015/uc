@@ -75,8 +75,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public String toString() {
-		String str = "eventMatch action='" + this.getAction() + "' isTry='"
-				+ this.isTryEvent() + "': [";
+		String str = "eventMatch action='" + this.getAction() + "' isTry='"	+ this.isTryEvent() + "': [";
 		for (ParamMatchType p : this.getParams()) {
 			ParamMatch p2 = (ParamMatch) p;
 			str += p2.toString() + ", ";

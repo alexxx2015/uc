@@ -3,9 +3,9 @@ package de.tum.in.i22.cm.pdp.internal.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.internal.Event;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
+import de.tum.in.i22.cm.pdp.internal.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.xsd.StateBasedOperatorType;
 import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
 

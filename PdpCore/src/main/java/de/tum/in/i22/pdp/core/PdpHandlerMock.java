@@ -11,6 +11,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
@@ -104,5 +105,11 @@ public class PdpHandlerMock implements IPdpIncoming {
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

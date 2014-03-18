@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.interfaces;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.out.IConnection;
@@ -14,4 +15,6 @@ public interface IPep2Pdp extends IConnection {
 			IPipDeployer deployer,
 			byte[] jarFileBytes,
 			EConflictResolution flagForTheConflictResolution);
+	
+	public boolean registerPxp(IPxpSpec pxp);
 }

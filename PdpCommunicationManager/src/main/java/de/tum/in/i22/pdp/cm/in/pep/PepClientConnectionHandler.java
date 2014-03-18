@@ -8,17 +8,22 @@ import java.io.OutputStream;
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpByteArray;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpRegPxp;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
@@ -49,6 +54,9 @@ public abstract class PepClientConnectionHandler extends ClientConnectionHandler
 			break;
 		case UPDATE_INFORMATION_FLOW_SEMANTICS:
 			doUpdateInformationFlowSemantics();
+			break;
+		case REGISTER_PXP:
+			doRegPxp();
 			break;
 		default:
 			throw new RuntimeException("Method " + method
@@ -126,4 +134,61 @@ public abstract class PepClientConnectionHandler extends ClientConnectionHandler
 			_logger.debug("Received event is null.");
 		}
 	}
+
+	private void doRegPxp()
+		throws IOException, InterruptedException {
+
+			_logger.debug("Do register PXP");
+			GpRegPxp gpRegPxpEvent = GpRegPxp.parseDelimitedFrom(getDataInputStream());
+			if (gpRegPxpEvent != null) {
+				_logger.trace("Received event: " + gpRegPxpEvent);
+				String ip = gpRegPxpEvent.getIp();
+				int port = gpRegPxpEvent.getPort();
+				String desc = gpRegPxpEvent.getDescription();
+				String id = gpRegPxpEvent.getId();
+				IPxpSpec pxp = new PxpSpec(ip,port,id,desc);
+
+				RequestHandler requestHandler = RequestHandler.getInstance();
+				_logger.info("Register PXP {} " + gpRegPxpEvent.getId());
+				requestHandler.addPxpRegEvent(pxp, this);
+
+				Object responseObj = waitForResponse();
+				if(responseObj instanceof Boolean){
+					PdpProtos.GpBoolean.Builder gpResponse = PdpProtos.GpBoolean.newBuilder();
+					if(((boolean)responseObj) == true)
+						gpResponse.setValue(true);
+					else
+						gpResponse.setValue(false);
+					GpBoolean response = gpResponse.build();
+					throwAwayResponse();
+					response.writeDelimitedTo(getOutputStream());
+					getOutputStream().flush();
+					_logger.trace("Response to PXP reg {}" + response);
+				}
+
+//				IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
+//				IEvent event = mf.createEvent(gpRegPxpEvent, System.currentTimeMillis());
+//				requestHandler.addEvent(event, this);
+//
+//				Object responseObj = waitForResponse();
+//
+//				if (responseObj instanceof IResponse) {
+//					IResponse response = (IResponse) responseObj;
+//					_logger.trace("Response to return: " + response);
+//
+//					GpResponse gpResponse = ResponseBasic
+//							.createGpbResponse(response);
+//					// important!!! Make sure it is invoked in all classes
+//					throwAwayResponse();
+//					gpResponse.writeDelimitedTo(getOutputStream());
+//					getOutputStream().flush();
+//				} else {
+//					throw new RuntimeException("IResponse type expected for "
+//							+ responseObj);
+//				}
+			} else {
+				_logger.debug("Received event is null.");
+			}
+	}
+
 }

@@ -35,6 +35,8 @@ public class Mechanism extends Thread implements IPdpMechanism
   private AuthorizationAction authorizationAction =null;
   private List<ExecuteAction> executeAsyncActions =new ArrayList<ExecuteAction>();
 
+  private IPolicyDecisionPoint pdp = null;
+
   public boolean isStarted = false;
   private Thread updateThread = null;
 
@@ -139,9 +141,10 @@ public class Mechanism extends Thread implements IPdpMechanism
     }
   }
 
-  public boolean init()
+  public boolean init(IPolicyDecisionPoint pdp)
   {
     log.debug("Initializing mechanism update thread");
+    this.pdp = pdp;
     this.lastUpdate = System.currentTimeMillis();
     this.updateThread = new Thread(this);
     this.updateThread.start();
@@ -151,7 +154,8 @@ public class Mechanism extends Thread implements IPdpMechanism
     return isStarted;
   }
 
-  public String getMechanismName()
+  @Override
+public String getMechanismName()
   {
     return mechanismName;
   }
@@ -211,7 +215,8 @@ public class Mechanism extends Thread implements IPdpMechanism
     this.timestepSize=timestepSize;
   }
 
-  public boolean revoke()
+  @Override
+public boolean revoke()
   {
     this.updateThread.interrupt();
     return true;

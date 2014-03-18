@@ -19,11 +19,14 @@ import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
+import de.tum.in.i22.uc.cm.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
@@ -115,6 +118,11 @@ public class RequestHandler implements Runnable {
 		_requestQueue.add(obj);
 	}
 
+	public void addPxpRegEvent(IPxpSpec pxpSpec, IForwarder forwarder) throws InterruptedException {
+		RequestWrapper obj = new PdpRegPxpWrapper(pxpSpec,forwarder);
+		_requestQueue.put(obj);
+	}
+
 	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {
 		add(new PepNotifyEventRequestWrapper(forwarder, event));
 	}
@@ -172,11 +180,14 @@ public class RequestHandler implements Runnable {
 				_logger.debug(System.lineSeparator() + InformationFlowModel.getInstance().niceString());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
+			} else if (request instanceof PdpRegPxpWrapper){
+				response = processPdpRegPxp(((PdpRegPxpWrapper) request).getPxpSpec());
 			} else if (request instanceof PmpRequestWrapper) {
 				response = processPmpRequest(((PmpRequestWrapper) request).getPmpRequest());
 			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
 				response = delegeteUpdateIfFlowToPip((UpdateIfFlowSemanticsRequestWrapper) request);
-			} else {
+			}
+			else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}
 
@@ -235,6 +246,16 @@ public class RequestHandler implements Runnable {
 		}
 
 		return result;
+	}
+
+	private Object processPdpRegPxp(IPxpSpec pxp){
+		_logger.debug("Process PXP registration");
+		Boolean b = _pdpHandler.registerPxp(pxp);
+		return b;
+//		Object response = new ResponseBasic(new StatusBasic(EStatus.ALLOW),null,null);
+//		if(_res == false)
+//			response = new ResponseBasic(new StatusBasic(EStatus.INHIBIT),null,null);
+//		return response;
 	}
 
 
@@ -358,6 +379,27 @@ public class RequestHandler implements Runnable {
 
 		public IEvent getEvent() {
 			return _event;
+		}
+	}
+
+	/**
+	 * @author SuperStar
+	 */
+	private class PdpRegPxpWrapper extends RequestWrapper {
+		private final IPxpSpec _pxpSpec;
+
+		public PdpRegPxpWrapper(IPxpSpec pxpSpec, IForwarder forwarder){
+			super(forwarder);
+			_pxpSpec = pxpSpec;
+		}
+
+		@Override
+		public String toString(){
+			return "PdpRegPxpWrapper [_event="+_pxpSpec+"]";
+		}
+
+		public IPxpSpec getPxpSpec(){
+			return _pxpSpec;
 		}
 	}
 

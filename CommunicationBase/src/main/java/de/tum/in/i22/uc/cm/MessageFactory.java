@@ -6,12 +6,14 @@ import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
@@ -92,5 +94,11 @@ public class MessageFactory implements IMessageFactory {
 	public IContainer createContainer(String classValue, String id) {
 		IContainer cont = new ContainerBasic(classValue, id);
 		return cont;
+	}
+
+	@Override
+	public IPxpSpec createPxpSpec() {
+		// TODO Auto-generated method stub
+		return new PxpSpec(null,0,null,null);
 	}
 }

@@ -3,7 +3,8 @@ package de.tum.in.i22.uc.cm.methods;
 
 public enum EPep2PdpMethod {
 	NOTIFY_EVENT((byte)1),
-	UPDATE_INFORMATION_FLOW_SEMANTICS((byte)2);
+	UPDATE_INFORMATION_FLOW_SEMANTICS((byte)2),
+	REGISTER_PXP((byte)3);
 	
     private final byte value;
 

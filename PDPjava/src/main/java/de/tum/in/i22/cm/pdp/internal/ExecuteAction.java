@@ -21,6 +21,7 @@ public class ExecuteAction implements Serializable
   private String          name      = null;
   private List<Param<?>>  parameter = new ArrayList<Param<?>>();
   private String          processor = null;
+  private String	id = null;
 
   public ExecuteAction(String name, List<Param<?>> params)
   {
@@ -35,6 +36,7 @@ public class ExecuteAction implements Serializable
   {
     log.debug("Preparing executeAction from ExecuteActionType");
     this.name = execAction.getName();
+    this.id = execAction.getId();
     for(ParameterType param : execAction.getParameter())
     {
       this.parameter.add(new Param<String>(param.getName(), param.getValue()));
@@ -45,6 +47,7 @@ public class ExecuteAction implements Serializable
   {
     log.debug("Preparing executeAction from ExecuteAsyncActionType");
     this.name = execAction.getName();
+    this.id = execAction.getId();
     this.processor = execAction.getProcessor().value();
     for(ParameterType param : execAction.getParameter())
     {
@@ -106,6 +109,10 @@ public class ExecuteAction implements Serializable
   public String getProcessor()
   {
     return processor;
+  }
+  
+  public String getId(){
+	  return this.id;
   }
 
   public void setProcessor(String processor)

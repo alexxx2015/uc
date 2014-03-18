@@ -9,10 +9,9 @@ import testutil.DummyMessageGen;
 
 import com.google.inject.Inject;
 
-import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.internal.Decision;
 import de.tum.in.i22.cm.pdp.internal.Event;
-import de.tum.in.i22.cm.pdp.internal.Mechanism;
+import de.tum.in.i22.cm.pdp.internal.PolicyDecisionPoint;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -21,6 +20,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
@@ -168,4 +168,9 @@ public class PdpHandlerTestPip implements IPdpIncoming {
 		return _engine2pip.getCurrentPipModel();
 	}
 
+	@Override
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		return this._lpdp.registerPxp(pxp);
+	}
 }
