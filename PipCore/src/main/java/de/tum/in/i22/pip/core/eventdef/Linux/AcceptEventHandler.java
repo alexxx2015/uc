@@ -72,22 +72,30 @@ public class AcceptEventHandler extends BaseEventHandler {
 
 		if (!localIP.equals(remoteIP)) {
 			// client is remote
-			remoteConnectedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003));
 
+			// create a 'proxy' container and name it.
+			remoteConnectedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP, 51003));
 			ifModel.addName(remoteSocketName, remoteConnectedSocket);
+
+			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
+			localAcceptedSocket = new SocketContainer(domain, type);
+			ifModel.addName(localSocketName, localAcceptedSocket);
+
+			// add alias from new local container to remote proxy container
 			ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
 		}
 		else {
 			// client is local
+
+			// see whether local container was already created
+			// which is the case if connect() already happened
 			localAcceptedSocket = ifModel.getContainer(localSocketName);
 
 			if (localAcceptedSocket == null) {
 				// accept() happens before connect().
 
-				// create new container c
+				// create new container c and name it, f[(p,(sn(e),(a,x))) <- c]
 				localAcceptedSocket = new SocketContainer(domain, type);
-
-				// f[(p,(sn(e),(a,x))) <- c]
 				ifModel.addName(localSocketName, localAcceptedSocket);
 
 				/*
