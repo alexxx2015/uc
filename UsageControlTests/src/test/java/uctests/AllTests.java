@@ -12,9 +12,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.tum.in.i22.pdp.PdpController;
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pip.PipController;
-import de.tum.in.i22.pip.PipSettings;
+import de.tum.in.i22.pip.core.PipHandlerMock;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 @RunWith(Suite.class)
 //@SuiteClasses({ PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class,
@@ -55,9 +56,9 @@ public class AllTests {
 	}
 
 	private static void startPip() {
-		final PipController pipController = _injector.getInstance(PipController.class);
+		PipController pipController = new PipController(new PipHandlerMock());
 		_logger.debug("Start PIP. Listen from incoming PDP connections on port " + TestSettings.PDP_LISTENER_PORT_IN_PIP);
-		PipSettings pipSettings = pipController.getPipSettings();
+		PipSettings pipSettings = PipSettings.getInstance();
 		pipSettings.setPdpListenerPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
 		pipSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_IN_PIP);
 		pipController.start();

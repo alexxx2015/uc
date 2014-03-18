@@ -9,7 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
@@ -17,7 +16,6 @@ import de.tum.in.i22.pdp.core.IIncoming;
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
@@ -31,7 +29,9 @@ import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
 public class RequestHandler implements Runnable {
 
@@ -54,7 +54,7 @@ public class RequestHandler implements Runnable {
 
 
 	private RequestHandler() {
-		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
+		// tell the PIP about the port being used.
 		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
 
 		_pdp2PipProxy = new Pdp2PipTcpImp(PdpSettings.getInstance().getPipAddress(), PdpSettings.getInstance().getPipPortNum());

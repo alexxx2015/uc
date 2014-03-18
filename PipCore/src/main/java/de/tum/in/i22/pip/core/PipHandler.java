@@ -10,11 +10,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pip.core.Scope.scopeType;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -29,6 +27,9 @@ import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
@@ -41,17 +42,17 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	//info for PipCacher
 	private Map<String, IKey> _predicatesToEvaluate;
 
-	// this is to include classes within the jar file
+	// this is to include classes within the jar file. DO NOT REMOVE.
+	@SuppressWarnings("unused")
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
-		this(0);
+		this(PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandler(int pipPersistenceID) {
+	public PipHandler(int pipPort) {
 		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize(pipPersistenceID);
+		PipManager pipManager = new PipManager(eventHandlerManager, pipPort);
 
 		_actionHandlerCreator = eventHandlerManager;
 		_pipManager = pipManager;
@@ -407,8 +408,6 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	@Override
 	public void populate(String predicate) {
 		_logger.info("Populating "+predicate+ " in PIP");
-
-		Set<IContainer> s;
 
 		IName name = new NameBasic(predicate);
 		IContainer container = _ifModel.getContainer(name);

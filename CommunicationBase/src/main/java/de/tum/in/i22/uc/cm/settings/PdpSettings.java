@@ -1,4 +1,4 @@
-package de.tum.in.i22.pdp;
+package de.tum.in.i22.uc.cm.settings;
 
 import java.io.IOException;
 import java.util.Properties;

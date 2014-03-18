@@ -40,13 +40,17 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		_logger.debug(ifModel.toString());
 		}
 
+
 		/*
 		 * for FK.
 		 */
-		IContainer file = new FileContainer();
+		IContainer file1 = new FileContainer();
+		IContainer file2 = new FileContainer();
 		IData data = _messageFactory.createData("MY_DATA");
-		ifModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file);
-		ifModel.addDataToContainer(data, file);
+		ifModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file1);
+		ifModel.addName(FilenameName.create("machineA", "/home/anonymous/tainted"), file2);
+		ifModel.addDataToContainer(data, file1);
+		ifModel.addDataToContainer(data, file2);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

@@ -1,12 +1,12 @@
 package uctests;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assert;
 
 import de.tum.in.i22.pdp.core.IPmp2Pdp;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;

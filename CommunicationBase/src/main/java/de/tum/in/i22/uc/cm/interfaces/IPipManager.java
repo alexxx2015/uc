@@ -1,4 +1,4 @@
-package de.tum.in.i22.pip.core.manager;
+package de.tum.in.i22.uc.cm.interfaces;
 
 import java.io.File;
 

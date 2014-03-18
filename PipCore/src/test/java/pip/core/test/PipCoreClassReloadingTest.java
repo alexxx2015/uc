@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -20,18 +19,18 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class PipCoreClassReloadingTest {
 
 	private static final Logger _logger = Logger.getLogger(PipCoreClassReloadingTest.class);
 
-	private static IPdp2Pip _pipHandler;
-	private static IMessageFactory _messageFactory;
+	private static IPdp2Pip _pipHandler = new PipHandlerMock(PipSettings.getInstance().getPipRemotePortNum());
+	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pipHandler = new PipHandlerMock();
-		_messageFactory = MessageFactoryCreator.createMessageFactory();
 	}
 
 	@AfterClass

@@ -1,8 +1,7 @@
-package de.tum.in.i22.pip.core;
+package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;

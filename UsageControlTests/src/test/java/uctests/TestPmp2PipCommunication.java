@@ -1,9 +1,9 @@
 package uctests;
-import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assert;
 
 import testutil.DummyMessageGen;
 import de.tum.in.i22.pmp2pip.Pmp2PipTcpImp;

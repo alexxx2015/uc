@@ -2,10 +2,9 @@ package de.tum.in.i22.pdp.core;
 
 import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
-import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 /***
- * we use this interface to pass the pip-reference (via pipcahcer)to the pdp 
+ * we use this interface to pass the pip-reference (via pipcahcer)to the pdp
  * @author uc
  *
  */

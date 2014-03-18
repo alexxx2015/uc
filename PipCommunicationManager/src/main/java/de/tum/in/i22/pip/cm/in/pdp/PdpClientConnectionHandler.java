@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -36,6 +35,7 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpString;
 import de.tum.in.i22.uc.cm.in.ClientTcpConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.methods.EPdp2PipMethod;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 

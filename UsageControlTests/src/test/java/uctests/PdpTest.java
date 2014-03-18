@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assert;
 
 import testutil.DummyMessageGen;
 import de.tum.in.i22.pdp.core.IPmp2Pdp;
