@@ -38,6 +38,7 @@ import de.tum.in.i22.cm.pdp.internal.exceptions.InvalidOperatorException;
 import de.tum.in.i22.cm.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.cm.pdp.xsd.PolicyType;
 import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 
 public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static Logger log = LoggerFactory
@@ -49,6 +50,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private HashMap<String, ArrayList<Mechanism>> policyTable = new HashMap<String, ArrayList<Mechanism>>();
 
 	private static IPdpEngine2PipCacher _engine2PipCacher;
+	
+	public static HashMap<String,IPxpSpec> pxpSpec=  new HashMap<String,IPxpSpec>();
 
 	@Inject
 	private PolicyDecisionPoint() {
@@ -122,7 +125,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 					this.policyTable.put(curPolicy.getName(), mechanismList);
 
 					log.debug("Starting mechanism update thread...");
-					curMechanism.init();
+					curMechanism.init(this);
 					log.info("Mechanism {} started...",
 							curMechanism.getMechanismName());
 				} catch (InvalidMechanismException e) {
@@ -171,7 +174,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				this.policyTable.put(curPolicy.getName(), mechanismList);
 
 				log.debug("Starting mechanism update thread...");
-				curMechanism.init();
+				curMechanism.init(this);
 				log.info("Mechanism {} started...",
 						curMechanism.getMechanismName());
 			} catch (InvalidOperatorException e) {
@@ -275,4 +278,13 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return _engine2PipCacher;
 	}
 
+	@Override
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		boolean b = false;
+		if(!pxpSpec.containsKey(pxp.getId())){
+			b = pxpSpec.put(pxp.getId(), pxp) == null ;
+		}
+		return b;
+	}
 }

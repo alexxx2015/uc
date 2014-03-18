@@ -13,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -103,5 +104,11 @@ public class PdpHandlerMock implements IIncoming {
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

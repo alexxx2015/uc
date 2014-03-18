@@ -7,7 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ClientConnectionHandler implements Runnable, IForwarder {
 
-	protected static Logger _logger = Logger.getLogger(ClientConnectionHandler.class);
+	protected static Logger _logger = LoggerFactory.getLogger(ClientConnectionHandler.class);
 	private Socket _socket;
 	private InputStream _inputStream;
 	private OutputStream _outputStream;

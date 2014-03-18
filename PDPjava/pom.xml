@@ -27,12 +27,23 @@
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
-		</dependency>
+		</dependency><!-- 
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>PdpCommunicationManager</artifactId>
+			<version>1.0</version>
+		</dependency>-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.thrift</groupId>
+			<artifactId>libthrift</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
 			<version>1.2.14</version> </dependency> -->
@@ -120,6 +131,7 @@
 						<arg>-Xinheritance</arg>
 						<arg>-extension</arg>
 					</args>
+					<generateDirectory>src/main/java</generateDirectory>
 
 					<plugins>
 						<plugin>

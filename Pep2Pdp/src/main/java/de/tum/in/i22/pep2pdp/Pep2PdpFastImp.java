@@ -3,7 +3,9 @@ package de.tum.in.i22.pep2pdp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PipDeployerBasic;
@@ -12,12 +14,16 @@ import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpBoolean;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpByteArray;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpPipDeployer;
+import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpRegPxp;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
 import de.tum.in.i22.uc.cm.in.EPep2PdpMethod;
@@ -27,7 +33,7 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
 public class Pep2PdpFastImp extends FastConnector implements IPep2PdpFast {
 
 	
-	private static final Logger _logger = Logger
+	private static final Logger _logger = LoggerFactory
 			.getLogger(Pep2PdpFastImp.class);
 	
 //	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
@@ -57,6 +63,35 @@ public class Pep2PdpFastImp extends FastConnector implements IPep2PdpFast {
 			//TODO better throw custom unchecked exception than return null
 			return null;
 		}
+	}
+
+	@Override
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		_logger.debug("register PXP {}", pxp.getId());
+		
+		PdpProtos.GpRegPxp.Builder gpEventBuilder = PdpProtos.GpRegPxp.newBuilder();
+		gpEventBuilder.setDescription(pxp.getDescription());
+		gpEventBuilder.setId(pxp.getId());
+		gpEventBuilder.setIp(pxp.getIp());
+		gpEventBuilder.setPort(pxp.getPort());
+		GpRegPxp gpRegPxpEvent = gpEventBuilder.build();
+		
+		try {
+			OutputStream out = getOutputStream();
+			out.write(EPep2PdpMethod.REGISTER_PXP.getValue());
+			gpRegPxpEvent.writeDelimitedTo(out);
+			out.flush();
+			_logger.trace("Event written to OutputStream");
+			
+			_logger.trace("Wait for GpResponse");
+			GpBoolean response = GpBoolean.parseDelimitedFrom(getInputStream());
+			return response.getValue();
+		} catch (IOException ex) {
+			_logger.error("Failed to notify event.", ex);			
+		}
+		
+		return false;
 	}
  	
  	@Override
