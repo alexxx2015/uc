@@ -35,7 +35,7 @@ public class Main {
 		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
 //		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 
-		pdp1 = ConnectionManager.obtain(pdp1);
+		pdp1 = ConnectionManager.MAIN.obtain(pdp1);
 
 		new DummyPEP(pdp1) {
 			@Override
@@ -144,7 +144,7 @@ public class Main {
 
 				IPep2Pdp con = this.getPdpCon();
 				try {
-					ConnectionManager.release(con);
+					ConnectionManager.MAIN.release(con);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

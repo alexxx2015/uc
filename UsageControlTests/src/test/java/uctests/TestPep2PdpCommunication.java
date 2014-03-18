@@ -47,7 +47,7 @@ public class TestPep2PdpCommunication {
 		IEvent event2 = mf.createEvent(eventName2, map);
 
 		// connect to pdp
-		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
+		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
 		// notify event1
 		IResponse response1 = _pdpProxy.notifyEvent(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
@@ -55,7 +55,7 @@ public class TestPep2PdpCommunication {
 		IResponse response2 = _pdpProxy.notifyEvent(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
 		// disconnect from pdp
-		ConnectionManager.release(_pdpProxy);
+		ConnectionManager.MAIN.release(_pdpProxy);
 
 		// check if status is not null
 		Assert.assertNotNull(response1);
@@ -68,7 +68,7 @@ public class TestPep2PdpCommunication {
 	@Test
 	public void testUpdateIfFlowSemantics() throws Exception {
 		// connect to pdp
-		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
+		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
 		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
 		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
 		byte[] jarFileBytes = FileUtils.readFileToByteArray(file);
@@ -77,7 +77,7 @@ public class TestPep2PdpCommunication {
 				jarFileBytes,
 				EConflictResolution.OVERWRITE);
 		// disconnect from pdp
-		ConnectionManager.release(_pdpProxy);
+		ConnectionManager.MAIN.release(_pdpProxy);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 

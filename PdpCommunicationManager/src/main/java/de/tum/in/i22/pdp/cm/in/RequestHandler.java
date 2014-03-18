@@ -287,7 +287,7 @@ public class RequestHandler implements Runnable {
 		try {
 			_logger.debug("Establish connection to PIP");
 
-			_pdp2PipProxy = ConnectionManager.obtain(_pdp2PipProxy);
+			_pdp2PipProxy = ConnectionManager.MAIN.obtain(_pdp2PipProxy);
 
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
 					+ System.currentTimeMillis());
@@ -297,7 +297,7 @@ public class RequestHandler implements Runnable {
 					request.getConflictResolution());
 			jarFile.delete();
 
-			ConnectionManager.release(_pdp2PipProxy);
+			ConnectionManager.MAIN.release(_pdp2PipProxy);
 
 			return status;
 		} catch (Exception e) {

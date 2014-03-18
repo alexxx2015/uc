@@ -28,14 +28,14 @@ public class TestPmp2PipCommunication {
 	@Test
 	public void testInitialRepresentation() throws Exception {
 		// connect to PIP
-		_pipProxy = ConnectionManager.obtain(_pipProxy);
+		_pipProxy = ConnectionManager.MAIN.obtain(_pipProxy);
 		IContainer container = DummyMessageGen.createContainer();
 		IData data = DummyMessageGen.createData();
 		IStatus status = _pipProxy.initialRepresentation(container, data);
 		_logger.debug("Received status: " + status);
 
 		// disconnect from PIP
-		ConnectionManager.release(_pipProxy);
+		ConnectionManager.MAIN.release(_pipProxy);
 
 		Assert.assertNotNull(status);
 	}

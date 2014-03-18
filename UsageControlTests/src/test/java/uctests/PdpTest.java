@@ -78,7 +78,7 @@ public class PdpTest {
 		IEvent event2 = mf.createEvent(eventName2, map);
 
 		// connect to pdp
-		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
+		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
 		// notify event1
 		IResponse response1 = _pdpProxy.notifyEvent(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
@@ -86,7 +86,7 @@ public class PdpTest {
 		IResponse response2 = _pdpProxy.notifyEvent(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
 		// disconnect from pdp
-		ConnectionManager.release(_pdpProxy);
+		ConnectionManager.MAIN.release(_pdpProxy);
 
 		// check if status is not null
 		Assert.assertNotNull(response1);
@@ -103,9 +103,9 @@ public class PdpTest {
 	@Test
 	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
 		IEvent event = DummyMessageGen.createActualEvent();
-		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
+		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
 		IResponse response = _pdpProxy.notifyEvent(event);
-		ConnectionManager.release(_pdpProxy);
+		ConnectionManager.MAIN.release(_pdpProxy);
 		Assert.assertNotNull(response);
 	}
 
@@ -115,7 +115,7 @@ public class PdpTest {
 	@Test
 	public void testUpdateIfFlowSemantics() throws Exception {
 		// connect to pdp
-		_pdpProxy = ConnectionManager.obtain(_pdpProxy);
+		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
 		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
 		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
 		byte[] jarFileBytes = FileUtils.readFileToByteArray(file);
@@ -124,7 +124,7 @@ public class PdpTest {
 				jarFileBytes,
 				EConflictResolution.OVERWRITE);
 		// disconnect from pdp
-		ConnectionManager.release(_pdpProxy);
+		ConnectionManager.MAIN.release(_pdpProxy);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -145,7 +145,7 @@ public class PdpTest {
 				IPep2Pdp pdpProxyOne = new Pep2PdpTcpImp("localhost",
 						PEP_LISTENER_PORT_NUM);
 				try {
-					pdpProxyOne = ConnectionManager.obtain(pdpProxyOne);
+					pdpProxyOne = ConnectionManager.MAIN.obtain(pdpProxyOne);
 				} catch (Exception e) {
 					_logger.error(e);
 					return;
@@ -169,7 +169,7 @@ public class PdpTest {
 					}
 				}
 				try {
-					ConnectionManager.release(pdpProxyOne);
+					ConnectionManager.MAIN.release(pdpProxyOne);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -187,7 +187,7 @@ public class PdpTest {
 			public void run() {
 				IPmp2Pdp pdpProxyTwo = new Pmp2PdpTcpImp("localhost", PMP_LISTENER_PORT_NUM);
 				try {
-					pdpProxyTwo = ConnectionManager.obtain(pdpProxyTwo);
+					pdpProxyTwo = ConnectionManager.MAIN.obtain(pdpProxyTwo);
 				} catch (Exception e) {
 					_logger.error(e);
 					return;
@@ -206,7 +206,7 @@ public class PdpTest {
 					}
 				}
 				try {
-					ConnectionManager.release(pdpProxyTwo);
+					ConnectionManager.MAIN.release(pdpProxyTwo);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

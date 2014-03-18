@@ -38,12 +38,12 @@ public class PipTest {
 	@Before
 	public void setUp() throws Exception {
 		// connect pdp to pip
-		_pipProxy = ConnectionManager.obtain(_pipProxy);
+		_pipProxy = ConnectionManager.MAIN.obtain(_pipProxy);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		ConnectionManager.release(_pipProxy);
+		ConnectionManager.MAIN.release(_pipProxy);
 	}
 
 	@Test
