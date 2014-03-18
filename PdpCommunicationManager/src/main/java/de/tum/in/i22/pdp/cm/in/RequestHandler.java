@@ -12,9 +12,6 @@ import org.apache.log4j.Logger;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
 import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
-import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
 import de.tum.in.i22.pip.core.InformationFlowModel;
@@ -30,6 +27,9 @@ import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
@@ -45,7 +45,7 @@ public class RequestHandler implements Runnable {
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
 
-	private IIncoming _pdpHandler;
+	private IPdpIncoming _pdpHandler;
 	private IPdp2Pip _pdp2PipProxy;
 
 	private final IPdpCore2PipCacher _core2pip;
@@ -99,7 +99,7 @@ public class RequestHandler implements Runnable {
 		return _instance;
 	}
 
-	public void setPdpHandler(IIncoming pdpHandler) {
+	public void setPdpHandler(IPdpIncoming pdpHandler) {
 		_pdpHandler = pdpHandler;
 		_pdpHandler.setPdpCore2PipCacher(_core2pip);
 		_pdpHandler.setPdpEngine2PipCacher(_engine2pip);

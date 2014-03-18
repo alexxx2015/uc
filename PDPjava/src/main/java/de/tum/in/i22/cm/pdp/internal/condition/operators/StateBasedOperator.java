@@ -7,7 +7,7 @@ import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.internal.Event;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
 import de.tum.in.i22.cm.pdp.xsd.StateBasedOperatorType;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
 
 public class StateBasedOperator extends StateBasedOperatorType
 {

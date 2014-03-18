@@ -8,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assert;
 
-import de.tum.in.i22.pdp.core.IPmp2Pdp;
 import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
@@ -21,6 +20,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 public class TestPmp2PdpCommunication {

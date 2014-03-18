@@ -13,8 +13,6 @@ import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
 import de.tum.in.i22.cm.pdp.internal.Decision;
 import de.tum.in.i22.cm.pdp.internal.Event;
 import de.tum.in.i22.cm.pdp.internal.Mechanism;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -25,6 +23,9 @@ import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 
 /**
  * This contains some tests to run the PIP "inside" the PDP
@@ -32,7 +33,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  * @author Lovat
  *
  */
-public class PdpHandlerTestPip implements IIncoming {
+public class PdpHandlerTestPip implements IPdpIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerTestPip.class);
 

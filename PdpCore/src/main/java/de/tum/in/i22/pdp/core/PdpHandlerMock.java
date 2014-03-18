@@ -6,8 +6,6 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -15,6 +13,9 @@ import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 
 /**
  * This is just a stub for now
@@ -22,7 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  * @author Stoimenov
  *
  */
-public class PdpHandlerMock implements IIncoming {
+public class PdpHandlerMock implements IPdpIncoming {
 
 	private static final Logger _logger = Logger.getLogger(PdpHandlerMock.class);
 

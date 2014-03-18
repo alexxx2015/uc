@@ -38,8 +38,8 @@ import de.tum.in.i22.cm.pdp.internal.exceptions.InvalidMechanismException;
 import de.tum.in.i22.cm.pdp.internal.exceptions.InvalidOperatorException;
 import de.tum.in.i22.cm.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.cm.pdp.xsd.PolicyType;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
 
 public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static Logger log = LoggerFactory
