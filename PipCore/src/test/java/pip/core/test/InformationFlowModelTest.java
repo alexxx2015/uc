@@ -16,21 +16,17 @@ import org.junit.Test;
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 
 public class InformationFlowModelTest {
-	protected final IMessageFactory _messageFactory = MessageFactoryCreator
-			.createMessageFactory();
+	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
-	private static final Logger _logger = Logger
-			.getLogger(InformationFlowModelTest.class);
+	private static final Logger _logger = Logger.getLogger(InformationFlowModelTest.class);
 
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-
 	}
 
 	@AfterClass
