@@ -10,8 +10,6 @@ public class PdpModuleMockTestPip extends AbstractModule {
 
 	@Override
 	protected void configure() {
-//		bind(IIncoming.class).to(PdpHandlerMockLinux.class).in(Singleton.class);
-
 		bind(IPdpIncoming.class).to(PdpHandlerTestPip.class).in(Singleton.class);
 	}
 
