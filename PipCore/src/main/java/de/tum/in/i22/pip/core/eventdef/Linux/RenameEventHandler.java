@@ -28,8 +28,8 @@ public class RenameEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName oldN = FilenameName.create(host, LinuxEvents.toAbsoluteFilename(oldName));
-		IName newN = FilenameName.create(host, LinuxEvents.toAbsoluteFilename(newName));
+		IName oldN = FilenameName.create(host, LinuxEvents.toRealPath(oldName));
+		IName newN = FilenameName.create(host, LinuxEvents.toRealPath(newName));
 
 		ifModel.removeName(newN);
 		ifModel.addName(oldN, newN);
