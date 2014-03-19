@@ -15,7 +15,7 @@ public class EventBasic implements IEvent {
 
 	public static final String PEP_PARAMETER_KEY = "PEP";
 
-	public static final String PREFIX_SEPARATOR = "_";
+	private static final String PREFIX_SEPARATOR = "_";
 
 	private String _name = null;
 	private String _pep = null;
