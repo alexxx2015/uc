@@ -3,6 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pip;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
@@ -24,7 +25,7 @@ public abstract class PipClientConnectionHandler extends ClientConnectionHandler
 
 	private final RequestHandler _requestHandler = RequestHandler.getInstance();
 
-	public PipClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) throws IOException {
+	public PipClientConnectionHandler(InputStream inputStream, OutputStream outputStream) throws IOException {
 		super(inputStream, outputStream);
 	}
 

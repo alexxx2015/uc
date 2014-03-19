@@ -3,6 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pep;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
@@ -32,7 +33,7 @@ import de.tum.in.i22.uc.cm.methods.EPep2PdpMethod;
 
 public abstract class PepClientConnectionHandler extends ClientConnectionHandler {
 
-	public PepClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) {
+	public PepClientConnectionHandler(InputStream inputStream, OutputStream outputStream) {
 		super(inputStream, outputStream);
 	}
 
