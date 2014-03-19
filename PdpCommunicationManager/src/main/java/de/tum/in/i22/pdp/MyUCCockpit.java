@@ -844,7 +844,7 @@ public class MyUCCockpit {
 			/*
 			 * Now that we've got the injector, we can build objects.
 			 */
-			new Thread (injector.getInstance(PdpController.class)).start();
+			injector.getInstance(PdpController.class).start();
 
 		}
 

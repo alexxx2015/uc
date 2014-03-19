@@ -27,7 +27,7 @@ import de.tum.in.i22.pdp.injection.PdpModuleMockTestPip;
 import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
-public class PdpController implements Runnable {
+public class PdpController {
 
 	private static Logger _logger = Logger.getLogger(PdpController.class);
 
@@ -65,8 +65,7 @@ public class PdpController implements Runnable {
 	}
 
 
-	@Override
-	public void run() {
+	public void start() {
 		if (_wasStarted) {
 			return;
 		}
@@ -104,7 +103,7 @@ public class PdpController implements Runnable {
 		if (getPdpSettings().isPepPipeListenerEnabled()) {
 			File pepPipeIn = new File(getPdpSettings().getPepPipeIn());
 			File pepPipeOut = new File(getPdpSettings().getPepPipeOut());
-
+			
 			if (pepPipeIn.exists() && !pepPipeIn.isDirectory() && pepPipeOut.exists() && !pepPipeOut.isDirectory()) {
 				_logger.info("Start PepPipeHandler using pipes " + pepPipeIn + " and " + pepPipeOut);
 				try {
@@ -156,12 +155,13 @@ public class PdpController implements Runnable {
 
 
 	public void stop(){
-		_threadPepGPBFastServiceHandler.stop();
-		_threadPmpFastServiceHandler.stop();
-		_threadPipFastServiceHandler.stop();
-		_threadRequestHandler.stop();
-		_threadPepPipeHandler.stop();
-		_threadThriftServer.stop();
+		// TODO These methods are deprecated for a good reason... Get rid of them.
+		this._threadPepGPBFastServiceHandler.stop();
+		this._threadPmpFastServiceHandler.stop();
+		this._threadPipFastServiceHandler.stop();
+		this._threadRequestHandler.stop();
+		this._threadPepPipeHandler.stop();
+		this._threadThriftServer.stop();
 	}
 
 	public static PdpSettings getPdpSettings() {
@@ -234,8 +234,19 @@ public class PdpController implements Runnable {
 		Injector injector = Guice.createInjector(new PdpModuleMockTestPip());
 //		Injector injector = Guice.createInjector(new PdpModule());
 
-		// start the PDP controller
-		new Thread (injector.getInstance(PdpController.class)).start();
+		// build a PdpController object
+		injector.getInstance(PdpController.class).start();
+
+		// EventHandler thread loops forever, this stops the main thread,
+		// otherwise the app will be closed
+		Object lock = new Object();
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				_logger.error("EventHandler thread interrupted.", e);
+			}
+		}
 	}
 
 	public static boolean isStarted() {
@@ -249,6 +260,6 @@ public class PdpController implements Runnable {
 	}
 
 	IPdpIncoming getPdpHandler(){
-		return _pdpHandler;
+		return this._pdpHandler;
 	}
 }

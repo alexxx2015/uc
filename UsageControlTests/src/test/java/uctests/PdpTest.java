@@ -167,11 +167,8 @@ public class PdpTest {
 						_logger.error(e);
 					}
 				}
-				try {
-					ConnectionManager.MAIN.release(pdpProxyOne);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+
+				ConnectionManager.MAIN.release(pdpProxyOne);
 			}
 		});
 
@@ -204,11 +201,8 @@ public class PdpTest {
 						_logger.error(e);
 					}
 				}
-				try {
-					ConnectionManager.MAIN.release(pdpProxyTwo);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+
+				ConnectionManager.MAIN.release(pdpProxyTwo);
 			}
 		});
 
