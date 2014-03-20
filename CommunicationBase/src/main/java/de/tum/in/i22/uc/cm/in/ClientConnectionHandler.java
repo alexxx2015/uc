@@ -1,8 +1,11 @@
 package de.tum.in.i22.uc.cm.in;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
@@ -23,9 +26,9 @@ public abstract class ClientConnectionHandler implements IForwarder, Runnable {
 
 	protected Object _response = null;
 
-	public ClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) {
-		_inputStream = inputStream;
-		_outputStream = outputStream;
+	public ClientConnectionHandler(InputStream inputStream, OutputStream outputStream) {
+		_inputStream = new DataInputStream(new BufferedInputStream(inputStream));
+		_outputStream = new BufferedOutputStream(outputStream);
 	}
 
 

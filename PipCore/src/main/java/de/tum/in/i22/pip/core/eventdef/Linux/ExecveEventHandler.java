@@ -32,9 +32,7 @@ public class ExecveEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		filename = LinuxEvents.toAbsoluteFilename(filename);
-
-		IName fileName = FilenameName.create(host, filename);
+		IName fileName = FilenameName.create(host, LinuxEvents.toRealPath(filename));
 		IName procName = ProcessName.create(host, pid);
 
 		IContainer fileCont = ifModel.getContainer(fileName);

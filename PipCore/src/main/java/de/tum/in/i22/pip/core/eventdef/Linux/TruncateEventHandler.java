@@ -25,7 +25,7 @@ public class TruncateEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.emptyContainer(FilenameName.create(host, LinuxEvents.toAbsoluteFilename(filename)));
+		ifModel.emptyContainer(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
 
 		return STATUS_OKAY;
 	}

@@ -143,12 +143,8 @@ public class Main {
 
 
 				IPep2Pdp con = this.getPdpCon();
-				try {
-					ConnectionManager.MAIN.release(con);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+				ConnectionManager.MAIN.release(con);
 			}
 		}.start();
 	}

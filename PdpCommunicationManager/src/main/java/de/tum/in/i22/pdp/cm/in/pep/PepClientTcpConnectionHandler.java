@@ -1,8 +1,5 @@
 package de.tum.in.i22.pdp.cm.in.pep;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -10,8 +7,7 @@ public class PepClientTcpConnectionHandler extends PepClientConnectionHandler {
 	private final Socket _socket;
 
 	public PepClientTcpConnectionHandler(Socket socket) throws IOException {
-		super(new DataInputStream(new BufferedInputStream(socket.getInputStream())),
-				new BufferedOutputStream(socket.getOutputStream()));
+		super(socket.getInputStream(), socket.getOutputStream());
 		_socket = socket;
 	}
 

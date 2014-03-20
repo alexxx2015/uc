@@ -2,25 +2,25 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.Linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
@@ -36,13 +36,14 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
  */
 class LinuxEvents {
 
-	private static final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
+	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	private static final InformationFlowModel ifModel = InformationFlowModel.getInstance();
-	private static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 
-	private final static IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
-	private final static IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
+	private static final DistributedPipManager distributedPipManager = DistributedPipManager.getInstance();
+
+	private static final IStatus STATUS_OKAY = messageFactory.createStatus(EStatus.OKAY);
+	private static final IStatus STATUS_ERROR = messageFactory.createStatus(EStatus.ERROR);
 
 	/*
 	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
@@ -50,84 +51,17 @@ class LinuxEvents {
 	 */
 
 
+	static String toRealPath(String file) {
+		return toRealPath(file, "");
+	}
 
-
-
-
-	private static String getAbsolutePath(File f) {
+	static String toRealPath(String dir, String file) {
+		Path p = new File(dir, new File(file).getName()).toPath();
 		try {
-			return f.getCanonicalPath();
+			return p.toRealPath().toString();
 		} catch (IOException e) {
-			return f.getAbsolutePath();
+			return p.toAbsolutePath().toString();
 		}
-	}
-
-	/*
-	 * TODO CHeck: probably we might need to get the traced processes'
-	 * current working directory.
-	 */
-
-	static String toAbsoluteFilename(String filename) {
-		return getAbsolutePath(new File(filename));
-	}
-
-
-	/**
-	 * Used by both open() and openat().
-	 * @param host
-	 * @param pid
-	 * @param newfd
-	 * @param dirfd
-	 * @param filename
-	 * @param at_fdcwd
-	 * @param truncate
-	 */
-	static void open(String host, int pid, int newfd, int dirfd, String filename, boolean at_fdcwd, boolean truncate) {
-		IName fdName = FiledescrName.create(host, pid, newfd);
-		IName fnName;
-
-		File file = new File(filename);
-
-		if (!file.isAbsolute() && !at_fdcwd) {
-			// all this part is for openat()
-
-			IName dirfdName = FiledescrName.create(host, pid, dirfd);
-
-			List<FilenameName> names = ifModel.getAllNames(dirfdName, FilenameName.class);
-
-			// the resulting list should always be of size 1.
-			if (names.size() != 1) {
-				_logger.error("There was not exactly one filename for " + dirfdName);
-			}
-			else {
-				File path = new File(names.get(0).getFilename());
-
-				String pathStr = LinuxEvents.getAbsolutePath(path);
-
-				if (path.isDirectory()) {
-					file = new File(pathStr, filename);
-				}
-				else {
-					file = new File(path.getParent(), filename);
-				}
-			}
-		}
-
-		fnName = FilenameName.create(host, LinuxEvents.getAbsolutePath(file));
-
-		// get the file's container (if present)
-		IContainer cont = ifModel.getContainer(fnName);
-
-		if (cont != null) {
-			if (truncate) {
-				ifModel.emptyContainer(cont);
-			}
-		}
-		else {
-			cont = new FileContainer();
-			ifModel.addName(fnName, cont);
-		}
-		ifModel.addName(fdName, cont);
 	}
 
 
@@ -183,13 +117,29 @@ class LinuxEvents {
 		}
 
 		for (SocketName n : allSocketNames) {
-			// if remote IP is in fact remote, then do a remote call to tell about connection teardown
-			if (!(n.getRemoteIP().equals(n.getLocalIP()))) {
-				IContainer remoteContainer = ifModel.getContainer(n);
-
-				// TODO remote call
+			IContainer remoteContainer = ifModel.getContainer(n);
+			if (remoteContainer instanceof RemoteSocketContainer) {
+				notifyRemoteShutdown((RemoteSocketContainer) remoteContainer, how);
 			}
 		}
+	}
+
+	static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut howLocal) {
+		SocketName remoteName = remoteContainer.getSocketName();
+
+		Map<String,String> params = new HashMap<String,String>();
+
+		params.put(EventBasic.PEP_PARAMETER_KEY, "Linux");
+		params.put("localIP", remoteName.getLocalIP());
+		params.put("localPort", String.valueOf(remoteName.getLocalPort()));
+		params.put("remoteIP", remoteName.getRemoteIP());
+		params.put("remotePort", String.valueOf(remoteName.getRemotePort()));
+
+//		params.put("how", ); TODO
+
+		distributedPipManager.notifyActualEvent(
+				remoteContainer.getConnector(),
+				new EventBasic("RemoteShutdown", params, true));
 	}
 
 
@@ -200,13 +150,15 @@ class LinuxEvents {
 
 		Set<IData> data = ifModel.getDataInContainer(srcCont);
 		if (data == null || data.size() == 0) {
-			return _messageFactory.createStatus(EStatus.OKAY);
+			return messageFactory.createStatus(EStatus.OKAY);
 		}
 
 		// copy into all containers aliased from the destination container
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 			if (c instanceof RemoteSocketContainer) {
-				System.out.println("Remote data transfer to " + c);
+				distributedPipManager.notifyDataTransfer(
+						((RemoteSocketContainer) c).getConnector(),
+						((RemoteSocketContainer) c).getSocketName(), data);
 			}
 			else {
 				ifModel.addDataToContainerMappings(data, c);
@@ -233,12 +185,6 @@ class LinuxEvents {
 					result.add(pname);
 				}
 			}
-//			else if (name instanceof SharedFiledescrName) {
-//				SharedFiledescrName sname = (SharedFiledescrName) name;
-//				if (sname.isSharedWith(pid)) {
-//					result.add(sname);
-//				}
-//			}
 		}
 
 		return result;

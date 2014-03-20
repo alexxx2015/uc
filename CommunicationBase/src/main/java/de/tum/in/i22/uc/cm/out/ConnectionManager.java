@@ -138,7 +138,7 @@ public class ConnectionManager {
 	 * @param iconnection
 	 * @throws IOException
 	 */
-	public void release(IConnection iconnection) throws IOException {
+	public void release(IConnection iconnection) {
 		release(iconnection, false);
 	}
 
@@ -188,7 +188,7 @@ public class ConnectionManager {
 	 * @param forceClose
 	 * @throws IOException
 	 */
-	private void release(IConnection iconnection, boolean forceClose) throws IOException {
+	private void release(IConnection iconnection, boolean forceClose) {
 		if (iconnection == null) {
 			throw new NullPointerException("No connection provided.");
 		}

@@ -19,8 +19,6 @@ import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.KeyBasic;
-import de.tum.in.i22.uc.cm.basic.ResponseBasic;
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -58,7 +56,9 @@ public class RequestHandler implements Runnable {
 
 	private RequestHandler() {
 		// tell the PIP about the port being used.
-		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
+		_pipHandler = new PipHandler(
+								PdpSettings.getInstance().getDistributedPipStrategy(),
+								PdpSettings.getInstance().getPipPortNum());
 
 		_pdp2PipProxy = new Pdp2PipTcpImp(PdpSettings.getInstance().getPipAddress(), PdpSettings.getInstance().getPipPortNum());
 
@@ -234,13 +234,17 @@ public class RequestHandler implements Runnable {
 		Object result = null;
 
 		switch (pipRequest.getMethod()) {
-			case HAS_CONTAINER:
-				// TODO Florian Kelbert.
+			case HAS_ALL_CONTAINERS:
 				break;
-			case HAS_DATA:
-				// TODO Florian Kelbert.
+			case HAS_ANY_CONTAINER:
 				break;
-			case NOTIFY_EVENT:
+			case HAS_ALL_DATA:
+				break;
+			case HAS_ANY_DATA:
+				break;
+			case NOTIFY_DATA_TRANSFER:
+				break;
+			case NOTIFY_ACTUAL_EVENT:
 				result = _pipHandler.notifyActualEvent(pipRequest.getEvent());
 				break;
 		}

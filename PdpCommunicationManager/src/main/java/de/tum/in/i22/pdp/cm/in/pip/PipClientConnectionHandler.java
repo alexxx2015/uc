@@ -3,6 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pip;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
@@ -24,7 +25,7 @@ public abstract class PipClientConnectionHandler extends ClientConnectionHandler
 
 	private final RequestHandler _requestHandler = RequestHandler.getInstance();
 
-	public PipClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) throws IOException {
+	public PipClientConnectionHandler(InputStream inputStream, OutputStream outputStream) throws IOException {
 		super(inputStream, outputStream);
 	}
 
@@ -42,11 +43,17 @@ public abstract class PipClientConnectionHandler extends ClientConnectionHandler
 
 		//parse message
 		switch (method) {
-			case HAS_CONTAINER:
+			case HAS_ALL_DATA:
 				break;
-			case HAS_DATA:
+			case HAS_ANY_DATA:
 				break;
-			case NOTIFY_EVENT:
+			case HAS_ALL_CONTAINERS:
+				break;
+			case HAS_ANY_CONTAINER:
+				break;
+			case NOTIFY_DATA_TRANSFER:
+				break;
+			case NOTIFY_ACTUAL_EVENT:
 				doNotifyEvent();
 				break;
 			default:

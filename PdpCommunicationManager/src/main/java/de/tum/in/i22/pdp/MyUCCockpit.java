@@ -844,19 +844,7 @@ public class MyUCCockpit {
 			/*
 			 * Now that we've got the injector, we can build objects.
 			 */
-			pdpCtrl = injector.getInstance(PdpController.class);
-			pdpCtrl.start();
-
-			// EventHandler thread loops forever, this stops the main thread,
-			// otherwise the app will be closed
-//			Object lock = new Object();
-//			synchronized (lock) {
-//				try {
-//					lock.wait();
-//				} catch (InterruptedException e) {
-//					_logger.error("EventHandler thread interrupted.", e);
-//				}
-//			}
+			injector.getInstance(PdpController.class).start();
 
 		}
 

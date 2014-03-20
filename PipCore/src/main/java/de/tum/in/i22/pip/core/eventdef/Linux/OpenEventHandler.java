@@ -2,7 +2,12 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
 
 /**
  *
@@ -30,7 +35,21 @@ public class OpenEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		LinuxEvents.open(host, pid, fd, 0, filename, true, truncate);
+		IName fdName = FiledescrName.create(host, pid, fd);
+		IName fnName = FilenameName.create(host, LinuxEvents.toRealPath(filename));
+
+		// get the file's container (if present)
+		IContainer cont = ifModel.getContainer(fnName);
+
+		if (cont == null) {
+			cont = new FileContainer();
+			ifModel.addName(fnName, cont);
+		}
+		else if (truncate) {
+			ifModel.emptyContainer(cont);
+		}
+
+		ifModel.addName(fdName, cont);
 
 		return STATUS_OKAY;
 	}

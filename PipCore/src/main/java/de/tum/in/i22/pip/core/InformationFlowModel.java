@@ -33,19 +33,19 @@ public class InformationFlowModel {
 				.toString();
 	}
 
-	private final static InformationFlowModel _instance = new InformationFlowModel();
+	private static final InformationFlowModel _instance = new InformationFlowModel();
 
 	// [Container.identifier -> List[Data.identifier]]
-	private Map<IContainer, Set<IData>> _containerToDataMap = null;
+	private Map<IContainer, Set<IData>> _containerToDataMap;
 
 	// [Container.identifier -> List[Container.identifier]]
-	private Map<IContainer, Set<IContainer>> _aliasesMap = null;
+	private Map<IContainer, Set<IContainer>> _aliasesMap;
 
 	// the naming set [name -> Container.identifier]
-	private Map<IName, IContainer> _namingMap = null;
+	private Map<IName, IContainer> _namingMap;
 
 	// list of currently opened scopes
-	private Set<Scope> _scopeSet = null;
+	private Set<Scope> _scopeSet;
 
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IContainer> _containerSetBackup;
@@ -56,6 +56,21 @@ public class InformationFlowModel {
 	private Set<Scope> _scopeSetBackup;
 
 	private InformationFlowModel() {
+		init();
+	}
+
+	public static InformationFlowModel getInstance() {
+		return _instance;
+	}
+
+	/**
+	 * Resets the information flow model to its initial (empty) state.
+	 */
+	public void reset() {
+		init();
+	}
+
+	private void init() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
@@ -67,11 +82,6 @@ public class InformationFlowModel {
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
 		_scopeSetBackup = null;
-
-	}
-
-	public static InformationFlowModel getInstance() {
-		return _instance;
 	}
 
 

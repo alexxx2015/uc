@@ -3,6 +3,7 @@ package de.tum.in.i22.pdp.cm.in.pmp;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import de.tum.in.i22.pdp.cm.in.RequestHandler;
@@ -21,7 +22,7 @@ public abstract class PmpClientConnectionHandler extends ClientConnectionHandler
 
 	private final RequestHandler _requestHandler = RequestHandler.getInstance();
 
-	public PmpClientConnectionHandler(DataInputStream inputStream, OutputStream outputStream) throws IOException {
+	public PmpClientConnectionHandler(InputStream inputStream, OutputStream outputStream) throws IOException {
 		super(inputStream, outputStream);
 	}
 

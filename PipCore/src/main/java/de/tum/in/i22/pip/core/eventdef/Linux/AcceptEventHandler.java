@@ -2,7 +2,6 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.pip2pip.Pip2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -13,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
+import de.tum.in.i22.uc.cm.out.TcpConnector;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class AcceptEventHandler extends BaseEventHandler {
@@ -28,7 +28,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 		int newFd;
 		int oldFd;
 		IName localSocketName = null;
-		IName remoteSocketName = null;
+		SocketName remoteSocketName = null;
 		IContainer localAcceptedSocket = null;
 		IContainer remoteConnectedSocket = null;
 
@@ -75,8 +75,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// client is remote
 
 			// create a 'proxy' container and name it.
-			remoteConnectedSocket = new RemoteSocketContainer(domain, type,
-					new Pip2PipTcpImp(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
+			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
+					new TcpConnector(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
 			ifModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
