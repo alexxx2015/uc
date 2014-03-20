@@ -10,9 +10,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -30,37 +30,39 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IPipManager;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 
-	private static IEventHandlerCreator _actionHandlerCreator;
-	private static  IPipManager _pipManager;
-	private static InformationFlowModel _ifModel;
+	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
+
+	private final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+
+	private final IPipManager _pipManager;
+
+	/**
+	 * Manages everything related to distributed data flow tracking
+	 */
+	private final DistributedPipManager _distributedPipManager;
 
 	//info for PipCacher
-	private Map<String, IKey> _predicatesToEvaluate;
+	private Map<String, IKey> _predicatesToEvaluate = new HashMap<String,IKey>();
 
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
-		this(PipSettings.getInstance().getPipRemotePortNum());
+		this(PipSettings.getInstance().getDistributedPipStrategy(),
+				PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandler(int pipPort) {
-		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(eventHandlerManager, pipPort);
-
-		_actionHandlerCreator = eventHandlerManager;
-		_pipManager = pipManager;
-		_ifModel = InformationFlowModel.getInstance();
-		_predicatesToEvaluate = new HashMap<String,IKey>();
+	public PipHandler(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
+		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
+		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
 	}
-
-
 
 
 	@Override
@@ -102,6 +104,17 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			Set<IContainer> s;
 
 			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
+
+			/*
+			 * TODO
+			 *
+			 * Whoever wrote this: Factor this code out.
+			 * Proposal: Create an abstract class or interface and
+			 * have one subclass per state based formula.
+			 * Then just get the correct instance and invoke the function
+			 * for evaluation. done.
+			 * -FK-
+			 */
 
 			switch (formula) {
 			case "isNotIn":  //par1 is data, par2 is list of containers

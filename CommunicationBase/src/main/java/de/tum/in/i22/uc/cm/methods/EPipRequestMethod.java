@@ -3,9 +3,12 @@ package de.tum.in.i22.uc.cm.methods;
 
 
 public enum EPipRequestMethod {
-	HAS_DATA((byte)1),
-	HAS_CONTAINER((byte)2),
-	NOTIFY_EVENT((byte)3);
+	HAS_ALL_DATA((byte)1),
+	HAS_ANY_DATA((byte)2),
+	HAS_ALL_CONTAINERS((byte)3),
+	HAS_ANY_CONTAINER((byte)4),
+	NOTIFY_DATA_TRANSFER((byte)5),
+	NOTIFY_ACTUAL_EVENT((byte)6);
 
     private final byte value;
 
@@ -28,3 +31,4 @@ public enum EPipRequestMethod {
         throw new RuntimeException("Byte value " + b + " not valid for EPipRequestMethod.");
     }
 }
+

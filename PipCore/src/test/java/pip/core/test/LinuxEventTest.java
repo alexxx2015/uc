@@ -24,7 +24,10 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 public class LinuxEventTest {
-	private static IPdp2Pip _pipHandler = new PipHandlerMock(PipSettings.getInstance().getPipRemotePortNum());
+	private static IPdp2Pip _pipHandler = new PipHandlerMock(
+												PipSettings.getInstance().getDistributedPipStrategy(),
+												PipSettings.getInstance().getPipRemotePortNum());
+
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 
 	private static final String PEP_PARAMETER_LINUX = "Linux";
@@ -156,7 +159,7 @@ public class LinuxEventTest {
 
 
 	@Test
-	public void testConnectAcceptLocal() {
+	public void testLocalConnectionEstablishment() {
 		IContainer clientCont;
 		IContainer serverCont;
 
@@ -204,7 +207,7 @@ public class LinuxEventTest {
 
 
 	@Test
-	public void testConnectAcceptRemote() {
+	public void testRemoteConnectionEstablishment() {
 		IContainer serverCont;
 		IContainer clientCont;
 
@@ -244,7 +247,7 @@ public class LinuxEventTest {
 	}
 
 	@Test
-	public void testSocketDataTransferBeforeConnectionEstablished() {
+	public void testLocalSocketDataTransferBeforeConnectionEstablished() {
 		IContainer procCont;
 		IData data = new DataBasic("data");
 
@@ -300,5 +303,32 @@ public class LinuxEventTest {
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, serverPid));
 		Assert.assertEquals(true, _ifModel.getDataInContainer(procCont).contains(data));
+	}
+
+	@Test
+	public void testRemoteDataTransfer() {
+		IData data = new DataBasic("data");
+
+		IEvent eventServerExecve = createLinuxExecveEvent(serverHost, serverPid, "/bin/server.exe", true);
+		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
+		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, clientIP, clientPort, 4, 5, true);
+		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, true);
+
+		IEvent eventClientExecve = createLinuxExecveEvent(clientHost, clientPid, "/bin/client.exe", true);
+		IEvent eventClientSocket = createLinuxSocketEvent(clientHost, clientPid, INET, STREAM, 3, true);
+		IEvent eventClientConnect = createLinuxConnectEvent(clientHost, clientPid, clientIP, clientPort, serverIP, serverPort, 3, true);
+
+//		_ifModel.reset();
+//		_pipHandler.notifyActualEvent(eventServerExecve);
+//		_pipHandler.notifyActualEvent(eventClientExecve);
+//		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));
+//		_pipHandler.notifyActualEvent(eventClientSocket);
+//		_pipHandler.notifyActualEvent(eventServerSocket);
+//		_pipHandler.notifyActualEvent(eventClientConnect);
+//		System.out.println(_ifModel.niceString());
+//		_pipHandler.notifyActualEvent(eventServerAccept);
+//		System.out.println(_ifModel.niceString());
+//		_pipHandler.notifyActualEvent(eventServerWrite);
+//		System.out.println(_ifModel.niceString());
 	}
 }

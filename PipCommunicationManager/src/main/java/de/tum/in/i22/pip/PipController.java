@@ -33,7 +33,7 @@ public class PipController {
 			return;
 		}
 
-		new PipController(new PipHandler(_pipSettings.getPipRemotePortNum())).start();
+		new PipController(new PipHandler()).start();
 
 //		 EventHandler thread loops forever, this stops the main thread,
 //		 otherwise the app will be closed

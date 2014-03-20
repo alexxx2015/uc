@@ -28,8 +28,8 @@ import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.util.GpUtil;
 
-public abstract class Pep2PdpImp extends Connection implements IPep2Pdp {
-	protected Pep2PdpImp(Connector connector) {
+public class Pep2PdpImp extends Connection implements IPep2Pdp {
+	public Pep2PdpImp(Connector connector) {
 		super(connector);
 	}
 

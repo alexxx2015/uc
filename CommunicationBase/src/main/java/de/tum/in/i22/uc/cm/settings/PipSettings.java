@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.uc.cm.SettingsLoader;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 /**
  *
@@ -29,6 +29,8 @@ public class PipSettings {
 	private int _pmpListenerPortNum = 60005;
 
 	private int _pipRemotePortNum = 10003;
+
+	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.DEFAULT_STRATEGY;
 
 	private PipSettings() {}
 
@@ -60,7 +62,12 @@ public class PipSettings {
 			_logger.info("Default port of remote pip: " + _pipRemotePortNum);
 		}
 
-
+		try {
+			_distributedPipStrategy = EDistributedPipStrategy.from((String) props.get("distributed_pip_strategy"));
+		} catch (Exception e) {
+			_logger.warn("Cannot read distributed pip strategy.", e);
+			_logger.info("Default: " + _distributedPipStrategy);
+		}
 
 	}
 
@@ -74,6 +81,10 @@ public class PipSettings {
 
 	public int getPipRemotePortNum() {
 		return _pipRemotePortNum;
+	}
+
+	public EDistributedPipStrategy getDistributedPipStrategy() {
+		return _distributedPipStrategy;
 	}
 
 	public void setPdpListenerPortNum(int pdpListenerPortNum) {

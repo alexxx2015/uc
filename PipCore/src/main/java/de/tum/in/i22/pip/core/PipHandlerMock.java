@@ -8,9 +8,9 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
@@ -25,6 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IPipManager;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 /**
  * Mock class, used for testing only
@@ -36,17 +37,23 @@ public class PipHandlerMock implements IPdp2Pip, IPipCacher2Pip
 
 	private static final Logger _logger = Logger.getLogger(PipHandlerMock.class);
 
-	private final IEventHandlerCreator _actionHandlerCreator;
+	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
 	private final IPipManager _pipManager;
 
+	/**
+	 * Manages everything related to distributed data flow tracking
+	 */
+	private final DistributedPipManager _distributedPipManager;
+
 	public PipHandlerMock() {
-		this(PipSettings.getInstance().getPipRemotePortNum());
+		this(
+				PipSettings.getInstance().getDistributedPipStrategy(),
+				PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandlerMock(int pipPort) {
-		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		_pipManager = new PipManager(eventHandlerManager, pipPort);
-		_actionHandlerCreator = eventHandlerManager;
+	public PipHandlerMock(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
+		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
+		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
 	}
 
 	@Override

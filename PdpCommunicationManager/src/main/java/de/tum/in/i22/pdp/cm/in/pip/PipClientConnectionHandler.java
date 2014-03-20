@@ -43,11 +43,17 @@ public abstract class PipClientConnectionHandler extends ClientConnectionHandler
 
 		//parse message
 		switch (method) {
-			case HAS_CONTAINER:
+			case HAS_ALL_DATA:
 				break;
-			case HAS_DATA:
+			case HAS_ANY_DATA:
 				break;
-			case NOTIFY_EVENT:
+			case HAS_ALL_CONTAINERS:
+				break;
+			case HAS_ANY_CONTAINER:
+				break;
+			case NOTIFY_DATA_TRANSFER:
+				break;
+			case NOTIFY_ACTUAL_EVENT:
 				doNotifyEvent();
 				break;
 			default:

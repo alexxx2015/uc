@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.uc.cm.SettingsLoader;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 /**
  *
@@ -44,6 +44,8 @@ public class PdpSettings {
 	private boolean _pepThriftListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
 	private boolean _pepPipeListenerEnabled = false;
+
+	EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
 	private PdpSettings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);
@@ -100,6 +102,13 @@ public class PdpSettings {
 		} catch (Exception e) {
 			_logger.warn("Cannot read queue size.", e);
 			_logger.info("Default queue size: " + _queueSize);
+		}
+
+		try {
+			_distributedPipStrategy = EDistributedPipStrategy.from((String) props.get("distributed_pip_strategy"));
+		} catch (Exception e) {
+			_logger.warn("Cannot read distributed pip strategy.", e);
+			_logger.info("Default: " + _distributedPipStrategy);
 		}
 	}
 
@@ -298,5 +307,8 @@ public class PdpSettings {
 		_queueSize = queueSize;
 	}
 
+	public EDistributedPipStrategy getDistributedPipStrategy() {
+		return _distributedPipStrategy;
+	}
 }
 

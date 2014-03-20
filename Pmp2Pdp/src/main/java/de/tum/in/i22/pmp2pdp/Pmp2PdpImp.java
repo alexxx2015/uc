@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.cm.util.GpUtil;
  * @author Stoimenov
  *
  */
-public abstract class Pmp2PdpImp extends Connection implements IPmp2Pdp {
+public class Pmp2PdpImp extends Connection implements IPmp2Pdp {
 
  	public Pmp2PdpImp(Connector connector) {
  		super(connector);

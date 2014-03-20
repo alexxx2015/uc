@@ -27,13 +27,14 @@ import de.tum.in.i22.uc.cm.settings.PipSettings;
 public class PipCoreTest {
 	private static final Logger _logger = Logger.getLogger(PipCoreTest.class);
 
-	private static IPdp2Pip _pipHandler;
+	private static IPdp2Pip _pipHandler = new PipHandlerMock(
+											PipSettings.getInstance().getDistributedPipStrategy(),
+											PipSettings.getInstance().getPipRemotePortNum());
 	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 
-		_pipHandler = new PipHandlerMock(PipSettings.getInstance().getPipRemotePortNum());
 		File file = getJarFile();
 
 		if (file != null && file.exists()) {

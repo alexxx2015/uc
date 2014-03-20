@@ -26,7 +26,10 @@ public class PipCoreClassReloadingTest {
 
 	private static final Logger _logger = Logger.getLogger(PipCoreClassReloadingTest.class);
 
-	private static IPdp2Pip _pipHandler = new PipHandlerMock(PipSettings.getInstance().getPipRemotePortNum());
+	private static IPdp2Pip _pipHandler = new PipHandlerMock(
+												PipSettings.getInstance().getDistributedPipStrategy(),
+												PipSettings.getInstance().getPipRemotePortNum());
+
 	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass

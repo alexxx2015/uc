@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm;
+package de.tum.in.i22.uc.cm.settings;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-public class SettingsLoader {
+class SettingsLoader {
 
 
 	private static final Logger _logger = Logger
@@ -24,7 +24,7 @@ public class SettingsLoader {
 	 * @return Properties object with loaded properties.
 	 * @throws IOException In case the file cannot be loaded.
 	 */
-	public static Properties loadProperties(String propertiesFileName) throws IOException {
+	static Properties loadProperties(String propertiesFileName) throws IOException {
 		_logger.debug("Loading properties file: " + propertiesFileName);
 
 		InputStream is = null;
