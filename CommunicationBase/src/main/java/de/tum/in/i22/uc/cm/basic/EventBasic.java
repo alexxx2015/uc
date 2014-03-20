@@ -1,15 +1,10 @@
 package de.tum.in.i22.uc.cm.basic;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent.GpMapEntry;
 
 public class EventBasic implements IEvent {
 
@@ -36,34 +31,6 @@ public class EventBasic implements IEvent {
 		_isActual = isActual;
 	}
 
-	public EventBasic(GpEvent gpEvent) {
-		if (gpEvent == null)
-			return;
-
-		if (gpEvent.hasName())
-			_name = gpEvent.getName();
-
-		if (gpEvent.hasIsActual())
-			_isActual = gpEvent.getIsActual();
-
-		//number of elements in the map
-		int count = gpEvent.getMapEntryCount();
-		if (count > 0) {
-			Iterator<GpMapEntry> it = gpEvent.getMapEntryList().iterator();
-			while (it.hasNext()) {
-				GpMapEntry entry = it.next();
-				_parameters.put(entry.getKey(), entry.getValue());
-			}
-		}
-
-		_pep = _parameters.get(PEP_PARAMETER_KEY);
-
-		// Insert timestamp
-		if (gpEvent.hasTimestamp() && gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
-			_timestamp = Long.valueOf(gpEvent.getTimestamp());
-		else
-			_timestamp = 0;
-	}
 
 	public void addParameter(String key, String value) {
 		_parameters.put(key, value);
@@ -115,36 +82,6 @@ public class EventBasic implements IEvent {
 		_timestamp = timestamp;
 	}
 
-	/**
-	 *
-	 * @param e
-	 * @return Google Protocol Buffer object corresponding to IEvent
-	 */
-	public static GpEvent createGpbEvent(IEvent e) {
-		if (e == null)
-			return null;
-
-		PdpProtos.GpEvent.Builder gpEvent = PdpProtos.GpEvent.newBuilder();
-		if (e.getPrefixedName() != null)
-			gpEvent.setName(e.getName());
-
-		gpEvent.setIsActual(e.isActual());
-
-		Map<String, String> map = e.getParameters();
-		if (map != null && !map.isEmpty()) {
-			Set<String> keys = map.keySet();
-			for (String key:keys) {
-				String value = map.get(key);
-				PdpProtos.GpEvent.GpMapEntry.Builder entry = PdpProtos.GpEvent.GpMapEntry.newBuilder();
-				entry.setKey(key);
-				entry.setValue(value);
-
-				gpEvent.addMapEntry(entry);
-			}
-		}
-
-		return gpEvent.build();
-	}
 
 	@Override
 	public String toString() {

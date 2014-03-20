@@ -7,6 +7,4 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  *
  */
 public interface IPdpConf {
-	public IStatus setPdpCore2PipCacher (IPdpCore2PipCacher core2cacher);
-	public IStatus setPdpEngine2PipCacher (IPdpEngine2PipCacher engine2cacher);
 }

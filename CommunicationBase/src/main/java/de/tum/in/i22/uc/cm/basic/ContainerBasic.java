@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpContainer;
 
 public class ContainerBasic implements IContainer {
 	private String _classValue;
@@ -22,19 +21,6 @@ public class ContainerBasic implements IContainer {
 		_id = id;
 	}
 
-	public ContainerBasic(GpContainer gpContainer) {
-		if (gpContainer == null) {
-			return;
-		}
-
-		if (gpContainer.hasClassValue()) {
-			_classValue = gpContainer.getClassValue();
-		}
-
-		if (gpContainer.hasId()) {
-			_id = gpContainer.getId();
-		}
-	}
 
 	@Override
 	public String getClassValue() {
@@ -46,20 +32,7 @@ public class ContainerBasic implements IContainer {
 		return _id;
 	}
 
-	/**
-	 *
-	 * @param container
-	 * @return Google Protocol Buffer object corresponding to IContainer
-	 */
-	public static GpContainer createGpbContainer(IContainer container) {
-		GpContainer.Builder gp = GpContainer.newBuilder();
-		gp.setClassValue(container.getClassValue());
-		gp.setId(container.getId());
-		return gp.build();
-	}
 
-	// TODO, FK: I have the feeling that equals() and hashCode() break
-	// the general contract between the two (see official javadoc). Double check.
 
 	@Override
 	public boolean equals(Object obj) {

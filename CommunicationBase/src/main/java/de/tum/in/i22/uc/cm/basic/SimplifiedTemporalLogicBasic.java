@@ -8,10 +8,6 @@ import de.tum.in.i22.uc.cm.datatypes.IDataEventMap;
 import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
 import de.tum.in.i22.uc.cm.datatypes.ISimplifiedTemporalLogic;
 import de.tum.in.i22.uc.cm.datatypes.IStateEventMap;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpDataEventMap;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpOslFormula;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpSimplifiedTemporalLogic;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStateEventMap;
 
 public class SimplifiedTemporalLogicBasic
 	implements ISimplifiedTemporalLogic {
@@ -32,19 +28,6 @@ public class SimplifiedTemporalLogicBasic
 		_stateEventMap = stateEventMap;
 	}
 
-	public SimplifiedTemporalLogicBasic(GpSimplifiedTemporalLogic gp) {
-		if (gp == null)
-			return;
-
-		if (gp.hasDataEventMap())
-			_dataEventMap = new DataEventMapBasic(gp.getDataEventMap());
-
-		if (gp.hasFormula())
-			_formula = new OslFormulaBasic(gp.getFormula());
-
-		if (gp.hasStateEventMap())
-			_stateEventMap = new StateEventMapBasic(gp.getStateEventMap());
-	}
 
 	@Override
 	public IDataEventMap getDataEventMap() {
@@ -74,33 +57,6 @@ public class SimplifiedTemporalLogicBasic
 		_stateEventMap = stateEventMap;
 	}
 
-	/**
-	 *
-	 * @return Google Protocol Buffer object corresponding to ISimplifiedTemporalLogic
-	 */
-	public static GpSimplifiedTemporalLogic createGpbSimplifiedTemporalLogic(
-			ISimplifiedTemporalLogic obj) {
-		if (obj == null)
-			return null;
-		_logger.trace("Build GpSimplifiedTemporalLogic");
-		GpSimplifiedTemporalLogic.Builder gp = GpSimplifiedTemporalLogic.newBuilder();
-		GpDataEventMap gpDataEventMap = DataEventMapBasic.createGpbDataEventMap(
-				obj.getDataEventMap());
-		if (gpDataEventMap != null)
-			gp.setDataEventMap(gpDataEventMap);
-
-		GpOslFormula gpOslFormula = OslFormulaBasic.createGpbOslFormula(
-				obj.getFormula());
-		if (gpOslFormula != null)
-			gp.setFormula(gpOslFormula);
-
-		GpStateEventMap gpStateEventMap = StateEventMapBasic.createGpbStateEventMap(
-				obj.getStateEventMap());
-		if (gpStateEventMap != null)
-			gp.setStateEventMap(gpStateEventMap);
-
-		return gp.build();
-	}
 
 	@Override
 	public boolean equals(Object obj) {

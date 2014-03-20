@@ -14,10 +14,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>../PdpEngine</module>
-	    <module>../PipCacher</module>
-		<module>../PdpCore</module>
-		<module>../PdpCommunicationManager</module>
 		<module>../PDPjava</module>
 	</modules>
 
@@ -25,11 +21,6 @@
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationBase</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>PipCommunicationManager</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

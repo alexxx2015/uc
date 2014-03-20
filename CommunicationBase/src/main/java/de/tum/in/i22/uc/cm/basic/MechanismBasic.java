@@ -9,11 +9,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IHistory;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpCondition;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpEvent;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpHistory;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpMechanism;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpResponse;
 
 public class MechanismBasic implements IMechanism {
 	private static Logger _logger = Logger.getLogger(MechanismBasic.class);
@@ -37,21 +32,6 @@ public class MechanismBasic implements IMechanism {
 		return _xml;
 	}
 
-	public MechanismBasic(GpMechanism gpM) {
-		if (gpM == null)
-			return;
-
-		if (gpM.hasMechanismName())
-			_mechanismName = gpM.getMechanismName();
-		if (gpM.hasCondition())
-			_condition = new ConditionBasic(gpM.getCondition());
-		if (gpM.hasResponse())
-			_response = new ResponseBasic(gpM.getResponse());
-		if (gpM.hasState())
-			_state = new HistoryBasic(gpM.getState());
-		if (gpM.hasTriggerEvent())
-			_triggerEvent = new EventBasic(gpM.getTriggerEvent());
-	}
 
 	@Override
 	public String getMechanismName() {
@@ -98,46 +78,6 @@ public class MechanismBasic implements IMechanism {
 		_triggerEvent = triggerEvent;
 	}
 
-	/**
-	 *
-	 * @param e
-	 * @return Google Protocol Buffer object corresponding to IMechanism
-	 */
-	public static GpMechanism createGpbMechanism(IMechanism m) {
-		_logger.trace("Build GpMechanism");
-		GpMechanism.Builder gp = GpMechanism.newBuilder();
-
-		_logger.trace("Build condition");
-
-		GpCondition gpCondition = ConditionBasic.createGpbCondition(
-				m.getCondition());
-		if (gpCondition != null)
-			gp.setCondition(gpCondition);
-
-		String mechanismName = m.getMechanismName();
-		if (mechanismName != null)
-			gp.setMechanismName(mechanismName);
-
-		_logger.trace("Build response");
-		GpResponse gpResponse = ResponseBasic.createGpbResponse(
-				m.getResponse());
-		if (gpResponse != null)
-			gp.setResponse(gpResponse);
-
-		_logger.trace("Build state");
-		GpHistory gpHistory = HistoryBasic.createGpbHistory(
-				m.getState());
-		if (gpHistory != null)
-			gp.setState(gpHistory);
-
-		_logger.trace("Build trigger event");
-		GpEvent gpEvent = EventBasic.createGpbEvent(
-				m.getTriggerEvent());
-		if (gpEvent != null)
-			gp.setTriggerEvent(gpEvent);
-
-		return gp.build();
-	}
 
 	@Override
 	public boolean equals(Object obj) {

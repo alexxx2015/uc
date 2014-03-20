@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpData;
 
 public class DataBasic implements IData {
 
@@ -20,28 +19,12 @@ public class DataBasic implements IData {
 		_id = id;
 	}
 
-	public DataBasic(GpData gpData) {
-		if (gpData == null)
-			return;
-
-		if (gpData.hasId())
-			_id = gpData.getId();
-	}
 
 	@Override
 	public String getId() {
 		return _id;
 	}
 
-	/**
-	 *
-	 * @return Google Protocol Buffer object corresponding to IData
-	 */
-	public static GpData createGpbData(IData data) {
-		GpData.Builder gp = GpData.newBuilder();
-		gp.setId(data.getId());
-		return gp.build();
-	}
 
 	@Override
 	public boolean equals(Object obj) {

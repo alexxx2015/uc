@@ -4,24 +4,12 @@ import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus;
-import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpStatus.GpEStatus;
 
 public class StatusBasic implements IStatus {
 	private EStatus _eStatus = null;
 	private String _errorMessage  = null;
 
 	public StatusBasic() {
-	}
-
-	public StatusBasic(GpStatus gpStatus) {
-		if (gpStatus.hasValue()) {
-			GpEStatus gpEStatus = gpStatus.getValue();
-			_eStatus = EStatus.convertFromGpEStatus(gpEStatus);
-		}
-
-		if (gpStatus.hasErrorMessage())
-			_errorMessage = gpStatus.getErrorMessage();
 	}
 
 	public StatusBasic(EStatus eStatus, String errorMessage) {
@@ -47,19 +35,6 @@ public class StatusBasic implements IStatus {
 		return _errorMessage;
 	}
 
-	/**
-	 *
-	 * @param status
-	 * @return Google Protocol Buffer object corresponding to IStatus
-	 */
-	public static GpStatus createGpbStatus(IStatus status) {
-		GpStatus.Builder gpStatus = GpStatus.newBuilder();
-		gpStatus.setValue(status.getEStatus().asGpEStatus());
-
-		if (status.getErrorMessage() != null)
-			gpStatus.setErrorMessage(status.getErrorMessage());
-		return gpStatus.build();
-	}
 
 	@Override
 	public boolean equals(Object obj) {
