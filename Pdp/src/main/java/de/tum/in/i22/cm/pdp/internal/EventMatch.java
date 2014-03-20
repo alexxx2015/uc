@@ -3,6 +3,10 @@ package de.tum.in.i22.cm.pdp.internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.cm.pdp.gproto.EventProto.PbEvent;
+import de.tum.in.i22.cm.pdp.xsd.EventMatchingOperatorType;
+import de.tum.in.i22.cm.pdp.xsd.ParamMatchType;
+
 public class EventMatch extends EventMatchingOperatorType {
 	private static Logger log = LoggerFactory.getLogger(EventMatch.class);
 

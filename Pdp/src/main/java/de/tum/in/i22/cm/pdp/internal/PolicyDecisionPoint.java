@@ -41,6 +41,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private ActionDescriptionStore actionDescriptionStore = null;
 	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 
+
 	public static HashMap<String,IPxpSpec> pxpSpec=  new HashMap<String,IPxpSpec>();
 
 	@Inject
@@ -266,7 +267,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		reader.close();
 		return stringBuilder.toString();
 	}
-
 
 	@Override
 	public boolean registerPxp(IPxpSpec pxp) {

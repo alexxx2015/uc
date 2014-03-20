@@ -27,15 +27,6 @@ public class StateBasedOperator extends StateBasedOperatorType
   public void initOperatorForMechanism(Mechanism mech)
   {
 	  //TODO
-	  
-	  //FIXME: Removed interface, no idea what the code di, I guess it's Superstar's stuff
-	  
-//	  IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
-//	  if(engine2PipCacher != null){
-//		  engine2PipCacher.populatePip(this.getParam1());
-//		  engine2PipCacher.populatePip(this.getParam2());
-//		  engine2PipCacher.populatePip(this.getParam3());
-//	  }
   }
   
   @Override 
@@ -48,12 +39,11 @@ public class StateBasedOperator extends StateBasedOperatorType
 
   public boolean evaluate(Event curEvent)
   {
-    log.debug("eval StateBasedFormula");
-    // TODO: stateBasedFormula evaluation NYI: forward to PIP for evaluation 
 
-    //FIXME: Superstar 2
-    
-    //    IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
+	  //Superstar fix here and above. code deleted during restructuring
+	  //    log.debug("eval StateBasedFormula");
+//    // TODO: stateBasedFormula evaluation NYI: forward to PIP for evaluation 
+//    IPdpEngine2PipCacher engine2PipCacher = PolicyDecisionPoint.get_engine2PipCacher();
 //    if(engine2PipCacher != null){
 //	    if(curEvent == null)
 //	    	return engine2PipCacher.evaluatePredicateCurrentState(this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
