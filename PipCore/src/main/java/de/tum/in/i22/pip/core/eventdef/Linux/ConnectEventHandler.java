@@ -2,7 +2,6 @@ package de.tum.in.i22.pip.core.eventdef.Linux;
 
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.pip2pip.Pip2PipTcpImp;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -13,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.out.TcpConnector;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 
@@ -28,7 +28,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		String remoteIP = null;
 		int remotePort;
 		IName localSocketName = null;
-		IName remoteSocketName = null;
+		SocketName remoteSocketName = null;
 		SocketContainer localConnectingSocket = null;
 		IContainer remoteAcceptedSocket = null;
 
@@ -66,53 +66,69 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
-		if (!localIP.equals(remoteIP)) {
-			// server is remote
-			remoteAcceptedSocket = new RemoteSocketContainer(domain, type, new Pip2PipTcpImp(remoteIP,
-					PipSettings.getInstance().getPipRemotePortNum()));
-			ifModel.addName(remoteSocketName, remoteAcceptedSocket);
-			ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
+		remoteAcceptedSocket = ifModel.getContainer(remoteSocketName);
+
+		if (remoteAcceptedSocket != null && localIP.equals(remoteIP)) {
+			// server is local AND
+			// accept() happened before connect(); it created a temporary container.
+			// Compensate for this. We can identify this temporary container by 'localSocketName'.
+
+			IContainer tmpContainer = ifModel.getContainer(localSocketName);
+
+			// copy aliases
+			for (IContainer alias : ifModel.getAliasesFrom(tmpContainer)) {
+				ifModel.addAlias(localConnectingSocket, alias);;
+			}
+			for (IContainer alias : ifModel.getAliasesTo(tmpContainer)) {
+				ifModel.addAlias(alias, localConnectingSocket);
+			}
+
+			// copy data
+			ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(tmpContainer), localConnectingSocket);
+
+			// remove temporary container
+			ifModel.remove(tmpContainer);
 		}
 		else {
-			// server is local
-			remoteAcceptedSocket = ifModel.getContainer(remoteSocketName);
-
 			if (remoteAcceptedSocket == null) {
-				// connect() happens before accept(). Create the new container that would otherwise be created by accept().
-				remoteAcceptedSocket = new SocketContainer(domain, type);
+				if (localIP.equals(remoteIP)) {
+					// server is local and connect() happens before accept().
+					remoteAcceptedSocket = new SocketContainer(domain, type);
+				}
+				else {
+					// server is remote.
+					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
+							new TcpConnector(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
+				}
 
 				// assign the remote name
 				ifModel.addName(remoteSocketName, remoteAcceptedSocket);
-
-				// add aliases in both directions
-				ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
-				ifModel.addAlias(remoteAcceptedSocket, localConnectingSocket);
 			}
-			else {
-				// accept() happened before connect(); it created a temporary container.
-				// Compensate for this. We can identify this temporary container by 'localSocketName'.
+			/*
+			 * Comment left for clarification.
+			 * else {
+			 *     // server is remote, but remote socket container already exists locally.
+			 *     // Usually, this should not be the case.
+			 *     // Yet, if a machine has multiple IP addresses, or if we do simulations,
+			 *     // this might in fact be the case.
+			 * }
+			 */
 
-				IContainer tmpContainer = ifModel.getContainer(localSocketName);
-
-				// copy aliases
-				for (IContainer alias : ifModel.getAliasesFrom(tmpContainer)) {
-					ifModel.addAlias(localConnectingSocket, alias);;
-				}
-				for (IContainer alias : ifModel.getAliasesTo(tmpContainer)) {
-					ifModel.addAlias(alias, localConnectingSocket);
-				}
-
-				// copy data
-				ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(tmpContainer), localConnectingSocket);
-
-				// remove temporary container
-				ifModel.remove(tmpContainer);
-			}
+			// add aliases in both directions
+			ifModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
+			ifModel.addAlias(remoteAcceptedSocket, localConnectingSocket);
 		}
 
-		// f[(p,(sn(e),(a,x))) <- c];
+		// Assign the local socket container's name
 		// CAUTION: We can *not* do this before compensating the temporary container!
-		ifModel.addName(localSocketName, localConnectingSocket);
+		// Also, we do not do this if there already exists a proxy remote socket container
+		// with the same name, as this means that two ip addreses are used locally and
+		// the existing container was already created by accept()
+		if (!(ifModel.getContainer(localSocketName) instanceof RemoteSocketContainer)) {
+			// f[(p,(sn(e),(a,x))) <- c];
+			ifModel.addName(localSocketName, localConnectingSocket);
+		}
+
 
 		return STATUS_OKAY;
 	}
