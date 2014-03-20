@@ -3,13 +3,13 @@ package de.tum.in.i22.pip.core;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
 
 public interface IPipCacher2Pip extends IPipManager {
 
@@ -36,5 +36,7 @@ public interface IPipCacher2Pip extends IPipManager {
 	public IStatus notifyActualEvent(IEvent event);
 	
     public String getCurrentPipModel();
+    
+    public void populate(String predicate);
            
 }

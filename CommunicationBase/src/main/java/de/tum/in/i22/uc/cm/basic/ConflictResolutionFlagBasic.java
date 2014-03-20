@@ -1,5 +1,9 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
+import com.google.common.base.Objects.ToStringHelper;
+
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IConflictResolutionFlag;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag;
@@ -7,14 +11,14 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpConflictResolutionFlag.GpEConflictRes
 
 public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 	private EConflictResolution _eConflictResolution = null;
-	
+
 	public ConflictResolutionFlagBasic(GpConflictResolutionFlag gpConflictResolutionFlag) {
 		if (gpConflictResolutionFlag.hasValue()) {
 			GpEConflictResolution gpEConflictResolution = gpConflictResolutionFlag.getValue();
 			_eConflictResolution = EConflictResolution.convertFromGpEConflictResolution(gpEConflictResolution);
 		}
 	}
-	
+
 	public ConflictResolutionFlagBasic(EConflictResolution value) {
 		_eConflictResolution = value;
 	}
@@ -23,28 +27,33 @@ public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 	public EConflictResolution getConflictResolution() {
 		return _eConflictResolution;
 	}
-	
+
 	public static GpConflictResolutionFlag createGpbConflictResolutionFlag(IConflictResolutionFlag flag) {
 		GpConflictResolutionFlag.Builder gp = GpConflictResolutionFlag.newBuilder();
 		gp.setValue(flag.getConflictResolution().asGpEConflictResolution());
 		return gp.build();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
-		if (obj != null && this.getClass() == obj.getClass()) {
-			ConflictResolutionFlagBasic o = (ConflictResolutionFlagBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(_eConflictResolution, o.getConflictResolution());
+		if (obj instanceof ConflictResolutionFlagBasic) {
+			isEqual = Objects.equals(_eConflictResolution, ((ConflictResolutionFlagBasic) obj).getConflictResolution());
 		}
 		return isEqual;
 	}
 
 	@Override
-	public String toString() {
-		return "ConflictResolutionFlagBasic [_eConflictResolution="
-				+ _eConflictResolution + "]";
+	public int hashCode() {
+		return Objects.hash(_eConflictResolution);
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_eConflictResolution", _eConflictResolution)
+				.toString();
+	}
+
+
 }

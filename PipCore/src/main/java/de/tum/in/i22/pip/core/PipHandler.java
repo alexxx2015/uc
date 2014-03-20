@@ -10,50 +10,59 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pip.core.Scope.scopeType;
+import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.CacheUpdateBasic;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 
 	private static final Logger _logger = Logger.getLogger(PipHandler.class);
 
-	private static IEventHandlerCreator _actionHandlerCreator;
-	private static  IPipManager _pipManager;
-	private static InformationFlowModel _ifModel;
+	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
+
+	private final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+
+	private final IPipManager _pipManager;
+
+	/**
+	 * Manages everything related to distributed data flow tracking
+	 */
+	private final DistributedPipManager _distributedPipManager;
 
 	//info for PipCacher
-	private Map<String, IKey> _predicatesToEvaluate;
+	private Map<String, IKey> _predicatesToEvaluate = new HashMap<String,IKey>();
+
+	// this is to include classes within the jar file. DO NOT REMOVE.
+	@SuppressWarnings("unused")
+	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
-		this(0);
+		this(PipSettings.getInstance().getDistributedPipStrategy(),
+				PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandler(int pipPersistenceID) {
-		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize(pipPersistenceID);
-
-		_actionHandlerCreator = eventHandlerManager;
-		_pipManager = pipManager;
-		_ifModel = InformationFlowModel.getInstance();
-		_predicatesToEvaluate = new HashMap<String,IKey>();
+	public PipHandler(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
+		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
+		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
 	}
-
-
 
 
 	@Override
@@ -92,39 +101,73 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 			int par3 = Integer.parseInt(st[3]);  //to be used for quantitative formulae
 
 			String[] containers;
-			Set<String> s;
+			Set<IContainer> s;
 
 			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
 
+			/*
+			 * TODO
+			 *
+			 * Whoever wrote this: Factor this code out.
+			 * Proposal: Create an abstract class or interface and
+			 * have one subclass per state based formula.
+			 * Then just get the correct instance and invoke the function
+			 * for evaluation. done.
+			 * -FK-
+			 */
+
 			switch (formula) {
 			case "isNotIn":  //par1 is data, par2 is list of containers
+//				containers= par2.split(separator2);
+//				s= _ifModel.getContainersForData(new DataBasic(par1));
+//				//_logger.debug("size of s: "+s.size());
+//				if(s.size() > 0){
+//					for (String cont : containers){
+//						NameBasic pname= new NameBasic(cont);
+//						//_logger.debug("..in loop("+cont+")..");
+//						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
+//							_logger.trace(out+"=false");
+//							return false;
+//						}
+//					}
+//					//_logger.trace("..no match found, returning true");
+//					_logger.trace(out+"=true");
+//					return true;
+//				} else{
+//					return false;
+//				}
+				IContainer par1Container = _ifModel.getContainerRelaxed(new NameBasic(par1));
+				Set<IData> par1DataSet = _ifModel.getDataInContainer(par1Container);
 				containers= par2.split(separator2);
-				s= _ifModel.getContainersForData(par1);
-				//_logger.debug("size of s: "+s.size());
-				if(s.size() > 0){
-					for (String cont : containers){
-						ContainerName pname= new ContainerName(cont);
-						//_logger.debug("..in loop("+cont+")..");
-						if (s.contains(_ifModel.getContainerIdByNameRelaxed(pname))) {
-							_logger.trace(out+"=false");
-							return false;
+				for(IData par1Data : par1DataSet){
+					s= _ifModel.getContainersForData(par1Data);
+					//_logger.debug("size of s: "+s.size());
+					if(s.size() > 0){
+						for (String cont : containers){
+							NameBasic pname= new NameBasic(cont);
+							//_logger.debug("..in loop("+cont+")..");
+							if (s.contains(_ifModel.getContainerRelaxed(pname))) {
+								_logger.trace(out+"=false");
+								return false;
+							}
 						}
+						//_logger.trace("..no match found, returning true");
+						_logger.trace(out+"=true");
+						return true;
 					}
-					//_logger.trace("..no match found, returning true");
-					_logger.trace(out+"=true");
-					return true;
-				} else{
+				}
+				if(par1DataSet.size() == 0){
 					return false;
 				}
 			case "isOnlyIn":
 				containers= par2.split(separator2);
 				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
-				s= _ifModel.getContainersForData(par1);
+				s= _ifModel.getContainersForData(new DataBasic(par1));
 				//_logger.debug("size of s: "+s.size());
-				for (String cont : s){
-					ContainerName pname= new ContainerName(cont);
+				for (IContainer cont : s){
+					NameBasic pname= new NameBasic(cont.getId());//TODO: not sure if it is correct
 					//_logger.debug("..in loop("+cont+")..");
-					if (!(limit.contains(_ifModel.getContainerIdByNameRelaxed(pname)))) {
+					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
 						_logger.trace(out+"=false");
 						return false;
 					}
@@ -134,9 +177,9 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 				return true;
 
 			case "isCombinedWith":
-				Set<String> s1= _ifModel.getContainersForData(par1);
-				Set<String> s2=_ifModel.getContainersForData(par2);
-				for (String cont : s1){
+				Set<IContainer> s1= _ifModel.getContainersForData(new DataBasic(par1));
+				Set<IContainer> s2=_ifModel.getContainersForData(new DataBasic(par2));
+				for (IContainer cont : s1){
 					if (s2.contains(cont)) {
 						_logger.trace(out+"=true");
 						return true;
@@ -157,27 +200,13 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	}
 
 	@Override
-	public Set<IContainer> getContainerForData(IData arg0) {
-		if (arg0==null) return null;
-		Set<String> contIds= _ifModel.getContainersForData(arg0.getId());
-		Set<IContainer> result = new HashSet<IContainer>();
-		for (String s: contIds){
-			IContainer c = _ifModel.getContainerById(s);
-			if (s!=null) result.add(c);
-		}
-		return result;
+	public Set<IContainer> getContainerForData(IData data) {
+		return _ifModel.getContainersForData(data);
 	}
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
-		if (container==null) return null;
-		Set<String> sd= _ifModel.getDataInContainer(container.getId());
-		Set<IData> result = new HashSet<IData>();
-		for (String s : sd){
-			IData d = _ifModel.getDataById(s);
-			if (d!=null) result.add(d);
-		}
-		return result;
+		return _ifModel.getDataInContainer(container);
 	}
 
 	@Override
@@ -387,6 +416,20 @@ public class PipHandler implements IPdp2Pip, IPipCacher2Pip {
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return _ifModel.toString();
+	}
+
+	@Override
+	public void populate(String predicate) {
+		_logger.info("Populating "+predicate+ " in PIP");
+
+		IName name = new NameBasic(predicate);
+		IContainer container = _ifModel.getContainer(name);
+		if(container == null){
+			IData data = new DataBasic(predicate);
+			container = new ContainerBasic();
+			_ifModel.addName(name, container);
+			_ifModel.addDataToContainer(data, container);
+		}
 	}
 
 }

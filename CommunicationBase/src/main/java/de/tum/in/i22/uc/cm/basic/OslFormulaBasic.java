@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
 import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
@@ -8,16 +10,16 @@ import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpOslFormula;
 public class OslFormulaBasic implements IOslFormula {
 	private static Logger _logger = Logger.getLogger(OslFormulaBasic.class);
 	private String _stringRepresentation;
-	
+
 	public OslFormulaBasic(String stringRepresentation) {
 		super();
 		_stringRepresentation = stringRepresentation;
 	}
-	
+
 	public OslFormulaBasic(GpOslFormula gpOslFormula) {
 		if (gpOslFormula == null)
 			return;
-		
+
 		if (gpOslFormula.hasFormula())
 			_stringRepresentation = gpOslFormula.getFormula();
 	}
@@ -28,7 +30,7 @@ public class OslFormulaBasic implements IOslFormula {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
 	 * @return Google Protocol Buffer object corresponding to IOslFormula
 	 */
@@ -41,16 +43,20 @@ public class OslFormulaBasic implements IOslFormula {
 			gp.setFormula(formula.getAsString());
 		return gp.build();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
-		if (obj != null && this.getClass() == obj.getClass()) {
+		if (obj instanceof OslFormulaBasic) {
 			OslFormulaBasic o = (OslFormulaBasic)obj;
-			isEqual = CompareUtil.areObjectsEqual(
-					_stringRepresentation, o.getAsString());
+			isEqual = Objects.equals(_stringRepresentation, o._stringRepresentation);
 		}
 		return isEqual;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_stringRepresentation);
+	}
+
 }

@@ -1,56 +1,50 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Objects;
+
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos;
 import de.tum.in.i22.uc.cm.gpb.PdpProtos.GpKey;
 
 public class KeyBasic implements IKey {
-	
+
 	private int _key;
 	private static int counter=0;
-	
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + _key;
-		return result;
+		return Objects.hash(_key);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		KeyBasic other = (KeyBasic) obj;
-		if (_key != other._key)
-			return false;
-		return true;
+		if (obj instanceof KeyBasic) {
+			return Objects.equals(_key,  ((KeyBasic) obj)._key);
+		}
+		return super.equals(obj);
 	}
 
 	@Override
 	public int getKey() {
 		return _key;
 	}
-	
+
+	@Override
 	public void setKey(int key){
 		_key=key;
 	}
 
 	public KeyBasic (GpKey key){
-		if (key.isInitialized()) 
+		if (key.isInitialized())
 			_key=key.getKey();
 		else
 			_key=-1;
 	}
-	
+
 	public KeyBasic (int _key){
 			this._key=_key;
 	}
-	
+
 	public static GpKey createGpbKey(IKey k) {
 		PdpProtos.GpKey.Builder gpKey = PdpProtos.GpKey.newBuilder();
 		if (k.getKey() != -1)
@@ -64,14 +58,14 @@ public class KeyBasic implements IKey {
 	public static IKey createNewKey(){
 		return new KeyBasic(counter++);
 	}
-	
+
 	public static IKey keyfromString(String stringKey){
 		if (stringKey==null) return null;
 		if (stringKey=="") return null;
 		if (stringKey.matches("[0-9]*")) return new KeyBasic(Integer.decode(stringKey));
 		return null;
 	}
-	
-	
-	
+
+
+
 }

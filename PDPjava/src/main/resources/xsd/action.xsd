@@ -31,18 +31,21 @@
   </complexType>
 
   <complexType name="ExecuteActionType">
-    <sequence>
-      <element name="parameter" type="tns:ParameterType" minOccurs="0" maxOccurs="unbounded" />
-    </sequence>
-    <attribute name="name"    type="string" use="required" />
+  	<sequence>
+  		<element name="parameter" type="tns:ParameterType"
+  			minOccurs="0" maxOccurs="unbounded" />
+  	</sequence>
+  	<attribute name="name" type="string" use="required" />
+  	<attribute name="id" type="string"></attribute>
   </complexType>
 
   <complexType name="ExecuteAsyncActionType">
-    <complexContent>
-      <extension base="tns:ExecuteActionType">
-          <attribute name="processor"     type="tns:ExecutorProcessors" use="optional" default="pxp"/>
-      </extension>
-    </complexContent>
+  	<complexContent>
+  		<extension base="tns:ExecuteActionType">
+  			<attribute name="processor" type="tns:ExecutorProcessors"
+  				use="optional" default="pxp" />
+  		</extension>
+  	</complexContent>
   </complexType>
-  
+
 </schema>

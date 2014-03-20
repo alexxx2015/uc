@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.basic;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -14,22 +15,20 @@ public class EventBasic implements IEvent {
 
 	public static final String PEP_PARAMETER_KEY = "PEP";
 
-	public static final String PREFIX_SEPARATOR = "_";
+	private static final String PREFIX_SEPARATOR = "_";
 
 	private String _name = null;
 	private String _pep = null;
 	private boolean _isActual = false;
-	private Map<String, String> _map = null;
+	private final Map<String, String> _parameters = new HashMap<>();
 	private long _timestamp;
-
-	public EventBasic() {
-		_map = new HashMap<>();
-	}
 
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
-		_map = map;
-		setPep(map);
+		if (map != null) {
+			_parameters.putAll(map);
+			_pep = _parameters.get(PEP_PARAMETER_KEY);
+		}
 	}
 
 	public EventBasic(String name, Map<String, String> map, boolean isActual) {
@@ -50,15 +49,14 @@ public class EventBasic implements IEvent {
 		//number of elements in the map
 		int count = gpEvent.getMapEntryCount();
 		if (count > 0) {
-			_map = new HashMap<String, String>();
 			Iterator<GpMapEntry> it = gpEvent.getMapEntryList().iterator();
 			while (it.hasNext()) {
 				GpMapEntry entry = it.next();
-				_map.put(entry.getKey(), entry.getValue());
+				_parameters.put(entry.getKey(), entry.getValue());
 			}
 		}
 
-		setPep(_map);
+		_pep = _parameters.get(PEP_PARAMETER_KEY);
 
 		// Insert timestamp
 		if (gpEvent.hasTimestamp() && gpEvent.getTimestamp() != null && !gpEvent.getTimestamp().isEmpty())
@@ -68,7 +66,7 @@ public class EventBasic implements IEvent {
 	}
 
 	public void addParameter(String key, String value) {
-		_map.put(key, value);
+		_parameters.put(key, value);
 	}
 
 	@Override
@@ -88,12 +86,6 @@ public class EventBasic implements IEvent {
 	@Override
 	public String getName() {
 		return _name;
-	}
-
-	private void setPep(Map<String,String> parameters) {
-		if (parameters != null) {
-			_pep = parameters.get(PEP_PARAMETER_KEY);
-		}
 	}
 
 	@Override
@@ -116,7 +108,7 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public Map<String, String> getParameters() {
-		return _map;
+		return _parameters;
 	}
 
 	public void setTimestamp(long timestamp) {
@@ -156,8 +148,13 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventBasic [_name=" + _name + ", _pep=" + _pep + ", _isActual=" + _isActual
-				+ ", _map=" + _map + ", _timestamp=" + _timestamp + "]";
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_name", _name)
+				.add("_pep", _pep)
+				.add("_isActual", _isActual)
+				.add("_parameters", _parameters)
+				.add("_timestamp", _timestamp)
+				.toString();
 	}
 
 	@Override
@@ -166,13 +163,20 @@ public class EventBasic implements IEvent {
 		if (obj != null && this.getClass() == obj.getClass()) {
 			EventBasic o = (EventBasic)obj;
 			//TODO check if timestamp should be checked
-			isEqual = CompareUtil.areObjectsEqual(_name, o.getPrefixedName())
-					&& _isActual == o.isActual()
-					&& CompareUtil.areMapsEqual(_map, o.getParameters());
+			isEqual = Objects.equals(_name, o._name)
+					&& Objects.equals(_isActual, o._isActual)
+					&& Objects.equals(_parameters, o._parameters);
 		}
 		return isEqual;
 	}
 
 
-	// TODO, FK: if equals() is implemented, also hashCode() should be implemented
+	@Override
+	public int hashCode() {
+		return Objects.hash(_name, _isActual, _parameters);
+	}
+
+	public String niceString() {
+		return _name + (_isActual ? "[Actual]" : "[Desired]") +_parameters;
+	}
 }

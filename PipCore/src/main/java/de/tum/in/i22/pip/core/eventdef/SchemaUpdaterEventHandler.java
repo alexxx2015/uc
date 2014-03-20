@@ -3,9 +3,10 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Set;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class SchemaUpdaterEventHandler extends BaseEventHandler {
@@ -21,21 +22,19 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		// It assumes the state contains a container TEST_C containing TEST_D (see SchemaInitializer) and removes it
 
 
-		InformationFlowModel ifModel = getInformationFlowModel();
-
 		String contName="TEST_C";
 
-		String contId = ifModel.getContainerIdByName(new ContainerName(
+		IContainer cont = ifModel.getContainer(new NameBasic(
 				contName));
 		//this should contain TEST_D
 
 		// check if container for clipboard exists and create new container if not
-		if (contId == null) {
+		if (cont == null) {
 			_logger.error("No container named "+ contName);
 			return _messageFactory.createStatus(EStatus.ERROR);
 		}
 
-		Set<String> dataIds=ifModel.getDataInContainer(contId);
+		Set<IData> dataIds=ifModel.getDataInContainer(cont);
 
 		if ((dataIds == null)||(dataIds.size()!=1)){
 			_logger.error("content of "+ contName+" different from expected. is dataIds empty? "+(dataIds == null));
@@ -43,13 +42,13 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		}
 
 		_logger.debug("emptying container "+ contName);
-		ifModel.emptyContainer(contId);
+		ifModel.emptyContainer(cont);
 
 		_logger.debug("deleting data d from ifModel... ");
-		ifModel.removeData(ifModel.getDataById((String)(dataIds.toArray()[0])));
+		ifModel.remove((IData)dataIds.toArray()[0]);
 
 
-		_logger.debug("number of data elements in container TEST_C = "+ ifModel.getDataInContainer(contId).size());
+		_logger.debug("number of data elements in container TEST_C = "+ ifModel.getDataInContainer(cont).size());
 
 
 		_logger.debug(ifModel.toString());

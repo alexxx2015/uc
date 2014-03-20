@@ -1,10 +1,8 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-
-import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.pip.core.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -36,22 +34,20 @@ public class CreateDcEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		String processContainerId = instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
-		InformationFlowModel ifModel = getInformationFlowModel();
-		String deviceContainerId = ifModel.getContainerIdByName(new ContainerName(
+		IContainer deviceContainer = ifModel.getContainer(new NameBasic(
 				deviceName));
 
 		// check if container for device exists and create new container if not
-		if (deviceContainerId == null) {
-			IContainer container = _messageFactory.createContainer();
-			deviceContainerId = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(deviceName), deviceContainerId);
+		if (deviceContainer == null) {
+			deviceContainer = _messageFactory.createContainer();
+			ifModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
 		ifModel.addDataToContainerMappings(
-				ifModel.getDataInContainer(processContainerId),
-				deviceContainerId);
+				ifModel.getDataInContainer(processContainer),
+				deviceContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

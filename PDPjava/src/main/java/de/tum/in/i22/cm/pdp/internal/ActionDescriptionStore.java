@@ -50,4 +50,8 @@ public class ActionDescriptionStore
   {
     return this.mechanismList.get(eventAction);
   }
+  
+  public boolean removeMechanism(String eventAction){	  	
+	   return this.mechanismList.remove(eventAction) == null;
+  }
 }

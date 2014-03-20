@@ -1,6 +1,5 @@
 package de.tum.in.i22.pip.core.eventdef;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -10,19 +9,23 @@ import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.Scope;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.ContainerName;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
+
 public abstract class BaseEventHandler implements IEventHandler {
-	protected final IMessageFactory _messageFactory = MessageFactoryCreator
-			.createMessageFactory();
-	protected static final Logger _logger = Logger
-			.getLogger(BaseEventHandler.class);
+	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
+	protected static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
+
+	protected InformationFlowModel ifModel = InformationFlowModel.getInstance();
+
+	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
+	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
 
 	/*
 	 * scopes affected by the current event execution
@@ -38,33 +41,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 
-	/*
-	 * Filename is a very common parameter, thus we write a small function to
-	 * retrieve it instead of duplicating code, and we store it as a class field
-	 */
-	protected String _filename = null;
-
-	/*
-	 * Auxiliary function to retrieve the parameter filename
-	 */
-	protected final IStatus getFilename() {
-		try {
-			_filename = getParameterValue("filename");
-			return _messageFactory.createStatus(EStatus.OKAY);
-
-		} catch (ParameterNotFoundException e) {
-			_logger.error(e.getMessage());
-			return _messageFactory.createStatus(
-					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
-		}
-	}
-
 	public BaseEventHandler() {
 		super();
-	}
-
-	public IEvent getEvent() {
-		return _event;
 	}
 
 	/*
@@ -86,7 +64,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * final.
 	 */
 	protected final IStatus openScope(Scope scope) {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		boolean isOpen = ifModel.isScopeOpened(scope);
 
 		if (isOpen | !(ifModel.openScope(scope))) {
@@ -107,7 +84,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * It should be final.
 	 */
 	protected final IStatus closeScope(Scope scope) {
-		InformationFlowModel ifModel = getInformationFlowModel();
 		boolean isOpen = ifModel.isScopeOpened(scope);
 
 		if (!(isOpen) | !(ifModel.closeScope(scope))) {
@@ -125,17 +101,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * except for the scope part, which is handled in a generic way by the
 	 * functions createScope, openScope and closeScope.
 	 */
-	public IStatus execute() {
-		// TODO: implement a body
-		IEvent e = getEvent();
-		if (e == null)
-			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters() == null)
-			return _messageFactory
-					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
-
-		return _messageFactory.createStatus(EStatus.OKAY);
-	}
+	public abstract IStatus execute();
 
 	/*
 	 * In this function, we describe what happens when a certain event is
@@ -150,12 +116,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 	@Override
 	public IStatus executeEvent() {
 
-		IEvent e = getEvent();
-		if (e == null)
+		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-		if (e.getParameters() == null)
-			return _messageFactory
-					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 
 		IStatus finalStatus = _messageFactory.createStatus(EStatus.OKAY);
 		String errorString = "";
@@ -211,8 +173,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 			}
 		}
 
-		if (finalStatus.isSameStatus(_messageFactory
-				.createStatus(EStatus.ERROR)))
+		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR)))
 			finalStatus.setErrorMessage(errorString);
 
 		return finalStatus;
@@ -221,21 +182,18 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	@Override
 	public void setEvent(IEvent event) {
-		_event = event;
-	}
-
-	protected String getParameterValue(String key)
-			throws ParameterNotFoundException {
-		Map<String, String> parameters = getEvent().getParameters();
-		if (parameters != null && parameters.containsKey(key)) {
-			return parameters.get(key);
-		} else {
-			throw new ParameterNotFoundException(key);
+		if (event != null) {
+			_event = event;
 		}
 	}
 
-	protected InformationFlowModel getInformationFlowModel() {
-		return InformationFlowModel.getInstance();
+	protected String getParameterValue(String key) throws ParameterNotFoundException {
+		String value = _event.getParameters().get(key);
+
+		if (value == null) {
+			throw new ParameterNotFoundException(key);
+		}
+		return value;
 	}
 
 	/**
@@ -246,18 +204,17 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 *            Process ID (PID)
 	 * @return
 	 */
-	protected String instantiateProcess(String processId, String processName) {
-		InformationFlowModel ifModel = getInformationFlowModel();
-		String containerID = ifModel.getContainerIdByName(new ContainerName(processId));
+	// TODO, FK: This should _NOT_ be part of the *generic* BaseEventHandler
+	protected IContainer instantiateProcess(String processId, String processName) {
+		IContainer container = ifModel.getContainer(new NameBasic(processId));
 
 		// check if container for process exists and create new container if not
-		if (containerID == null) {
-			IContainer container = _messageFactory.createContainer();
-			containerID = ifModel.addContainer(container);
-			ifModel.addName(new ContainerName(processId), containerID);
-			ifModel.addName(new ContainerName(processName), containerID);
+		if (container == null) {
+			container = _messageFactory.createContainer();
+			ifModel.addName(new NameBasic(processId), container);
+			ifModel.addName(new NameBasic(processName), container);
 		}
 
-		return containerID;
+		return container;
 	}
 }

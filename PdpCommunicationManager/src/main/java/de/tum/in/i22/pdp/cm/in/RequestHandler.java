@@ -3,24 +3,18 @@ package de.tum.in.i22.pdp.cm.in;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.tum.in.i22.cm.pdp.PolicyDecisionPoint;
-import de.tum.in.i22.pdp.PdpSettings;
 import de.tum.in.i22.pdp.cm.in.pip.PipRequest;
 import de.tum.in.i22.pdp.cm.in.pmp.PmpRequest;
-import de.tum.in.i22.pdp.cm.out.pip.IPdp2PipFast;
-import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipImp;
-import de.tum.in.i22.pdp.core.IIncoming;
-import de.tum.in.i22.pdp.pipcacher.IPdpCore2PipCacher;
-import de.tum.in.i22.pdp.pipcacher.IPdpEngine2PipCacher;
+import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.pdp.pipcacher.PipCacherImpl;
-import de.tum.in.i22.pip.core.IPdp2Pip;
 import de.tum.in.i22.pip.core.IPipCacher2Pip;
+import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
@@ -30,36 +24,55 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.IForwarder;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.cm.settings.PdpSettings;
 
 public class RequestHandler implements Runnable {
+
 	private static Logger _logger = Logger.getRootLogger();
-	private static RequestHandler _instance = null;
-	private BlockingQueue<RequestWrapper> _requestQueue = null;
 
-	private IIncoming pdpHandler;
-	private IPdp2PipFast _pdp2PipProxy = null;
+	private final static RequestHandler _instance = new RequestHandler();
 
-	private static IPdpCore2PipCacher _core2pip = null;
-	private static IPdpEngine2PipCacher _engine2pip = null;
-	private static IPipCacher2Pip _pipHandler = null;
+	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
+
+	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
+	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
+	private final BlockingQueue<RequestWrapper> _requestQueue = new LinkedBlockingQueue<RequestWrapper>();
+
+	private IPdpIncoming _pdpHandler;
+	private IPdp2Pip _pdp2PipProxy;
+
+	private final IPdpCore2PipCacher _core2pip;
+	private final IPdpEngine2PipCacher _engine2pip;
+	private final IPipCacher2Pip _pipHandler;
+
+
+	private RequestHandler() {
+		// tell the PIP about the port being used.
+		_pipHandler = new PipHandler(
+								PdpSettings.getInstance().getDistributedPipStrategy(),
+								PdpSettings.getInstance().getPipPortNum());
+
+		_pdp2PipProxy = new Pdp2PipTcpImp(PdpSettings.getInstance().getPipAddress(), PdpSettings.getInstance().getPipPortNum());
+
+		// 1 implementation for 2 interfaces
+		_core2pip = new PipCacherImpl(_pipHandler);
+		_engine2pip = (PipCacherImpl) _core2pip;
+		populate();
+	}
 
 	public IPdpCore2PipCacher getCore2Pip(){
 		return _core2pip ;
 	}
 	public IPipCacher2Pip getPipHandler(){
 		return _pipHandler;
-	}
-
-	public void initializeAll() {
-		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
-		_pipHandler = new PipHandler(PdpSettings.getInstance().getPipPortNum());
-
-		// 1 implementation for 2 interfaces
-		_core2pip = new PipCacherImpl(_pipHandler);
-		_engine2pip = (PipCacherImpl) _core2pip;
-		populate();
 	}
 
 	/***
@@ -85,52 +98,41 @@ public class RequestHandler implements Runnable {
 		_pipHandler.notifyActualEvent(initEvent);
 	}
 
-	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
-
 	public static RequestHandler getInstance() {
-		if (_instance == null) {
-			_instance = new RequestHandler();
-		}
 		return _instance;
 	}
 
-	public void setPdpHandler(IIncoming pdpHandler) {
-		this.pdpHandler = pdpHandler;
-		initializeAll();
-		this.pdpHandler.setPdpCore2PipCacher(_core2pip);
-		this.pdpHandler.setPdpEngine2PipCacher(_engine2pip);
+	public void setPdpHandler(IPdpIncoming pdpHandler) {
+		_pdpHandler = pdpHandler;
+		_pdpHandler.setPdpCore2PipCacher(_core2pip);
+		_pdpHandler.setPdpEngine2PipCacher(_engine2pip);
 	}
 
-	private RequestHandler() {
-		int queueSize = PdpSettings.getInstance().getQueueSize();
-		_requestQueue = new ArrayBlockingQueue<RequestWrapper>(queueSize, true);
-	}
-
-	public void addEvent(IEvent event, IForwarder forwarder)
-			throws InterruptedException {
-		// add event to the tail of the queue
+	/**
+	 * Helper method to synchronize access to the queue.
+	 * @param obj the object to add to the queue.
+	 */
+	private void add(RequestWrapper obj) {
 		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PepNotifyEventRequestWrapper(forwarder, event);
 		_logger.debug("Add " + obj + " to the queue.");
+		_requestQueue.add(obj);
+	}
+
+	public void addPxpRegEvent(IPxpSpec pxpSpec, IForwarder forwarder) throws InterruptedException {
+		RequestWrapper obj = new PdpRegPxpWrapper(pxpSpec,forwarder);
 		_requestQueue.put(obj);
 	}
 
-	public void addPipRequest(PipRequest request, IForwarder forwarder)
-			throws InterruptedException {
-		// add pipRequest to the tail of the queue
-		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PipRequestWrapper(forwarder, request);
-		_logger.debug("Add " + obj + "  to the queue.");
-		_requestQueue.put(obj);
+	public void addEvent(IEvent event, IForwarder forwarder) throws InterruptedException {
+		add(new PepNotifyEventRequestWrapper(forwarder, event));
 	}
 
-	public void addPmpRequest(PmpRequest request, IForwarder forwarder)
-			throws InterruptedException {
-		// add pmpRequest to the tail of the queue
-		// put method blocks until the space in the queue becomes available
-		RequestWrapper obj = new PmpRequestWrapper(forwarder, request);
-		_logger.debug("Add " + obj + "  to the queue.");
-		_requestQueue.put(obj);
+	public void addPipRequest(PipRequest request, IForwarder forwarder) throws InterruptedException {
+		add(new PipRequestWrapper(forwarder, request));
+	}
+
+	public void addPmpRequest(PmpRequest request, IForwarder forwarder) throws InterruptedException {
+		add(new PmpRequestWrapper(forwarder, request));
 	}
 
 	public void addUpdateIfFlowRequest(IPipDeployer pipDeployer,
@@ -144,8 +146,7 @@ public class RequestHandler implements Runnable {
 		request.setJarBytes(jarBytes);
 		request.setConflictResolution(conflictResolutionFlag);
 
-		_logger.debug("Add " + request + " to the queue.");
-		_requestQueue.put(request);
+		add(request);
 	}
 
 	@Override
@@ -162,8 +163,6 @@ public class RequestHandler implements Runnable {
 
 			Object response = null;
 			if (request instanceof PepNotifyEventRequestWrapper) {
-				IEvent event = ((PepNotifyEventRequestWrapper) request)
-						.getEvent();
 				/***
 				 *
 				 * This code has been removed because redundant with the
@@ -175,27 +174,29 @@ public class RequestHandler implements Runnable {
 				 *
 				 */
 
-				response = pdpHandler.notifyEvent(event);
-			} else if (request instanceof PmpRequestWrapper) {
-				PmpRequest pmpRequest = ((PmpRequestWrapper) request)
-						.getPmpRequest();
-				response = processPmpRequest(pmpRequest);
-			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
-				UpdateIfFlowSemanticsRequestWrapper updateIfFlowRequest = (UpdateIfFlowSemanticsRequestWrapper) request;
-				response = delegeteUpdateIfFlowToPip(updateIfFlowRequest);
+				IEvent event = ((PepNotifyEventRequestWrapper) request).getEvent();
+				_logger.debug("Processing " + event);
+				response = _pdpHandler.notifyEvent(event);
+				_logger.debug(System.lineSeparator() + InformationFlowModel.getInstance().niceString());
 			} else if (request instanceof PipRequestWrapper) {
 				response = processPipRequest(((PipRequestWrapper) request).getPipRequest());
+			} else if (request instanceof PdpRegPxpWrapper){
+				response = processPdpRegPxp(((PdpRegPxpWrapper) request).getPxpSpec());
+			} else if (request instanceof PmpRequestWrapper) {
+				response = processPmpRequest(((PmpRequestWrapper) request).getPmpRequest());
+			} else if (request instanceof UpdateIfFlowSemanticsRequestWrapper) {
+				response = delegeteUpdateIfFlowToPip((UpdateIfFlowSemanticsRequestWrapper) request);
 			}
 			else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}
 
-			_logger.trace("event " + request.toString()
-					+ " processed. forward response");
+			_logger.trace("event " + request.toString() + " processed. forward response");
 			IForwarder forwarder = request.getForwarder();
-			forwarder.forwardResponse(response);
+			if (forwarder != null) {
+				forwarder.forwardResponse(response);
+			}
 			_logger.trace("response forwarded");
-
 		}
 
 		// the thread is interrupted, stop processing the events
@@ -206,15 +207,13 @@ public class RequestHandler implements Runnable {
 		Object result = null;
 		switch (pmpRequest.getMethod()) {
 		case DEPLOY_MECHANISM:
-			result = pdpHandler.deployMechanism(pmpRequest.getMechanism());
+			result = _pdpHandler.deployMechanism(pmpRequest.getMechanism());
 			break;
 		case EXPORT_MECHANISM:
-			result = pdpHandler
-					.exportMechanism(pmpRequest.getStringParameter());
+			result = _pdpHandler.exportMechanism(pmpRequest.getStringParameter());
 			break;
 		case REVOKE_MECHANISM:
-			result = pdpHandler
-					.revokeMechanism(pmpRequest.getStringParameter());
+			result = _pdpHandler.revokeMechanism(pmpRequest.getStringParameter());
 			break;
 		default:
 			throw new RuntimeException("Method " + pmpRequest.getMethod()
@@ -235,13 +234,17 @@ public class RequestHandler implements Runnable {
 		Object result = null;
 
 		switch (pipRequest.getMethod()) {
-			case HAS_CONTAINER:
-				// TODO Florian Kelbert.
+			case HAS_ALL_CONTAINERS:
 				break;
-			case HAS_DATA:
-				// TODO Florian Kelbert.
+			case HAS_ANY_CONTAINER:
 				break;
-			case NOTIFY_EVENT:
+			case HAS_ALL_DATA:
+				break;
+			case HAS_ANY_DATA:
+				break;
+			case NOTIFY_DATA_TRANSFER:
+				break;
+			case NOTIFY_ACTUAL_EVENT:
 				result = _pipHandler.notifyActualEvent(pipRequest.getEvent());
 				break;
 		}
@@ -249,23 +252,16 @@ public class RequestHandler implements Runnable {
 		return result;
 	}
 
-	/**
-	 * The proxy object will be created only if needed on the first invocation
-	 * of this method.
-	 *
-	 * @return
-	 */
-	private IPdp2PipFast getPdp2PipProxy() throws Exception {
-		if (_pdp2PipProxy == null) {
-			String pipAddress = PdpSettings.getInstance().getPipAddress();
-			int pipPort = PdpSettings.getInstance().getPipPortNum();
-
-			_logger.debug("Create proxy object to connect to PIP listener "
-					+ pipAddress + ":" + pipPort);
-			_pdp2PipProxy = new Pdp2PipImp(pipAddress, pipPort);
-		}
-		return _pdp2PipProxy;
+	private Object processPdpRegPxp(IPxpSpec pxp){
+		_logger.debug("Process PXP registration");
+		Boolean b = _pdpHandler.registerPxp(pxp);
+		return b;
+//		Object response = new ResponseBasic(new StatusBasic(EStatus.ALLOW),null,null);
+//		if(_res == false)
+//			response = new ResponseBasic(new StatusBasic(EStatus.INHIBIT),null,null);
+//		return response;
 	}
+
 
 	private IStatus notifyEventToPip(IEvent event) {
 		try {
@@ -305,17 +301,12 @@ public class RequestHandler implements Runnable {
 			 *
 			 */
 
-			if (_pipHandler == null)
-				initializeAll();
-
-			IStatus status = _pipHandler.notifyActualEvent(event);
-			return status;
+			return _pipHandler.notifyActualEvent(event);
 
 			// / return _mf.createStatus(EStatus.OKAY);
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);
-			return _mf.createStatus(EStatus.ERROR,
-					"Error at PDP: " + e.getMessage());
+			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
 		}
 	}
 
@@ -323,22 +314,24 @@ public class RequestHandler implements Runnable {
 			UpdateIfFlowSemanticsRequestWrapper request) {
 		_logger.debug("Delegate update if flow to PIP");
 		try {
-			IPdp2PipFast pipProxy = getPdp2PipProxy();
 			_logger.debug("Establish connection to PIP");
-			pipProxy.connect();
+
+			_pdp2PipProxy = ConnectionManager.MAIN.obtain(_pdp2PipProxy);
+
 			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
 					+ System.currentTimeMillis());
 			FileUtils.writeByteArrayToFile(jarFile, request.getJarBytes());
-			IStatus status = pipProxy.updateInformationFlowSemantics(
+			IStatus status = _pdp2PipProxy.updateInformationFlowSemantics(
 					request.getPipDeployer(), jarFile,
 					request.getConflictResolution());
 			jarFile.delete();
-			pipProxy.disconnect();
+
+			ConnectionManager.MAIN.release(_pdp2PipProxy);
+
 			return status;
 		} catch (Exception e) {
 			_logger.fatal("Failed to notify actual event to PIP.", e);
-			return _mf.createStatus(EStatus.ERROR,
-					"Error at PDP: " + e.getMessage());
+			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
 		}
 	}
 
@@ -390,6 +383,27 @@ public class RequestHandler implements Runnable {
 
 		public IEvent getEvent() {
 			return _event;
+		}
+	}
+
+	/**
+	 * @author SuperStar
+	 */
+	private class PdpRegPxpWrapper extends RequestWrapper {
+		private final IPxpSpec _pxpSpec;
+
+		public PdpRegPxpWrapper(IPxpSpec pxpSpec, IForwarder forwarder){
+			super(forwarder);
+			_pxpSpec = pxpSpec;
+		}
+
+		@Override
+		public String toString(){
+			return "PdpRegPxpWrapper [_event="+_pxpSpec+"]";
+		}
+
+		public IPxpSpec getPxpSpec(){
+			return _pxpSpec;
 		}
 	}
 

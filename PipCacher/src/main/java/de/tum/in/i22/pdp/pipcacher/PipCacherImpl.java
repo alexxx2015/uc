@@ -16,6 +16,8 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdpCore2PipCacher;
+import de.tum.in.i22.uc.cm.interfaces.IPdpEngine2PipCacher;
 
 
 public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
@@ -176,6 +178,12 @@ public class PipCacherImpl implements IPdpCore2PipCacher,IPdpEngine2PipCacher {
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return this._pip.getCurrentPipModel();
+	}
+
+	@Override
+	public void populatePip(String predicate) {
+		// TODO Auto-generated method stub
+		this._pip.populate(predicate);
 	}
 
 }

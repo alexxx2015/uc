@@ -8,10 +8,9 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
-import de.tum.in.i22.pip.core.manager.IEventHandlerCreator;
-import de.tum.in.i22.pip.core.manager.IPipManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
@@ -23,31 +22,38 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPipManager;
+import de.tum.in.i22.uc.cm.settings.PipSettings;
+import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 /**
  * Mock class, used for testing only
  * @author Stoimenov
  *
  */
-public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
+public class PipHandlerMock implements IPdp2Pip, IPipCacher2Pip
 {
 
 	private static final Logger _logger = Logger.getLogger(PipHandlerMock.class);
 
-	private final IEventHandlerCreator _actionHandlerCreator;
+	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
 	private final IPipManager _pipManager;
 
+	/**
+	 * Manages everything related to distributed data flow tracking
+	 */
+	private final DistributedPipManager _distributedPipManager;
+
 	public PipHandlerMock() {
-		this(0);
+		this(
+				PipSettings.getInstance().getDistributedPipStrategy(),
+				PipSettings.getInstance().getPipRemotePortNum());
 	}
 
-	public PipHandlerMock(int pipPersistenceID) {
-		EventHandlerManager eventHandlerManager = new EventHandlerManager();
-		PipManager pipManager = new PipManager(eventHandlerManager);
-		pipManager.initialize(pipPersistenceID);
-
-		_actionHandlerCreator = eventHandlerManager;
-		_pipManager = pipManager;
+	public PipHandlerMock(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
+		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
+		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
 	}
 
 	@Override
@@ -165,5 +171,11 @@ public class PipHandlerMock implements IPdp2Pip ,IPipCacher2Pip
 	public String getCurrentPipModel() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void populate(String predicate) {
+		// TODO Auto-generated method stub
+
 	}
 }
