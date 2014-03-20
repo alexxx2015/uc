@@ -11,10 +11,5 @@ import de.tum.in.i22.uc.cm.out.IConnection;
 public interface IPep2Pdp extends IConnection {
 	public IResponse notifyEvent(IEvent event);
 
-	public IStatus updateInformationFlowSemantics(
-			IPipDeployer deployer,
-			byte[] jarFileBytes,
-			EConflictResolution flagForTheConflictResolution);
-	
-	public boolean registerPxp(IPxpSpec pxp);
+
 }

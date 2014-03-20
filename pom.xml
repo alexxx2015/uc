@@ -11,11 +11,11 @@
 
 	<modules>
 		<module>CommunicationBase</module>
+		<module>CommunicationManager</module>
 		<module>Pip</module>
 		<module>Pdp</module>
 		<module>Pmp</module>
-		<module>Pep</module>
-		<module>UsageControlTests</module>
+<!-- 	<module>UsageControlTests</module> -->
 	</modules>
 
 	<build>

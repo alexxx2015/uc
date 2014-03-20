@@ -9,8 +9,8 @@
 //import com.google.inject.Guice;
 //import com.google.inject.Injector;
 //
-//import de.tum.in.i22.cm.core.IIncoming;
-//import de.tum.in.i22.cm.injection.PdpModule;
+//import de.tum.in.i22.core.IIncoming;
+//import de.tum.in.i22.injection.PdpModule;
 //
 //public class PdpHandlerNativeImplTest {
 //	

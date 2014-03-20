@@ -9,11 +9,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>Pmp</artifactId>
-	<name>PMP parent project</name>
-	<packaging>pom</packaging>
+	<name>Pmp</name>
+	<packaging>jar</packaging>
 
-	<modules>
-		<module>../Pmp2Pdp</module>
-		<module>../Pmp2Pip</module>
-	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<slf4jVersion>1.7.2</slf4jVersion>
+	</properties>
+
+
 </project>

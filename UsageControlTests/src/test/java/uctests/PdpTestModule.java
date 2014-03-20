@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import de.tum.in.i22.pdp.core.PdpHandlerMock;
 import de.tum.in.i22.pip.core.PipHandlerMock;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IPdpIncoming;
 
 public class PdpTestModule extends AbstractModule {
 

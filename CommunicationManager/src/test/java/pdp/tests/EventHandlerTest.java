@@ -2,7 +2,7 @@ package pdp.tests;
 
 import org.junit.Test;
 
-import de.tum.in.i22.cm.cm.in.RequestHandler;
+import de.tum.in.i22.cm.in.RequestHandler;
 
 public class EventHandlerTest {
 	static RequestHandler eventHandler;

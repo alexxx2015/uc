@@ -8,13 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import de.tum.in.i22.pdp.PdpController;
-import de.tum.in.i22.pip.PipController;
-import de.tum.in.i22.pip.core.PipHandlerMock;
-import de.tum.in.i22.uc.cm.settings.PdpSettings;
+import de.tum.in.i22.uc.cm.settings.GlobalSettings;
 import de.tum.in.i22.uc.cm.settings.PipSettings;
 
 @RunWith(Suite.class)
@@ -25,18 +19,17 @@ public class AllTests {
 
 	private static Logger _logger = Logger.getLogger(AllTests.class);
 
-	private static Injector _injector = null;
 
 	@BeforeClass
     public static void setUpClass() {
-		 /*
-	     * Guice.createInjector() takes your Modules, and returns a new Injector
-	     * instance.
-	     */
-		_injector = Guice.createInjector(new PdpTestModule());
-
-		startPip();
-		startPdp();
+//		 /*
+//	     * Guice.createInjector() takes your Modules, and returns a new Injector
+//	     * instance.
+//	     */
+//		_injector = Guice.createInjector(new PdpTestModule());
+//
+//		startPip();
+//		startPdp();
     }
 
     @AfterClass public static void tearDownClass() {
@@ -44,25 +37,25 @@ public class AllTests {
     }
 
 	private static void startPdp() {
-		final PdpController pdp = _injector.getInstance(PdpController.class);
-		_logger.debug("Start PDP. Listen from incoming PEP connections on port " + TestSettings.PEP_LISTENER_PORT_NUM);
-		PdpSettings pdpSettings = PdpController.getPdpSettings();
-		pdpSettings.setPepGPBListenerPortNum(TestSettings.PEP_LISTENER_PORT_NUM);
-		pdpSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_NUM);
-		pdpSettings.setPipPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
-		pdpSettings.setPipAddress(TestSettings.PIP_ADDRESS);
-		pdp.start();
-		_logger.debug("PDP started");
+//		final PdpController pdp = _injector.getInstance(PdpController.class);
+//		_logger.debug("Start PDP. Listen from incoming PEP connections on port " + TestSettings.PEP_LISTENER_PORT_NUM);
+//		GlobalSettings pdpSettings = PdpController.getPdpSettings();
+//		pdpSettings.setPepGPBListenerPortNum(TestSettings.PEP_LISTENER_PORT_NUM);
+//		pdpSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_NUM);
+//		pdpSettings.setPipPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
+//		pdpSettings.setPipAddress(TestSettings.PIP_ADDRESS);
+//		pdp.start();
+//		_logger.debug("PDP started");
 	}
 
 	private static void startPip() {
-		PipController pipController = new PipController(new PipHandlerMock());
-		_logger.debug("Start PIP. Listen from incoming PDP connections on port " + TestSettings.PDP_LISTENER_PORT_IN_PIP);
-		PipSettings pipSettings = PipSettings.getInstance();
-		pipSettings.setPdpListenerPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
-		pipSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_IN_PIP);
-		pipController.start();
-		_logger.debug("PIP started");
+//		PipController pipController = new PipController(new PipHandlerMock());
+//		_logger.debug("Start PIP. Listen from incoming PDP connections on port " + TestSettings.PDP_LISTENER_PORT_IN_PIP);
+//		PipSettings pipSettings = PipSettings.getInstance();
+//		pipSettings.setPdpListenerPortNum(TestSettings.PDP_LISTENER_PORT_IN_PIP);
+//		pipSettings.setPmpListenerPortNum(TestSettings.PMP_LISTENER_PORT_IN_PIP);
+//		pipController.start();
+//		_logger.debug("PIP started");
 	}
 
 }
