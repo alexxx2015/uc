@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>CommunicationBase</module>
+		<module>ThriftConnectors</module>
 		<module>CommunicationManager</module>
 		<module>Pip</module>
 		<module>Pdp</module>

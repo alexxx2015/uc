@@ -9,11 +9,9 @@
 	</parent>
 	<artifactId>CommunicationBase</artifactId>
 	<packaging>jar</packaging>
-	
-	<!--
-	   *
-	   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
-	   * 
-	 -->
+
+	<!--* 
+		* DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
+		* -->
 
 </project>
