@@ -19,6 +19,11 @@
 		<!-- <module>UsageControlTests</module> -->
 	</modules>
 
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+
     <pluginRepositories>
         <pluginRepository>
             <id>dtrotts</id>
