@@ -1,5 +1,0 @@
-EventHandler classes
-====================
-* Assuming you write EventHandler classes for PEP 'Thunderbird', put your event handler class (named, e.g., SendEventHandler or SaveEventHandler) into package 'de.tum.in.i22.pip.core.eventdef.Thunderbird' in project PipCore.
-* Add an additional parameter to your events: key 'PEP', value 'Thunderbird'
-* That's it. Enjoy the possibility of having the same event name at different system layers.
