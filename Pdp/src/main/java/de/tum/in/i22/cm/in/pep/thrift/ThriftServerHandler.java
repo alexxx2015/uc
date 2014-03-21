@@ -35,29 +35,30 @@ ExtendedThriftConnector.Iface {
 	}
 
 	private IResponse processEvent(IEvent ev) {
-		if (ev == null)
+		//TODO: move to communication manager
+//		if (ev == null)
+//			return null;
+//
+//		Object responseObj;
+//		try {
+//			requestHandler.addEvent(ev, this);
+//			responseObj = waitForResponse();
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			_logger.error("Communication error. Returning null");
+//			e1.printStackTrace();
 			return null;
-
-		Object responseObj;
-		try {
-			requestHandler.addEvent(ev, this);
-			responseObj = waitForResponse();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			_logger.error("Communication error. Returning null");
-			e1.printStackTrace();
-			return null;
-		}
-
-		_logger.trace("Response received");
-
-		if (responseObj instanceof IResponse) {
-			return (IResponse) responseObj;
-		} else {
-			_logger.error("Response is not an instance of IResponse. returning null");
-			throw new RuntimeException("IResponse type expected for "
-					+ responseObj);
-		}
+//		}
+//
+//		_logger.trace("Response received");
+//
+//		if (responseObj instanceof IResponse) {
+//			return (IResponse) responseObj;
+//		} else {
+//			_logger.error("Response is not an instance of IResponse. returning null");
+//			throw new RuntimeException("IResponse type expected for "
+//					+ responseObj);
+//		}
 	}
 
 	@Override
