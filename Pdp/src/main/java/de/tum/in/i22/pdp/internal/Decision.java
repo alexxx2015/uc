@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
@@ -166,7 +167,7 @@ public class Decision implements java.io.Serializable
     return str;
   }
 
-  public Object getResponse() {
+  public IResponse getResponse() {
 	//Convert an (IESE) Decision object into a (TUM) Response
 	IStatus status;
 
@@ -190,7 +191,7 @@ public class Decision implements java.io.Serializable
 	}
 
 	//TODO: add modified event, didn't found it so far. probably implemented as inhibit+execute.
-	Object res = new ResponseBasic(status, list, null);
+    IResponse res = new ResponseBasic(status, list, null);
 
 	return res;
   }

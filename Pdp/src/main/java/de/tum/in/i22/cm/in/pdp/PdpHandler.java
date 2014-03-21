@@ -120,9 +120,11 @@ public class PdpHandler implements IAny2Pdp {
 
 	@Override
 	public Object process(PdpRequest request) {
+		Object result = null;
+
 		switch (request.getType()) {
 			case REGISTER_PXP:
-				return registerPxp(request.getPxp());
+				result = registerPxp(request.getPxp());
 		case NOTIFY_EVENT:
 			break;
 		case UPDATE_INFORMATION_FLOW_SEMANTICS:
@@ -130,5 +132,7 @@ public class PdpHandler implements IAny2Pdp {
 		default:
 			throw new RuntimeException("Method " + request.getType() + " is not supported!");
 		}
+
+		return result;
 	}
 }

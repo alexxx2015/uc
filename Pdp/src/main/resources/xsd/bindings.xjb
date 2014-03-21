@@ -9,7 +9,7 @@
 
   <jxb:bindings schemaLocation="enfLanguage.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.cm.pdp.xsd" />
+      <jxb:package name="de.tum.in.i22.pdp.xsd" />
     </jxb:schemaBindings>
     <jxb:globalBindings choiceContentProperty="true" 
                         generateIsSetMethod="true"
@@ -19,89 +19,89 @@
     </jxb:globalBindings>    
     
     <jxb:bindings node="//xs:complexType[@name='NotType']">
-      <jxb:package name="de.tum.in.i22.cm.pdp.xsd.condition" />
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLNot" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:package name="de.tum.in.i22.pdp.xsd.condition" />
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLNot" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='TrueType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLTrue" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLTrue" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='FalseType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLFalse" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLFalse" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='OrType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLOr" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLOr" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='AndType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLAnd" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLAnd" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='ImpliesType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.OSLImplies" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.OSLImplies" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
     
     <jxb:bindings node="//xs:complexType[@name='SinceType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.Since" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.Since" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='AlwaysType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.Always" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.Always" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='BeforeType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.Before" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.Before" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='DuringType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.During" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.During" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='WithinType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.Within" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.Within" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepLimType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.RepLim" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.RepLim" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepSinceType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.RepSince" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.RepSince" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepMaxType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.RepMax" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.RepMax" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
     
     <jxb:bindings node="//xs:complexType[@name='StateBasedOperatorType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.StateBasedOperator" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.StateBasedOperator" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>
     
     <jxb:bindings node="//xs:complexType[@name='EvalOperatorType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.EvalOperator" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.EvalOperator" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
     </jxb:bindings>    
 
     <jxb:bindings node="//xs:complexType[@name='EventMatchingOperatorType']">
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.condition.operators.EventMatchOperator" />
-      <inheritance:extends>de.tum.in.i22.cm.pdp.internal.condition.Operator</inheritance:extends> 
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.condition.operators.EventMatchOperator" />
+      <inheritance:extends>de.tum.in.i22.pdp.internal.condition.Operator</inheritance:extends> 
       
       <jxb:bindings node="//xs:element[@name='paramMatch']">
         <jxb:property name="params" />
@@ -109,27 +109,27 @@
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='ParamMatchType']">
-      <!--<jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.Param" />-->
-      <jxb:class implClass = "de.tum.in.i22.cm.pdp.internal.ParamMatch" />
+      <!--<jxb:class implClass = "de.tum.in.i22.pdp.internal.Param" />-->
+      <jxb:class implClass = "de.tum.in.i22.pdp.internal.ParamMatch" />
     </jxb:bindings>    
   </jxb:bindings>
 
 
   <jxb:bindings schemaLocation="event.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.cm.pdp.xsd.event" />
+      <jxb:package name="de.tum.in.i22.pdp.xsd.event" />
     </jxb:schemaBindings>  
   </jxb:bindings>
   
   <jxb:bindings schemaLocation="action.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.cm.pdp.xsd.action" />
+      <jxb:package name="de.tum.in.i22.pdp.xsd.action" />
     </jxb:schemaBindings>  
   </jxb:bindings>    
 
   <jxb:bindings schemaLocation="time.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.cm.pdp.xsd.time" />
+      <jxb:package name="de.tum.in.i22.pdp.xsd.time" />
     </jxb:schemaBindings>  
   </jxb:bindings>    
   

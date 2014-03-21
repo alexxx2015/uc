@@ -8,6 +8,7 @@ import org.apache.thrift.TException;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
@@ -33,7 +34,7 @@ ExtendedThriftConnector.Iface {
 		return "ThriftServer: " + IP + ":" + PORT;
 	}
 
-	private Object processEvent(IEvent ev) {
+	private IResponse processEvent(IEvent ev) {
 		if (ev == null)
 			return null;
 
@@ -50,9 +51,8 @@ ExtendedThriftConnector.Iface {
 
 		_logger.trace("Response received");
 
-		if (responseObj instanceof Object) {
-			Object response = responseObj;
-			return response;
+		if (responseObj instanceof IResponse) {
+			return (IResponse) responseObj;
 		} else {
 			_logger.error("Response is not an instance of IResponse. returning null");
 			throw new RuntimeException("IResponse type expected for "
@@ -93,7 +93,7 @@ ExtendedThriftConnector.Iface {
 		IEvent ev = new EventBasic(e.name, e.parameters, false);
 		_logger.trace("PDP received synchronous thrift event " + e.name);
 
-		Object response = processEvent(ev);
+		IResponse response = processEvent(ev);
 
 		_logger.trace("Response to return: " + response);
 
