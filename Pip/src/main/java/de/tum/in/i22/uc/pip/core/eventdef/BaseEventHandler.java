@@ -13,8 +13,8 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.pip.core.IEventHandler;
-import de.tum.in.i22.uc.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.Scope;
+import de.tum.in.i22.uc.pip.core.ifm.ScopeInformationFlowModel;
 
 
 public abstract class BaseEventHandler implements IEventHandler {
@@ -23,7 +23,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	private IEvent _event;
 
-	protected InformationFlowModel ifModel = InformationFlowModel.getInstance();
+//	protected InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	protected ScopeInformationFlowModel ifModel = ScopeInformationFlowModel.getInstance();
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);

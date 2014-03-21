@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core;
+package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
  * Information flow model Singleton.
  */
 public class InformationFlowModel {
-	private static final Logger _logger = LoggerFactory.getLogger(InformationFlowModel.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(InformationFlowModel.class);
 
 	@Override
 	public String toString() {
@@ -29,7 +29,6 @@ public class InformationFlowModel {
 				.add("_containerToDataMap", _containerToDataMap)
 				.add("_aliasesMap", _aliasesMap)
 				.add("_namingMap", _namingMap)
-				.add("_scopeSet", _scopeSet)
 				.add("_isSimulating", isSimulating())
 				.toString();
 	}
@@ -45,18 +44,14 @@ public class InformationFlowModel {
 	// the naming set [name -> Container.identifier]
 	private Map<IName, IContainer> _namingMap;
 
-	// list of currently opened scopes
-	private Set<Scope> _scopeSet;
-
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IContainer> _containerSetBackup;
 	private Set<IData> _dataSetBackup;
 	private Map<IContainer, Set<IData>> _containerToDataMapBackup;
 	private Map<IContainer, Set<IContainer>> _aliasesMapBackup;
 	private Map<IName, IContainer> _namingSetBackup;
-	private Set<Scope> _scopeSetBackup;
 
-	private InformationFlowModel() {
+	protected InformationFlowModel() {
 		init();
 	}
 
@@ -71,26 +66,25 @@ public class InformationFlowModel {
 		init();
 	}
 
-	private void init() {
+	protected void init() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
-		_scopeSet = new HashSet<>();
 
 		_containerSetBackup = null;
 		_dataSetBackup = null;
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
-		_scopeSetBackup = null;
 	}
 
 
 	public boolean isSimulating(){
-		return !((_containerSetBackup == null) && (_dataSetBackup == null)
-				&& (_containerToDataMapBackup == null)
-				&& (_aliasesMapBackup == null)
-				&& (_namingSetBackup == null) && (_scopeSetBackup == null));
+		return _containerSetBackup != null
+				|| _dataSetBackup != null
+				|| _containerToDataMapBackup != null
+				|| _aliasesMapBackup != null
+				|| _namingSetBackup != null;
 	}
 
 
@@ -116,7 +110,6 @@ public class InformationFlowModel {
 			}
 
 			_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
-			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
 			return true;
 		}
 		_logger.error("Current stack not empty!");
@@ -134,130 +127,17 @@ public class InformationFlowModel {
 			_containerToDataMap = _containerToDataMapBackup;
 			_aliasesMap = _aliasesMapBackup;
 			_namingMap = _namingSetBackup;
-			_scopeSet = _scopeSetBackup;
 
 			_containerSetBackup = null;
 			_dataSetBackup = null;
 			_containerToDataMapBackup = null;
 			_aliasesMapBackup = null;
 			_namingSetBackup = null;
-			_scopeSetBackup = null;
 
 			return true;
 		}
 		_logger.error("Current stack empty!");
 		return false;
-	}
-
-	/**
-	 * Adds a new scope to the set.
-	 *
-	 * @param scope
-	 * @return true if the scope is not already present in the set. false
-	 *         otherwise.
-	 *
-	 */
-	public boolean addScope(Scope scope) {
-		assert (scope != null);
-		return _scopeSet.add(scope);
-	}
-
-	/**
-	 * opens a new scope.
-	 *
-	 * @param the
-	 *            new scope to open
-	 * @return true if the scope is not already opened. false otherwise.
-	 *
-	 */
-	public boolean openScope(Scope scope) {
-		return addScope(scope);
-	}
-
-	/**
-	 * Removes a scope from the set.
-	 *
-	 * @param scope
-	 * @return true if the scope is successfully removed. false otherwise.
-	 *
-	 */
-	public boolean removeScope(Scope scope) {
-		assert (scope != null);
-		return _scopeSet.remove(scope);
-	}
-
-	/**
-	 * Close a specific scope.
-	 *
-	 * @param the
-	 *            scope to be closed
-	 * @return true if the scope is successfully closed. false otherwise.
-	 *
-	 */
-	public boolean closeScope(Scope scope) {
-		return removeScope(scope);
-	}
-
-	/**
-	 * Checks whether a specific scope has been opened. Note that the scope can
-	 * be under-specified with respect to the matching element in the set.
-	 *
-	 * @param the
-	 *            (possibly under-specified) scope to be found
-	 * @return true if the scope is in the set. false otherwise.
-	 *
-	 */
-	public boolean isScopeOpened(Scope scope) {
-		return _scopeSet.contains(scope);
-	}
-
-	/**
-	 * Returns the only element that should match the (possibly under-specified)
-	 * scope in the set of currently opened scopes. Note that if more than one
-	 * active (i.e. opened but not closed) scope matches the parameter, the
-	 * method returns null. Similarly, if no scope is found, the method returns
-	 * null.
-	 *
-	 * There must exists only one matching otherwise the information about the
-	 * scope are not enough to identify to which scope a certain event belongs
-	 *
-	 * @param the
-	 *            (possibly under-specified) scope to be found
-	 * @return the opened scope, if found. null if more than one match or no
-	 *         match is found.
-	 *
-	 */
-	public Scope getOpenedScope(Scope scope) {
-		// if at least one matching exists...
-		if (isScopeOpened(scope)) {
-
-			// ...then clone the set...
-			Set<Scope> tmpSet = new HashSet<>();
-			tmpSet.addAll(_scopeSet);
-
-			// ...remove it...
-			tmpSet.remove(scope);
-
-			// ..and check whether another one exists. If that is the case
-			// return null...
-			if (tmpSet.contains(scope))
-				return null;
-
-			// ..otherwise return the only matching from the original set.
-			for (Scope s : _scopeSet)
-				if (scope.equals(s))
-					return s;
-			// Note that we have to iterate until the matching is found again
-			// and return that element.
-			// This is due to our definition of equality.
-
-			// This line should never be reached. It is added so Eclipse does
-			// not complain about the lack of a return value
-			assert (false);
-			return null;
-
-		} else
-			return null;
 	}
 
 	/**

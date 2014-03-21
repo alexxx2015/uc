@@ -19,8 +19,8 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 
 public class LinuxEventTest {
 	private static IPdp2Pip _pipHandler = new PipHandler(

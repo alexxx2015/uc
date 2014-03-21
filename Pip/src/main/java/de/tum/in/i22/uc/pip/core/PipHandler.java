@@ -27,6 +27,7 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.eventdef.DefaultEventHandler;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 
