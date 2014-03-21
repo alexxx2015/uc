@@ -11,12 +11,18 @@
 
 	<modules>
 		<module>CommunicationBase</module>
+		<module>ThriftConnectors</module>
 		<module>CommunicationManager</module>
 		<module>Pip</module>
 		<module>Pdp</module>
 		<module>Pmp</module>
 		<!-- <module>UsageControlTests</module> -->
 	</modules>
+
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
 
     <pluginRepositories>
         <pluginRepository>
