@@ -49,6 +49,16 @@ service ExtendedThriftConnector extends GenericThriftConnector {
 	
 }
 
+
+service TAny2Pdp  {
+	
+	oneway void processEventAsync(1: Event e, 2: string senderID),
+
+	Response processEventSync(1: Event e, 2: string senderID)
+	
+}
+
+
 service MWThriftConnector {
 
 	oneway void dumpGraph(1: string graphName),

@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.pdp.internal.Decision;
 import de.tum.in.i22.uc.pdp.internal.Event;
@@ -27,7 +28,7 @@ import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
  * @author Lovat
  *
  */
-public class PdpHandler implements IAny2Pdp {
+public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
 	private final IPolicyDecisionPoint _lpdp = PolicyDecisionPoint.getInstance();
 
