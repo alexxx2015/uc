@@ -7,8 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.pdp.gproto.ExecuteActionProto.PbExecuteAction;
-import de.tum.in.i22.pdp.gproto.ParameterProto.PbParameter;
+import de.tum.in.i22.pdp.internal.gproto.ExecuteActionProto.PbExecuteAction;
+import de.tum.in.i22.pdp.internal.gproto.ParameterProto.PbParameter;
 import de.tum.in.i22.pdp.xsd.action.ExecuteActionType;
 import de.tum.in.i22.pdp.xsd.action.ExecuteAsyncActionType;
 import de.tum.in.i22.pdp.xsd.action.ParameterType;

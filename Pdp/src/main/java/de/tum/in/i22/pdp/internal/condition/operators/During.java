@@ -3,11 +3,11 @@ package de.tum.in.i22.pdp.internal.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.pdp.gproto.ConditionProto.PbTimeAmount;
 import de.tum.in.i22.pdp.internal.Event;
 import de.tum.in.i22.pdp.internal.Mechanism;
 import de.tum.in.i22.pdp.internal.condition.Operator;
 import de.tum.in.i22.pdp.internal.condition.TimeAmount;
+import de.tum.in.i22.pdp.internal.gproto.ConditionProto.PbTimeAmount;
 import de.tum.in.i22.pdp.xsd.DuringType;
 import de.tum.in.i22.pdp.xsd.time.TimeUnitType;
 

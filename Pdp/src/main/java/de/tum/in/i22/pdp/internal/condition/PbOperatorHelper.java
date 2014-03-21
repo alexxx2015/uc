@@ -8,10 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
-import de.tum.in.i22.pdp.gproto.ConditionProto.PbBinaryOperator;
-import de.tum.in.i22.pdp.gproto.ConditionProto.PbTimeBoundedUnaryOperator;
-import de.tum.in.i22.pdp.gproto.ConditionProto.PbUnaryOperator;
-import de.tum.in.i22.pdp.gproto.EventProto.PbEvent;
 import de.tum.in.i22.pdp.internal.condition.operators.Always;
 import de.tum.in.i22.pdp.internal.condition.operators.Before;
 import de.tum.in.i22.pdp.internal.condition.operators.During;
@@ -25,6 +21,10 @@ import de.tum.in.i22.pdp.internal.condition.operators.OSLTrue;
 import de.tum.in.i22.pdp.internal.condition.operators.Since;
 import de.tum.in.i22.pdp.internal.condition.operators.Within;
 import de.tum.in.i22.pdp.internal.exceptions.InvalidOperatorException;
+import de.tum.in.i22.pdp.internal.gproto.ConditionProto.PbBinaryOperator;
+import de.tum.in.i22.pdp.internal.gproto.ConditionProto.PbTimeBoundedUnaryOperator;
+import de.tum.in.i22.pdp.internal.gproto.ConditionProto.PbUnaryOperator;
+import de.tum.in.i22.pdp.internal.gproto.EventProto.PbEvent;
 
 public class PbOperatorHelper
 {

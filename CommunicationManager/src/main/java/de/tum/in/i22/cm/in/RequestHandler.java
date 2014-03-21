@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.cm.in.pdp.PdpHandler;
+import de.tum.in.i22.pdp.handlers.pdp.PdpHandler;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;

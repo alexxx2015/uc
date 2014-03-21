@@ -7,14 +7,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.cm.pxp.IPolicyExecutionPoint;
-import de.tum.in.i22.cm.pxp.PXPStub;
-import de.tum.in.i22.pdp.gproto.ExecuteActionProto.PbExecuteAction;
-import de.tum.in.i22.pdp.gproto.MechanismProto.PbMechanismOrBuilder;
+import de.tum.in.i22.pdp.handlers.pxp.IPolicyExecutionPoint;
+import de.tum.in.i22.pdp.handlers.pxp.PXPStub;
 import de.tum.in.i22.pdp.internal.condition.Condition;
 import de.tum.in.i22.pdp.internal.condition.TimeAmount;
 import de.tum.in.i22.pdp.internal.exceptions.InvalidMechanismException;
 import de.tum.in.i22.pdp.internal.exceptions.InvalidOperatorException;
+import de.tum.in.i22.pdp.internal.gproto.ExecuteActionProto.PbExecuteAction;
+import de.tum.in.i22.pdp.internal.gproto.MechanismProto.PbMechanismOrBuilder;
 import de.tum.in.i22.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.pdp.xsd.PreventiveMechanismType;

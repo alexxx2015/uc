@@ -6,8 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.cm.pxp.IPolicyExecutionPoint;
-import de.tum.in.i22.cm.pxp.PXPStub;
+import de.tum.in.i22.pdp.handlers.pxp.IPolicyExecutionPoint;
+import de.tum.in.i22.pdp.handlers.pxp.PXPStub;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;

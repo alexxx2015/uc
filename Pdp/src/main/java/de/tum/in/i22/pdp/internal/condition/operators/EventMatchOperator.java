@@ -3,11 +3,11 @@ package de.tum.in.i22.pdp.internal.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.pdp.gproto.EventProto.PbEvent;
 import de.tum.in.i22.pdp.internal.ActionDescriptionStore;
 import de.tum.in.i22.pdp.internal.Event;
 import de.tum.in.i22.pdp.internal.EventMatch;
 import de.tum.in.i22.pdp.internal.Mechanism;
+import de.tum.in.i22.pdp.internal.gproto.EventProto.PbEvent;
 
 public class EventMatchOperator extends EventMatch
 {

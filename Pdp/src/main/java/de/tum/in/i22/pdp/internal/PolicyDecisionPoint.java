@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.Message.Builder;
 import com.google.protobuf.TextFormat;
 
-import de.tum.in.i22.pdp.gproto.MechanismProto.PbMechanism;
-import de.tum.in.i22.pdp.gproto.PolicyProto.PbPolicy;
-import de.tum.in.i22.pdp.gproto.PolicyProto.PbPolicyOrBuilder;
 import de.tum.in.i22.pdp.internal.exceptions.InvalidMechanismException;
 import de.tum.in.i22.pdp.internal.exceptions.InvalidOperatorException;
+import de.tum.in.i22.pdp.internal.gproto.MechanismProto.PbMechanism;
+import de.tum.in.i22.pdp.internal.gproto.PolicyProto.PbPolicy;
+import de.tum.in.i22.pdp.internal.gproto.PolicyProto.PbPolicyOrBuilder;
 import de.tum.in.i22.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.pdp.xsd.PolicyType;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;

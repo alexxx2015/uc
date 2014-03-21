@@ -3,7 +3,7 @@ package de.tum.in.i22.pdp.internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.pdp.gproto.EventProto.PbEvent;
+import de.tum.in.i22.pdp.internal.gproto.EventProto.PbEvent;
 import de.tum.in.i22.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.pdp.xsd.ParamMatchType;
 
