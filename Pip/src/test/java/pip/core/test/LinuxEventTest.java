@@ -21,12 +21,12 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.settings.GlobalSettings;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class LinuxEventTest {
 	private static IPdp2Pip _pipHandler = new PipHandler(
-												GlobalSettings.getInstance().getDistributedPipStrategy(),
-												GlobalSettings.getInstance().getPipPortNum());
+												Settings.getInstance().getDistributedPipStrategy(),
+												Settings.getInstance().getPipPortNum());
 
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 

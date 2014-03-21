@@ -17,5 +17,11 @@
 		<slf4jVersion>1.7.2</slf4jVersion>
 	</properties>
 
-
+	<dependencies>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 </project>

@@ -24,16 +24,15 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public class DummyMessageGen {
 	private static IMessageFactory _factory = MessageFactoryCreator.createMessageFactory();
-	
+
 	public static IMechanism createMechanism() {
 		MechanismBasic m = new MechanismBasic();
-		
-		
+
+
 		//* set condition
 		ConditionBasic condition = new ConditionBasic();
 		//** set condition condition
@@ -42,7 +41,7 @@ public class DummyMessageGen {
 		//** set condition conditionSimp
 		SimplifiedTemporalLogicBasic conditionSimp = new SimplifiedTemporalLogicBasic();
 		conditionSimp.setFormula(new OslFormulaBasic("Formula yyyy"));
-		
+
 		//*** set condition conditionSimp dataEventMap
 		Map<IData, IEvent> map1 = new HashMap<IData, IEvent>();
 		map1.put(new DataBasic("id1"), new EventBasic("event1", null));
@@ -52,10 +51,10 @@ public class DummyMessageGen {
 		m.setCondition(condition);
 		return m;
 	}
-	
-	public static IResponse createResponse() {
+
+	public static Object createResponse() {
 		IStatus status = new StatusBasic(EStatus.ALLOW, null);
-		
+
 		List<IEvent> executeActions = new ArrayList<IEvent>();
 		Map<String, String> map1 = new HashMap<String, String>();
 		map1.put("key1", "val1");
@@ -64,21 +63,21 @@ public class DummyMessageGen {
 		IEvent action2 = _factory.createEvent("event2", map1);
 		executeActions.add(action1);
 		executeActions.add(action2);
-		
+
 		IEvent modifiedEvent = _factory.createEvent("eventModified", map1);
-		
+
 		ResponseBasic response = new ResponseBasic(status, executeActions, modifiedEvent);
 		return response;
 	}
-	
-	public static IResponse createRandomResponse() {
+
+	public static Object createRandomResponse() {
 		EStatus eStatus = null;
-		if (Math.random() > 0.5) { 
+		if (Math.random() > 0.5) {
 			eStatus = EStatus.ALLOW;
 		} else {eStatus = EStatus.INHIBIT;}
-		
+
 		IStatus status = new StatusBasic(eStatus, null);
-		
+
 		List<IEvent> executeActions = new ArrayList<IEvent>();
 		Map<String, String> map1 = new HashMap<String, String>();
 		map1.put("key1", "val1");
@@ -87,47 +86,47 @@ public class DummyMessageGen {
 		IEvent action2 = _factory.createEvent("event2", map1);
 		executeActions.add(action1);
 		executeActions.add(action2);
-		
+
 		IEvent modifiedEvent = _factory.createEvent("eventModified", map1);
-		
+
 		ResponseBasic response = new ResponseBasic(status, executeActions, modifiedEvent);
 		return response;
 	}
-	
+
 	public static IStatus createAllowStatus() {
 		return new StatusBasic(EStatus.ALLOW);
 	}
-	
+
 	public static IStatus createOkStatus() {
 		return new StatusBasic(EStatus.ALLOW);
 	}
-	
+
 	public static IStatus createErrorStatus() {
 		return new StatusBasic(EStatus.ERROR);
 	}
-	
+
 	public static IStatus createErrorStatus(String errorMessage) {
 		return new StatusBasic(EStatus.ERROR, errorMessage);
 	}
-	
+
 	public static IEvent createEvent() {
 		Map<String, String> map = createDummyMap();
 		IEvent event = _factory.createEvent("event1", map);
 		return event;
 	}
-	
+
 	public static IEvent createActualEvent() {
 		Map<String, String> map = createDummyMap();
 		IEvent event = _factory.createActualEvent("event1", map);
 		return event;
 	}
-	
+
 	public static IEvent createActualEvent(String eventName) {
 		Map<String, String> map = createDummyMap();
 		IEvent event = _factory.createActualEvent(eventName, map);
 		return event;
 	}
-	
+
 	@SafeVarargs
 	public static IEvent createActualEvent(String eventName, Entry<String, String>... parameters) {
 		Map<String, String> map = null;
@@ -140,7 +139,7 @@ public class DummyMessageGen {
 		IEvent event = _factory.createActualEvent(eventName, map);
 		return event;
 	}
-	
+
 	private static Map<String, String> createDummyMap() {
 		Map<String, String> map = new HashMap<String, String>();
 		// add some entries
@@ -154,10 +153,10 @@ public class DummyMessageGen {
 		IContainer container = new ContainerBasic("class value", null);
 		return container;
 	}
-	
+
 	public static IData createData() {
 		IData data = new DataBasic(UUID.randomUUID().toString());
 		return data;
 	}
-	
+
 }

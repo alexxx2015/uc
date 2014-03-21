@@ -7,13 +7,13 @@ import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
-import de.tum.in.i22.uc.cm.methods.EPmp2PdpMethod;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.cm.requests.EPmpRequestType;
 
 /**
  * Each method writes a message to the output stream.
- * First an {@link EPmp2PdpMethod} is written that identifies the method.
+ * First an {@link EPmpRequestType} is written that identifies the method.
  * Then the message size is written as int.
  * Finally, the message is written.
  * @author Stoimenov

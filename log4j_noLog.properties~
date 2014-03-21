@@ -1,0 +1,12 @@
+log4j.rootLogger=ALL, fa, stdout
+#log4j.rootLogger=NONE
+log4j.appender.fa=org.apache.log4j.FileAppender
+log4j.appender.fa.File=logging/pdp.log
+log4j.appender.fa.layout=org.apache.log4j.PatternLayout
+log4j.appender.fa.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c: %m%n
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d{mm:ss} %5p [%t] (%F:%L) - %m%n

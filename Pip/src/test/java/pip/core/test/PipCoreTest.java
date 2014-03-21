@@ -22,14 +22,14 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.settings.GlobalSettings;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class PipCoreTest {
 	private static final Logger _logger = Logger.getLogger(PipCoreTest.class);
 
 	private static IAny2Pip _pipHandler = new PipHandler(
-			GlobalSettings.getInstance().getDistributedPipStrategy(),
-			GlobalSettings.getInstance().getPipPortNum());
+			Settings.getInstance().getDistributedPipStrategy(),
+			Settings.getInstance().getPipPortNum());
 	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass

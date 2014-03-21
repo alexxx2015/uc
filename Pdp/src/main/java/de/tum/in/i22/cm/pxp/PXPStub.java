@@ -8,10 +8,10 @@ import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.cm.pdp.internal.Event;
-import de.tum.in.i22.cm.pdp.internal.ExecuteAction;
-import de.tum.in.i22.cm.pdp.internal.Param;
-import de.tum.in.i22.cm.pdp.internal.PolicyDecisionPoint;
+import de.tum.in.i22.pdp.internal.Event;
+import de.tum.in.i22.pdp.internal.ExecuteAction;
+import de.tum.in.i22.pdp.internal.Param;
+import de.tum.in.i22.pdp.internal.PolicyDecisionPoint;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 
 public class PXPStub implements IPolicyExecutionPoint

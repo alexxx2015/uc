@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
@@ -38,16 +37,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.tum.in.i22.cm.in.RequestHandler;
-import de.tum.in.i22.injection.PdpModuleMockTestPip;
 import de.tum.in.i22.pdp.internal.Mechanism;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.KeyBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
-import de.tum.in.i22.uc.cm.settings.GlobalSettings;
-import edu.tum.XMLtools.OffsetNode;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import edu.tum.XMLtools.OffsetParameter;
 import edu.tum.XMLtools.OffsetTable;
 import edu.tum.XMLtools.StaticAnalysis;
@@ -74,11 +69,11 @@ public class MyUCCockpit {
 	private JTextArea pipTextArea;
 	private JTextArea pipTextFormula;
 
-	private static Logger _logger = Logger.getLogger(PdpController.class);
+	private static Logger _logger = Logger.getLogger(Controller.class);
 
 	private Thread pdpThread;
 
-	private PdpController pdpCtrl;
+	private Controller pdpCtrl;
 
 	// -Djava.rmi.server.hostname=172.16.195.143
 	// static{
@@ -827,7 +822,7 @@ public class MyUCCockpit {
 
 			// load PDP properties
 			try {
-				GlobalSettings.getInstance().loadProperties();
+				Settings.getInstance().loadProperties();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -844,7 +839,7 @@ public class MyUCCockpit {
 			/*
 			 * Now that we've got the injector, we can build objects.
 			 */
-			injector.getInstance(PdpController.class).start();
+			injector.getInstance(Controller.class).start();
 
 		}
 

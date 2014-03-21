@@ -8,13 +8,12 @@ import de.tum.in.i22.uc.cm.datatypes.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IHistory;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
 
 public class MechanismBasic implements IMechanism {
 	private static Logger _logger = Logger.getLogger(MechanismBasic.class);
 	private ICondition _condition;
 	private String _mechanismName;
-	private IResponse _response;
+	private Object _response;
 	private IHistory _state;
 	private IEvent _triggerEvent;
 	private String _xml;
@@ -44,7 +43,7 @@ public class MechanismBasic implements IMechanism {
 	}
 
 	@Override
-	public IResponse getResponse() {
+	public Object getResponse() {
 		return _response;
 	}
 
@@ -66,7 +65,7 @@ public class MechanismBasic implements IMechanism {
 		_mechanismName = mechanismName;
 	}
 
-	public void setResponse(IResponse response) {
+	public void setResponse(Object response) {
 		_response = response;
 	}
 

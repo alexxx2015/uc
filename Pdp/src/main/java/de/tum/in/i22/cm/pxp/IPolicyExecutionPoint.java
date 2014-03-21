@@ -1,7 +1,7 @@
 package de.tum.in.i22.cm.pxp;
 
-import de.tum.in.i22.cm.pdp.internal.Event;
-import de.tum.in.i22.cm.pdp.internal.ExecuteAction;
+import de.tum.in.i22.pdp.internal.Event;
+import de.tum.in.i22.pdp.internal.ExecuteAction;
 
 
 public interface IPolicyExecutionPoint

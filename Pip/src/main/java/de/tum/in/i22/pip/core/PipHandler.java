@@ -3,9 +3,7 @@ package de.tum.in.i22.pip.core;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -15,20 +13,20 @@ import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.pip.core.manager.PipManager;
-import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
-import de.tum.in.i22.uc.cm.datatypes.ICacheUpdate;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IKey;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.settings.GlobalSettings;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.PipRequest;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 public class PipHandler implements IAny2Pip {
@@ -46,21 +44,23 @@ public class PipHandler implements IAny2Pip {
 	 */
 	private final DistributedPipManager _distributedPipManager;
 
-	//info for PipCacher
-	private Map<String, IKey> _predicatesToEvaluate = new HashMap<String,IKey>();
-
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
-	public PipHandler() {
-		this(GlobalSettings.getInstance().getDistributedPipStrategy(),
-				GlobalSettings.getInstance().getPipPortNum());
-	}
+	private IAny2Pdp _pdp;
+	private IAny2Pmp _pmp;
 
 	public PipHandler(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
 		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
 		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
+	}
+
+
+	@Override
+	public void init(IAny2Pdp pdp, IAny2Pmp pmp) {
+		_pdp = pdp;
+		_pmp = pmp;
 	}
 
 
@@ -395,5 +395,40 @@ public class PipHandler implements IAny2Pip {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public Object process(PipRequest request) {
+		Object result = null;
+
+		switch(request.getType()) {
+			case EVALUATE_PREDICATE:
+				break;
+			case GET_CONTAINER_FOR_DATA:
+				break;
+			case GET_DATA_IN_CONTAINER:
+				break;
+			case HAS_ALL_CONTAINERS:
+				break;
+			case HAS_ALL_DATA:
+				break;
+			case HAS_ANY_CONTAINER:
+				break;
+			case HAS_ANY_DATA:
+				break;
+			case NOTIFY_ACTUAL_EVENT:
+				result = notifyActualEvent(request.getEvent());
+				break;
+			case NOTIFY_DATA_TRANSFER:
+				break;
+			case UPDATE_INFORMATION_FLOW_SEMANTICS:
+				break;
+			default:
+				throw new RuntimeException("Method " + request.getType() + " is not supported!");
+		}
+
+		return result;
+	}
+
 
 }

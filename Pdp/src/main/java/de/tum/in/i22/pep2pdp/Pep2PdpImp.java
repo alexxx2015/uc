@@ -1,11 +1,6 @@
 package de.tum.in.i22.pep2pdp;
 
-import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
@@ -16,7 +11,7 @@ public class Pep2PdpImp extends Connection implements IPep2Pdp {
 	}
 
 	@Override
-	public IResponse notifyEvent(IEvent event) {
+	public Object notifyEvent(IEvent event) {
 // 		_logger.debug("notifyEvent method entered");
 //
 //		_logger.trace("Create Google Protocol Buffer event instance");

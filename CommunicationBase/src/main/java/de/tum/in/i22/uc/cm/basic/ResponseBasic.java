@@ -6,10 +6,10 @@ import java.util.Objects;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IObject;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public class ResponseBasic implements IResponse {
+public class ResponseBasic implements IObject {
 	private IStatus _authorizationAction = null;
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
