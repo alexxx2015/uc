@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
-
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -21,7 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 public class InformationFlowModelTest {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
-	private static final Logger _logger = Logger.getLogger(InformationFlowModelTest.class);
+	private static final Logger _logger = LoggerFactory.getLogger(InformationFlowModelTest.class);
 
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 

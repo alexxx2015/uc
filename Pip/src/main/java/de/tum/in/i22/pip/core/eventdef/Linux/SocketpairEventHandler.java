@@ -43,7 +43,7 @@ public class SocketpairEventHandler extends BaseEventHandler {
 			ifModel.addAlias(sock2Container, sock1Container);
 		}
 		else {
-			_logger.fatal("Unable to create socket containers.");
+			_logger.error("Unable to create socket containers.");
 		}
 
 		return STATUS_OKAY;

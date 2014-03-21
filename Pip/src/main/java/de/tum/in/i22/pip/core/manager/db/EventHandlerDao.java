@@ -9,7 +9,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * event handler data access object class.
@@ -18,7 +19,7 @@ import org.apache.log4j.Logger;
  */
 public class EventHandlerDao {
 
-	private static final Logger _logger = Logger.getLogger(EventHandlerDao.class);
+	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerDao.class);
 
 	private static final String PERSISTENCE_UNIT_NAME = "PipDb";
 

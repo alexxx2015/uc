@@ -3,14 +3,15 @@ package de.tum.in.i22;
 import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class Controller {
 
-	private static Logger _logger = Logger.getLogger(Controller.class);
+	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
 	private static boolean _started = false;
 
@@ -39,7 +40,7 @@ public class Controller {
 				Settings.getInstance().loadProperties();
 			}
 		} catch (IOException e) {
-			_logger.fatal("Properties cannot be loaded.	", e);
+			_logger.error("Properties cannot be loaded.	", e);
 			return;
 		}
 

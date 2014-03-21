@@ -5,12 +5,13 @@ import java.io.File;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -24,7 +25,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class PipCoreClassReloadingTest {
 
-	private static final Logger _logger = Logger.getLogger(PipCoreClassReloadingTest.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipCoreClassReloadingTest.class);
 
 	private static IAny2Pip _pipHandler = new PipHandler(
 			Settings.getInstance().getDistributedPipStrategy(),

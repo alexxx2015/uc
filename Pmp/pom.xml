@@ -4,24 +4,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>UsageControlSystem</groupId>
-		<artifactId>simple-parent</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
+		<artifactId>UCParent</artifactId>
 	</parent>
 	<artifactId>Pmp</artifactId>
 	<name>Pmp</name>
 	<packaging>jar</packaging>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<slf4jVersion>1.7.2</slf4jVersion>
-	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<!--
+		   *
+		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
+		   * 
+		 -->
 	</dependencies>
 </project>

@@ -3,23 +3,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>UsageControlSystem</groupId>
-		<artifactId>simple-parent</artifactId>
+		<artifactId>UCParent</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>CommunicationBase</artifactId>
 	<packaging>jar</packaging>
+	
+	<!--
+	   *
+	   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
+	   * 
+	 -->
 
-	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.8</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>16.0.1</version>
-		</dependency>
-	</dependencies>
 </project>

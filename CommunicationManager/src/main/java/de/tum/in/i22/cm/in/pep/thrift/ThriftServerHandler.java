@@ -3,8 +3,9 @@ package de.tum.in.i22.cm.in.pep.thrift;
 import java.io.EOFException;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -18,8 +19,7 @@ ExtendedThriftConnector.Iface {
 	private static final String IP = "localhost";
 	private static int PORT = 8090;
 
-	private static final Logger _logger = Logger
-			.getLogger(ThriftServerHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ThriftServerHandler.class);
 
 	public ThriftServerHandler(int pepPort) {
 		// we should start it on this port

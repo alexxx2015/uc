@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.IMessageFactory;
@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class PipCoreTest {
-	private static final Logger _logger = Logger.getLogger(PipCoreTest.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipCoreTest.class);
 
 	private static IAny2Pip _pipHandler = new PipHandler(
 			Settings.getInstance().getDistributedPipStrategy(),
@@ -41,7 +41,7 @@ public class PipCoreTest {
 			_logger.debug("File file " + file.getAbsolutePath() + " found.");
 			_pipHandler.updateInformationFlowSemantics(null, file, EConflictResolution.OVERWRITE);
 		} else {
-			_logger.fatal("Zip file not found.");
+			_logger.error("Zip file not found.");
 		}
 
 	}

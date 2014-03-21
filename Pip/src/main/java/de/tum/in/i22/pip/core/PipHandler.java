@@ -6,7 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
 import de.tum.in.i22.pip.core.distribution.DistributedPipManager;
@@ -26,12 +27,11 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 public class PipHandler implements IAny2Pip {
 
-	private static final Logger _logger = Logger.getLogger(PipHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
 	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
 

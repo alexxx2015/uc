@@ -8,7 +8,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,7 +26,7 @@ public class Network {
 	public static final Set<String> LOCAL_IP_ADDRESSES = new HashSet<String>(
 			Arrays.asList("127.0.0.1", "localhost",
 					"0000:0000:0000:0000:0000:0000:0000:0001", "::1"));
-	protected static final Logger _logger = Logger.getLogger(Network.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(Network.class);
 
 
 

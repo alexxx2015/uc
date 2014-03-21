@@ -3,7 +3,8 @@ package de.tum.in.i22.pip.core.manager;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
@@ -14,7 +15,7 @@ public class EventHandlerManager implements IEventHandlerCreator {
 	private static final String EVENT_HANDLER_SUFFIX = "EventHandler";
 	private static final String EVENT_HANDLER_PACKAGE = "de.tum.in.i22.pip.core.eventdef.";
 
-	private static final Logger _logger = Logger.getLogger(EventHandlerManager.class);
+	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerManager.class);
 
 	private Map<String, PipClassLoader> _classLoaderMap = null;
 

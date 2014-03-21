@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class SettingsLoader {
 
 
-	private static final Logger _logger = Logger
-			.getLogger(SettingsLoader.class);
+	private static final Logger _logger = LoggerFactory.getLogger(SettingsLoader.class);
 
 	/**
 	 * Tries to load <code>propertiesFileName</code> from the directory where the jar file is executed.

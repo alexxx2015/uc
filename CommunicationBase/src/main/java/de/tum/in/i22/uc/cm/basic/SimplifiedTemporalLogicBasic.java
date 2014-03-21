@@ -2,7 +2,8 @@ package de.tum.in.i22.uc.cm.basic;
 
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IDataEventMap;
 import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
@@ -12,7 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStateEventMap;
 public class SimplifiedTemporalLogicBasic
 	implements ISimplifiedTemporalLogic {
 
-	private static Logger _logger = Logger.getLogger(SimplifiedTemporalLogicBasic.class);
+	private static Logger _logger = LoggerFactory.getLogger(SimplifiedTemporalLogicBasic.class);
 	private IDataEventMap _dataEventMap;
 	private IOslFormula _formula;
 	private IStateEventMap _stateEventMap;

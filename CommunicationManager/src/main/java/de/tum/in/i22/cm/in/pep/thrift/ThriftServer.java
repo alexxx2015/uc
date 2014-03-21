@@ -1,15 +1,16 @@
 package de.tum.in.i22.cm.in.pep.thrift;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TServer.Args;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThriftServer implements Runnable {
-	protected static Logger _logger = Logger.getLogger(ThriftServer.class);
+	protected static Logger _logger = LoggerFactory.getLogger(ThriftServer.class);
 
 	private TServer _server = null;
 

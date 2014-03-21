@@ -19,7 +19,6 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
 import com.google.protobuf.Message.Builder;
 import com.google.protobuf.TextFormat;
 

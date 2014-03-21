@@ -2,7 +2,8 @@ package de.tum.in.i22.pip.core.eventdef;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.IEventHandler;
 import de.tum.in.i22.pip.core.InformationFlowModel;
@@ -18,7 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
-	protected static final Logger _logger = Logger.getLogger(BaseEventHandler.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(BaseEventHandler.class);
 
 	private IEvent _event;
 

@@ -11,14 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDao;
 import de.tum.in.i22.pip.core.manager.db.EventHandlerDefinition;
@@ -33,7 +33,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 public class PipManager {
 
 
-	private static final Logger _logger = Logger.getLogger(PipManager.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipManager.class);
 
 
 	private EventHandlerManager _eventHandlerManager = null;

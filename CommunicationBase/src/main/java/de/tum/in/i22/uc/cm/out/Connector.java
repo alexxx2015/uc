@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
  *
  */
 public abstract class Connector {
-	protected static final Logger _logger = Logger.getLogger(Connector.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(Connector.class);
 
 	private OutputStream _outputStream;
  	private InputStream _inputStream;

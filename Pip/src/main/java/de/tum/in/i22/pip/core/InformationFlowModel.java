@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -20,7 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
  * Information flow model Singleton.
  */
 public class InformationFlowModel {
-	private static final Logger _logger = Logger.getLogger(InformationFlowModel.class);
+	private static final Logger _logger = LoggerFactory.getLogger(InformationFlowModel.class);
 
 	@Override
 	public String toString() {

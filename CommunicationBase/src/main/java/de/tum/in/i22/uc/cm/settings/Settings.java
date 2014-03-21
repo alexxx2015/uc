@@ -3,7 +3,8 @@ package de.tum.in.i22.uc.cm.settings;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
@@ -18,7 +19,7 @@ import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
  */
 public class Settings {
 
-	private static Logger _logger = Logger.getLogger(Settings.class);
+	private static Logger _logger = LoggerFactory.getLogger(Settings.class);
 
 	private static Settings _instance;
 
@@ -84,7 +85,7 @@ public class Settings {
 		try {
 			_pipAddress = props.getProperty("pip_address");
 		} catch (Exception e) {
-			_logger.fatal("Cannot read pip address.", e);
+			_logger.error("Cannot read pip address.", e);
 			_logger.debug("Killing the app.");
 			System.exit(1);
 		}
@@ -92,7 +93,7 @@ public class Settings {
 		try {
 			_pipPortNum = Integer.valueOf(props.getProperty("pip_port_num"));
 		} catch (Exception e) {
-			_logger.fatal("Cannot read pip port number.", e);
+			_logger.error("Cannot read pip port number." + e);
 			_logger.debug("Killing the app.");
 			System.exit(1);
 		}

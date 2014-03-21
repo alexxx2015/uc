@@ -2,14 +2,15 @@ package de.tum.in.i22.uc.cm.basic;
 
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
 import de.tum.in.i22.uc.cm.datatypes.ISimplifiedTemporalLogic;
 
 public class ConditionBasic implements ICondition {
-	private static Logger _logger = Logger.getLogger(ConditionBasic.class);
+	private static Logger _logger = LoggerFactory.getLogger(ConditionBasic.class);
 	private IOslFormula _condition;
 	private ISimplifiedTemporalLogic _conditionSimp;
 

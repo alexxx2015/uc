@@ -3,12 +3,10 @@ package de.tum.in.i22.cm.in;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.cm.in.pdp.PdpHandler;
-import de.tum.in.i22.cm.in.pep.thrift.ThriftServer;
-import de.tum.in.i22.uc.cm.IMessageFactory;
-import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
@@ -17,11 +15,10 @@ import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
-import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class RequestHandler implements Runnable {
 
-	private static Logger _logger = Logger.getRootLogger();
+	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
 	public final static RequestHandler INSTANCE = new RequestHandler();
 

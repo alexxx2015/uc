@@ -54,7 +54,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		}
 
 		if (localConnectingSocket == null) {
-			_logger.fatal("Container with identifier " + FiledescrName.create(host, pid, fd)
+			_logger.error("Container with identifier " + FiledescrName.create(host, pid, fd)
 					+ " should exist due to previous socket() call. But it did not.");
 			return STATUS_ERROR;
 		}

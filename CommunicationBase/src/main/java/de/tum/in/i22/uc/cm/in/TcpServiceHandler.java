@@ -5,7 +5,8 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Template class
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
 public abstract class TcpServiceHandler implements
 		Runnable {
 
-	protected static Logger _logger = Logger.getRootLogger();
+	protected static Logger _logger = LoggerFactory.getLogger(TcpServiceHandler.class);
 
 	protected int _port;
 	protected ServerSocket _serverSocket;

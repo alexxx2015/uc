@@ -48,7 +48,7 @@ public class CloneEventHandler extends BaseEventHandler {
 		}
 
 		if (flagSet.contains("CLONE_FILES")) {
-			_logger.fatal("CLONE_FILES was set, but is not implemented.");
+			_logger.error("CLONE_FILES was set, but is not implemented.");
 			return STATUS_ERROR;
 		}
 

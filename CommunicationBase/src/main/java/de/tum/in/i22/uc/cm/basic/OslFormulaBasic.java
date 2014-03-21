@@ -2,13 +2,14 @@ package de.tum.in.i22.uc.cm.basic;
 
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
 
 public class OslFormulaBasic implements IOslFormula {
-	private static Logger _logger = Logger.getLogger(OslFormulaBasic.class);
-	private String _stringRepresentation;
+	private static Logger _logger = LoggerFactory.getLogger(OslFormulaBasic.class);
+	private final String _stringRepresentation;
 
 	public OslFormulaBasic(String stringRepresentation) {
 		super();
