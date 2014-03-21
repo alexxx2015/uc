@@ -6,10 +6,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
+import de.tum.in.i22.uc.cm.in.thrift.GenericThriftServer;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpImpl;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
@@ -36,8 +40,8 @@ public class RequestHandler implements Runnable {
 
 	private RequestHandler() {
 		_pdpHandler = PdpHandler.getInstance();
-		_pipHandler = null;
-		_pmpHandler = null;
+		_pipHandler = PipHandler.getInstance();
+		_pmpHandler = PmpHandler.getInstance();
 
 		_pdpHandler.init(_pipHandler, _pmpHandler);
 		_pipHandler.init(_pdpHandler, _pmpHandler);
@@ -48,16 +52,23 @@ public class RequestHandler implements Runnable {
 
 
 	private void startListeners() {
-		// TODO start thrift server listeners here.
-
+		
+		int port = Settings.getInstance().getPepThriftListenerPortNum();
+		
+		TAny2PdpImpl pdpServerHandler=new TAny2PdpImpl(port);
+		TAny2Pdp.Processor<TAny2PdpImpl> pdpProcessor =	new TAny2Pdp.Processor<TAny2PdpImpl>(pdpServerHandler);
+		GenericThriftServer<TAny2PdpImpl> pdpServer = new GenericThriftServer<>(port, new TAny2PdpImpl(port), pdpProcessor);
+		new Thread (pdpServer).start();
+				
+		
 	}
 
 
 //	private void startPepThriftListener() {
 //		if (Settings.getInstance().isPepThriftListenerEnabled()) {
 //			int pepThriftListenerPort = Settings.getInstance().getPepThriftListenerPortNum();
-//			_logger.info("Start ThriftServer on port: " + pepThriftListenerPort);
-//			_threadThriftServer = new Thread (new ThriftServer(pepThriftListenerPort, Settings.getInstance().getPepGPBListenerPortNum()));
+//			_logger.info("Start GenericThriftServer on port: " + pepThriftListenerPort);
+//			_threadThriftServer = new Thread (new GenericThriftServer(pepThriftListenerPort, Settings.getInstance().getPepGPBListenerPortNum()));
 //			_threadThriftServer.start();
 //			_startedThriftServer = true;
 //		}

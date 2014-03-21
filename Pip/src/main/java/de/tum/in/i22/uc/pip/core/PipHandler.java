@@ -24,7 +24,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
-import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
@@ -39,12 +39,14 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 
-	private final PipManager _pipManager;
+	private final PipManager _pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
 
+	private static final PipHandler _instance = new PipHandler();
+	
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
-	private final DistributedPipManager _distributedPipManager;
+	private final DistributedPipManager _distributedPipManager= DistributedPipManager.getInstance();
 
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
@@ -53,11 +55,13 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private IAny2Pdp _pdp;
 	private IAny2Pmp _pmp;
 
-	public PipHandler(EDistributedPipStrategy distributedPipStrategy, int pipPort) {
-		_pipManager = new PipManager(_actionHandlerCreator, pipPort);
-		_distributedPipManager = DistributedPipManager.getInstance(distributedPipStrategy);
+	private PipHandler() {
+	
 	}
 
+	public static PipHandler getInstance(){
+		return _instance; 
+	}
 
 	@Override
 	public void init(IAny2Pdp pdp, IAny2Pmp pmp) {
