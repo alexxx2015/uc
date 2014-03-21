@@ -15,19 +15,6 @@ public class Controller {
 
 	private static boolean _started = false;
 
-	private Controller() {
-	}
-
-
-	public void start() {
-		if (_started) {
-			return;
-		}
-		_started = true;
-
-		new Thread(RequestHandler.INSTANCE).start();;
-	}
-
 	public static void main(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
 
@@ -44,8 +31,7 @@ public class Controller {
 			return;
 		}
 
-		new Controller().start();
-
+		new Thread(RequestHandler.INSTANCE).start();
 
 		// EventHandler thread loops forever, this stops the main thread,
 		// otherwise the app will be closed

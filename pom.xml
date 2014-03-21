@@ -18,6 +18,16 @@
 		<!-- <module>UsageControlTests</module> -->
 	</modules>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>dtrotts</id>
+            <name>Repository for maven thrift plugin</name>
+            <url>http://maven.davidtrott.com/repository</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -91,3 +101,7 @@
 		</pluginManagement>
 	</build>
 </project>
+
+
+
+
