@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
+import de.tum.in.i22.uc.pip.core.eventdef.EmptyCliboardEventHandler;
 
 public class TestBeEventHandler extends BaseEventHandler {
 	private static final Logger _logger = LoggerFactory

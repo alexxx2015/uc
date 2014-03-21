@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.pip.core.InformationFlowModel;
-import de.tum.in.i22.pip.core.PipHandler;
 import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -21,6 +19,8 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pip.core.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.PipHandler;
 
 public class LinuxEventTest {
 	private static IPdp2Pip _pipHandler = new PipHandler(
