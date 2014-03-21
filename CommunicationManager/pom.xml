@@ -33,12 +33,10 @@
 			<artifactId>Pmp</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<!--
-		   *
-		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
-		   * 
-	 	-->
+		<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
+			* -->
 	</dependencies>
+
 
 	<build>
 		<plugins>
@@ -52,6 +50,8 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
@@ -64,6 +64,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.thrift.tools</groupId>
+				<artifactId>maven-thrift-plugin</artifactId>
+				<version>0.1.10</version>
+				<executions>
+					<execution>
+						<id>thrift-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
