@@ -24,9 +24,9 @@ import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.Linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
-import de.tum.in.i22.uc.pip.core.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.eventdef.Linux.ShutdownEventHandler.Shut;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
