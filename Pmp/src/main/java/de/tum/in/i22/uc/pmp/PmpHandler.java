@@ -1,12 +1,13 @@
-package de.tum.in.i22.uc.pmp.core;
+package de.tum.in.i22.uc.pmp;
 
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 
 
-public class PmpHandler implements IAny2Pmp {
+public class PmpHandler extends GenericHandler<PmpRequest> implements IAny2Pmp {
 
 	private IAny2Pip _pip;
 	private IAny2Pdp _pdp;

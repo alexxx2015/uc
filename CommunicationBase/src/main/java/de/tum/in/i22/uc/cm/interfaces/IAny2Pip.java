@@ -8,7 +8,6 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pip extends IPdp2Pip, IPip2Pip, IPmp2Pip, IPep2Pip {
-	void init(IAny2Pdp pdp, IAny2Pmp pmp);
-	Object process(PipRequest request);
+public interface IAny2Pip extends IPdp2Pip, IPip2Pip, IPmp2Pip, IPep2Pip, IAny2Generic<IAny2Pdp, IAny2Pmp> {
+	
 }

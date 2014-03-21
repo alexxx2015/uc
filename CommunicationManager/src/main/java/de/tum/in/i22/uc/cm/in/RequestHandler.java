@@ -6,15 +6,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.in.IForwarder;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
 import de.tum.in.i22.uc.pdp.PdpHandler;
+import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pmp.PmpHandler;
 
 public class RequestHandler implements Runnable {
 
@@ -26,9 +24,9 @@ public class RequestHandler implements Runnable {
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper<? extends Request>> _requestQueue = new LinkedBlockingQueue<>();
 
-	private final IAny2Pdp _pdpHandler;
-	private final IAny2Pip _pipHandler;
-	private final IAny2Pmp _pmpHandler;
+	private final PdpHandler _pdpHandler;
+	private final PipHandler _pipHandler;
+	private final PmpHandler _pmpHandler;
 
 
 	private static Thread _threadThriftServer;

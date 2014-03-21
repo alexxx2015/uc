@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.cm.in;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.requests.Request;
 
-class RequestWrapper<T extends Request> {
+public class RequestWrapper<T extends Request> {
 	private final IForwarder _forwarder;
 	private final T _request;
 

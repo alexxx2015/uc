@@ -22,6 +22,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
@@ -29,7 +30,7 @@ import de.tum.in.i22.uc.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 
-public class PipHandler implements IAny2Pip {
+public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
