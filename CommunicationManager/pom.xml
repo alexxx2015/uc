@@ -33,6 +33,12 @@
 			<artifactId>Pmp</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>ThriftConnectors</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<!--
 		   *
 		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
