@@ -7,9 +7,7 @@ import de.tum.in.i22.uc.pdp.internal.Event;
 import de.tum.in.i22.uc.pdp.internal.Mechanism;
 import de.tum.in.i22.uc.pdp.internal.condition.Operator;
 import de.tum.in.i22.uc.pdp.internal.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.internal.gproto.ConditionProto.PbTimeAmount;
 import de.tum.in.i22.uc.pdp.xsd.WithinType;
-import de.tum.in.i22.uc.pdp.xsd.time.TimeUnitType;
 
 public class Within extends WithinType 
 {
@@ -19,13 +17,6 @@ public class Within extends WithinType
   public Within()
   {}
   
-  public Within(Operator operand, PbTimeAmount boundary)
-  {
-    this.operators = operand;
-    this.setAmount(boundary.getAmount());
-    this.setUnit(TimeUnitType.fromValue(boundary.getUnit()));
-  }  
-
   @Override
   public void initOperatorForMechanism(Mechanism mech)
   {

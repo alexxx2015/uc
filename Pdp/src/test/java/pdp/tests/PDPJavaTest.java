@@ -18,7 +18,7 @@ public class PDPJavaTest
   @Test
   public void test()
   {
-    System.out.println("PDPnativeTest");
+    System.out.println("PDPJavaTest");
     lpdp = PolicyDecisionPoint.getInstance();
 
     System.out.println("lpdp: " + lpdp);

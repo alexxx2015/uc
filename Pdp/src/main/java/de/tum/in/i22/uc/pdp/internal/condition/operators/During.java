@@ -7,9 +7,7 @@ import de.tum.in.i22.uc.pdp.internal.Event;
 import de.tum.in.i22.uc.pdp.internal.Mechanism;
 import de.tum.in.i22.uc.pdp.internal.condition.Operator;
 import de.tum.in.i22.uc.pdp.internal.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.internal.gproto.ConditionProto.PbTimeAmount;
 import de.tum.in.i22.uc.pdp.xsd.DuringType;
-import de.tum.in.i22.uc.pdp.xsd.time.TimeUnitType;
 
 public class During extends DuringType 
 {
@@ -18,13 +16,6 @@ public class During extends DuringType
   
   public During()
   {}
-  
-  public During(Operator operand, PbTimeAmount boundary)
-  {
-    this.setOperators(operand);
-    this.setAmount(boundary.getAmount());
-    this.setUnit(TimeUnitType.fromValue(boundary.getUnit()));
-  }
   
   @Override
   public void initOperatorForMechanism(Mechanism mech)

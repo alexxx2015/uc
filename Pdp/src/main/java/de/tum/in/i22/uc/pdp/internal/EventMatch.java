@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pdp.internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.internal.gproto.EventProto.PbEvent;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -20,22 +19,6 @@ public class EventMatch extends EventMatchingOperatorType {
 		for (ParamMatchType paramMatch : op.getParams()) {
 			this.getParams().add(paramMatch);
 		}
-	}
-
-	public EventMatch(PbEvent pbEvent) {
-		log.debug("Preparing eventMatch from pbEvent");
-		if (pbEvent == null)
-			return;
-		// if(pbEvent.hasAction()) action=pbEvent.getAction();
-		// if(pbEvent.hasIsTry()) tryEvent=pbEvent.getIsTry();
-		// if(pbEvent.getParameterCount()>0)
-		// {
-		// for(PbParameter param : pbEvent.getParameterList())
-		// {
-		// log.debug("Processing param from PbParameter...");
-		// params.add(new Param<String>(param.getName(), param.getValue()));
-		// }
-		// }
 	}
 
 	@Override

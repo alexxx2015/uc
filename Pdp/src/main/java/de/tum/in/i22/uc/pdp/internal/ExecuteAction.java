@@ -7,8 +7,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.internal.gproto.ExecuteActionProto.PbExecuteAction;
-import de.tum.in.i22.uc.pdp.internal.gproto.ParameterProto.PbParameter;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
@@ -55,20 +53,6 @@ public class ExecuteAction implements Serializable
     }
   }  
   
-  public ExecuteAction(PbExecuteAction pbExecuteAction)
-  {
-    if(pbExecuteAction == null) return;
-
-    if(pbExecuteAction.hasName()) name=pbExecuteAction.getName();
-    if(pbExecuteAction.getParameterCount()>0)
-    {
-      for(PbParameter param : pbExecuteAction.getParameterList())
-      {
-        parameter.add(new Param<String>(param.getName(), param.getValue()));
-      }
-    }
-  }
-
   public String getName()
   {
     return name;
