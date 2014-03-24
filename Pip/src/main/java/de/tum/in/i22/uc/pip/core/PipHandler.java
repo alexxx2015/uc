@@ -23,11 +23,11 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.states.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
+import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
 public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {

@@ -43,7 +43,7 @@ public class Settings extends SettingsLoader {
 	private boolean _pipListenerEnabled = true;
 
 	private String _pipEventHandlerSuffix = "EventHandler";
-	private String _pipEventHandlerPackage = "de.tum.in.i22.pip.core.eventdef.";
+	private String _pipEventHandlerPackage = "de.tum.in.i22.uc.pip.eventdef.";
 
 	EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 

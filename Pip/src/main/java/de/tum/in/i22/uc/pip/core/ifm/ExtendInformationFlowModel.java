@@ -7,6 +7,7 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 
 /**
  * Wrapper class for the InformationFlowModel, that

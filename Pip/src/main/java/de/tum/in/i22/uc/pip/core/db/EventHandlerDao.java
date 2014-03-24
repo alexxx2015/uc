@@ -35,7 +35,7 @@ public class EventHandlerDao {
 		Map<String,String> connectProps1 = new HashMap<String,String>();
 		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + _persistenceUnitName + ";create=true");
 
-		_entityManager = Persistence.createEntityManagerFactory(_persistenceUnitName, connectProps1).createEntityManager();
+		_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
 	}
 
 	public EventHandlerDefinition getEventHandlerDefinition(String className) {
