@@ -52,24 +52,28 @@ public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp
 	@Override
 	public Response notifyEvent(Event e) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: notifyEvent");
 		return null;
 	}
 
 	@Override
 	public boolean registerPxp(Pxp pxp) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: registerPxp");
 		return false;
 	}
 
 	@Override
 	public StatusType deployMechanism(String mechanism) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: deploymech");
 		return null;
 	}
 
 	@Override
 	public StatusType revokeMechanism1(String policyName) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: revokemech1");
 		return null;
 	}
 
@@ -77,21 +81,22 @@ public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp
 	public StatusType revokeMechanism2(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: revokemech2");
 		return null;
 	}
 
 	@Override
 	public StatusType deployPolicy(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: deployPolicy");
 		return null;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pdp: listMech");
 		return null;
 	}
-
-
 
 }

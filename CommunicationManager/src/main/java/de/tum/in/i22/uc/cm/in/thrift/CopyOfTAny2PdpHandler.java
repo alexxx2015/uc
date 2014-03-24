@@ -2,9 +2,15 @@ package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.thrift.TException;
 
+import de.tum.i22.in.uc.cm.thrift.Event;
+import de.tum.i22.in.uc.cm.thrift.Pxp;
+import de.tum.i22.in.uc.cm.thrift.Response;
+import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -128,8 +134,46 @@ public class CopyOfTAny2PdpHandler extends ClientConnectionHandler implements TA
 	protected void disconnect() {
 	}
 
+
 	@Override
-	public de.tum.i22.in.uc.cm.thrift.Response processEvent(de.tum.i22.in.uc.cm.thrift.Event e) throws TException {
+	public Response notifyEvent(Event e) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean registerPxp(Pxp pxp) throws TException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public StatusType deployMechanism(String mechanism) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType revokeMechanism1(String policyName) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType revokeMechanism2(String policyName, String mechName)
+			throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType deployPolicy(String policyFilePath) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}

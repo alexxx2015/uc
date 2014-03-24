@@ -45,12 +45,14 @@ public class TAny2PmpHandler extends ClientConnectionHandler implements TAny2Pmp
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pmp: deployMechPmp");
 		return null;
 	}
 
 	@Override
 	public StatusType revokeMechanism1Pmp(String policyName) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pmp: revokeMech1Pmp");
 		return null;
 	}
 
@@ -58,20 +60,21 @@ public class TAny2PmpHandler extends ClientConnectionHandler implements TAny2Pmp
 	public StatusType revokeMechanism2Pmp(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pmp: revokeMech2Pmp");
 		return null;
 	}
 
 	@Override
 	public StatusType deployPolicyPmp(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pmp: deployPolicyPmp");
 		return null;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanismsPmp() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pmp: listmechPmp");
 		return null;
 	}
-
-
 }

@@ -52,24 +52,28 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	@Override
 	public Response notifyEvent(Event e) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: notifyEvent");
 		return null;
 	}
 
 	@Override
 	public boolean registerPxp(Pxp pxp) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: registerPxp");
 		return false;
 	}
 
 	@Override
 	public StatusType deployMechanism(String mechanism) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: deploymech");
 		return null;
 	}
 
 	@Override
 	public StatusType revokeMechanism1(String policyName) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: revokemech1");
 		return null;
 	}
 
@@ -77,18 +81,21 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public StatusType revokeMechanism2(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: revokemech2");
 		return null;
 	}
 
 	@Override
 	public StatusType deployPolicy(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: deployPolicy");
 		return null;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: listMech");
 		return null;
 	}
 
@@ -96,36 +103,42 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public StatusType initialRepresentation(Container container, Data data)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: initrep");
 		return null;
 	}
 
 	@Override
 	public boolean hasAllData(Set<Data> data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: hasAllData");
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyData(Set<Data> data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: hasAnyData");
 		return false;
 	}
 
 	@Override
 	public boolean hasAllContainers(Set<Container> container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: hasAllContainers");
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyContainer(Set<Container> container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: hasAnycontainers");
 		return false;
 	}
 
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: notifyActualEvent");
 		return null;
 	}
 
@@ -133,6 +146,7 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public StatusType notifyDataTransfer(Name containerName, Set<Data> data)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: notifyDatatransfer");
 		return null;
 	}
 
@@ -140,6 +154,7 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public boolean evaluatePredicateSimulatingNextState(Event event,
 			String predicate) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: evaluatePredicateSimulatingNextState");
 		return false;
 	}
 
@@ -147,48 +162,56 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public boolean evaluatePredicatCurrentState(String predicate)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: evaluatePredicateCurrentState");
 		return false;
 	}
 
 	@Override
 	public Set<Container> getContainerForData(Data data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: getContainerforData");
 		return null;
 	}
 
 	@Override
 	public Set<Data> getDataInContainer(Container container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: getDataInContainer");
 		return null;
 	}
 
 	@Override
 	public StatusType startSimulation() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: startsimulation");
 		return null;
 	}
 
 	@Override
 	public StatusType stopSimulation() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: stopSimulation");
 		return null;
 	}
 
 	@Override
 	public boolean isSimulating() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: isSimulating");
 		return false;
 	}
 
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: deployMechPmp");
 		return null;
 	}
 
 	@Override
 	public StatusType revokeMechanism1Pmp(String policyName) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: revokeMech1Pmp");
 		return null;
 	}
 
@@ -196,18 +219,21 @@ public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any
 	public StatusType revokeMechanism2Pmp(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: revokeMech2Pmp");
 		return null;
 	}
 
 	@Override
 	public StatusType deployPolicyPmp(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: deployPolicyPmp");
 		return null;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanismsPmp() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: listmechPmp");
 		return null;
 	}
 

@@ -49,36 +49,42 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public StatusType initialRepresentation(Container container, Data data)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: initrep");
 		return null;
 	}
 
 	@Override
 	public boolean hasAllData(Set<Data> data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: hasAllData");
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyData(Set<Data> data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: hasAnyData");
 		return false;
 	}
 
 	@Override
 	public boolean hasAllContainers(Set<Container> container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: hasAllContainers");
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyContainer(Set<Container> container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: hasAnycontainers");
 		return false;
 	}
 
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: notifyActualEvent");
 		return null;
 	}
 
@@ -86,6 +92,7 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public StatusType notifyDataTransfer(Name containerName, Set<Data> data)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: notifyDatatransfer");
 		return null;
 	}
 
@@ -93,6 +100,7 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public boolean evaluatePredicateSimulatingNextState(Event event,
 			String predicate) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: evaluatePredicateSimulatingNextState");
 		return false;
 	}
 
@@ -100,38 +108,42 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public boolean evaluatePredicatCurrentState(String predicate)
 			throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: evaluatePredicateCurrentState");
 		return false;
 	}
 
 	@Override
 	public Set<Container> getContainerForData(Data data) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: getContainerforData");
 		return null;
 	}
 
 	@Override
 	public Set<Data> getDataInContainer(Container container) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: getDataInContainer");
 		return null;
 	}
 
 	@Override
 	public StatusType startSimulation() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: startsimulation");
 		return null;
 	}
 
 	@Override
 	public StatusType stopSimulation() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: stopSimulation");
 		return null;
 	}
 
 	@Override
 	public boolean isSimulating() throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Pip: isSimulating");
 		return false;
 	}
-
-
 }

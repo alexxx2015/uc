@@ -38,7 +38,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 
-	private final PipManager _pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
+	private PipManager _pipManager = null;
 
 	private static PipHandler _instance = null;
 
@@ -69,6 +69,10 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		if (!_initialized) {
 			_pdp = pdp;
 			_pmp = pmp;
+			
+			//FIXME: not sure this initialization goes here. FK please fix it.
+			_pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
+
 			_initialized = true;
 		}
 	}

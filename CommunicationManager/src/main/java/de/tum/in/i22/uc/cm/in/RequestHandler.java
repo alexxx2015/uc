@@ -6,13 +6,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.i22.in.uc.cm.thrift.TAny2Any;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
 import de.tum.in.i22.uc.cm.in.thrift.GenericThriftServer;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2AnyHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PipHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpHandler;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
@@ -26,15 +31,15 @@ public class RequestHandler implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
-	public final static RequestHandler INSTANCE = new RequestHandler();
+	private static RequestHandler INSTANCE;
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper<? extends Request>> _requestQueue = new LinkedBlockingQueue<>();
 
-	private static PdpHandler PDP;
-	private static PipHandler PIP;
-	private static PmpHandler PMP;
+	private static IAny2Pdp PDP;
+	private static IAny2Pip PIP;
+	private static IAny2Pmp PMP;
 
 	// not sure we need getters for these 3 handlers, therefore I didn't write them yet. -E-
 	
@@ -42,6 +47,13 @@ public class RequestHandler implements Runnable {
 	private static Thread _threadThriftServer;
 	private static boolean _startedThriftServer = false;
 
+	
+	public static RequestHandler getInstance(){
+		if (INSTANCE==null) INSTANCE = new RequestHandler();
+		return INSTANCE;
+	}
+	
+	
 	private RequestHandler() {
 		PDP = PdpHandler.getInstance();
 		PIP = PipHandler.getInstance();
@@ -57,26 +69,37 @@ public class RequestHandler implements Runnable {
 
 	private void startListeners() {
 
-		int port = Settings.getInstance().getPepThriftListenerPortNum();
+		_logger.debug("Starting listeners");
+		
+		//TODO: Fix ports in settings
+		int portPdp = Settings.getInstance().getPepThriftListenerPortNum();
+		int portPip = Settings.getInstance().getPepThriftListenerPortNum() + 1;
+		int portPmp = Settings.getInstance().getPepThriftListenerPortNum() + 2;
+		int portAny = Settings.getInstance().getPepThriftListenerPortNum() + 3;
 
-		TAny2PdpHandler pdpServerHandler=new TAny2PdpHandler(port);
+		
+		TAny2PdpHandler pdpServerHandler=new TAny2PdpHandler(portPdp);
 		TAny2Pdp.Processor<TAny2PdpHandler> pdpProcessor =	new TAny2Pdp.Processor<TAny2PdpHandler>(pdpServerHandler);
-		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(port, new TAny2PdpHandler(port), pdpProcessor);
+		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(portPdp, new TAny2PdpHandler(portPdp), pdpProcessor);
 		new Thread (pdpServer).start();
 
 
-		TAny2PipHandler pipServerHandler=new TAny2PipHandler(port);
+		TAny2PipHandler pipServerHandler=new TAny2PipHandler(portPip);
 		TAny2Pip.Processor<TAny2PipHandler> PipProcessor =	new TAny2Pip.Processor<TAny2PipHandler>(pipServerHandler);
-		GenericThriftServer<TAny2PipHandler> PipServer = new GenericThriftServer<>(port, new TAny2PipHandler(port), PipProcessor);
+		GenericThriftServer<TAny2PipHandler> PipServer = new GenericThriftServer<>(portPip, new TAny2PipHandler(portPip), PipProcessor);
 		new Thread (PipServer).start();
 
 		
-		TAny2PmpHandler pmpServerHandler=new TAny2PmpHandler(port);
+		TAny2PmpHandler pmpServerHandler=new TAny2PmpHandler(portPmp);
 		TAny2Pmp.Processor<TAny2PmpHandler> PmpProcessor =	new TAny2Pmp.Processor<TAny2PmpHandler>(pmpServerHandler);
-		GenericThriftServer<TAny2PmpHandler> PmpServer = new GenericThriftServer<>(port, new TAny2PmpHandler(port), PmpProcessor);
+		GenericThriftServer<TAny2PmpHandler> PmpServer = new GenericThriftServer<>(portPmp, new TAny2PmpHandler(portPmp), PmpProcessor);
 		new Thread (PmpServer).start();
 		
 		
+		TAny2AnyHandler anyServerHandler=new TAny2AnyHandler(portAny);
+		TAny2Any.Processor<TAny2AnyHandler> AnyProcessor =	new TAny2Any.Processor<TAny2AnyHandler>(anyServerHandler);
+		GenericThriftServer<TAny2AnyHandler> AnyServer = new GenericThriftServer<>(portAny, new TAny2AnyHandler(portAny), AnyProcessor);
+		new Thread (AnyServer).start();
 		
 		
 		
