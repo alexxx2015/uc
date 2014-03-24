@@ -6,7 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pip.core.Scope;
+import de.tum.in.i22.uc.pip.core.scope.Scope;
 
 public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);

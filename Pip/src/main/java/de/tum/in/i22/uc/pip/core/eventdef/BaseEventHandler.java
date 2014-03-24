@@ -12,8 +12,8 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.pip.core.Scope;
 import de.tum.in.i22.uc.pip.core.ifm.ScopeInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.scope.Scope;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
 
@@ -23,7 +23,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	private IEvent _event;
 
-//	protected InformationFlowModel ifModel = InformationFlowModel.getInstance();
 	protected ScopeInformationFlowModel ifModel = ScopeInformationFlowModel.getInstance();
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
@@ -137,7 +136,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 			if (_scopesToBeOpened != null) {
 				for (Scope scope : _scopesToBeOpened) {
 					_logger.info("Opening scope "
-							+ scope.get_humanReadableName());
+							+ scope.getHumanReadableName());
 					IStatus is = openScope(scope);
 					if (!is.isSameStatus(_messageFactory
 							.createStatus(EStatus.OKAY))) {
@@ -163,7 +162,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 			if (_scopesToBeClosed != null) {
 				for (Scope scope : _scopesToBeClosed) {
 					_logger.info("Closing scope "
-							+ scope.get_humanReadableName());
+							+ scope.getHumanReadableName());
 					IStatus is = closeScope(scope);
 					if (!is.isSameStatus(_messageFactory
 							.createStatus(EStatus.OKAY))) {
@@ -183,10 +182,13 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public final void setEvent(IEvent event) {
-		if (event != null) {
-			_event = event;
+	public final IEventHandler setEvent(IEvent event) {
+		if (_event != null) {
+			throw new RuntimeException("Event already set. Can only be set once.");
 		}
+
+		_event = event;
+		return this;
 	}
 
 	protected final String getParameterValue(String key) throws ParameterNotFoundException {

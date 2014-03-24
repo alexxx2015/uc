@@ -7,7 +7,7 @@ import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 
-public class Pmp2PipImp extends Connection implements IPmp2Pip {
+public abstract class Pmp2PipImp extends Connection implements IPmp2Pip {
 	public Pmp2PipImp(Connector connector) {
 		super(connector);
 	}

@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.requests.PipRequest;
 
 /**
  * Incoming interface. Other modules use this interface to invoke operations
@@ -9,5 +8,5 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
  *
  */
 public interface IAny2Pip extends IPdp2Pip, IPip2Pip, IPmp2Pip, IPep2Pip, IAny2Generic<IAny2Pdp, IAny2Pmp> {
-	
+
 }

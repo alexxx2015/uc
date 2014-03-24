@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -22,7 +24,6 @@ import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
-import de.tum.in.i22.uc.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.states.IsCombinedWith;
 import de.tum.in.i22.uc.pip.core.ifm.states.IsNotIn;
@@ -61,7 +62,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private boolean _initialized = false;
 
 	private PipHandler() {
-
 	}
 
 	public static PipHandler getInstance(){
@@ -120,31 +120,21 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		String action = event.getPrefixedName();
-		_logger.debug("Action name: " + action);
 		IEventHandler actionHandler = null;
+
+		_logger.debug("Action name: " + action);
+
 		try {
-			_logger.trace("Create event handler");
 			actionHandler = _actionHandlerCreator.createEventHandler(event);
 		} catch (IllegalAccessException | InstantiationException e) {
-			_logger.error(
-					"Failed to create event handler for action " + action, e);
-			// FIXME create error status with description
+			return new StatusBasic(EStatus.ERROR, "Failed to create event handler for action " + action);
 		} catch (ClassNotFoundException e) {
-			_logger.error("Class not found for event handler " + action, e);
-			// FIXME create error status with description
+			return new StatusBasic(EStatus.ERROR, "Class not found for event handler " + action);
 		}
 
-		if (actionHandler == null) {
-			_logger.trace("Create default event handler");
-			actionHandler = new DefaultEventHandler();
-		}
-
-		actionHandler.setEvent(event);
-
-		IStatus status = actionHandler.executeEvent();
-		_logger.trace("Status to return: " + status);
-
-		return status;
+		return actionHandler != null
+			? actionHandler.setEvent(event).executeEvent()
+			: new StatusBasic(EStatus.ERROR);
 	}
 
 	@Override
@@ -157,18 +147,16 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public IStatus startSimulation() {
-		if (_ifModel.push())
-			return DummyMessageGen.createOkStatus();
-		return DummyMessageGen
-				.createErrorStatus("Impossible to push current state.");
+		return _ifModel.push()
+			? DummyMessageGen.createOkStatus()
+			: DummyMessageGen.createErrorStatus("Impossible to push current state.");
 	}
 
 	@Override
 	public IStatus stopSimulation() {
-		if (_ifModel.pop())
-			return DummyMessageGen.createOkStatus();
-		return DummyMessageGen
-				.createErrorStatus("Impossible to pop current state.");
+		return _ifModel.pop()
+			? DummyMessageGen.createOkStatus()
+			: DummyMessageGen.createErrorStatus("Impossible to pop current state.");
 	}
 
 //    /**
@@ -244,20 +232,25 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
 		_logger.info("Saving PIP current state");
+
+		Boolean res = null;
+
 		if (_ifModel.push()) {
 			_logger.trace("Updating PIP semantics with current event ("
 					+ (event == null ? "null" : event.getPrefixedName()) + ")");
 			notifyActualEvent(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");
-			Boolean res = evaluatePredicatCurrentState(predicate);
+			res = evaluatePredicatCurrentState(predicate);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModel.pop();
 			_logger.trace("done!");
-			return res;
 		}
-		_logger.error("Failed! Stack not empty!");
-		return null;
+		else {
+			_logger.error("Failed! Stack not empty!");
+		}
+
+		return res;
 	}
 
 	@Override
@@ -298,15 +291,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
-			byte[] jarFileBytes,
-			EConflictResolution flagForTheConflictResolution) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
 	public Object process(PipRequest request) {
 		Object result = null;
 
@@ -338,6 +322,4 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 		return result;
 	}
-
-
 }

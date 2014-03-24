@@ -14,17 +14,9 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
  *
  */
 public interface IPep2Pip {
-	
-	
-	
-	// FIXME: No idea which one of these two is used. Superstar please fix it
 	public IStatus updateInformationFlowSemantics(
 			IPipDeployer deployer,
 			File jarFile,
-			EConflictResolution flagForTheConflictResolution);
-
-	IStatus updateInformationFlowSemantics(IPipDeployer deployer,
-			byte[] jarFileBytes,
 			EConflictResolution flagForTheConflictResolution);
 
 }

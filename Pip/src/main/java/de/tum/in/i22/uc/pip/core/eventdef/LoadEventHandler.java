@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.pip.core.Scope;
+import de.tum.in.i22.uc.pip.core.scope.Scope;
+import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
 public class LoadEventHandler extends BaseEventHandler {
 	private String _delimiter = null;
@@ -34,7 +35,7 @@ public class LoadEventHandler extends BaseEventHandler {
 
 
 		Scope scope = new Scope("TB loading file " + filename + " OPEN",
-				Scope.scopeType.GENERIC_IN, attributes);
+				EScopeType.GENERIC_IN, attributes);
 
 		if (_delimiter.equals(_openDelimiter)) {
 			if (_scopesToBeOpened==null) _scopesToBeOpened = new HashSet<Scope>();

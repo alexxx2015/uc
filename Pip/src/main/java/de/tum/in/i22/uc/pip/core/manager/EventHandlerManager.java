@@ -24,8 +24,7 @@ public class EventHandlerManager implements IEventHandlerCreator {
 	}
 
 	@Override
-	public IEventHandler createEventHandler(IEvent event) throws IllegalAccessException, InstantiationException,
-			ClassNotFoundException {
+	public IEventHandler createEventHandler(IEvent event) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 
 		String className =  EVENT_HANDLER_PACKAGE
 				+ ((event.getPep() != null) ? event.getPep().toLowerCase() + "." : "")

@@ -7,41 +7,35 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.distribution.pip.IDistributedPipStrategy;
 
 /**
+ * This class manages the distributed parts of the PIP. To be used as a singleton.
+ *
+ * The strategy used by this DistributedPipManager instance is determined by
+ * {@link Settings#getDistributedPipStrategy()}.
  *
  * @author Florian Kelbert
  *
  */
 public class DistributedPipManager {
-	private static DistributedPipManager _instance;
+	private final static DistributedPipManager _instance = new DistributedPipManager();
 
 	private static IDistributedPipStrategy _strategy;
 
-	private DistributedPipManager(EDistributedPipStrategy strategy) {
-		_strategy = AbstractPipStrategy.create(strategy);
+	private DistributedPipManager() {
+		_strategy = AbstractDistributedPipStrategy.create(Settings.getInstance().getDistributedPipStrategy());
 	}
-
-	public static DistributedPipManager getInstance(EDistributedPipStrategy strategy) {
-		if (_instance == null) {
-			_instance = new DistributedPipManager(strategy);
-		}
-		else if (!_strategy.getStrategy().equals(strategy)) {
-			throw new RuntimeException("DistributedPipManager was initialized before with strategy: " + _strategy.getStrategy());
-		}
-		return _instance;
-	}
-
 
 	public static DistributedPipManager getInstance() {
-		if (_instance == null) {
-			_instance = new DistributedPipManager(EDistributedPipStrategy.DEFAULT_STRATEGY);
-		}
 		return _instance;
 	}
 
+	public static EDistributedPipStrategy getStrategy() {
+		return _strategy.getStrategy();
+	}
 
 	public IStatus notifyDataTransfer(Connector connector, IName containerName, Collection<IData> data) {
 		return _strategy.notifyDataTransfer(connector, containerName, data);

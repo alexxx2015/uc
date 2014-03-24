@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import de.tum.in.i22.uc.pip.core.Scope;
-import de.tum.in.i22.uc.pip.core.Scope.scopeType;
+import de.tum.in.i22.uc.pip.core.scope.Scope;
+import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
 public abstract class GenericAppEventHandler extends BaseEventHandler {
 	/*
@@ -44,19 +44,19 @@ public abstract class GenericAppEventHandler extends BaseEventHandler {
 		attributes.put("filename", filename);
 
 
-		Scope.scopeType type=null;
+		EScopeType type = null;
 
-		switch (direction){
+		switch (direction) {
 		case _genericInDirection:
-			type=scopeType.GENERIC_IN;
+			type = EScopeType.GENERIC_IN;
 			break;
 		case _genericOutDirection:
-			type=scopeType.GENERIC_OUT;
+			type = EScopeType.GENERIC_OUT;
 			break;
 		default:
-			//default value.
-			//no scope with this value should be opened
-			type=scopeType.EMPTY;
+			// default value.
+			// no scope with this value should be opened
+			type = EScopeType.EMPTY;
 		}
 
 		if (delimiter.equals(_openDelimiter)) {

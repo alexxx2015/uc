@@ -6,5 +6,4 @@ public class Pep2PipTcpImp extends Pep2PipImp  {
  	public Pep2PipTcpImp(String address, int port) {
  		super(new TcpConnector(address, port));
 	}
-
 }
