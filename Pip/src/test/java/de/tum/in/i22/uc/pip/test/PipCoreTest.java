@@ -96,7 +96,6 @@ public class PipCoreTest {
         IEvent event = createWindowsEvent("CreateProcess", map);
 		IStatus status = _pipHandler.notifyActualEvent(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
-		_pipHandler.updateInformationFlowSemantics(null, new File("D:/temp/test.jar"), EConflictResolution.OVERWRITE);
 	}
 
 	@Test

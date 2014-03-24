@@ -12,11 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Manages and synchronizes connections.
  *
- * While in most cases this class ought to be used as a singleton
- * (using {@link ConnectionManager#MAIN}), there might be situations
- * in which a developer intentionally wants open multiple connections
- * to the same location at the same time. For this reason, additional
- * instances of this manager can be created using the constructors.
+ * Singleton.
  *
  * Any manager instance keeps a fixed amount of connections open, closing connections
  * that have been least-recently-used. Using this manager, {@link Connection}s
@@ -30,9 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class ConnectionManager {
+
+	// TODO Move to configuration file
 	private static final int DEFAULT_MAX_ENTRIES = 20;
 
-	public static final ConnectionManager MAIN = new ConnectionManager();
+	private static final ConnectionManager _instance = new ConnectionManager();
 
 	private final PoolMap connectionPool;;
 
@@ -43,17 +41,19 @@ public class ConnectionManager {
 	 *   (2) they have not yet been released.
 	 * A map is used intentionally. Reason: From a set we cannot easily retrieve a value.
 	 */
-	private final Map<PoolMapEntry, PoolMapEntry> toClose = new ConcurrentHashMap<>();
+	private final Map<PoolMapEntry, PoolMapEntry> toClose;
 
 
 	public ConnectionManager() {
-		this(DEFAULT_MAX_ENTRIES);
-	}
-
-
-	public ConnectionManager(int maxEntries) {
 		connectionPool = new PoolMap(DEFAULT_MAX_ENTRIES);
+		toClose = new ConcurrentHashMap<>();
 	}
+
+
+	public static final ConnectionManager getInstance() {
+		return _instance;
+	}
+
 
 
 	/**

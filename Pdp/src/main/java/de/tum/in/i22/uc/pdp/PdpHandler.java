@@ -29,9 +29,9 @@ import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
  */
 public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
-	private final IPolicyDecisionPoint _lpdp = PolicyDecisionPoint.getInstance();
+	private final IPolicyDecisionPoint _lpdp;
 
-	private static PdpHandler _instance = null;
+	private static PdpHandler _instance = new PdpHandler();
 
 	private boolean _initialized = false;
 
@@ -39,10 +39,10 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 	private IAny2Pip _pip;
 
 	private PdpHandler() {
+		_lpdp = PolicyDecisionPoint.getInstance();
 	}
 
 	public static PdpHandler getInstance() {
-		if (_instance==null) _instance = new PdpHandler();
 		return _instance;
 	}
 

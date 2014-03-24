@@ -34,18 +34,18 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
-	private final EventHandlerManager _actionHandlerCreator = new EventHandlerManager();
+	private final EventHandlerManager _actionHandlerCreator;
 
-	private final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+	private final InformationFlowModel _ifModel;
 
-	private PipManager _pipManager = null;
+	private final PipManager _pipManager;
 
-	private static PipHandler _instance = null;
+	private static PipHandler _instance = new PipHandler();
 
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
-	private final DistributedPipManager _distributedPipManager= DistributedPipManager.getInstance();
+	private final DistributedPipManager _distributedPipManager;
 
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
@@ -57,10 +57,13 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private boolean _initialized = false;
 
 	private PipHandler() {
+		_actionHandlerCreator = new EventHandlerManager();
+		_pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
+		_distributedPipManager = DistributedPipManager.getInstance();
+		_ifModel = InformationFlowModel.getInstance();
 	}
 
 	public static PipHandler getInstance(){
-		if (_instance==null) _instance = new PipHandler();
 		return _instance;
 	}
 
@@ -69,10 +72,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		if (!_initialized) {
 			_pdp = pdp;
 			_pmp = pmp;
-			
-			//FIXME: not sure this initialization goes here. FK please fix it.
-			_pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
-
 			_initialized = true;
 		}
 	}
