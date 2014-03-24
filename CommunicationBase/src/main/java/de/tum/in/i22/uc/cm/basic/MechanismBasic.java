@@ -2,16 +2,12 @@ package de.tum.in.i22.uc.cm.basic;
 
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.datatypes.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IHistory;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 
 public class MechanismBasic implements IMechanism {
-	private static Logger _logger = LoggerFactory.getLogger(MechanismBasic.class);
 	private ICondition _condition;
 	private String _mechanismName;
 	private Object _response;

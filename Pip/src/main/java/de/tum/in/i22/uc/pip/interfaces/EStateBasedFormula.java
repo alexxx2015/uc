@@ -7,12 +7,12 @@ public enum EStateBasedFormula {
 
 	public static EStateBasedFormula from(String s) {
 		switch(s.toLowerCase()) {
-		case "isnotin":
-			return IS_NOT_IN;
-		case "isonlyin":
-			return IS_ONLY_IN;
-		case "iscombinedwith":
-			return IS_COMBINED_WITH;
+			case "isnotin":
+				return IS_NOT_IN;
+			case "isonlyin":
+				return IS_ONLY_IN;
+			case "iscombinedwith":
+				return IS_COMBINED_WITH;
 		}
 		return null;
 	}

@@ -23,17 +23,12 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.states.IsCombinedWith;
-import de.tum.in.i22.uc.pip.core.ifm.states.IsNotIn;
-import de.tum.in.i22.uc.pip.core.ifm.states.IsOnlyIn;
-import de.tum.in.i22.uc.pip.core.ifm.states.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
-import de.tum.in.i22.uc.pip.interfaces.EStateBasedFormula;
+import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
+import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
-import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
@@ -71,41 +66,17 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public void init(IAny2Pdp pdp, IAny2Pmp pmp) {
-		_initialized = true;
 		if (!_initialized) {
 			_pdp = pdp;
 			_pmp = pmp;
+			_initialized = true;
 		}
 	}
 
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
-		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
-
-		IStateBasedPredicate spredicate = null;
-
-		String[] st = predicate.split(StateBasedPredicate.separator1);
-		if (st.length == 0) {
-			return null;
-		}
-
-		switch (EStateBasedFormula.from(st[0])) {
-			case IS_COMBINED_WITH:
-				if (st.length < 3) { return null; }
-				spredicate = new IsCombinedWith(predicate, st[1], st[2]);
-				break;
-			case IS_NOT_IN:
-				if (st.length < 3) { return null; }
-				spredicate = new IsNotIn(predicate, st[1], st[2]);
-				break;
-			case IS_ONLY_IN:
-				if (st.length < 3) { return null; }
-				spredicate = new IsOnlyIn(predicate, st[1], st[2]);
-				break;
-		}
-
-		return spredicate != null ? spredicate.evaluate() : null;
+		return StateBasedPredicate.create(predicate).evaluate();
 	}
 
 	@Override
