@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
-public class PipPushStrategy extends AbstractDistributedPipStrategy {
+public class PipPushStrategy extends DistributedPipStrategy {
 
 	public PipPushStrategy(EDistributedPipStrategy eStrategy) {
 		super(eStrategy);

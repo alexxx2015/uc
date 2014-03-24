@@ -42,6 +42,9 @@ public class Settings extends SettingsLoader {
 	private boolean _pepThriftListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
 
+	private String _pipEventHandlerSuffix = "EventHandler";
+	private String _pipEventHandlerPackage = "de.tum.in.i22.pip.core.eventdef.";
+
 	EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
 	private Settings() {
@@ -80,6 +83,8 @@ public class Settings extends SettingsLoader {
 
 
 	private void loadProperties() {
+		_pipEventHandlerPackage = loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
+		_pipEventHandlerSuffix = loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
 		_pmpListenerEnabled = loadSetting("pmp_listener_enabled", _pmpListenerEnabled);
 		_pepGPBListenerEnabled = loadSetting("pep_GPB_listener_enabled", _pepGPBListenerEnabled);
 		_pepThriftListenerEnabled = loadSetting("pep_Thrift_listener_enabled", _pepThriftListenerEnabled);
@@ -151,6 +156,14 @@ public class Settings extends SettingsLoader {
 
 	public EDistributedPipStrategy getDistributedPipStrategy() {
 		return _distributedPipStrategy;
+	}
+
+	public String getPipEventHandlerPackage() {
+		return _pipEventHandlerPackage;
+	}
+
+	public String getPipEventHandlerSuffix() {
+		return _pipEventHandlerSuffix;
 	}
 }
 

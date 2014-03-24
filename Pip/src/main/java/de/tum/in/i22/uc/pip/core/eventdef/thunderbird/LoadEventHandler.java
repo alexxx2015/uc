@@ -1,14 +1,16 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.thunderbird;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.pip.core.eventdef.scope.AbstractScopeEventHandler;
 import de.tum.in.i22.uc.pip.core.scope.Scope;
 import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
-public class LoadEventHandler extends BaseEventHandler {
+public class LoadEventHandler extends AbstractScopeEventHandler {
 	private String _delimiter = null;
 
 	public LoadEventHandler() {

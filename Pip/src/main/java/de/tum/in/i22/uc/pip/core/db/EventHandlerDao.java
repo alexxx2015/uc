@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.manager.db;
+package de.tum.in.i22.uc.pip.core.db;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class EventHandlerDao {
 		Map<String,String> connectProps1 = new HashMap<String,String>();
 		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + _persistenceUnitName + ";create=true");
 
-		_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
+		_entityManager = Persistence.createEntityManagerFactory(_persistenceUnitName, connectProps1).createEntityManager();
 	}
 
 	public EventHandlerDefinition getEventHandlerDefinition(String className) {

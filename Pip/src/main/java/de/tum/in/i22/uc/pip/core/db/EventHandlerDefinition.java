@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.manager.db;
+package de.tum.in.i22.uc.pip.core.db;
 
 import java.sql.Timestamp;
 

@@ -26,7 +26,7 @@ public class DistributedPipManager {
 	private static IDistributedPipStrategy _strategy;
 
 	private DistributedPipManager() {
-		_strategy = AbstractDistributedPipStrategy.create(Settings.getInstance().getDistributedPipStrategy());
+		_strategy = DistributedPipStrategy.create(Settings.getInstance().getDistributedPipStrategy());
 	}
 
 	public static DistributedPipManager getInstance() {

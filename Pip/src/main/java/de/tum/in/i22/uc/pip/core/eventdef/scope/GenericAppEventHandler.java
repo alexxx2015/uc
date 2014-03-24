@@ -1,14 +1,15 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.scope;
 
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.core.scope.Scope;
 import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
-public abstract class GenericAppEventHandler extends BaseEventHandler {
+public abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 	/*
 	 * This function should be overridden by single events class
 	 */

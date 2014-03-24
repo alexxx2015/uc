@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public class PipClassLoader extends ClassLoader {
 
-	private static final Logger _logger = LoggerFactory
-			.getLogger(PipClassLoader.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipClassLoader.class);
 
 	private final String _nameOfTheClassToLoad;
 	private final byte[] _classBytes;

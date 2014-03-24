@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.windows;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -26,7 +26,7 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-        IContainer  processContainer = instantiateProcess(pid, processName);
+        IContainer  processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
         IContainer clipboardContainer = ifModel.getContainer(new NameBasic("clipboard"));
 

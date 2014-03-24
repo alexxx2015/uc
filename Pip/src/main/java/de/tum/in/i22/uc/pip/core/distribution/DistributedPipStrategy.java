@@ -6,11 +6,11 @@ import de.tum.in.i22.uc.distribution.AbstractStrategy;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.distribution.pip.IDistributedPipStrategy;
 
-public abstract class AbstractDistributedPipStrategy extends AbstractStrategy implements IDistributedPipStrategy {
+public abstract class DistributedPipStrategy extends AbstractStrategy implements IDistributedPipStrategy {
 
 	private final EDistributedPipStrategy _eStrategy;
 
-	public AbstractDistributedPipStrategy(EDistributedPipStrategy eStrategy) {
+	public DistributedPipStrategy(EDistributedPipStrategy eStrategy) {
 		_eStrategy = eStrategy;
 	}
 
@@ -21,13 +21,13 @@ public abstract class AbstractDistributedPipStrategy extends AbstractStrategy im
 
 	@Override
 	public final boolean equals(Object obj) {
-		if (obj instanceof AbstractDistributedPipStrategy) {
-			return Objects.equals(_eStrategy, ((AbstractDistributedPipStrategy) obj)._eStrategy);
+		if (obj instanceof DistributedPipStrategy) {
+			return Objects.equals(_eStrategy, ((DistributedPipStrategy) obj)._eStrategy);
 		}
 		return false;
 	}
 
-	static final AbstractDistributedPipStrategy create(EDistributedPipStrategy strategy) {
+	static final DistributedPipStrategy create(EDistributedPipStrategy strategy) {
 		switch (strategy) {
 		case PUSH:
 			return new PipPushStrategy(strategy);

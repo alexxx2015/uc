@@ -20,22 +20,20 @@ public class IsOnlyIn extends StateBasedPredicate {
 
 	@Override
 	public Boolean evaluate() {
-		String[] containers;
-		Set<IContainer> s;
+		// TODO FK: This implementation seems to be completely wrong.
 
-		containers = _param2.split(separator2);
-		Set<String> limit = new HashSet<String>(Arrays.asList(containers));
-		s = _ifModel.getContainersForData(new DataBasic(_param1));
-		// _logger.debug("size of s: "+s.size());
-		for (IContainer cont : s) {
-			NameBasic pname = new NameBasic(cont.getId());// TODO: not sure if
-															// it is correct
-			// _logger.debug("..in loop("+cont+")..");
+		Set<String> limit = new HashSet<String>(Arrays.asList(_param2.split(SEPARATOR2)));
+
+		Set<IContainer> containers = _ifModel.getContainersForData(new DataBasic(_param1));
+
+		for (IContainer cont : containers) {
+			NameBasic pname = new NameBasic(cont.getId());
+
 			if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
 				return false;
 			}
 		}
-		// _logger.trace("..no match found, returning true");
+
 		return true;
 	}
 

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.windows;
 
 
 import java.util.Set;

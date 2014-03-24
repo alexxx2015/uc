@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.windows;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;

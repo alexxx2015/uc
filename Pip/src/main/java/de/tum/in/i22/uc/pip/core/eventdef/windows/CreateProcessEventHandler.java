@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.windows;
 
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -34,8 +34,8 @@ public class CreateProcessEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-        IContainer processContainer = instantiateProcess(pid, processName);
-        IContainer parentProcessContainer = instantiateProcess(parentPid, parentProcessName);
+        IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
+        IContainer parentProcessContainer = WindowsEvents.instantiateProcess(parentPid, parentProcessName);
 
         //add data of parent process container to child process container
         ifModel.addDataToContainerMappings(ifModel.getDataInContainer(parentProcessContainer), processContainer);

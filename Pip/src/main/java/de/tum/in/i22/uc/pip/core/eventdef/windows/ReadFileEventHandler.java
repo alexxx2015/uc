@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef;
+package de.tum.in.i22.uc.pip.core.eventdef.windows;
 
 
 import java.util.Set;
@@ -32,7 +32,7 @@ public class ReadFileEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer processContainer = instantiateProcess(pid, processName);
+		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
 		IContainer fileContainer = ifModel.getContainer(new NameBasic(fileName));
 

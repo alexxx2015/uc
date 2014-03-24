@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.pip.core.manager.db.EventHandlerDefinition;
+import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pip.core.db.EventHandlerDefinition;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
 public class EventHandlerManager implements IEventHandlerCreator {
 
-	private static final String EVENT_HANDLER_SUFFIX = "EventHandler";
-	private static final String EVENT_HANDLER_PACKAGE = "de.tum.in.i22.pip.core.eventdef.";
+	private static final String EVENT_HANDLER_SUFFIX = Settings.getInstance().getPipEventHandlerSuffix();
+	private static final String EVENT_HANDLER_PACKAGE = Settings.getInstance().getPipEventHandlerPackage();
 
 	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerManager.class);
 

@@ -26,7 +26,7 @@ public class IsNotIn extends StateBasedPredicate {
 		IContainer container = _ifModel.getContainerRelaxed(new NameBasic(_param1));
 		Set<IData> data = _ifModel.getDataInContainer(container);
 
-		containers = _param2.split(separator2);
+		containers = _param2.split(SEPARATOR2);
 		for (IData d : data) {
 			s = _ifModel.getContainersForData(d);
 			// _logger.debug("size of s: "+s.size());
