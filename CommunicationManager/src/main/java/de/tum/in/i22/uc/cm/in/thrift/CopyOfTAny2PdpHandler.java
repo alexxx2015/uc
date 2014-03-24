@@ -2,65 +2,59 @@ package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import de.tum.i22.in.uc.cm.thrift.Event;
+import de.tum.i22.in.uc.cm.thrift.Pxp;
+import de.tum.i22.in.uc.cm.thrift.Response;
+import de.tum.i22.in.uc.cm.thrift.StatusType;
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.in.i22.uc.cm.in.RequestHandler;
+import de.tum.in.i22.uc.cm.requests.EPdpRequestType;
+import de.tum.in.i22.uc.cm.requests.PdpRequest;
 
-public class ThriftServerHandler extends ClientConnectionHandler implements
-ExtendedThriftConnector.Iface {
+public class CopyOfTAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp.Iface, IForwarder {
 
-	private static final String IP = "localhost";
-	private static int PORT = 8090;
+	private final int _port;
 
-	private static final Logger _logger = LoggerFactory.getLogger(ThriftServerHandler.class);
-
-	public ThriftServerHandler(int pepPort) {
-		// we should start it on this port
+	public CopyOfTAny2PdpHandler(int pepPort) {
 		super(null, null);
-		PORT = pepPort;
+		_port = pepPort;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "GenericThriftServer: " + IP + ":" + PORT;
+		return this.getClass().getSimpleName() + " listening on port " + _port;
 	}
 
 	private IResponse processEvent(IEvent ev) {
-		//TODO: move to communication manager
-//		if (ev == null)
-//			return null;
-//
-//		Object responseObj;
-//		try {
-//			requestHandler.addEvent(ev, this);
-//			responseObj = waitForResponse();
-//		} catch (InterruptedException e1) {
-//			// TODO Auto-generated catch block
-//			_logger.error("Communication error. Returning null");
-//			e1.printStackTrace();
+		RequestHandler.addRequest(new PdpRequest(EPdpRequestType.NOTIFY_EVENT, ev), this);
+
+		Object responseObj;
+		try {
+			responseObj = waitForResponse();
+			_logger.error("Communication error. Returning null");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 			return null;
-//		}
-//
-//		_logger.trace("Response received");
-//
-//		if (responseObj instanceof IResponse) {
-//			return (IResponse) responseObj;
-//		} else {
-//			_logger.error("Response is not an instance of IResponse. returning null");
-//			throw new RuntimeException("IResponse type expected for "
-//					+ responseObj);
-//		}
+		}
+
+		if (responseObj instanceof IResponse) {
+			return (IResponse) responseObj;
+		} else {
+			throw new RuntimeException("IResponse type expected for " + responseObj);
+		}
 	}
 
-	@Override
 	/****
 	 * Async events are not blocking on the PEP side, therefore they can only be actual events.
 	 *
@@ -77,7 +71,6 @@ ExtendedThriftConnector.Iface {
 		return;
 	}
 
-	@Override
 	/****
 	 * Async events are not blocking on the PEP side, therefore they can only be actual events.
 	 * As of now, we assume the sync (=blocking) events are ONLY DESIRED events, but for synchronization issues it may be the case that we need to make also the actual events synchronous.
@@ -136,21 +129,54 @@ ExtendedThriftConnector.Iface {
 
 	}
 
-	@Override
-	public void processEventAsync(Event e, String senderID) throws TException {
-		//TODO: senderID ignored for the time being
-		processEventAsync(e);
-
-	}
-
-	@Override
-	public Response processEventSync(Event e, String senderID)
-			throws TException {
-		//TODO: senderID ignored for the time being
-		return processEventSync(e);
-	}
 
 	@Override
 	protected void disconnect() {
 	}
+
+
+	@Override
+	public Response notifyEvent(Event e) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean registerPxp(Pxp pxp) throws TException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public StatusType deployMechanism(String mechanism) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType revokeMechanism1(String policyName) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType revokeMechanism2(String policyName, String mechName)
+			throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StatusType deployPolicy(String policyFilePath) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanisms() throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

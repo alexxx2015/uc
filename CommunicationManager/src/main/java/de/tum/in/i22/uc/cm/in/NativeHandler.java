@@ -30,14 +30,14 @@ public class NativeHandler {
 
 		if (event != null) {
 			if (isActual) {
-				RequestHandler.INSTANCE.addRequest(new NotifyEventRequest(event), new IForwarder() {
+				RequestHandler.getInstance().addRequest(new NotifyEventRequest(event), new IForwarder() {
 					@Override
 					public void forwardResponse(Object response) { }
 				});
 			}
 			else {
 				synchronized(responses) {
-					RequestHandler.INSTANCE.addRequest(new NotifyEventRequest(event), new NativeForwarder(event));
+					RequestHandler.getInstance().addRequest(new NotifyEventRequest(event), new NativeForwarder(event));
 				}
 
 				synchronized (responses) {

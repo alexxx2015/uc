@@ -23,8 +23,8 @@ public class Controller {
 		else {
 			Settings.getInstance();
 		}
-
-		new Thread(RequestHandler.INSTANCE).start();
+		
+		new Thread(RequestHandler.getInstance()).start();
 
 		// EventHandler thread loops forever, this stops the main thread,
 		// otherwise the app will be closed
