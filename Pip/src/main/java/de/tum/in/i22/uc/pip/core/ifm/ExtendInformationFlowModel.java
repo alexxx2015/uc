@@ -8,6 +8,21 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
+/**
+ * Wrapper class for the InformationFlowModel, that
+ * (1) takes an InformationFlowModel,
+ * (2) wraps it,
+ * (3) forwards all calls to the wrapped InformationFlowModel.
+ *
+ * This class can be used to extend any InformationFlowModel instance,
+ * e.g. with functionalities for data quantities, cross-layer behavior
+ * ({@link ScopeInformationFlowModel}), or structured data.
+ *
+ * For an example extension see {@link ScopeInformationFlowModel}.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class ExtendInformationFlowModel extends InformationFlowModel {
 	private final InformationFlowModel _ifm;
 
