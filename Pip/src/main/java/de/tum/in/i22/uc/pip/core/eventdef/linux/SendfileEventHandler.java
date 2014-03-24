@@ -1,7 +1,6 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
@@ -12,31 +11,27 @@ import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class TeeEventHandler extends BaseEventHandler {
+public class SendfileEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		int srcfd;
-		int dstfd;
+		int infd;
+		int outfd;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			srcfd = Integer.valueOf(getParameterValue("srcfd"));
-			dstfd = Integer.valueOf(getParameterValue("dstfd"));
+			outfd = Integer.valueOf(getParameterValue("outfd"));
+			infd = Integer.valueOf(getParameterValue("infd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName srcName = FiledescrName.create(host, pid, srcfd);
-		IName dstName = FiledescrName.create(host, pid, dstfd);
-
-		ifModel.copyData(srcName, dstName);
-
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(
+				ifModel.getContainer(FiledescrName.create(host, pid, infd)),
+				ifModel.getContainer(FiledescrName.create(host, pid, outfd)));
 	}
-
 }

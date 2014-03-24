@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Java;
+package de.tum.in.i22.uc.pip.core.eventdef.java;
 /**
  * This class initializes all sinks and sources according to the joana output
  */

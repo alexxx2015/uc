@@ -1,6 +1,5 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
@@ -11,29 +10,22 @@ import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class RenameEventHandler extends BaseEventHandler {
+public class TruncateEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String oldName = null;
-		String newName = null;
+		String filename = null;
 
 		try {
 			host = getParameterValue("host");
-			oldName = getParameterValue("old");
-			newName = getParameterValue("new");
+			filename = getParameterValue("filename");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName oldN = FilenameName.create(host, LinuxEvents.toRealPath(oldName));
-		IName newN = FilenameName.create(host, LinuxEvents.toRealPath(newName));
-
-		ifModel.removeName(newN);
-		ifModel.addName(oldN, newN);
-		ifModel.removeName(oldN);
+		ifModel.emptyContainer(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
 
 		return STATUS_OKAY;
 	}

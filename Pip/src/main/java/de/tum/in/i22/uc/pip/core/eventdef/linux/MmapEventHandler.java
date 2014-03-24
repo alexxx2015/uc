@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;

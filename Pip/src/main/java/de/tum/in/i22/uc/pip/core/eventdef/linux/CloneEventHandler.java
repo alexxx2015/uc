@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 import java.util.Arrays;
 import java.util.HashSet;

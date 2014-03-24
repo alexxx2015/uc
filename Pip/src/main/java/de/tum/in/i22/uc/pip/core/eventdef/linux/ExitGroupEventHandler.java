@@ -1,37 +1,30 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 
-/**
- *
- * @author Florian Kelbert
- *
- */
-public class CloseEventHandler extends BaseEventHandler {
+public class ExitGroupEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		int pid;
-		int fd;
+		String pids = null;
 
 		try {
 			host = getParameterValue("host");
-			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = Integer.valueOf(getParameterValue("fd"));
+			pids = getParameterValue("pids");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		LinuxEvents.close(FiledescrName.create(host, pid, fd));
+		for (String pid : pids.split(":")) {
+			LinuxEvents.exit(host, Integer.valueOf(pid));
+		}
 
 		return STATUS_OKAY;
 	}
 
 }
-

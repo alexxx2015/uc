@@ -1,9 +1,8 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.MmapName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 
@@ -12,31 +11,25 @@ import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class SpliceEventHandler extends BaseEventHandler {
+public class MunmapEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
 		int pid;
-		int srcfd;
-		int dstfd;
+		String addr = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			srcfd = Integer.valueOf(getParameterValue("srcfd"));
-			dstfd = Integer.valueOf(getParameterValue("dstfd"));
+			addr = getParameterValue("addr");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName srcName = FiledescrName.create(host, pid, srcfd);
-		IName dstName = FiledescrName.create(host, pid, dstfd);
-
-		ifModel.copyData(srcName, dstName);
+		ifModel.remove(ifModel.getContainer(MmapName.create(host, pid, addr)));
 
 		return STATUS_OKAY;
 	}
-
 }

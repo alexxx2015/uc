@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
-import de.tum.in.i22.uc.pip.core.eventdef.Linux.ShutdownEventHandler.Shut;
+import de.tum.in.i22.uc.pip.core.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 
 /**

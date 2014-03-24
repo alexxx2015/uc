@@ -28,7 +28,7 @@ public class EventHandlerManager implements IEventHandlerCreator {
 			ClassNotFoundException {
 
 		String className =  EVENT_HANDLER_PACKAGE
-				+ ((event.getPep() != null) ? event.getPep() + "." : "")
+				+ ((event.getPep() != null) ? event.getPep().toLowerCase() + "." : "")
 				+ event.getName()
 				+ EVENT_HANDLER_SUFFIX;
 

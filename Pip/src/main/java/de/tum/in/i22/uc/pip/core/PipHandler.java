@@ -1,18 +1,13 @@
 package de.tum.in.i22.uc.pip.core;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.derby.impl.sql.compile.IsNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.uc.cm.basic.DataBasic;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;

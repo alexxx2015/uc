@@ -1,34 +1,35 @@
-package de.tum.in.i22.uc.pip.core.eventdef.Linux;
+package de.tum.in.i22.uc.pip.core.eventdef.linux;
+
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 
-/**
- *
- * @author Florian Kelbert
- *
- */
-public class TruncateEventHandler extends BaseEventHandler {
+public class DupEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
 		String host = null;
-		String filename = null;
+		int pid;
+		int oldfd;
+		int newfd;
 
 		try {
 			host = getParameterValue("host");
-			filename = getParameterValue("filename");
+			pid = Integer.valueOf(getParameterValue("pid"));
+			oldfd = Integer.valueOf(getParameterValue("oldfd"));
+			newfd = Integer.valueOf(getParameterValue("newfd"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.emptyContainer(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
+		ifModel.addName(
+				FiledescrName.create(host, pid, oldfd),
+				FiledescrName.create(host, pid, newfd));
 
 		return STATUS_OKAY;
 	}
 
 }
-
