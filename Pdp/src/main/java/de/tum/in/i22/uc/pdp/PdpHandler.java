@@ -47,8 +47,8 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
 	@Override
 	public void init(IAny2Pip pip, IAny2Pmp pmp) {
-		_initialized = true;
 		if (!_initialized) {
+			_initialized = true;
 			_pmp = pmp;
 			_pip = pip;
 		}

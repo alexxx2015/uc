@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class SettingsLoader {
-
-
 	private static final Logger _logger = LoggerFactory.getLogger(SettingsLoader.class);
+
+	protected Properties _props;
 
 	/**
 	 * Tries to load <code>propertiesFileName</code> from the directory where the jar file is executed.
@@ -24,7 +24,7 @@ class SettingsLoader {
 	 * @return Properties object with loaded properties.
 	 * @throws IOException In case the file cannot be loaded.
 	 */
-	static Properties loadProperties(String propertiesFileName) throws IOException {
+	void initProperties(String propertiesFileName) throws IOException {
 		_logger.debug("Loading properties file: " + propertiesFileName);
 
 		InputStream is = null;
@@ -56,12 +56,10 @@ class SettingsLoader {
 			}
 
 			// load a properties file
-			Properties props = new Properties();
+			_props = new Properties();
 			// load all the properties from this file
-			props.load(is);
+			_props.load(is);
 			_logger.debug("Properties file '" + propertiesFileName + "' loaded.");
-
-			return props;
 
 		} finally {
 			if (is != null) {
@@ -73,5 +71,47 @@ class SettingsLoader {
 				}
 			}
 		}
+	}
+
+	protected int loadSetting(String propName, int defaultValue) {
+		int val = defaultValue;
+
+		try {
+			val = Integer.valueOf((String) _props.get(propName));
+		}
+		catch (Exception e) {
+			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+		}
+
+		return val;
+	}
+
+	protected String loadSetting(String propName, String defaultValue) {
+		String val = defaultValue;
+
+		try {
+			val = (String) _props.get(propName);
+		}
+		catch (Exception e) {
+			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+		}
+
+		return val;
+	}
+
+	protected boolean loadSetting(String propName, boolean defaultValue) {
+		boolean val = defaultValue;
+
+		try {
+			String s = _props.getProperty(propName);
+			if (s != null) {
+				val = Boolean.valueOf(s);
+			}
+		}
+		catch (Exception e) {
+			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+		}
+
+		return val;
 	}
 }

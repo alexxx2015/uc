@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.distribution.pip;
 
+
 public enum EDistributedPipStrategy {
 	PUSH;
 

@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc;
 
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +17,11 @@ public class Controller {
 		CommandLine cl = CommandLineOptions.init(args);
 
 		// load properties
-		try {
-			if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
-				Settings.getInstance(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS)).loadProperties();
-			}
-			else {
-				Settings.getInstance().loadProperties();
-			}
-		} catch (IOException e) {
-			_logger.error("Properties cannot be loaded.	", e);
-			return;
+		if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
+			Settings.getInstance(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
+		}
+		else {
+			Settings.getInstance();
 		}
 
 		new Thread(RequestHandler.INSTANCE).start();

@@ -24,8 +24,8 @@ public class PmpHandler extends GenericHandler<PmpRequest> implements IAny2Pmp {
 
 	@Override
 	public void init(IAny2Pip pip, IAny2Pdp pdp) {
-		_initialized = true;
 		if (!_initialized) {
+			_initialized = true;
 			_pip = pip;
 			_pdp = pdp;
 		}
