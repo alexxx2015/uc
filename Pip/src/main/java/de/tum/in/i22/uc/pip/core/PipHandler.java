@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.derby.impl.sql.compile.IsNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,15 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.distribution.DistributedPipManager;
 import de.tum.in.i22.uc.pip.core.eventdef.DefaultEventHandler;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.states.IsCombinedWith;
+import de.tum.in.i22.uc.pip.core.ifm.states.IsNotIn;
+import de.tum.in.i22.uc.pip.core.ifm.states.IsOnlyIn;
+import de.tum.in.i22.uc.pip.core.ifm.states.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.pip.interfaces.EStateBasedFormula;
+import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
+import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
@@ -42,7 +50,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private final PipManager _pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
 
 	private static final PipHandler _instance = new PipHandler();
-	
+
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
@@ -55,153 +63,53 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private IAny2Pdp _pdp;
 	private IAny2Pmp _pmp;
 
+	private boolean _initialized = false;
+
 	private PipHandler() {
-	
+
 	}
 
 	public static PipHandler getInstance(){
-		return _instance; 
+		return _instance;
 	}
 
 	@Override
 	public void init(IAny2Pdp pdp, IAny2Pmp pmp) {
-		_pdp = pdp;
-		_pmp = pmp;
+		_initialized = true;
+		if (!_initialized) {
+			_pdp = pdp;
+			_pmp = pmp;
+		}
 	}
 
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
-		// TODO: evaluatePredicateCurrentState
-		// TODO: add code to evaluate generic predicate
-		// Note that the three parameters of the predicate (State-based formula,
-		// parameter1, parameter2) should be separated by separator1, while list
-		// of elements (containers or data) should be separated by separator2
-		final String separator1 = "\\|";
-		final String separator2 = "#";
 		_logger.info("Evaluate Predicate "+predicate+ " in simulated environment");
 
+		IStateBasedPredicate spredicate = null;
 
-		///BEGINNING OF TEST BLOCK
-//		String contId = _ifModel.getContainerIdByName(new Name(
-//				"TEST_C"));
-//
-//		if (contId!=null){
-//			_logger.debug("number of data elements in container TEST_C = "+_ifModel.getDataInContainer(contId).size());
-//		} else {
-//			_logger.debug("TEST_C contains no data or no container TEST_C found");
-//		}
-		///END OF TEST BLOCK
-
-
-
-		//System.err.println(_ifModel.printModel());
-		String[] st = predicate.split(separator1);
-		_logger.debug("st.length="+st.length);
-
-		if (st.length == 4) {
-			String formula = st[0];
-			String par1 = st[1];
-			String par2 = st[2];
-			int par3 = Integer.parseInt(st[3]);  //to be used for quantitative formulae
-
-			String[] containers;
-			Set<IContainer> s;
-
-			String out="Evaluate Predicate "+formula+ " with parameters [" + par1 + "],[" + par2+"] and ["+par3+"]";
-
-			/*
-			 * TODO
-			 *
-			 * Whoever wrote this: Factor this code out.
-			 * Proposal: Create an abstract class or interface and
-			 * have one subclass per state based formula.
-			 * Then just get the correct instance and invoke the function
-			 * for evaluation. done.
-			 * -FK-
-			 */
-
-			switch (formula) {
-			case "isNotIn":  //par1 is data, par2 is list of containers
-//				containers= par2.split(separator2);
-//				s= _ifModel.getContainersForData(new DataBasic(par1));
-//				//_logger.debug("size of s: "+s.size());
-//				if(s.size() > 0){
-//					for (String cont : containers){
-//						NameBasic pname= new NameBasic(cont);
-//						//_logger.debug("..in loop("+cont+")..");
-//						if (s.contains(_ifModel.getContainerRelaxed(pname))) {
-//							_logger.trace(out+"=false");
-//							return false;
-//						}
-//					}
-//					//_logger.trace("..no match found, returning true");
-//					_logger.trace(out+"=true");
-//					return true;
-//				} else{
-//					return false;
-//				}
-				IContainer par1Container = _ifModel.getContainerRelaxed(new NameBasic(par1));
-				Set<IData> par1DataSet = _ifModel.getDataInContainer(par1Container);
-				containers= par2.split(separator2);
-				for(IData par1Data : par1DataSet){
-					s= _ifModel.getContainersForData(par1Data);
-					//_logger.debug("size of s: "+s.size());
-					if(s.size() > 0){
-						for (String cont : containers){
-							NameBasic pname= new NameBasic(cont);
-							//_logger.debug("..in loop("+cont+")..");
-							if (s.contains(_ifModel.getContainerRelaxed(pname))) {
-								_logger.trace(out+"=false");
-								return false;
-							}
-						}
-						//_logger.trace("..no match found, returning true");
-						_logger.trace(out+"=true");
-						return true;
-					}
-				}
-				if(par1DataSet.size() == 0){
-					return false;
-				}
-			case "isOnlyIn":
-				containers= par2.split(separator2);
-				Set<String> limit = new HashSet<String>(Arrays.asList(containers));
-				s= _ifModel.getContainersForData(new DataBasic(par1));
-				//_logger.debug("size of s: "+s.size());
-				for (IContainer cont : s){
-					NameBasic pname= new NameBasic(cont.getId());//TODO: not sure if it is correct
-					//_logger.debug("..in loop("+cont+")..");
-					if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
-						_logger.trace(out+"=false");
-						return false;
-					}
-				}
-				//_logger.trace("..no match found, returning true");
-				_logger.trace(out+"=false");
-				return true;
-
-			case "isCombinedWith":
-				Set<IContainer> s1= _ifModel.getContainersForData(new DataBasic(par1));
-				Set<IContainer> s2=_ifModel.getContainersForData(new DataBasic(par2));
-				for (IContainer cont : s1){
-					if (s2.contains(cont)) {
-						_logger.trace(out+"=true");
-						return true;
-					}
-				}
-				_logger.trace(out+"=false");
-				return false;
-
-
-			default:
-				_logger.trace(out+"=null");
-				return null;
-			}
-
-		} else
-			_logger.trace("returning null");
+		String[] st = predicate.split(StateBasedPredicate.separator1);
+		if (st.length == 0) {
 			return null;
+		}
+
+		switch (EStateBasedFormula.from(st[0])) {
+			case IS_COMBINED_WITH:
+				if (st.length < 3) { return null; }
+				spredicate = new IsCombinedWith(predicate, st[1], st[2]);
+				break;
+			case IS_NOT_IN:
+				if (st.length < 3) { return null; }
+				spredicate = new IsNotIn(predicate, st[1], st[2]);
+				break;
+			case IS_ONLY_IN:
+				if (st.length < 3) { return null; }
+				spredicate = new IsOnlyIn(predicate, st[1], st[2]);
+				break;
+		}
+
+		return spredicate != null ? spredicate.evaluate() : null;
 	}
 
 	@Override

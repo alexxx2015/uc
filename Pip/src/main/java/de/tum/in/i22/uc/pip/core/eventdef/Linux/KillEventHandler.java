@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.pip.core.eventdef.Linux;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 

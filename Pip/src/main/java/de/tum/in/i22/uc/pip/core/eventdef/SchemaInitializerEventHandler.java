@@ -5,8 +5,8 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FileContainer;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.linux.FileContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
 
 public class SchemaInitializerEventHandler extends BaseEventHandler {
 

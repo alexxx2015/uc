@@ -12,9 +12,9 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.pip.core.IEventHandler;
 import de.tum.in.i22.uc.pip.core.Scope;
 import de.tum.in.i22.uc.pip.core.ifm.ScopeInformationFlowModel;
+import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
 
 public abstract class BaseEventHandler implements IEventHandler {
@@ -116,7 +116,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * @see de.tum.in.i22.pip.core.IActionHandler#execute_event()
 	 */
 	@Override
-	public IStatus executeEvent() {
+	public final IStatus executeEvent() {
 
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
@@ -183,13 +183,13 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public void setEvent(IEvent event) {
+	public final void setEvent(IEvent event) {
 		if (event != null) {
 			_event = event;
 		}
 	}
 
-	protected String getParameterValue(String key) throws ParameterNotFoundException {
+	protected final String getParameterValue(String key) throws ParameterNotFoundException {
 		String value = _event.getParameters().get(key);
 
 		if (value == null) {
@@ -202,11 +202,13 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 * Checks if the process with given PID already exists, if not create a
 	 * container, crate a name, and make a relation between them.
 	 *
+	 * @deprecated This should _NOT_ be part of the *generic* BaseEventHandler -FK-
 	 * @param processId
 	 *            Process ID (PID)
 	 * @return
 	 */
 	// TODO, FK: This should _NOT_ be part of the *generic* BaseEventHandler
+	@Deprecated
 	protected IContainer instantiateProcess(String processId, String processName) {
 		IContainer container = ifModel.getContainer(new NameBasic(processId));
 

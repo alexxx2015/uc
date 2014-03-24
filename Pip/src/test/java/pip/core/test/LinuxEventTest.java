@@ -14,18 +14,15 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.SocketName;
+import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 
 public class LinuxEventTest {
-	private static IPdp2Pip _pipHandler = new PipHandler(
-												Settings.getInstance().getDistributedPipStrategy(),
-												Settings.getInstance().getPipPortNum());
+	private static IPdp2Pip _pipHandler = PipHandler.getInstance();
 
 	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
 

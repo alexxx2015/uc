@@ -1,8 +1,10 @@
 package de.tum.in.i22.uc.pdp.internal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,106 +13,76 @@ import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
 
-public class ExecuteAction implements Serializable
-{
-  private static final long serialVersionUID =8451999937686098519L;
-  private static Logger     log              =LoggerFactory.getLogger(ExecuteAction.class);
+public class ExecuteAction implements Serializable {
+	private static final long serialVersionUID = 8451999937686098519L;
+	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
 
-  private String          name      = null;
-  private List<Param<?>>  parameter = new ArrayList<Param<?>>();
-  private String          processor = null;
-  private String	id = null;
+	private String name = null;
+	private final Set<Param<?>> parameters = new HashSet<Param<?>>();
+	private String processor = null;
+	private String id = null;
 
-  public ExecuteAction(String name, List<Param<?>> params)
-  {
-    this.name=name;
-    this.parameter=params;
-  }
+	public ExecuteAction(String name, List<Param<?>> params) {
+		this.name = name;
+		this.parameters.addAll(params);
+	}
 
-  public ExecuteAction()
-  {}
-  
-  public ExecuteAction(ExecuteActionType execAction)
-  {
-    log.debug("Preparing executeAction from ExecuteActionType");
-    this.name = execAction.getName();
-    this.id = execAction.getId();
-    for(ParameterType param : execAction.getParameter())
-    {
-      this.parameter.add(new Param<String>(param.getName(), param.getValue()));
-    }
-  }
-  
-  public ExecuteAction(ExecuteAsyncActionType execAction)
-  {
-    log.debug("Preparing executeAction from ExecuteAsyncActionType");
-    this.name = execAction.getName();
-    this.id = execAction.getId();
-    this.processor = execAction.getProcessor().value();
-    for(ParameterType param : execAction.getParameter())
-    {
-      this.parameter.add(new Param<String>(param.getName(), param.getValue()));
-    }
-  }  
-  
-  public String getName()
-  {
-    return name;
-  }
+	public ExecuteAction() {
+	}
 
-  public void setName(String name)
-  {
-    this.name=name;
-  }
+	public ExecuteAction(ExecuteActionType execAction) {
+		log.debug("Preparing executeAction from ExecuteActionType");
+		this.name = execAction.getName();
+		this.id = execAction.getId();
+		for (ParameterType param : execAction.getParameter()) {
+			this.parameters.add(new Param<String>(param.getName(), param
+					.getValue()));
+		}
+	}
 
-  public List<Param<?>> getParams()
-  {
-    return parameter;
-  }
+	public ExecuteAction(ExecuteAsyncActionType execAction) {
+		log.debug("Preparing executeAction from ExecuteAsyncActionType");
+		this.name = execAction.getName();
+		this.id = execAction.getId();
+		this.processor = execAction.getProcessor().value();
+		for (ParameterType param : execAction.getParameter()) {
+			this.parameters.add(new Param<String>(param.getName(), param
+					.getValue()));
+		}
+	}
 
-  public void setParams(List<Param<?>> params)
-  {
-    this.parameter=params;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void addParameter(Param<?> param)
-  {
-    this.parameter.add(param);
-  }
+	public Collection<Param<?>> getParams() {
+		return parameters;
+	}
 
-  public void removeParameter(String name)
-  {
-    this.parameter.remove(name);
-  }
+	public Param<?> getParameterForName(String name) {
+		for (Param<?> p : parameters) {
+			if (p.getName().equalsIgnoreCase(name)) {
+				return p;
+			}
+		}
+		return null;
+	}
 
-  public Param<?> getParameterForName(String name)
-  {
-    for(int i=0; i < parameter.size(); i++)
-      if(parameter.get(i).getName().equalsIgnoreCase(name)) return parameter.get(i);
-    return null;
-  }
+	public String getProcessor() {
+		return processor;
+	}
 
-  public String getProcessor()
-  {
-    return processor;
-  }
-  
-  public String getId(){
-	  return this.id;
-  }
+	public String getId() {
+		return this.id;
+	}
 
-  public void setProcessor(String processor)
-  {
-    this.processor=processor;
-  }
-
-  public String toString()
-  {
-    String str="ExecuteAction name=[" + this.name + "]; "+(this.processor!=null ? "[processed by: " + this.processor + "]" : "")+" Parameter:{";
-
-    for(Param<?> param : this.parameter)
-      str+=param.toString() + ";";
-    str+="}";
-    return str;
-  }
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("name", name)
+				.add("id", id)
+				.add(processor, processor)
+				.add("parameters", parameters)
+				.toString();
+	}
 }

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
-import de.tum.in.i22.uc.pdp.handlers.pxp.IPolicyExecutionPoint;
+import de.tum.in.i22.uc.pdp.handlers.pxp.IPxp;
 import de.tum.in.i22.uc.pdp.handlers.pxp.PXPStub;
 import de.tum.in.i22.uc.pdp.internal.condition.Condition;
 import de.tum.in.i22.uc.pdp.internal.condition.TimeAmount;
@@ -273,7 +273,7 @@ public boolean revoke()
             {
               log.debug("Execute asynchronous action [{}]", execAction.getName());
               // TODO: Execution should be forwarded to appropriate execution instance!
-              IPolicyExecutionPoint pxp = new PXPStub();
+              IPxp pxp = new PXPStub();
               pxp.execute(execAction, null);
             }
           }

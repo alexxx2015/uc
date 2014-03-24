@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.datatypes.Linux;
+package de.tum.in.i22.uc.cm.datatypes.linux;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 

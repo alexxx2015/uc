@@ -143,9 +143,11 @@ public class TAny2PdpImpl extends ClientConnectionHandler implements TAny2Pdp.If
 	}
 
 	@Override
-	public de.tum.i22.in.uc.cm.thrift.Response processEventSync(
+	public de.tum.i22.in.uc.cm.thrift.Response processEvent(
 			de.tum.i22.in.uc.cm.thrift.Event e) throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 }

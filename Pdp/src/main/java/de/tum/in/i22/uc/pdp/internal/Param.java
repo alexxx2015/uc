@@ -1,95 +1,81 @@
 package de.tum.in.i22.uc.pdp.internal;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class Param<T> implements Serializable
-{
-  //private static Logger     log              =LoggerFactory.getLogger(EventMatch.class);
-  private static final long serialVersionUID =-7061921148298856812L;
+public class Param<T> implements Serializable {
+	private static final long serialVersionUID = -7061921148298856812L;
 
-  private String name;
-  private T      value;
-  private int    type;
-  
-  public Param()
-  {}
+	private final String name;
+	private final T value;
+	private final int type;
 
-  public Param(String name, T value, int type)
-  {
-    if(name == null) throw new IllegalArgumentException("Name required");
-    this.name=name;
-    this.value=value;
-    this.type=type;
-  }
+	public Param(String name, T value, int type) {
+		if (name == null)
+			throw new IllegalArgumentException("Name required");
+		this.name = name;
+		this.value = value;
+		this.type = type;
+	}
 
-  public Param(String name, T value)
-  {
-    if(name == null) throw new IllegalArgumentException("Name required");
-    this.name=name;
-    this.value=value;
-    this.type=Constants.PARAMETER_TYPE_STRING;
-  }
+	public Param(String name, T value) {
+		this(name, value, Constants.PARAMETER_TYPE_STRING);
+	}
 
+	public String getName() {
+		return name;
+	}
+	public T getValue() {
+		return value;
+	}
 
-  public String getName()
-  {
-    return name;
-  }
+	public int getType() {
+		return type;
+	}
 
-  public void setName(String name)
-  {
-    this.name=name;
-  }
+	public static int getIdForName(String type) {
+		if (type != null) {
+			switch (type.toLowerCase()) {
+				case "datausage":
+					return Constants.PARAMETER_TYPE_DATAUSAGE;
+				case "xpath":
+					return Constants.PARAMETER_TYPE_XPATH;
+				case "regex":
+					return Constants.PARAMETER_TYPE_REGEX;
+				case "context":
+					return Constants.PARAMETER_TYPE_CONTEXT;
+				case "binary":
+					return Constants.PARAMETER_TYPE_BINARY;
+				case "int":
+					return Constants.PARAMETER_TYPE_INT;
+				case "long":
+					return Constants.PARAMETER_TYPE_LONG;
+				case "bool":
+					return Constants.PARAMETER_TYPE_BOOL;
+			}
+		}
+		return Constants.PARAMETER_TYPE_STRING;
+	}
 
-  public T getValue()
-  {
-    return value;
-  }
+	@Override
+	public String toString() {
+		return name + ": " + value + " ("
+				+ Constants.PARAMETER_TYPE_NAMES[type] + ")";
+	}
 
-  public void setValue(T value)
-  {
-    this.value=value;
-  }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Param) {
+			Param<?> o = (Param<?>) obj;
+			return Objects.equals(name, o.name)
+					&& Objects.equals(value, o.value)
+					&& Objects.equals(type, o.type);
+		}
+		return false;
+	}
 
-  public int getType()
-  {
-    return type;
-  }
-
-  public void setType(int type)
-  {
-    this.type=type;
-  }
-
-  public static int getIdForName(String type)
-  {
-    if(type != null)
-    {
-      if(type.equalsIgnoreCase("datausage"))
-        return Constants.PARAMETER_TYPE_DATAUSAGE;
-      else if(type.equalsIgnoreCase("xpath"))
-        return Constants.PARAMETER_TYPE_XPATH;
-      else if(type.equalsIgnoreCase("regex"))
-        return Constants.PARAMETER_TYPE_REGEX;
-      else if(type.equalsIgnoreCase("context"))
-        return Constants.PARAMETER_TYPE_CONTEXT;
-      else if(type.equalsIgnoreCase("binary"))
-        return Constants.PARAMETER_TYPE_BINARY;
-      else if(type.equalsIgnoreCase("int"))
-        return Constants.PARAMETER_TYPE_INT;
-      else if(type.equalsIgnoreCase("long"))
-        return Constants.PARAMETER_TYPE_LONG;
-      else if(type.equalsIgnoreCase("bool")) 
-        return Constants.PARAMETER_TYPE_BOOL;
-    }
-    return Constants.PARAMETER_TYPE_STRING;
-  }
-  
-  public String toString()
-  {
-    return name + ": " + value + " (" + Constants.PARAMETER_TYPE_NAMES[type] + ")";
-  }
-  
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, type, value);
+	}
 }
-
-

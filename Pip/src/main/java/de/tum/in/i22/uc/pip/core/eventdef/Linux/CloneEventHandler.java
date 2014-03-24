@@ -8,9 +8,9 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.Linux.IClonableForProcess;
-import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessContainer;
-import de.tum.in.i22.uc.cm.datatypes.Linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.linux.IClonableForProcess;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 

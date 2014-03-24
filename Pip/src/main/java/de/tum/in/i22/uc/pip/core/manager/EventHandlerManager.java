@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.pip.core.IEventHandler;
 import de.tum.in.i22.uc.pip.core.manager.db.EventHandlerDefinition;
+import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
 public class EventHandlerManager implements IEventHandlerCreator {
 

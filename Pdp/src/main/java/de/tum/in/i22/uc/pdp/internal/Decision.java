@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.pdp.handlers.pxp.IPolicyExecutionPoint;
+import de.tum.in.i22.uc.pdp.handlers.pxp.IPxp;
 import de.tum.in.i22.uc.pdp.handlers.pxp.PXPStub;
 
 /**
@@ -87,7 +87,7 @@ public class Decision implements java.io.Serializable
             log.debug("Executing [{}]", execAction.getName());
 
             // TODO: Execution should be forwarded to appropriate execution instance!
-            IPolicyExecutionPoint pxp = new PXPStub();
+            IPxp pxp = new PXPStub();
             executionReturn = pxp.execute(execAction, curEvent);
           }
 
@@ -143,7 +143,7 @@ public class Decision implements java.io.Serializable
       {
         log.debug("Execute asynchronous action [{}]", execAction.getName());
         // TODO: Execution should be forwarded to appropriate execution instance!
-        IPolicyExecutionPoint pxp = new PXPStub();
+        IPxp pxp = new PXPStub();
         pxp.execute(execAction, curEvent);
       }
     }

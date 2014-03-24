@@ -3,10 +3,10 @@ package de.tum.in.i22.uc.pip.core.eventdef.Linux;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.Linux.FiledescrName;
-import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer;
-import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Domain;
-import de.tum.in.i22.uc.cm.datatypes.Linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
 import de.tum.in.i22.uc.pip.core.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.core.eventdef.ParameterNotFoundException;
 

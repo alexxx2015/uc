@@ -627,16 +627,18 @@ public class InformationFlowModel {
 		return null;
 	}
 
-// 	FK:  Why would it be useful???
-//		If there is someone who agrees: Please delete this code.
+
 	/**
 	 * Returns the container that is referenced by the naming name. The search
 	 * is done in a less strict way; it is enough that the name only partially
 	 * fits an entry in the naming mapping.
-	 *
+	 * @deprecated Why would it be useful?. Should imo be deleted. -FK-
 	 * @param name
 	 * @return
 	 */
+// 	FK:  Why would it be useful???
+//		If there is someone who agrees: Please delete this code.
+	@Deprecated
 	public IContainer getContainerRelaxed(IName name) {
 		IContainer container = null;
 		if (name != null && name.getName() != null) {

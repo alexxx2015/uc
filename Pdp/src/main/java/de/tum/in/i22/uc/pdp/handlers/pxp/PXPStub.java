@@ -14,7 +14,7 @@ import de.tum.in.i22.uc.pdp.internal.ExecuteAction;
 import de.tum.in.i22.uc.pdp.internal.Param;
 import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
 
-public class PXPStub implements IPolicyExecutionPoint
+public class PXPStub implements IPxp
 {
   private static Logger log = LoggerFactory.getLogger(PXPStub.class);
 
