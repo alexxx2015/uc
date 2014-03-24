@@ -1,64 +1,52 @@
 package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
-
 import java.io.IOException;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
+import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
-import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
+import de.tum.in.i22.uc.cm.in.RequestHandler;
+import de.tum.in.i22.uc.cm.requests.EPdpRequestType;
+import de.tum.in.i22.uc.cm.requests.PdpRequest;
 
-public class TAny2PdpImpl extends ClientConnectionHandler implements TAny2Pdp.Iface {
+public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp.Iface, IForwarder {
 
-	private static final String IP = "localhost";
-	private static int PORT = 8090;
+	private final int _port;
 
-	private static final Logger _logger = LoggerFactory.getLogger(TAny2PdpImpl.class);
-
-	public TAny2PdpImpl(int pepPort) {
-		// we should start it on this port
+	public TAny2PdpHandler(int pepPort) {
 		super(null, null);
-		PORT = pepPort;
+		_port = pepPort;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "GenericThriftServer: " + IP + ":" + PORT;
+		return this.getClass().getSimpleName() + " listening on port " + _port;
 	}
 
 	private IResponse processEvent(IEvent ev) {
-		//TODO: move to communication manager
-//		if (ev == null)
-//			return null;
-//
-//		Object responseObj;
-//		try {
-//			requestHandler.addEvent(ev, this);
-//			responseObj = waitForResponse();
-//		} catch (InterruptedException e1) {
-//			// TODO Auto-generated catch block
-//			_logger.error("Communication error. Returning null");
-//			e1.printStackTrace();
+		RequestHandler.addRequest(new PdpRequest(EPdpRequestType.NOTIFY_EVENT, ev), this);
+
+		Object responseObj;
+		try {
+			responseObj = waitForResponse();
+			_logger.error("Communication error. Returning null");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 			return null;
-//		}
-//
-//		_logger.trace("Response received");
-//
-//		if (responseObj instanceof IResponse) {
-//			return (IResponse) responseObj;
-//		} else {
-//			_logger.error("Response is not an instance of IResponse. returning null");
-//			throw new RuntimeException("IResponse type expected for "
-//					+ responseObj);
-//		}
+		}
+
+		if (responseObj instanceof IResponse) {
+			return (IResponse) responseObj;
+		} else {
+			throw new RuntimeException("IResponse type expected for " + responseObj);
+		}
 	}
 
 	/****
@@ -136,15 +124,12 @@ public class TAny2PdpImpl extends ClientConnectionHandler implements TAny2Pdp.If
 	}
 
 
-
-
 	@Override
 	protected void disconnect() {
 	}
 
 	@Override
-	public de.tum.i22.in.uc.cm.thrift.Response processEvent(
-			de.tum.i22.in.uc.cm.thrift.Event e) throws TException {
+	public de.tum.i22.in.uc.cm.thrift.Response processEvent(de.tum.i22.in.uc.cm.thrift.Event e) throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}

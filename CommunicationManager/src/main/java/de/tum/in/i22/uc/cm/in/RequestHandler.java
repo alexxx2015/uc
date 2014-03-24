@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.in.i22.uc.cm.in.thrift.GenericThriftServer;
-import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpImpl;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
@@ -28,9 +28,9 @@ public class RequestHandler implements Runnable {
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper<? extends Request>> _requestQueue = new LinkedBlockingQueue<>();
 
-	private final PdpHandler _pdpHandler;
-	private final PipHandler _pipHandler;
-	private final PmpHandler _pmpHandler;
+	public static final PdpHandler PDP = PdpHandler.getInstance();
+	public static final PipHandler PIP = PipHandler.getInstance();
+	public static final PmpHandler PMP = PmpHandler.getInstance();
 
 
 	private static Thread _threadThriftServer;
@@ -39,28 +39,24 @@ public class RequestHandler implements Runnable {
 
 
 	private RequestHandler() {
-		_pdpHandler = PdpHandler.getInstance();
-		_pipHandler = PipHandler.getInstance();
-		_pmpHandler = PmpHandler.getInstance();
-
-		_pdpHandler.init(_pipHandler, _pmpHandler);
-		_pipHandler.init(_pdpHandler, _pmpHandler);
-		_pmpHandler.init(_pipHandler, _pdpHandler);
+		PDP.init(PIP, PMP);
+		PIP.init(PDP, PMP);
+		PMP.init(PIP, PDP);
 
 		startListeners();
 	}
 
 
 	private void startListeners() {
-		
+
 		int port = Settings.getInstance().getPepThriftListenerPortNum();
-		
-		TAny2PdpImpl pdpServerHandler=new TAny2PdpImpl(port);
-		TAny2Pdp.Processor<TAny2PdpImpl> pdpProcessor =	new TAny2Pdp.Processor<TAny2PdpImpl>(pdpServerHandler);
-		GenericThriftServer<TAny2PdpImpl> pdpServer = new GenericThriftServer<>(port, new TAny2PdpImpl(port), pdpProcessor);
+
+		TAny2PdpHandler pdpServerHandler=new TAny2PdpHandler(port);
+		TAny2Pdp.Processor<TAny2PdpHandler> pdpProcessor =	new TAny2Pdp.Processor<TAny2PdpHandler>(pdpServerHandler);
+		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(port, new TAny2PdpHandler(port), pdpProcessor);
 		new Thread (pdpServer).start();
-				
-		
+
+
 	}
 
 
@@ -80,8 +76,9 @@ public class RequestHandler implements Runnable {
 		this._threadThriftServer.stop();
 	}
 
-	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
-		_requestQueue.add(new RequestWrapper<T>(request, forwarder));
+
+	public static <T extends Request>  void addRequest(T request, IForwarder forwarder) {
+		INSTANCE._requestQueue.add(new RequestWrapper<T>(request, forwarder));
 	}
 
 //	public void addUpdateIfFlowRequest(IPipDeployer pipDeployer,
@@ -115,11 +112,11 @@ public class RequestHandler implements Runnable {
 			Object response = null;
 
 			if (request instanceof PdpRequest) {
-				response = _pdpHandler.process((PdpRequest) request);
+				response = PDP.process((PdpRequest) request);
 			} else if (request instanceof PipRequest) {
-				response = _pipHandler.process((PipRequest) request);
+				response = PIP.process((PipRequest) request);
 			} else if (request instanceof PmpRequest) {
-				response = _pmpHandler.process((PmpRequest) request);
+				response = PMP.process((PmpRequest) request);
 			} else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}

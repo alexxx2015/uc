@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.requests.PdpRequest;
 
 /**
  * Incoming interface. Other modules use this interface to invoke operations

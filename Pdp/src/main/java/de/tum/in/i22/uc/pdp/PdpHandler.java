@@ -17,7 +17,6 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
-import de.tum.in.i22.uc.pdp.internal.Decision;
 import de.tum.in.i22.uc.pdp.internal.Event;
 import de.tum.in.i22.uc.pdp.internal.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
@@ -39,7 +38,7 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 	private IAny2Pmp _pmp;
 	private IAny2Pip _pip;
 
-	private PdpHandler(){
+	private PdpHandler() {
 	}
 
 	public static PdpHandler getInstance() {
@@ -55,16 +54,13 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		}
 	}
 
-
 	@Override
 	public IResponse notifyEvent(IEvent event) {
-		if (event==null){
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR,"null event received"), null, null);
+		if (event == null) {
+			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		Decision d = _lpdp.notifyEvent(new Event(event));
-		return d.getResponse();
+		return _lpdp.notifyEvent(new Event(event)).getResponse();
 	}
-
 
 	@Override
 	public IStatus deployMechanism(IMechanism mechanism) {
@@ -72,13 +68,11 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		return null;
 	}
 
-
 	@Override
 	public IMechanism exportMechanism(String par) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public IStatus revokeMechanism(String policyName) {
@@ -86,13 +80,11 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		return null;
 	}
 
-
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public IStatus deployPolicy(String policyFilePath) {
@@ -100,17 +92,15 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		return null;
 	}
 
-
 	@Override
 	public HashMap<String, ArrayList<IPdpMechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	@Override
 	public boolean registerPxp(IPxpSpec pxp) {
-		// TODO Auto-generated method stub
+		// TODO Superstar.
 		return false;
 	}
 
@@ -121,9 +111,18 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		switch (request.getType()) {
 			case REGISTER_PXP:
 				result = registerPxp(request.getPxp());
-		case NOTIFY_EVENT:
+			case NOTIFY_EVENT:
+				result = notifyEvent(request.getEvent());
+				break;
+		case DEPLOY_MECHANISM:
 			break;
-		case UPDATE_INFORMATION_FLOW_SEMANTICS:
+		case DEPLOY_POLICY:
+			break;
+		case EXPORT_MECHANISM:
+			break;
+		case LIST_MECHANISMS:
+			break;
+		case REVOKE_MECHANISM:
 			break;
 		default:
 			throw new RuntimeException("Method " + request.getType() + " is not supported!");

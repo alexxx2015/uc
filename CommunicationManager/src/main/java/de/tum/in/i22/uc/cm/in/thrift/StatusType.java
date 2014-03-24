@@ -7,9 +7,6 @@
 package de.tum.in.i22.uc.cm.in.thrift;
 
 
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
 
 public enum StatusType implements org.apache.thrift.TEnum {
   OK(1),
@@ -27,7 +24,8 @@ public enum StatusType implements org.apache.thrift.TEnum {
   /**
    * Get the integer value of this enum value, as defined in the Thrift IDL.
    */
-  public int getValue() {
+  @Override
+public int getValue() {
     return value;
   }
 
@@ -35,7 +33,7 @@ public enum StatusType implements org.apache.thrift.TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static StatusType findByValue(int value) { 
+  public static StatusType findByValue(int value) {
     switch (value) {
       case 1:
         return OK;
