@@ -45,7 +45,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private final PipManager _pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
 
-	private static final PipHandler _instance = new PipHandler();
+	private static PipHandler _instance = null;
 
 	/**
 	 * Manages everything related to distributed data flow tracking
@@ -65,6 +65,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	}
 
 	public static PipHandler getInstance(){
+		if (_instance==null) _instance = new PipHandler();
 		return _instance;
 	}
 

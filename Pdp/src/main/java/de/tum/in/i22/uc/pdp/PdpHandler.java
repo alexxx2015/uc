@@ -31,7 +31,7 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
 	private final IPolicyDecisionPoint _lpdp = PolicyDecisionPoint.getInstance();
 
-	private final static PdpHandler _instance = new PdpHandler();
+	private static PdpHandler _instance = null;
 
 	private boolean _initialized = false;
 
@@ -42,6 +42,7 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 	}
 
 	public static PdpHandler getInstance() {
+		if (_instance==null) _instance = new PdpHandler();
 		return _instance;
 	}
 
