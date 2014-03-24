@@ -1,6 +1,7 @@
-package de.tum.in.i22.uc.cm.in.pep.thrift;
+package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
+
 import java.io.IOException;
 
 import org.apache.thrift.TException;
@@ -12,26 +13,25 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 
-public class ThriftServerHandler extends ClientConnectionHandler implements
-ExtendedThriftConnector.Iface {
+public class TAny2PdpImpl extends ClientConnectionHandler implements TAny2Pdp.Iface {
 
 	private static final String IP = "localhost";
 	private static int PORT = 8090;
 
-	private static final Logger _logger = LoggerFactory.getLogger(ThriftServerHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(TAny2PdpImpl.class);
 
-	public ThriftServerHandler(int pepPort) {
+	public TAny2PdpImpl(int pepPort) {
 		// we should start it on this port
 		super(null, null);
 		PORT = pepPort;
-
 	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "ThriftServer: " + IP + ":" + PORT;
+		return "GenericThriftServer: " + IP + ":" + PORT;
 	}
 
 	private IResponse processEvent(IEvent ev) {
@@ -61,7 +61,6 @@ ExtendedThriftConnector.Iface {
 //		}
 	}
 
-	@Override
 	/****
 	 * Async events are not blocking on the PEP side, therefore they can only be actual events.
 	 *
@@ -78,7 +77,6 @@ ExtendedThriftConnector.Iface {
 		return;
 	}
 
-	@Override
 	/****
 	 * Async events are not blocking on the PEP side, therefore they can only be actual events.
 	 * As of now, we assume the sync (=blocking) events are ONLY DESIRED events, but for synchronization issues it may be the case that we need to make also the actual events synchronous.
@@ -137,21 +135,17 @@ ExtendedThriftConnector.Iface {
 
 	}
 
-	@Override
-	public void processEventAsync(Event e, String senderID) throws TException {
-		//TODO: senderID ignored for the time being
-		processEventAsync(e);
 
-	}
 
-	@Override
-	public Response processEventSync(Event e, String senderID)
-			throws TException {
-		//TODO: senderID ignored for the time being
-		return processEventSync(e);
-	}
 
 	@Override
 	protected void disconnect() {
+	}
+
+	@Override
+	public de.tum.i22.in.uc.cm.thrift.Response processEventSync(
+			de.tum.i22.in.uc.cm.thrift.Event e) throws TException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

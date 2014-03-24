@@ -19,18 +19,12 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.Message.Builder;
-import com.google.protobuf.TextFormat;
-
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.pdp.internal.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.internal.exceptions.InvalidOperatorException;
-import de.tum.in.i22.uc.pdp.internal.gproto.MechanismProto.PbMechanism;
-import de.tum.in.i22.uc.pdp.internal.gproto.PolicyProto.PbPolicy;
-import de.tum.in.i22.uc.pdp.internal.gproto.PolicyProto.PbPolicyOrBuilder;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
+
 public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static Logger log = LoggerFactory
 			.getLogger(PolicyDecisionPoint.class);
@@ -57,8 +51,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	public boolean deployPolicy(String policyFilename) {
 		if (policyFilename.endsWith(".xml"))
 			return deployXML(policyFilename);
-		else if (policyFilename.endsWith(".gpb"))
-			return deployGPB(policyFilename);
 		log.warn("Unsupported message format of policy!");
 		return false;
 	}
@@ -66,7 +58,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	public boolean deployXML(String xmlFilename) {
 		try {
 			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.cm.pdp.xsd");
+					.newInstance("de.tum.in.i22.uc.pdp.xsd");
 			Unmarshaller u = jc.createUnmarshaller();
 
 			// SchemaFactory sf = SchemaFactory.newInstance(
@@ -131,48 +123,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			e.printStackTrace();
 		}
 		return false;
-	}
-
-	public boolean deployGPB(String gpbFilename) {
-		PbPolicyOrBuilder curPolicy = PbPolicy.newBuilder();
-		try {
-			CharSequence cs = readFile(gpbFilename);
-			TextFormat.merge(cs, (Builder) curPolicy);
-		} catch (Exception e) {
-			log.error("Exception occured: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-
-		log.debug(curPolicy.toString());
-		for (PbMechanism mech : curPolicy.getMechanismsList()) {
-			log.debug("Processing mechanism: {}", mech.getName());
-			try {
-				Mechanism curMechanism = new Mechanism(mech);
-				ArrayList<IPdpMechanism> mechanismList = this.policyTable.get(curPolicy.getName());
-				if (mechanismList == null)
-					mechanismList = new ArrayList<IPdpMechanism>();
-				if (mechanismList.contains(curMechanism)) {
-					log.error(
-							"Mechanism [{}] is already deployed for policy [{}]",
-							curMechanism.getMechanismName(),
-							curPolicy.getName());
-					continue;
-				}
-
-				mechanismList.add(curMechanism);
-				this.policyTable.put(curPolicy.getName(), mechanismList);
-
-				log.debug("Starting mechanism update thread...");
-				curMechanism.init(this);
-				log.info("Mechanism {} started...",
-						curMechanism.getMechanismName());
-			} catch (InvalidOperatorException e) {
-				log.error("Invalid Operator specified: {}", e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		return true;
 	}
 
 	@Override

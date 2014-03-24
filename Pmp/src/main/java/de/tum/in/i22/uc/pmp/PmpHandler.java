@@ -12,6 +12,16 @@ public class PmpHandler extends GenericHandler<PmpRequest> implements IAny2Pmp {
 	private IAny2Pip _pip;
 	private IAny2Pdp _pdp;
 
+	private static final PmpHandler _instance = new PmpHandler();
+	
+	private PmpHandler(){
+		
+	}
+	
+	public static PmpHandler getInstance(){
+		return _instance;
+	}
+	
 	@Override
 	public void init(IAny2Pip pip, IAny2Pdp pdp) {
 		_pip = pip;

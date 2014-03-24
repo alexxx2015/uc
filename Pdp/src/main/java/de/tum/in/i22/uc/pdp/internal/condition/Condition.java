@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.internal.Event;
 import de.tum.in.i22.uc.pdp.internal.Mechanism;
-import de.tum.in.i22.uc.pdp.internal.exceptions.InvalidOperatorException;
-import de.tum.in.i22.uc.pdp.internal.gproto.ConditionProto.PbUnaryOperator;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
 public class Condition
@@ -35,17 +33,6 @@ public class Condition
 //      e.printStackTrace();
 //    }
     log.debug("condition: {}", this.operator);
-  }
-  
-  public Condition(PbUnaryOperator pbCondition, Mechanism curMechanism) throws InvalidOperatorException
-  {
-    log.debug("Preparing condition from pbCondition");
-    log.debug("condition: {}", pbCondition);
-    if(pbCondition == null) return;
-    
-    PbOperatorHelper helper = new PbOperatorHelper();
-    this.operator = helper.processOperator(pbCondition);
-    this.operator.initOperatorForMechanism(curMechanism);
   }
   
   public String toString()

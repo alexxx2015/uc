@@ -50,15 +50,6 @@ service ExtendedThriftConnector extends GenericThriftConnector {
 }
 
 
-service TAny2Pdp  {
-	
-	oneway void processEventAsync(1: Event e, 2: string senderID),
-
-	Response processEventSync(1: Event e, 2: string senderID)
-	
-}
-
-
 service MWThriftConnector {
 
 	oneway void dumpGraph(1: string graphName),
@@ -72,4 +63,31 @@ service MWThriftConnector {
 	string getPartialGraph(1: string graphName, 2: long startTime, 3: long endTime)
 	
 }
+
+
+service TAny2Pdp  {
+		
+	Response processEvent(1: Event e)
+	
+}
+
+service TAny2Pip  {
+	
+	oneway void processEventAsync(1: Event e, 2: string senderID),
+
+	Response processEventSync(1: Event e, 2: string senderID)
+	
+}
+
+service TAny2Pmp  {
+	
+	oneway void processEventAsync(1: Event e, 2: string senderID),
+
+	Response processEventSync(1: Event e, 2: string senderID)
+	
+}
+
+
+
+
 

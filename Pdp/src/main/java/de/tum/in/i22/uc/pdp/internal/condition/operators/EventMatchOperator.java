@@ -7,7 +7,6 @@ import de.tum.in.i22.uc.pdp.internal.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.internal.Event;
 import de.tum.in.i22.uc.pdp.internal.EventMatch;
 import de.tum.in.i22.uc.pdp.internal.Mechanism;
-import de.tum.in.i22.uc.pdp.internal.gproto.EventProto.PbEvent;
 
 public class EventMatchOperator extends EventMatch
 {
@@ -29,11 +28,6 @@ public class EventMatchOperator extends EventMatch
 //    ads.addEventMatch(this);
 //  }
   
-  public EventMatchOperator(PbEvent pbEvent)
-  {
-    super(pbEvent);
-  }
-
   @Override
   public void initOperatorForMechanism(Mechanism mech)
   {

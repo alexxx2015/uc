@@ -13,9 +13,6 @@ import de.tum.in.i22.uc.pdp.handlers.pxp.PXPStub;
 import de.tum.in.i22.uc.pdp.internal.condition.Condition;
 import de.tum.in.i22.uc.pdp.internal.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.internal.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.internal.exceptions.InvalidOperatorException;
-import de.tum.in.i22.uc.pdp.internal.gproto.ExecuteActionProto.PbExecuteAction;
-import de.tum.in.i22.uc.pdp.internal.gproto.MechanismProto.PbMechanismOrBuilder;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
@@ -118,26 +115,6 @@ public class Mechanism extends Thread implements IPdpMechanism
     for(ExecuteAsyncActionType execAction : mech.getExecuteAsyncAction())
     {
       this.executeAsyncActions.add(new ExecuteAction(execAction));
-    }
-  }
-
-  public Mechanism(PbMechanismOrBuilder pbMechanism) throws InvalidOperatorException
-  {
-    if(pbMechanism == null) return;
-
-    if(pbMechanism.hasName()) this.mechanismName=pbMechanism.getName();
-    if(pbMechanism.hasDescription()) description=pbMechanism.getDescription();
-    if(pbMechanism.hasTimestepSize()) timestepSize=pbMechanism.getTimestepSize();
-    if(pbMechanism.hasTriggerEvent()) triggerEvent=new EventMatch(pbMechanism.getTriggerEvent());
-    if(pbMechanism.hasCondition()) condition=new Condition(pbMechanism.getCondition(), this);
-    if(pbMechanism.hasAuthorizationAction()) authorizationAction=new AuthorizationAction(pbMechanism.getAuthorizationAction());
-
-    if(pbMechanism.getExecuteAsyncActionCount()>0)
-    {
-      for(PbExecuteAction execAction : pbMechanism.getExecuteAsyncActionList())
-      {
-        executeAsyncActions.add(new ExecuteAction(execAction));
-      }
     }
   }
 

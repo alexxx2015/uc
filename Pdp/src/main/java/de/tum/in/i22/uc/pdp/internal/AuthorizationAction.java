@@ -8,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.internal.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.internal.gproto.AuthorizationActionProto.PbAuthorizationAction;
-import de.tum.in.i22.uc.pdp.internal.gproto.ExecuteActionProto.PbExecuteAction;
-import de.tum.in.i22.uc.pdp.internal.gproto.ParameterProto.PbParameter;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
@@ -108,38 +105,6 @@ public class AuthorizationAction implements Serializable
     }
   }
   
-  public AuthorizationAction(PbAuthorizationAction pbAuthorizationAction)
-  {
-    if(pbAuthorizationAction == null) return;
-
-    if(pbAuthorizationAction.hasName()) name=pbAuthorizationAction.getName();
-    if(pbAuthorizationAction.hasAuthorization())
-    {
-      type=pbAuthorizationAction.getAuthorization().getAllow();
-      if(pbAuthorizationAction.getAuthorization().hasDelay()) 
-        delay=pbAuthorizationAction.getAuthorization().getDelay();
-    }
-    if(pbAuthorizationAction.getAuthorization().getModifyCount()>0)
-    {
-      for(PbParameter param : pbAuthorizationAction.getAuthorization().getModifyList())
-      {
-        addModifier(new Param<String>(param.getName(), param.getValue()));
-      }
-    }
-    
-    if(pbAuthorizationAction.getAuthorization().getExecuteSyncActionCount()>0)
-    {
-      for(PbExecuteAction execAction : pbAuthorizationAction.getAuthorization().getExecuteSyncActionList())
-      {
-        addExecuteAction(new ExecuteAction(execAction));
-      }
-    }
-    if(pbAuthorizationAction.hasFallback())
-    {
-      fallback = new AuthorizationAction(pbAuthorizationAction.getFallback());
-    }
-  }
-
   public boolean getAuthorizationAction()
   {
     return type;

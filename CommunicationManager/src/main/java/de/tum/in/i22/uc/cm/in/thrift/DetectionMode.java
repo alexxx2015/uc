@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package de.tum.in.i22.uc.cm.in.pep.thrift;
+package de.tum.in.i22.uc.cm.in.thrift;
 
 
 import java.util.Map;
