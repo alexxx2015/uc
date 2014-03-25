@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,18 +44,19 @@ public class TAny2PmpHandler extends ClientConnectionHandler implements TAny2Pmp
 	protected void disconnect() {
 	}
 
+
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pmp: deployMechPmp");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public StatusType revokeMechanism1Pmp(String policyName) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pmp: revokeMech1Pmp");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -61,20 +64,25 @@ public class TAny2PmpHandler extends ClientConnectionHandler implements TAny2Pmp
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pmp: revokeMech2Pmp");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public StatusType deployPolicyPmp(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pmp: deployPolicyPmp");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanismsPmp() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pmp: listmechPmp");
-		return null;
+		HashMap<String, List<String>> m = new HashMap<String, List<String>>();
+		List<String> l = new ArrayList<String>();
+		l.add("test");
+		m.put("mystring", l);
+		return m;
 	}
+
 }

@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +55,7 @@ public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp
 	public Response notifyEvent(Event e) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: notifyEvent");
-		return null;
+		return new Response();
 	}
 
 	@Override
@@ -67,14 +69,14 @@ public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp
 	public StatusType deployMechanism(String mechanism) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: deploymech");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public StatusType revokeMechanism1(String policyName) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: revokemech1");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -82,21 +84,24 @@ public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: revokemech2");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public StatusType deployPolicy(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: deployPolicy");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: listMech");
-		return null;
+		HashMap<String, List<String>> m = new HashMap<String, List<String>>();
+		List<String> l = new ArrayList<String>();
+		l.add("test");
+		m.put("mystring", l);
+		return m;
 	}
-
 }
