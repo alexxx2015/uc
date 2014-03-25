@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.cm.in.thrift;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -50,7 +51,7 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: initrep");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public StatusType notifyActualEvent(Event event) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: notifyActualEvent");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: notifyDatatransfer");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -116,28 +117,28 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 	public Set<Container> getContainerForData(Data data) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: getContainerforData");
-		return null;
+		return new HashSet<Container>();
 	}
 
 	@Override
 	public Set<Data> getDataInContainer(Container container) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: getDataInContainer");
-		return null;
+		return new HashSet<Data>();
 	}
 
 	@Override
 	public StatusType startSimulation() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: startsimulation");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
 	public StatusType stopSimulation() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: stopSimulation");
-		return null;
+		return StatusType.ERROR;
 	}
 
 	@Override
@@ -146,4 +147,5 @@ public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip
 		_logger.debug("TAny2Pip: isSimulating");
 		return false;
 	}
+
 }

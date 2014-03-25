@@ -25,7 +25,7 @@ public class GenericThriftServer<H> implements Runnable {
 		}
 		_server = new TSimpleServer(new Args(serverTransport).processor(processor));
 
-		_logger.info("Server GenericThriftServer listening on port: " + port);
+		_logger.info("Server GenericThriftServer ("+handler.getClass().toString()+") listening on port: " + port);
 	}
 
 	public void stop(){
