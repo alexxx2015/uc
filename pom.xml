@@ -12,11 +12,11 @@
 	<modules>
 		<module>CommunicationBase</module>
 		<module>ThriftConnectors</module>
-		<module>CommunicationManager</module>
-		<module>Pip</module>
 		<module>Pdp</module>
+		<module>Pip</module>
 		<module>Pmp</module>
-		<!-- <module>UsageControlTests</module> -->
+		<module>CommunicationManager</module>
+		<module>UsageControlTests</module>
 	</modules>
 
 	<properties>
@@ -79,11 +79,6 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
 			<version>2.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
