@@ -37,7 +37,7 @@ public class CopyOfTAny2PdpHandler extends ClientConnectionHandler implements TA
 	}
 
 	private IResponse processEvent(IEvent ev) {
-		RequestHandler.addRequest(new PdpRequest(EPdpRequestType.NOTIFY_EVENT, ev), this);
+		RequestHandler.getInstance().addRequest(new PdpRequest(EPdpRequestType.NOTIFY_EVENT, ev), this);
 
 		Object responseObj;
 		try {

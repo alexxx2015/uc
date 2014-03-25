@@ -1,15 +1,13 @@
 package uctests;
 
 
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import de.tum.in.i22.uc.cm.settings.GlobalSettings;
-import de.tum.in.i22.uc.cm.settings.PipSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(Suite.class)
 //@SuiteClasses({ PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class,
@@ -17,7 +15,7 @@ import de.tum.in.i22.uc.cm.settings.PipSettings;
 @SuiteClasses({PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class, TestPmp2PdpCommunication.class})
 public class AllTests {
 
-	private static Logger _logger = Logger.getLogger(AllTests.class);
+	private static Logger _logger = LoggerFactory.getLogger(AllTests.class);
 
 
 	@BeforeClass

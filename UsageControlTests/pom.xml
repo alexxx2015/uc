@@ -4,7 +4,7 @@
 
 	<parent>
 		<groupId>UsageControlSystem</groupId>
-		<artifactId>simple-parent</artifactId>
+		<artifactId>UCParent</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -19,32 +19,22 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>PdpCommunicationManager</artifactId>
+			<artifactId>CommunicationManager</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>PipCommunicationManager</artifactId>
+			<artifactId>Pip</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>PipCore</artifactId>
+			<artifactId>Pmp</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pep2Pdp</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pmp2Pdp</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pmp2Pip</artifactId>
+			<artifactId>Pdp</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

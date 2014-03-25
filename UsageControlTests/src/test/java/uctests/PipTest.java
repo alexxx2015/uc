@@ -3,31 +3,42 @@ package uctests;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pdp.cm.out.pip.Pdp2PipTcpImp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.pdp.PdpHandler;
+import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pip.handlers.pdp.Pdp2PipTcpImp;
+import de.tum.in.i22.uc.pmp.PmpHandler;
 
 public class PipTest {
 
-	private static Logger _logger = Logger.getRootLogger();
+	private static Logger _logger = LoggerFactory.getLogger(PipTest.class);
 
-	private static IPdp2Pip _pipProxy;
+	private static IAny2Pdp _pdp;
+	private static IAny2Pip _pip;
+	private static IAny2Pmp _pmp;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pipProxy = new Pdp2PipTcpImp("localhost", TestSettings.PDP_LISTENER_PORT_IN_PIP);
+		_pdp = PdpHandler.getInstance();
+		_pip = PipHandler.getInstance();
+		_pmp = PmpHandler.getInstance();
 	}
 
 	@AfterClass
@@ -36,13 +47,10 @@ public class PipTest {
 
 	@Before
 	public void setUp() throws Exception {
-		// connect pdp to pip
-		_pipProxy = ConnectionManager.MAIN.obtain(_pipProxy);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		ConnectionManager.MAIN.release(_pipProxy);
 	}
 
 	@Test
@@ -50,7 +58,7 @@ public class PipTest {
 		Map<String, String> map = new HashMap<>();
 		IEvent event = new EventBasic("event1", map);
 		String predicate = "dummy string";
-		boolean res = _pipProxy.evaluatePredicateSimulatingNextState(event, predicate);
+		boolean res = _pip.evaluatePredicateSimulatingNextState(event, predicate);
 		_logger.debug("Received result: " + res);
 		Assert.assertEquals(true, res);
 	}
@@ -77,7 +85,7 @@ public class PipTest {
 	@Test
 	public void testNotifyActualEvent() {
 		IEvent event = DummyMessageGen.createEvent();
-		IStatus status = _pipProxy.notifyActualEvent(event);
+		IStatus status = _pip.notifyActualEvent(event);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);
 	}

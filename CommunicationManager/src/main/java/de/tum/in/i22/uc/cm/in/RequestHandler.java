@@ -76,68 +76,39 @@ public class RequestHandler implements Runnable {
 		int portAny = Settings.getInstance().getPepThriftListenerPortNum() + 3;
 
 
-		TAny2PdpHandler pdpServerHandler=new TAny2PdpHandler(portPdp);
-		TAny2Pdp.Processor<TAny2PdpHandler> pdpProcessor =	new TAny2Pdp.Processor<TAny2PdpHandler>(pdpServerHandler);
-		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(portPdp, new TAny2PdpHandler(portPdp), pdpProcessor);
-		new Thread (pdpServer).start();
+		TAny2PdpHandler pdpServerHandler = new TAny2PdpHandler(portPdp);
+		TAny2Pdp.Processor<TAny2PdpHandler> pdpProcessor = new TAny2Pdp.Processor<TAny2PdpHandler>(pdpServerHandler);
+		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(portPdp,
+				new TAny2PdpHandler(portPdp), pdpProcessor);
+		new Thread(pdpServer).start();
 
+		TAny2PipHandler pipServerHandler = new TAny2PipHandler(portPip);
+		TAny2Pip.Processor<TAny2PipHandler> PipProcessor = new TAny2Pip.Processor<TAny2PipHandler>(pipServerHandler);
+		GenericThriftServer<TAny2PipHandler> PipServer = new GenericThriftServer<>(portPip,
+				new TAny2PipHandler(portPip), PipProcessor);
+		new Thread(PipServer).start();
 
-		TAny2PipHandler pipServerHandler=new TAny2PipHandler(portPip);
-		TAny2Pip.Processor<TAny2PipHandler> PipProcessor =	new TAny2Pip.Processor<TAny2PipHandler>(pipServerHandler);
-		GenericThriftServer<TAny2PipHandler> PipServer = new GenericThriftServer<>(portPip, new TAny2PipHandler(portPip), PipProcessor);
-		new Thread (PipServer).start();
+		TAny2PmpHandler pmpServerHandler = new TAny2PmpHandler(portPmp);
+		TAny2Pmp.Processor<TAny2PmpHandler> PmpProcessor = new TAny2Pmp.Processor<TAny2PmpHandler>(pmpServerHandler);
+		GenericThriftServer<TAny2PmpHandler> PmpServer = new GenericThriftServer<>(portPmp,
+				new TAny2PmpHandler(portPmp), PmpProcessor);
+		new Thread(PmpServer).start();
 
-
-		TAny2PmpHandler pmpServerHandler=new TAny2PmpHandler(portPmp);
-		TAny2Pmp.Processor<TAny2PmpHandler> PmpProcessor =	new TAny2Pmp.Processor<TAny2PmpHandler>(pmpServerHandler);
-		GenericThriftServer<TAny2PmpHandler> PmpServer = new GenericThriftServer<>(portPmp, new TAny2PmpHandler(portPmp), PmpProcessor);
-		new Thread (PmpServer).start();
-
-
-		TAny2AnyHandler anyServerHandler=new TAny2AnyHandler(portAny);
-		TAny2Any.Processor<TAny2AnyHandler> AnyProcessor =	new TAny2Any.Processor<TAny2AnyHandler>(anyServerHandler);
-		GenericThriftServer<TAny2AnyHandler> AnyServer = new GenericThriftServer<>(portAny, new TAny2AnyHandler(portAny), AnyProcessor);
-		new Thread (AnyServer).start();
-
-
-
+		TAny2AnyHandler anyServerHandler = new TAny2AnyHandler(portAny);
+		TAny2Any.Processor<TAny2AnyHandler> AnyProcessor = new TAny2Any.Processor<TAny2AnyHandler>(anyServerHandler);
+		GenericThriftServer<TAny2AnyHandler> AnyServer = new GenericThriftServer<>(portAny,
+				new TAny2AnyHandler(portAny), AnyProcessor);
+		new Thread(AnyServer).start();
 	}
-
-
-//	private void startPepThriftListener() {
-//		if (Settings.getInstance().isPepThriftListenerEnabled()) {
-//			int pepThriftListenerPort = Settings.getInstance().getPepThriftListenerPortNum();
-//			_logger.info("Start GenericThriftServer on port: " + pepThriftListenerPort);
-//			_threadThriftServer = new Thread (new GenericThriftServer(pepThriftListenerPort, Settings.getInstance().getPepGPBListenerPortNum()));
-//			_threadThriftServer.start();
-//			_startedThriftServer = true;
-//		}
-//	}
-
 
 	public void stop(){
 		// TODO These methods are deprecated for a good reason... Get rid of them.
 		this._threadThriftServer.stop();
 	}
 
-
-	public static <T extends Request>  void addRequest(T request, IForwarder forwarder) {
+	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
 		_instance._requestQueue.add(new RequestWrapper<T>(request, forwarder));
 	}
-
-//	public void addUpdateIfFlowRequest(IPipDeployer pipDeployer,
-//			byte[] jarBytes, EConflictResolution conflictResolutionFlag,
-//			IForwarder forwarder) throws InterruptedException {
-//		// add update information flow request to the tail of the queue
-//		// put method blocks until the space in the queue becomes available
-//		UpdateIfFlowSemanticsRequestWrapper request = new UpdateIfFlowSemanticsRequestWrapper(
-//				forwarder);
-//		request.setPipDeployer(pipDeployer);
-//		request.setJarBytes(jarBytes);
-//		request.setConflictResolution(conflictResolutionFlag);
-//
-//		add(request);
-//	}
 
 	@Override
 	public void run() {

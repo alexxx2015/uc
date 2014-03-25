@@ -1,20 +1,18 @@
 package uctests;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
-import de.tum.in.i22.pmp2pdp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
@@ -33,13 +31,21 @@ import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.pdp.PdpHandler;
+import de.tum.in.i22.uc.pdp.handlers.pep.Pep2PdpTcpImp;
+import de.tum.in.i22.uc.pdp.handlers.pmp.Pmp2PdpTcpImp;
+import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pmp.PmpHandler;
 
 public class PdpTest {
 
-	private static Logger _logger = Logger.getRootLogger();
+	private static Logger _logger = LoggerFactory.getLogger(PdpTest.class);
 
 	// num of calls from pep thread
 	private final static int NUM_OF_CALLS_FROM_PEP = 10;
@@ -49,7 +55,9 @@ public class PdpTest {
 	private final static int PMP_LISTENER_PORT_NUM = 50008;
 	private final static int PEP_LISTENER_PORT_NUM = 50009;
 
-	private static IPep2Pdp _pdpProxy;
+	private static IAny2Pdp _pdp;
+	private static IAny2Pip _pip;
+	private static IAny2Pmp _pmp;
 
 	private static Thread _threadPep;
 	private static Thread _threadPmp;
@@ -60,10 +68,12 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
+		_pdp = PdpHandler.getInstance();
+		_pip = PipHandler.getInstance();
+		_pmp = PmpHandler.getInstance();
+
 		startPepClient();
 		startPmpClient();
-
-		_pdpProxy = new Pep2PdpTcpImp("localhost", PEP_LISTENER_PORT_NUM);
 	}
 
 	@Test
@@ -76,16 +86,12 @@ public class PdpTest {
 		IEvent event1 = mf.createEvent(eventName1, map);
 		IEvent event2 = mf.createEvent(eventName2, map);
 
-		// connect to pdp
-		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
-		// notify event1
-		IResponse response1 = _pdpProxy.notifyEvent(event1);
+		IResponse response1 = _pdp.notifyEvent(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
 
-		IResponse response2 = _pdpProxy.notifyEvent(event2);
+		IResponse response2 = _pdp.notifyEvent(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
-		// disconnect from pdp
-		ConnectionManager.MAIN.release(_pdpProxy);
+
 
 		// check if status is not null
 		Assert.assertNotNull(response1);
@@ -102,9 +108,9 @@ public class PdpTest {
 	@Test
 	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
 		IEvent event = DummyMessageGen.createActualEvent();
-		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
-		IResponse response = _pdpProxy.notifyEvent(event);
-		ConnectionManager.MAIN.release(_pdpProxy);
+
+		IResponse response = _pdp.notifyEvent(event);
+
 		Assert.assertNotNull(response);
 	}
 
@@ -113,17 +119,15 @@ public class PdpTest {
 	 */
 	@Test
 	public void testUpdateIfFlowSemantics() throws Exception {
-		// connect to pdp
-		_pdpProxy = ConnectionManager.MAIN.obtain(_pdpProxy);
+
 		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
 		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
-		byte[] jarFileBytes = FileUtils.readFileToByteArray(file);
-		IStatus status = _pdpProxy.updateInformationFlowSemantics(
+
+		IStatus status = _pip.updateInformationFlowSemantics(
 				pipDeployer,
-				jarFileBytes,
+				file,
 				EConflictResolution.OVERWRITE);
-		// disconnect from pdp
-		ConnectionManager.MAIN.release(_pdpProxy);
+
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -141,14 +145,6 @@ public class PdpTest {
 
 			@Override
 			public void run() {
-				IPep2Pdp pdpProxyOne = new Pep2PdpTcpImp("localhost",
-						PEP_LISTENER_PORT_NUM);
-				try {
-					pdpProxyOne = ConnectionManager.MAIN.obtain(pdpProxyOne);
-				} catch (Exception e) {
-					_logger.error(e);
-					return;
-				}
 				for (int i = 0; i < NUM_OF_CALLS_FROM_PEP; i++) {
 					String eventName1 = "event1";
 					Map<String, String> map = new HashMap<String, String>();
@@ -159,16 +155,14 @@ public class PdpTest {
 					IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 					IEvent event1 = mf.createEvent(eventName1, map);
 
-					pdpProxyOne.notifyEvent(event1);
+					_pdp.notifyEvent(event1);
 
 					try {
 						Thread.sleep(20);
 					} catch (InterruptedException e) {
-						_logger.error(e);
+						_logger.error(e.toString());
 					}
 				}
-
-				ConnectionManager.MAIN.release(pdpProxyOne);
 			}
 		});
 
@@ -181,28 +175,20 @@ public class PdpTest {
 		_threadPmp = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IPmp2Pdp pdpProxyTwo = new Pmp2PdpTcpImp("localhost", PMP_LISTENER_PORT_NUM);
-				try {
-					pdpProxyTwo = ConnectionManager.MAIN.obtain(pdpProxyTwo);
-				} catch (Exception e) {
-					_logger.error(e);
-					return;
-				}
+
 				for (int i = 0; i < NUM_OF_CALLS_FROM_PMP; i++) {
 					//TODO invoke some methods
 					// deploy mechanism
 					IMechanism m = createMechanism();
-					IStatus status = pdpProxyTwo.deployMechanism(m);
+					IStatus status = _pdp.deployMechanism(m);
 					_logger.debug("Received status: " + status);
 
 					try {
 						Thread.sleep(30);
 					} catch (InterruptedException e) {
-						_logger.error(e);
+						_logger.error(e.toString());
 					}
 				}
-
-				ConnectionManager.MAIN.release(pdpProxyTwo);
 			}
 		});
 

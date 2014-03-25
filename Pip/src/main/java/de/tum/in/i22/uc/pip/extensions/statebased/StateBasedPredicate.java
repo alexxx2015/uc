@@ -25,11 +25,13 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 		RuntimeException rte = new RuntimeException("Predicate {" + predicate + "} is invalid.");
 
 		String[] st = predicate.split(StateBasedPredicate.SEPARATOR1);
-		if (st.length == 0) {
+		EStateBasedFormula pred = EStateBasedFormula.from(st[0]);
+
+		if (st.length == 0 || pred == null) {
 			throw rte;
 		}
 
-		switch (EStateBasedFormula.from(st[0])) {
+		switch (pred) {
 			case IS_COMBINED_WITH:
 				if (st.length >= 3)
 					spredicate = new IsCombinedWith(predicate, st[1], st[2]);
