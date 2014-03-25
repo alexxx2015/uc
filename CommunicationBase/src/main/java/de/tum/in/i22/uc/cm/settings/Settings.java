@@ -39,7 +39,7 @@ public class Settings extends SettingsLoader {
 	private String _pipEventHandlerSuffix = "EventHandler";
 	private String _pipEventHandlerPackage = "de.tum.in.i22.uc.pip.eventdef.";
 
-	EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
+	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
 	private Settings() {
 		this(DEFAULT_PROPERTIES_FILE_NAME);
