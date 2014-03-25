@@ -102,13 +102,18 @@ class SettingsLoader {
 	protected boolean loadSetting(String propName, boolean defaultValue) {
 		boolean val = defaultValue;
 
+		boolean success = false;
+
 		try {
 			String s = _props.getProperty(propName);
 			if (s != null) {
 				val = Boolean.valueOf(s);
+				success = true;
 			}
 		}
-		catch (Exception e) {
+		catch (Exception e) {	}
+
+		if (!success) {
 			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
 		}
 

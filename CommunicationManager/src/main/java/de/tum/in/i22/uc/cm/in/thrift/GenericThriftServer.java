@@ -10,13 +10,16 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GenericThriftServer<H> implements Runnable {
+public class GenericThriftServer implements Runnable {
 	protected static Logger _logger = LoggerFactory.getLogger(GenericThriftServer.class);
 
 	private TServer _server = null;
 
-	public GenericThriftServer(int port, H handler, TProcessor processor){	
+	private boolean _started = false;
+
+	public GenericThriftServer(int port, TProcessor processor){
 		TServerTransport serverTransport;
+
 		try {
 			serverTransport = new TServerSocket(port);
 		} catch (TTransportException e) {
@@ -25,7 +28,8 @@ public class GenericThriftServer<H> implements Runnable {
 		}
 		_server = new TSimpleServer(new Args(serverTransport).processor(processor));
 
-		_logger.info("Server GenericThriftServer ("+handler.getClass().toString()+") listening on port: " + port);
+		_logger.info("ThriftServer listening on port: " + port);
+		_started = true;
 	}
 
 	public void stop(){
@@ -37,4 +41,7 @@ public class GenericThriftServer<H> implements Runnable {
 		_server.serve();
 	}
 
+	public boolean started() {
+		return _started;
+	}
 }

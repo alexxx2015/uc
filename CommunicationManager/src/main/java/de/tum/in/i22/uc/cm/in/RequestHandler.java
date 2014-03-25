@@ -27,32 +27,38 @@ import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 
+interface X {
+
+}
+
 public class RequestHandler implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
 	private static RequestHandler _instance = new RequestHandler();
 
+	private final Settings _settings = Settings.getInstance();
+
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
 	private final BlockingQueue<RequestWrapper<? extends Request>> _requestQueue;
 
-	private static IAny2Pdp PDP;
-	private static IAny2Pip PIP;
-	private static IAny2Pmp PMP;
+	private final IAny2Pdp PDP;
+	private final IAny2Pip PIP;
+	private final IAny2Pmp PMP;
 
-
-	private static Thread _threadThriftServer;
-	private static boolean _startedThriftServer = false;
-
+	private GenericThriftServer _pdpServer;
+	private GenericThriftServer _pipServer;
+	private GenericThriftServer _pmpServer;
+	private GenericThriftServer _anyServer;
 
 	public static RequestHandler getInstance(){
 		return _instance;
 	}
 
-
 	private RequestHandler() {
 		_requestQueue = new LinkedBlockingQueue<>();
+
 		PDP = PdpHandler.getInstance();
 		PIP = PipHandler.getInstance();
 		PMP = PmpHandler.getInstance();
@@ -66,44 +72,32 @@ public class RequestHandler implements Runnable {
 
 
 	private void startListeners() {
-
 		_logger.debug("Starting listeners");
 
-		//TODO: Fix ports in settings
-		int portPdp = Settings.getInstance().getPepThriftListenerPortNum();
-		int portPip = Settings.getInstance().getPepThriftListenerPortNum() + 1;
-		int portPmp = Settings.getInstance().getPepThriftListenerPortNum() + 2;
-		int portAny = Settings.getInstance().getPepThriftListenerPortNum() + 3;
+		int portPdp = _settings.getPdpListenerPort();
+		int portPip = _settings.getPipListenerPort();
+		int portPmp = _settings.getPmpListenerPort();
+		int portAny = _settings.getAnyListenerPort();
 
+		if (_settings.isPdpListenerEnabled()) {
+			_pdpServer = new GenericThriftServer(portPdp, new TAny2Pdp.Processor<TAny2PdpHandler>(new TAny2PdpHandler(portPdp)));
+			new Thread(_pdpServer).start();
+		}
 
-		TAny2PdpHandler pdpServerHandler = new TAny2PdpHandler(portPdp);
-		TAny2Pdp.Processor<TAny2PdpHandler> pdpProcessor = new TAny2Pdp.Processor<TAny2PdpHandler>(pdpServerHandler);
-		GenericThriftServer<TAny2PdpHandler> pdpServer = new GenericThriftServer<>(portPdp,
-				new TAny2PdpHandler(portPdp), pdpProcessor);
-		new Thread(pdpServer).start();
+		if (_settings.isPipListenerEnabled()) {
+			_pipServer = new GenericThriftServer(portPip, new TAny2Pip.Processor<TAny2PipHandler>(new TAny2PipHandler(portPip)));
+			new Thread(_pipServer).start();
+		}
 
-		TAny2PipHandler pipServerHandler = new TAny2PipHandler(portPip);
-		TAny2Pip.Processor<TAny2PipHandler> PipProcessor = new TAny2Pip.Processor<TAny2PipHandler>(pipServerHandler);
-		GenericThriftServer<TAny2PipHandler> PipServer = new GenericThriftServer<>(portPip,
-				new TAny2PipHandler(portPip), PipProcessor);
-		new Thread(PipServer).start();
+		if (_settings.isPmpListenerEnabled()) {
+			_pmpServer = new GenericThriftServer(portPmp, new TAny2Pmp.Processor<TAny2PmpHandler>(new TAny2PmpHandler(portPmp)));
+			new Thread(_pmpServer).start();
+		}
 
-		TAny2PmpHandler pmpServerHandler = new TAny2PmpHandler(portPmp);
-		TAny2Pmp.Processor<TAny2PmpHandler> PmpProcessor = new TAny2Pmp.Processor<TAny2PmpHandler>(pmpServerHandler);
-		GenericThriftServer<TAny2PmpHandler> PmpServer = new GenericThriftServer<>(portPmp,
-				new TAny2PmpHandler(portPmp), PmpProcessor);
-		new Thread(PmpServer).start();
-
-		TAny2AnyHandler anyServerHandler = new TAny2AnyHandler(portAny);
-		TAny2Any.Processor<TAny2AnyHandler> AnyProcessor = new TAny2Any.Processor<TAny2AnyHandler>(anyServerHandler);
-		GenericThriftServer<TAny2AnyHandler> AnyServer = new GenericThriftServer<>(portAny,
-				new TAny2AnyHandler(portAny), AnyProcessor);
-		new Thread(AnyServer).start();
-	}
-
-	public void stop(){
-		// TODO These methods are deprecated for a good reason... Get rid of them.
-		this._threadThriftServer.stop();
+		if (_settings.isAnyListenerEnabled()) {
+			_anyServer = new GenericThriftServer(portAny, new TAny2Any.Processor<TAny2AnyHandler>(new TAny2AnyHandler(portAny)));
+			new Thread(_anyServer).start();
+		}
 	}
 
 	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
@@ -144,6 +138,13 @@ public class RequestHandler implements Runnable {
 		}
 
 		// the thread is interrupted, stop processing the events
+	}
+
+	public boolean started() {
+		return (!_settings.isPdpListenerEnabled() || _pdpServer.started())
+				&& (!_settings.isPipListenerEnabled() || _pipServer.started())
+				&& (!_settings.isPmpListenerEnabled() || _pmpServer.started())
+				&& (!_settings.isAnyListenerEnabled() || _anyServer.started());
 	}
 
 

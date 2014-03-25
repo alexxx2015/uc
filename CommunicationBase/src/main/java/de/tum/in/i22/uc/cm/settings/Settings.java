@@ -26,21 +26,15 @@ public class Settings extends SettingsLoader {
 
 	private final String _propertiesFilename;
 
-
-	// default values will be overridden with the values from the properties file
-	private int _pepGPBListenerPortNum = 10001;
-	private int _pepThriftListenerPortNum=20001;
-	private int _pmpListenerPortNum = 10002;
-	private int _pipListenerPort = 10003;
-
-	private String _pipAddress = "localhost";
-	private int _pipPort = 10004;
-	private int _queueSize = 100;
+	private int _pmpListenerPort = 21001;
+	private int _pipListenerPort = 21002;
+	private int _pdpListenerPort = 21003;
+	private int _anyListenerPort = 21004;
 
 	private boolean _pmpListenerEnabled = true;
-	private boolean _pepGPBListenerEnabled = true;
-	private boolean _pepThriftListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
+	private boolean _pdpListenerEnabled = true;
+	private boolean _anyListenerEnabled = true;
 
 	private String _pipEventHandlerSuffix = "EventHandler";
 	private String _pipEventHandlerPackage = "de.tum.in.i22.uc.pip.eventdef.";
@@ -85,17 +79,16 @@ public class Settings extends SettingsLoader {
 	private void loadProperties() {
 		_pipEventHandlerPackage = loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
 		_pipEventHandlerSuffix = loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
+
 		_pmpListenerEnabled = loadSetting("pmp_listener_enabled", _pmpListenerEnabled);
-		_pepGPBListenerEnabled = loadSetting("pep_GPB_listener_enabled", _pepGPBListenerEnabled);
-		_pepThriftListenerEnabled = loadSetting("pep_Thrift_listener_enabled", _pepThriftListenerEnabled);
 		_pipListenerEnabled = loadSetting("pip_listener_enabled", _pipListenerEnabled);
-		_pipAddress = loadSetting("pip_address", _pipAddress);
-		_pmpListenerPortNum = loadSetting("pmp_listener_port_num", _pmpListenerPortNum);
-		_pepGPBListenerPortNum = loadSetting("pep_GPB_listener_port_num", _pepGPBListenerPortNum);
-		_pepThriftListenerPortNum = loadSetting("pep_Thrift_listener_port_num", _pepThriftListenerPortNum);
-		_pipListenerPort = loadSetting("pip_listener_port_num", _pipListenerPort);
-		_pipPort = loadSetting("pip_port_num", _pipPort);
-		_queueSize = loadSetting("queue_size", _queueSize);
+		_pdpListenerEnabled = loadSetting("pdp_listener_enabled", _pdpListenerEnabled);
+		_anyListenerEnabled = loadSetting("any_listener_enabled", _anyListenerEnabled);
+
+		_pmpListenerPort = loadSetting("pmp_listener_port", _pmpListenerPort);
+		_pipListenerPort = loadSetting("pip_listener_port", _pipListenerPort);
+		_pdpListenerPort = loadSetting("pdp_listener_port", _pdpListenerPort);
+		_anyListenerPort = loadSetting("any_listener_port", _anyListenerPort);
 
 		try {
 			_distributedPipStrategy = EDistributedPipStrategy.from((String) _props.get("distributed_pip_strategy"));
@@ -110,48 +103,36 @@ public class Settings extends SettingsLoader {
 		return _propertiesFilename;
 	}
 
-	public int getPepGPBListenerPortNum() {
-		return _pepGPBListenerPortNum;
+	public int getPmpListenerPort() {
+		return _pmpListenerPort;
 	}
 
-	public int getPepThriftListenerPortNum() {
-		return _pepThriftListenerPortNum;
-	}
-
-	public int getPmpListenerPortNum() {
-		return _pmpListenerPortNum;
-	}
-
-	public int getPipListenerPortNum() {
+	public int getPipListenerPort() {
 		return _pipListenerPort;
 	}
 
-	public String getPipAddress() {
-		return _pipAddress;
+	public int getPdpListenerPort() {
+		return _pdpListenerPort;
 	}
 
-	public int getPipPortNum() {
-		return _pipPort;
-	}
-
-	public int getQueueSize() {
-		return _queueSize;
+	public int getAnyListenerPort() {
+		return _anyListenerPort;
 	}
 
 	public boolean isPmpListenerEnabled() {
 		return _pmpListenerEnabled;
 	}
 
-	public boolean isPepGPBListenerEnabled() {
-		return _pepGPBListenerEnabled;
-	}
-
-	public boolean isPepThriftListenerEnabled() {
-		return _pepThriftListenerEnabled;
-	}
-
 	public boolean isPipListenerEnabled() {
 		return _pipListenerEnabled;
+	}
+
+	public boolean isPdpListenerEnabled() {
+		return _pdpListenerEnabled;
+	}
+
+	public boolean isAnyListenerEnabled() {
+		return _anyListenerEnabled;
 	}
 
 	public EDistributedPipStrategy getDistributedPipStrategy() {

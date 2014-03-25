@@ -3,11 +3,11 @@ package de.tum.in.i22.uc.cm.in;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.requests.Request;
 
-public class RequestWrapper<T extends Request> {
+public class RequestWrapper<R extends Request> {
 	private final IForwarder _forwarder;
-	private final T _request;
+	private final R _request;
 
-	public RequestWrapper(T request, IForwarder forwarder) {
+	public RequestWrapper(R request, IForwarder forwarder) {
 		_forwarder = forwarder;
 		_request = request;
 	}
@@ -16,7 +16,7 @@ public class RequestWrapper<T extends Request> {
 		return _forwarder;
 	}
 
-	public T getRequest() {
+	public R getRequest() {
 		return _request;
 	}
 }

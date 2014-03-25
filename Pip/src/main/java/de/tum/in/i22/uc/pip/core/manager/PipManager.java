@@ -42,7 +42,7 @@ public class PipManager {
 	private final EventHandlerDao _eventHandlerDao;
 
 	private PipManager() {
-		_eventHandlerDao = new EventHandlerDao(Settings.getInstance().getPipPortNum());
+		_eventHandlerDao = new EventHandlerDao(Settings.getInstance().getPipListenerPort());
 
 		// read the database and store class definitions in the event handler manager
 		List<EventHandlerDefinition> eventHandlerDefinitions = _eventHandlerDao.getCurrentEventHandlerDefinitions();

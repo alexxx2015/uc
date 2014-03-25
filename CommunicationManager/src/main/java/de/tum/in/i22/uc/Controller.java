@@ -11,8 +11,6 @@ public class Controller {
 
 	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
-	private static boolean _started = false;
-
 	public static void main(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
 
@@ -23,7 +21,7 @@ public class Controller {
 		else {
 			Settings.getInstance();
 		}
-		
+
 		new Thread(RequestHandler.getInstance()).start();
 
 		// EventHandler thread loops forever, this stops the main thread,
@@ -38,7 +36,7 @@ public class Controller {
 		}
 	}
 
-	public static boolean isStarted() {
-		return _started;
+	public boolean started() {
+		return RequestHandler.getInstance().started();
 	}
 }
