@@ -11,21 +11,16 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDefinition;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 
-public class EventHandlerManager implements IEventHandlerCreator {
+public class EventHandlerManager {
 
 	private static final String EVENT_HANDLER_SUFFIX = Settings.getInstance().getPipEventHandlerSuffix();
 	private static final String EVENT_HANDLER_PACKAGE = Settings.getInstance().getPipEventHandlerPackage();
 
 	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerManager.class);
 
-	private Map<String, PipClassLoader> _classLoaderMap = null;
+	private static Map<String, PipClassLoader> _classLoaderMap = new HashMap<>();
 
-	public EventHandlerManager() {
-		_classLoaderMap = new HashMap<>();
-	}
-
-	@Override
-	public IEventHandler createEventHandler(IEvent event) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+	public static IEventHandler createEventHandler(IEvent event) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 
 		String className =  EVENT_HANDLER_PACKAGE
 				+ ((event.getPep() != null) ? event.getPep().toLowerCase() + "." : "")
@@ -56,7 +51,7 @@ public class EventHandlerManager implements IEventHandlerCreator {
 		}
 	}
 
-	public void setClassToBeLoaded(EventHandlerDefinition eventHandlerDefinition) {
+	public static void setClassToBeLoaded(EventHandlerDefinition eventHandlerDefinition) {
 		_logger.debug("Creating class loader for class: " + eventHandlerDefinition.getClassName());
 		String className = eventHandlerDefinition.getClassName();
 

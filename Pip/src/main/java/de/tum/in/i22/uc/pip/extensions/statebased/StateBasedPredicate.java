@@ -19,16 +19,16 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 		_predicate = predicate;
 	}
 
-	public static IStateBasedPredicate create(String predicate) {
+	public static IStateBasedPredicate create(String predicate) throws InvalidStateBasedFormula {
 		IStateBasedPredicate spredicate = null;
 
-		RuntimeException rte = new RuntimeException("Predicate {" + predicate + "} is invalid.");
+		InvalidStateBasedFormula exc = new InvalidStateBasedFormula("Predicate {" + predicate + "} is invalid.");
 
 		String[] st = predicate.split(StateBasedPredicate.SEPARATOR1);
 		EStateBasedFormula pred = EStateBasedFormula.from(st[0]);
 
 		if (st.length == 0 || pred == null) {
-			throw rte;
+			throw exc;
 		}
 
 		switch (pred) {
@@ -45,11 +45,11 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 					spredicate = new IsOnlyIn(predicate, st[1], st[2]);
 				break;
 			default:
-				throw rte;
+				throw exc;
 		}
 
 		if (spredicate == null) {
-			throw rte;
+			throw exc;
 		}
 
 		return spredicate;

@@ -16,7 +16,7 @@
 		<module>Pip</module>
 		<module>Pmp</module>
 		<module>CommunicationManager</module>
-		<!-- <module>UsageControlTests</module> -->
+		<module>UsageControlTests</module>
 	</modules>
 
 	<properties>

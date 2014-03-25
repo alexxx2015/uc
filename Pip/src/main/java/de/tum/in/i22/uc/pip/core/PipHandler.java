@@ -27,14 +27,14 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
+import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
+import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
-
-	private final EventHandlerManager _actionHandlerCreator;
 
 	private final InformationFlowModel _ifModel;
 
@@ -57,8 +57,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private boolean _initialized = false;
 
 	private PipHandler() {
-		_actionHandlerCreator = new EventHandlerManager();
-		_pipManager = new PipManager(_actionHandlerCreator, Settings.getInstance().getPipPortNum());
+		_pipManager = PipManager.getInstance();
 		_distributedPipManager = DistributedPipManager.getInstance();
 		_ifModel = InformationFlowModel.getInstance();
 	}
@@ -79,7 +78,15 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
-		return StateBasedPredicate.create(predicate).evaluate();
+		IStateBasedPredicate pred;
+
+		try {
+			pred = StateBasedPredicate.create(predicate);
+		} catch (InvalidStateBasedFormula e) {
+			_logger.warn(e.toString());
+			return false;
+		}
+		return pred.evaluate();
 	}
 
 	@Override
@@ -100,7 +107,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		_logger.debug("Action name: " + action);
 
 		try {
-			actionHandler = _actionHandlerCreator.createEventHandler(event);
+			actionHandler = EventHandlerManager.createEventHandler(event);
 		} catch (IllegalAccessException | InstantiationException e) {
 			return new StatusBasic(EStatus.ERROR, "Failed to create event handler for action " + action);
 		} catch (ClassNotFoundException e) {
@@ -261,8 +268,8 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public IStatus initialRepresentation(IContainer container, IData data) {
-		// TODO Auto-generated method stub
-		return null;
+		_ifModel.addDataToContainer(data, container);
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override

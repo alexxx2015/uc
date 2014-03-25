@@ -397,7 +397,7 @@ public class InformationFlowModel {
 			return;
 		}
 
-		addDataToContainerMappings(Collections.singleton(data), container);
+		addDataToContainer(Collections.singleton(data), container);
 	}
 
 	/**
@@ -509,9 +509,9 @@ public class InformationFlowModel {
 			return;
 		}
 
-		addDataToContainerMappings(data, dstContainer);
+		addDataToContainer(data, dstContainer);
 		for (IContainer c : getAliasesFrom(dstContainer)) {
-			addDataToContainerMappings(data, c);
+			addDataToContainer(data, c);
 		}
 	}
 
@@ -531,7 +531,7 @@ public class InformationFlowModel {
 		return result;
 	}
 
-	public void addDataToContainerMappings(Set<IData> data, IContainer container) {
+	public void addDataToContainer(Set<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}

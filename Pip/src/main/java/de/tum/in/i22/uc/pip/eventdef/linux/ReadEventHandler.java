@@ -49,7 +49,7 @@ public class ReadEventHandler extends BaseEventHandler {
 		}
 
 		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(procCont)) {
-			ifModel.addDataToContainerMappings(data, c);
+			ifModel.addDataToContainer(data, c);
 		}
 
 		return STATUS_OKAY;

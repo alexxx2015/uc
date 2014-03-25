@@ -37,7 +37,7 @@ public class TakeScreenshotEventHandler extends BaseEventHandler {
         //ifModel.emptyContainer(clipboardContainerID);
 
         IContainer windowContainer = ifModel.getContainer(new NameBasic(visibleWindow));
-        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(windowContainer), clipboardContainer);
+        ifModel.addDataToContainer(ifModel.getDataInContainer(windowContainer), clipboardContainer);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

@@ -175,8 +175,8 @@ public class ExtendInformationFlowModel extends InformationFlowModel {
 	}
 
 	@Override
-	public void addDataToContainerMappings(Set<IData> data, IContainer container) {
-		_ifm.addDataToContainerMappings(data, container);
+	public void addDataToContainer(Set<IData> data, IContainer container) {
+		_ifm.addDataToContainer(data, container);
 	}
 
 	@Override

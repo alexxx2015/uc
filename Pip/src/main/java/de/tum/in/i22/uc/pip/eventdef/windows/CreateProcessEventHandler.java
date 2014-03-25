@@ -38,7 +38,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
         IContainer parentProcessContainer = WindowsEvents.instantiateProcess(parentPid, parentProcessName);
 
         //add data of parent process container to child process container
-        ifModel.addDataToContainerMappings(ifModel.getDataInContainer(parentProcessContainer), processContainer);
+        ifModel.addDataToContainer(ifModel.getDataInContainer(parentProcessContainer), processContainer);
 
         //add initial windows of process to model
         //TODO: REGEX??
@@ -54,7 +54,7 @@ public class CreateProcessEventHandler extends BaseEventHandler {
                 ifModel.addName(new NameBasic(handle), windowContainer);
             }
 
-            ifModel.addDataToContainerMappings(ifModel.getDataInContainer(processContainer), windowContainer);
+            ifModel.addDataToContainer(ifModel.getDataInContainer(processContainer), windowContainer);
 
             ifModel.addAlias(processContainer, windowContainer);
         }

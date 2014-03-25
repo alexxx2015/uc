@@ -45,7 +45,7 @@ public class CreateDcEventHandler extends BaseEventHandler {
 			ifModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
-		ifModel.addDataToContainerMappings(
+		ifModel.addDataToContainer(
 				ifModel.getDataInContainer(processContainer),
 				deviceContainer);
 

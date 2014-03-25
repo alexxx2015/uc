@@ -27,34 +27,32 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDao;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDefinition;
 
 
 public class PipManager {
-
-
 	private static final Logger _logger = LoggerFactory.getLogger(PipManager.class);
 
+	private static final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
-	private EventHandlerManager _eventHandlerManager = null;
-	private EventHandlerDao _eventHandlerDao = null;
+	private static final PipManager _instance = new PipManager();
 
-	private final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
+	private final EventHandlerDao _eventHandlerDao;
 
-	public PipManager(EventHandlerManager eventHandlerManager, int pipPort) {
-		_eventHandlerManager = eventHandlerManager;
-
-		_logger.info("Create data access object");
-
-		// 'misuse' the PIP's port as an ID for the PIP's database. That's fine.
-		_eventHandlerDao = new EventHandlerDao(pipPort);
+	private PipManager() {
+		_eventHandlerDao = new EventHandlerDao(Settings.getInstance().getPipPortNum());
 
 		// read the database and store class definitions in the event handler manager
 		List<EventHandlerDefinition> eventHandlerDefinitions = _eventHandlerDao.getCurrentEventHandlerDefinitions();
 		for (EventHandlerDefinition eventHandlerDefinition : eventHandlerDefinitions) {
-			_eventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
+			EventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
 		}
+	}
+
+	public static PipManager getInstance() {
+		return _instance;
 	}
 
 	public IStatus updateInformationFlowSemantics(
@@ -97,7 +95,7 @@ public class PipManager {
 					for (String className : keySet) {
 						EventHandlerDefinition eventHandlerDefinition = map.get(className);
 						_eventHandlerDao.saveEventHandlerDefinition(eventHandlerDefinition);
-						_eventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
+						EventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
 					}
 					break;
 				case IGNORE_UPDATES: break; // currently not used

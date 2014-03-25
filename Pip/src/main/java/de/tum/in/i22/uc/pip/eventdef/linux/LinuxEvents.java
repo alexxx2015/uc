@@ -161,14 +161,14 @@ class LinuxEvents {
 						((RemoteSocketContainer) c).getSocketName(), data);
 			}
 			else {
-				ifModel.addDataToContainerMappings(data, c);
+				ifModel.addDataToContainer(data, c);
 			}
 		}
 
 		// now, also copy into the actual (direct) destination container ...
 		// ... but only if it is not a socket.
 		if (!(dstCont instanceof SocketContainer)) {
-			ifModel.addDataToContainerMappings(data, dstCont);
+			ifModel.addDataToContainer(data, dstCont);
 		}
 
 		return STATUS_OKAY;

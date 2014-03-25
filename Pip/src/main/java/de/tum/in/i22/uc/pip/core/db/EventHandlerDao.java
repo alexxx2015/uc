@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * event handler data access object class.
+ *
  * @author Stoimenov
  *
  */
@@ -32,7 +33,7 @@ public class EventHandlerDao {
 		_logger.debug("Create entity manager for: " + _persistenceUnitName);
 
 		// configure this PIP's database ID
-		Map<String,String> connectProps1 = new HashMap<String,String>();
+		Map<String, String> connectProps1 = new HashMap<String, String>();
 		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + _persistenceUnitName + ";create=true");
 
 		_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
@@ -41,25 +42,23 @@ public class EventHandlerDao {
 	public EventHandlerDefinition getEventHandlerDefinition(String className) {
 		_logger.debug("Get event handler definition for " + className);
 		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
-				"select t from EventHandlerDefinition t where t.className=:className",
-				EventHandlerDefinition.class);
+				"select t from EventHandlerDefinition t where t.className=:className", EventHandlerDefinition.class);
 		q.setParameter("className", className);
 
 		try {
-			EventHandlerDefinition result =  q.getSingleResult();
+			EventHandlerDefinition result = q.getSingleResult();
 			return result;
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
 
-	public void saveEventHandlerDefinition(
-			EventHandlerDefinition eventHandlerDefinition) {
+	public void saveEventHandlerDefinition(EventHandlerDefinition eventHandlerDefinition) {
 
 		_logger.debug("Save event handler definition: " + eventHandlerDefinition.getClassName());
 		// check if event handler definition already exists
-		EventHandlerDefinition existingEventHandlerDef =
-				getEventHandlerDefinition(eventHandlerDefinition.getClassName());
+		EventHandlerDefinition existingEventHandlerDef = getEventHandlerDefinition(eventHandlerDefinition
+				.getClassName());
 
 		if (existingEventHandlerDef == null) {
 			_logger.debug("Create new table entry");
@@ -80,8 +79,7 @@ public class EventHandlerDao {
 
 	public List<EventHandlerDefinition> getCurrentEventHandlerDefinitions() {
 		_logger.debug("Get current event handler definitions");
-		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery(
-				"select t from EventHandlerDefinition t",
+		TypedQuery<EventHandlerDefinition> q = _entityManager.createQuery("select t from EventHandlerDefinition t",
 				EventHandlerDefinition.class);
 		return q.getResultList();
 	}

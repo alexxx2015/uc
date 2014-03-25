@@ -1,42 +1,38 @@
 package uctests;
 
-import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import testutil.DummyMessageGen;
-import de.tum.in.i22.pmp2pip.Pmp2PipTcpImp;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.pip.core.PipHandler;
 
 public class TestPmp2PipCommunication {
 
-	private static Logger _logger = Logger.getRootLogger();
+	private static Logger _logger = LoggerFactory.getLogger(TestPmp2PipCommunication.class);
 
-	private static IPmp2Pip _pipProxy;
+	private static IAny2Pip _pip;
 
 
 	@BeforeClass
 	public static void beforeClass() {
-		_pipProxy = new Pmp2PipTcpImp("localhost", TestSettings.PMP_LISTENER_PORT_IN_PIP);
+		_pip = PipHandler.getInstance();
 	}
 
 	@Test
 	public void testInitialRepresentation() throws Exception {
-		// connect to PIP
-		_pipProxy = ConnectionManager.MAIN.obtain(_pipProxy);
 		IContainer container = DummyMessageGen.createContainer();
 		IData data = DummyMessageGen.createData();
-		IStatus status = _pipProxy.initialRepresentation(container, data);
+		IStatus status = _pip.initialRepresentation(container, data);
 		_logger.debug("Received status: " + status);
 
-		// disconnect from PIP
-		ConnectionManager.MAIN.release(_pipProxy);
-
-		Assert.assertNotNull(status);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 }

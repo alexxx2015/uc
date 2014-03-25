@@ -19,11 +19,8 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
-import de.tum.in.i22.uc.pip.handlers.pdp.Pdp2PipTcpImp;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 
 public class PipTest {
@@ -60,7 +57,7 @@ public class PipTest {
 		String predicate = "dummy string";
 		boolean res = _pip.evaluatePredicateSimulatingNextState(event, predicate);
 		_logger.debug("Received result: " + res);
-		Assert.assertEquals(true, res);
+		Assert.assertEquals(false, res);
 	}
 
 	@Test
