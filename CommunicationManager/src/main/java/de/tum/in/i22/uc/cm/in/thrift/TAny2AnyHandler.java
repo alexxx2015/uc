@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.in.thrift;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,37 +17,11 @@ import de.tum.i22.in.uc.cm.thrift.Pxp;
 import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Any;
-import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.uc.cm.in.IForwarder;
-import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 
+public class TAny2AnyHandler extends GenericHandler implements TAny2Any.Iface {
 
-
-public class TAny2AnyHandler extends ClientConnectionHandler implements TAny2Any.Iface, IForwarder {
-
-	private final int _port;
-
-	public TAny2AnyHandler(int pepPort) {
-		super(null, null);
-		_port = pepPort;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " listening on port " + _port;
-	}
-
-	@Override
-	protected void doProcessing() throws IOException, EOFException,
-			InterruptedException, MessageTooLargeException {
-		_logger.debug("Thrift doProcessing invoked");
-
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void disconnect() {
+	public TAny2AnyHandler(int port) {
+		super(port);
 	}
 
 	@Override

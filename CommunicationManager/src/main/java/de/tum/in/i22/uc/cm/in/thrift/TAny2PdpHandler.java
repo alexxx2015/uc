@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.in.thrift;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,41 +12,11 @@ import de.tum.i22.in.uc.cm.thrift.Pxp;
 import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.uc.cm.in.IForwarder;
-import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
-import de.tum.in.i22.uc.cm.in.RequestHandler;
-import de.tum.in.i22.uc.cm.requests.EPdpRequestType;
-import de.tum.in.i22.uc.cm.requests.PdpRequest;
 
-public class TAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp.Iface, IForwarder {
+public class TAny2PdpHandler extends GenericHandler implements TAny2Pdp.Iface {
 
-	private final int _port;
-
-	public TAny2PdpHandler(int pepPort) {
-		super(null, null);
-		_port = pepPort;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " listening on port " + _port;
-	}
-
-	@Override
-	protected void doProcessing() throws IOException, EOFException,
-			InterruptedException, MessageTooLargeException {
-		_logger.debug("Thrift doProcessing invoked");
-
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void disconnect() {
+	public TAny2PdpHandler(int port) {
+		super(port);
 	}
 
 	@Override

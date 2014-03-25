@@ -1,15 +1,10 @@
 package de.tum.in.i22.uc.cm.in.thrift;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.thrift.TException;
 
-import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
-import de.tum.in.i22.uc.cm.in.IForwarder;
-import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 import de.tum.i22.in.uc.cm.thrift.Container;
 import de.tum.i22.in.uc.cm.thrift.Data;
 import de.tum.i22.in.uc.cm.thrift.Event;
@@ -18,32 +13,10 @@ import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
 
 
+public class TAny2PipHandler extends GenericHandler implements TAny2Pip.Iface {
 
-public class TAny2PipHandler extends ClientConnectionHandler implements TAny2Pip.Iface, IForwarder {
-
-	private final int _port;
-
-	public TAny2PipHandler(int pepPort) {
-		super(null, null);
-		_port = pepPort;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " listening on port " + _port;
-	}
-
-	@Override
-	protected void doProcessing() throws IOException, EOFException,
-			InterruptedException, MessageTooLargeException {
-		_logger.debug("Thrift doProcessing invoked");
-
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void disconnect() {
+	public TAny2PipHandler(int port) {
+		super(port);
 	}
 
 	@Override
