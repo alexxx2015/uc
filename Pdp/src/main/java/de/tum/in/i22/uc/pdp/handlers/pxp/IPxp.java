@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pdp.handlers.pxp;
 
-import de.tum.in.i22.uc.pdp.internal.Event;
-import de.tum.in.i22.uc.pdp.internal.ExecuteAction;
+import de.tum.in.i22.uc.pdp.core.Event;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 
 
 public interface IPxp

@@ -17,9 +17,9 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
-import de.tum.in.i22.uc.pdp.internal.Event;
-import de.tum.in.i22.uc.pdp.internal.IPolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.Event;
+import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 /**
  * This contains some tests to run the PIP "inside" the PDP

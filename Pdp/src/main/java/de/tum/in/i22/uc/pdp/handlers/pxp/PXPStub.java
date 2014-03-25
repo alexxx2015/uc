@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
-import de.tum.in.i22.uc.pdp.internal.Event;
-import de.tum.in.i22.uc.pdp.internal.ExecuteAction;
-import de.tum.in.i22.uc.pdp.internal.Param;
-import de.tum.in.i22.uc.pdp.internal.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.Event;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
+import de.tum.in.i22.uc.pdp.core.Param;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class PXPStub implements IPxp
 {
