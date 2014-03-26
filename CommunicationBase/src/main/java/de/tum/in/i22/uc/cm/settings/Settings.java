@@ -6,6 +6,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.distribution.IPLocation;
+import de.tum.in.i22.uc.distribution.LocalLocation;
+import de.tum.in.i22.uc.distribution.Location;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.pip.EInformationFlowModel;
 
@@ -37,6 +40,10 @@ public class Settings extends SettingsLoader {
 	private boolean _pipListenerEnabled = true;
 	private boolean _pdpListenerEnabled = true;
 	private boolean _anyListenerEnabled = true;
+
+	private Location _pdpLocation = new LocalLocation();
+	private Location _pipLocation = new LocalLocation();
+	private Location _pmpLocation = new LocalLocation();
 
 	private String _pipEnabledInformationFlowModels = "scope";
 
@@ -85,6 +92,10 @@ public class Settings extends SettingsLoader {
 		_pipEventHandlerSuffix = loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
 		_pipEnabledInformationFlowModels = loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
 
+		_pmpLocation = loadSetting("pmp_location", _pmpLocation);
+		_pipLocation = loadSetting("pip_location", _pipLocation);
+		_pdpLocation = loadSetting("pdp_location", _pdpLocation);
+
 		_pmpListenerEnabled = loadSetting("pmp_listener_enabled", _pmpListenerEnabled);
 		_pipListenerEnabled = loadSetting("pip_listener_enabled", _pipListenerEnabled);
 		_pdpListenerEnabled = loadSetting("pdp_listener_enabled", _pdpListenerEnabled);
@@ -103,6 +114,26 @@ public class Settings extends SettingsLoader {
 		}
 	}
 
+	private Location loadSetting(String propName, Location defaultValue) {
+		Location val = defaultValue;
+
+		boolean success = false;
+
+		try {
+			val = IPLocation.from(_props.getProperty(propName));
+			if (val != null) {
+				success = true;
+			}
+		}
+		catch (Exception e) { }
+
+		if (!success) {
+			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			val = defaultValue;
+		}
+
+		return val;
+	}
 
 	public String getPropertiesFileName() {
 		return _propertiesFilename;
@@ -154,6 +185,18 @@ public class Settings extends SettingsLoader {
 
 	public Set<EInformationFlowModel> getEnabledInformationFlowModels() {
 		return EInformationFlowModel.from(_pipEnabledInformationFlowModels);
+	}
+
+	public Location getPdpLocation() {
+		return _pdpLocation;
+	}
+
+	public Location getPipLocation() {
+		return _pipLocation;
+	}
+
+	public Location getPmpLocation() {
+		return _pmpLocation;
 	}
 }
 

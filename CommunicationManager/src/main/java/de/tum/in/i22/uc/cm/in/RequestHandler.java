@@ -23,6 +23,7 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.distribution.ELocation;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
@@ -59,9 +60,29 @@ public class RequestHandler implements Runnable {
 	private RequestHandler() {
 		_requestQueue = new LinkedBlockingQueue<>();
 
-		PDP = PdpHandler.getInstance();
-		PIP = PipHandler.getInstance();
-		PMP = PmpHandler.getInstance();
+		// TODO handle case of remote PDP, PMP, PIP
+
+
+		if (_settings.getPdpLocation().getLocation() == ELocation.LOCAL) {
+			PDP = PdpHandler.getInstance();
+		}
+		else {
+			PDP = null;
+		}
+
+		if (_settings.getPipLocation().getLocation() == ELocation.LOCAL) {
+			PIP = PipHandler.getInstance();
+		}
+		else {
+			PIP = null;
+		}
+
+		if (_settings.getPmpLocation().getLocation() == ELocation.LOCAL) {
+			PMP = PmpHandler.getInstance();
+		}
+		else {
+			PMP = null;
+		}
 
 		PDP.init(PIP, PMP);
 		PIP.init(PDP, PMP);
@@ -100,7 +121,7 @@ public class RequestHandler implements Runnable {
 		}
 	}
 
-	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
+	public static <T extends Request> void addRequest(T request, IForwarder forwarder) {
 		_instance._requestQueue.add(new RequestWrapper<T>(request, forwarder));
 	}
 
