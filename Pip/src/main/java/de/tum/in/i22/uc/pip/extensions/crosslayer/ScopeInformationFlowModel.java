@@ -200,7 +200,7 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 		String nl = System.getProperty("line.separator");
 
 		sb.append("  Scope:" + nl);
-		sb.append("+++ NOT IMPLEMENTED +++");
+		sb.append("    not implemented." + nl);
 
 		return sb.toString();
 	}

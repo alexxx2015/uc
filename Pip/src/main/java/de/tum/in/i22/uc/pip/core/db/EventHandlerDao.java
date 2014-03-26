@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pip.core.db;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,32 +11,42 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**
  * event handler data access object class.
  *
- * @author Stoimenov
+ * @author Stoimenov, Kelbert
  *
  */
 public class EventHandlerDao {
 
 	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerDao.class);
 
-	private static final String PERSISTENCE_UNIT_NAME = "PipDb";
-
-	private final String _persistenceUnitName;
-
 	private final EntityManager _entityManager;
 
-	public EventHandlerDao(int pipPersistenceID) {
-		_persistenceUnitName = PERSISTENCE_UNIT_NAME + pipPersistenceID;
-		_logger.debug("Create entity manager for: " + _persistenceUnitName);
+	public EventHandlerDao() {
+		Settings settings = Settings.getInstance();
+
+		File persistencePath = new File(settings.getPipPersistenceDirectory());
+
+		if (persistencePath.exists() && settings.pipDeletePersistenceDirectory()) {
+			try {
+				FileUtils.deleteDirectory(persistencePath);
+			} catch (IOException e) {
+				_logger.warn(e.toString());;
+			}
+		}
+
+		_logger.info("Create entity manager for: " + persistencePath);
 
 		// configure this PIP's database ID
 		Map<String, String> connectProps1 = new HashMap<String, String>();
-		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + _persistenceUnitName + ";create=true");
+		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + persistencePath.getName() + ";create=true");
 
 		_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
 	}

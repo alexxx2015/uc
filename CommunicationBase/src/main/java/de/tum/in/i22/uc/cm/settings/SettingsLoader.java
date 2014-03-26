@@ -73,59 +73,62 @@ class SettingsLoader {
 		}
 	}
 
+	protected <T extends Object> T loadSettingFinalize(boolean success, String propName, T loadedValue, T defaultValue) {
+		if (success) {
+			_logger.info("Property [" + propName + "] loaded. Value: [" + loadedValue + "].");
+			return loadedValue;
+		}
+		else {
+			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			return defaultValue;
+		}
+	}
+
 	protected int loadSetting(String propName, int defaultValue) {
-		int val = defaultValue;
+		int loadedValue = defaultValue;
+
+		boolean success = true;
 
 		try {
-			val = Integer.valueOf((String) _props.get(propName));
+			loadedValue = Integer.valueOf((String) _props.get(propName));
 		}
 		catch (Exception e) {
-			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			success = false;
 		}
 
-		return val;
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
 	protected String loadSetting(String propName, String defaultValue) {
-		String val = defaultValue;
+		String loadedValue = defaultValue;
 
 		boolean success = false;
 
 		try {
-			val = (String) _props.get(propName);
-			if (val != null) {
+			loadedValue = (String) _props.get(propName);
+			if (loadedValue != null) {
 				success = true;
 			}
 		}
 		catch (Exception e) { }
 
-		if (!success) {
-			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
-			val = defaultValue;
-		}
-
-		return val;
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
 	protected boolean loadSetting(String propName, boolean defaultValue) {
-		boolean val = defaultValue;
+		boolean loadedValue = defaultValue;
 
 		boolean success = false;
 
 		try {
 			String s = _props.getProperty(propName);
 			if (s != null) {
-				val = Boolean.valueOf(s);
+				loadedValue = Boolean.valueOf(s);
 				success = true;
 			}
 		}
 		catch (Exception e) {	}
 
-		if (!success) {
-			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
-			val = defaultValue;
-		}
-
-		return val;
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 }

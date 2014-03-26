@@ -27,7 +27,6 @@ import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDao;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDefinition;
 
@@ -42,7 +41,7 @@ public class PipManager {
 	private final EventHandlerDao _eventHandlerDao;
 
 	private PipManager() {
-		_eventHandlerDao = new EventHandlerDao(Settings.getInstance().getPipListenerPort());
+		_eventHandlerDao = new EventHandlerDao();
 
 		// read the database and store class definitions in the event handler manager
 		List<EventHandlerDefinition> eventHandlerDefinitions = _eventHandlerDao.getCurrentEventHandlerDefinitions();

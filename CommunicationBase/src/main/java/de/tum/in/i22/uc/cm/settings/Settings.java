@@ -47,8 +47,11 @@ public class Settings extends SettingsLoader {
 
 	private String _pipEnabledInformationFlowModels = "scope";
 
-	private String _pipEventHandlerSuffix = "EventHandler";
-	private String _pipEventHandlerPackage = "de.tum.in.i22.uc.pip.eventdef.";
+	private String _pipEventHandlerSuffix 			= "EventHandler";
+	private String _pipEventHandlerPackage 			= "de.tum.in.i22.uc.pip.eventdef.";
+	private String _pipInitializerEvent 			= "SchemaInitializer";
+	private String _pipPersistenceDirectory			= "pipdb";
+	private boolean _pipDeletePersistenceDirectory	= true;
 
 	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
@@ -88,10 +91,6 @@ public class Settings extends SettingsLoader {
 
 
 	private void loadProperties() {
-		_pipEventHandlerPackage = loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
-		_pipEventHandlerSuffix = loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
-		_pipEnabledInformationFlowModels = loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
-
 		_pmpLocation = loadSetting("pmp_location", _pmpLocation);
 		_pipLocation = loadSetting("pip_location", _pipLocation);
 		_pdpLocation = loadSetting("pdp_location", _pdpLocation);
@@ -106,33 +105,45 @@ public class Settings extends SettingsLoader {
 		_pdpListenerPort = loadSetting("pdp_listener_port", _pdpListenerPort);
 		_anyListenerPort = loadSetting("any_listener_port", _anyListenerPort);
 
-		try {
-			_distributedPipStrategy = EDistributedPipStrategy.from((String) _props.get("distributed_pip_strategy"));
-		}
-		catch (Exception e) {
-			_logger.warn("Cannot read property [" + "distributed_pip_strategy" + "]. Using default value [" + _distributedPipStrategy + "].");
-		}
+		_pipEventHandlerPackage 			= loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
+		_pipEventHandlerSuffix 				= loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
+		_pipInitializerEvent 				= loadSetting("pip_initializer_event", _pipInitializerEvent);
+		_pipEnabledInformationFlowModels 	= loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
+		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
+		_pipDeletePersistenceDirectory 		= loadSetting("pip_empty_persistence_directory", _pipDeletePersistenceDirectory);
+
+		_distributedPipStrategy = loadSetting("distributed_pip_strategy", _distributedPipStrategy);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
-		Location val = defaultValue;
+		Location loadedValue = defaultValue;
 
 		boolean success = false;
 
 		try {
-			val = IPLocation.from(_props.getProperty(propName));
-			if (val != null) {
+			loadedValue = IPLocation.from(_props.getProperty(propName));
+			if (loadedValue != null) {
 				success = true;
 			}
 		}
 		catch (Exception e) { }
 
-		if (!success) {
-			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
-			val = defaultValue;
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
+	}
+
+	private EDistributedPipStrategy loadSetting(String propName, EDistributedPipStrategy defaultValue) {
+		EDistributedPipStrategy loadedValue = defaultValue;
+
+		boolean success = true;
+
+		try {
+			loadedValue = EDistributedPipStrategy.from((String) _props.get(propName));
+		}
+		catch (Exception e) {
+			success = false;
 		}
 
-		return val;
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
 	public String getPropertiesFileName() {
@@ -197,6 +208,18 @@ public class Settings extends SettingsLoader {
 
 	public Location getPmpLocation() {
 		return _pmpLocation;
+	}
+
+	public String getPipInitializerEvent() {
+		return _pipInitializerEvent;
+	}
+
+	public String getPipPersistenceDirectory() {
+		return _pipPersistenceDirectory;
+	}
+
+	public boolean pipDeletePersistenceDirectory() {
+		return _pipDeletePersistenceDirectory;
 	}
 }
 

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -21,6 +22,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
@@ -62,6 +64,9 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		_distributedPipManager = DistributedPipManager.getInstance();
 		_ifModelManager = InformationFlowModelManager.getInstance();
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
+
+		// initialize data flow according to settings
+		notifyActualEvent(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
 	}
 
 	public static synchronized PipHandler getInstance(){
@@ -109,8 +114,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		String action = event.getPrefixedName();
 		IEventHandler actionHandler = null;
 
-		_logger.debug("Action name: " + action);
-
 		try {
 			actionHandler = EventHandlerManager.createEventHandler(event);
 		} catch (IllegalAccessException | InstantiationException e) {
@@ -119,9 +122,13 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 			return new StatusBasic(EStatus.ERROR, "Class not found for event handler " + action);
 		}
 
-		return actionHandler != null
-			? actionHandler.setEvent(event).executeEvent()
-			: new StatusBasic(EStatus.ERROR);
+		if (actionHandler == null) {
+			return new StatusBasic(EStatus.ERROR);
+		}
+
+		IStatus result = actionHandler.setEvent(event).executeEvent();
+		System.out.println(_ifModelManager.niceString());
+		return result;
 	}
 
 	@Override
