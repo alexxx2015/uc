@@ -7,9 +7,11 @@ import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
+import de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
-import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 
 
 public abstract class AbstractScopeEventHandler extends BaseEventHandler {
@@ -17,7 +19,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 	private IEvent _event;
 
-	protected ScopeInformationFlowModel ifModel = ScopeInformationFlowModel.getInstance();
+	protected IScopeInformationFlowModel ifScopeModel;
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
@@ -36,7 +38,12 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 
-	public AbstractScopeEventHandler() { }
+	public AbstractScopeEventHandler() {
+		ifScopeModel = InformationFlowModelManager.getInstance().getExtension(EInformationFlowModel.SCOPE);
+		if (ifScopeModel == null) {
+			throw new RuntimeException("Scopes are not supported. Check the configuration.");
+		}
+	}
 
 	/*
 	 * Event-specific class that creates the scopes (usually only one) that are
@@ -56,9 +63,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * final.
 	 */
 	protected final IStatus openScope(Scope scope) {
-		boolean isOpen = ifModel.isScopeOpened(scope);
+		boolean isOpen = ifScopeModel.isScopeOpened(scope);
 
-		if (isOpen | !(ifModel.openScope(scope))) {
+		if (isOpen | !(ifScopeModel.openScope(scope))) {
 			_logger.info("Scope " + scope + " is already opened");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already opened");
@@ -76,9 +83,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * It should be final.
 	 */
 	protected final IStatus closeScope(Scope scope) {
-		boolean isOpen = ifModel.isScopeOpened(scope);
+		boolean isOpen = ifScopeModel.isScopeOpened(scope);
 
-		if (!(isOpen) | !(ifModel.closeScope(scope))) {
+		if (!(isOpen) | !(ifScopeModel.closeScope(scope))) {
 			_logger.info("Scope " + scope + " is already closed");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already closed");

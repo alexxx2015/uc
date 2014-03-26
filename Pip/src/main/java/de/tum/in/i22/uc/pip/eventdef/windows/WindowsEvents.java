@@ -4,11 +4,12 @@ import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class WindowsEvents {
 
-	private final static InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	private final static BasicInformationFlowModel ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
 
 	private final static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 

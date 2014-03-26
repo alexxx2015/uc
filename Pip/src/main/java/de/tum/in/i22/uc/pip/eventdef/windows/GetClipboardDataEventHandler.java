@@ -28,19 +28,19 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
 		}
         IContainer  processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-        IContainer clipboardContainer = ifModel.getContainer(new NameBasic("clipboard"));
+        IContainer clipboardContainer = basicIfModel.getContainer(new NameBasic("clipboard"));
 
          //check if container for clipboard exists and create new container if not
          if (clipboardContainer == null)
          {
         	 clipboardContainer = _messageFactory.createContainer();
-             ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
+             basicIfModel.addName(new NameBasic("clipboard"), clipboardContainer);
          };
 
          //add data to transitive reflexive closure of process container
-         for (IContainer tempContainer : ifModel.getAliasTransitiveReflexiveClosure(processContainer))
+         for (IContainer tempContainer : basicIfModel.getAliasTransitiveReflexiveClosure(processContainer))
          {
-             ifModel.addDataToContainer(ifModel.getDataInContainer(clipboardContainer), tempContainer);
+             basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(clipboardContainer), tempContainer);
          }
 
          return _messageFactory.createStatus(EStatus.OKAY);

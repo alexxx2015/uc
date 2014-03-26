@@ -16,15 +16,17 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.pip.core.PipHandler;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class LinuxEventTest {
 	private static IPdp2Pip _pipHandler = PipHandler.getInstance();
 
-	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+	private static final InformationFlowModelManager _ifModelManager = InformationFlowModelManager.getInstance();
+
+	private static final BasicInformationFlowModel _ifModel = _ifModelManager.getBasicInformationFlowModel();
 
 	private static final String PEP_PARAMETER_LINUX = "Linux";
 
@@ -171,7 +173,7 @@ public class LinuxEventTest {
 		 * Do connect() before accept().
 		 * Test: Is the connection reflected in PIP (i.e. alias between the two)?
 		 */
-		_ifModel.reset();
+		_ifModelManager.reset();
 		_pipHandler.notifyActualEvent(eventClientSocket);
 		_pipHandler.notifyActualEvent(eventServerSocket);
 		_pipHandler.notifyActualEvent(eventClientConnect);
@@ -189,7 +191,7 @@ public class LinuxEventTest {
 		 * Do accept() before connect().
 		 * Test: Is the connection reflected in PIP (i.e. alias between the two)?
 		 */
-		_ifModel.reset();
+		_ifModelManager.reset();
 		_pipHandler.notifyActualEvent(eventClientSocket);
 		_pipHandler.notifyActualEvent(eventServerSocket);
 		_pipHandler.notifyActualEvent(eventServerAccept);
@@ -266,7 +268,7 @@ public class LinuxEventTest {
 		 * Local order of events: server:accept(), server:write(), client:connect(), client:read()
 		 * Test: Is server processes' data propagated to client process?
 		 */
-		_ifModel.reset();
+		_ifModelManager.reset();
 		_pipHandler.notifyActualEvent(eventServerExecve);
 		_pipHandler.notifyActualEvent(eventClientExecve);
 		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));
@@ -286,7 +288,7 @@ public class LinuxEventTest {
 		 * Local order of events: client:connect(), client:write(), server:accept(), server:read()
 		 * Test: Is client processes' data propagated to server process?
 		 */
-		_ifModel.reset();
+		_ifModelManager.reset();
 		_pipHandler.notifyActualEvent(eventServerExecve);
 		_pipHandler.notifyActualEvent(eventClientExecve);
 		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, clientPid)));
@@ -314,7 +316,7 @@ public class LinuxEventTest {
 		IEvent eventClientSocket = createLinuxSocketEvent(clientHost, clientPid, INET, STREAM, 3, true);
 		IEvent eventClientConnect = createLinuxConnectEvent(clientHost, clientPid, clientIP, clientPort, serverIP, serverPort, 3, true);
 
-//		_ifModel.reset();
+//		_ifModelManager.reset();
 //		_pipHandler.notifyActualEvent(eventServerExecve);
 //		_pipHandler.notifyActualEvent(eventClientExecve);
 //		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));

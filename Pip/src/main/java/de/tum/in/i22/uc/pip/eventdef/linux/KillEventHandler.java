@@ -29,12 +29,12 @@ public class KillEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer srcCont = ifModel.getContainer(ProcessName.create(host, srcPid));
-		IContainer dstCont = ifModel.getContainer(ProcessName.create(host, dstPid));
+		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, srcPid));
+		IContainer dstCont = basicIfModel.getContainer(ProcessName.create(host, dstPid));
 
 		if (srcCont != null) {
-			for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
-				ifModel.copyData(srcCont, c);
+			for (IContainer c : basicIfModel.getAliasTransitiveReflexiveClosure(dstCont)) {
+				basicIfModel.copyData(srcCont, c);
 			}
 		}
 

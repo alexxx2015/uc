@@ -26,17 +26,17 @@ public class SetClipboardDataEventHandler extends BaseEventHandler {
 		}
         IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-        IContainer clipboardContainer = ifModel.getContainer(new NameBasic("clipboard"));
+        IContainer clipboardContainer = basicIfModel.getContainer(new NameBasic("clipboard"));
 
         //check if container for clipboard exists and create new container if not
         if (clipboardContainer == null)
         {
         	clipboardContainer = _messageFactory.createContainer();
-            ifModel.addName(new NameBasic("clipboard"), clipboardContainer);
+            basicIfModel.addName(new NameBasic("clipboard"), clipboardContainer);
         };
 
-        ifModel.emptyContainer(clipboardContainer);
-        ifModel.addDataToContainer(ifModel.getDataInContainer(processContainer), clipboardContainer);
+        basicIfModel.emptyContainer(clipboardContainer);
+        basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(processContainer), clipboardContainer);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

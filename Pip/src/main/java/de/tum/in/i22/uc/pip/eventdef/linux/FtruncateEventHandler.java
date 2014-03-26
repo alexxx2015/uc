@@ -27,7 +27,7 @@ public class FtruncateEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.emptyContainer(FiledescrName.create(host, pid, fd));
+		basicIfModel.emptyContainer(FiledescrName.create(host, pid, fd));
 
 		return STATUS_OKAY;
 	}

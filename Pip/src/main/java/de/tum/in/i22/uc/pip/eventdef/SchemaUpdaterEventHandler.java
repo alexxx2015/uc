@@ -24,7 +24,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 
 		String contName="TEST_C";
 
-		IContainer cont = ifModel.getContainer(new NameBasic(
+		IContainer cont = basicIfModel.getContainer(new NameBasic(
 				contName));
 		//this should contain TEST_D
 
@@ -34,7 +34,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR);
 		}
 
-		Set<IData> dataIds=ifModel.getDataInContainer(cont);
+		Set<IData> dataIds=basicIfModel.getDataInContainer(cont);
 
 		if ((dataIds == null)||(dataIds.size()!=1)){
 			_logger.error("content of "+ contName+" different from expected. is dataIds empty? "+(dataIds == null));
@@ -42,16 +42,16 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		}
 
 		_logger.debug("emptying container "+ contName);
-		ifModel.emptyContainer(cont);
+		basicIfModel.emptyContainer(cont);
 
 		_logger.debug("deleting data d from ifModel... ");
-		ifModel.remove((IData)dataIds.toArray()[0]);
+		basicIfModel.remove((IData)dataIds.toArray()[0]);
 
 
-		_logger.debug("number of data elements in container TEST_C = "+ ifModel.getDataInContainer(cont).size());
+		_logger.debug("number of data elements in container TEST_C = "+ basicIfModel.getDataInContainer(cont).size());
 
 
-		_logger.debug(ifModel.toString());
+		_logger.debug(basicIfModel.toString());
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

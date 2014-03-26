@@ -30,24 +30,24 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer processContainer = ifModel.getContainer(new NameBasic(pid));
+		IContainer processContainer = basicIfModel.getContainer(new NameBasic(pid));
 
 		// check if container for process exists
 		if (processContainer != null) {
-			ifModel.emptyContainer(processContainer);
+			basicIfModel.emptyContainer(processContainer);
 
 			// also remove all depending containers
-			Set<IContainer> closureSet = ifModel.getAliasTransitiveReflexiveClosure(processContainer);
+			Set<IContainer> closureSet = basicIfModel.getAliasTransitiveReflexiveClosure(processContainer);
 			for (IContainer cont : closureSet) {
-				ifModel.remove(cont);
+				basicIfModel.remove(cont);
 			}
 
-			ifModel.removeAllAliasesFrom(processContainer);
-			ifModel.removeAllAliasesTo(processContainer);
-			ifModel.remove(processContainer);
+			basicIfModel.removeAllAliasesFrom(processContainer);
+			basicIfModel.removeAllAliasesTo(processContainer);
+			basicIfModel.remove(processContainer);
 
-			for (IName nm : ifModel.getAllNamingsFrom(processContainer)) {
-				ifModel.removeName(nm);
+			for (IName nm : basicIfModel.getAllNamingsFrom(processContainer)) {
+				basicIfModel.removeName(nm);
 			}
 		}
 

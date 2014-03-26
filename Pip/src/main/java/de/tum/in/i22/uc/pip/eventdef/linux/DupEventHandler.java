@@ -25,7 +25,7 @@ public class DupEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		ifModel.addName(
+		basicIfModel.addName(
 				FiledescrName.create(host, pid, oldfd),
 				FiledescrName.create(host, pid, newfd));
 

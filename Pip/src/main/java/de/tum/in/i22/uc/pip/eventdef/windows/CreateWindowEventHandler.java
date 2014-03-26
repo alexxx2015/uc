@@ -30,16 +30,16 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-		IContainer containerIdByWindowHandle = ifModel.getContainer(new NameBasic(windowHandle));
+		IContainer containerIdByWindowHandle = basicIfModel.getContainer(new NameBasic(windowHandle));
 
 		// check if container for window exists and create new container if not
 		if (containerIdByWindowHandle == null) {
 			containerIdByWindowHandle = _messageFactory.createContainer();
-			ifModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
+			basicIfModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 
-		ifModel.addDataToContainer(ifModel.getDataInContainer(processContainer), containerIdByWindowHandle);
-		ifModel.addAlias(processContainer, containerIdByWindowHandle);
+		basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(processContainer), containerIdByWindowHandle);
+		basicIfModel.addAlias(processContainer, containerIdByWindowHandle);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

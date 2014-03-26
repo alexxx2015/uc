@@ -16,14 +16,15 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class InformationFlowModelTest {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	private static final Logger _logger = LoggerFactory.getLogger(InformationFlowModelTest.class);
 
-	private static final InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+	private static final BasicInformationFlowModel _ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {

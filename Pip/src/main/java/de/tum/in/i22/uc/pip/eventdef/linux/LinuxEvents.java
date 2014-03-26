@@ -24,7 +24,8 @@ import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
 
@@ -38,7 +39,7 @@ class LinuxEvents {
 
 	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
 
-	private static final InformationFlowModel ifModel = InformationFlowModel.getInstance();
+	private static final BasicInformationFlowModel ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
 
 	private static final DistributedPipManager distributedPipManager = DistributedPipManager.getInstance();
 

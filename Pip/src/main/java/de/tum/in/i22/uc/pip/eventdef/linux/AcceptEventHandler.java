@@ -46,7 +46,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 		// get old container
 		SocketContainer listeningSocket = null;
 		try {
-			listeningSocket = (SocketContainer) ifModel.getContainer(FiledescrName.create(host, pid, oldFd));
+			listeningSocket = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, oldFd));
 		}
 		catch (ClassCastException e) {
 			_logger.error("Expected container did not exist or was of wrong type.");
@@ -75,28 +75,28 @@ public class AcceptEventHandler extends BaseEventHandler {
 			//TODO: restore settings
 			//			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
 //					new TcpConnector(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
-			ifModel.addName(remoteSocketName, remoteConnectedSocket);
+			basicIfModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
 			localAcceptedSocket = new SocketContainer(domain, type);
-			ifModel.addName(localSocketName, localAcceptedSocket);
+			basicIfModel.addName(localSocketName, localAcceptedSocket);
 
 			// add alias from new local container to remote proxy container
-			ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+			basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
 		}
 		else {
 			// client is local
 
 			// see whether local container was already created
 			// which is the case if connect() already happened
-			localAcceptedSocket = ifModel.getContainer(localSocketName);
+			localAcceptedSocket = basicIfModel.getContainer(localSocketName);
 
 			if (localAcceptedSocket == null) {
 				// accept() happens before connect().
 
 				// create new container c and name it, f[(p,(sn(e),(a,x))) <- c]
 				localAcceptedSocket = new SocketContainer(domain, type);
-				ifModel.addName(localSocketName, localAcceptedSocket);
+				basicIfModel.addName(localSocketName, localAcceptedSocket);
 
 				/*
 				 * We create a temporary remote socket container.
@@ -110,17 +110,17 @@ public class AcceptEventHandler extends BaseEventHandler {
 				 * is called 'remoteSocketName' and that will be called 'localSocketName' upon connect().
 				 */
 				remoteConnectedSocket = new SocketContainer(domain, type);
-				ifModel.addName(remoteSocketName, remoteConnectedSocket);
+				basicIfModel.addName(remoteSocketName, remoteConnectedSocket);
 
 				// add aliases in both directions
-				ifModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
-				ifModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
+				basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+				basicIfModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
 			}
 			// else: connect() happened before accept(); it created the container and both aliases
 		}
 
 		// f[((p,e)) <- c]
-		ifModel.addName(FiledescrName.create(host, pid, newFd), localAcceptedSocket);
+		basicIfModel.addName(FiledescrName.create(host, pid, newFd), localAcceptedSocket);
 
 		return STATUS_OKAY;
 	}

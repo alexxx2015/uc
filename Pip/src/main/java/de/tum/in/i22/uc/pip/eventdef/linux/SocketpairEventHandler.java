@@ -37,10 +37,10 @@ public class SocketpairEventHandler extends BaseEventHandler {
 		IContainer sock2Container = new SocketContainer(Domain.from(domain), Type.from(type));
 
 		if (sock1Container != null && sock2Container != null) {
-			ifModel.addName(FiledescrName.create(host, pid, fd1), sock1Container);
-			ifModel.addName(FiledescrName.create(host, pid, fd2), sock2Container);
-			ifModel.addAlias(sock1Container, sock2Container);
-			ifModel.addAlias(sock2Container, sock1Container);
+			basicIfModel.addName(FiledescrName.create(host, pid, fd1), sock1Container);
+			basicIfModel.addName(FiledescrName.create(host, pid, fd2), sock2Container);
+			basicIfModel.addAlias(sock1Container, sock2Container);
+			basicIfModel.addAlias(sock2Container, sock1Container);
 		}
 		else {
 			_logger.error("Unable to create socket containers.");

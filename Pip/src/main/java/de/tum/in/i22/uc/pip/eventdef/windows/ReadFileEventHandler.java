@@ -34,19 +34,19 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-		IContainer fileContainer = ifModel.getContainer(new NameBasic(fileName));
+		IContainer fileContainer = basicIfModel.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container
 		if (fileContainer == null) {
 			fileContainer = _messageFactory.createContainer();
-			ifModel.addName(new NameBasic(fileName), fileContainer);
+			basicIfModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
 		// add data to transitive reflexive closure of process container
-		Set<IContainer> transitiveReflexiveClosure = ifModel.getAliasTransitiveReflexiveClosure(processContainer);
-		Set<IData> dataSet = ifModel.getDataInContainer(fileContainer);
+		Set<IContainer> transitiveReflexiveClosure = basicIfModel.getAliasTransitiveReflexiveClosure(processContainer);
+		Set<IData> dataSet = basicIfModel.getDataInContainer(fileContainer);
 		for (IContainer tempContainer : transitiveReflexiveClosure) {
-			ifModel.addDataToContainer(dataSet, tempContainer);
+			basicIfModel.addDataToContainer(dataSet, tempContainer);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

@@ -42,7 +42,7 @@ public class ShutdownEventHandler extends BaseEventHandler {
 			how = Shut.SHUT_RDWR;
 		}
 
-		SocketContainer cont = (SocketContainer) ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		SocketContainer cont = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 		LinuxEvents.shutdownSocket(cont, how);
 
 		return STATUS_OKAY;

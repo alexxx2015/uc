@@ -35,20 +35,20 @@ public class ExecveEventHandler extends BaseEventHandler {
 		IName fileName = FilenameName.create(host, LinuxEvents.toRealPath(filename));
 		IName procName = ProcessName.create(host, pid);
 
-		IContainer fileCont = ifModel.getContainer(fileName);
-		IContainer procCont = ifModel.getContainer(procName);
+		IContainer fileCont = basicIfModel.getContainer(fileName);
+		IContainer procCont = basicIfModel.getContainer(procName);
 
 		if (fileCont == null) {
 			fileCont = new FileContainer();
-			ifModel.addName(fileName, fileCont);
+			basicIfModel.addName(fileName, fileCont);
 		}
 
 		if (procCont == null) {
 			procCont = new ProcessContainer(host, pid);
-			ifModel.addName(procName, procCont);
+			basicIfModel.addName(procName, procCont);
 		}
 
-		ifModel.copyData(fileName, procName);
+		basicIfModel.copyData(fileName, procName);
 
 		return STATUS_OKAY;
 	}

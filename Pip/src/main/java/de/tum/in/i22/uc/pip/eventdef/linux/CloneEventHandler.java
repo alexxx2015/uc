@@ -39,12 +39,12 @@ public class CloneEventHandler extends BaseEventHandler {
 		IName oldProcName = ProcessName.create(host, parentPid);
 
 		IContainer newProcCont = new ProcessContainer(host, childPid);
-		ProcessContainer oldProcCont = (ProcessContainer) ifModel.getContainer(oldProcName);
+		ProcessContainer oldProcCont = (ProcessContainer) basicIfModel.getContainer(oldProcName);
 
 		// Add a container for the old process, if it did not yet exist (should not happen).
 		if (oldProcCont == null) {
 			oldProcCont = new ProcessContainer(host, parentPid);
-			ifModel.addName(oldProcName, oldProcCont);
+			basicIfModel.addName(oldProcName, oldProcCont);
 		}
 
 		if (flagSet.contains("CLONE_FILES")) {
@@ -53,27 +53,27 @@ public class CloneEventHandler extends BaseEventHandler {
 		}
 
 		// Add the container for the newly created child
-		ifModel.addName(newProcName, newProcCont);
+		basicIfModel.addName(newProcName, newProcCont);
 
 		// Copy all process relative names from the old parent process to the new child process
 		for (IName name : LinuxEvents.getAllProcessRelativeNames(oldProcCont.getPid())) {
 			if (name instanceof IClonableForProcess) {
 				IClonableForProcess n = (IClonableForProcess) name;
-				ifModel.addName(n.cloneFor(childPid), ifModel.getContainer(n));
+				basicIfModel.addName(n.cloneFor(childPid), basicIfModel.getContainer(n));
 			}
 		}
 
 		// Clone all aliases
-		for (IContainer cont : ifModel.getAliasesFrom(oldProcCont)) {
-			ifModel.addAlias(newProcCont, cont);
+		for (IContainer cont : basicIfModel.getAliasesFrom(oldProcCont)) {
+			basicIfModel.addAlias(newProcCont, cont);
 		}
-		for (IContainer cont : ifModel.getAliasesTo(oldProcCont)) {
-			ifModel.addAlias(cont, newProcCont);
+		for (IContainer cont : basicIfModel.getAliasesTo(oldProcCont)) {
+			basicIfModel.addAlias(cont, newProcCont);
 		}
 
 		// Copy all data from old process
-		for (IContainer cont : ifModel.getAliasTransitiveClosure(newProcCont)) {
-			ifModel.copyData(oldProcCont, cont);
+		for (IContainer cont : basicIfModel.getAliasTransitiveClosure(newProcCont)) {
+			basicIfModel.copyData(oldProcCont, cont);
 		}
 
 		return STATUS_OKAY;

@@ -36,17 +36,17 @@ public class CreateDcEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-		IContainer deviceContainer = ifModel.getContainer(new NameBasic(
+		IContainer deviceContainer = basicIfModel.getContainer(new NameBasic(
 				deviceName));
 
 		// check if container for device exists and create new container if not
 		if (deviceContainer == null) {
 			deviceContainer = _messageFactory.createContainer();
-			ifModel.addName(new NameBasic(deviceName), deviceContainer);
+			basicIfModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
-		ifModel.addDataToContainer(
-				ifModel.getDataInContainer(processContainer),
+		basicIfModel.addDataToContainer(
+				basicIfModel.getDataInContainer(processContainer),
 				deviceContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);

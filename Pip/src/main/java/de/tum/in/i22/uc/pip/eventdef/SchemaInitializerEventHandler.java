@@ -23,21 +23,21 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		String dataName="TEST_D";
 
 
-		IContainer cont = ifModel.getContainer(new NameBasic(
+		IContainer cont = basicIfModel.getContainer(new NameBasic(
 				contName));
 
 		_logger.debug("cont = " + cont);
 
 		if (cont == null) {
 			cont = _messageFactory.createContainer("TestContainer",contName);
-			ifModel.addName(new NameBasic(contName), cont);
+			basicIfModel.addName(new NameBasic(contName), cont);
 
 			IData d= _messageFactory.createData(dataName);
-			ifModel.addDataToContainer(d, cont);
-			_logger.debug(ifModel.toString());
+			basicIfModel.addDataToContainer(d, cont);
+			_logger.debug(basicIfModel.toString());
 		} else {
 			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
-		_logger.debug(ifModel.toString());
+		_logger.debug(basicIfModel.toString());
 		}
 
 
@@ -47,10 +47,10 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 		IContainer file1 = new FileContainer();
 		IContainer file2 = new FileContainer();
 		IData data = _messageFactory.createData("MY_DATA");
-		ifModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file1);
-		ifModel.addName(FilenameName.create("machineA", "/home/anonymous/tainted"), file2);
-		ifModel.addDataToContainer(data, file1);
-		ifModel.addDataToContainer(data, file2);
+		basicIfModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file1);
+		basicIfModel.addName(FilenameName.create("machineA", "/home/anonymous/tainted"), file2);
+		basicIfModel.addDataToContainer(data, file1);
+		basicIfModel.addDataToContainer(data, file2);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

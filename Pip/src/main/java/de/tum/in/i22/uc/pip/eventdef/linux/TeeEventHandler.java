@@ -34,7 +34,7 @@ public class TeeEventHandler extends BaseEventHandler {
 		IName srcName = FiledescrName.create(host, pid, srcfd);
 		IName dstName = FiledescrName.create(host, pid, dstfd);
 
-		ifModel.copyData(srcName, dstName);
+		basicIfModel.copyData(srcName, dstName);
 
 		return STATUS_OKAY;
 	}

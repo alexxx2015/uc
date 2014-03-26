@@ -29,8 +29,8 @@ public class Dup2EventHandler extends BaseEventHandler {
 		IName oldName = FiledescrName.create(host, pid, oldfd);
 		IName newName = FiledescrName.create(host, pid, newfd);
 
-		ifModel.removeName(newName);
-		ifModel.addName(oldName, newName);
+		basicIfModel.removeName(newName);
+		basicIfModel.addName(oldName, newName);
 
 		return STATUS_OKAY;
 	}

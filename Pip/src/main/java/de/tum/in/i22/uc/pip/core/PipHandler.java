@@ -7,7 +7,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -22,8 +21,8 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
-import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
@@ -36,7 +35,9 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
-	private final InformationFlowModel _ifModel;
+	private final BasicInformationFlowModel _ifModel;
+
+	private final InformationFlowModelManager _ifModelManager;
 
 	private final PipManager _pipManager;
 
@@ -59,7 +60,8 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	private PipHandler() {
 		_pipManager = PipManager.getInstance();
 		_distributedPipManager = DistributedPipManager.getInstance();
-		_ifModel = InformationFlowModel.getInstance();
+		_ifModelManager = InformationFlowModelManager.getInstance();
+		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 	}
 
 	public static PipHandler getInstance(){
@@ -129,16 +131,12 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public IStatus startSimulation() {
-		return _ifModel.push()
-			? DummyMessageGen.createOkStatus()
-			: DummyMessageGen.createErrorStatus("Impossible to push current state.");
+		return _ifModelManager.startSimulation();
 	}
 
 	@Override
 	public IStatus stopSimulation() {
-		return _ifModel.pop()
-			? DummyMessageGen.createOkStatus()
-			: DummyMessageGen.createErrorStatus("Impossible to pop current state.");
+		return _ifModelManager.stopSimulation();
 	}
 
 //    /**
@@ -203,7 +201,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	@Override
 	public boolean isSimulating() {
-		return _ifModel.isSimulating();
+		return _ifModelManager.isSimulating();
 	}
 
 
@@ -217,7 +215,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 		Boolean res = null;
 
-		if (_ifModel.push()) {
+		if (_ifModelManager.startSimulation().getEStatus() == EStatus.OKAY) {
 			_logger.trace("Updating PIP semantics with current event ("
 					+ (event == null ? "null" : event.getPrefixedName()) + ")");
 			notifyActualEvent(event);
@@ -225,7 +223,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 					+ predicate + ")");
 			res = evaluatePredicatCurrentState(predicate);
 			_logger.trace("Restoring PIP previous state...");
-			_ifModel.pop();
+			_ifModelManager.stopSimulation();
 			_logger.trace("done!");
 		}
 		else {

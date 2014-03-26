@@ -89,11 +89,19 @@ class SettingsLoader {
 	protected String loadSetting(String propName, String defaultValue) {
 		String val = defaultValue;
 
+		boolean success = false;
+
 		try {
 			val = (String) _props.get(propName);
+			if (val != null) {
+				success = true;
+			}
 		}
-		catch (Exception e) {
+		catch (Exception e) { }
+
+		if (!success) {
 			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			val = defaultValue;
 		}
 
 		return val;
@@ -115,6 +123,7 @@ class SettingsLoader {
 
 		if (!success) {
 			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			val = defaultValue;
 		}
 
 		return val;

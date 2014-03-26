@@ -29,8 +29,8 @@ public class PipeEventHandler extends BaseEventHandler {
 
 		IContainer pipeContainer = new PipeContainer();
 
-		ifModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
-		ifModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
+		basicIfModel.addName(FiledescrName.create(host, pid, fd1), pipeContainer);
+		basicIfModel.addName(FiledescrName.create(host, pid, fd2), pipeContainer);
 
 		return STATUS_OKAY;
 	}

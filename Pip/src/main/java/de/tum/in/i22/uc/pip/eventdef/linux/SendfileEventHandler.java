@@ -31,7 +31,7 @@ public class SendfileEventHandler extends BaseEventHandler {
 		}
 
 		return LinuxEvents.copyDataTransitive(
-				ifModel.getContainer(FiledescrName.create(host, pid, infd)),
-				ifModel.getContainer(FiledescrName.create(host, pid, outfd)));
+				basicIfModel.getContainer(FiledescrName.create(host, pid, infd)),
+				basicIfModel.getContainer(FiledescrName.create(host, pid, outfd)));
 	}
 }

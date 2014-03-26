@@ -6,11 +6,21 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pip.core.ifm.ExtendInformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModelExtension;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
-public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
+/**
+ * Visibility of this class and its methods has been developed carefully.
+ * Access via {@link InformationFlowModelManager}.
+ *
+ * @author Florian Kelbert
+ *
+ */
+class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);
+
+	private static final IInformationFlowModelExtension _instance = new ScopeInformationFlowModel();
 
 	@Override
 	public String toString() {
@@ -25,59 +35,30 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	// BACKUP TABLES FOR SIMULATION
 	private Set<Scope> _scopeSetBackup;
 
-	private final InformationFlowModel _ifm;
-
-	private static ScopeInformationFlowModel _instance = null;
-
-	private ScopeInformationFlowModel(InformationFlowModel ifm) {
-		super(ifm);
-		_ifm = ifm;
+	private ScopeInformationFlowModel() {
 	}
 
-	public static ScopeInformationFlowModel getInstance() {
-		if (_instance == null) {
-			_instance = new ScopeInformationFlowModel(InformationFlowModel.getInstance());
-		}
-		return _instance;
-	}
-
-	public static ScopeInformationFlowModel getInstance(InformationFlowModel ifm) {
-		if (_instance != null) {
-			throw new RuntimeException("ScopeInformationFlowModel was already initialized."
-					+ " Impossible to initialize more than once.");
-		}
-		_instance = new ScopeInformationFlowModel(ifm);
+	static IInformationFlowModelExtension getInstance() {
 		return _instance;
 	}
 
 	@Override
-	protected void init() {
-		super.init();
+	public void reset() {
 		_scopeSet = new HashSet<>();
 		_scopeSetBackup = null;
 	}
-
-
-	@Override
-	public boolean isSimulating(){
-		return _ifm.isSimulating() || _scopeSetBackup != null;
-	}
-
 
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
 	@Override
-	public boolean push() {
+	public void push() {
 		_logger.info("Pushing current PIP state...");
-		if (!isSimulating()) {
-			_ifm.push();
+		if (_scopeSet != null) {
 			_scopeSetBackup = new HashSet<Scope>(_scopeSet);
-			return true;
 		}
-		_logger.error("Current stack not empty!");
-		return false;
+
 	}
 
 	/**
@@ -85,17 +66,10 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
 	@Override
-	public boolean pop() {
+	public void pop() {
 		_logger.info("Popping current PIP state...");
-		if (isSimulating()) {
-			_ifm.pop();
-			_scopeSet = _scopeSetBackup;
-			_scopeSetBackup = null;
-
-			return true;
-		}
-		_logger.error("Current stack empty!");
-		return false;
+		_scopeSet = _scopeSetBackup;
+		_scopeSetBackup = null;
 	}
 
 	/**
@@ -106,6 +80,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 *         otherwise.
 	 *
 	 */
+	@Override
 	public boolean addScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.add(scope);
@@ -119,6 +94,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 * @return true if the scope is not already opened. false otherwise.
 	 *
 	 */
+	@Override
 	public boolean openScope(Scope scope) {
 		return addScope(scope);
 	}
@@ -130,6 +106,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 * @return true if the scope is successfully removed. false otherwise.
 	 *
 	 */
+	@Override
 	public boolean removeScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.remove(scope);
@@ -143,6 +120,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 * @return true if the scope is successfully closed. false otherwise.
 	 *
 	 */
+	@Override
 	public boolean closeScope(Scope scope) {
 		return removeScope(scope);
 	}
@@ -156,6 +134,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 * @return true if the scope is in the set. false otherwise.
 	 *
 	 */
+	@Override
 	public boolean isScopeOpened(Scope scope) {
 		return _scopeSet.contains(scope);
 	}
@@ -176,6 +155,7 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 	 *         match is found.
 	 *
 	 */
+	@Override
 	public Scope getOpenedScope(Scope scope) {
 		// if at least one matching exists...
 		if (isScopeOpened(scope)) {
@@ -212,15 +192,12 @@ public class ScopeInformationFlowModel extends ExtendInformationFlowModel {
 
 	@Override
 	public String niceString() {
-		StringBuilder sb = new StringBuilder(_ifm.niceString());
+		StringBuilder sb = new StringBuilder();
 
 		String nl = System.getProperty("line.separator");
 
 		sb.append("  Scope:" + nl);
-
 		sb.append("+++ NOT IMPLEMENTED +++");
-
-		sb.append("-----------------------------------------------");
 
 		return sb.toString();
 	}

@@ -1,11 +1,13 @@
 package de.tum.in.i22.uc.cm.settings;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
+import de.tum.in.i22.uc.pip.EInformationFlowModel;
 
 /**
  *
@@ -35,6 +37,8 @@ public class Settings extends SettingsLoader {
 	private boolean _pipListenerEnabled = true;
 	private boolean _pdpListenerEnabled = true;
 	private boolean _anyListenerEnabled = true;
+
+	private String _pipEnabledInformationFlowModels = "scope";
 
 	private String _pipEventHandlerSuffix = "EventHandler";
 	private String _pipEventHandlerPackage = "de.tum.in.i22.uc.pip.eventdef.";
@@ -79,6 +83,7 @@ public class Settings extends SettingsLoader {
 	private void loadProperties() {
 		_pipEventHandlerPackage = loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
 		_pipEventHandlerSuffix = loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
+		_pipEnabledInformationFlowModels = loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
 
 		_pmpListenerEnabled = loadSetting("pmp_listener_enabled", _pmpListenerEnabled);
 		_pipListenerEnabled = loadSetting("pip_listener_enabled", _pipListenerEnabled);
@@ -145,6 +150,10 @@ public class Settings extends SettingsLoader {
 
 	public String getPipEventHandlerSuffix() {
 		return _pipEventHandlerSuffix;
+	}
+
+	public Set<EInformationFlowModel> getEnabledInformationFlowModels() {
+		return EInformationFlowModel.from(_pipEnabledInformationFlowModels);
 	}
 }
 

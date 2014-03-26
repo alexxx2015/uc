@@ -20,20 +20,10 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 /**
  * Information flow model Singleton.
  */
-public class InformationFlowModel {
-	protected static final Logger _logger = LoggerFactory.getLogger(InformationFlowModel.class);
+public final class BasicInformationFlowModel {
+	private static final Logger _logger = LoggerFactory.getLogger(BasicInformationFlowModel.class);
 
-	@Override
-	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_containerToDataMap", _containerToDataMap)
-				.add("_aliasesMap", _aliasesMap)
-				.add("_namingMap", _namingMap)
-				.add("_isSimulating", isSimulating())
-				.toString();
-	}
-
-	private static final InformationFlowModel _instance = new InformationFlowModel();
+	private static final BasicInformationFlowModel _instance = new BasicInformationFlowModel();
 
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> _containerToDataMap;
@@ -45,99 +35,73 @@ public class InformationFlowModel {
 	private Map<IName, IContainer> _namingMap;
 
 	// BACKUP TABLES FOR SIMULATION
-	private Set<IContainer> _containerSetBackup;
-	private Set<IData> _dataSetBackup;
 	private Map<IContainer, Set<IData>> _containerToDataMapBackup;
 	private Map<IContainer, Set<IContainer>> _aliasesMapBackup;
 	private Map<IName, IContainer> _namingSetBackup;
 
-	protected InformationFlowModel() {
-		init();
+	BasicInformationFlowModel() {
+		reset();
 	}
 
-	public static InformationFlowModel getInstance() {
+	/**
+	 * Visibility set to 'default' (i.e. package) on purpose.
+	 * Use {@link InformationFlowModelManager} to get an instance.
+	 *
+	 * @return
+	 */
+	static BasicInformationFlowModel getInstance() {
 		return _instance;
 	}
 
 	/**
 	 * Resets the information flow model to its initial (empty) state.
 	 */
-	public void reset() {
-		init();
-	}
-
-	protected void init() {
+	void reset() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
 
-		_containerSetBackup = null;
-		_dataSetBackup = null;
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
 	}
 
-
-	public boolean isSimulating(){
-		return _containerSetBackup != null
-				|| _dataSetBackup != null
-				|| _containerToDataMapBackup != null
-				|| _aliasesMapBackup != null
-				|| _namingSetBackup != null;
-	}
-
-
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
-	public boolean push() {
-		_logger.info("Pushing current PIP state...");
-		if (!isSimulating()) {
-			_logger.info("..done!");
+	void push() {
+		_logger.info("Pushing current PIP state.");
 
-			_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
-			for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
-				Set<IData> s = new HashSet<IData>(e.getValue());
-				_containerToDataMapBackup.put(e.getKey(), s);
-			}
-
-			_aliasesMapBackup = new HashMap<>();
-			for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
-				Set<IContainer> s = new HashSet<IContainer>(e.getValue());
-				_aliasesMapBackup.put(e.getKey(), s);
-			}
-
-			_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
-			return true;
+		_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
+		for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
+			Set<IData> s = new HashSet<IData>(e.getValue());
+			_containerToDataMapBackup.put(e.getKey(), s);
 		}
-		_logger.error("Current stack not empty!");
-		return false;
+
+		_aliasesMapBackup = new HashMap<>();
+		for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
+			Set<IContainer> s = new HashSet<IContainer>(e.getValue());
+			_aliasesMapBackup.put(e.getKey(), s);
+		}
+
+		_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
 	}
 
 	/**
 	 * Simulation step: pop. Restore a previously pushed IF state, if any.
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
-	public boolean pop() {
-		_logger.info("Popping current PIP state...");
-		if (isSimulating()) {
-			_logger.info("..done!");
-			_containerToDataMap = _containerToDataMapBackup;
-			_aliasesMap = _aliasesMapBackup;
-			_namingMap = _namingSetBackup;
+	void pop() {
+		_logger.info("Popping current PIP state.");
 
-			_containerSetBackup = null;
-			_dataSetBackup = null;
-			_containerToDataMapBackup = null;
-			_aliasesMapBackup = null;
-			_namingSetBackup = null;
+		_containerToDataMap = _containerToDataMapBackup;
+		_aliasesMap = _aliasesMapBackup;
+		_namingMap = _namingSetBackup;
 
-			return true;
-		}
-		_logger.error("Current stack empty!");
-		return false;
+		_containerToDataMapBackup = null;
+		_aliasesMapBackup = null;
+		_namingSetBackup = null;
 	}
 
 	/**
@@ -744,9 +708,6 @@ public class InformationFlowModel {
 		return result;
 	}
 
-
-
-
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
 
@@ -819,8 +780,15 @@ public class InformationFlowModel {
 		}
 		sb.append(nl);
 
-		sb.append("-----------------------------------------------");
-
 		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_containerToDataMap", _containerToDataMap)
+				.add("_aliasesMap", _aliasesMap)
+				.add("_namingMap", _namingMap)
+				.toString();
 	}
 }

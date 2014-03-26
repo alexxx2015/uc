@@ -52,34 +52,34 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * They are not interesting.
 		 */
 
-		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer fileCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
 			return STATUS_OKAY;
 		}
 
-		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
+		IContainer procCont = basicIfModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return STATUS_OKAY;
 		}
 
 		IContainer mmapCont = new MmapContainer(host, pid, addr);
 
-		ifModel.addName(MmapName.create(host, pid, addr), mmapCont);
+		basicIfModel.addName(MmapName.create(host, pid, addr), mmapCont);
 
-		ifModel.addAlias(fileCont, mmapCont);
+		basicIfModel.addAlias(fileCont, mmapCont);
 
 		if (flags.contains("s")) {		// MAP_SHARED
-			ifModel.addAlias(mmapCont, fileCont);
+			basicIfModel.addAlias(mmapCont, fileCont);
 		}
 		if (flags.contains("r")) {		// PROT_READ
-			ifModel.addAlias(mmapCont, procCont);
+			basicIfModel.addAlias(mmapCont, procCont);
 		}
 		if (flags.contains("w")) {		// PROT_WRITE
-			ifModel.addAlias(procCont, mmapCont);
+			basicIfModel.addAlias(procCont, mmapCont);
 		}
 
 		// now copy data from file to mmap container and its aliases
-		ifModel.addDataToContainerAndAliases(ifModel.getDataInContainer(fileCont), mmapCont);
+		basicIfModel.addDataToContainerAndAliases(basicIfModel.getDataInContainer(fileCont), mmapCont);
 
 		return STATUS_OKAY;
 	}

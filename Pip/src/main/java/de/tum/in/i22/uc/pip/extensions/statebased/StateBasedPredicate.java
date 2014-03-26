@@ -2,12 +2,13 @@ package de.tum.in.i22.uc.pip.extensions.statebased;
 
 import com.google.common.base.Objects;
 
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public abstract class StateBasedPredicate implements IStateBasedPredicate {
-	protected InformationFlowModel _ifModel = InformationFlowModel.getInstance();
+	protected BasicInformationFlowModel _ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
 
 	private final String _predicate;
 

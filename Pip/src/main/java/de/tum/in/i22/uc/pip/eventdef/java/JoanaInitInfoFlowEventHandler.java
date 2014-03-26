@@ -62,36 +62,36 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 			if(data == null){
 				data = new DataBasic();//DataBasic(infoCont);
 			}
-			IContainer infoContId = ifModel.getContainer(new NameBasic(infoCont));
+			IContainer infoContId = basicIfModel.getContainer(new NameBasic(infoCont));
 
 			_logger.debug("contID = " + infoContId);
 
 			if (infoContId == null) {
 				IContainer signatureCont = _messageFactory.createContainer();
 
-				ifModel.addName(new NameBasic(infoCont), signatureCont);
+				basicIfModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-				ifModel.addDataToContainer(data, signatureCont);
-				_logger.debug(ifModel.toString());
+				basicIfModel.addDataToContainer(data, signatureCont);
+				_logger.debug(basicIfModel.toString());
 			} else {
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");
-			_logger.debug(ifModel.toString());
+			_logger.debug(basicIfModel.toString());
 			}
 		}
 
 //		Process alias relationship
-		IContainer id1 = ifModel.getContainer(new NameBasic(prefix+infoConts[0]));
-		IContainer id2 = ifModel.getContainer(new NameBasic(prefix+infoConts[1]));
-		IContainer id3 = ifModel.getContainer(new NameBasic(prefix+infoConts[2]));
+		IContainer id1 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[0]));
+		IContainer id2 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[1]));
+		IContainer id3 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[2]));
 
 		if(type.toLowerCase().equals("source")){
-			ifModel.addAlias(id1, id2);
-			ifModel.addAlias(id2, id3);
+			basicIfModel.addAlias(id1, id2);
+			basicIfModel.addAlias(id2, id3);
 		}
 		else if (type.toLowerCase().equals("sink")){
-			ifModel.addAlias(id3, id2);
-			ifModel.addAlias(id2, id1);
+			basicIfModel.addAlias(id3, id2);
+			basicIfModel.addAlias(id2, id1);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

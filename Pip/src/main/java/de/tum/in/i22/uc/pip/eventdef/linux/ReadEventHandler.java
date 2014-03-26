@@ -33,23 +33,23 @@ public class ReadEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer fileCont = ifModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer fileCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
 			return STATUS_OKAY;
 		}
 
-		IContainer procCont = ifModel.getContainer(ProcessName.create(host, pid));
+		IContainer procCont = basicIfModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return STATUS_OKAY;
 		}
 
-		Set<IData> data = ifModel.getDataInContainer(fileCont);
+		Set<IData> data = basicIfModel.getDataInContainer(fileCont);
 		if (data == null || data.size() == 0) {
 			return STATUS_OKAY;
 		}
 
-		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(procCont)) {
-			ifModel.addDataToContainer(data, c);
+		for (IContainer c : basicIfModel.getAliasTransitiveReflexiveClosure(procCont)) {
+			basicIfModel.addDataToContainer(data, c);
 		}
 
 		return STATUS_OKAY;

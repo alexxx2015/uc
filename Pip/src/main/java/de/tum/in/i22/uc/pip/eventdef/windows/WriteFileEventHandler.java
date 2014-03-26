@@ -33,7 +33,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 
 		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
 
-		IContainer fileContainer = ifModel
+		IContainer fileContainer = basicIfModel
 				.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container if
@@ -42,13 +42,13 @@ public class WriteFileEventHandler extends BaseEventHandler {
 			fileContainer = _messageFactory.createContainer();
 			IData data = _messageFactory.createData();
 
-			ifModel.addDataToContainer(data, fileContainer);
+			basicIfModel.addDataToContainer(data, fileContainer);
 
-			ifModel.addName(new NameBasic(fileName), fileContainer);
+			basicIfModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
-		ifModel.addDataToContainer(
-				ifModel.getDataInContainer(processContainer), fileContainer);
+		basicIfModel.addDataToContainer(
+				basicIfModel.getDataInContainer(processContainer), fileContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
