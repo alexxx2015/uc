@@ -11,12 +11,8 @@ public class Controller {
 
 	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
-	private static RequestHandler requestHandler;
-
 	public static void main(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
-
-		requestHandler = RequestHandler.getInstance();
 
 		// load properties
 		if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
@@ -26,7 +22,7 @@ public class Controller {
 			Settings.getInstance();
 		}
 
-		new Thread(requestHandler).start();
+		new Thread(RequestHandler.getInstance()).start();
 
 		// EventHandler thread loops forever, this stops the main thread,
 		// otherwise the app will be closed
@@ -41,6 +37,6 @@ public class Controller {
 	}
 
 	public static boolean started() {
-		return requestHandler.started();
+		return RequestHandler.getInstance().started();
 	}
 }
