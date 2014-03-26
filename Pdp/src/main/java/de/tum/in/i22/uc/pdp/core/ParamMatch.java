@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.pdp.core.Param;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class ParamMatch extends ParamMatchType

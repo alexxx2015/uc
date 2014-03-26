@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
+import de.tum.in.i22.uc.cm.pdp.core.Constants;
+import de.tum.in.i22.uc.cm.pdp.core.Decision;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
@@ -161,7 +165,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public Decision notifyEvent(Event event) {
+	public de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism notifyEvent(Event event) {
 		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
 				.getEventList(event.getEventAction());
 		if (eventMatchList == null)

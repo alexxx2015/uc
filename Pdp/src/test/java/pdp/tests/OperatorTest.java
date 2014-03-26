@@ -7,9 +7,9 @@ import static org.junit.Assert.fail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.Decision;
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
+import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class OperatorTest
@@ -52,7 +52,7 @@ public class OperatorTest
     for(int a=0; a<3; a++)
     {
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert(a<2 == d.getAuthorizationAction().getType());
 
@@ -75,7 +75,7 @@ public class OperatorTest
     for(int a=0; a<3; a++)
     {
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a==0) == d.getAuthorizationAction().getType());
 
@@ -99,7 +99,7 @@ public class OperatorTest
     for(int a=0; a<5; a++)
     {
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a<4) == d.getAuthorizationAction().getType());
 
@@ -122,7 +122,7 @@ public class OperatorTest
     for(int a=0; a<5; a++)
     {
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a<3) == !d.getAuthorizationAction().getType());
 
@@ -146,7 +146,7 @@ public class OperatorTest
     for(int a=0; a<5; a++)
     {
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a<3) == !d.getAuthorizationAction().getType());
 
@@ -171,7 +171,7 @@ public class OperatorTest
     {
       log.debug("##################################");
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a==0 || a>2) == d.getAuthorizationAction().getType());
       log.debug("##################################");
@@ -184,7 +184,7 @@ public class OperatorTest
     {
       log.debug("##################################");
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assert((a<3) == !d.getAuthorizationAction().getType());
       log.debug("##################################");
@@ -213,7 +213,7 @@ public class OperatorTest
       {
         log.debug("##################################");
         log.info("Notifying event");
-        Decision d = lpdp.notifyEvent(levent2);
+        IPdpMechanism d = lpdp.notifyEvent(levent2);
         log.debug("Decision: {}", d);
         // this event doesn't trigger any mechanism, not possible to check the internal condition state which should be
         // set to TRUE due to this event...
@@ -225,7 +225,7 @@ public class OperatorTest
       sleep(6000);
       log.debug("##################################");
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assertFalse(d.getAuthorizationAction().getType());
       log.debug("##################################");
@@ -300,7 +300,7 @@ public class OperatorTest
       sleep(1000);
       log.debug("##################################");
       log.info("Notifying event");
-      Decision d = lpdp.notifyEvent(levent);
+      IPdpMechanism d = lpdp.notifyEvent(levent);
       log.debug("Decision: {}", d);
       assertFalse(d.getAuthorizationAction().getType());
       log.debug("##################################");

@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -22,7 +24,7 @@ public class EventMatch extends EventMatchingOperatorType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
+	public void initOperatorForMechanism(IPdpMechanism mech) {
 	}
 
 	public boolean eventMatches(Event curEvent) {

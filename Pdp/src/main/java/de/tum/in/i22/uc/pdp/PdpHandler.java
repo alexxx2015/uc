@@ -15,10 +15,10 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.cm.requests.GenericHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 

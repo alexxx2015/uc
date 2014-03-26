@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.condition;
 
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 
 public abstract class Operator
 {
@@ -10,7 +10,7 @@ public abstract class Operator
   public Operator()
   {}
   
-  public abstract void initOperatorForMechanism(Mechanism mech);
+  public abstract void initOperatorForMechanism(IPdpMechanism mech);
   public abstract boolean evaluate(Event curEvent);
   
 }

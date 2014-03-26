@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core;
+package de.tum.in.i22.uc.cm.pdp.core;
 
 public class Constants
 {

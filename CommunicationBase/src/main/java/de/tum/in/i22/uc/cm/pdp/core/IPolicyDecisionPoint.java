@@ -1,15 +1,14 @@
-package de.tum.in.i22.uc.pdp.core;
+package de.tum.in.i22.uc.cm.pdp.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
-import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 
 public interface IPolicyDecisionPoint
 {
   // PDP exported methods
-  public Decision notifyEvent(Event event);
+  public de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism notifyEvent(Event event);
 
   public boolean  deployPolicy(String filename);
   public boolean  revokePolicy(String policyName);
