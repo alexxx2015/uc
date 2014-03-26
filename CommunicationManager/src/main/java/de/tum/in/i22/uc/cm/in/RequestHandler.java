@@ -18,12 +18,15 @@ import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpHandler;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.out.RemotePip;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.distribution.ELocation;
+import de.tum.in.i22.uc.distribution.IPLocation;
+import de.tum.in.i22.uc.distribution.Location;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
@@ -90,12 +93,16 @@ public class RequestHandler implements Runnable {
 	}
 
 	private IAny2Pip createPipHandler() {
-		if (_settings.getPipLocation().getLocation() == ELocation.LOCAL) {
-			return PipHandler.getInstance();
+		Location loc = _settings.getPipLocation();
+
+		switch (loc.getLocation()) {
+			case LOCAL:
+				return PipHandler.getInstance();
+			case IP:
+				return new RemotePip((IPLocation) loc);
 		}
 
-		// TODO: Handle case of remote PIP
-		return null;
+		return PipHandler.getInstance();
 	}
 
 

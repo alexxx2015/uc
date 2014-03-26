@@ -1,23 +1,22 @@
 package de.tum.in.i22.uc.distribution;
 
-import java.net.InetAddress;
 import java.util.Objects;
 
 
 public class IPLocation extends Location {
-	private final InetAddress _address;
+	private final String _host;
 	private final int _port;
 
-	public IPLocation(InetAddress address, int port) {
+	public IPLocation(String host, int port) {
 		super(ELocation.IP);
-		_address = address;
+		_host = host;
 		_port = port;
 	}
 
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_address", _address)
+				.add("_host", _host)
 				.add("_port", _port)
 				.toString();
 	}
@@ -26,7 +25,7 @@ public class IPLocation extends Location {
 	public boolean equals(Object obj) {
 		if (obj instanceof IPLocation) {
 			IPLocation o = (IPLocation) obj;
-			return Objects.equals(_address, o._address)
+			return Objects.equals(_host, o._host)
 					&& Objects.equals(_port, o._port);
 		}
 		return false;
@@ -34,7 +33,15 @@ public class IPLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_address, _port);
+		return Objects.hash(_host, _port);
+	}
+
+	public String getHost() {
+		return _host;
+	}
+
+	public int getPort() {
+		return _port;
 	}
 
 	public static IPLocation from(String s) {
@@ -43,7 +50,7 @@ public class IPLocation extends Location {
 
 		if (s != null && (arr = s.split(":")).length == 2) {
 			try {
-				result = new IPLocation(InetAddress.getByName(arr[0]), Integer.valueOf(arr[1]));
+				result = new IPLocation(arr[0], Integer.valueOf(arr[1]));
 			} catch (Exception e) {	}
 		}
 

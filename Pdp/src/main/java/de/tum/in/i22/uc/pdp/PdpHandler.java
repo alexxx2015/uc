@@ -12,26 +12,16 @@ import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.requests.GenericHandler;
-import de.tum.in.i22.uc.cm.requests.PdpRequest;
+import de.tum.in.i22.uc.cm.requests.GenericPdpHandler;
 import de.tum.in.i22.uc.pdp.core.Event;
 import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 
-public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
-
+public class PdpHandler extends GenericPdpHandler {
 	private final IPolicyDecisionPoint _lpdp;
 
 	private static PdpHandler _instance;
-
-	private boolean _initialized = false;
-
-	private IAny2Pmp _pmp;
-	private IAny2Pip _pip;
 
 	private PdpHandler() {
 		_lpdp = PolicyDecisionPoint.getInstance();
@@ -44,14 +34,6 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		return _instance;
 	}
 
-	@Override
-	public void init(IAny2Pip pip, IAny2Pmp pmp) {
-		if (!_initialized) {
-			_initialized = true;
-			_pmp = pmp;
-			_pip = pip;
-		}
-	}
 
 	@Override
 	public IResponse notifyEvent(IEvent event) {
@@ -101,35 +83,5 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 	public boolean registerPxp(IPxpSpec pxp) {
 		// TODO Superstar.
 		return false;
-	}
-
-	@Override
-	public Object process(PdpRequest request) {
-		Object result = null;
-
-		switch (request.getType()) {
-			case REGISTER_PXP:
-				result = registerPxp(request.getPxp());
-			case NOTIFY_EVENT:
-				result = notifyEvent(request.getEvent());
-
-				// TODO: As of now unconditionally notifying event to PIP.
-				_pip.notifyActualEvent(request.getEvent());
-				break;
-			case DEPLOY_MECHANISM:
-				break;
-			case DEPLOY_POLICY:
-				break;
-			case EXPORT_MECHANISM:
-				break;
-			case LIST_MECHANISMS:
-				break;
-			case REVOKE_MECHANISM:
-				break;
-			default:
-				throw new RuntimeException("Method " + request.getType() + " is not supported!");
-		}
-
-		return result;
 	}
 }

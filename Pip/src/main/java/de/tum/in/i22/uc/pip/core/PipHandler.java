@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -17,11 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.requests.GenericHandler;
-import de.tum.in.i22.uc.cm.requests.PipRequest;
+import de.tum.in.i22.uc.cm.requests.GenericPipHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
@@ -33,9 +26,7 @@ import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
-public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
-
-	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
+public class PipHandler extends GenericPipHandler {
 
 	private final BasicInformationFlowModel _ifModel;
 
@@ -54,11 +45,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	@SuppressWarnings("unused")
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
-	private IAny2Pdp _pdp;
-	private IAny2Pmp _pmp;
-
-	private boolean _initialized = false;
-
 	private PipHandler() {
 		_pipManager = PipManager.getInstance();
 		_distributedPipManager = DistributedPipManager.getInstance();
@@ -74,15 +60,6 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 			_instance = new PipHandler();
 		}
 		return _instance;
-	}
-
-	@Override
-	public void init(IAny2Pdp pdp, IAny2Pmp pmp) {
-		if (!_initialized) {
-			_pdp = pdp;
-			_pmp = pmp;
-			_initialized = true;
-		}
 	}
 
 
@@ -279,38 +256,5 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	public IStatus initialRepresentation(IContainer container, IData data) {
 		_ifModel.addDataToContainer(data, container);
 		return new StatusBasic(EStatus.OKAY);
-	}
-
-	@Override
-	public Object process(PipRequest request) {
-		Object result = null;
-
-		switch(request.getType()) {
-			case EVALUATE_PREDICATE:
-				break;
-			case GET_CONTAINER_FOR_DATA:
-				break;
-			case GET_DATA_IN_CONTAINER:
-				break;
-			case HAS_ALL_CONTAINERS:
-				break;
-			case HAS_ALL_DATA:
-				break;
-			case HAS_ANY_CONTAINER:
-				break;
-			case HAS_ANY_DATA:
-				break;
-			case NOTIFY_ACTUAL_EVENT:
-				result = notifyActualEvent(request.getEvent());
-				break;
-			case NOTIFY_DATA_TRANSFER:
-				break;
-			case UPDATE_INFORMATION_FLOW_SEMANTICS:
-				break;
-			default:
-				throw new RuntimeException("Method " + request.getType() + " is not supported!");
-		}
-
-		return result;
 	}
 }
