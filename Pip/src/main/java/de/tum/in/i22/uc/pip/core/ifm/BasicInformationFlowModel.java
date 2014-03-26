@@ -23,7 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 public final class BasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(BasicInformationFlowModel.class);
 
-	private static final BasicInformationFlowModel _instance = new BasicInformationFlowModel();
+	private static BasicInformationFlowModel _instance;
 
 	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> _containerToDataMap;
@@ -49,7 +49,10 @@ public final class BasicInformationFlowModel {
 	 *
 	 * @return
 	 */
-	static BasicInformationFlowModel getInstance() {
+	static synchronized BasicInformationFlowModel getInstance() {
+		if (_instance == null) {
+			_instance = new BasicInformationFlowModel();
+		}
 		return _instance;
 	}
 

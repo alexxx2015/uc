@@ -26,7 +26,7 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
 	private final IPolicyDecisionPoint _lpdp;
 
-	private static PdpHandler _instance = new PdpHandler();
+	private static PdpHandler _instance;
 
 	private boolean _initialized = false;
 
@@ -37,7 +37,10 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 		_lpdp = PolicyDecisionPoint.getInstance();
 	}
 
-	public static PdpHandler getInstance() {
+	public static synchronized PdpHandler getInstance() {
+		if (_instance == null) {
+			_instance = new PdpHandler();
+		}
 		return _instance;
 	}
 
@@ -109,19 +112,21 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 				result = registerPxp(request.getPxp());
 			case NOTIFY_EVENT:
 				result = notifyEvent(request.getEvent());
+				// TODO: As of now unconditionally notifying event to PIP.
+				_pip.notifyActualEvent(request.getEvent());
 				break;
-		case DEPLOY_MECHANISM:
-			break;
-		case DEPLOY_POLICY:
-			break;
-		case EXPORT_MECHANISM:
-			break;
-		case LIST_MECHANISMS:
-			break;
-		case REVOKE_MECHANISM:
-			break;
-		default:
-			throw new RuntimeException("Method " + request.getType() + " is not supported!");
+			case DEPLOY_MECHANISM:
+				break;
+			case DEPLOY_POLICY:
+				break;
+			case EXPORT_MECHANISM:
+				break;
+			case LIST_MECHANISMS:
+				break;
+			case REVOKE_MECHANISM:
+				break;
+			default:
+				throw new RuntimeException("Method " + request.getType() + " is not supported!");
 		}
 
 		return result;

@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeManager;
 
 public final class InformationFlowModelManager {
-	private static InformationFlowModelManager _instance = new InformationFlowModelManager();
+	private static InformationFlowModelManager _instance;
 
 	private final Map<EInformationFlowModel,IInformationFlowModelExtension> _ifModelExtensions;
 
@@ -38,7 +38,10 @@ public final class InformationFlowModelManager {
 		}
 	}
 
-	public static InformationFlowModelManager getInstance() {
+	public static synchronized InformationFlowModelManager getInstance() {
+		if (_instance == null) {
+			_instance = new InformationFlowModelManager();
+		}
 		return _instance;
 	}
 

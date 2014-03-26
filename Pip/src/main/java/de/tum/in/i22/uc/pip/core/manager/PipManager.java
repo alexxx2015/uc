@@ -37,7 +37,7 @@ public class PipManager {
 
 	private static final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
-	private static final PipManager _instance = new PipManager();
+	private static PipManager _instance;
 
 	private final EventHandlerDao _eventHandlerDao;
 
@@ -51,7 +51,10 @@ public class PipManager {
 		}
 	}
 
-	public static PipManager getInstance() {
+	public static synchronized PipManager getInstance() {
+		if (_instance == null) {
+			_instance = new PipManager();
+		}
 		return _instance;
 	}
 

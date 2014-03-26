@@ -17,7 +17,7 @@ public class EventHandlerDefinition {
 	private String versionLabel;
 	private int version;
 	private byte[] classFile;
-	
+
 	@Column(length = 20000)
 	private String sourceFile;
 	private Timestamp classFileLastModified;
@@ -79,7 +79,7 @@ public class EventHandlerDefinition {
 	public void setCurrentlyActive(boolean currentlyActive) {
 		this.currentlyActive = currentlyActive;
 	}
-	
+
 	public Timestamp getClassFileLastModified() {
 		return classFileLastModified;
 	}

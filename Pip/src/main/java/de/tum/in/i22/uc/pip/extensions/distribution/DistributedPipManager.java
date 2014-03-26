@@ -21,7 +21,7 @@ import de.tum.in.i22.uc.distribution.pip.IDistributedPipStrategy;
  *
  */
 public class DistributedPipManager {
-	private final static DistributedPipManager _instance = new DistributedPipManager();
+	private static DistributedPipManager _instance;
 
 	private static IDistributedPipStrategy _strategy;
 
@@ -29,7 +29,10 @@ public class DistributedPipManager {
 		_strategy = DistributedPipStrategy.create(Settings.getInstance().getDistributedPipStrategy());
 	}
 
-	public static DistributedPipManager getInstance() {
+	public static synchronized DistributedPipManager getInstance() {
+		if (_instance == null) {
+			_instance = new DistributedPipManager();
+		}
 		return _instance;
 	}
 

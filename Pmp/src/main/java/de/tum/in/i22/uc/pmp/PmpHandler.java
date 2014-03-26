@@ -13,12 +13,15 @@ public class PmpHandler extends GenericHandler<PmpRequest> implements IAny2Pmp {
 	private IAny2Pdp _pdp;
 	private boolean _initialized = false;
 
-	private static PmpHandler _instance = new PmpHandler();
+	private static PmpHandler _instance;
 
 	private PmpHandler(){
 	}
 
-	public static PmpHandler getInstance(){
+	public static synchronized PmpHandler getInstance(){
+		if (_instance == null) {
+			_instance = new PmpHandler();
+		}
 		return _instance;
 	}
 

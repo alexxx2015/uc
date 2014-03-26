@@ -20,7 +20,7 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);
 
-	private static final IInformationFlowModelExtension _instance = new ScopeInformationFlowModel();
+	private static IInformationFlowModelExtension _instance;
 
 	@Override
 	public String toString() {
@@ -38,7 +38,10 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	private ScopeInformationFlowModel() {
 	}
 
-	static IInformationFlowModelExtension getInstance() {
+	static synchronized IInformationFlowModelExtension getInstance() {
+		if (_instance == null) {
+			_instance = new ScopeInformationFlowModel();
+		}
 		return _instance;
 	}
 

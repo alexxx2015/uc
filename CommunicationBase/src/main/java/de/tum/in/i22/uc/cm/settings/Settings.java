@@ -69,13 +69,13 @@ public class Settings extends SettingsLoader {
 	}
 
 
-	public static Settings getInstance() {
+	public static synchronized Settings getInstance() {
 		return (_instance != null)
 			? _instance
 			: getInstance(DEFAULT_PROPERTIES_FILE_NAME);
 	}
 
-	public static Settings getInstance(String propertiesFilename) {
+	public static synchronized Settings getInstance(String propertiesFilename) {
 		if (_instance != null) {
 			throw new IllegalStateException("Settings have already been initialized and loaded. "
 					+ "Only the first invocation of " + Settings.class + ".getInstance() might be invoked with a parameter.");

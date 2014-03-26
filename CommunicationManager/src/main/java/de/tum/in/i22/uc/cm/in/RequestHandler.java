@@ -32,9 +32,9 @@ public class RequestHandler implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
-	private static RequestHandler _instance = new RequestHandler();
+	private static RequestHandler _instance;
 
-	private final Settings _settings = Settings.getInstance();
+	private final Settings _settings;
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
@@ -49,15 +49,16 @@ public class RequestHandler implements Runnable {
 	private GenericThriftServer _pmpServer;
 	private GenericThriftServer _anyServer;
 
-	public static RequestHandler getInstance(){
+	public static synchronized RequestHandler getInstance() {
+		if (_instance == null) {
+			_instance = new RequestHandler();
+		}
 		return _instance;
 	}
 
 	private RequestHandler() {
 		_requestQueue = new LinkedBlockingQueue<>();
-
-		// TODO handle case of remote PDP, PMP, PIP
-
+		_settings = Settings.getInstance();
 
 		PDP = createPdpHandler();
 		PIP = createPipHandler();

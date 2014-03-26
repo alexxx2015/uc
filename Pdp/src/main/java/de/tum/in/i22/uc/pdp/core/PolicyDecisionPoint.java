@@ -41,9 +41,10 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		this.actionDescriptionStore = ActionDescriptionStore.getInstance();
 	}
 
-	public static IPolicyDecisionPoint getInstance() {
-		if (instance == null)
+	public static synchronized IPolicyDecisionPoint getInstance() {
+		if (instance == null) {
 			instance = new PolicyDecisionPoint();
+		}
 		return instance;
 	}
 

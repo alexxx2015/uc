@@ -30,7 +30,7 @@ public class ConnectionManager {
 	// TODO Move to configuration file
 	private static final int DEFAULT_MAX_ENTRIES = 20;
 
-	private static final ConnectionManager _instance = new ConnectionManager();
+	private static ConnectionManager _instance;
 
 	private final PoolMap connectionPool;;
 
@@ -50,7 +50,10 @@ public class ConnectionManager {
 	}
 
 
-	public static final ConnectionManager getInstance() {
+	public static synchronized ConnectionManager getInstance() {
+		if (_instance == null) {
+			_instance = new ConnectionManager();
+		}
 		return _instance;
 	}
 

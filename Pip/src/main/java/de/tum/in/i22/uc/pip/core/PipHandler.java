@@ -41,7 +41,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 
 	private final PipManager _pipManager;
 
-	private static PipHandler _instance = new PipHandler();
+	private static PipHandler _instance;
 
 	/**
 	 * Manages everything related to distributed data flow tracking
@@ -64,7 +64,10 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 	}
 
-	public static PipHandler getInstance(){
+	public static synchronized PipHandler getInstance(){
+		if (_instance == null) {
+			_instance = new PipHandler();
+		}
 		return _instance;
 	}
 
@@ -125,8 +128,7 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
 			File jarFile, EConflictResolution flagForTheConflictResolution) {
 
-		return _pipManager.updateInformationFlowSemantics(deployer, jarFile,
-				flagForTheConflictResolution);
+		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 
 	@Override
