@@ -59,32 +59,42 @@ public class RequestHandler implements Runnable {
 		// TODO handle case of remote PDP, PMP, PIP
 
 
-		if (_settings.getPdpLocation().getLocation() == ELocation.LOCAL) {
-			PDP = PdpHandler.getInstance();
-		}
-		else {
-			PDP = null;
-		}
-
-		if (_settings.getPipLocation().getLocation() == ELocation.LOCAL) {
-			PIP = PipHandler.getInstance();
-		}
-		else {
-			PIP = null;
-		}
-
-		if (_settings.getPmpLocation().getLocation() == ELocation.LOCAL) {
-			PMP = PmpHandler.getInstance();
-		}
-		else {
-			PMP = null;
-		}
+		PDP = createPdpHandler();
+		PIP = createPipHandler();
+		PMP = createPmpHandler();
 
 		PDP.init(PIP, PMP);
 		PIP.init(PDP, PMP);
 		PMP.init(PIP, PDP);
 
 		startListeners();
+	}
+
+	private IAny2Pdp createPdpHandler() {
+		if (_settings.getPdpLocation().getLocation() == ELocation.LOCAL) {
+			return PdpHandler.getInstance();
+		}
+
+		// TODO: Handle case of remote PDP
+		return null;
+	}
+
+	private IAny2Pmp createPmpHandler() {
+		if (_settings.getPmpLocation().getLocation() == ELocation.LOCAL) {
+			return PmpHandler.getInstance();
+		}
+
+		// TODO: Handle case of remote PMP
+		return null;
+	}
+
+	private IAny2Pip createPipHandler() {
+		if (_settings.getPipLocation().getLocation() == ELocation.LOCAL) {
+			return PipHandler.getInstance();
+		}
+
+		// TODO: Handle case of remote PIP
+		return null;
 	}
 
 
