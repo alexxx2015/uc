@@ -13,7 +13,7 @@ public class EmptyCliboardEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		IContainer clipboardContainer = basicIfModel.getContainer(new NameBasic(
 				"clipboard"));
 

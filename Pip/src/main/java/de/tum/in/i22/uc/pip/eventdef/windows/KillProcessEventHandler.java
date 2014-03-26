@@ -18,7 +18,7 @@ public class KillProcessEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		String pid = null;
 //		String processName = null;
 

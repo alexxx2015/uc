@@ -18,7 +18,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 	}
 
 	@Override
-	public int createScope() {
+	protected int createScope() {
 		String filename;
 
 		try {
@@ -53,7 +53,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		return null;
 	}
 

@@ -35,7 +35,7 @@ import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
  * @author Florian Kelbert
  *
  */
-class LinuxEvents {
+public class LinuxEvents {
 
 	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
 

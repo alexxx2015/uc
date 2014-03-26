@@ -38,7 +38,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected Set<Scope> _scopesToBeOpened = null;
 	protected Set<Scope> _scopesToBeClosed = null;
 
-	public AbstractScopeEventHandler() {
+	protected AbstractScopeEventHandler() {
 		ifScopeModel = InformationFlowModelManager.getInstance().getExtension(EInformationFlowModel.SCOPE);
 		if (ifScopeModel == null) {
 			throw new RuntimeException("Scopes are not supported. Check the configuration.");
@@ -52,7 +52,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * stored in _scopesToBeClosed. The function returns the total number of
 	 * scopes opened/closed.
 	 */
-	public int createScope() {
+	protected int createScope() {
 		return 0;
 	}
 
@@ -107,7 +107,8 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * @see de.tum.in.i22.pip.core.IActionHandler#executeEvent()
 	 */
 	@Override
-	public final IStatus executeEvent() {
+	public
+	final IStatus executeEvent() {
 
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);

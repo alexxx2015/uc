@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
 import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
-public abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
+abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 	/*
 	 * This function should be overridden by single events class
 	 */
@@ -24,7 +24,7 @@ public abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 	 * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
 	 */
 	@Override
-	public int createScope() {
+	protected int createScope() {
 		String delimiter = null;
 		String direction = null;
 		String filename = null;

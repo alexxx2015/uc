@@ -18,7 +18,7 @@ public class ReadFileEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		String fileName = null;
 		String pid = null;
 		String processName = null;

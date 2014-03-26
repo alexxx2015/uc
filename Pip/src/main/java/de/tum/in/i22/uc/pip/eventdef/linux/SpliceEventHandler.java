@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class SpliceEventHandler extends BaseEventHandler {
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		String host = null;
 		int pid;
 		int srcfd;

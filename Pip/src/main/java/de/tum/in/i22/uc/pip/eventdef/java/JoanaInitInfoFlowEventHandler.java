@@ -21,7 +21,7 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 	static IData data = null;
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 
 		//This event is used only during tests to initialize the information flow schema to a specific state
 

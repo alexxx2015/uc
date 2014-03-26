@@ -126,8 +126,10 @@ public class PipHandler extends GenericHandler<PipRequest> implements IAny2Pip {
 			return new StatusBasic(EStatus.ERROR);
 		}
 
+
+		_logger.info(System.lineSeparator() + event);
 		IStatus result = actionHandler.setEvent(event).executeEvent();
-		System.out.println(_ifModelManager.niceString());
+		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 		return result;
 	}
 

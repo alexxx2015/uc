@@ -112,6 +112,7 @@ public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 				result = registerPxp(request.getPxp());
 			case NOTIFY_EVENT:
 				result = notifyEvent(request.getEvent());
+
 				// TODO: As of now unconditionally notifying event to PIP.
 				_pip.notifyActualEvent(request.getEvent());
 				break;

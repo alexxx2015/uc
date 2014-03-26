@@ -14,7 +14,7 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	protected IStatus execute() {
 		String pid = null;
 		String processName = null;
 		String windowHandle = null;
