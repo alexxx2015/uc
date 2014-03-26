@@ -21,12 +21,7 @@ import de.tum.in.i22.uc.pdp.core.Event;
 import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-/**
- * This contains some tests to run the PIP "inside" the PDP
- *
- * @author Lovat
- *
- */
+
 public class PdpHandler extends GenericHandler<PdpRequest> implements IAny2Pdp {
 
 	private final IPolicyDecisionPoint _lpdp;

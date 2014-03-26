@@ -28,10 +28,6 @@ import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 
-interface X {
-
-}
-
 public class RequestHandler implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
