@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.pdp.core.Decision;
 import de.tum.in.i22.uc.cm.pdp.core.Event;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
@@ -32,7 +33,7 @@ public class PDPJavaTest
     e.addStringParameter("name1", "value1");
     e.addStringParameter("name2", "value2");
 
-    IPdpMechanism d = lpdp.notifyEvent(e);
+    Decision d = lpdp.notifyEvent(e);
     log.debug("d: [{}]", d);
 
     log.debug("revoking test mechanism...");

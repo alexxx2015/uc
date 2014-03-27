@@ -9,7 +9,7 @@ public abstract class Operator
 
   public Operator()
   {}
-  
+
   public abstract void initOperatorForMechanism(IPdpMechanism mech);
   public abstract boolean evaluate(Event curEvent);
   

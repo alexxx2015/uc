@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.out.IConnection;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 
 public interface IPmp2Pdp extends IConnection {
 	public IStatus deployMechanism(IMechanism mechanism);

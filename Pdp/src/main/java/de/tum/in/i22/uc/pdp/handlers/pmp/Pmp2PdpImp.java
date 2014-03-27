@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.cm.requests.EPmpRequestType;
 
 /**

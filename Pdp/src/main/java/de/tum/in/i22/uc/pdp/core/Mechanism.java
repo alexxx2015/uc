@@ -199,7 +199,7 @@ public String getMechanismName()
   }
 
   @Override
-public boolean revoke()
+  public boolean revoke()
   {
     this.updateThread.interrupt();
     return true;

@@ -19,11 +19,11 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.pdp.core.Constants;
 import de.tum.in.i22.uc.cm.pdp.core.Decision;
 import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -165,7 +165,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism notifyEvent(Event event) {
+	public Decision notifyEvent(Event event) {
 		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
 				.getEventList(event.getEventAction());
 		if (eventMatchList == null)
@@ -187,7 +187,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				"Searching for triggered mechanisms for event=[{}] -> subscriptions: {}",
 				event.getEventAction(), mechanismList.size());
 
-		Decision d = new Decision("default", Constants.AUTHORIZATION_ALLOW);
+		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW));
 		for (Mechanism mech : mechanismList) {
 			log.info("Processing mechanism [{}] for event [{}]",
 					mech.getMechanismName(), event.getEventAction());

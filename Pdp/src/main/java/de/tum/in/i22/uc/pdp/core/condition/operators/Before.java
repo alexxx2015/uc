@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.core.condition.CircularArray;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
@@ -19,7 +19,7 @@ public class Before extends BeforeType
   {}
   
   @Override
-  public void initOperatorForMechanism(Mechanism mech)
+  public void initOperatorForMechanism(IPdpMechanism mech)
   {
     this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
     this.state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);

@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 public interface IPolicyDecisionPoint
 {
   // PDP exported methods
-  public de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism notifyEvent(Event event);
+  public Decision notifyEvent(Event event);
 
   public boolean  deployPolicy(String filename);
   public boolean  revokePolicy(String policyName);

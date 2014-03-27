@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.FalseType;
 
@@ -18,7 +19,7 @@ public class OSLFalse extends FalseType
   {}
   
   @Override
-  public void initOperatorForMechanism(Mechanism mech)
+  public void initOperatorForMechanism(IPdpMechanism mech)
   {}  
   
   @Override 

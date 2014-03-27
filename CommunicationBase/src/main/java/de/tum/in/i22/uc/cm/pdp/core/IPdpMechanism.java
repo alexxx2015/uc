@@ -8,6 +8,9 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 public interface IPdpMechanism {
 
 	IPdpAuthorizationAction getAuthorizationAction();
+	
+  public long getTimestepSize();
+  public void setTimestepSize(long timestepSize);
 
 	void setAuthorizationAction(IPdpAuthorizationAction mAuthorizationAction);
 
