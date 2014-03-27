@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.distribution.IPLocation;
 import de.tum.in.i22.uc.distribution.LocalLocation;
 import de.tum.in.i22.uc.distribution.Location;
@@ -25,11 +26,9 @@ public class Settings extends SettingsLoader {
 
 	private static Logger _logger = LoggerFactory.getLogger(Settings.class);
 
-	private static Settings _instance;
+	private static Settings _instance = null;
 
-	private static final String DEFAULT_PROPERTIES_FILE_NAME = "pdp.properties";
-
-	private final String _propertiesFilename;
+	private static String _propertiesFile = "pdp.properties";
 
 	private int _pmpListenerPort = 21001;
 	private int _pipListenerPort = 21002;
@@ -56,39 +55,45 @@ public class Settings extends SettingsLoader {
 	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
 	private Settings() {
-		this(DEFAULT_PROPERTIES_FILE_NAME);
-	}
-
-	private Settings(String propertiesFilename) {
-		_propertiesFilename = propertiesFilename;
-
 		try {
-			initProperties(propertiesFilename);
+			initProperties(_propertiesFile);
 		} catch (IOException e) {
-			_logger.warn("Unable to load properties file [" + _propertiesFilename + "]. Using defaults.");
+			_logger.warn("Unable to load properties file [" + _propertiesFile + "]. Using defaults.");
 		}
 
 		loadProperties();
 	}
 
-
-	public static synchronized Settings getInstance() {
-		return (_instance != null)
-			? _instance
-			: getInstance(DEFAULT_PROPERTIES_FILE_NAME);
-	}
-
-	public static synchronized Settings getInstance(String propertiesFilename) {
-		if (_instance != null) {
-			throw new IllegalStateException("Settings have already been initialized and loaded. "
-					+ "Only the first invocation of " + Settings.class + ".getInstance() might be invoked with a parameter.");
+	public static void setPropertiesFile(String propertiesFile) {
+		boolean success = false;
+		if (_instance == null) {
+			synchronized (Settings.class) {
+				if (_instance == null) {
+					_propertiesFile = propertiesFile;
+					success = true;
+				}
+			}
 		}
 
-		_instance = new Settings(propertiesFilename);
-
-		return _instance;
+		if (success) {
+			_logger.warn("Must set properties file before getting the first Settings instance.");
+		}
 	}
 
+	public static Settings getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
+		if (_instance == null) {
+			synchronized (Settings.class) {
+				if (_instance == null) _instance = new Settings();
+			}
+		}
+		return _instance;
+	}
 
 	private void loadProperties() {
 		_pmpLocation = loadSetting("pmp_location", _pmpLocation);
@@ -147,7 +152,7 @@ public class Settings extends SettingsLoader {
 	}
 
 	public String getPropertiesFileName() {
-		return _propertiesFilename;
+		return _propertiesFile;
 	}
 
 	public int getPmpListenerPort() {

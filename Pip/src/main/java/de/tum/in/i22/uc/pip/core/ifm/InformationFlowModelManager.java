@@ -6,6 +6,7 @@ import java.util.Map;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeManager;
@@ -38,9 +39,17 @@ public final class InformationFlowModelManager {
 		}
 	}
 
-	public static synchronized InformationFlowModelManager getInstance() {
+	public static InformationFlowModelManager getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (_instance == null) {
-			_instance = new InformationFlowModelManager();
+			synchronized (InformationFlowModelManager.class) {
+				if (_instance == null) _instance = new InformationFlowModelManager();
+			}
 		}
 		return _instance;
 	}

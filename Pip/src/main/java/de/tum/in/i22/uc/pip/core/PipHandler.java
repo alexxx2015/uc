@@ -14,6 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.cm.requests.GenericPipHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
@@ -55,9 +56,17 @@ public class PipHandler extends GenericPipHandler {
 		notifyActualEvent(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
 	}
 
-	public static synchronized PipHandler getInstance(){
+	public static PipHandler getInstance(){
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (_instance == null) {
-			_instance = new PipHandler();
+			synchronized (PipHandler.class) {
+				if (_instance == null) _instance = new PipHandler();
+			}
 		}
 		return _instance;
 	}

@@ -38,9 +38,17 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	private ScopeInformationFlowModel() {
 	}
 
-	static synchronized IInformationFlowModelExtension getInstance() {
+	static IInformationFlowModelExtension getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (_instance == null) {
-			_instance = new ScopeInformationFlowModel();
+			synchronized (ScopeInformationFlowModel.class) {
+				if (_instance == null) _instance = new ScopeInformationFlowModel();
+			}
 		}
 		return _instance;
 	}

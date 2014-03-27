@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 /**
  * Information flow model Singleton.
@@ -49,9 +50,17 @@ public final class BasicInformationFlowModel {
 	 *
 	 * @return
 	 */
-	static synchronized BasicInformationFlowModel getInstance() {
+	static BasicInformationFlowModel getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (_instance == null) {
-			_instance = new BasicInformationFlowModel();
+			synchronized (BasicInformationFlowModel.class) {
+				if (_instance == null) _instance = new BasicInformationFlowModel();
+			}
 		}
 		return _instance;
 	}

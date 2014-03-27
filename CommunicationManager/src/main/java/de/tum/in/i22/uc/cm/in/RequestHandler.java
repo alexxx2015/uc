@@ -52,9 +52,17 @@ public class RequestHandler implements Runnable {
 	private GenericThriftServer _pmpServer;
 	private GenericThriftServer _anyServer;
 
-	public static synchronized RequestHandler getInstance() {
+	public static RequestHandler getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (_instance == null) {
-			_instance = new RequestHandler();
+			synchronized (RequestHandler.class) {
+				if (_instance == null) _instance = new RequestHandler();
+			}
 		}
 		return _instance;
 	}

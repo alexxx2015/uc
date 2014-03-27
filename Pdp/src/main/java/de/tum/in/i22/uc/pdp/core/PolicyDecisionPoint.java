@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
+import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
@@ -41,9 +42,17 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		this.actionDescriptionStore = ActionDescriptionStore.getInstance();
 	}
 
-	public static synchronized IPolicyDecisionPoint getInstance() {
+	public static IPolicyDecisionPoint getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (instance == null) {
-			instance = new PolicyDecisionPoint();
+			synchronized (PolicyDecisionPoint.class) {
+				if (instance == null) instance = new PolicyDecisionPoint();
+			}
 		}
 		return instance;
 	}

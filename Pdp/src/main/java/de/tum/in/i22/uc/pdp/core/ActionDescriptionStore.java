@@ -14,9 +14,17 @@ public class ActionDescriptionStore {
 		this.mechanismList = new HashMap<String, ArrayList<Mechanism>>();
 	}
 
-	public static synchronized ActionDescriptionStore getInstance() {
+	public static ActionDescriptionStore getInstance() {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all of it.
+		 * Yet, it is the best way to implement a thread-safe singleton, cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
+		 * -FK-
+		 */
 		if (instance == null) {
-			instance = new ActionDescriptionStore();
+			synchronized (ActionDescriptionStore.class) {
+				if (instance == null) instance = new ActionDescriptionStore();
+			}
 		}
 		return instance;
 	}

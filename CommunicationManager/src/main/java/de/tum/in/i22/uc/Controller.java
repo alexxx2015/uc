@@ -16,10 +16,7 @@ public class Controller {
 
 		// load properties
 		if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
-			Settings.getInstance(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
-		}
-		else {
-			Settings.getInstance();
+			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
 		}
 
 		new Thread(RequestHandler.getInstance()).start();
