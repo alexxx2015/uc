@@ -36,8 +36,8 @@ public class TestPep2PdpCommunication {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdp = PdpHandler.getInstance();
-		_pip = PipHandler.getInstance();
+		_pdp = new PdpHandler();
+		_pip = new PipHandler();
 	}
 
 	@Test

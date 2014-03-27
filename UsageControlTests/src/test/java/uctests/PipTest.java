@@ -33,9 +33,9 @@ public class PipTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdp = PdpHandler.getInstance();
-		_pip = PipHandler.getInstance();
-		_pmp = PmpHandler.getInstance();
+		_pdp = new PdpHandler();
+		_pip = new PipHandler();
+		_pmp = new PmpHandler();
 	}
 
 	@AfterClass

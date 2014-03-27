@@ -22,7 +22,7 @@ public class TAny2PdpHandler extends GenericHandler implements TAny2Pdp.Iface {
 	@Override
 	public Response notifyEvent(Event e) throws TException {
 		// TODO Auto-generated method stub
-		_logger.debug("TAny2Pdp: notifyEvent");
+		_logger.warn("TAny2Pdp: notifyEvent");
 		return new Response();
 	}
 

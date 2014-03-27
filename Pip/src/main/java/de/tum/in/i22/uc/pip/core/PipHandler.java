@@ -14,7 +14,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.cm.requests.GenericPipHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
@@ -35,8 +34,6 @@ public class PipHandler extends GenericPipHandler {
 
 	private final PipManager _pipManager;
 
-	private static PipHandler _instance;
-
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
@@ -46,7 +43,7 @@ public class PipHandler extends GenericPipHandler {
 	@SuppressWarnings("unused")
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
-	private PipHandler() {
+	public PipHandler() {
 		_pipManager = PipManager.getInstance();
 		_distributedPipManager = DistributedPipManager.getInstance();
 		_ifModelManager = InformationFlowModelManager.getInstance();
@@ -55,22 +52,6 @@ public class PipHandler extends GenericPipHandler {
 		// initialize data flow according to settings
 		notifyActualEvent(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
 	}
-
-	public static PipHandler getInstance(){
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (PipHandler.class) {
-				if (_instance == null) _instance = new PipHandler();
-			}
-		}
-		return _instance;
-	}
-
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {

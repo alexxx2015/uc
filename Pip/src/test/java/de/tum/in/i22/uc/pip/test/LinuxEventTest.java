@@ -22,7 +22,7 @@ import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class LinuxEventTest {
-	private static IPdp2Pip _pipHandler = PipHandler.getInstance();
+	private static IPdp2Pip _pipHandler = new PipHandler();
 
 	private static final InformationFlowModelManager _ifModelManager = InformationFlowModelManager.getInstance();
 

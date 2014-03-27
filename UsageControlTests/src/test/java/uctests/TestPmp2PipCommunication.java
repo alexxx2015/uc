@@ -23,7 +23,7 @@ public class TestPmp2PipCommunication {
 
 	@BeforeClass
 	public static void beforeClass() {
-		_pip = PipHandler.getInstance();
+		_pip = new PipHandler();
 	}
 
 	@Test

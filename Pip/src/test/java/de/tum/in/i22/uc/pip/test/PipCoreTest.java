@@ -26,7 +26,8 @@ import de.tum.in.i22.uc.pip.core.PipHandler;
 public class PipCoreTest {
 	private static final Logger _logger = LoggerFactory.getLogger(PipCoreTest.class);
 
-	private static IAny2Pip _pipHandler = PipHandler.getInstance();
+	private static IAny2Pip _pipHandler = new PipHandler();
+
 	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	@BeforeClass

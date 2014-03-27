@@ -12,7 +12,6 @@ import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.cm.requests.GenericPdpHandler;
 import de.tum.in.i22.uc.pdp.core.Event;
 import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
@@ -22,27 +21,9 @@ import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 public class PdpHandler extends GenericPdpHandler {
 	private final IPolicyDecisionPoint _lpdp;
 
-	private static PdpHandler _instance;
-
-	private PdpHandler() {
+	public PdpHandler() {
 		_lpdp = PolicyDecisionPoint.getInstance();
 	}
-
-	public static PdpHandler getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (PdpHandler.class) {
-				if (_instance == null) _instance = new PdpHandler();
-			}
-		}
-		return _instance;
-	}
-
 
 	@Override
 	public IResponse notifyEvent(IEvent event) {

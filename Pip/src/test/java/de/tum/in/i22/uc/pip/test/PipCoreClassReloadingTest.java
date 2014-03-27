@@ -25,7 +25,7 @@ public class PipCoreClassReloadingTest {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipCoreClassReloadingTest.class);
 
-	private static IAny2Pip _pipHandler = PipHandler.getInstance();
+	private static IAny2Pip _pipHandler = new PipHandler();
 
 	private static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 

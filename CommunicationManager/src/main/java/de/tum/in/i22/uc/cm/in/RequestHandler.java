@@ -24,7 +24,6 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 import de.tum.in.i22.uc.cm.requests.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.distribution.ELocation;
 import de.tum.in.i22.uc.distribution.IPLocation;
 import de.tum.in.i22.uc.distribution.Location;
 import de.tum.in.i22.uc.pdp.PdpHandler;
@@ -83,34 +82,41 @@ public class RequestHandler implements Runnable {
 	}
 
 	private IAny2Pdp createPdpHandler() {
-		if (_settings.getPdpLocation().getLocation() == ELocation.LOCAL) {
-			return PdpHandler.getInstance();
-		}
+		Location loc = _settings.getPdpLocation();
 
-		// TODO: Handle case of remote PDP
-		return null;
+		switch (loc.getLocation()) {
+			case IP:
+				// TODO
+				return null;
+			case LOCAL:
+			default:
+				return new PdpHandler();
+		}
 	}
 
 	private IAny2Pmp createPmpHandler() {
-		if (_settings.getPmpLocation().getLocation() == ELocation.LOCAL) {
-			return PmpHandler.getInstance();
-		}
+		Location loc = _settings.getPmpLocation();
 
-		// TODO: Handle case of remote PMP
-		return null;
+		switch (loc.getLocation()) {
+			case IP:
+				// TODO
+				return null;
+			case LOCAL:
+			default:
+				return new PmpHandler();
+		}
 	}
 
 	private IAny2Pip createPipHandler() {
 		Location loc = _settings.getPipLocation();
 
 		switch (loc.getLocation()) {
-			case LOCAL:
-				return PipHandler.getInstance();
 			case IP:
 				return new RemotePip((IPLocation) loc);
+			case LOCAL:
+			default:
+				return new PipHandler();
 		}
-
-		return PipHandler.getInstance();
 	}
 
 

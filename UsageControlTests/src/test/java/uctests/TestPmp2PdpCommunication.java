@@ -3,7 +3,6 @@ package uctests;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ public class TestPmp2PdpCommunication {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		_pdp = PdpHandler.getInstance();
+		_pdp = new PdpHandler();
 	}
 
 	@Test

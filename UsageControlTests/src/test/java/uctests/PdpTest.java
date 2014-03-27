@@ -34,12 +34,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pdp.handlers.pep.Pep2PdpTcpImp;
-import de.tum.in.i22.uc.pdp.handlers.pmp.Pmp2PdpTcpImp;
 import de.tum.in.i22.uc.pip.core.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 
@@ -51,9 +46,6 @@ public class PdpTest {
 	private final static int NUM_OF_CALLS_FROM_PEP = 10;
 	// num of calls from pmp thread
 	private final static int NUM_OF_CALLS_FROM_PMP = 10;
-
-	private final static int PMP_LISTENER_PORT_NUM = 50008;
-	private final static int PEP_LISTENER_PORT_NUM = 50009;
 
 	private static IAny2Pdp _pdp;
 	private static IAny2Pip _pip;
@@ -68,9 +60,9 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
-		_pdp = PdpHandler.getInstance();
-		_pip = PipHandler.getInstance();
-		_pmp = PmpHandler.getInstance();
+		_pdp = new PdpHandler();
+		_pip = new PipHandler();
+		_pmp = new PmpHandler();
 
 		startPepClient();
 		startPmpClient();

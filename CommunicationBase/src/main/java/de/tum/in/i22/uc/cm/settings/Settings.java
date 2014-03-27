@@ -6,7 +6,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.distribution.IPLocation;
 import de.tum.in.i22.uc.distribution.LocalLocation;
 import de.tum.in.i22.uc.distribution.Location;
