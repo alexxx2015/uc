@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core;
+package de.tum.in.i22.uc.cm.pdp.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,6 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.pdp.handlers.pxp.IPxp;
-import de.tum.in.i22.uc.pdp.handlers.pxp.PXPStub;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It
@@ -26,52 +24,52 @@ public class Decision implements java.io.Serializable
 
   private static final long        serialVersionUID =4922446035665121547L;
 
-  public static final Decision     RESPONSE_ALLOW   =new Decision("ALLOW", Constants.AUTHORIZATION_ALLOW);
-  public static final Decision     RESPONSE_INHIBIT =new Decision("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
+//  public static final Decision     RESPONSE_ALLOW   =new Decision("ALLOW", Constants.AUTHORIZATION_ALLOW);
+//  public static final Decision     RESPONSE_INHIBIT =new Decision("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
 
-  private AuthorizationAction      mAuthorizationAction;
+  private IPdpAuthorizationAction      mAuthorizationAction;
 
   /** 'optional' executeActions processed by PEP */
-  private ArrayList<ExecuteAction> mExecuteActions  =new ArrayList<ExecuteAction>();
+  private ArrayList<IPdpExecuteAction> mExecuteActions  =new ArrayList<IPdpExecuteAction>();
 
   public Decision()
   {}
 
-  public Decision(String name, boolean type)
+  public Decision(IPdpAuthorizationAction authAction)
   {
-    this.mAuthorizationAction=new AuthorizationAction(name, type);
+    this.mAuthorizationAction=authAction;
   }
 
-  public AuthorizationAction getAuthorizationAction()
+  public IPdpAuthorizationAction getAuthorizationAction()
   {
     return mAuthorizationAction;
   }
 
-  public void setAuthorizationAction(AuthorizationAction mAuthorizationAction)
+  public void setAuthorizationAction(IPdpAuthorizationAction mAuthorizationAction)
   {
     this.mAuthorizationAction=mAuthorizationAction;
   }
 
-  public ArrayList<ExecuteAction> getExecuteActions()
+  public ArrayList<IPdpExecuteAction> getExecuteActions()
   {
     return mExecuteActions;
   }
 
-  public void setExecuteActions(ArrayList<ExecuteAction> mExecuteActions)
+  public void setExecuteActions(ArrayList<IPdpExecuteAction> mExecuteActions)
   {
     this.mExecuteActions=mExecuteActions;
   }
 
-  public void addExecuteAction(ExecuteAction mExecuteActionTmp)
+  public void addExecuteAction(IPdpExecuteAction mExecuteActionTmp)
   {
     mExecuteActions.add(mExecuteActionTmp);
   }
 
-  public void processMechanism(Mechanism mech, Event curEvent)
+  public void processMechanism(IPdpMechanism mech, Event curEvent)
   {
     log.debug("Processing mechanism={} for decision", mech.getMechanismName());
 
-    AuthorizationAction curAuthAction = mech.getAuthorizationAction();
+    IPdpAuthorizationAction curAuthAction = mech.getAuthorizationAction();
     if(this.getAuthorizationAction().getType() == Constants.AUTHORIZATION_ALLOW)
     {
       log.debug("Decision still allowing event, processing mechanisms authActions");
@@ -82,13 +80,13 @@ public class Decision implements java.io.Serializable
         {
           log.debug("Executing specified executeActions: {}", curAuthAction.getExecuteActions().size());
           boolean executionReturn = false;
-          for(ExecuteAction execAction : curAuthAction.getExecuteActions())
+          for(IPdpExecuteAction execAction : curAuthAction.getExecuteActions())
           {
             log.debug("Executing [{}]", execAction.getName());
 
             // TODO: Execution should be forwarded to appropriate execution instance!
-            IPxp pxp = new PXPStub();
-            executionReturn = pxp.execute(execAction, curEvent);
+//            IPxp pxp = new PXPStub();
+//            executionReturn = pxp.execute(execAction, curEvent);
           }
 
           if(!executionReturn)
@@ -132,7 +130,7 @@ public class Decision implements java.io.Serializable
     }
 
     log.debug("Processing asynchronous executeActions");
-    for(ExecuteAction execAction : mech.getExecuteAsyncActions())
+    for(IPdpExecuteAction execAction : mech.getExecuteAsyncActions())
     {
       if(execAction.getProcessor().equals("pep"))
       {
@@ -143,8 +141,8 @@ public class Decision implements java.io.Serializable
       {
         log.debug("Execute asynchronous action [{}]", execAction.getName());
         // TODO: Execution should be forwarded to appropriate execution instance!
-        IPxp pxp = new PXPStub();
-        pxp.execute(execAction, curEvent);
+//        IPxp pxp = new PXPStub();
+//        pxp.execute(execAction, curEvent);
       }
     }
 
@@ -160,7 +158,7 @@ public class Decision implements java.io.Serializable
     else str+=this.mAuthorizationAction.toString();
 
     str+="; optional executeActions: [";
-    for(ExecuteAction a : mExecuteActions)
+    for(IPdpExecuteAction a : mExecuteActions)
       str+=a.toString();
     str+="]";
 
@@ -183,7 +181,7 @@ public class Decision implements java.io.Serializable
 
 	List<IEvent> list = new ArrayList<IEvent>();
 
-    for (ExecuteAction ea : getExecuteActions()){
+    for (IPdpExecuteAction ea : getExecuteActions()){
     	Event e = new Event(ea.getName(),true);
     	for (Param<?> p: ea.getParams()) e.addParam(p);
     	list.add(e.toIEvent());

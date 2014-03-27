@@ -9,11 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.pdp.core.IPdpExecuteAction;
+import de.tum.in.i22.uc.cm.pdp.core.Param;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
 
-public class ExecuteAction implements Serializable {
+public class ExecuteAction implements Serializable, IPdpExecuteAction {
 	private static final long serialVersionUID = 8451999937686098519L;
 	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
 

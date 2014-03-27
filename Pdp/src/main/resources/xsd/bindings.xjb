@@ -109,7 +109,7 @@
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='ParamMatchType']">
-      <!--<jxb:class implClass = "de.tum.in.i22.uc.pdp.core.Param" />-->
+      <!--<jxb:class implClass = "de.tum.in.i22.uc.cm.pdp.core.Param" />-->
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.ParamMatch" />
     </jxb:bindings>    
   </jxb:bindings>

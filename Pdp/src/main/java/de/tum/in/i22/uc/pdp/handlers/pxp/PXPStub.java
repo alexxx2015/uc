@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.ExecuteAction;
-import de.tum.in.i22.uc.pdp.core.Param;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpExecuteAction;
+import de.tum.in.i22.uc.cm.pdp.core.Param;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class PXPStub implements IPxp
@@ -19,7 +19,7 @@ public class PXPStub implements IPxp
   private static Logger log = LoggerFactory.getLogger(PXPStub.class);
 
   @Override
-  public boolean execute(ExecuteAction execAction, Event event)
+  public boolean execute(IPdpExecuteAction execAction, Event event)
   {
     log.info("[PXPStub] Executing {} with parameters: {}", execAction.getName(), execAction.getParams());
 

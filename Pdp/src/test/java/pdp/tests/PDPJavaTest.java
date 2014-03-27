@@ -4,9 +4,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.Decision;
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.IPolicyDecisionPoint;
+import de.tum.in.i22.uc.cm.pdp.core.Decision;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
+import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class PDPJavaTest

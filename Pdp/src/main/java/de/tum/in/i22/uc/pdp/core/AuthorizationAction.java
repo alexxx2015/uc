@@ -7,6 +7,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.pdp.core.Constants;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpAuthorizationAction;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpExecuteAction;
+import de.tum.in.i22.uc.cm.pdp.core.Param;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
@@ -14,27 +18,27 @@ import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
 import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
 
-public class AuthorizationAction implements Serializable
+public class AuthorizationAction implements Serializable, IPdpAuthorizationAction
 {
   private static final long serialVersionUID =3456284152512343695L;
   private static Logger log = LoggerFactory.getLogger(AuthorizationAction.class);
 
-  public static final AuthorizationAction AUTHORIZATION_INHIBIT =new AuthorizationAction("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
-  public static final AuthorizationAction AUTHORIZATION_ALLOW   =new AuthorizationAction("ALLOW", Constants.AUTHORIZATION_ALLOW);
+  public static final IPdpAuthorizationAction AUTHORIZATION_INHIBIT =new AuthorizationAction("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
+  public static final IPdpAuthorizationAction AUTHORIZATION_ALLOW   =new AuthorizationAction("ALLOW", Constants.AUTHORIZATION_ALLOW);
 
   private boolean                         type                  =false;
   private String                          name                  ="";
-  private AuthorizationAction             fallback              =AUTHORIZATION_INHIBIT;
+  private IPdpAuthorizationAction             fallback              =AUTHORIZATION_INHIBIT;
   private String                          fallbackName          ="";
-  private List<ExecuteAction>             executeSyncActions    =new ArrayList<ExecuteAction>();
+  private List<IPdpExecuteAction>             executeSyncActions    =new ArrayList<IPdpExecuteAction>();
   private List<Param<?>>                  modifiers             =new ArrayList<Param<?>>();
   private long                            delay                 =0;
 
   public AuthorizationAction()
   {}
   
-  public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions, long delay, List<Param<?>> modifiers,
-      AuthorizationAction fallback)
+  public AuthorizationAction(int start, String name, boolean type, List<IPdpExecuteAction> executeActions, long delay, List<Param<?>> modifiers,
+      IPdpAuthorizationAction fallback)
   {
     this.type=type;
     if(name!=null)           this.name=name;
@@ -110,7 +114,7 @@ public class AuthorizationAction implements Serializable
     return type;
   }
 
-  public List<ExecuteAction> getExecuteActions()
+  public List<IPdpExecuteAction> getExecuteActions()
   {
     return executeSyncActions;
   }
@@ -120,7 +124,7 @@ public class AuthorizationAction implements Serializable
     return modifiers;
   }
 
-  public void setExecuteActions(List<ExecuteAction> executeActions)
+  public void setExecuteActions(List<IPdpExecuteAction> executeActions)
   {
     this.executeSyncActions=executeActions;
   }
@@ -136,7 +140,7 @@ public class AuthorizationAction implements Serializable
     modifiers.add(parameter);
   }
 
-  public void addExecuteAction(ExecuteAction executeAction)
+  public void addExecuteAction(IPdpExecuteAction executeAction)
   {
     executeSyncActions.add(executeAction);
   }
@@ -171,12 +175,12 @@ public class AuthorizationAction implements Serializable
     if(name != null) this.name=name;
   }
 
-  public AuthorizationAction getFallback()
+  public IPdpAuthorizationAction getFallback()
   {
     return fallback == null ? AUTHORIZATION_INHIBIT : fallback;
   }
 
-  public void setFallback(AuthorizationAction fallback)
+  public void setFallback(IPdpAuthorizationAction fallback)
   {
     this.fallback=fallback;
   }
@@ -202,7 +206,7 @@ public class AuthorizationAction implements Serializable
       str+=p.toString() + ",";
     str+="}; mandatory execs: {";
     
-    for(ExecuteAction a : this.executeSyncActions)
+    for(IPdpExecuteAction a : this.executeSyncActions)
       str+=a.toString() + ", ";
     str+="}; Fallback: [" + getFallbackName() + "]";
     

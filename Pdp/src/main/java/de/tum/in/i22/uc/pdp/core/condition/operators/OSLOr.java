@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.Event;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.xsd.OrType;
 
@@ -22,7 +22,7 @@ public class OSLOr extends OrType
   }
   
   @Override
-  public void initOperatorForMechanism(Mechanism mech)
+  public void initOperatorForMechanism(IPdpMechanism mech)
   {
     ((Operator)this.getOperators().get(0)).initOperatorForMechanism(mech);
     ((Operator)this.getOperators().get(1)).initOperatorForMechanism(mech);

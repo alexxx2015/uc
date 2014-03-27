@@ -7,7 +7,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.IPdpMechanism;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.pdp.core.Decision;
+import de.tum.in.i22.uc.cm.pdp.core.Event;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpAuthorizationAction;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpExecuteAction;
+import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
+import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
@@ -29,8 +35,8 @@ public class Mechanism extends Thread implements IPdpMechanism
   private long                timestep            =0;
   private EventMatch          triggerEvent        =null;
   private Condition           condition           =null;
-  private AuthorizationAction authorizationAction =null;
-  private List<ExecuteAction> executeAsyncActions =new ArrayList<ExecuteAction>();
+  private IPdpAuthorizationAction authorizationAction =null;
+  private List<IPdpExecuteAction> executeAsyncActions =new ArrayList<IPdpExecuteAction>();
 
   private IPolicyDecisionPoint pdp = null;
 
@@ -76,14 +82,14 @@ public class Mechanism extends Thread implements IPdpMechanism
 
       if(curMech.getAuthorizationAction().size()>1)
       {
-        AuthorizationAction curAuth = this.authorizationAction;
+        IPdpAuthorizationAction curAuth = this.authorizationAction;
         log.debug("starting with curAuth: {}", curAuth.getName());
         do
         {
           log.debug("searching for fallback={}", curAuth.getFallbackName());
           if(!curAuth.getFallbackName().equalsIgnoreCase("allow") && !curAuth.getFallbackName().equalsIgnoreCase("inhibit"))
           {
-            AuthorizationAction fallbackAuth =authActions.get(curAuth.getFallbackName());
+            IPdpAuthorizationAction fallbackAuth =authActions.get(curAuth.getFallbackName());
             if(fallbackAuth==null)
             {
               log.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
@@ -152,22 +158,22 @@ public String getMechanismName()
     this.description=description;
   }
 
-  public AuthorizationAction getAuthorizationAction()
+  public IPdpAuthorizationAction getAuthorizationAction()
   {
     return authorizationAction;
   }
 
-  public void setAuthorizationAction(AuthorizationAction authorizationAction)
+  public void setAuthorizationAction(IPdpAuthorizationAction authorizationAction)
   {
     this.authorizationAction=authorizationAction;
   }
 
-  public List<ExecuteAction> getExecuteAsyncActions()
+  public List<IPdpExecuteAction> getExecuteAsyncActions()
   {
     return executeAsyncActions;
   }
 
-  public void setExecuteAsyncActions(List<ExecuteAction> executeAsyncActions)
+  public void setExecuteAsyncActions(List<IPdpExecuteAction> executeAsyncActions)
   {
     this.executeAsyncActions=executeAsyncActions;
   }
@@ -193,7 +199,7 @@ public String getMechanismName()
   }
 
   @Override
-public boolean revoke()
+  public boolean revoke()
   {
     this.updateThread.interrupt();
     return true;
@@ -265,7 +271,7 @@ public boolean revoke()
         if(mechanismValue)
         {
           log.info("Mechanism condition satisfied; triggered optional executeActions");
-          for(ExecuteAction execAction : this.getExecuteAsyncActions())
+          for(IPdpExecuteAction execAction : this.getExecuteAsyncActions())
           {
             if(execAction.getProcessor().equals("pep"))
               log.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP", execAction.getName());
@@ -308,4 +314,26 @@ public String toString()
     str += "\n   executeActions=["+executeAsyncActions+"]";
     return str;
   }
+
+@Override
+public IResponse getResponse() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public List<IPdpExecuteAction> getExecuteActions() {
+	return this.executeAsyncActions;
+}
+
+@Override
+public void setExecuteActions(ArrayList<IPdpExecuteAction> mExecuteActions) {
+	this.executeAsyncActions=mExecuteActions;
+}
+
+@Override
+public void addExecuteAction(IPdpExecuteAction mExecuteActionTmp) {
+	this.executeAsyncActions.add(mExecuteActionTmp);
+}
+
 }
