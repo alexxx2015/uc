@@ -14,9 +14,16 @@ import de.tum.i22.in.uc.cm.thrift.Pxp;
 import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 
 public class TAny2PdpServerHandler implements TAny2Pdp.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpServerHandler.class);
+
+	private final IAny2Pdp _pdp;
+
+	public TAny2PdpServerHandler(IAny2Pdp pdp) {
+		_pdp = pdp;
+	}
 
 	@Override
 	public Response notifyEvent(Event e) throws TException {

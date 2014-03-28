@@ -11,10 +11,17 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 
 
 public class TAny2PmpServerHandler implements TAny2Pmp.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PmpServerHandler.class);
+
+	private final IAny2Pmp _pmp;
+
+	public TAny2PmpServerHandler(IAny2Pmp pmp) {
+		_pmp = pmp;
+	}
 
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {

@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.cm.in;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -76,7 +77,7 @@ public class RequestHandler implements Runnable {
 	private RequestHandler() {
 		_requestQueue = new LinkedBlockingQueue<>();
 		_settings = Settings.getInstance();
-		_portsUsed = new HashSet<>();
+		_portsUsed = portsInUse();
 
 		PDP = createPdpHandler();
 		PIP = createPipHandler();
@@ -95,11 +96,16 @@ public class RequestHandler implements Runnable {
 		switch (loc.getLocation()) {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
-				return new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
+				if (isConnectionAllowed(iploc)) {
+					return new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
+				}
+				break;
 			case LOCAL:
 			default:
 				return new PdpHandler();
 		}
+
+		return null;
 	}
 
 	private IAny2Pmp createPmpHandler() {
@@ -108,11 +114,16 @@ public class RequestHandler implements Runnable {
 		switch (loc.getLocation()) {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
-				return new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
+				if (isConnectionAllowed(iploc)) {
+					return new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
+				}
+				break;
 			case LOCAL:
 			default:
 				return new PmpHandler();
 		}
+
+		return null;
 	}
 
 	private IAny2Pip createPipHandler() {
@@ -121,43 +132,86 @@ public class RequestHandler implements Runnable {
 		switch (loc.getLocation()) {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
-				return new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());
+				if (isConnectionAllowed(iploc)) {
+					return new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());
+				}
+				break;
 			case LOCAL:
 			default:
 				return new PipHandler();
 		}
+
+		return null;
+	}
+
+	private Set<Integer> portsInUse() {
+		Set<Integer> result = new HashSet<>();
+
+		if (_settings.isPdpListenerEnabled()) {
+			result.add(_settings.getPdpListenerPort());
+		}
+
+		if (_settings.isPipListenerEnabled()) {
+			result.add(_settings.getPipListenerPort());
+		}
+
+		if (_settings.isPmpListenerEnabled()) {
+			result.add(_settings.getPmpListenerPort());
+		}
+
+		if (_settings.isAnyListenerEnabled()) {
+			result.add(_settings.getAnyListenerPort());
+		}
+
+		return result;
+	}
+
+	private boolean isConnectionAllowed(IPLocation loc) {
+		RuntimeException rte = new RuntimeException("Not allowed to forward PIP/PMP/PDP requests to " + loc + ". "
+				+ "Rethink your setup/configuration.");
+
+		InetAddress addr;
+
+		try {
+			addr = InetAddress.getByName(loc.getHost());
+		} catch (UnknownHostException e) {
+			throw rte;
+		}
+
+		if ((addr.isAnyLocalAddress() || addr.isLoopbackAddress()) && _portsUsed.contains(loc.getPort())) {
+			throw rte;
+		}
+
+		return true;
 	}
 
 
 	private void startListeners() {
-		_logger.debug("Starting listeners");
-
-		int portPdp = _settings.getPdpListenerPort();
-		int portPip = _settings.getPipListenerPort();
-		int portPmp = _settings.getPmpListenerPort();
-		int portAny = _settings.getAnyListenerPort();
-
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = new GenericThriftServer(portPdp, new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler()));
-			_portsUsed.add(portPdp);
+			_pdpServer = new GenericThriftServer(
+								_settings.getPdpListenerPort(),
+								new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler(PDP)));
 			new Thread(_pdpServer).start();
 		}
 
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = new GenericThriftServer(portPip, new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler(PIP)));
-			_portsUsed.add(portPip);
+			_pipServer = new GenericThriftServer(
+								_settings.getPipListenerPort(),
+								new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler(PIP)));
 			new Thread(_pipServer).start();
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = new GenericThriftServer(portPmp, new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler()));
-			_portsUsed.add(portPmp);
+			_pmpServer = new GenericThriftServer(
+								_settings.getPmpListenerPort(),
+								new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler(PMP)));
 			new Thread(_pmpServer).start();
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = new GenericThriftServer(portAny, new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
-			_portsUsed.add(portAny);
+			_anyServer = new GenericThriftServer(
+								_settings.getAnyListenerPort(),
+								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
 			new Thread(_anyServer).start();
 		}
 	}
