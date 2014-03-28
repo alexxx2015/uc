@@ -19,7 +19,7 @@ public class TAny2PdpServerHandler implements TAny2Pdp.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpServerHandler.class);
 
 	@Override
-	public Response notifyEvent(Event e) throws TException {
+	public Response notifyEventSync(Event e) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: notifyEvent");
 		return new Response();
@@ -70,5 +70,10 @@ public class TAny2PdpServerHandler implements TAny2Pdp.Iface {
 		l.add("test");
 		m.put("mystring", l);
 		return m;
+	}
+
+	@Override
+	public void notifyEventAsync(Event e) throws TException {
+		// TODO Auto-generated method stub
 	}
 }

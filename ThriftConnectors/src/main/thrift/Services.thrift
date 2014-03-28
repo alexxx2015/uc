@@ -9,7 +9,8 @@ service TAny2Pdp  {
 	///////////////	
 	// PEP 2 PDP //
 	///////////////	
-	Types.Response notifyEvent(1: Types.Event e),
+	Types.Response notifyEventSync(1: Types.Event e),
+	oneway void notifyEventAsync(1: Types.Event e),
 	
 	
 	///////////////	
@@ -127,7 +128,8 @@ service TAny2Any  {
 	///////////////	
 	// PEP 2 PDP //
 	///////////////	
-	Types.Response notifyEvent(1: Types.Event e),
+	Types.Response notifyEventSync(1: Types.Event e),
+	oneway void notifyEventAsync(1: Types.Event e),
 	
 	
 	///////////////	
