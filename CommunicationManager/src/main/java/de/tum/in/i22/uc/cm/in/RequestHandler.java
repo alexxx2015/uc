@@ -229,6 +229,20 @@ public class RequestHandler implements Runnable {
 		}
 	}
 
+	public IAny2Pdp getPDP() {
+		return PDP;
+	}
+
+	public IAny2Pip getPIP() {
+		return PIP;
+	}
+
+	public IAny2Pmp getPMP() {
+		return PMP;
+	}
+	
+	
+
 
 //	private IStatus delegeteUpdateIfFlowToPip(
 //			UpdateIfFlowSemanticsRequestWrapper request) {
