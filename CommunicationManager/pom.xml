@@ -63,7 +63,7 @@
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>de.tum.in.i22.Controller</mainClass>
+									<mainClass>de.tum.in.i22.uc.Controller</mainClass>
 								</manifest>
 							</archive>
 						</configuration>

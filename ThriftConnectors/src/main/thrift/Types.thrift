@@ -11,11 +11,12 @@ typedef i64 long
 typedef i32 int
 
 enum StatusType {
-	OK = 1,
+	OKAY = 1,
 	ERROR = 2,
 	ALLOW = 3,
 	INHIBIT = 4,
-	MODIFY = 5
+	MODIFY = 5,
+	ERROR_EVENT_PARAMETER_MISSING = 6
 }
 
 enum DetectionMode {

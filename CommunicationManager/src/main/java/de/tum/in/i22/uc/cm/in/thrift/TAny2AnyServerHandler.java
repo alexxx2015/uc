@@ -19,16 +19,44 @@ import de.tum.i22.in.uc.cm.thrift.Pxp;
 import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Any;
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
+import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
+import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
 
 public class TAny2AnyServerHandler implements TAny2Any.Iface {
-
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyServerHandler.class);
+
+	TAny2Pdp.Iface _pdp;
+	TAny2Pip.Iface _pip;
+	TAny2Pmp.Iface _pmp;
+
+	public TAny2AnyServerHandler(TAny2Pdp.Iface pdp, TAny2Pip.Iface pip, TAny2Pmp.Iface pmp) {
+		if (pdp != null) {
+			_pdp = pdp;
+		}
+		else {
+			_pdp = new TAny2PdpServerNull();
+		}
+
+		if (pip != null) {
+			_pip = pip;
+		}
+		else {
+			_pip = new TAny2PipServerNull();
+		}
+
+		if (pmp != null) {
+			_pmp = pmp;
+		}
+		else {
+			_pmp = new TAny2PmpServerNull();
+		}
+	}
 
 	@Override
 	public Response notifyEvent(Event e) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyEvent");
-		return new Response();
+		return _pdp.notifyEvent(e);
 	}
 
 	@Override
@@ -219,6 +247,4 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 		m.put("mystring", l);
 		return m;
 	}
-
-
 }

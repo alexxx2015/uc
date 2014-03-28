@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
 
 
 /**
@@ -24,7 +24,7 @@ import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
  * @author Florian Kelbert
  *
  */
-public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> implements ThriftClient {
+public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPipClientHandler.class);
 
 	public ThriftPipClientHandler(String address, int port) {

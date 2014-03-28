@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
  * @author Florian Kelbert
  *
  */
-public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> implements ThriftClient {
+public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPdpClientHandler.class);
 
 	public ThriftPdpClientHandler(String address, int port) {

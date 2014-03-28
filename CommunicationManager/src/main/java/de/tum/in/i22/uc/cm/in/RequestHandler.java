@@ -79,6 +79,8 @@ public class RequestHandler implements Runnable {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
 
+		/* Important: The creation of the handlers depends on the properly
+		 * initialized set _portsUsed */
 		PDP = createPdpHandler();
 		PIP = createPipHandler();
 		PMP = createPmpHandler();
@@ -187,31 +189,38 @@ public class RequestHandler implements Runnable {
 
 
 	private void startListeners() {
+		TAny2PdpServerHandler pdpServerHandler = null;
+		TAny2PipServerHandler pipServerHandler = null;
+		TAny2PmpServerHandler pmpServerHandler = null;
+
 		if (_settings.isPdpListenerEnabled()) {
+			pdpServerHandler = new TAny2PdpServerHandler(PDP);
 			_pdpServer = new GenericThriftServer(
 								_settings.getPdpListenerPort(),
-								new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler(PDP)));
+								new TAny2Pdp.Processor<TAny2PdpServerHandler>(pdpServerHandler));
 			new Thread(_pdpServer).start();
 		}
 
 		if (_settings.isPipListenerEnabled()) {
+			pipServerHandler = new TAny2PipServerHandler(PIP);
 			_pipServer = new GenericThriftServer(
 								_settings.getPipListenerPort(),
-								new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler(PIP)));
+								new TAny2Pip.Processor<TAny2PipServerHandler>(pipServerHandler));
 			new Thread(_pipServer).start();
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
+			pmpServerHandler = new TAny2PmpServerHandler(PMP);
 			_pmpServer = new GenericThriftServer(
 								_settings.getPmpListenerPort(),
-								new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler(PMP)));
+								new TAny2Pmp.Processor<TAny2PmpServerHandler>(pmpServerHandler));
 			new Thread(_pmpServer).start();
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
 			_anyServer = new GenericThriftServer(
 								_settings.getAnyListenerPort(),
-								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
+								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler(pdpServerHandler, pipServerHandler, pmpServerHandler)));
 			new Thread(_anyServer).start();
 		}
 	}
@@ -282,29 +291,4 @@ public class RequestHandler implements Runnable {
 			return _request;
 		}
 	}
-
-
-//	private IStatus delegeteUpdateIfFlowToPip(
-//			UpdateIfFlowSemanticsRequestWrapper request) {
-//		_logger.debug("Delegate update if flow to PIP");
-//		try {
-//			_logger.debug("Establish connection to PIP");
-//
-//			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
-//					+ System.currentTimeMillis());
-//			FileUtils.writeByteArrayToFile(jarFile, request.getJarBytes());
-//			IStatus status = _pdp2PipProxy.updateInformationFlowSemantics(
-//					request.getPipDeployer(), jarFile,
-//					request.getConflictResolution());
-//			jarFile.delete();
-//
-//			ConnectionManager.MAIN.release(_pdp2PipProxy);
-//
-//			return status;
-//		} catch (Exception e) {
-//			_logger.fatal("Failed to notify actual event to PIP.", e);
-//			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
-//		}
-//	}
-
 }

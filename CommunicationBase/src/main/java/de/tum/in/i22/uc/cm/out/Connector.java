@@ -21,14 +21,6 @@ public abstract class Connector {
 	private OutputStream _outputStream;
  	private InputStream _inputStream;
 
-	UnclosableOutputStream getOutputStream() {
-		return new UnclosableOutputStream(_outputStream);
-	}
-
-	UnclosableInputStream getInputStream() {
-		return new UnclosableInputStream(_inputStream);
-	}
-
 	protected void setOutputStream(OutputStream out) {
 		_outputStream = new BufferedOutputStream(out);
 	}

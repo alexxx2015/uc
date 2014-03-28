@@ -26,14 +26,6 @@ public abstract class Connection implements IConnection {
 		_connector.disconnect();
 	}
 
-	protected OutputStream getOutputStream() {
-		return _connector.getOutputStream();
-	}
-
-	protected InputStream getInputStream() {
-		return _connector.getInputStream();
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(getClass(), _connector);

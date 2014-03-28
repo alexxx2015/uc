@@ -14,7 +14,7 @@ import de.tum.i22.in.uc.cm.thrift.Name;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
 
 
 public class TAny2PipServerHandler implements TAny2Pip.Iface {
@@ -65,8 +65,7 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface {
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
-		_pip.notifyActualEvent(ThriftTypeConversion.convert(event));
-		return StatusType.ERROR;
+		return ThriftTypeConversion.convert(_pip.notifyActualEvent(ThriftTypeConversion.convert(event)));
 	}
 
 	@Override
