@@ -79,8 +79,7 @@ public class RequestHandler implements Runnable {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
 
-		/* Important: The creation of the handlers depends on the properly
-		 * initialized set _portsUsed */
+		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
 		PDP = createPdpHandler();
 		PIP = createPipHandler();
 		PMP = createPmpHandler();
@@ -189,38 +188,31 @@ public class RequestHandler implements Runnable {
 
 
 	private void startListeners() {
-		TAny2PdpServerHandler pdpServerHandler = null;
-		TAny2PipServerHandler pipServerHandler = null;
-		TAny2PmpServerHandler pmpServerHandler = null;
-
 		if (_settings.isPdpListenerEnabled()) {
-			pdpServerHandler = new TAny2PdpServerHandler(PDP);
 			_pdpServer = new GenericThriftServer(
 								_settings.getPdpListenerPort(),
-								new TAny2Pdp.Processor<TAny2PdpServerHandler>(pdpServerHandler));
+								new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler()));
 			new Thread(_pdpServer).start();
 		}
 
 		if (_settings.isPipListenerEnabled()) {
-			pipServerHandler = new TAny2PipServerHandler(PIP);
 			_pipServer = new GenericThriftServer(
 								_settings.getPipListenerPort(),
-								new TAny2Pip.Processor<TAny2PipServerHandler>(pipServerHandler));
+								new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler()));
 			new Thread(_pipServer).start();
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			pmpServerHandler = new TAny2PmpServerHandler(PMP);
 			_pmpServer = new GenericThriftServer(
 								_settings.getPmpListenerPort(),
-								new TAny2Pmp.Processor<TAny2PmpServerHandler>(pmpServerHandler));
+								new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler()));
 			new Thread(_pmpServer).start();
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
 			_anyServer = new GenericThriftServer(
 								_settings.getAnyListenerPort(),
-								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler(pdpServerHandler, pipServerHandler, pmpServerHandler)));
+								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
 			new Thread(_anyServer).start();
 		}
 	}

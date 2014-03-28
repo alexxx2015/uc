@@ -18,7 +18,7 @@ public class PipRequest extends Request  {
 	private IEvent _event = null;
 	private EPipResponse _response = null;
 
-	public PipRequest(EPipRequestType type, IEvent event, Collection<IData> data, Collection<IContainer> containers, EPipResponse response) {
+	private PipRequest(EPipRequestType type, IEvent event, Collection<IData> data, Collection<IContainer> containers, EPipResponse response) {
 		if (response == null
 			|| (type == EPipRequestType.HAS_ALL_DATA && !paramsPresent(data))
 			|| (type == EPipRequestType.HAS_ANY_DATA && !paramsPresent(data))
@@ -49,8 +49,8 @@ public class PipRequest extends Request  {
 		return result;
 	}
 
-	public PipRequest(IEvent event, EPipResponse response) {
-		this(EPipRequestType.NOTIFY_ACTUAL_EVENT, event, null, null, response);
+	public PipRequest(IEvent event) {
+		this(EPipRequestType.NOTIFY_ACTUAL_EVENT, event, null, null, EPipResponse.VOID);
 	}
 
 //	public PipRequest(EPipRequestMethod method, IData ... data) {

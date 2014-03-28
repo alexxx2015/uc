@@ -73,6 +73,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		disconnect();
 		return null;
 	}
 
