@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.Container;
 import de.tum.i22.in.uc.cm.thrift.Data;
@@ -11,12 +13,17 @@ import de.tum.i22.in.uc.cm.thrift.Event;
 import de.tum.i22.in.uc.cm.thrift.Name;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
 
 
-public class TAny2PipHandler extends GenericHandler implements TAny2Pip.Iface {
+public class TAny2PipServerHandler implements TAny2Pip.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2PipServerHandler.class);
 
-	public TAny2PipHandler(int port) {
-		super(port);
+	private final IAny2Pip _pip;
+
+	public TAny2PipServerHandler(IAny2Pip pip) {
+		_pip = pip;
 	}
 
 	@Override
@@ -57,8 +64,8 @@ public class TAny2PipHandler extends GenericHandler implements TAny2Pip.Iface {
 
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: notifyActualEvent");
+		_pip.notifyActualEvent(ThriftTypeConversion.convert(event));
 		return StatusType.ERROR;
 	}
 

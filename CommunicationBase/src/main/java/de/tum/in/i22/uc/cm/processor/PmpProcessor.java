@@ -1,10 +1,16 @@
-package de.tum.in.i22.uc.cm.requests;
+package de.tum.in.i22.uc.cm.processor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.PmpRequest;
 
-public abstract class GenericPmpHandler extends GenericHandler<PmpRequest> implements IAny2Pmp {
+public abstract class PmpProcessor implements Processor<PmpRequest>, IAny2Pmp {
+	protected static Logger _logger = LoggerFactory.getLogger(PmpProcessor.class);
+
 	private IAny2Pip _pip;
 	private IAny2Pdp _pdp;
 	private boolean _initialized = false;

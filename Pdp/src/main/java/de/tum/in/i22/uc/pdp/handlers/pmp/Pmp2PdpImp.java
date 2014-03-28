@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
-import de.tum.in.i22.uc.cm.requests.EPmpRequestType;
+import de.tum.in.i22.uc.cm.requests.PmpRequest.EPmpRequestType;
 
 /**
  * Each method writes a message to the output stream.

@@ -14,11 +14,9 @@ import de.tum.in.i22.uc.pip.EInformationFlowModel;
 
 /**
  *
- * @author Stoimenov, Florian Kelbert
+ * @author Florian Kelbert
  * Settings are read from the specified properties file.
- * If no file is specified, file "pdp.properties" is used.
- *
- * Only the first invocation of getInstance(...) might carry the filename parameter.
+ * If no file is specified, file "uc.properties" is used.
  *
  */
 public class Settings extends SettingsLoader {
@@ -27,7 +25,7 @@ public class Settings extends SettingsLoader {
 
 	private static Settings _instance = null;
 
-	private static String _propertiesFile = "pdp.properties";
+	private static String _propertiesFile = "uc.properties";
 
 	private int _pmpListenerPort = 21001;
 	private int _pipListenerPort = 21002;

@@ -44,4 +44,10 @@ public class PmpRequest extends Request  {
 		return "PmpRequest [_method=" + _requestType + ", _mechanism=" + _mechanism
 				+ ", _stringParameter=" + _stringParameter + "]";
 	}
+
+	public enum EPmpRequestType {
+		DEPLOY_MECHANISM,
+		EXPORT_MECHANISM,
+		REVOKE_MECHANISM;
+	}
 }

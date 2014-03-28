@@ -52,7 +52,7 @@ public class ThriftClient {
 
    x=0;
 
-   System.out.println("Test "+ (x++) +": "+ clientPdp.notifyEvent(new Event("event",new HashMap<String,String>(),0)));
+   System.out.println("Test "+ (x++) +": "+ clientPdp.notifyEvent(new Event("event",new HashMap<String,String>(),0, true)));
 
    System.out.println("Test "+ (x++) +": "+ clientPdp.registerPxp(new Pxp()));
 
@@ -84,11 +84,11 @@ public class ThriftClient {
 
    System.out.println("Test "+ (x++) +": "+ clientPip.hasAnyContainer(new HashSet<Container>()));
 
-   System.out.println("Test "+ (x++) +": "+ clientPip.notifyActualEvent(new Event("event",new HashMap<String,String>(),0)));
+   System.out.println("Test "+ (x++) +": "+ clientPip.notifyActualEvent(new Event("event",new HashMap<String,String>(),0,true)));
 
    System.out.println("Test "+ (x++) +": "+ clientPip.notifyDataTransfer(new Name("name"), new HashSet<Data>()));
 
-   System.out.println("Test "+ (x++) +": "+ clientPip.evaluatePredicateSimulatingNextState(new Event("event",new HashMap<String,String>(),0), "predicate"));
+   System.out.println("Test "+ (x++) +": "+ clientPip.evaluatePredicateSimulatingNextState(new Event("event",new HashMap<String,String>(),0,true), "predicate"));
 
    System.out.println("Test "+ (x++) +": "+ clientPip.evaluatePredicatCurrentState("predicate"));
 
@@ -128,7 +128,7 @@ public class ThriftClient {
 
    x=0;
 
-   System.out.println("Test "+ (x++) +": "+ clientAny.notifyEvent(new Event("event",new HashMap<String,String>(),0)));
+   System.out.println("Test "+ (x++) +": "+ clientAny.notifyEvent(new Event("event",new HashMap<String,String>(),0,true)));
 
    System.out.println("Test "+ (x++) +": "+ clientAny.registerPxp(new Pxp()));
 
@@ -152,11 +152,11 @@ public class ThriftClient {
 
    System.out.println("Test "+ (x++) +": "+ clientAny.hasAnyContainer(new HashSet<Container>()));
 
-   System.out.println("Test "+ (x++) +": "+ clientAny.notifyActualEvent(new Event("event",new HashMap<String,String>(),0)));
+   System.out.println("Test "+ (x++) +": "+ clientAny.notifyActualEvent(new Event("event",new HashMap<String,String>(),0,true)));
 
    System.out.println("Test "+ (x++) +": "+ clientAny.notifyDataTransfer(new Name("name"), new HashSet<Data>()));
 
-   System.out.println("Test "+ (x++) +": "+ clientAny.evaluatePredicateSimulatingNextState(new Event("event",new HashMap<String,String>(),0), "predicate"));
+   System.out.println("Test "+ (x++) +": "+ clientAny.evaluatePredicateSimulatingNextState(new Event("event",new HashMap<String,String>(),0,true), "predicate"));
 
    System.out.println("Test "+ (x++) +": "+ clientAny.evaluatePredicatCurrentState("predicate"));
 

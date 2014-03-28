@@ -33,4 +33,15 @@ public class PdpRequest extends Request {
 	public IEvent getEvent() {
 		return _event;
 	}
+
+	public enum EPdpRequestType {
+		NOTIFY_EVENT,
+		REGISTER_PXP,
+		DEPLOY_MECHANISM,
+		EXPORT_MECHANISM,
+		REVOKE_MECHANISM,
+		DEPLOY_POLICY,
+		LIST_MECHANISMS;
+	}
+
 }

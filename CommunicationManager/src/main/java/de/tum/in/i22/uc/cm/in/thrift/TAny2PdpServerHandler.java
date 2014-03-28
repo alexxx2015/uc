@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.Event;
 import de.tum.i22.in.uc.cm.thrift.Pxp;
@@ -13,16 +15,13 @@ import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 
-public class TAny2PdpHandler extends GenericHandler implements TAny2Pdp.Iface {
-
-	public TAny2PdpHandler(int port) {
-		super(port);
-	}
+public class TAny2PdpServerHandler implements TAny2Pdp.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpServerHandler.class);
 
 	@Override
 	public Response notifyEvent(Event e) throws TException {
 		// TODO Auto-generated method stub
-		_logger.warn("TAny2Pdp: notifyEvent");
+		_logger.debug("TAny2Pdp: notifyEvent");
 		return new Response();
 	}
 

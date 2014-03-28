@@ -14,7 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.requests.GenericPipHandler;
+import de.tum.in.i22.uc.cm.processor.PipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
@@ -26,7 +26,7 @@ import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
-public class PipHandler extends GenericPipHandler {
+public class PipHandler extends PipProcessor {
 
 	private final BasicInformationFlowModel _ifModel;
 
@@ -67,7 +67,7 @@ public class PipHandler extends GenericPipHandler {
 	}
 
 	@Override
-	public Set<IContainer> getContainerForData(IData data) {
+	public Set<IContainer> getContainersForData(IData data) {
 		return _ifModel.getContainersForData(data);
 	}
 

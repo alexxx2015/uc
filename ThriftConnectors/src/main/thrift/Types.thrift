@@ -34,7 +34,8 @@ struct Event {
 	1: required string name,
 	2: map<string,string> parameters,
 	3: long timeStamp,
-	4: optional string comment
+	4: bool isActual
+	5: optional string comment	
 }
 
 struct Response {

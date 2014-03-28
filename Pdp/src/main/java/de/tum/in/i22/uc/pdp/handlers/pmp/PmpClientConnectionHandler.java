@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
-import de.tum.in.i22.uc.cm.requests.EPmpRequestType;
+import de.tum.in.i22.uc.cm.requests.PmpRequest.EPmpRequestType;
 
 public abstract class PmpClientConnectionHandler extends ClientConnectionHandler {
 
@@ -19,29 +19,29 @@ public abstract class PmpClientConnectionHandler extends ClientConnectionHandler
 	@Override
 	protected void doProcessing() throws IOException, EOFException,
 			InterruptedException, MessageTooLargeException {
-
-		// first determine the method (operation) by reading the first byte
-		_logger.trace("Process the incomming bytes");
-		DataInputStream dataInputStream = getDataInputStream();
-		byte methodCodeBytes[] = new byte[1];
-		dataInputStream.readFully(methodCodeBytes);
-		EPmpRequestType method = EPmpRequestType.fromByte(methodCodeBytes[0]);
-		_logger.trace("Method to invoke: " + method);
-
-		//parse message
-		switch (method) {
-			case DEPLOY_MECHANISM:
-				doDeployMechanism();
-				break;
-			case EXPORT_MECHANISM:
-				doExportMechanism();
-				break;
-			case REVOKE_MECHANISM:
-				doRevokeMechanism();
-				break;
-			default:
-				throw new RuntimeException("Method " + method + " is not supported.");
-		}
+//
+//		// first determine the method (operation) by reading the first byte
+//		_logger.trace("Process the incomming bytes");
+//		DataInputStream dataInputStream = getDataInputStream();
+//		byte methodCodeBytes[] = new byte[1];
+//		dataInputStream.readFully(methodCodeBytes);
+//		EPmpRequestType method = EPmpRequestType.fromByte(methodCodeBytes[0]);
+//		_logger.trace("Method to invoke: " + method);
+//
+//		//parse message
+//		switch (method) {
+//			case DEPLOY_MECHANISM:
+//				doDeployMechanism();
+//				break;
+//			case EXPORT_MECHANISM:
+//				doExportMechanism();
+//				break;
+//			case REVOKE_MECHANISM:
+//				doRevokeMechanism();
+//				break;
+//			default:
+//				throw new RuntimeException("Method " + method + " is not supported.");
+//		}
 	}
 
 	private void doDeployMechanism()

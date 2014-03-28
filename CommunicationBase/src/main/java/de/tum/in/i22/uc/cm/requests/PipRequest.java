@@ -95,4 +95,25 @@ public class PipRequest extends Request  {
 				.add("_event", _event)
 				.toString();
 	}
+
+	public enum EPipRequestType {
+		EVALUATE_PREDICATE,
+		GET_CONTAINER_FOR_DATA,
+		GET_DATA_IN_CONTAINER,
+		NOTIFY_ACTUAL_EVENT,
+		UPDATE_INFORMATION_FLOW_SEMANTICS,
+		HAS_ALL_DATA,
+		HAS_ANY_DATA,
+		HAS_ALL_CONTAINERS,
+		HAS_ANY_CONTAINER,
+		NOTIFY_DATA_TRANSFER;
+	}
+
+	public enum EPipResponse {
+		VOID,
+		ICONTAINER,
+		ISTATUS,
+	}
+
+
 }

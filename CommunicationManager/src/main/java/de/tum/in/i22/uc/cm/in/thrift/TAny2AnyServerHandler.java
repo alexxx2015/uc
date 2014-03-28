@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.Container;
 import de.tum.i22.in.uc.cm.thrift.Data;
@@ -18,11 +20,9 @@ import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Any;
 
-public class TAny2AnyHandler extends GenericHandler implements TAny2Any.Iface {
+public class TAny2AnyServerHandler implements TAny2Any.Iface {
 
-	public TAny2AnyHandler(int port) {
-		super(port);
-	}
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyServerHandler.class);
 
 	@Override
 	public Response notifyEvent(Event e) throws TException {

@@ -1,36 +1,29 @@
-package de.tum.in.i22.uc.pdp;
+package de.tum.in.i22.uc.cm.out.thrift;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.tum.in.i22.uc.cm.basic.ResponseBasic;
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.pdp.core.Event;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
-import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
-import de.tum.in.i22.uc.cm.processor.PdpProcessor;
-import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
+public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> implements ThriftClient {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPdpClientHandler.class);
 
-public class PdpHandler extends PdpProcessor {
-	private final IPolicyDecisionPoint _lpdp;
-
-	public PdpHandler() {
-		_lpdp = PolicyDecisionPoint.getInstance();
-	}
-
-	@Override
-	public IResponse notifyEvent(IEvent event) {
-		if (event == null) {
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
-		}
-		return _lpdp.notifyEvent(new Event(event)).getResponse();
+	public ThriftPdpClientHandler(String address, int port) {
+		super(new ThriftConnector<>(address, port, TAny2Pdp.Client.class));
 	}
 
 	@Override
@@ -70,8 +63,15 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
+	public IResponse notifyEvent(IEvent event) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public boolean registerPxp(IPxpSpec pxp) {
-		// TODO Superstar.
+		// TODO Auto-generated method stub
 		return false;
 	}
+
 }

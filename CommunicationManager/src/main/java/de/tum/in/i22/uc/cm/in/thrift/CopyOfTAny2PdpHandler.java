@@ -19,8 +19,8 @@ import de.tum.in.i22.uc.cm.in.ClientConnectionHandler;
 import de.tum.in.i22.uc.cm.in.IForwarder;
 import de.tum.in.i22.uc.cm.in.MessageTooLargeException;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
-import de.tum.in.i22.uc.cm.requests.EPdpRequestType;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
+import de.tum.in.i22.uc.cm.requests.PdpRequest.EPdpRequestType;
 
 public class CopyOfTAny2PdpHandler extends ClientConnectionHandler implements TAny2Pdp.Iface, IForwarder {
 

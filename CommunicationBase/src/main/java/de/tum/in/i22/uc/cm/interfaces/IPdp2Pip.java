@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.cm.out.IConnection;
 public interface IPdp2Pip extends IConnection {
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
 	public Boolean evaluatePredicatCurrentState(String predicate);
-	public Set<IContainer> getContainerForData(IData data);
+	public Set<IContainer> getContainersForData(IData data);
 	public Set<IData> getDataInContainer(IContainer container);
 	public IStatus notifyActualEvent(IEvent event);
 	IStatus startSimulation();

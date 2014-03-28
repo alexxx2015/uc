@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
 
 
-public class TAny2PmpHandler extends GenericHandler implements TAny2Pmp.Iface {
-
-	public TAny2PmpHandler(int port) {
-		super(port);
-	}
+public class TAny2PmpServerHandler implements TAny2Pmp.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2PmpServerHandler.class);
 
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {

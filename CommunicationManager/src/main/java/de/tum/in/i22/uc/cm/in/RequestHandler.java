@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.cm.in;
 
+import java.net.InetAddress;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -11,14 +14,16 @@ import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
 import de.tum.in.i22.uc.cm.in.thrift.GenericThriftServer;
-import de.tum.in.i22.uc.cm.in.thrift.TAny2AnyHandler;
-import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpHandler;
-import de.tum.in.i22.uc.cm.in.thrift.TAny2PipHandler;
-import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpHandler;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2AnyServerHandler;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpServerHandler;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2PipServerHandler;
+import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpServerHandler;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.out.RemotePip;
+import de.tum.in.i22.uc.cm.out.thrift.ThriftPdpClientHandler;
+import de.tum.in.i22.uc.cm.out.thrift.ThriftPipClientHandler;
+import de.tum.in.i22.uc.cm.out.thrift.ThriftPmpClientHandler;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
@@ -51,6 +56,8 @@ public class RequestHandler implements Runnable {
 	private GenericThriftServer _pmpServer;
 	private GenericThriftServer _anyServer;
 
+	private final Set<Integer> _portsUsed;
+
 	public static RequestHandler getInstance() {
 		/*
 		 * This implementation may seem odd, overengineered, redundant, or all of it.
@@ -69,6 +76,7 @@ public class RequestHandler implements Runnable {
 	private RequestHandler() {
 		_requestQueue = new LinkedBlockingQueue<>();
 		_settings = Settings.getInstance();
+		_portsUsed = new HashSet<>();
 
 		PDP = createPdpHandler();
 		PIP = createPipHandler();
@@ -86,8 +94,8 @@ public class RequestHandler implements Runnable {
 
 		switch (loc.getLocation()) {
 			case IP:
-				// TODO
-				return null;
+				IPLocation iploc = (IPLocation) loc;
+				return new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
 			case LOCAL:
 			default:
 				return new PdpHandler();
@@ -99,8 +107,8 @@ public class RequestHandler implements Runnable {
 
 		switch (loc.getLocation()) {
 			case IP:
-				// TODO
-				return null;
+				IPLocation iploc = (IPLocation) loc;
+				return new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
 			case LOCAL:
 			default:
 				return new PmpHandler();
@@ -112,7 +120,8 @@ public class RequestHandler implements Runnable {
 
 		switch (loc.getLocation()) {
 			case IP:
-				return new RemotePip((IPLocation) loc);
+				IPLocation iploc = (IPLocation) loc;
+				return new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());
 			case LOCAL:
 			default:
 				return new PipHandler();
@@ -129,27 +138,31 @@ public class RequestHandler implements Runnable {
 		int portAny = _settings.getAnyListenerPort();
 
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = new GenericThriftServer(portPdp, new TAny2Pdp.Processor<TAny2PdpHandler>(new TAny2PdpHandler(portPdp)));
+			_pdpServer = new GenericThriftServer(portPdp, new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler()));
+			_portsUsed.add(portPdp);
 			new Thread(_pdpServer).start();
 		}
 
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = new GenericThriftServer(portPip, new TAny2Pip.Processor<TAny2PipHandler>(new TAny2PipHandler(portPip)));
+			_pipServer = new GenericThriftServer(portPip, new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler(PIP)));
+			_portsUsed.add(portPip);
 			new Thread(_pipServer).start();
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = new GenericThriftServer(portPmp, new TAny2Pmp.Processor<TAny2PmpHandler>(new TAny2PmpHandler(portPmp)));
+			_pmpServer = new GenericThriftServer(portPmp, new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler()));
+			_portsUsed.add(portPmp);
 			new Thread(_pmpServer).start();
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = new GenericThriftServer(portAny, new TAny2Any.Processor<TAny2AnyHandler>(new TAny2AnyHandler(portAny)));
+			_anyServer = new GenericThriftServer(portAny, new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
+			_portsUsed.add(portAny);
 			new Thread(_anyServer).start();
 		}
 	}
 
-	public static <T extends Request> void addRequest(T request, IForwarder forwarder) {
+	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
 		_instance._requestQueue.add(new RequestWrapper<T>(request, forwarder));
 	}
 
@@ -180,6 +193,8 @@ public class RequestHandler implements Runnable {
 			}
 
 			_logger.trace("event " + request.toString() + " processed. forward response");
+
+			// TODO double check this forwarding. Has never been checked in the simplified branch
 			if (forwarder != null) {
 				forwarder.forwardResponse(response);
 			}
@@ -196,19 +211,25 @@ public class RequestHandler implements Runnable {
 				&& (!_settings.isAnyListenerEnabled() || _anyServer.started());
 	}
 
+	class RequestWrapper<R extends Request> {
+		private final IForwarder _forwarder;
+		private final R _request;
 
-//	private IStatus notifyEventToPip(IEvent event) {
-//		try {
-//
-//			return _pipHandler.notifyActualEvent(event);
-//
-//			// / return _mf.createStatus(EStatus.OKAY);
-//		} catch (Exception e) {
-//			_logger.fatal("Failed to notify actual event to PIP.", e);
-//			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
-//		}
-//	}
-//
+		public RequestWrapper(R request, IForwarder forwarder) {
+			_forwarder = forwarder;
+			_request = request;
+		}
+
+		public IForwarder getForwarder() {
+			return _forwarder;
+		}
+
+		public R getRequest() {
+			return _request;
+		}
+	}
+
+
 //	private IStatus delegeteUpdateIfFlowToPip(
 //			UpdateIfFlowSemanticsRequestWrapper request) {
 //		_logger.debug("Delegate update if flow to PIP");
@@ -231,49 +252,5 @@ public class RequestHandler implements Runnable {
 //			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
 //		}
 //	}
-//
-//
-//
-//
-//	/**
-//	 * Update information flow semantics request wrapper. Used for placing
-//	 * requests in the queue.
-//	 *
-//	 * @author Stoimenov
-//	 *
-//	 */
-//	private class UpdateIfFlowSemanticsRequestWrapper extends RequestWrapper {
-//		private IPipDeployer _pipDeployer;
-//		private byte[] _jarBytes;
-//		private EConflictResolution _conflictResolution;
-//
-//		public UpdateIfFlowSemanticsRequestWrapper(IForwarder forwarder) {
-//			super(forwarder);
-//		}
-//
-//		public IPipDeployer getPipDeployer() {
-//			return _pipDeployer;
-//		}
-//
-//		public void setPipDeployer(IPipDeployer pipDeployer) {
-//			_pipDeployer = pipDeployer;
-//		}
-//
-//		public byte[] getJarBytes() {
-//			return _jarBytes;
-//		}
-//
-//		public void setJarBytes(byte[] jarBytes) {
-//			_jarBytes = jarBytes;
-//		}
-//
-//		public EConflictResolution getConflictResolution() {
-//			return _conflictResolution;
-//		}
-//
-//		public void setConflictResolution(EConflictResolution conflictResolution) {
-//			_conflictResolution = conflictResolution;
-//		}
-//
-//	}
+
 }

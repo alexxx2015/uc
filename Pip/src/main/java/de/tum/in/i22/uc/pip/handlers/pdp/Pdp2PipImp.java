@@ -29,7 +29,7 @@ public abstract class Pdp2PipImp extends Connection implements IPdp2Pip {
 	}
 
 	@Override
-	public Set<IContainer> getContainerForData(IData data) {
+	public Set<IContainer> getContainersForData(IData data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

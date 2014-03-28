@@ -79,7 +79,7 @@ class SettingsLoader {
 			return loadedValue;
 		}
 		else {
-			_logger.warn("Cannot read property [" + propName + "]. Using default value [" + defaultValue + "].");
+			_logger.warn("Property [" + propName + "] not found. Using default value [" + defaultValue + "].");
 			return defaultValue;
 		}
 	}
