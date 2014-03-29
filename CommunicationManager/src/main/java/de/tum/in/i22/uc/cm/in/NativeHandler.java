@@ -6,8 +6,10 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PdpRequest.EPdpRequestType;
+import de.tum.in.i22.uc.cm.requests.Request;
 
 /**
  * This class will be used via JNI to dispatch events.
@@ -26,14 +28,15 @@ public class NativeHandler {
 
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		PdpRequest req = new PdpRequest(EPdpRequestType.NOTIFY_EVENT, event);
+		PdpRequest<IStatus> req = new PdpRequest<>(EPdpRequestType.NOTIFY_EVENT, event);
 		Object response = null;
 
 		if (event != null) {
 			if (isActual) {
-				RequestHandler.getInstance().addRequest(req, new IForwarder() {
+				RequestHandler.getInstance().addRequest(req, new Forwarder() {
 					@Override
-					public void forwardResponse(Object response) { }
+					public <R> void forwardResponse(Request<R> request, R response) {
+					}
 				});
 			}
 			else {
@@ -69,7 +72,7 @@ public class NativeHandler {
 	}
 }
 
-class NativeForwarder implements IForwarder {
+class NativeForwarder implements Forwarder {
 	private final IEvent _event;
 
 	public NativeForwarder(IEvent ev) {
@@ -77,7 +80,7 @@ class NativeForwarder implements IForwarder {
 	}
 
 	@Override
-	public void forwardResponse(Object response) {
+	public <R> void forwardResponse(Request<R> request, R response) {
 		NativeHandler.addResponse(_event, response);
 	}
 }

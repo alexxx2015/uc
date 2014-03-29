@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.cm.requests;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 
-public class PdpRequest extends Request {
+public class PdpRequest<R> extends Request<R> {
 	private final EPdpRequestType _type;
 	private IPxpSpec _pxp;
 	private IEvent _event;

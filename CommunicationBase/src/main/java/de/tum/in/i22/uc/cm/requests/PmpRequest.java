@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.requests;
 
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 
-public class PmpRequest extends Request  {
+public class PmpRequest<R> extends Request<R>  {
 	private final EPmpRequestType _requestType;
 	private IMechanism _mechanism;
 	private String _stringParameter;

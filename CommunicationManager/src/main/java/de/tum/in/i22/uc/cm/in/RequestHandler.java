@@ -25,6 +25,9 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPdpClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPipClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPmpClientHandler;
+import de.tum.in.i22.uc.cm.processor.PdpProcessor;
+import de.tum.in.i22.uc.cm.processor.PipProcessor;
+import de.tum.in.i22.uc.cm.processor.PmpProcessor;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
@@ -46,11 +49,11 @@ public class RequestHandler implements Runnable {
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
-	private final BlockingQueue<RequestWrapper<? extends Request>> _requestQueue;
+	private final BlockingQueue<RequestWrapper<? extends Request<?>>> _requestQueue;
 
-	private final IAny2Pdp PDP;
-	private final IAny2Pip PIP;
-	private final IAny2Pmp PMP;
+	private final PdpProcessor PDP;
+	private final PipProcessor PIP;
+	private final PmpProcessor PMP;
 
 	private GenericThriftServer _pdpServer;
 	private GenericThriftServer _pipServer;
@@ -91,7 +94,7 @@ public class RequestHandler implements Runnable {
 		startListeners();
 	}
 
-	private IAny2Pdp createPdpHandler() {
+	private PdpProcessor createPdpHandler() {
 		Location loc = _settings.getPdpLocation();
 
 		switch (loc.getLocation()) {
@@ -109,7 +112,7 @@ public class RequestHandler implements Runnable {
 		return null;
 	}
 
-	private IAny2Pmp createPmpHandler() {
+	private PmpProcessor createPmpHandler() {
 		Location loc = _settings.getPmpLocation();
 
 		switch (loc.getLocation()) {
@@ -127,7 +130,7 @@ public class RequestHandler implements Runnable {
 		return null;
 	}
 
-	private IAny2Pip createPipHandler() {
+	private PipProcessor createPipHandler() {
 		Location loc = _settings.getPipLocation();
 
 		switch (loc.getLocation()) {
@@ -217,7 +220,7 @@ public class RequestHandler implements Runnable {
 		}
 	}
 
-	public <T extends Request> void addRequest(T request, IForwarder forwarder) {
+	public <T extends Request<?>> void addRequest(T request, Forwarder forwarder) {
 		_instance._requestQueue.add(new RequestWrapper<T>(request, forwarder));
 	}
 
@@ -225,7 +228,7 @@ public class RequestHandler implements Runnable {
 	public void run() {
 		_logger.debug("Request handler run method");
 		while (!Thread.interrupted()) {
-			RequestWrapper<? extends Request> requestWrapper = null;
+			RequestWrapper<? extends Request<?>> requestWrapper = null;
 			try {
 				requestWrapper = _requestQueue.take();
 			} catch (InterruptedException e) {
@@ -234,7 +237,7 @@ public class RequestHandler implements Runnable {
 			}
 
 			Request request = requestWrapper.getRequest();
-			IForwarder forwarder = requestWrapper.getForwarder();
+			Forwarder forwarder = requestWrapper.getForwarder();
 			Object response = null;
 
 			if (request instanceof PdpRequest) {
@@ -249,9 +252,8 @@ public class RequestHandler implements Runnable {
 
 			_logger.trace("event " + request.toString() + " processed. forward response");
 
-			// TODO double check this forwarding. Has never been checked in the simplified branch
 			if (forwarder != null) {
-				forwarder.forwardResponse(response);
+				forwarder.forwardResponse(request, response);
 			}
 			_logger.trace("response forwarded");
 		}
@@ -267,15 +269,15 @@ public class RequestHandler implements Runnable {
 	}
 
 	class RequestWrapper<R extends Request> {
-		private final IForwarder _forwarder;
+		private final Forwarder _forwarder;
 		private final R _request;
 
-		public RequestWrapper(R request, IForwarder forwarder) {
+		public RequestWrapper(R request, Forwarder forwarder) {
 			_forwarder = forwarder;
 			_request = request;
 		}
 
-		public IForwarder getForwarder() {
+		public Forwarder getForwarder() {
 			return _forwarder;
 		}
 

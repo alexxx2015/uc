@@ -14,16 +14,15 @@ import de.tum.i22.in.uc.cm.thrift.Name;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.in.IForwarder;
+import de.tum.in.i22.uc.cm.in.Forwarder;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.requests.PipRequest;
+import de.tum.in.i22.uc.cm.requests.Request;
 import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
 
 
-public class TAny2PipServerHandler implements TAny2Pip.Iface, IForwarder {
+public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PipServerHandler.class);
-
-	private Object _response;
 
 	@Override
 	public StatusType initialRepresentation(Container container, Data data)
@@ -64,10 +63,9 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, IForwarder {
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
-		PipRequest req = new PipRequest(ThriftTypeConversion.convert(event));
+		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event));
 		RequestHandler.getInstance().addRequest(req, this);
-		waitForResponse();
-		return ThriftTypeConversion.convert((IStatus) _response);
+		return ThriftTypeConversion.convert(waitForResponse(req));
 	}
 
 	@Override
@@ -129,22 +127,26 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, IForwarder {
 		return false;
 	}
 
-	private void waitForResponse() {
+	private <R> R waitForResponse(Request<R> request) {
+		R result = null;
+
 		synchronized (this) {
-			while (_response == null) {
+			while (!request.responseReady()) {
 				try {
 					wait();
 				} catch (InterruptedException e) {	}
 			}
+			result = request.getResponse();
 		}
+
+		return result;
 	}
 
 	@Override
-	public void forwardResponse(Object response) {
+	public <R> void forwardResponse(Request<R> request, R response) {
 		synchronized (this) {
-			_response = response;
+			request.setResponse(response);
 			notifyAll();
 		}
 	}
-
 }

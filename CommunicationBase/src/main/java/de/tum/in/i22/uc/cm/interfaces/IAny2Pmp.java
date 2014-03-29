@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.requests.PmpRequest;
 
 
 /**
@@ -9,6 +8,6 @@ import de.tum.in.i22.uc.cm.requests.PmpRequest;
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pmp extends IPdp2Pmp, IPip2Pmp, IPmp2Pmp, IRequestProcessor<PmpRequest>, IAny2Generic<IAny2Pip, IAny2Pdp>  {
+public interface IAny2Pmp extends IPdp2Pmp, IPip2Pmp, IPmp2Pmp, IAny2Generic<IAny2Pip, IAny2Pdp>  {
 
 }

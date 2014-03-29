@@ -29,6 +29,15 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 
 	public ThriftPipClientHandler(String address, int port) {
 		super(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
+
+		// TODO: Connection is never closed
+
+		try {
+			connect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -62,18 +71,12 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		try {
-			connect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			_handle.notifyActualEvent(ThriftTypeConversion.convert(event));
 		} catch (TException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		disconnect();
+
 		return null;
 	}
 
