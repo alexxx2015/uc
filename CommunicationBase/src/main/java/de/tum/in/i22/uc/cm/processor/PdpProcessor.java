@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 
-public abstract class PdpProcessor implements Processor<PdpRequest>, IAny2Pdp  {
+public abstract class PdpProcessor implements Processor<PdpRequest<?>>, IAny2Pdp  {
 
 	protected static Logger _logger = LoggerFactory.getLogger(PdpProcessor.class);
 
@@ -27,7 +27,7 @@ public abstract class PdpProcessor implements Processor<PdpRequest>, IAny2Pdp  {
 	}
 
 	@Override
-	public final Object process(PdpRequest request) {
+	public final Object process(PdpRequest<?> request) {
 		Object result = null;
 
 		switch (request.getType()) {
@@ -52,7 +52,6 @@ public abstract class PdpProcessor implements Processor<PdpRequest>, IAny2Pdp  {
 			default:
 				throw new RuntimeException("Method " + request.getType() + " is not supported!");
 		}
-
 		return result;
 	}
 

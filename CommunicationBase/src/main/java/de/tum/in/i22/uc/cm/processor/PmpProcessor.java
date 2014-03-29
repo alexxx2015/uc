@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.requests.PmpRequest;
 
-public abstract class PmpProcessor implements Processor<PmpRequest>, IAny2Pmp {
+public abstract class PmpProcessor implements Processor<PmpRequest<?>>, IAny2Pmp {
 	protected static Logger _logger = LoggerFactory.getLogger(PmpProcessor.class);
 
 	private IAny2Pip _pip;
@@ -25,7 +25,7 @@ public abstract class PmpProcessor implements Processor<PmpRequest>, IAny2Pmp {
 	}
 
 	@Override
-	public Object process(PmpRequest request) {
+	public final Object process(PmpRequest<?> request) {
 		Object result = null;
 
 		switch (request.getType()) {

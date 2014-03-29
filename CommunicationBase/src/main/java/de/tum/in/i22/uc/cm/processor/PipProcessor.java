@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.cm.requests.PipRequest;
  * @author Florian Kelbert
  *
  */
-public abstract class PipProcessor implements Processor<PipRequest>, IAny2Pip {
+public abstract class PipProcessor implements Processor<PipRequest<?>>, IAny2Pip {
 
 	protected static Logger _logger = LoggerFactory.getLogger(PipProcessor.class);
 
@@ -32,7 +32,7 @@ public abstract class PipProcessor implements Processor<PipRequest>, IAny2Pip {
 	}
 
 	@Override
-	public final Object process(PipRequest request) {
+	public final Object process(PipRequest<?> request) {
 		Object result = null;
 
 		switch(request.getType()) {
@@ -62,7 +62,6 @@ public abstract class PipProcessor implements Processor<PipRequest>, IAny2Pip {
 			default:
 				throw new RuntimeException("Method " + request.getType() + " is not supported!");
 		}
-
 		return result;
 	}
 

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.requests.PdpRequest;
 import de.tum.in.i22.uc.cm.requests.PdpRequest.EPdpRequestType;
 import de.tum.in.i22.uc.cm.requests.Request;
@@ -28,14 +28,17 @@ public class NativeHandler {
 
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		PdpRequest<IStatus> req = new PdpRequest<>(EPdpRequestType.NOTIFY_EVENT, event);
+		PdpRequest<IResponse> req = new PdpRequest<>(EPdpRequestType.NOTIFY_EVENT, event, IResponse.class);
 		Object response = null;
 
 		if (event != null) {
 			if (isActual) {
 				RequestHandler.getInstance().addRequest(req, new Forwarder() {
+
 					@Override
-					public <R> void forwardResponse(Request<R> request, R response) {
+					public void forwardResponse(Request request, Object response) {
+						// TODO Auto-generated method stub
+
 					}
 				});
 			}
@@ -80,8 +83,9 @@ class NativeForwarder implements Forwarder {
 	}
 
 	@Override
-	public <R> void forwardResponse(Request<R> request, R response) {
+	public void forwardResponse(Request request, Object response) {
 		NativeHandler.addResponse(_event, response);
 	}
+
 }
 

@@ -19,9 +19,6 @@ import de.tum.in.i22.uc.cm.in.thrift.TAny2AnyServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PipServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpServerHandler;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPdpClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPipClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPmpClientHandler;
@@ -236,21 +233,24 @@ public class RequestHandler implements Runnable {
 				return;
 			}
 
-			Request request = requestWrapper.getRequest();
+			Request<?> request = requestWrapper.getRequest();
+			Class<?> responseClass = request.getResponseClass();
 			Forwarder forwarder = requestWrapper.getForwarder();
 			Object response = null;
 
 			if (request instanceof PdpRequest) {
-				response = PDP.process((PdpRequest) request);
+				response = PDP.process((PdpRequest<?>) request);
 			} else if (request instanceof PipRequest) {
-				response = PIP.process((PipRequest) request);
+				response = PIP.process((PipRequest<?>) request);
 			} else if (request instanceof PmpRequest) {
-				response = PMP.process((PmpRequest) request);
+				response = PMP.process((PmpRequest<?>) request);
 			} else {
 				throw new RuntimeException("Unknown queue element " + request);
 			}
 
-			_logger.trace("event " + request.toString() + " processed. forward response");
+			if (!responseClass.isInstance(response)) {
+				throw new RuntimeException("Unexpected response type: [" + response + ", " + responseClass + "]");
+			}
 
 			if (forwarder != null) {
 				forwarder.forwardResponse(request, response);
@@ -268,7 +268,7 @@ public class RequestHandler implements Runnable {
 				&& (!_settings.isAnyListenerEnabled() || _anyServer.started());
 	}
 
-	class RequestWrapper<R extends Request> {
+	class RequestWrapper<R extends Request<?>> {
 		private final Forwarder _forwarder;
 		private final R _request;
 

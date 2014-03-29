@@ -11,13 +11,14 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
  * @author Florian Kelbert
  *
  */
-public class PipRequest<R> extends Request<R>  {
+public class PipRequest<R> extends Request<R> {
 	private final EPipRequestType _type;
 	private Collection<IData> _data = null;
 	private Collection<IContainer> _containers = null;
 	private IEvent _event = null;
 
-	private PipRequest(EPipRequestType type, IEvent event, Collection<IData> data, Collection<IContainer> containers) {
+	private PipRequest(EPipRequestType type, IEvent event, Collection<IData> data, Collection<IContainer> containers, Class<R> responseClass) {
+		super(responseClass);
 		if ((type == EPipRequestType.HAS_ALL_DATA && !paramsPresent(data))
 			|| (type == EPipRequestType.HAS_ANY_DATA && !paramsPresent(data))
 			|| (type == EPipRequestType.HAS_ALL_CONTAINERS && !paramsPresent(containers))
@@ -33,8 +34,8 @@ public class PipRequest<R> extends Request<R>  {
 		_event = event;
 	}
 
-	public PipRequest(IEvent event) {
-		this(EPipRequestType.NOTIFY_ACTUAL_EVENT, event, null, null);
+	public PipRequest(IEvent event, Class<R> responseClass) {
+		this(EPipRequestType.NOTIFY_ACTUAL_EVENT, event, null, null, responseClass);
 	}
 
 //	public PipRequest(EPipRequestMethod method, IData ... data) {

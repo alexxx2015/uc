@@ -7,7 +7,9 @@ public class PmpRequest<R> extends Request<R>  {
 	private IMechanism _mechanism;
 	private String _stringParameter;
 
-	private PmpRequest(EPmpRequestType requestType, IMechanism mechanism, String stringParam) {
+	private PmpRequest(EPmpRequestType requestType, IMechanism mechanism, String stringParam, Class<R> responseClass) {
+		super(responseClass);
+
 		_requestType = requestType;
 		if (requestType == EPmpRequestType.DEPLOY_MECHANISM) {
 			_mechanism = mechanism;
@@ -20,11 +22,11 @@ public class PmpRequest<R> extends Request<R>  {
 	}
 
 	public PmpRequest(EPmpRequestType method, IMechanism mechanism) {
-		this(method, mechanism, null);
+		this(method, mechanism, null, null);
 	}
 
 	public PmpRequest(EPmpRequestType method, String stringParam) {
-		this(method, null, stringParam);
+		this(method, null, stringParam, null);
 	}
 
 	public EPmpRequestType getType() {

@@ -8,17 +8,18 @@ public class PdpRequest<R> extends Request<R> {
 	private IPxpSpec _pxp;
 	private IEvent _event;
 
-	public PdpRequest(EPdpRequestType type) {
+	public PdpRequest(EPdpRequestType type, Class<R> responseClass) {
+		super(responseClass);
 		_type = type;
 	}
 
-	public PdpRequest(EPdpRequestType type, IPxpSpec pxp) {
-		this(type);
+	public PdpRequest(EPdpRequestType type, IPxpSpec pxp, Class<R> responseClass) {
+		this(type, responseClass);
 		_pxp = pxp;
 	}
 
-	public PdpRequest(EPdpRequestType type, IEvent event) {
-		this(type);
+	public PdpRequest(EPdpRequestType type, IEvent event, Class<R> responseClass) {
+		this(type, responseClass);
 		_event = event;
 	}
 

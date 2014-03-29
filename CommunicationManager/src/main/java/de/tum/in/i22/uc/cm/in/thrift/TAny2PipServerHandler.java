@@ -63,9 +63,10 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
-		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event));
+		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event), IStatus.class);
 		RequestHandler.getInstance().addRequest(req, this);
-		return ThriftTypeConversion.convert(waitForResponse(req));
+		waitForResponse(req);
+		return ThriftTypeConversion.convert(req.getResponse());
 	}
 
 	@Override
@@ -127,8 +128,8 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 		return false;
 	}
 
-	private <R> R waitForResponse(Request<R> request) {
-		R result = null;
+	private Object waitForResponse(Request request) {
+		Object result = null;
 
 		synchronized (this) {
 			while (!request.responseReady()) {
@@ -143,7 +144,7 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	}
 
 	@Override
-	public <R> void forwardResponse(Request<R> request, R response) {
+	public void forwardResponse(Request request, Object response) {
 		synchronized (this) {
 			request.setResponse(response);
 			notifyAll();
