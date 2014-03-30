@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.cm.out.thrift;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.processor.PipProcessor;
+import de.tum.in.i22.uc.pip.PipProcessor;
 
 /**
  *

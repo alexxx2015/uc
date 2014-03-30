@@ -71,9 +71,8 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		try {
-			_handle.notifyActualEvent(ThriftTypeConversion.convert(event));
+			return ThriftTypeConversion.convert(_handle.notifyActualEvent(ThriftTypeConversion.convert(event)));
 		} catch (TException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

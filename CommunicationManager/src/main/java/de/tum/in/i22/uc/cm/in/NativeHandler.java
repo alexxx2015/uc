@@ -6,10 +6,8 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.cm.requests.PdpRequest;
-import de.tum.in.i22.uc.cm.requests.PdpRequest.EPdpRequestType;
-import de.tum.in.i22.uc.cm.requests.Request;
+import de.tum.in.i22.uc.cm.processing.Request;
+import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 
 /**
  * This class will be used via JNI to dispatch events.
@@ -28,7 +26,7 @@ public class NativeHandler {
 
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		PdpRequest<IResponse> req = new PdpRequest<>(EPdpRequestType.NOTIFY_EVENT, event, IResponse.class);
+		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
 		Object response = null;
 
 		if (event != null) {
@@ -36,9 +34,7 @@ public class NativeHandler {
 				RequestHandler.getInstance().addRequest(req, new Forwarder() {
 
 					@Override
-					public void forwardResponse(Request request, Object response) {
-						// TODO Auto-generated method stub
-
+					public void forwardResponse(Request<?,?> request, Object response) {
 					}
 				});
 			}
@@ -83,7 +79,7 @@ class NativeForwarder implements Forwarder {
 	}
 
 	@Override
-	public void forwardResponse(Request request, Object response) {
+	public void forwardResponse(Request<?,?> request, Object response) {
 		NativeHandler.addResponse(_event, response);
 	}
 

@@ -14,11 +14,10 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.pdp.core.Event;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 import de.tum.in.i22.uc.cm.pdp.core.IPolicyDecisionPoint;
-import de.tum.in.i22.uc.cm.processor.PdpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-
 public class PdpHandler extends PdpProcessor {
+
 	private final IPolicyDecisionPoint _lpdp;
 
 	public PdpHandler() {

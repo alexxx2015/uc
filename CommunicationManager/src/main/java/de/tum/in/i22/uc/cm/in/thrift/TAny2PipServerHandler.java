@@ -13,12 +13,12 @@ import de.tum.i22.in.uc.cm.thrift.Event;
 import de.tum.i22.in.uc.cm.thrift.Name;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.in.Forwarder;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
-import de.tum.in.i22.uc.cm.requests.PipRequest;
-import de.tum.in.i22.uc.cm.requests.Request;
+import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
+import de.tum.in.i22.uc.pip.requests.NotifyActualEventPipRequest;
 
 
 public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
@@ -63,10 +63,14 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
-		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event), IStatus.class);
-		RequestHandler.getInstance().addRequest(req, this);
-		waitForResponse(req);
-		return ThriftTypeConversion.convert(req.getResponse());
+//		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event), IStatus.class);
+//		RequestHandler.getInstance().addRequest(req, this);
+//		waitForResponse(req);
+//		return ThriftTypeConversion.convert(req.getResponse());
+		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftTypeConversion.convert(event));
+		RequestHandler.getInstance().addRequest(request, this);
+		waitForResponse(request);
+		return ThriftTypeConversion.convert(request.getResponse());
 	}
 
 	@Override

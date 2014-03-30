@@ -1,34 +1,32 @@
-package de.tum.in.i22.uc.cm.requests;
+package de.tum.in.i22.uc.cm.processing;
 
 import java.util.Collection;
 
-public abstract class Request<R> {
-	private Object _response;
+public abstract class Request<R, P extends Processor> {
+	private R _response;
 
 	private boolean _responseReady = false;
 
-	private final Class<R> _responseClass;
-
-	protected Request(Class<R> responseClass) {
-		_responseClass = responseClass;
-	}
-
+	/**
+	 * Sets the response. Will throw a ClassCastException if specified response
+	 * is not of type R.
+	 * @param response
+	 */
+	@SuppressWarnings("unchecked")
 	public void setResponse(Object response) {
-		_response = response;
+		_response = (R) response;
 		_responseReady = true;
 	}
 
 	public R getResponse() {
-		return _responseClass.cast(_response);
+		return _response;
 	}
 
 	public boolean responseReady() {
 		return _responseReady;
 	}
 
-	public Class<?> getResponseClass() {
-		return _responseClass;
-	}
+	public abstract R process(P processor);
 
 	protected boolean paramsPresent(Object ... params) {
 		boolean result = true;
