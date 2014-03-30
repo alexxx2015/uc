@@ -128,16 +128,8 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 		return false;
 	}
 
-
 	@Override
-	public IStatus notifyDataTransfer(IName containerName, Collection<IData> data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public IStatus initialRepresentation(IContainer container, IData data) {
+	public IStatus initialRepresentation(IName container, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

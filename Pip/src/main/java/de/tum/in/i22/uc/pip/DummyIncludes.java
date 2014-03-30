@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.core;
+package de.tum.in.i22.uc.pip;
 
 import de.tum.in.i22.uc.pip.eventdef.SchemaInitializerEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.linux.AcceptEventHandler;

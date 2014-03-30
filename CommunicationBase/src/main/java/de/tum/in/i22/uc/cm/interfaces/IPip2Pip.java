@@ -14,5 +14,4 @@ public interface IPip2Pip {
     public boolean hasAllContainers(Collection<IContainer> container);
     public boolean hasAnyContainer(Collection<IContainer> container);
     public IStatus notifyActualEvent(IEvent event);
-    public IStatus notifyDataTransfer(IName containerName, Collection<IData> data);
 }

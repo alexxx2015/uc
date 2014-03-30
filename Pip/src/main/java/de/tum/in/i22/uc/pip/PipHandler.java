@@ -1,9 +1,11 @@
-package de.tum.in.i22.uc.pip.core;
+package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
@@ -15,7 +17,6 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.PipProcessor;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
@@ -132,7 +133,6 @@ public class PipHandler extends PipProcessor {
 //		ICacheUpdate res = new CacheUpdateBasic();
 //		Map<IKey,Boolean> map=new HashMap<IKey,Boolean>();
 //
-//		//TODO: fix missing getScopeId. requires implementation of XBEHAV.
 //
 //		res.setMap(map);
 //		res.setScopeId("<GET SCOPE ID STILL NOT IMPLEMENTED>");
@@ -213,38 +213,41 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public boolean hasAllData(Collection<IData> data) {
-		// TODO Auto-generated method stub
-		return false;
+		Set<IData> all = new HashSet<>();
+		for (IContainer c : _ifModel.getAllContainers()) {
+			all.addAll(_ifModel.getDataInContainer(c));
+		}
+		return all.containsAll(data);
 	}
 
 	@Override
 	public boolean hasAnyData(Collection<IData> data) {
-		// TODO Auto-generated method stub
+		for (IContainer c : _ifModel.getAllContainers()) {
+			if (_ifModel.getDataInContainer(c).contains(data)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean hasAllContainers(Collection<IContainer> container) {
-		// TODO Auto-generated method stub
-		return false;
+		return _ifModel.getAllContainers().containsAll(container);
 	}
 
 	@Override
 	public boolean hasAnyContainer(Collection<IContainer> container) {
-		// TODO Auto-generated method stub
-		return false;
+		return _ifModel.getAllContainers().contains(container);
 	}
 
 	@Override
-	public IStatus notifyDataTransfer(IName containerName,
-			Collection<IData> data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IStatus initialRepresentation(IContainer container, IData data) {
-		_ifModel.addDataToContainer(data, container);
+	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		IContainer container;
+		if ((container = _ifModel.getContainer(containerName)) == null) {
+			container = new ContainerBasic();
+			_ifModel.addName(containerName, container);
+		}
+		_ifModel.addDataToContainerAndAliases(data, container);
 		return new StatusBasic(EStatus.OKAY);
 	}
 }

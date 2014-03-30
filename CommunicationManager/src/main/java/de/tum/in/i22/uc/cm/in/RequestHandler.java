@@ -28,13 +28,13 @@ import de.tum.in.i22.uc.distribution.IPLocation;
 import de.tum.in.i22.uc.distribution.Location;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pdp.PdpProcessor;
-import de.tum.in.i22.uc.pdp.PdpRequest;
+import de.tum.in.i22.uc.pdp.requests.PdpRequest;
+import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.PipProcessor;
-import de.tum.in.i22.uc.pip.PipRequest;
-import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.PmpProcessor;
-import de.tum.in.i22.uc.pmp.PmpRequest;
+import de.tum.in.i22.uc.pmp.requests.PmpRequest;
 
 public class RequestHandler implements Runnable {
 
@@ -46,7 +46,7 @@ public class RequestHandler implements Runnable {
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
 	// when using JNI and dispatching _many_ events. This took me 5 hours of debugging! -FK-
-	private final BlockingQueue<RequestWrapper<? extends Request<?,?>>> _requestQueue;
+	private final BlockingQueue<RequestWrapper> _requestQueue;
 
 	private final PdpProcessor PDP;
 	private final PipProcessor PIP;
@@ -217,15 +217,15 @@ public class RequestHandler implements Runnable {
 		}
 	}
 
-	public <T extends Request<?,?>> void addRequest(T request, Forwarder forwarder) {
-		_instance._requestQueue.add(new RequestWrapper<T>(request, forwarder));
+	public void addRequest(Request<?,?> request, Forwarder forwarder) {
+		_instance._requestQueue.add(new RequestWrapper(request, forwarder));
 	}
 
 	@Override
 	public void run() {
 		_logger.debug("Request handler run method");
 		while (!Thread.interrupted()) {
-			RequestWrapper<? extends Request<?,?>> requestWrapper = null;
+			RequestWrapper requestWrapper = null;
 			try {
 				requestWrapper = _requestQueue.take();
 			} catch (InterruptedException e) {
@@ -263,11 +263,11 @@ public class RequestHandler implements Runnable {
 				&& (!_settings.isAnyListenerEnabled() || _anyServer.started());
 	}
 
-	class RequestWrapper<R extends Request<?,?>> {
+	class RequestWrapper {
 		private final Forwarder _forwarder;
-		private final R _request;
+		private final Request<?,?> _request;
 
-		public RequestWrapper(R request, Forwarder forwarder) {
+		public RequestWrapper(Request<?,?> request, Forwarder forwarder) {
 			_forwarder = forwarder;
 			_request = request;
 		}
@@ -276,7 +276,7 @@ public class RequestHandler implements Runnable {
 			return _forwarder;
 		}
 
-		public R getRequest() {
+		public Request<?,?> getRequest() {
 			return _request;
 		}
 	}

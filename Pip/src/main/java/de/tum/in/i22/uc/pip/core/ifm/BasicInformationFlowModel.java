@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 
 /**
  * Information flow model Singleton.
@@ -472,7 +471,7 @@ public final class BasicInformationFlowModel {
 		return true;
 	}
 
-	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
+	public void addDataToContainerAndAliases(Collection<IData> data, IName dstContainerName) {
 		if (dstContainerName == null) {
 			return;
 		}
@@ -480,7 +479,7 @@ public final class BasicInformationFlowModel {
 		addDataToContainerAndAliases(data, getContainer(dstContainerName));
 	}
 
-	public void addDataToContainerAndAliases(Set<IData> data, IContainer dstContainer) {
+	public void addDataToContainerAndAliases(Collection<IData> data, IContainer dstContainer) {
 		if (data == null || data.size() == 0 || dstContainer == null) {
 			return;
 		}
@@ -507,7 +506,7 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
-	public void addDataToContainer(Set<IData> data, IContainer container) {
+	public void addDataToContainer(Collection<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}
@@ -631,6 +630,16 @@ public final class BasicInformationFlowModel {
 		return container;
 	}
 
+	/**
+	 * Returns an unmodifiable view onto all containers.
+	 *
+	 * ~ Double checked, 2014/03/30. FK.
+	 *
+	 * @return an unmodifiable view onto all containers.
+	 */
+	public Collection<IContainer> getAllContainers() {
+		return Collections.unmodifiableCollection(_namingMap.values());
+	}
 
 	/**
 	 * Returns an unmodifiable view onto all names.

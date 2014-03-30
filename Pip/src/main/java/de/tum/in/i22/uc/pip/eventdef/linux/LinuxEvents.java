@@ -137,10 +137,10 @@ public class LinuxEvents {
 		params.put("remotePort", String.valueOf(remoteName.getRemotePort()));
 
 //		params.put("how", ); TODO
-
-		distributedPipManager.notifyActualEvent(
-				remoteContainer.getConnector(),
-				new EventBasic("RemoteShutdown", params, true));
+//
+//		distributedPipManager.notifyActualEvent(
+//				remoteContainer.getConnector(),
+//				new EventBasic("RemoteShutdown", params, true));
 	}
 
 
@@ -160,6 +160,7 @@ public class LinuxEvents {
 				distributedPipManager.notifyDataTransfer(
 						((RemoteSocketContainer) c).getConnector(),
 						((RemoteSocketContainer) c).getSocketName(), data);
+
 			}
 			else {
 				ifModel.addDataToContainer(data, c);

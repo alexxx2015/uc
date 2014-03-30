@@ -17,8 +17,8 @@ import de.tum.in.i22.uc.cm.in.Forwarder;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
-import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.pip.requests.NotifyActualEventPipRequest;
+import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 
 
 public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
@@ -63,22 +63,21 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	@Override
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
-//		PipRequest<IStatus> req = new PipRequest<>(ThriftTypeConversion.convert(event), IStatus.class);
-//		RequestHandler.getInstance().addRequest(req, this);
-//		waitForResponse(req);
-//		return ThriftTypeConversion.convert(req.getResponse());
+
 		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftTypeConversion.convert(event));
 		RequestHandler.getInstance().addRequest(request, this);
-		waitForResponse(request);
-		return ThriftTypeConversion.convert(request.getResponse());
+		return ThriftTypeConversion.convert(waitForResponse(request));
 	}
 
 	@Override
-	public StatusType notifyDataTransfer(Name containerName, Set<Data> data)
-			throws TException {
-		// TODO Auto-generated method stub
+	public StatusType notifyDataTransfer(Name containerName, Set<Data> data) throws TException {
 		_logger.debug("TAny2Pip: notifyDatatransfer");
-		return StatusType.ERROR;
+
+		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(
+				ThriftTypeConversion.convert(containerName),
+				ThriftTypeConversion.convert(data));
+		RequestHandler.getInstance().addRequest(request, this);
+		return ThriftTypeConversion.convert(waitForResponse(request));
 	}
 
 	@Override
@@ -132,8 +131,8 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 		return false;
 	}
 
-	private Object waitForResponse(Request request) {
-		Object result = null;
+	private <T> T waitForResponse(Request<T,?> request) {
+		T result = null;
 
 		synchronized (this) {
 			while (!request.responseReady()) {
@@ -148,7 +147,7 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	}
 
 	@Override
-	public void forwardResponse(Request request, Object response) {
+	public void forwardResponse(Request<?,?> request, Object response) {
 		synchronized (this) {
 			request.setResponse(response);
 			notifyAll();

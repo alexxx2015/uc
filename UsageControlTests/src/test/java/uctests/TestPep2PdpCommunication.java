@@ -23,7 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pip.core.PipHandler;
+import de.tum.in.i22.uc.pip.PipHandler;
 
 
 
