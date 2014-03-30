@@ -65,7 +65,7 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public HashMap<String, ArrayList<IPdpMechanism>> listMechanisms() {
 		// TODO Auto-generated method stub
-		return null;
+		return _lpdp.listDeployedMechanisms();
 	}
 
 	@Override

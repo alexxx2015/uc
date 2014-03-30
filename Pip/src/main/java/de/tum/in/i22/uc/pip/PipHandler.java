@@ -250,4 +250,9 @@ public class PipHandler extends PipProcessor {
 		_ifModel.addDataToContainerAndAliases(data, container);
 		return new StatusBasic(EStatus.OKAY);
 	}
+	
+	@Override
+	public String toString() {
+        return _ifModelManager.niceString();
+    }
 }

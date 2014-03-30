@@ -37,6 +37,11 @@
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>ThriftConnectors</artifactId>
 			<version>1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>edu.kit</groupId>
+			<artifactId>joana</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 		
 		<!--

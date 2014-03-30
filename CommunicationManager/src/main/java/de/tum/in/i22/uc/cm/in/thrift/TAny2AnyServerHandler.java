@@ -27,7 +27,8 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyServerHandler.class);
 
 	@Override
-	public Response notifyEvent(Event e) throws TException {
+	public Response notifyEventSync(Event e) throws TException {
+		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyEvent");
 		return null;
 	}
@@ -220,4 +221,11 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 		m.put("mystring", l);
 		return m;
 	}
+
+	@Override
+	public void notifyEventAsync(Event e) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
 }

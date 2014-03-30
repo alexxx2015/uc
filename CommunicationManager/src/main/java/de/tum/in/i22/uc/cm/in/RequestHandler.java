@@ -19,6 +19,9 @@ import de.tum.in.i22.uc.cm.in.thrift.TAny2AnyServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PdpServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PipServerHandler;
 import de.tum.in.i22.uc.cm.in.thrift.TAny2PmpServerHandler;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPdpClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPipClientHandler;
 import de.tum.in.i22.uc.cm.out.thrift.ThriftPmpClientHandler;
@@ -280,4 +283,44 @@ public class RequestHandler implements Runnable {
 			return _request;
 		}
 	}
+
+
+	public IAny2Pdp getPDP() {
+		return PDP;
+	}
+
+	public IAny2Pip getPIP() {
+		return PIP;
+	}
+
+	public IAny2Pmp getPMP() {
+		return PMP;
+	}
+
+
+
+
+//	private IStatus delegeteUpdateIfFlowToPip(
+//			UpdateIfFlowSemanticsRequestWrapper request) {
+//		_logger.debug("Delegate update if flow to PIP");
+//		try {
+//			_logger.debug("Establish connection to PIP");
+//
+//			File jarFile = new File(FileUtils.getTempDirectory(), "jarFile"
+//					+ System.currentTimeMillis());
+//			FileUtils.writeByteArrayToFile(jarFile, request.getJarBytes());
+//			IStatus status = _pdp2PipProxy.updateInformationFlowSemantics(
+//					request.getPipDeployer(), jarFile,
+//					request.getConflictResolution());
+//			jarFile.delete();
+//
+//			ConnectionManager.MAIN.release(_pdp2PipProxy);
+//
+//			return status;
+//		} catch (Exception e) {
+//			_logger.fatal("Failed to notify actual event to PIP.", e);
+//			return _mf.createStatus(EStatus.ERROR, "Error at PDP: " + e.getMessage());
+//		}
+//	}
+
 }

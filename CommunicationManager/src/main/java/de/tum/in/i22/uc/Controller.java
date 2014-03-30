@@ -18,6 +18,10 @@ public class Controller {
 		if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
 			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
 		}
+		startUC();
+	}
+	
+	protected static void startUC(){
 
 		new Thread(RequestHandler.getInstance()).start();
 
