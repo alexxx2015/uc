@@ -51,10 +51,10 @@ public class TestPep2PdpCommunication {
 		IEvent event2 = mf.createEvent(eventName2, map);
 
 		// notify event1
-		IResponse response1 = _pdp.notifyEvent(event1);
+		IResponse response1 = _pdp.notifyEventSync(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
 
-		IResponse response2 = _pdp.notifyEvent(event2);
+		IResponse response2 = _pdp.notifyEventSync(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
 
 		// check if status is not null

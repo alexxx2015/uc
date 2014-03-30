@@ -25,14 +25,6 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public IResponse notifyEvent(IEvent event) {
-		if (event == null) {
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
-		}
-		return _lpdp.notifyEvent(new Event(event)).getResponse();
-	}
-
-	@Override
 	public IStatus deployMechanism(IMechanism mechanism) {
 		// TODO Auto-generated method stub
 		return null;
@@ -72,5 +64,19 @@ public class PdpHandler extends PdpProcessor {
 	public boolean registerPxp(IPxpSpec pxp) {
 		// TODO Superstar.
 		return false;
+	}
+
+	@Override
+	public IResponse notifyEventAsync(IEvent event) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse notifyEventSync(IEvent event) {
+		if (event == null) {
+			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
+		}
+		return _lpdp.notifyEvent(new Event(event)).getResponse();
 	}
 }

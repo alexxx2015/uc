@@ -13,7 +13,7 @@ public class NotifyEventPdpRequest extends PdpRequest<IResponse> {
 
 	@Override
 	public IResponse process(PdpProcessor processor) {
-		IResponse res = processor.notifyEvent(_event);
+		IResponse res = processor.notifyEventSync(_event);
 		processor.getPip().notifyActualEvent(_event);
 		return res;
 	}

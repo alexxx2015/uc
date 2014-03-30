@@ -19,9 +19,6 @@ import de.tum.i22.in.uc.cm.thrift.Pxp;
 import de.tum.i22.in.uc.cm.thrift.Response;
 import de.tum.i22.in.uc.cm.thrift.StatusType;
 import de.tum.i22.in.uc.cm.thrift.TAny2Any;
-import de.tum.i22.in.uc.cm.thrift.TAny2Pdp;
-import de.tum.i22.in.uc.cm.thrift.TAny2Pip;
-import de.tum.i22.in.uc.cm.thrift.TAny2Pmp;
 
 public class TAny2AnyServerHandler implements TAny2Any.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyServerHandler.class);
@@ -29,7 +26,7 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 	@Override
 	public Response notifyEventSync(Event e) throws TException {
 		// TODO Auto-generated method stub
-		_logger.debug("TAny2Any: notifyEvent");
+		_logger.debug("TAny2Any: notifyEventSync");
 		return null;
 	}
 
@@ -225,6 +222,7 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 	@Override
 	public void notifyEventAsync(Event e) throws TException {
 		// TODO Auto-generated method stub
+		_logger.debug("TAny2Any: notifyEventAsync");
 
 	}
 

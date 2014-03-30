@@ -63,15 +63,21 @@ public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	}
 
 	@Override
-	public IResponse notifyEvent(IEvent event) {
+	public boolean registerPxp(IPxpSpec pxp) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IResponse notifyEventAsync(IEvent event) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean registerPxp(IPxpSpec pxp) {
+	public IResponse notifyEventSync(IEvent event) {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }

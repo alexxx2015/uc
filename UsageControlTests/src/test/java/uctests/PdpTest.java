@@ -78,10 +78,10 @@ public class PdpTest {
 		IEvent event1 = mf.createEvent(eventName1, map);
 		IEvent event2 = mf.createEvent(eventName2, map);
 
-		IResponse response1 = _pdp.notifyEvent(event1);
+		IResponse response1 = _pdp.notifyEventSync(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
 
-		IResponse response2 = _pdp.notifyEvent(event2);
+		IResponse response2 = _pdp.notifyEventSync(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
 
 
@@ -101,7 +101,7 @@ public class PdpTest {
 	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
 		IEvent event = DummyMessageGen.createActualEvent();
 
-		IResponse response = _pdp.notifyEvent(event);
+		IResponse response = _pdp.notifyEventSync(event);
 
 		Assert.assertNotNull(response);
 	}
@@ -147,7 +147,7 @@ public class PdpTest {
 					IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 					IEvent event1 = mf.createEvent(eventName1, map);
 
-					_pdp.notifyEvent(event1);
+					_pdp.notifyEventSync(event1);
 
 					try {
 						Thread.sleep(20);

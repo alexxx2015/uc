@@ -52,7 +52,7 @@ public class ThriftClient {
 
    x=0;
 
-   System.out.println("Test "+ (x++) +": "+ clientPdp.notifyEvent(new Event("event",new HashMap<String,String>(),0, true)));
+   System.out.println("Test "+ (x++) +": "+ clientPdp.notifyEventSync(new Event("event",new HashMap<String,String>(),0, true)));
 
    System.out.println("Test "+ (x++) +": "+ clientPdp.registerPxp(new Pxp()));
 
@@ -128,7 +128,7 @@ public class ThriftClient {
 
    x=0;
 
-   System.out.println("Test "+ (x++) +": "+ clientAny.notifyEvent(new Event("event",new HashMap<String,String>(),0,true)));
+   System.out.println("Test "+ (x++) +": "+ clientAny.notifyEventSync(new Event("event",new HashMap<String,String>(),0,true)));
 
    System.out.println("Test "+ (x++) +": "+ clientAny.registerPxp(new Pxp()));
 
