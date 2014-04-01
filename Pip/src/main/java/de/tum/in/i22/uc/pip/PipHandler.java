@@ -1,9 +1,10 @@
 package de.tum.in.i22.uc.pip;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
@@ -212,7 +213,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllData(Collection<IData> data) {
+	public boolean hasAllData(Set<IData> data) {
 		Set<IData> all = new HashSet<>();
 		for (IContainer c : _ifModel.getAllContainers()) {
 			all.addAll(_ifModel.getDataInContainer(c));
@@ -221,7 +222,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAnyData(Collection<IData> data) {
+	public boolean hasAnyData(Set<IData> data) {
 		for (IContainer c : _ifModel.getAllContainers()) {
 			if (_ifModel.getDataInContainer(c).contains(data)) {
 				return true;
@@ -231,13 +232,13 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllContainers(Collection<IContainer> container) {
-		return _ifModel.getAllContainers().containsAll(container);
+	public boolean hasAllContainers(Set<IContainer> containers) {
+		return _ifModel.getAllContainers().containsAll(containers);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Collection<IContainer> container) {
-		return _ifModel.getAllContainers().contains(container);
+	public boolean hasAnyContainer(Set<IContainer> containers) {
+		return Sets.intersection(containers, _ifModel.getAllContainers()).size() >= 1;
 	}
 
 	@Override
@@ -250,7 +251,7 @@ public class PipHandler extends PipProcessor {
 		_ifModel.addDataToContainerAndAliases(data, container);
 		return new StatusBasic(EStatus.OKAY);
 	}
-	
+
 	@Override
 	public String toString() {
         return _ifModelManager.niceString();

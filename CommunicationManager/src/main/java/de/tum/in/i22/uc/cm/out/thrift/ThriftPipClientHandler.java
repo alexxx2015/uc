@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.cm.out.thrift;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -17,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.pip.PipClientHandler;
 
 
 /**
@@ -35,103 +35,136 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 		try {
 			connect();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return _handle.evaluatePredicateSimulatingNextState(ThriftTypeConversion.toThrift(event), predicate);
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public Boolean evaluatePredicatCurrentState(String predicate) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return _handle.evaluatePredicatCurrentState(predicate);
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public Set<IContainer> getContainersForData(IData data) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ThriftTypeConversion.fromThriftContainerSet(_handle.getContainerForData(ThriftTypeConversion.toThrift(data)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ThriftTypeConversion.fromThriftDataSet(_handle.getDataInContainer(ThriftTypeConversion.toThrift(container)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		try {
-			return ThriftTypeConversion.convert(_handle.notifyActualEvent(ThriftTypeConversion.convert(event)));
+			return ThriftTypeConversion.fromThrift(_handle.notifyActualEvent(ThriftTypeConversion.toThrift(event)));
 		} catch (TException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e.getMessage(), e);
 		}
-
-		return null;
 	}
 
 
 	@Override
 	public IStatus startSimulation() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ThriftTypeConversion.fromThrift(_handle.startSimulation());
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public IStatus stopSimulation() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ThriftTypeConversion.fromThrift(_handle.stopSimulation());
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
 	public boolean isSimulating() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return _handle.isSimulating();
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
-	public boolean hasAllData(Collection<IData> data) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAllData(Set<IData> data) {
+		try {
+			return _handle.hasAllData(ThriftTypeConversion.toThriftDataSet(data));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
-	public boolean hasAnyData(Collection<IData> data) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAnyData(Set<IData> data) {
+		try {
+			return _handle.hasAnyData(ThriftTypeConversion.toThriftDataSet(data));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
-	public boolean hasAllContainers(Collection<IContainer> container) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAllContainers(Set<IContainer> containers) {
+		try {
+			return _handle.hasAllContainers(ThriftTypeConversion.toThriftContainerSet(containers));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	@Override
-	public boolean hasAnyContainer(Collection<IContainer> container) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAnyContainer(Set<IContainer> containers) {
+		try {
+			return _handle.hasAnyContainer(ThriftTypeConversion.toThriftContainerSet(containers));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public IStatus initialRepresentation(IName container, Set<IData> data) {
-		// TODO Auto-generated method stub
-		return null;
+	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		try {
+			return ThriftTypeConversion.fromThrift(_handle.initialRepresentation(ThriftTypeConversion.toThrift(containerName), ThriftTypeConversion.toThriftDataSet(data)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
@@ -139,6 +172,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
 			EConflictResolution flagForTheConflictResolution) {
 		// TODO Auto-generated method stub
+		// not yet supported by thrift interface
 		return null;
 	}
 

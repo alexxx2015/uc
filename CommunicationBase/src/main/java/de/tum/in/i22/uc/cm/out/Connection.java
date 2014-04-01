@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc.cm.out;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -18,7 +16,7 @@ public abstract class Connection implements IConnection {
 		_connector = connector;
 	}
 
-	final void connect() throws IOException {
+	final void connect() throws Exception {
 		_connector.connect();
 	}
 

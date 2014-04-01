@@ -27,7 +27,7 @@ public class TAny2AnyServerHandler implements TAny2Any.Iface {
 	public Response notifyEventSync(Event e) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyEventSync");
-		return null;
+		return new Response(StatusType.ERROR);
 	}
 
 	@Override

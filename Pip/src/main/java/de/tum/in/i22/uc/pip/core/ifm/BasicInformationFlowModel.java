@@ -13,6 +13,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -637,8 +639,8 @@ public final class BasicInformationFlowModel {
 	 *
 	 * @return an unmodifiable view onto all containers.
 	 */
-	public Collection<IContainer> getAllContainers() {
-		return Collections.unmodifiableCollection(_namingMap.values());
+	public Set<IContainer> getAllContainers() {
+		return Collections.unmodifiableSet(Sets.newHashSet(_namingMap.values()));
 	}
 
 	/**

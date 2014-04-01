@@ -25,7 +25,7 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PipServerHandler.class);
 
 	@Override
-	public StatusType initialRepresentation(Container container, Data data)
+	public StatusType initialRepresentation(Name containerName, Set<Data> data)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pip: initrep");
@@ -64,9 +64,9 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 	public StatusType notifyActualEvent(Event event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
 
-		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftTypeConversion.convert(event));
+		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftTypeConversion.fromThrift(event));
 		RequestHandler.getInstance().addRequest(request, this);
-		return ThriftTypeConversion.convert(waitForResponse(request));
+		return ThriftTypeConversion.toThrift(waitForResponse(request));
 	}
 
 	@Override
@@ -74,10 +74,10 @@ public class TAny2PipServerHandler implements TAny2Pip.Iface, Forwarder {
 		_logger.debug("TAny2Pip: notifyDatatransfer");
 
 		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(
-				ThriftTypeConversion.convert(containerName),
-				ThriftTypeConversion.convert(data));
+				ThriftTypeConversion.fromThrift(containerName),
+				ThriftTypeConversion.fromThriftDataSet(data));
 		RequestHandler.getInstance().addRequest(request, this);
-		return ThriftTypeConversion.convert(waitForResponse(request));
+		return ThriftTypeConversion.toThrift(waitForResponse(request));
 	}
 
 	@Override

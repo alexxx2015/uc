@@ -55,7 +55,7 @@ service TAny2Pip  {
 	///////////////	
 	// PMP 2 PIP //
 	///////////////	
-	Types.StatusType initialRepresentation(1: Types.Container container,2: Types.Data data),
+	Types.StatusType initialRepresentation(1: Types.Name container,2: set<Types.Data> data),
 	
 	    
 	///////////////	

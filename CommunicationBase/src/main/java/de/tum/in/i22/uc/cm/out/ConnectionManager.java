@@ -114,7 +114,12 @@ public class ConnectionManager {
 
 				if (entry == null) {
 					// connection is not known
-					connection.connect();
+					try {
+						connection.connect();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					entry = new PoolMapEntry(connection, false);
 				}
 				else if (entry.inuse == true) {

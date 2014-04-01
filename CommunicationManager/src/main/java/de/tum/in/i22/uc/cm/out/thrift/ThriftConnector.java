@@ -8,6 +8,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
+import de.tum.in.i22.uc.cm.out.Connector;
+
 /**
  *
  * @author Florian Kelbert
@@ -28,7 +30,7 @@ public class ThriftConnector<T extends TServiceClient> extends Connector<T> {
 
 
 	@Override
-	T connect() throws Exception {
+	public T connect() throws Exception {
 		T handle = null;
 		_transport = new TSocket(_address, _port);
 
@@ -45,7 +47,7 @@ public class ThriftConnector<T extends TServiceClient> extends Connector<T> {
 	}
 
 	@Override
-	void disconnect() {
+	public void disconnect() {
 		if (_transport != null) {
 			_transport.close();
 			_transport = null;

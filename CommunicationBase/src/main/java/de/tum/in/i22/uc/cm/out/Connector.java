@@ -1,11 +1,5 @@
 package de.tum.in.i22.uc.cm.out;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,27 +9,16 @@ import org.slf4j.LoggerFactory;
  * @author Florian Kelbert
  *
  */
-public abstract class Connector {
+public abstract class Connector<Handle> {
 	protected static final Logger _logger = LoggerFactory.getLogger(Connector.class);
 
-	private OutputStream _outputStream;
- 	private InputStream _inputStream;
-
-	protected void setOutputStream(OutputStream out) {
-		_outputStream = new BufferedOutputStream(out);
-	}
-
-	protected void setInputStream(InputStream in) {
-		_inputStream = new BufferedInputStream(in);
-	}
-
-	protected void close() throws IOException {
-		_outputStream.close();
-		_inputStream.close();
-	}
-
-	abstract void connect() throws IOException;
-	abstract void disconnect();
+	/**
+	 * Connects the connector and returns a handle for communication.
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract Handle connect() throws Exception;
+	public abstract void disconnect();
 
 	@Override
 	public abstract int hashCode();

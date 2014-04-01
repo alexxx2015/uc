@@ -1,23 +1,24 @@
-package de.tum.in.i22.uc.cm.out.thrift;
+package de.tum.in.i22.uc.pip;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pmp.PmpProcessor;
+import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.cm.out.IConnectable;
 
 /**
  *
  * @author Florian Kelbert
  *
  */
-public abstract class PmpClientHandler<Handle> extends PmpProcessor implements ThriftClient {
-	protected static final Logger _logger = LoggerFactory.getLogger(PmpClientHandler.class);
+public abstract class PipClientHandler<Handle> extends PipProcessor implements IConnectable {
+	protected static final Logger _logger = LoggerFactory.getLogger(PipClientHandler.class);
 
 	private final Connector<Handle> _connector;
 
 	protected Handle _handle;
 
-	public PmpClientHandler(Connector<Handle> connector) {
+	public PipClientHandler(Connector<Handle> connector) {
 		_connector = connector;
 	}
 

@@ -1,4 +1,5 @@
 package de.tum.i22.in.uc.cm.thrift.client;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -74,7 +75,7 @@ public class ThriftClient {
 
    x=0;
 
-   System.out.println("Test "+ (x++) +": "+ clientPip.initialRepresentation(new Container("classValue","id"), new Data("id")));
+   System.out.println("Test "+ (x++) +": "+ clientPip.initialRepresentation(new Name("contid"), Collections.singleton(new Data("dataid"))));
 
    System.out.println("Test "+ (x++) +": "+ clientPip.hasAllData(new HashSet<Data>() ));
 

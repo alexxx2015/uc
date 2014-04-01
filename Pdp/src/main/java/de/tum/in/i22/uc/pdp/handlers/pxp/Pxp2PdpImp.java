@@ -6,6 +6,7 @@ import de.tum.in.i22.uc.cm.out.Connection;
 import de.tum.in.i22.uc.cm.out.Connector;
 
 public class Pxp2PdpImp extends Connection implements IPxp2Pdp {
+
 	public Pxp2PdpImp(Connector connector) {
 		super(connector);
 	}
