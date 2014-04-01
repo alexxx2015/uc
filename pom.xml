@@ -11,7 +11,8 @@
 
 	<modules>
 		<module>CommunicationBase</module>
-		<module>ThriftConnectors</module>
+		<module>ThriftDefinitions</module>
+		<module>ThriftClient</module>
 		<module>Pdp</module>
 		<module>Pip</module>
 		<module>Pmp</module>

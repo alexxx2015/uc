@@ -31,7 +31,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftConnectors</artifactId>
+			<artifactId>ThriftDefinitions</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>

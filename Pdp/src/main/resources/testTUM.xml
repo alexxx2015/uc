@@ -6,6 +6,19 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            
         name="testPolicy">
+        
+  <preventiveMechanism name="prev2">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="t" tryEvent="true">
+      <paramMatch name="name1" value="value1" />
+    </trigger>  
+    <condition><true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+      <allow/>
+    </authorizationAction>
+  </preventiveMechanism>        
 
   <preventiveMechanism name="testTUM">
     <description>...</description>

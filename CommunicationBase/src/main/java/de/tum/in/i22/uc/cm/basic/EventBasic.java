@@ -60,14 +60,6 @@ public class EventBasic implements IEvent {
 		return _pep;
 	}
 
-	public void setName(String name) {
-		_name = name;
-	}
-
-	public void setActual(boolean isActual) {
-		_isActual = isActual;
-	}
-
 	@Override
 	public boolean isActual() {
 		return _isActual;
@@ -77,11 +69,6 @@ public class EventBasic implements IEvent {
 	public Map<String, String> getParameters() {
 		return _parameters;
 	}
-
-	public void setTimestamp(long timestamp) {
-		_timestamp = timestamp;
-	}
-
 
 	@Override
 	public String toString() {

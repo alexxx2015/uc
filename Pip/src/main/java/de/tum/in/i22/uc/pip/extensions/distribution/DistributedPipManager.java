@@ -2,11 +2,11 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.util.Collection;
 
+import de.tum.in.i22.uc.cm.client.Connector;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.distribution.pip.IDistributedPipStrategy;

@@ -3,13 +3,13 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 import java.util.Collection;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.client.Connector;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.out.Connector;
 import de.tum.in.i22.uc.distribution.pip.EDistributedPipStrategy;
 
 public class PipPushStrategy extends DistributedPipStrategy {

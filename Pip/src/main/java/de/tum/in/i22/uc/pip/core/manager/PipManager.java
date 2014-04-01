@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.out.ConnectionManager;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDao;
 import de.tum.in.i22.uc.pip.core.db.EventHandlerDefinition;
 

@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.datatypes.linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.out.Connector;
+import de.tum.in.i22.uc.cm.client.Connector;
 
 /**
  * Represents a remote container of which we only know a name and its location.

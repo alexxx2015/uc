@@ -8,6 +8,6 @@ package de.tum.in.i22.uc.cm.interfaces;
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pmp extends IPdp2Pmp, IPip2Pmp, IPmp2Pmp, IAny2Generic<IAny2Pip, IAny2Pdp>  {
+public interface IAny2Pmp extends IAny2Generic<IAny2Pip, IAny2Pdp>  {
 
 }

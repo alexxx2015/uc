@@ -35,9 +35,14 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftConnectors</artifactId>
+			<artifactId>ThriftDefinitions</artifactId>
 			<version>1.0</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>ThriftClient</artifactId>
+			<version>1.0</version>
+		</dependency>	
 		<dependency>
 			<groupId>edu.kit</groupId>
 			<artifactId>joana</artifactId>

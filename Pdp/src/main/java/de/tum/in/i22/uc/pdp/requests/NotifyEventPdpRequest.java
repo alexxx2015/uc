@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.pdp.requests;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
-import de.tum.in.i22.uc.pdp.PdpProcessor;
+import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 public class NotifyEventPdpRequest extends PdpRequest<IResponse> {
 	private final IEvent _event;

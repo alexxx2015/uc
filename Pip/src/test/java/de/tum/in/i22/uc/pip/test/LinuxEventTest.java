@@ -16,13 +16,13 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class LinuxEventTest {
-	private static IPdp2Pip _pipHandler = new PipHandler();
+	private static IAny2Pip _pipHandler = new PipHandler();
 
 	private static final InformationFlowModelManager _ifModelManager = InformationFlowModelManager.getInstance();
 
