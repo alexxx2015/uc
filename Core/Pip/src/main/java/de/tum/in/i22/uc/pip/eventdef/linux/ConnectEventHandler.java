@@ -97,10 +97,10 @@ public class ConnectEventHandler extends BaseEventHandler {
 				}
 				else {
 					// server is remote.
-
+/*
 					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
 							new TcpConnector<?>(remoteIP, Settings.getInstance().getPipListenerPort()));
-				}
+*/				}
 
 				// assign the remote name
 				basicIfModel.addName(remoteSocketName, remoteAcceptedSocket);
