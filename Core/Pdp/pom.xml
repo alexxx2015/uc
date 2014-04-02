@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>UsageControlSystem</groupId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+		<artifactId>Core</artifactId>
+	</parent>
+
+	<artifactId>Pdp</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!--
+		   *
+		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
+		   * 
+		 -->
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.8.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<schemaDirectory>src/main/resources/xsd</schemaDirectory>
+					<args>
+						<arg>-XtoString</arg>
+						<arg>-Xinheritance</arg>
+						<arg>-extension</arg>
+					</args>
+					<generateDirectory>src/main/java</generateDirectory>
+
+					<plugins>
+						<plugin>
+							<groupId>org.jvnet.jaxb2_commons</groupId>
+							<artifactId>jaxb2-basics</artifactId>
+							<version>0.6.4</version>
+						</plugin>
+					</plugins>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<name>Pdp</name>
+	<description>Java Pdp developed at TUM with thelp of Cornelius</description>
+</project>

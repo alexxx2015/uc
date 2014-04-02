@@ -1,0 +1,8 @@
+/*
+!src/main/thrift/*
+!docs/
+!pom.xml
+!.gitignore
+/target
+/target
+/target
