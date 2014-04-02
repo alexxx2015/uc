@@ -1,1 +1,5 @@
-/target
+/*
+!src/main/java/*
+!docs/
+!pom.xml
+!.gitignore
