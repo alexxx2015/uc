@@ -61,7 +61,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Boolean evaluatePredicatCurrentState(String predicate) {
+	public Boolean evaluatePredicateCurrentState(String predicate) {
 		IStateBasedPredicate pred;
 
 		try {
@@ -205,7 +205,7 @@ public class PipHandler extends PipProcessor {
 			notifyActualEvent(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");
-			res = evaluatePredicatCurrentState(predicate);
+			res = evaluatePredicateCurrentState(predicate);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModelManager.stopSimulation();
 			_logger.trace("done!");

@@ -16,7 +16,7 @@ import de.tum.i22.in.uc.thrift.types.StatusType;
 import de.tum.i22.in.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
-import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.thrift.ThriftTypes;
 
 public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny2Pdp.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpThriftProcessor.class);
@@ -25,12 +25,12 @@ public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny
 	public Response notifyEventSync(Event e) throws TException {
 		_logger.debug("TAny2Pdp: notifyEvent");
 
-		IEvent ev = ThriftTypeConversion.fromThrift(e);
+		IEvent ev = ThriftTypes.fromThrift(e);
 		NotifyEventPdpRequest request = new NotifyEventPdpRequest(ev);
 
 		_requestHandler.addRequest(request, this);
 		waitForResponse(request);
-		return ThriftTypeConversion.toThrift(request.getResponse());
+		return ThriftTypes.toThrift(request.getResponse());
 	}
 
 	@Override

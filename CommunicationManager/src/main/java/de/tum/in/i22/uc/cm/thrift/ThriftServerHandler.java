@@ -49,5 +49,4 @@ abstract class ThriftServerHandler implements IForwarder {
 			notifyAll();
 		}
 	}
-
 }

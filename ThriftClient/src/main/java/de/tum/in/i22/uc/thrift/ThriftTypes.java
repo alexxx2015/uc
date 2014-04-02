@@ -29,23 +29,34 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-public final class ThriftTypeConversion {
+public final class ThriftTypes {
 
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftTypeConversion.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftTypes.class);
 
 	public static IEvent fromThrift(Event e) {
 		if (e == null) {
 			_logger.debug("Event was null.");
 			return null;
 		}
+
 		return new EventBasic(e.name, e.parameters, e.isActual);
 	}
 
 	public static Event toThrift(IEvent e) {
+		if (e == null) {
+			_logger.debug("Event was null.");
+			return null;
+		}
+
 		return new Event(e.getName(), e.getParameters(), e.getTimestamp(), e.isActual());
 	}
 
 	public static StatusType toThrift(IStatus s) {
+		if (s == null) {
+			_logger.debug("Status was null.");
+			return null;
+		}
+
 		switch (s.getEStatus()) {
 			case ALLOW:
 				return StatusType.ALLOW;
@@ -60,11 +71,17 @@ public final class ThriftTypeConversion {
 			case OKAY:
 				return StatusType.OKAY;
 			default:
-				throw new RuntimeException("Unknown StatusType.");
+				_logger.debug("Unknown Status. Returning null.");
+				return null;
 		}
 	}
 
 	public static IStatus fromThrift(StatusType s) {
+		if (s == null) {
+			_logger.debug("Status was null.");
+			return null;
+		}
+
 		EStatus eStatus;
 
 		switch(s) {
@@ -87,17 +104,28 @@ public final class ThriftTypeConversion {
 				eStatus = EStatus.OKAY;
 				break;
 			default:
-				throw new RuntimeException("Unknown StatusType.");
+				_logger.debug("Unknown Status. Returning null.");
+				return null;
 		}
 
 		return new StatusBasic(eStatus);
 	}
 
 	public static Response toThrift(IResponse r) {
-		return new Response(ThriftTypeConversion.toThrift(r.getAuthorizationAction()));
+		if (r == null) {
+			_logger.debug("Response was null.");
+			return null;
+		}
+
+		return new Response(ThriftTypes.toThrift(r.getAuthorizationAction()));
 	}
 
 	public static IName fromThrift(Name n) {
+		if (n == null) {
+			_logger.debug("Name was null.");
+			return null;
+		}
+
 		return new NameBasic(n.getName());
 	}
 
@@ -108,7 +136,7 @@ public final class ThriftTypeConversion {
 
 		Set<IData> res = new HashSet<>();
 		for (Data d : data) {
-			res.add(ThriftTypeConversion.fromThrift(d));
+			res.add(ThriftTypes.fromThrift(d));
 		}
 		return res;
 	}
@@ -120,7 +148,7 @@ public final class ThriftTypeConversion {
 
 		Set<Data> res = new HashSet<>();
 		for (IData d : data) {
-			res.add(ThriftTypeConversion.toThrift(d));
+			res.add(ThriftTypes.toThrift(d));
 		}
 		return res;
 	}
@@ -132,21 +160,36 @@ public final class ThriftTypeConversion {
 
 		Set<Container> res = new HashSet<>();
 		for (IContainer c : containers) {
-			res.add(ThriftTypeConversion.toThrift(c));
+			res.add(ThriftTypes.toThrift(c));
 		}
 		return res;
 	}
 
-	public static Name toThrift(IName name) {
-		return new Name(name.getName());
+	public static Name toThrift(IName n) {
+		if (n == null) {
+			_logger.debug("Name was null.");
+			return null;
+		}
+
+		return new Name(n.getName());
 	}
 
-	public static Container toThrift(IContainer container) {
-		return new Container(container.getClassValue(),container.getId());
+	public static Container toThrift(IContainer c) {
+		if (c == null) {
+			_logger.debug("Container was null.");
+			return null;
+		}
+
+		return new Container(c.getClassValue(),c.getId());
 	}
 
-	public static Data toThrift(IData data) {
-		return new Data(data.getId());
+	public static Data toThrift(IData d) {
+		if (d == null) {
+			_logger.debug("Data was null.");
+			return null;
+		}
+
+		return new Data(d.getId());
 	}
 
 	public static Set<IContainer> fromThriftContainerSet(Set<Container> containers) {
@@ -156,24 +199,39 @@ public final class ThriftTypeConversion {
 
 		Set<IContainer> res = new HashSet<>();
 		for (Container c : containers) {
-			res.add(ThriftTypeConversion.fromThrift(c));
+			res.add(ThriftTypes.fromThrift(c));
 		}
 		return res;
 	}
 
-	private static IContainer fromThrift(Container c) {
+	public static IContainer fromThrift(Container c) {
+		if (c == null) {
+			_logger.debug("Container was null.");
+			return null;
+		}
+
 		return new ContainerBasic(c.getClassValue(), c.getId());
 	}
 
-	public static IData fromThrift(Data data) {
-		return new DataBasic(data.getId());
+	public static IData fromThrift(Data d) {
+		if (d == null) {
+			_logger.debug("Data was null.");
+			return null;
+		}
+
+		return new DataBasic(d.getId());
 	}
 
 	public static IResponse fromThrift(Response r) {
+		if (r == null) {
+			_logger.debug("Response was null.");
+			return null;
+		}
+
 		return new ResponseBasic(
-				ThriftTypeConversion.fromThrift(r.getStatus()),
-				ThriftTypeConversion.fromThriftEventList(r.getExecuteEvents()),
-				ThriftTypeConversion.fromThrift(r.getModifiedEvents()));
+				ThriftTypes.fromThrift(r.getStatus()),
+				ThriftTypes.fromThriftEventList(r.getExecuteEvents()),
+				ThriftTypes.fromThrift(r.getModifiedEvents()));
 	}
 
 	public static List<IEvent> fromThriftEventList(List<Event> events) {
@@ -183,7 +241,7 @@ public final class ThriftTypeConversion {
 
 		List<IEvent> res = new LinkedList<>();
 		for (Event e : events) {
-			res.add(ThriftTypeConversion.fromThrift(e));
+			res.add(ThriftTypes.fromThrift(e));
 		}
 		return res;
 	}

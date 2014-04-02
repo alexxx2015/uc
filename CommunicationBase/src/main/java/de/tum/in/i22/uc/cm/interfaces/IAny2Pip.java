@@ -30,7 +30,7 @@ public interface IAny2Pip {
 	 * From PDP
 	 */
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
-	public Boolean evaluatePredicatCurrentState(String predicate);
+	public Boolean evaluatePredicateCurrentState(String predicate);
 	public Set<IContainer> getContainersForData(IData data);
 	public Set<IData> getDataInContainer(IContainer container);
 	IStatus startSimulation();

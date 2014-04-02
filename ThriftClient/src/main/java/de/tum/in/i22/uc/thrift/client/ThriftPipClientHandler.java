@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.thrift.ThriftTypes;
 
 
 /**
@@ -42,7 +42,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
 		try {
-			return _handle.evaluatePredicateSimulatingNextState(ThriftTypeConversion.toThrift(event), predicate);
+			return _handle.evaluatePredicateSimulatingNextState(ThriftTypes.toThrift(event), predicate);
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -50,7 +50,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 
 
 	@Override
-	public Boolean evaluatePredicatCurrentState(String predicate) {
+	public Boolean evaluatePredicateCurrentState(String predicate) {
 		try {
 			return _handle.evaluatePredicatCurrentState(predicate);
 		} catch (TException e) {
@@ -62,7 +62,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public Set<IContainer> getContainersForData(IData data) {
 		try {
-			return ThriftTypeConversion.fromThriftContainerSet(_handle.getContainerForData(ThriftTypeConversion.toThrift(data)));
+			return ThriftTypes.fromThriftContainerSet(_handle.getContainerForData(ThriftTypes.toThrift(data)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -72,7 +72,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
 		try {
-			return ThriftTypeConversion.fromThriftDataSet(_handle.getDataInContainer(ThriftTypeConversion.toThrift(container)));
+			return ThriftTypes.fromThriftDataSet(_handle.getDataInContainer(ThriftTypes.toThrift(container)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -82,7 +82,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus notifyActualEvent(IEvent event) {
 		try {
-			return ThriftTypeConversion.fromThrift(_handle.notifyActualEvent(ThriftTypeConversion.toThrift(event)));
+			return ThriftTypes.fromThrift(_handle.notifyActualEvent(ThriftTypes.toThrift(event)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -92,7 +92,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus startSimulation() {
 		try {
-			return ThriftTypeConversion.fromThrift(_handle.startSimulation());
+			return ThriftTypes.fromThrift(_handle.startSimulation());
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -102,7 +102,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus stopSimulation() {
 		try {
-			return ThriftTypeConversion.fromThrift(_handle.stopSimulation());
+			return ThriftTypes.fromThrift(_handle.stopSimulation());
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -122,7 +122,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public boolean hasAllData(Set<IData> data) {
 		try {
-			return _handle.hasAllData(ThriftTypeConversion.toThriftDataSet(data));
+			return _handle.hasAllData(ThriftTypes.toThriftDataSet(data));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -132,7 +132,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public boolean hasAnyData(Set<IData> data) {
 		try {
-			return _handle.hasAnyData(ThriftTypeConversion.toThriftDataSet(data));
+			return _handle.hasAnyData(ThriftTypes.toThriftDataSet(data));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -142,7 +142,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public boolean hasAllContainers(Set<IContainer> containers) {
 		try {
-			return _handle.hasAllContainers(ThriftTypeConversion.toThriftContainerSet(containers));
+			return _handle.hasAllContainers(ThriftTypes.toThriftContainerSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -152,7 +152,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public boolean hasAnyContainer(Set<IContainer> containers) {
 		try {
-			return _handle.hasAnyContainer(ThriftTypeConversion.toThriftContainerSet(containers));
+			return _handle.hasAnyContainer(ThriftTypes.toThriftContainerSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -161,7 +161,7 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		try {
-			return ThriftTypeConversion.fromThrift(_handle.initialRepresentation(ThriftTypeConversion.toThrift(containerName), ThriftTypeConversion.toThriftDataSet(data)));
+			return ThriftTypes.fromThrift(_handle.initialRepresentation(ThriftTypes.toThrift(containerName), ThriftTypes.toThriftDataSet(data)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

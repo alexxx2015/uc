@@ -98,9 +98,6 @@ public class ThriftTester {
 			System.out.println("Test " + (x++) + ": "
 					+ clientPip.notifyActualEvent(new Event("event", new HashMap<String, String>(), 0, true)));
 
-			System.out.println("Test " + (x++) + ": "
-					+ clientPip.notifyDataTransfer(new Name("name"), new HashSet<Data>()));
-
 			System.out.println("Test "
 					+ (x++)
 					+ ": "

@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
-import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
+import de.tum.in.i22.uc.thrift.ThriftTypes;
 
 
 /**
@@ -81,10 +81,10 @@ public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
 		try {
-			return ThriftTypeConversion.fromThrift(
+			return ThriftTypes.fromThrift(
 					_handle.
 					notifyEventSync(
-							ThriftTypeConversion.
+							ThriftTypes.
 							toThrift(event)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);

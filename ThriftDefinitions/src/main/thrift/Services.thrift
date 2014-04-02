@@ -65,8 +65,7 @@ service TAny2Pip  {
     bool hasAnyData(1: set<Types.Data> data),
     bool hasAllContainers(1: set<Types.Container> container),
     bool hasAnyContainer(1: set<Types.Container> container),
-    Types.StatusType notifyActualEvent(1:Types.Event event),
-    Types.StatusType notifyDataTransfer(1:Types.Name containerName, 2:set<Types.Data> data)
+    Types.StatusType notifyActualEvent(1:Types.Event event)
 	
 	
 	///////////////	
