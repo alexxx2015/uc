@@ -9,15 +9,17 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.Event;
-import de.tum.i22.in.uc.thrift.types.Pxp;
-import de.tum.i22.in.uc.thrift.types.Response;
-import de.tum.i22.in.uc.thrift.types.StatusType;
+import de.tum.i22.in.uc.thrift.types.TEvent;
+import de.tum.i22.in.uc.thrift.types.TPxpSpec;
+import de.tum.i22.in.uc.thrift.types.TResponse;
+import de.tum.i22.in.uc.thrift.types.TStatus;
 import de.tum.i22.in.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
+import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
+import de.tum.in.i22.uc.thrift.server.ThriftServerHandler;
 
 public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny2Pdp.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpThriftProcessor.class);
@@ -30,7 +32,7 @@ public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny
 
 
 	@Override
-	public Response notifyEventSync(Event e) throws TException {
+	public TResponse notifyEventSync(TEvent e) throws TException {
 		_logger.debug("TAny2Pdp: notifyEvent");
 
 		IEvent ev = ThriftConverter.fromThrift(e);
@@ -42,39 +44,40 @@ public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean registerPxp(Pxp pxp) throws TException {
-		// TODO Auto-generated method stub
+	public boolean registerPxp(TPxpSpec pxp) throws TException {
 		_logger.debug("TAny2Pdp: registerPxp");
-		return false;
+		RegisterPxpPdpRequest request = new RegisterPxpPdpRequest(ThriftConverter.fromThrift(pxp));
+		_requestHandler.addRequest(request, this);
+		return waitForResponse(request);
 	}
 
 	@Override
-	public StatusType deployMechanism(String mechanism) throws TException {
+	public TStatus deployMechanism(String mechanism) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: deploymech");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism1(String policyName) throws TException {
+	public TStatus revokeMechanism1(String policyName) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: revokemech1");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism2(String policyName, String mechName)
+	public TStatus revokeMechanism2(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: revokemech2");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType deployPolicy(String policyFilePath) throws TException {
+	public TStatus deployPolicy(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Pdp: deployPolicy");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
@@ -89,7 +92,7 @@ public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public void notifyEventAsync(Event e) throws TException {
+	public void notifyEventAsync(TEvent e) throws TException {
 		// TODO Auto-generated method stub
 	}
 }

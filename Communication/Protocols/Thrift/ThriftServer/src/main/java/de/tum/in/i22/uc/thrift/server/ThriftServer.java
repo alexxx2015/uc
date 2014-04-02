@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.thrift;
+package de.tum.in.i22.uc.thrift.server;
 
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;

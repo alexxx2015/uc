@@ -11,11 +11,11 @@ import de.tum.i22.in.uc.thrift.types.TAny2Pip;
 import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.cm.thrift.ThriftServer;
 import de.tum.in.i22.uc.cm.thrift.TAny2AnyThriftProcessor;
 import de.tum.in.i22.uc.cm.thrift.TAny2PdpThriftProcessor;
 import de.tum.in.i22.uc.cm.thrift.TAny2PipThriftProcessor;
 import de.tum.in.i22.uc.cm.thrift.TAny2PmpThriftProcessor;
+import de.tum.in.i22.uc.thrift.server.ThriftServer;
 
 public class Controller {
 

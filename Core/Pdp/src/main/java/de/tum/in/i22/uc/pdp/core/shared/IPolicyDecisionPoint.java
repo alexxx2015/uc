@@ -17,6 +17,4 @@ public interface IPolicyDecisionPoint {
 
 	public HashMap<String, ArrayList<IPdpMechanism>> listDeployedMechanisms();
 
-	public boolean registerPxp(IPxpSpec pxp);
-
 }

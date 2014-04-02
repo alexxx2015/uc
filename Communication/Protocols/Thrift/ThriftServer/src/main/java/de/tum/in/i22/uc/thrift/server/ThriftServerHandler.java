@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.thrift;
+package de.tum.in.i22.uc.thrift.server;
 
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.Request;
@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.cm.server.Request;
  * @author Florian Kelbert
  *
  */
-abstract class ThriftServerHandler implements IForwarder {
+public abstract class ThriftServerHandler implements IForwarder {
 	/**
 	 * Waits for the specified request to be processed.
 	 * Once the corresponding response is ready, execution

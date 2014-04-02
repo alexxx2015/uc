@@ -38,9 +38,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private ActionDescriptionStore actionDescriptionStore = null;
 	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 
-
-	public static HashMap<String,IPxpSpec> pxpSpec=  new HashMap<String,IPxpSpec>();
-
 	private PolicyDecisionPoint() {
 		this.actionDescriptionStore = ActionDescriptionStore.getInstance();
 	}
@@ -54,7 +51,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		 */
 		if (instance == null) {
 			synchronized (PolicyDecisionPoint.class) {
-				if (instance == null) instance = new PolicyDecisionPoint();
+				if (instance == null){
+					instance = new PolicyDecisionPoint();
+					instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
+
+				}
 			}
 		}
 		return instance;
@@ -229,13 +230,4 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		return stringBuilder.toString();
 	}
 
-	@Override
-	public boolean registerPxp(IPxpSpec pxp) {
-		// TODO Auto-generated method stub
-		boolean b = false;
-		if(!pxpSpec.containsKey(pxp.getId())){
-			b = pxpSpec.put(pxp.getId(), pxp) == null ;
-		}
-		return b;
-	}
 }

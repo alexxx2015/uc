@@ -32,11 +32,15 @@ public class Settings extends SettingsLoader {
 	private int _pdpListenerPort = 21003;
 	private int _anyListenerPort = 21004;
 
+	private int _pxpListenerPort = 30003;
+	
 	private boolean _pmpListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
 	private boolean _pdpListenerEnabled = true;
 	private boolean _anyListenerEnabled = true;
 
+	private boolean _pxpListenerEnabled = true;
+	
 	private Location _pdpLocation = new LocalLocation();
 	private Location _pipLocation = new LocalLocation();
 	private Location _pmpLocation = new LocalLocation();
@@ -50,6 +54,7 @@ public class Settings extends SettingsLoader {
 	private boolean _pipDeletePersistenceDirectory	= true;
 
 	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
+
 
 	private Settings() {
 		try {
@@ -106,6 +111,9 @@ public class Settings extends SettingsLoader {
 		_pipListenerPort = loadSetting("pip_listener_port", _pipListenerPort);
 		_pdpListenerPort = loadSetting("pdp_listener_port", _pdpListenerPort);
 		_anyListenerPort = loadSetting("any_listener_port", _anyListenerPort);
+
+		_pxpListenerPort = loadSetting("pxp_listener_port", _pxpListenerPort);
+		_pxpListenerEnabled = loadSetting("pxp_listener_enabled", _pxpListenerEnabled);
 
 		_pipEventHandlerPackage 			= loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
 		_pipEventHandlerSuffix 				= loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
@@ -164,6 +172,9 @@ public class Settings extends SettingsLoader {
 		return _pdpListenerPort;
 	}
 
+	public int getPxpListenerPort() {
+		return _pxpListenerPort;
+	}
 	public int getAnyListenerPort() {
 		return _anyListenerPort;
 	}
@@ -178,6 +189,10 @@ public class Settings extends SettingsLoader {
 
 	public boolean isPdpListenerEnabled() {
 		return _pdpListenerEnabled;
+	}
+
+	public boolean isPxpListenerEnabled() {
+		return _pxpListenerEnabled;
 	}
 
 	public boolean isAnyListenerEnabled() {
@@ -223,5 +238,6 @@ public class Settings extends SettingsLoader {
 	public boolean pipDeletePersistenceDirectory() {
 		return _pipDeletePersistenceDirectory;
 	}
+
 }
 

@@ -12,11 +12,12 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-import de.tum.i22.in.uc.thrift.types.Container;
-import de.tum.i22.in.uc.thrift.types.Data;
-import de.tum.i22.in.uc.thrift.types.Event;
-import de.tum.i22.in.uc.thrift.types.Name;
-import de.tum.i22.in.uc.thrift.types.Pxp;
+import de.tum.i22.in.uc.thrift.types.TContainer;
+import de.tum.i22.in.uc.thrift.types.TData;
+import de.tum.i22.in.uc.thrift.types.TEvent;
+import de.tum.i22.in.uc.thrift.types.TName;
+import de.tum.i22.in.uc.thrift.types.TPxpSpec;
+
 import de.tum.i22.in.uc.thrift.types.TAny2Any;
 import de.tum.i22.in.uc.thrift.types.TAny2Pip;
 import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
@@ -61,7 +62,7 @@ public class ThriftTester {
 			x = 0;
 
 			Map<String,String> map = new HashMap<>();
-			map.put("name1", "value21");
+			map.put("name1", "value1");
 
 			System.out.println("Test " + (x++) + ": "
 					+ clientPdp.notifyEventSync(new EventBasic("t", map, false)));
@@ -85,31 +86,31 @@ public class ThriftTester {
 			x = 0;
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientPip.initialRepresentation(new Name("contid"), Collections.singleton(new Data("dataid"))));
+					+ clientPip.initialRepresentation(new TName("contid"), Collections.singleton(new TData("dataid"))));
 
-			System.out.println("Test " + (x++) + ": " + clientPip.hasAllData(new HashSet<Data>()));
+			System.out.println("Test " + (x++) + ": " + clientPip.hasAllData(new HashSet<TData>()));
 
-			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyData(new HashSet<Data>()));
+			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyData(new HashSet<TData>()));
 
-			System.out.println("Test " + (x++) + ": " + clientPip.hasAllContainers(new HashSet<Container>()));
+			System.out.println("Test " + (x++) + ": " + clientPip.hasAllContainers(new HashSet<TContainer>()));
 
-			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyContainer(new HashSet<Container>()));
+			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyContainer(new HashSet<TContainer>()));
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientPip.notifyActualEvent(new Event("event", new HashMap<String, String>(), 0, true)));
+					+ clientPip.notifyActualEvent(new TEvent("event", new HashMap<String, String>(), 0, true)));
 
 			System.out.println("Test "
 					+ (x++)
 					+ ": "
-					+ clientPip.evaluatePredicateSimulatingNextState(new Event("event", new HashMap<String, String>(),
+					+ clientPip.evaluatePredicateSimulatingNextState(new TEvent("event", new HashMap<String, String>(),
 							0, true), "predicate"));
 
 			System.out.println("Test " + (x++) + ": " + clientPip.evaluatePredicatCurrentState("predicate"));
 
-			System.out.println("Test " + (x++) + ": " + clientPip.getContainerForData(new Data("id")));
+			System.out.println("Test " + (x++) + ": " + clientPip.getContainerForData(new TData("id")));
 
 			System.out
-					.println("Test " + (x++) + ": " + clientPip.getDataInContainer(new Container("classValue", "id")));
+					.println("Test " + (x++) + ": " + clientPip.getDataInContainer(new TContainer("classValue", "id")));
 
 			System.out.println("Test " + (x++) + ": " + clientPip.startSimulation());
 
@@ -123,15 +124,15 @@ public class ThriftTester {
 
 			x = 0;
 
-			System.out.println("Test " + (x++) + ": " + clientPmp.deployMechanismPmp("mechanism"));
-
-			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism1Pmp("policy"));
-
-			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism2Pmp("policy", "mech"));
-
-			System.out.println("Test " + (x++) + ": " + clientPmp.deployPolicyPmp("policyPath"));
-
-			System.out.println("Test " + (x++) + ": " + clientPmp.listMechanismsPmp());
+//			System.out.println("Test " + (x++) + ": " + clientPmp.deployMechanismPmp("mechanism"));
+//
+//			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism1Pmp("policy"));
+//
+//			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism2Pmp("policy", "mech"));
+//
+//			System.out.println("Test " + (x++) + ": " + clientPmp.deployPolicyPmp("policyPath"));
+//
+//			System.out.println("Test " + (x++) + ": " + clientPmp.listMechanismsPmp());
 
 			System.out.println("\n----------------");
 			System.out.println("Testing TAny2Any");
@@ -140,9 +141,9 @@ public class ThriftTester {
 			x = 0;
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientAny.notifyEventSync(new Event("event", new HashMap<String, String>(), 0, true)));
+					+ clientAny.notifyEventSync(new TEvent("event", new HashMap<String, String>(), 0, true)));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.registerPxp(new Pxp()));
+			System.out.println("Test " + (x++) + ": " + clientAny.registerPxp(new TPxpSpec()));
 
 			System.out.println("Test " + (x++) + ": " + clientAny.deployMechanism("mechanism"));
 
@@ -155,34 +156,34 @@ public class ThriftTester {
 			System.out.println("Test " + (x++) + ": " + clientAny.listMechanisms());
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientAny.initialRepresentation(new Container("classValue", "id"), new Data("id")));
+					+ clientAny.initialRepresentation(new TContainer("classValue", "id"), new TData("id")));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.hasAllData(new HashSet<Data>()));
+			System.out.println("Test " + (x++) + ": " + clientAny.hasAllData(new HashSet<TData>()));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyData(new HashSet<Data>()));
+			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyData(new HashSet<TData>()));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.hasAllContainers(new HashSet<Container>()));
+			System.out.println("Test " + (x++) + ": " + clientAny.hasAllContainers(new HashSet<TContainer>()));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyContainer(new HashSet<Container>()));
-
-			System.out.println("Test " + (x++) + ": "
-					+ clientAny.notifyActualEvent(new Event("event", new HashMap<String, String>(), 0, true)));
+			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyContainer(new HashSet<TContainer>()));
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientAny.notifyDataTransfer(new Name("name"), new HashSet<Data>()));
+					+ clientAny.notifyActualEvent(new TEvent("event", new HashMap<String, String>(), 0, true)));
+
+			System.out.println("Test " + (x++) + ": "
+					+ clientAny.notifyDataTransfer(new TName("name"), new HashSet<TData>()));
 
 			System.out.println("Test "
 					+ (x++)
 					+ ": "
-					+ clientAny.evaluatePredicateSimulatingNextState(new Event("event", new HashMap<String, String>(),
+					+ clientAny.evaluatePredicateSimulatingNextState(new TEvent("event", new HashMap<String, String>(),
 							0, true), "predicate"));
 
 			System.out.println("Test " + (x++) + ": " + clientAny.evaluatePredicatCurrentState("predicate"));
 
-			System.out.println("Test " + (x++) + ": " + clientAny.getContainerForData(new Data("id")));
+			System.out.println("Test " + (x++) + ": " + clientAny.getContainerForData(new TData("id")));
 
 			System.out
-					.println("Test " + (x++) + ": " + clientAny.getDataInContainer(new Container("classValue", "id")));
+					.println("Test " + (x++) + ": " + clientAny.getDataInContainer(new TContainer("classValue", "id")));
 
 			System.out.println("Test " + (x++) + ": " + clientAny.startSimulation());
 
