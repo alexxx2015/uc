@@ -36,6 +36,18 @@ public class Controller {
 			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
 		}
 		startUC();
+
+		/*
+		 * Lock forever
+		 */
+		Object lock = new Object();
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	static void startUC(){
@@ -111,10 +123,10 @@ public class Controller {
 	}
 
 	public static boolean started() {
-		return (!_settings.isPdpListenerEnabled() || _pdpServer.started())
-				&& (!_settings.isPipListenerEnabled() || _pipServer.started())
-				&& (!_settings.isPmpListenerEnabled() || _pmpServer.started())
-				&& (!_settings.isAnyListenerEnabled() || _anyServer.started());
+		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
+				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
+				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
+				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
 	}
 
 }

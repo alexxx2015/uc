@@ -88,7 +88,15 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					return new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
+					ThriftPdpClientHandler pdp = new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
+					try {
+						pdp.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pdp.", e);
+						throw new RuntimeException(e.getMessage(), e);
+
+					}
+					return pdp;
 				}
 				break;
 			case LOCAL:
@@ -106,7 +114,14 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					return new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
+					ThriftPmpClientHandler pmp = new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
+					try {
+						pmp.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pmp.", e);
+						throw new RuntimeException(e.getMessage(), e);
+					}
+					return pmp;
 				}
 				break;
 			case LOCAL:
@@ -124,7 +139,14 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					return new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());
+					ThriftPipClientHandler pip = new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());;
+					try {
+						pip.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pip.", e);
+						throw new RuntimeException(e.getMessage(), e);
+					}
+					return pip;
 				}
 				break;
 			case LOCAL:
