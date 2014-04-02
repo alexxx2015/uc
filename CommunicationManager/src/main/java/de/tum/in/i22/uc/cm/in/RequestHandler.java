@@ -178,6 +178,7 @@ public class RequestHandler implements Runnable {
 
 
 	public void addRequest(Request<?,?> request, Forwarder forwarder) {
+		System.out.println("Enqueueing: " + request);
 		_instance._requestQueue.add(new RequestWrapper(request, forwarder));
 	}
 

@@ -2,8 +2,7 @@ package de.tum.in.i22.uc.cm.thrift;
 
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TServer.Args;
-import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -26,7 +25,8 @@ public class GenericThriftServer implements Runnable {
 			serverTransport = null;
 			e.printStackTrace();
 		}
-		_server = new TSimpleServer(new Args(serverTransport).processor(processor));
+
+		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
 		_logger.info("ThriftServer listening on port: " + port);
 		_started = true;

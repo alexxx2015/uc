@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.basic.ContainerBasic;
@@ -30,6 +33,7 @@ import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends PipProcessor {
+	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
 	private final BasicInformationFlowModel _ifModel;
 

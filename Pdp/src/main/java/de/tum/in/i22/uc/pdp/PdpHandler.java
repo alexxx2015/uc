@@ -75,9 +75,10 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		if (event == null) {
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
-		}
-		return _lpdp.notifyEvent(new Event(event)).getResponse();
+		while(true);
+//		if (event == null) {
+//			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
+//		}
+//		return _lpdp.notifyEvent(new Event(event)).getResponse();
 	}
 }

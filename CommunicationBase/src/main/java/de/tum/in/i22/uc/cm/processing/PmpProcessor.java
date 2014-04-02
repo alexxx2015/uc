@@ -1,33 +1,31 @@
 package de.tum.in.i22.uc.cm.processing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 
-public abstract class PmpProcessor implements Processor, IAny2Pmp {
-	protected static Logger _logger = LoggerFactory.getLogger(PmpProcessor.class);
+/**
+ * An abstract PMP processor, extending {@link Processor} to take interfaces to
+ * a {@link PipProcessor} and to a {@link PdpProcessor} as an argument.
+ *
+ * @author Florian Kelbert
+ *
+ */
+public abstract class PmpProcessor extends Processor<PipProcessor,PdpProcessor> implements IAny2Pmp {
 
-	private IAny2Pip _pip;
-	private IAny2Pdp _pdp;
-	private boolean _initialized = false;
-
-	@Override
-	public void init(IAny2Pip pip, IAny2Pdp pdp) {
-		if (!_initialized) {
-			_initialized = true;
-			_pip = pip;
-			_pdp = pdp;
-		}
-	}
-
+	/**
+	 * Returns the PDP associated with this PMP.
+	 * @return
+	 */
 	public IAny2Pdp getPdp() {
-		return _pdp;
+		return _iface2;
 	}
 
+	/**
+	 * Returns the PIP associated with this PMP.
+	 * @return
+	 */
 	public IAny2Pip getPip() {
-		return _pip;
+		return _iface1;
 	}
 }

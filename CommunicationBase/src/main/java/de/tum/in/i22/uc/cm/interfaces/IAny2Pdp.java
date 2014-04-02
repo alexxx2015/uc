@@ -10,15 +10,12 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
 
-
-
 /**
- * Incoming interface. Other modules use this interface to invoke operations
- * on PDP.
+ * Interface defining methods to be invoked on a PDP.
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pdp extends IAny2Generic<IAny2Pip,IAny2Pmp>  {
+public interface IAny2Pdp {
 
 	/*
 	 * From PEP

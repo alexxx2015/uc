@@ -11,15 +11,12 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
-
-
 /**
- * Incoming interface. Other modules use this interface to invoke operations
- * on PDP.
+ * Interface defining methods to be invoked on a PIP.
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pip extends IAny2Generic<IAny2Pdp, IAny2Pmp> {
+public interface IAny2Pip {
 	/*
 	 * From PEP
 	 */
