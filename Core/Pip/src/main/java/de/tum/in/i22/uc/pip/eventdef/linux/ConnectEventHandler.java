@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
+import de.tum.in.i22.uc.cm.client.TcpConnector;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -10,6 +11,7 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -96,9 +98,8 @@ public class ConnectEventHandler extends BaseEventHandler {
 				else {
 					// server is remote.
 
-					//TODO: restore settings
-				//					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-//							new TcpConnector(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
+					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
+							new TcpConnector<?>(remoteIP, Settings.getInstance().getPipListenerPort()));
 				}
 
 				// assign the remote name
