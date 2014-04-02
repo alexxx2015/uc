@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>UsageControlSystem</groupId>
+		<artifactId>UCParent</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>Tests</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationManager</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>Pip</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>Pmp</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>Pdp</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.16</version>
+			<configuration>
+				<includes>
+					<include>**/AllTests.class</include>
+				</includes>
+			</configuration>
+		</plugin>
+	</plugins>
+	</build>
+	
+
+</project>
