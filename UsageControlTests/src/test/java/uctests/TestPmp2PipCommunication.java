@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import testutil.DummyMessageGen;
+import de.tum.in.i22.uc.cm.basic.DataBasic;
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -30,7 +30,7 @@ public class TestPmp2PipCommunication {
 
 	@Test
 	public void testInitialRepresentation() throws Exception {
-		IData data = DummyMessageGen.createData();
+		IData data = new DataBasic("x");
 		IStatus status = _pip.initialRepresentation(new NameBasic("X"), Collections.singleton(data));
 		_logger.debug("Received status: " + status);
 

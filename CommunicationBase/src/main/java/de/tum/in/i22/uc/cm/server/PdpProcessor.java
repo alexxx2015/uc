@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.processing;
+package de.tum.in.i22.uc.cm.server;
 
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;

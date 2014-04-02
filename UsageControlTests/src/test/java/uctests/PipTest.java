@@ -1,5 +1,6 @@
 package uctests;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
@@ -81,7 +81,7 @@ public class PipTest {
 
 	@Test
 	public void testNotifyActualEvent() {
-		IEvent event = DummyMessageGen.createEvent();
+		IEvent event = new EventBasic("x", Collections.EMPTY_MAP);
 		IStatus status = _pip.notifyActualEvent(event);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.processing;
+package de.tum.in.i22.uc.cm.server;
 
 /**
  * A abstract processor. Taking two interfaces to two other processors as an argument.

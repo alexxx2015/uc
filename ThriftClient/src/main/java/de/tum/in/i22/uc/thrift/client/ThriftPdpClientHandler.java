@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.pdp.core.IPdpMechanism;
-import de.tum.in.i22.uc.cm.processing.PdpProcessor;
+import de.tum.in.i22.uc.cm.server.PdpProcessor;
 import de.tum.in.i22.uc.thrift.ThriftTypes;
 
 

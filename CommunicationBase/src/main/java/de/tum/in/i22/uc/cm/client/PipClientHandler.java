@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.cm.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 /**
  * This class represents the client side of a remote {@link PipProcessor}.

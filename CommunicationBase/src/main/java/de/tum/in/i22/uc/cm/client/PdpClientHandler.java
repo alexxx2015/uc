@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.cm.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.processing.PdpProcessor;
+import de.tum.in.i22.uc.cm.server.PdpProcessor;
 
 /**
  * This class represents the client side of a remote {@link PdpProcessor}.

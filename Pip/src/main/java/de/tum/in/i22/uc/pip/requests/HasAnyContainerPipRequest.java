@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.pip.requests;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class HasAnyContainerPipRequest extends PipRequest<Boolean> {
 

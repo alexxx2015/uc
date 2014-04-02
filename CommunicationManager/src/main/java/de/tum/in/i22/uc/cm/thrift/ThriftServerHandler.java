@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.cm.thrift;
 
 import de.tum.in.i22.uc.cm.in.RequestHandler;
-import de.tum.in.i22.uc.cm.processing.IForwarder;
-import de.tum.in.i22.uc.cm.processing.Request;
+import de.tum.in.i22.uc.cm.server.IForwarder;
+import de.tum.in.i22.uc.cm.server.Request;
 
 /**
  * A generic Thrift server handler, implementing functionalities

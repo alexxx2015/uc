@@ -6,8 +6,8 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.processing.IForwarder;
-import de.tum.in.i22.uc.cm.processing.Request;
+import de.tum.in.i22.uc.cm.server.IForwarder;
+import de.tum.in.i22.uc.cm.server.Request;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 
 /**

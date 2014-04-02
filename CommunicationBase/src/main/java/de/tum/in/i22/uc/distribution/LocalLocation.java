@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.distribution;
 
 import java.util.Objects;
 
+import de.tum.in.i22.uc.distribution.IPLocation.ELocation;
+
 public class LocalLocation extends Location {
 	public LocalLocation() {
 		super(ELocation.LOCAL);

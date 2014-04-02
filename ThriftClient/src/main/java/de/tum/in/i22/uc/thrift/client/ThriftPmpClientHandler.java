@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.client.PmpClientHandler;
-import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.server.PmpProcessor;
 
 
 /**

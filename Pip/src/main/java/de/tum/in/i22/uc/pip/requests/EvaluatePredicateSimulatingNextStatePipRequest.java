@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pip.requests;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class EvaluatePredicateSimulatingNextStatePipRequest extends PipRequest<Boolean> {
 

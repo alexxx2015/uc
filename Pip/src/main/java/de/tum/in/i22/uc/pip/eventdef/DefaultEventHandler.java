@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.eventdef;
 
-import testutil.DummyMessageGen;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
@@ -12,6 +13,6 @@ public class DefaultEventHandler extends BaseEventHandler {
 
 	@Override
 	public IStatus execute() {
-		return DummyMessageGen.createOkStatus();
+		return new StatusBasic(EStatus.OKAY);
 	}
 }

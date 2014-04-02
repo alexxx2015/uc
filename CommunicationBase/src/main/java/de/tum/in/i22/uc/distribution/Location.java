@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.distribution;
 
+import de.tum.in.i22.uc.distribution.IPLocation.ELocation;
+
 public abstract class Location {
 	private final ELocation _location;
 

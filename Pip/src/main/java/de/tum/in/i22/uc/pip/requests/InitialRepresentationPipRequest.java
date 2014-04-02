@@ -5,7 +5,7 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class InitialRepresentationPipRequest extends PipRequest<IStatus> {
 	private IName name;

@@ -1,6 +1,7 @@
 package uctests;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import testutil.DummyMessageGen;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.ConditionBasic;
@@ -99,7 +99,7 @@ public class PdpTest {
 
 	@Test
 	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
-		IEvent event = DummyMessageGen.createActualEvent();
+		IEvent event = new EventBasic("x", Collections.EMPTY_MAP);
 
 		IResponse response = _pdp.notifyEventSync(event);
 
