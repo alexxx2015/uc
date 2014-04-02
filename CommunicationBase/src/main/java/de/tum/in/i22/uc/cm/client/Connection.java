@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.client;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import org.slf4j.Logger;

@@ -16,10 +16,16 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftTypes;
 
 
 /**
+ * The client side of a remote Thrift {@link PipProcessor} server.
+ *
+ * Create a instance of this class, connect it
+ * (using {@link PipClientHandler#connect()}) and
+ * do calls on a remote {@link PipProcessor}.
  *
  * @author Florian Kelbert
  *
@@ -27,16 +33,16 @@ import de.tum.in.i22.uc.thrift.ThriftTypes;
 public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPipClientHandler.class);
 
+	/**
+	 * Creates a {@link ThriftPipClientHandler} that will be
+	 * connected (upon calling {@link PipClientHandler#connect()})
+	 * the the specified thrift server on the specified address/port.
+	 *
+	 * @param address the address of the remote point
+	 * @param port the port of the remote point
+	 */
 	public ThriftPipClientHandler(String address, int port) {
 		super(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
-
-		// TODO: Connection is never closed
-
-		try {
-			connect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

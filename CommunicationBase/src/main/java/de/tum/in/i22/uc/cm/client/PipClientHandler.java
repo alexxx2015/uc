@@ -6,24 +6,35 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 /**
+ * This class represents the client side of a remote {@link PipProcessor}.
+ *
+ * This class operates on a {@link Connector} object that will be used to
+ * connect to the remote {@link PipProcessor}.
  *
  * @author Florian Kelbert
  *
  */
-public abstract class PipClientHandler<Handle> extends PipProcessor implements IConnectable {
+public abstract class PipClientHandler<HandleType> extends PipProcessor implements IConnectable<HandleType> {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipClientHandler.class);
 
-	private final Connector<Handle> _connector;
+	private final Connector<HandleType> _connector;
 
-	protected Handle _handle;
+	protected HandleType _handle;
 
-	public PipClientHandler(Connector<Handle> connector) {
+	/**
+	 * Creates a new {@link PipClientHandler} that will connect to a
+	 * remote {@link PipProcessor} by using the specified connector.
+	 *
+	 * @param connector the connector that will be used to connect to the remote {@link PipProcessor}.
+	 */
+	public PipClientHandler(Connector<HandleType> connector) {
 		_connector = connector;
 	}
 
 	@Override
-	public final void connect() throws Exception {
+	public final HandleType connect() throws Exception {
 		_handle = _connector.connect();
+		return _handle;
 	}
 
 	@Override

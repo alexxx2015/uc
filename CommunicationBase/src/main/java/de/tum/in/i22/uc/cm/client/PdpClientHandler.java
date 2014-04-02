@@ -6,24 +6,35 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 /**
+ * This class represents the client side of a remote {@link PdpProcessor}.
+ *
+ * This class operates on a {@link Connector} object that will be used to
+ * connect to the remote {@link PdpProcessor}.
  *
  * @author Florian Kelbert
  *
  */
-public abstract class PdpClientHandler<Handle> extends PdpProcessor implements IConnectable {
+public abstract class PdpClientHandler<HandleType> extends PdpProcessor implements IConnectable<HandleType> {
 	protected static final Logger _logger = LoggerFactory.getLogger(PdpClientHandler.class);
 
-	private final Connector<Handle> _connector;
+	private final Connector<HandleType> _connector;
 
-	protected Handle _handle;
+	protected HandleType _handle;
 
-	public PdpClientHandler(Connector<Handle> connector) {
+	/**
+	 * Creates a new {@link PdpClientHandler} that will connect to a
+	 * remote {@link PdpProcessor} by using the specified connector.
+	 *
+	 * @param connector the connector that will be used to connect to the remote {@link PdpProcessor}.
+	 */
+	public PdpClientHandler(Connector<HandleType> connector) {
 		_connector = connector;
 	}
 
 	@Override
-	public final void connect() throws Exception {
+	public final HandleType connect() throws Exception {
 		_handle = _connector.connect();
+		return _handle;
 	}
 
 	@Override
