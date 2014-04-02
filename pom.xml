@@ -7,17 +7,12 @@
 	<artifactId>UCParent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
-	<name>UsageControlSystem parent project</name>
 
 	<modules>
-		<module>CommunicationBase</module>
-		<module>ThriftDefinitions</module>
-		<module>ThriftClient</module>
-		<module>Pdp</module>
-		<module>Pip</module>
-		<module>Pmp</module>
-		<module>CommunicationManager</module>
-		<module>UsageControlTests</module>
+		<module>Communication</module>
+		<module>Core</module>
+		<module>Templates</module>
+		<module>Tests</module>
 	</modules>
 
 	<properties>
