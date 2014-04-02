@@ -18,8 +18,8 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
 
-public class TAny2PdpServerHandler extends ThriftServerHandler implements TAny2Pdp.Iface {
-	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpServerHandler.class);
+public class TAny2PdpThriftProcessor extends ThriftServerHandler implements TAny2Pdp.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2PdpThriftProcessor.class);
 
 	@Override
 	public Response notifyEventSync(Event e) throws TException {

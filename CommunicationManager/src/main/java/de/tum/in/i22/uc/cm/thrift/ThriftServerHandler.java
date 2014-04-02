@@ -1,17 +1,32 @@
 package de.tum.in.i22.uc.cm.thrift;
 
-import de.tum.in.i22.uc.cm.in.Forwarder;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
+import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.Request;
 
-public abstract class ThriftServerHandler implements Forwarder {
+/**
+ * A generic Thrift server handler, implementing functionalities
+ * to be used by concrete subclasses.
+ *
+ * @author Florian Kelbert
+ *
+ */
+abstract class ThriftServerHandler implements IForwarder {
 
 	protected final RequestHandler _requestHandler;
 
-	public ThriftServerHandler() {
+	ThriftServerHandler() {
 		_requestHandler = RequestHandler.getInstance();
 	}
 
+	/**
+	 * Waits for the specified request to be processed.
+	 * Once the corresponding response is ready, execution
+	 * continues and the request's response is returned.
+	 *
+	 * @param request the request for whose processing/response is waited for.
+	 * @return the response corresponding to the request.
+	 */
 	protected <T> T waitForResponse(Request<T,?> request) {
 		T result = null;
 

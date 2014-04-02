@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +11,11 @@ import de.tum.i22.in.uc.thrift.types.TAny2Pip;
 import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.in.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.cm.thrift.GenericThriftServer;
-import de.tum.in.i22.uc.cm.thrift.TAny2AnyServerHandler;
-import de.tum.in.i22.uc.cm.thrift.TAny2PdpServerHandler;
-import de.tum.in.i22.uc.cm.thrift.TAny2PipServerHandler;
-import de.tum.in.i22.uc.cm.thrift.TAny2PmpServerHandler;
+import de.tum.in.i22.uc.cm.thrift.ThriftServer;
+import de.tum.in.i22.uc.cm.thrift.TAny2AnyThriftProcessor;
+import de.tum.in.i22.uc.cm.thrift.TAny2PdpThriftProcessor;
+import de.tum.in.i22.uc.cm.thrift.TAny2PipThriftProcessor;
+import de.tum.in.i22.uc.cm.thrift.TAny2PmpThriftProcessor;
 
 public class Controller {
 
@@ -22,10 +23,10 @@ public class Controller {
 
 	private static Settings _settings;
 
-	private static GenericThriftServer _pdpServer;
-	private static GenericThriftServer _pipServer;
-	private static GenericThriftServer _pmpServer;
-	private static GenericThriftServer _anyServer;
+	private static ThriftServer _pdpServer;
+	private static ThriftServer _pipServer;
+	private static ThriftServer _pmpServer;
+	private static ThriftServer _anyServer;
 
 	public static void main(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
@@ -43,48 +44,69 @@ public class Controller {
 		new Thread(RequestHandler.getInstance()).start();
 
 		startListeners();
-
-
-		// EventHandler thread loops forever, this stops the main thread,
-		// otherwise the app will be closed
-		Object lock = new Object();
-		synchronized (lock) {
-			try {
-				lock.wait();
-			} catch (InterruptedException e) {
-				_logger.error("EventHandler thread interrupted.", e);
-			}
-		}
 	}
 
 
 	private static void startListeners() {
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = new GenericThriftServer(
-								_settings.getPdpListenerPort(),
-								new TAny2Pdp.Processor<TAny2PdpServerHandler>(new TAny2PdpServerHandler()));
-			new Thread(_pdpServer).start();
+			try {
+				_pdpServer = new ThriftServer(
+									_settings.getPdpListenerPort(),
+									new TAny2Pdp.Processor<TAny2PdpThriftProcessor>(new TAny2PdpThriftProcessor()));
+			} catch (TTransportException e) {
+				_logger.warn("Unable to start PDP server: " + e);
+				_pdpServer = null;
+			}
+
+			if (_pdpServer != null) {
+				new Thread(_pdpServer).start();
+			}
 		}
 
+
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = new GenericThriftServer(
-								_settings.getPipListenerPort(),
-								new TAny2Pip.Processor<TAny2PipServerHandler>(new TAny2PipServerHandler()));
-			new Thread(_pipServer).start();
+			try {
+				_pipServer = new ThriftServer(
+									_settings.getPipListenerPort(),
+									new TAny2Pip.Processor<TAny2PipThriftProcessor>(new TAny2PipThriftProcessor()));
+			} catch (TTransportException e) {
+				_logger.warn("Unable to start PIP server: " + e);
+				_pipServer = null;
+			}
+
+			if (_pipServer != null) {
+				new Thread(_pipServer).start();
+			}
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = new GenericThriftServer(
-								_settings.getPmpListenerPort(),
-								new TAny2Pmp.Processor<TAny2PmpServerHandler>(new TAny2PmpServerHandler()));
-			new Thread(_pmpServer).start();
+			try {
+				_pmpServer = new ThriftServer(
+									_settings.getPmpListenerPort(),
+									new TAny2Pmp.Processor<TAny2PmpThriftProcessor>(new TAny2PmpThriftProcessor()));
+			} catch (TTransportException e) {
+				_logger.warn("Unable to start PMP server: " + e);
+				_pmpServer = null;
+			}
+
+			if (_pmpServer != null) {
+				new Thread(_pmpServer).start();
+			}
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = new GenericThriftServer(
-								_settings.getAnyListenerPort(),
-								new TAny2Any.Processor<TAny2AnyServerHandler>(new TAny2AnyServerHandler()));
-			new Thread(_anyServer).start();
+			try {
+				_anyServer = new ThriftServer(
+									_settings.getAnyListenerPort(),
+									new TAny2Any.Processor<TAny2AnyThriftProcessor>(new TAny2AnyThriftProcessor()));
+			} catch (TTransportException e) {
+				_logger.warn("Unable to start Any2Any server: " + e);
+				_anyServer = null;
+			}
+
+			if (_anyServer != null) {
+				new Thread(_anyServer).start();
+			}
 		}
 	}
 

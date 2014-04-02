@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 
@@ -31,7 +32,7 @@ public class NativeHandler {
 
 		if (event != null) {
 			if (isActual) {
-				RequestHandler.getInstance().addRequest(req, new Forwarder() {
+				RequestHandler.getInstance().addRequest(req, new IForwarder() {
 
 					@Override
 					public void forwardResponse(Request<?,?> request, Object response) {
@@ -71,7 +72,7 @@ public class NativeHandler {
 	}
 }
 
-class NativeForwarder implements Forwarder {
+class NativeForwarder implements IForwarder {
 	private final IEvent _event;
 
 	public NativeForwarder(IEvent ev) {

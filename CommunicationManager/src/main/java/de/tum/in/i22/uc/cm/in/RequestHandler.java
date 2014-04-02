@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
@@ -177,7 +178,7 @@ public class RequestHandler implements Runnable {
 
 
 
-	public void addRequest(Request<?,?> request, Forwarder forwarder) {
+	public void addRequest(Request<?,?> request, IForwarder forwarder) {
 		System.out.println("Enqueueing: " + request);
 		_instance._requestQueue.add(new RequestWrapper(request, forwarder));
 	}
@@ -195,7 +196,7 @@ public class RequestHandler implements Runnable {
 			}
 
 			Request<?,?> request = requestWrapper.getRequest();
-			Forwarder forwarder = requestWrapper.getForwarder();
+			IForwarder forwarder = requestWrapper.getForwarder();
 			Object response = null;
 
 			if (request instanceof PdpRequest) {
@@ -218,15 +219,15 @@ public class RequestHandler implements Runnable {
 	}
 
 	class RequestWrapper {
-		private final Forwarder _forwarder;
+		private final IForwarder _forwarder;
 		private final Request<?,?> _request;
 
-		public RequestWrapper(Request<?,?> request, Forwarder forwarder) {
+		public RequestWrapper(Request<?,?> request, IForwarder forwarder) {
 			_forwarder = forwarder;
 			_request = request;
 		}
 
-		public Forwarder getForwarder() {
+		public IForwarder getForwarder() {
 			return _forwarder;
 		}
 

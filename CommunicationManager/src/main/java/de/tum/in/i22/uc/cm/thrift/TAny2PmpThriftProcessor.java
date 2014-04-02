@@ -14,8 +14,8 @@ import de.tum.i22.in.uc.thrift.types.StatusType;
 import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 
 
-public class TAny2PmpServerHandler extends ThriftServerHandler implements TAny2Pmp.Iface {
-	protected static Logger _logger = LoggerFactory.getLogger(TAny2PmpServerHandler.class);
+public class TAny2PmpThriftProcessor extends ThriftServerHandler implements TAny2Pmp.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2PmpThriftProcessor.class);
 
 	@Override
 	public StatusType deployMechanismPmp(String mechanism) throws TException {

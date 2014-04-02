@@ -22,8 +22,8 @@ import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.thrift.ThriftTypeConversion;
 
 
-public class TAny2PipServerHandler extends ThriftServerHandler implements TAny2Pip.Iface {
-	private static Logger _logger = LoggerFactory.getLogger(TAny2PipServerHandler.class);
+public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny2Pip.Iface {
+	private static Logger _logger = LoggerFactory.getLogger(TAny2PipThriftProcessor.class);
 
 	@Override
 	public StatusType initialRepresentation(Name containerName, Set<Data> data)

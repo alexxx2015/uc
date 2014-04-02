@@ -21,8 +21,8 @@ import de.tum.i22.in.uc.thrift.types.StatusType;
 
 import de.tum.i22.in.uc.thrift.types.TAny2Any;
 
-public class TAny2AnyServerHandler extends ThriftServerHandler implements TAny2Any.Iface {
-	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyServerHandler.class);
+public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny2Any.Iface {
+	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyThriftProcessor.class);
 
 	@Override
 	public Response notifyEventSync(Event e) throws TException {
