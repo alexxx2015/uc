@@ -1,1 +1,0 @@
-jar uf PdpCommunicationManager/target/PdpCommunicationManager-1.0-jar-with-dependencies.jar -C PipCore/target/classes/ PipCore/target/classes/de/tum/in/i22/pip/core/eventdef/*
