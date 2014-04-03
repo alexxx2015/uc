@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.pdp.PxpManager;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It
@@ -85,9 +86,8 @@ public class Decision implements java.io.Serializable
             log.debug("Executing [{}]", execAction.getName());
 
             // TODO: Execution should be forwarded to appropriate execution instance!
-//            IPxp pxp = new PXPStub();
-//            executionReturn = pxp.execute(execAction, curEvent);
-          }
+            executionReturn=PxpManager.getInstance().execute(execAction,true);
+           }
 
           if(!executionReturn)
           {
@@ -140,10 +140,8 @@ public class Decision implements java.io.Serializable
       else
       {
         log.debug("Execute asynchronous action [{}]", execAction.getName());
-        // TODO: Execution should be forwarded to appropriate execution instance!
-//        IPxp pxp = new PXPStub();
-//        pxp.execute(execAction, curEvent);
-      }
+        PxpManager.getInstance().execute(execAction,false);
+        }
     }
 
   }

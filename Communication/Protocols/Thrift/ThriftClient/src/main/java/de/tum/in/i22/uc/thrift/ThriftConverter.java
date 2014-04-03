@@ -69,7 +69,7 @@ public final class ThriftConverter {
 			_logger.debug("TPxpSpec was null.");
 			return null;
 		}
-		return new PxpSpec(p.getIp(), p.getPort(), p.getDescription(), p.getId());
+		return new PxpSpec(p.getIp(), p.getPort(), p.getId(),p.getDescription());
 	}
 
 	public static IName fromThrift(TName n) {

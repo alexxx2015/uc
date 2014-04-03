@@ -20,7 +20,7 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * (using {@link PxpClientHandler#connect()}) and
  * do calls on a remote {@link PxpProcessor}.
  *
- * @author Enrico  Lovat
+ * @author Enrico Lovat
  *
  */
 public class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
@@ -39,11 +39,24 @@ public class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	}
 	
 	@Override
-	public IStatus execute(List<IEvent> event) {
+	public IStatus executeSync(List<IEvent> event) {
 		try {
-			return ThriftConverter.fromThrift(_handle.execute(ThriftConverter.toThriftEventList(event)));
+			return ThriftConverter.fromThrift(
+					_handle.executeSync(
+							ThriftConverter.toThriftEventList(
+									event)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public void executeAsync(List<IEvent> event) {
+		try {
+			_handle.executeAsync(ThriftConverter.toThriftEventList(event));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
 }

@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.server.PmpProcessor;
  * (using {@link PmpClientHandler#connect()}) and
  * do calls on a remote {@link PmpProcessor}.
  *
- * @author Florian Kelbert
+ * @author Florian  Kelbert
  *
  */
 public class ThriftPmpClientHandler extends PmpClientHandler<TAny2Pmp.Client> {

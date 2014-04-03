@@ -14,5 +14,6 @@ public interface IAny2Pxp {
 	/*
 	 * From PDP
 	 */
-	public IStatus execute(List<IEvent> event);
+	public IStatus executeSync(List<IEvent> event);
+	public void executeAsync(List<IEvent> event);
 }

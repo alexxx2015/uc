@@ -23,7 +23,7 @@ public class PDPJavaTest
     lpdp = PolicyDecisionPoint.getInstance();
 
     System.out.println("lpdp: " + lpdp);
-    boolean ret=lpdp.deployPolicy("src/test/resources/testTUM.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testTUM.xml");
     System.out.println("Deploying policy returned: " + ret);
 
     log.debug("Deployed Mechanisms: [{}]", lpdp.listDeployedMechanisms());

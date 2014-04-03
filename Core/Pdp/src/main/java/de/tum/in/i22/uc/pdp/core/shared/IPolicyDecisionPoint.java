@@ -1,20 +1,20 @@
 package de.tum.in.i22.uc.pdp.core.shared;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
+import java.util.List;
+import java.util.Map;
 
 public interface IPolicyDecisionPoint {
 	// PDP exported methods
 	public Decision notifyEvent(Event event);
 
-	public boolean deployPolicy(String filename);
+	public boolean deployPolicyURI(String filename);
+
+	public boolean deployPolicyXML(String XMLPolicy);
 
 	public boolean revokePolicy(String policyName);
 
-	public boolean revokePolicy(String policyName, String mechName);
+	public boolean revokeMechanism(String policyName, String mechName);
 
-	public HashMap<String, ArrayList<IPdpMechanism>> listDeployedMechanisms();
+	public Map<String, List<String>> listDeployedMechanisms();
 
 }

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -19,7 +20,6 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
@@ -53,16 +53,23 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			synchronized (PolicyDecisionPoint.class) {
 				if (instance == null){
 					instance = new PolicyDecisionPoint();
-					instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
-
+//					instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
 				}
 			}
 		}
 		return instance;
 	}
 
+	
 	@Override
-	public boolean deployPolicy(String policyFilename) {
+	public boolean deployPolicyXML(String XMLPolicy) {
+		log.error("deployXML not yet supported");
+		return false;
+	}
+
+	
+	@Override
+	public boolean deployPolicyURI(String policyFilename) {
 		if (policyFilename.endsWith(".xml"))
 			return deployXML(policyFilename);
 		log.warn("Unsupported message format of policy!");
@@ -142,7 +149,14 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public boolean revokePolicy(String policyName) {
 		boolean ret = false;
-		for (IPdpMechanism mech : this.policyTable.get(policyName)) {
+		if (this.policyTable==null){
+			log.error("Empty Policy Table. impossible to revoke policy");
+			return false;
+		}
+		List<IPdpMechanism> mlist = this.policyTable.get(policyName);
+		if (mlist==null) return false;
+		
+		for (IPdpMechanism mech : mlist) {
 			log.info("Revoking mechanism: {}", mech.getMechanismName());
 			ret = mech.revoke();
 		}
@@ -150,8 +164,12 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public boolean revokePolicy(String policyName, String mechName) {
+	public boolean revokeMechanism(String policyName, String mechName) {
 		boolean ret = false;
+		if (this.policyTable==null){
+			log.error("Empty Policy Table. impossible to revoke policy");
+			return false;
+		}
 		ArrayList<IPdpMechanism> mechanisms = this.policyTable.get(policyName);
 		if (mechanisms != null) {
 			IPdpMechanism mech = null;
@@ -206,14 +224,18 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<IPdpMechanism>> listDeployedMechanisms() {
-		// ArrayList<Mechanism> mechanismList = new ArrayList<Mechanism>();
-		// for (String policyName : this.policyTable.keySet()) {
-		// mechanismList.add(policyName+this.policyTable.get(policyName));
-		// }
-		//
-		// return mechanismList;
-		return this.policyTable;
+	public Map<String, List<String>> listDeployedMechanisms() {
+		 Map<String, List<String>> map = new HashMap<String, List<String>>();
+		 
+		 for (String policyName : this.policyTable.keySet()) {
+			 List<String> mechanismList = new ArrayList<String>();
+			 for (IPdpMechanism m: this.policyTable.get(policyName)){
+				 mechanismList.add(m.getMechanismName());
+			 }
+			 map.put(policyName, mechanismList);
+		 }
+		
+		 return map;
 	}
 
 	private String readFile(String file) throws IOException {

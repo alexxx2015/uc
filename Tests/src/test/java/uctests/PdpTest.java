@@ -65,7 +65,6 @@ public class PdpTest {
 		_pmp = new PmpHandler();
 
 		startPepClient();
-		startPmpClient();
 	}
 
 	@Test
@@ -161,32 +160,6 @@ public class PdpTest {
 		_threadPep.start();
 
 		return _threadPep;
-	}
-
-	private static Thread startPmpClient() {
-		_threadPmp = new Thread(new Runnable() {
-			@Override
-			public void run() {
-
-				for (int i = 0; i < NUM_OF_CALLS_FROM_PMP; i++) {
-					//TODO invoke some methods
-					// deploy mechanism
-					IMechanism m = createMechanism();
-					IStatus status = _pdp.deployMechanism(m);
-					_logger.debug("Received status: " + status);
-
-					try {
-						Thread.sleep(30);
-					} catch (InterruptedException e) {
-						_logger.error(e.toString());
-					}
-				}
-			}
-		});
-
-		_threadPmp.start();
-
-		return _threadPmp;
 	}
 
 	private static IMechanism createMechanism() {

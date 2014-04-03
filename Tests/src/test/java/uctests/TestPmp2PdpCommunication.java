@@ -33,37 +33,6 @@ public class TestPmp2PdpCommunication {
 		_pdp = new PdpHandler();
 	}
 
-	@Test
-	public void testDeployMechanism() throws Exception {
-
-		// deploy mechanism
-		IMechanism m = createMechanism();
-		IStatus status = _pdp.deployMechanism(m);
-		_logger.debug("Received status: " + status);
-
-
-		// TODO Implementation is missing
-//		Assert.assertNotNull(status);
-	}
-
-	@Test
-	public void testDeployTwoMechanisms() throws Exception {
-		// deploy mechanism
-		IMechanism m = createMechanism();
-		IStatus status = _pdp.deployMechanism(m);
-		_logger.debug("Received status: " + status);
-
-		// TODO Implementation is missing
-//		Assert.assertNotNull(status);
-
-		m = createMechanism();
-
-		status = _pdp.deployMechanism(m);
-		_logger.debug("Received status: " + status);
-
-		// TODO Implementation is missing
-//		Assert.assertNotNull(status);
-	}
 
 	@Test
 	public void testExportMechanism() throws Exception {
@@ -79,7 +48,7 @@ public class TestPmp2PdpCommunication {
 	public void testRevokeMechanism() throws Exception {
 
 		// revoke
-		IStatus status = _pdp.revokeMechanism("param1");
+		IStatus status = _pdp.revokePolicy("param1");
 		_logger.debug("Received status: " + status);
 
 		// check if status is not null
@@ -87,19 +56,6 @@ public class TestPmp2PdpCommunication {
 //		Assert.assertNotNull(status);
 	}
 
-	@Test
-	public void testMultipleInvocations() throws Exception {
-		for (int i = 0; i < 100; i++) {
-			double r = Math.random();
-			if (r <= 0.2) {
-				testDeployMechanism();
-			} else if (r <= 0.66) {
-				testExportMechanism();
-			} else {
-				testRevokeMechanism();
-			}
-		}
-	}
 
 	private static IMechanism createMechanism() {
 		MechanismBasic m = new MechanismBasic();
