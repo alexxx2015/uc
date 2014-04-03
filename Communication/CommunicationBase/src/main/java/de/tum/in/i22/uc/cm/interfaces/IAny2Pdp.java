@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -19,18 +19,18 @@ public interface IAny2Pdp {
 	/*
 	 * From PEP
 	 */
-	public IResponse notifyEventAsync(IEvent event);
+	public void notifyEventAsync(IEvent event);
 	public IResponse notifyEventSync(IEvent event);
 
 	/*
 	 * From PMP
 	 */
-	public IStatus deployMechanism(IMechanism mechanism);
 	public IMechanism exportMechanism(String par);
-	public IStatus revokeMechanism(String policyName);
+	public IStatus revokePolicy(String policyName);
 	public IStatus revokeMechanism(String policyName, String mechName);
-	public IStatus deployPolicy(String policyFilePath);
-	public Map<String, ArrayList<IMechanism>> listMechanisms();
+	public IStatus deployPolicyURI(String policyFilePath);
+	public IStatus deployPolicyXML(String XMLPolicy);
+	public Map<String, List<String>> listMechanisms();
 
 	/*
 	 * From PXP

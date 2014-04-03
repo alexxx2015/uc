@@ -16,7 +16,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
@@ -52,9 +51,9 @@ public class PxpManager {
 		return _instance;
 	}
 
-	public boolean execute(IPdpExecuteAction execAction) {
-		_logger.info("[PXPStub] Executing {} with parameters: {}",
-				execAction.getName(), execAction.getParams());
+	public boolean execute(IPdpExecuteAction execAction, boolean synchronous) {
+		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
+				(synchronous==true?"":"a"),execAction.getName(), execAction.getParams());
 
 		String pxpId = execAction.getId();
 		IStatus res = null;
@@ -63,8 +62,7 @@ public class PxpManager {
 				IPxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
-					PxpClientHandler<?> client = new ThriftClientHandlerFactory().createPxpClientHandler(
-							new IPLocation("localhost", Settings.getInstance().getPxpListenerPort()));
+					PxpClientHandler<?> client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
 
 					try {
 						client.connect();
@@ -72,21 +70,21 @@ public class PxpManager {
 						throw new RuntimeException(e.getMessage(), e);
 					}
 
-					Param<?> olderThan = execAction
-							.getParameterForName("OLDERTHAN");
-					Param<?> unit = execAction.getParameterForName("UNIT");
-
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
 					Map<String, String> par = new HashMap<String, String>();
 
+					for (Param p : execAction.getParams()){
+						par.put(p.getName(),p.getValue().toString());
+					}
+					
 					// Parameter olderthan is added as a string parameter
 					// instead of short
-					par.put(unit.getValue().toString(),
-							(String) olderThan.getValue());
 
-					listOfEventsToBeExecuted.add(new EventBasic("delmr", par));
+					listOfEventsToBeExecuted.add(new EventBasic(execAction.getName(), par));
 
-					res = client.execute(listOfEventsToBeExecuted);
+					if (synchronous==true) res = client.executeSync(listOfEventsToBeExecuted);
+					else client.executeAsync(listOfEventsToBeExecuted);
+					
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

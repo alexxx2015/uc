@@ -675,20 +675,30 @@ public class MyUCCockpit {
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
 
-						Map<String, ArrayList<IMechanism>> ar = RequestHandler.getInstance().getPDP().listMechanisms();
-						Iterator<String> arIt = ar.keySet().iterator();
-						while (arIt.hasNext()) {
-							String policyName = arIt.next();
-							ArrayList<IMechanism> mechanism = ar.get(policyName);
-							Iterator<IMechanism> mechIt = mechanism.iterator();
-							while(mechIt.hasNext()){
-								IMechanism m = mechIt.next();
-								((DefaultTableModel) deployedPolicyTable
-										.getModel()).addRow(new Object[] {
-										policyName,
-										m.getMechanismName() });
-							}
-						}
+
+						
+						//FIXME: Outdated code (list mechanisms -> list of strings)
+//						listmechanisms now returns a list of strings, not of mechanisms. the following code is outdated
+						
+//						Map<String, ArrayList<IMechanism>> ar = RequestHandler.getInstance().getPDP().listMechanisms();
+//						Iterator<String> arIt = ar.keySet().iterator();
+//						while (arIt.hasNext()) {
+//							String policyName = arIt.next();
+//							ArrayList<IMechanism> mechanism = ar.get(policyName);
+//							Iterator<IMechanism> mechIt = mechanism.iterator();
+//							while(mechIt.hasNext()){
+//								IMechanism m = mechIt.next();
+//								((DefaultTableModel) deployedPolicyTable
+//										.getModel()).addRow(new Object[] {
+//										policyName,
+//										m.getMechanismName() });
+//							}
+//						}
+
+					
+					
+					
+					
 					}
 				}
 			}
@@ -808,7 +818,7 @@ public class MyUCCockpit {
 	}
 
 	public void deployPolicy(String policyFile) {
-		RequestHandler.getInstance().getPDP().deployPolicy(policyFile);
+		RequestHandler.getInstance().getPDP().deployPolicyURI(policyFile);
 	}
 
 	public class Runpdp implements Runnable{

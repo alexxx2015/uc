@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 
 public class OperatorTest
@@ -42,7 +41,7 @@ public class OperatorTest
   public void testBefore()
   {
     log.info("testBefore");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testBefore.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testBefore.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret==true);
 
@@ -65,7 +64,7 @@ public class OperatorTest
   public void testWithin()
   {
     log.info("testWithin");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testWithin.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testWithin.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret==true);
 
@@ -88,7 +87,7 @@ public class OperatorTest
   public void testDuring()
   {
     log.info("testDuring");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testDuring.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testDuring.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret);
 
@@ -112,7 +111,7 @@ public class OperatorTest
   public void testAlways()
   {
     log.info("testAlways");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testAlways.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testAlways.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret);
 
@@ -135,7 +134,7 @@ public class OperatorTest
   public void testRepMax()
   {
     log.info("testRepMax");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testRepmax.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testRepmax.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret);
 
@@ -159,7 +158,7 @@ public class OperatorTest
   public void testRepLim()
   {
     log.info("testRepLim");
-    boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testReplim.xml");
+    boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testReplim.xml");
     log.debug("Deploying test-policy returned: {}", ret);
     assert(ret);
 
@@ -199,7 +198,7 @@ public class OperatorTest
     try
     {
       log.info("testSince");
-      boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testSince.xml");
+      boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testSince.xml");
       log.debug("Deploying test-policy returned: {}", ret);
       assertTrue("Deploying test-policy failed", ret);
 
@@ -288,7 +287,7 @@ public class OperatorTest
     try
     {
       log.info("testRepSince");
-      boolean ret=lpdp.deployPolicy("src/test/resources/testPolicies/testRepSince.xml");
+      boolean ret=lpdp.deployPolicyURI("src/test/resources/testPolicies/testRepSince.xml");
       log.debug("Deploying test-policy returned: {}", ret);
       assertTrue("Deploying test-policy failed", ret);
 

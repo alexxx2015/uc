@@ -7,7 +7,7 @@
            
         name="testPolicy">
         
-  <preventiveMechanism name="prev2">
+  <preventiveMechanism name="testPxp">
     <description>...</description>
     <timestep amount="10" unit="SECONDS" />
     <trigger action="t" tryEvent="true">
@@ -16,14 +16,19 @@
     <condition><true/>
     </condition>
     <authorizationAction name="default" start="true" fallback="fallback">
-      <allow/>
+      <allow>
+    	<executeSyncAction name="myfunc1" processor="pxp" id="myPxp1">
+      		<a:parameter name="OLDERTHAN" value="3" />
+      		<a:parameter name="UNIT" value="seconds" />
+    	</executeSyncAction>
+    </allow>
     </authorizationAction>
-    <executeAsyncAction name="delmr" processor="myPxp">
-      <parameter name="OLDERTHAN" value=3 />
-      <parameter name="UNIT" value="seconds" />
-    </executeAsyncAction>
+   	<executeAsyncAction name="myfunc2" processor="pxp" id="myPxp2">
+  		<a:parameter name="OLDERTHAN" value="3" />
+   		<a:parameter name="UNIT" value="seconds" />
+   	</executeAsyncAction>
   </preventiveMechanism>        
-
+<!-- 
   <preventiveMechanism name="testTUM">
     <description>...</description>
     <timestep amount="10" unit="SECONDS" />
@@ -82,7 +87,7 @@
       <parameter name="file" value="abc.xml" />
     </executeAsyncAction>
   </preventiveMechanism>
-  
+  -->
   <preventiveMechanism name="prev2">
     <description>...</description>
     <timestep amount="10" unit="SECONDS" />

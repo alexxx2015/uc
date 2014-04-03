@@ -22,20 +22,19 @@ service TAny2Pdp  {
 	///////////////	
 	// PMP 2 PDP //
 	///////////////	
-	Types.TStatus deployMechanism(1: string mechanism),
 	
 	//TODO: This method returns the mechanism together with the current evaluation status.
 	//      i.e. in case of cardinalities, the value of the counter so far
-	// IMechanism exportMechanism(1:string par);
+	//IMechanism exportMechanism(1:string par);
 	
-	//Overloading is not supported
-	Types.TStatus revokeMechanism1 (1: string policyName),
-	Types.TStatus revokeMechanism2 (1: string policyName, 2: string mechName),
+	Types.TStatus revokePolicy (1: string policyName),
+	Types.TStatus revokeMechanism (1: string policyName, 2: string mechName),
 
 	// This method would make sense to be remotely invoked only if the path was a URL,
 	// but this is not supported yet. Still, for completeness, we expose this method too.
-	Types.TStatus deployPolicy (1: string policyFilePath),
-	
+	Types.TStatus deployPolicyURI (1: string policyFilePath),
+	Types.TStatus deployPolicyXML (1: string XMLPolicy),
+		
 	//HashMap<String, ArrayList<IPdpMechanism>> listMechanisms();
 	map<string,list<string>> listMechanisms()
 }
@@ -114,19 +113,18 @@ service TAny2Any  {
 	///////////////	
 	// PMP 2 PDP //
 	///////////////	
-	Types.TStatus deployMechanism(1: string mechanism),
 	
 	//TODO: This method returns the mechanism together with the current evaluation status.
 	//      i.e. in case of cardinalities, the value of the counter so far
-	// IMechanism exportMechanism(1:string par);
+	//IMechanism exportMechanism(1:string par);
 	
-	//Overloading is not supported
-	Types.TStatus revokeMechanism1 (1: string policyName),
-	Types.TStatus revokeMechanism2 (1: string policyName, 2: string mechName),
+	Types.TStatus revokePolicy (1: string policyName),
+	Types.TStatus revokeMechanism (1: string policyName, 2: string mechName),
 
 	// This method would make sense to be remotely invoked only if the path was a URL,
 	// but this is not supported yet. Still, for completeness, we expose this method too.
-	Types.TStatus deployPolicy (1: string policyFilePath),
+	Types.TStatus deployPolicyURI (1: string policyFilePath),
+	Types.TStatus deployPolicyXML (1: string XMLPolicy),
 	
 	//HashMap<String, ArrayList<IPdpMechanism>> listMechanisms();
 	map<string,list<string>> listMechanisms()
@@ -170,29 +168,6 @@ service TAny2Any  {
 	///////////////	
 	// PMP 2 PMP //
     ///////////////	
-	// Not sure yet what the interface between PMPs will be,
-    // so for the time being we duplicate the policy management methods
-    // relative to pdps. Names take Pmp as suffix to be distignuishable in TAny2any.
-    // notice that these methods need to be cahnged, as soon as we know what the 
-    // interface between 2 PMPs will look like
-
-	Types.TStatus deployMechanismPmp(1: string mechanism),
-
-	//Overloading is not supported
-	Types.TStatus revokeMechanism1Pmp (1: string policyName),
-	Types.TStatus revokeMechanism2Pmp (1: string policyName, 2: string mechName),
-
-	// This method would make sense to be remotely invoked only if the path was a URL,
-	// but this is not supported yet. Still, for completeness, we expose this method too.
-	Types.TStatus deployPolicyPmp (1: string policyFilePath),
-
-	//TODO: This method returns the mechanism together with the current evaluation status.
-	//      i.e. in case of cardinalities, the value of the counter so far
-	// IMechanism exportMechanism(1:string par);
-	
-	//HashMap<String, ArrayList<IPdpMechanism>> listMechanisms();
-	map<string, list<string>> listMechanismsPmp()
-	
 	
 }
 
@@ -207,7 +182,12 @@ service TAny2Pxp{
     ///////////////	
 	// PDP 2 PXP //
     ///////////////	
-	Types.TStatus execute(1: list<Types.TEvent> eventList)
+	Types.TStatus executeSync(1: list<Types.TEvent> eventList)
+
+	// use of oneway functions in thrift MAY lead to problems (cf. Tobias).
+	// if we observe unexpected behaviors we can roll back to the sync version and discard the response.
+	oneway void executeAsync(1: list<Types.TEvent> eventList)
+
 }
 
 

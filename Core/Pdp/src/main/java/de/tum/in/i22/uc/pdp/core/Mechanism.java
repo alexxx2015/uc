@@ -282,7 +282,7 @@ public void setTimestepSize(long timestepSize)
             else
             {
               log.debug("Execute asynchronous action [{}]", execAction.getName());
-              PxpManager.getInstance().execute(execAction);
+              PxpManager.getInstance().execute(execAction,false);
             }
           }
         }

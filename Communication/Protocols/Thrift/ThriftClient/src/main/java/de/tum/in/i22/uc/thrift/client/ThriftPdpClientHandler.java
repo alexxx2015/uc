@@ -1,7 +1,8 @@
 package de.tum.in.i22.uc.thrift.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -25,10 +26,13 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * Create a instance of this class, connect it
  * (using {@link PdpClientHandler#connect()}) and
  * do calls on a remote {@link PdpProcessor}.
- *
+ * 
+ * The goal of this class is usually to convert types from/to thrift types,
+ * invoke the respective dual method "on the other side", and convert back the result
+ * 
  * Use {@link ThriftClientHandlerFactory} to get an instance.
  *
- * @author Florian Kelbert
+ * @author Florian Kelbert & Enrico Lovat
  *
  */
 class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
@@ -61,55 +65,96 @@ class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	}
 
 	@Override
-	public IStatus deployMechanism(IMechanism mechanism) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IMechanism exportMechanism(String par) {
-		// TODO Auto-generated method stub
+		// TODO Method not yet supported
+		_logger.error("exportMechanism method not yet supported");
 		return null;
 	}
 
 	@Override
-	public IStatus revokeMechanism(String policyName) {
-		// TODO Auto-generated method stub
+	public IStatus revokePolicy(String policyName) {
+		_logger.debug("revoke policy (Pdp client)");
+		try {
+			return ThriftConverter.fromThrift(_handle.revokePolicy(policyName));
+		} catch (TException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
-		// TODO Auto-generated method stub
+		_logger.debug("revoke mechanism (Pdp client)");
+		try {
+			return ThriftConverter.fromThrift(_handle.revokeMechanism(policyName, mechName));
+		} catch (TException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
-	public IStatus deployPolicy(String policyFilePath) {
-		// TODO Auto-generated method stub
+	public IStatus deployPolicyURI(String policyFilePath) {
+		_logger.debug("deploy policy (Pdp client)");
+		try {
+			return ThriftConverter.fromThrift(_handle.deployPolicyURI(policyFilePath));
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
-	public HashMap<String, ArrayList<IMechanism>> listMechanisms() {
-		// TODO Auto-generated method stub
+	public IStatus deployPolicyXML(String XMLPolicy) {
+		_logger.debug("deploy policy (Pdp client)");
+		try {
+			return ThriftConverter.fromThrift(_handle.deployPolicyXML(XMLPolicy));
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanisms() {
+		_logger.debug("listMechanisms (Pdp client)");
+		try {
+			return _handle.listMechanisms();
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Collections.emptyMap();
 	}
 
 	@Override
 	public boolean registerPxp(IPxpSpec pxp) {
-		// TODO Auto-generated method stub
-		return false;
+		_logger.debug("registerPxp (Pdp client)");
+		boolean b =false;
+		try {
+			b=_handle.registerPxp(ThriftConverter.toThrift(pxp));
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return b;
 	}
 
 	@Override
-	public IResponse notifyEventAsync(IEvent event) {
-		// TODO Auto-generated method stub
-		return null;
+	public void notifyEventAsync(IEvent event) {
+		_logger.debug("notify event async (Pdp client)");
+		try{
+			_handle.notifyEventAsync(ThriftConverter.toThrift(event));
+		} catch (TException e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
+		_logger.debug("notify event sync (Pdp client)");
 		try {
 			return ThriftConverter.fromThrift(
 					_handle.
