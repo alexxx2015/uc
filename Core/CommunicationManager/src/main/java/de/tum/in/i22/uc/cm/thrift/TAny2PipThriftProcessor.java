@@ -6,11 +6,11 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.Container;
-import de.tum.i22.in.uc.thrift.types.Data;
-import de.tum.i22.in.uc.thrift.types.Event;
-import de.tum.i22.in.uc.thrift.types.Name;
-import de.tum.i22.in.uc.thrift.types.StatusType;
+import de.tum.i22.in.uc.thrift.types.TContainer;
+import de.tum.i22.in.uc.thrift.types.TData;
+import de.tum.i22.in.uc.thrift.types.TEvent;
+import de.tum.i22.in.uc.thrift.types.TName;
+import de.tum.i22.in.uc.thrift.types.TStatus;
 import de.tum.i22.in.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
@@ -27,6 +27,7 @@ import de.tum.in.i22.uc.pip.requests.NotifyActualEventPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
+import de.tum.in.i22.uc.thrift.server.ThriftServerHandler;
 
 
 public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny2Pip.Iface {
@@ -39,7 +40,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType initialRepresentation(Name containerName, Set<Data> data) throws TException {
+	public TStatus initialRepresentation(TName containerName, Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: initialRepresentation");
 
 		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(
@@ -50,7 +51,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean hasAllData(Set<Data> data) throws TException {
+	public boolean hasAllData(Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: hasAllData");
 
 		HasAllData request = new HasAllData(ThriftConverter.fromThriftDataSet(data));
@@ -59,7 +60,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean hasAnyData(Set<Data> data) throws TException {
+	public boolean hasAnyData(Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: hasAnyData");
 
 		HasAnyDataPipRequest request = new HasAnyDataPipRequest(ThriftConverter.fromThriftDataSet(data));
@@ -68,7 +69,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<Container> container) throws TException {
+	public boolean hasAllContainers(Set<TContainer> container) throws TException {
 		_logger.debug("TAny2Pip: hasAllContainers");
 
 		HasAllContainersPipRequest request =
@@ -78,7 +79,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<Container> container) throws TException {
+	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
 		_logger.debug("TAny2Pip: hasAnyContainer");
 
 		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(ThriftConverter.fromThriftContainerSet(container));
@@ -87,7 +88,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType notifyActualEvent(Event event) throws TException {
+	public TStatus notifyActualEvent(TEvent event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
 
 		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftConverter.fromThrift(event));
@@ -96,7 +97,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(Event event, String predicate) throws TException {
+	public boolean evaluatePredicateSimulatingNextState(TEvent event, String predicate) throws TException {
 		_logger.debug("TAny2Pip: evaluatePredicateSimulatingNextState");
 
 		EvaluatePredicateSimulatingNextStatePipRequest request =
@@ -115,7 +116,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public Set<Container> getContainerForData(Data data) throws TException {
+	public Set<TContainer> getContainerForData(TData data) throws TException {
 		_logger.debug("TAny2Pip: getContainerforData");
 
 		GetContainersForDataPipRequest request = new GetContainersForDataPipRequest(ThriftConverter.fromThrift(data));
@@ -124,7 +125,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public Set<Data> getDataInContainer(Container container) throws TException {
+	public Set<TData> getDataInContainer(TContainer container) throws TException {
 		_logger.debug("TAny2Pip: getDataInContainer");
 
 		GetDataInContainerPipRequest request = new GetDataInContainerPipRequest(ThriftConverter.fromThrift(container));
@@ -133,7 +134,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType startSimulation() throws TException {
+	public TStatus startSimulation() throws TException {
 		_logger.debug("TAny2Pip: startsimulation");
 
 		StartSimulationPipRequest request = new StartSimulationPipRequest();
@@ -142,7 +143,7 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType stopSimulation() throws TException {
+	public TStatus stopSimulation() throws TException {
 		_logger.debug("TAny2Pip: stopSimulation");
 
 		StopSimulationPipRequest request = new StopSimulationPipRequest();

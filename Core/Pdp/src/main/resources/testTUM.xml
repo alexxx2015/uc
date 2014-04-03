@@ -18,6 +18,10 @@
     <authorizationAction name="default" start="true" fallback="fallback">
       <allow/>
     </authorizationAction>
+    <executeAsyncAction name="delmr" processor="myPxp">
+      <parameter name="OLDERTHAN" value=3 />
+      <parameter name="UNIT" value="seconds" />
+    </executeAsyncAction>
   </preventiveMechanism>        
 
   <preventiveMechanism name="testTUM">

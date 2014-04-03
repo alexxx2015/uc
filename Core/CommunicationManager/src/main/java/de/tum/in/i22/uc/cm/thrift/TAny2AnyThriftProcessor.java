@@ -11,60 +11,61 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.Container;
-import de.tum.i22.in.uc.thrift.types.Data;
-import de.tum.i22.in.uc.thrift.types.Event;
-import de.tum.i22.in.uc.thrift.types.Name;
-import de.tum.i22.in.uc.thrift.types.Pxp;
-import de.tum.i22.in.uc.thrift.types.Response;
-import de.tum.i22.in.uc.thrift.types.StatusType;
-
 import de.tum.i22.in.uc.thrift.types.TAny2Any;
+import de.tum.i22.in.uc.thrift.types.TContainer;
+import de.tum.i22.in.uc.thrift.types.TData;
+import de.tum.i22.in.uc.thrift.types.TEvent;
+import de.tum.i22.in.uc.thrift.types.TName;
+import de.tum.i22.in.uc.thrift.types.TPxpSpec;
+import de.tum.i22.in.uc.thrift.types.TResponse;
+import de.tum.i22.in.uc.thrift.types.TStatus;
+import de.tum.in.i22.uc.thrift.server.ThriftServerHandler;
+
 
 public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny2Any.Iface {
 	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyThriftProcessor.class);
 
 	@Override
-	public Response notifyEventSync(Event e) throws TException {
+	public TResponse notifyEventSync(TEvent e) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyEventSync");
-		return new Response(StatusType.ERROR);
+		return new TResponse(TStatus.ERROR);
 	}
 
 	@Override
-	public boolean registerPxp(Pxp pxp) throws TException {
+	public boolean registerPxp(TPxpSpec pxp) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: registerPxp");
 		return false;
 	}
 
 	@Override
-	public StatusType deployMechanism(String mechanism) throws TException {
+	public TStatus deployMechanism(String mechanism) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: deploymech");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism1(String policyName) throws TException {
+	public TStatus revokeMechanism1(String policyName) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: revokemech1");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism2(String policyName, String mechName)
+	public TStatus revokeMechanism2(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: revokemech2");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType deployPolicy(String policyFilePath) throws TException {
+	public TStatus deployPolicy(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: deployPolicy");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
@@ -79,58 +80,58 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType initialRepresentation(Container container, Data data)
+	public TStatus initialRepresentation(TContainer container, TData data)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: initrep");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public boolean hasAllData(Set<Data> data) throws TException {
+	public boolean hasAllData(Set<TData> data) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAllData");
 		return false;
 	}
 
 	@Override
-	public boolean hasAnyData(Set<Data> data) throws TException {
+	public boolean hasAnyData(Set<TData> data) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAnyData");
 		return false;
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<Container> container) throws TException {
+	public boolean hasAllContainers(Set<TContainer> container) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAllContainers");
 		return false;
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<Container> container) throws TException {
+	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAnycontainers");
 		return false;
 	}
 
 	@Override
-	public StatusType notifyActualEvent(Event event) throws TException {
+	public TStatus notifyActualEvent(TEvent event) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyActualEvent");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType notifyDataTransfer(Name containerName, Set<Data> data)
+	public TStatus notifyDataTransfer(TName containerName, Set<TData> data)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyDatatransfer");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(Event event,
+	public boolean evaluatePredicateSimulatingNextState(TEvent event,
 			String predicate) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: evaluatePredicateSimulatingNextState");
@@ -146,31 +147,31 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public Set<Container> getContainerForData(Data data) throws TException {
+	public Set<TContainer> getContainerForData(TData data) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: getContainerforData");
-		return new HashSet<Container>();
+		return new HashSet<TContainer>();
 	}
 
 	@Override
-	public Set<Data> getDataInContainer(Container container) throws TException {
+	public Set<TData> getDataInContainer(TContainer container) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: getDataInContainer");
-		return new HashSet<Data>();
+		return new HashSet<TData>();
 	}
 
 	@Override
-	public StatusType startSimulation() throws TException {
+	public TStatus startSimulation() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: startsimulation");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType stopSimulation() throws TException {
+	public TStatus stopSimulation() throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: stopSimulation");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
@@ -181,32 +182,32 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public StatusType deployMechanismPmp(String mechanism) throws TException {
+	public TStatus deployMechanismPmp(String mechanism) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: deployMechPmp");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism1Pmp(String policyName) throws TException {
+	public TStatus revokeMechanism1Pmp(String policyName) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: revokeMech1Pmp");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType revokeMechanism2Pmp(String policyName, String mechName)
+	public TStatus revokeMechanism2Pmp(String policyName, String mechName)
 			throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: revokeMech2Pmp");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
-	public StatusType deployPolicyPmp(String policyFilePath) throws TException {
+	public TStatus deployPolicyPmp(String policyFilePath) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: deployPolicyPmp");
-		return StatusType.ERROR;
+		return TStatus.ERROR;
 	}
 
 	@Override
@@ -221,7 +222,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public void notifyEventAsync(Event e) throws TException {
+	public void notifyEventAsync(TEvent e) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyEventAsync");
 

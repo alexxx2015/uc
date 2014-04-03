@@ -10,7 +10,7 @@ namespace java de.tum.i22.in.uc.thrift.types
 typedef i64 long
 typedef i32 int
 
-enum StatusType {
+enum TStatus {
 	OKAY = 1,
 	ERROR = 2,
 	ALLOW = 3,
@@ -19,19 +19,19 @@ enum StatusType {
 	ERROR_EVENT_PARAMETER_MISSING = 6
 }
 
-enum DetectionMode {
+enum TDetectionMode {
 	MISUSE = 1,
 	ANOMALY = 2,
 	COMBINED = 3
 }
 
-enum ConflictResolution {
+enum TConflictResolution {
 	OVERWRITE = 1,
 	IGNORE_UPDATES = 2, //currently not used
 	KEEP_ALL = 3  // currently not used
 }
 
-struct Event {
+struct TEvent {
 	1: required string name,
 	2: map<string,string> parameters,
 	3: long timeStamp,
@@ -39,29 +39,29 @@ struct Event {
 	5: optional string comment	
 }
 
-struct Response {
-	1: StatusType status,
-	2: optional list<Event> executeEvents,
-	3: optional Event modifiedEvents,
+struct TResponse {
+	1: TStatus status,
+	2: optional list<TEvent> executeEvents,
+	3: optional TEvent modifiedEvents,
 	4: optional string comment
 }
 
-struct Pxp{
+struct TPxpSpec{
 	1: string ip,
 	2: int port,
 	3: string description,
 	4: string id
 }
 
-struct Container {
+struct TContainer {
 	1: string classValue,
 	2: required string id
 }
 
-struct Data {
+struct TData {
 	1: required string id
 }
 
-struct Name {
+struct TName {
 	1: required string name
 }
