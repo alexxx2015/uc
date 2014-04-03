@@ -5,10 +5,13 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -72,9 +75,8 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// client is remote
 
 			// create a 'proxy' container and name it.
-			//TODO: restore settings
-			//			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-//					new TcpConnector(remoteIP, PipSettings.getInstance().getPipRemotePortNum()));
+			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
+					new IPLocation(remoteIP, Settings.getInstance().getPipListenerPort()));
 			basicIfModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]

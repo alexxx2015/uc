@@ -158,7 +158,7 @@ public class LinuxEvents {
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 			if (c instanceof RemoteSocketContainer) {
 				distributedPipManager.notifyDataTransfer(
-						((RemoteSocketContainer) c).getConnector(),
+						((RemoteSocketContainer) c).getLocation(),
 						((RemoteSocketContainer) c).getSocketName(), data);
 
 			}

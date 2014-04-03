@@ -1,12 +1,12 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
-import java.util.Collection;
+import java.util.Set;
 
-import de.tum.in.i22.uc.cm.client.Connector;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.cm.distribution.pip.IDistributedPipStrategy;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -48,11 +48,11 @@ public class DistributedPipManager {
 		return _strategy.getStrategy();
 	}
 
-	public IStatus notifyDataTransfer(Connector connector, IName containerName, Collection<IData> data) {
-		return _strategy.notifyDataTransfer(connector, containerName, data);
+	public IStatus notifyDataTransfer(Location location, IName containerName, Set<IData> data) {
+		return _strategy.initialRepresentation(location, containerName, data);
 	}
 
-	public IStatus notifyActualEvent(Connector connector, IEvent event) {
-		return _strategy.notifyActualEvent(connector, event);
+	public IStatus notifyActualEvent(Location location, IEvent event) {
+		return _strategy.notifyActualEvent(location, event);
 	}
 }

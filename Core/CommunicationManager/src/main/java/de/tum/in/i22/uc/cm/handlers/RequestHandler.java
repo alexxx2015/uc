@@ -10,6 +10,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.PipClientHandler;
+import de.tum.in.i22.uc.cm.client.PmpClientHandler;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
@@ -27,10 +30,7 @@ import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.PmpRequest;
-import de.tum.in.i22.uc.thrift.client.ThriftPdpClientHandler;
-import de.tum.in.i22.uc.thrift.client.ThriftPipClientHandler;
-import de.tum.in.i22.uc.thrift.client.ThriftPmpClientHandler;
-
+import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
 
 public class RequestHandler implements Runnable {
@@ -51,6 +51,8 @@ public class RequestHandler implements Runnable {
 
 	private final Set<Integer> _portsUsed;
 
+	private final ThriftClientHandlerFactory thriftClientFactory;
+
 	public static RequestHandler getInstance() {
 		/*
 		 * This implementation may seem odd, overengineered, redundant, or all of it.
@@ -70,6 +72,7 @@ public class RequestHandler implements Runnable {
 		_requestQueue = new LinkedBlockingQueue<>();
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
+		thriftClientFactory = new ThriftClientHandlerFactory();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
 		PDP = createPdpHandler();
@@ -88,7 +91,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					ThriftPdpClientHandler pdp = new ThriftPdpClientHandler(iploc.getHost(), iploc.getPort());
+					PdpClientHandler<?> pdp = thriftClientFactory.createPdpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -114,7 +117,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					ThriftPmpClientHandler pmp = new ThriftPmpClientHandler(iploc.getHost(), iploc.getPort());
+					PmpClientHandler<?> pmp = thriftClientFactory.createPmpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -139,7 +142,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					ThriftPipClientHandler pip = new ThriftPipClientHandler(iploc.getHost(), iploc.getPort());;
+					PipClientHandler<?> pip = thriftClientFactory.createPipClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pip.connect();
 					} catch (Exception e) {

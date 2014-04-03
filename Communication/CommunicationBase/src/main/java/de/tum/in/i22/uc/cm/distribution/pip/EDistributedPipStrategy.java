@@ -9,9 +9,13 @@ public enum EDistributedPipStrategy {
 	private static final String STRATEGY_PUSH = "push";
 
 	public static EDistributedPipStrategy from(String s) {
+		if (s == null) {
+			return null;
+		}
+
 		switch (s.toLowerCase()) {
-		case STRATEGY_PUSH:
-			return PUSH;
+			case STRATEGY_PUSH:
+				return PUSH;
 		}
 
 		throw new RuntimeException("No such distributed pip strategy: " + s);
