@@ -6,4 +6,5 @@ public interface ClientHandlerFactory {
 	PdpClientHandler<?> createPdpClientHandler(Location location);
 	PipClientHandler<?> createPipClientHandler(Location location);
 	PmpClientHandler<?> createPmpClientHandler(Location location);
+	PxpClientHandler<?> createPxpClientHandler(Location location);
 }

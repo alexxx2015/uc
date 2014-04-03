@@ -10,6 +10,7 @@ import de.tum.i22.in.uc.thrift.types.TAny2Pxp;
 import de.tum.in.i22.uc.cm.client.PxpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 
 
@@ -23,7 +24,7 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * @author Enrico  Lovat
  *
  */
-public class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
+class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPxpClientHandler.class);
 
 	/**
@@ -34,10 +35,14 @@ public class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	public ThriftPxpClientHandler(String address, int port) {
+	ThriftPxpClientHandler(String address, int port) {
 		super(new ThriftConnector<>(address, port, TAny2Pxp.Client.class));
 	}
-	
+
+	ThriftPxpClientHandler(IPLocation location) {
+		this(location.getHost(), location.getPort());
+	}
+
 	@Override
 	public IStatus execute(List<IEvent> event) {
 		try {
