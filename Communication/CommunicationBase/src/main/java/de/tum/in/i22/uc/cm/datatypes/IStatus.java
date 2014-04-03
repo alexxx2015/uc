@@ -4,5 +4,5 @@ public interface IStatus {
 	public EStatus getEStatus();
 	public String getErrorMessage();
 	public void setErrorMessage(String error);
-	boolean isSameStatus(IStatus status);
+	boolean isSameStatus(EStatus status);
 }

@@ -538,7 +538,7 @@ public class MyUCCockpit {
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-						req.getPIP().notifyActualEvent(initEvent);
+						req.getPIP().update(initEvent);
 					}
 				}
 			}
@@ -567,7 +567,7 @@ public class MyUCCockpit {
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-						req.getPIP().notifyActualEvent(initEvent);
+						req.getPIP().update(initEvent);
 					}
 				}
 			}

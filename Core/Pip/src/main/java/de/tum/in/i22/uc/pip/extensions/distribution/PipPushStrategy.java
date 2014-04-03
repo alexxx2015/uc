@@ -51,7 +51,7 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	public IStatus initialRepresentation(Location location, IName containerName, Set<IData> data) {
 		_logger.debug("initialRepresentation(" + location + "," + containerName + "," + data + ")");
 
-		PipClientHandler<?> pip = _clientHandlerFactory.createPipClientHandler(location);
+		PipClientHandler pip = _clientHandlerFactory.createPipClientHandler(location);
 		try {
 			pip.connect();
 		} catch (Exception e) {

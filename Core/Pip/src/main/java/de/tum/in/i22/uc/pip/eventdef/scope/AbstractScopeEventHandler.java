@@ -131,8 +131,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 					_logger.info("Opening scope "
 							+ scope.getHumanReadableName());
 					IStatus is = openScope(scope);
-					if (!is.isSameStatus(_messageFactory
-							.createStatus(EStatus.OKAY))) {
+					if (!is.isSameStatus(EStatus.OKAY)) {
 						finalStatus = _messageFactory
 								.createStatus(EStatus.ERROR);
 						errorString = errorString + "\n" + is.getErrorMessage();
@@ -157,8 +156,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 					_logger.info("Closing scope "
 							+ scope.getHumanReadableName());
 					IStatus is = closeScope(scope);
-					if (!is.isSameStatus(_messageFactory
-							.createStatus(EStatus.OKAY))) {
+					if (!is.isSameStatus(EStatus.OKAY)) {
 						finalStatus = _messageFactory
 								.createStatus(EStatus.ERROR);
 						errorString = errorString + "\n" + is.getErrorMessage();
@@ -167,7 +165,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 			}
 		}
 
-		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR)))
+		if (finalStatus.isSameStatus(EStatus.ERROR))
 			finalStatus.setErrorMessage(errorString);
 
 		return finalStatus;

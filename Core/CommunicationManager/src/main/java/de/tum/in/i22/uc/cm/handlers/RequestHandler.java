@@ -91,7 +91,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PdpClientHandler<?> pdp = thriftClientFactory.createPdpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
+					PdpClientHandler pdp = thriftClientFactory.createPdpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -117,7 +117,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PmpClientHandler<?> pmp = thriftClientFactory.createPmpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
+					PmpClientHandler pmp = thriftClientFactory.createPmpClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -142,7 +142,7 @@ public class RequestHandler implements Runnable {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PipClientHandler<?> pip = thriftClientFactory.createPipClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
+					PipClientHandler pip = thriftClientFactory.createPipClientHandler(new IPLocation(iploc.getHost(), iploc.getPort()));
 					try {
 						pip.connect();
 					} catch (Exception e) {

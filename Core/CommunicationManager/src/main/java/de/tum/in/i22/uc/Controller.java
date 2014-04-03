@@ -32,8 +32,8 @@ public class Controller {
 		CommandLine cl = CommandLineOptions.init(args);
 
 		// load properties
-		if (cl.hasOption(CommandLineOptions.OPTION_PDP_PROPS)) {
-			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PDP_PROPS));
+		if (cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
+			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
 		}
 		startUC();
 

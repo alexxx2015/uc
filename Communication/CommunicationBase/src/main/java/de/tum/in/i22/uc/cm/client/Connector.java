@@ -12,10 +12,14 @@ package de.tum.in.i22.uc.cm.client;
  * @author Florian Kelbert
  *
  */
-public abstract class Connector<HandleType> implements IConnectable<HandleType> {
+public abstract class Connector<HandleType> {
 	@Override
 	public abstract int hashCode();
 
 	@Override
 	public abstract boolean equals(Object obj);
+
+	public abstract HandleType connect() throws Exception;
+
+	public abstract void disconnect();
 }

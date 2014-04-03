@@ -5,18 +5,14 @@ package de.tum.in.i22.uc.cm.client;
  *
  * @author Florian Kelbert
  *
- * @param <HandleType> the type of the handle for the connection
  */
-public interface IConnectable<HandleType> {
+public interface IConnectable {
 	/**
-	 * Connects this object to the remote point and
-	 * returns a handle of type <HandleType> that refers
-	 * to the connection that has been established.
+	 * Connects this object to the remote point
 	 *
-	 * @return a handle for the connection
 	 * @throws Exception if the connection cannot be established
 	 */
-	public HandleType connect() throws Exception;
+	public void connect() throws Exception;
 
 	/**
 	 * Disconnects.

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.i22.in.uc.thrift.types.TAny2Pdp;
+import de.tum.in.i22.uc.cm.client.IConnectable;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
@@ -23,20 +24,23 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
 /**
  * The client side of a remote Thrift {@link PdpProcessor} server.
  *
- * Create a instance of this class, connect it
- * (using {@link PdpClientHandler#connect()}) and
- * do calls on a remote {@link PdpProcessor}.
- * 
+ * Create a instance of this class, connects it and
+ * does calls on a remote {@link PdpProcessor}.
+ *
  * The goal of this class is usually to convert types from/to thrift types,
  * invoke the respective dual method "on the other side", and convert back the result
- * 
+ *
  * Use {@link ThriftClientHandlerFactory} to get an instance.
  *
  * @author Florian Kelbert & Enrico Lovat
  *
  */
-class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
+class ThriftPdpClientHandler extends PdpClientHandler {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPdpClientHandler.class);
+
+	private TAny2Pdp.Client _handle;
+
+	private final ThriftConnector<TAny2Pdp.Client> _connector;
 
 	/**
 	 * Creates a {@link ThriftPdpClientHandler} that will be
@@ -49,7 +53,7 @@ class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	 * @param port the port of the remote point
 	 */
 	ThriftPdpClientHandler(String address, int port) {
-		super(new ThriftConnector<>(address, port, TAny2Pdp.Client.class));
+		_connector = new ThriftConnector<>(address, port, TAny2Pdp.Client.class);
 	}
 
 	/**
@@ -62,6 +66,17 @@ class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	 */
 	ThriftPdpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
+	}
+
+	@Override
+	public void connect() throws Exception {
+		_handle = _connector.connect();
+	}
+
+	@Override
+	public void disconnect() {
+		_connector.disconnect();
+		_handle = null;
 	}
 
 	@Override

@@ -21,8 +21,12 @@ import de.tum.in.i22.uc.cm.server.PmpProcessor;
  * @author Florian Kelbert
  *
  */
-class ThriftPmpClientHandler extends PmpClientHandler<TAny2Pmp.Client> {
+class ThriftPmpClientHandler extends PmpClientHandler {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPmpClientHandler.class);
+
+	private TAny2Pmp.Client _handle;
+
+	private final ThriftConnector<TAny2Pmp.Client> _connector;
 
 	/**
 	 * Creates a {@link ThriftPmpClientHandler} that will be
@@ -35,7 +39,7 @@ class ThriftPmpClientHandler extends PmpClientHandler<TAny2Pmp.Client> {
 	 * @param port the port of the remote point
 	 */
 	ThriftPmpClientHandler(String address, int port) {
-		super(new ThriftConnector<>(address, port, TAny2Pmp.Client.class));
+		_connector = new ThriftConnector<>(address, port, TAny2Pmp.Client.class);
 	}
 
 	/**
@@ -49,4 +53,17 @@ class ThriftPmpClientHandler extends PmpClientHandler<TAny2Pmp.Client> {
 	ThriftPmpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
 	}
+
+	@Override
+	public void connect() throws Exception {
+		_handle = _connector.connect();
+	}
+
+	@Override
+	public void disconnect() {
+		_connector.disconnect();
+		_handle = null;
+
+	}
+
 }

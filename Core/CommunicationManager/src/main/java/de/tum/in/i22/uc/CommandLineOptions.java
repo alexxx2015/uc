@@ -13,7 +13,7 @@ abstract class CommandLineOptions {
 	public final static Options options = createCommandLineOptions();
 
 	final static String OPTION_HELP = "h";
-	final static String OPTION_PDP_PROPS = "pp";
+	final static String OPTION_PROPFILE = "pp";
 
 
 	private static Options createCommandLineOptions() {
@@ -22,7 +22,7 @@ abstract class CommandLineOptions {
 		OptionBuilder.withLongOpt("pdp-properties");
 		OptionBuilder.hasArg(true);
 		OptionBuilder.withDescription("the file containing the PDP's properties");
-		Option pdpProps = OptionBuilder.create(OPTION_PDP_PROPS);
+		Option pdpProps = OptionBuilder.create(OPTION_PROPFILE);
 
 		OptionBuilder.withLongOpt("help");
 		OptionBuilder.withDescription("shows this help");

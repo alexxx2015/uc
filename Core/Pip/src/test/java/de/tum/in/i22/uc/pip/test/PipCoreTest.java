@@ -60,7 +60,7 @@ public class PipCoreTest {
 	@Test
 	public void testReadFileActionMissingParameters() {
 		IEvent event = createWindowsEvent("ReadFile", null);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -71,7 +71,7 @@ public class PipCoreTest {
 		map.put("PID", "8293");
 		map.put("ProcessName", "notepad.exe");
 		IEvent event = createWindowsEvent("ReadFile", map);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -82,7 +82,7 @@ public class PipCoreTest {
 		map.put("PID", "1293");
 		map.put("ProcessName", "notepad.exe");
 		IEvent event = createWindowsEvent("WriteFile", map);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -95,7 +95,7 @@ public class PipCoreTest {
         map.put("ChildProcessName", "java");
         map.put("ParentProcessName", "eclipse");
         IEvent event = createWindowsEvent("CreateProcess", map);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -104,7 +104,7 @@ public class PipCoreTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("PID_Child", "8101");
         IEvent event = createWindowsEvent("KillProcess", map);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 
@@ -114,7 +114,7 @@ public class PipCoreTest {
 		map.put("PID", "8101");
 		map.put("ProcessName", "thunderbird");
         IEvent event = createWindowsEvent("SetClipboardData", map);
-		IStatus status = _pipHandler.notifyActualEvent(event);
+		IStatus status = _pipHandler.update(event);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
 

@@ -64,7 +64,7 @@ service TAny2Pip  {
     bool hasAnyData(1: set<Types.TData> data),
     bool hasAllContainers(1: set<Types.TContainer> container),
     bool hasAnyContainer(1: set<Types.TContainer> container),
-    Types.TStatus notifyActualEvent(1:Types.TEvent event)
+    Types.TStatus update(1:Types.TEvent event)
 	
 	
 	///////////////	
@@ -74,7 +74,7 @@ service TAny2Pip  {
 	bool evaluatePredicatCurrentState(1:string predicate),
 	set<Types.TContainer> getContainerForData(1:Types.TData data),
 	set<Types.TData> getDataInContainer(1:Types.TContainer container),
-	//Already present in  PIP2PIP, with same behavior --> Status notifyActualEvent(1:Types.Event event),
+	//Already present in  PIP2PIP, with same behavior --> Status update(1:Types.Event event),
 	Types.TStatus startSimulation(),
 	Types.TStatus stopSimulation(),
 	bool isSimulating()
@@ -149,7 +149,7 @@ service TAny2Any  {
     bool hasAnyData(1: set<Types.TData> data),
     bool hasAllContainers(1: set<Types.TContainer> container),
     bool hasAnyContainer(1: set<Types.TContainer> container),
-    Types.TStatus notifyActualEvent(1:Types.TEvent event),
+    Types.TStatus update(1:Types.TEvent event),
     Types.TStatus notifyDataTransfer(1:Types.TName containerName, 2:set<Types.TData> data)
 	
 	
@@ -160,7 +160,7 @@ service TAny2Any  {
 	bool evaluatePredicatCurrentState(1:string predicate),
 	set<Types.TContainer> getContainerForData(1:Types.TData data),
 	set<Types.TData> getDataInContainer(1:Types.TContainer container),
-	//Already present in  PIP2PIP, with same behavior --> Status notifyActualEvent(1:Types.TEvent event),
+	//Already present in  PIP2PIP, with same behavior --> Status update(1:Types.TEvent event),
 	Types.TStatus startSimulation(),
 	Types.TStatus stopSimulation(),
 	bool isSimulating()

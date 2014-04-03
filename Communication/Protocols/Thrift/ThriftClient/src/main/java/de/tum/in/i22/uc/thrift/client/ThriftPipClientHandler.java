@@ -24,17 +24,20 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
 /**
  * The client side of a remote Thrift {@link PipProcessor} server.
  *
- * Create a instance of this class, connect it
- * (using {@link PipClientHandler#connect()}) and
- * do calls on a remote {@link PipProcessor}.
+ * Create a instance of this class, connects it
+ * and does calls on a remote {@link PipProcessor}.
  *
  * Use {@link ThriftClientHandlerFactory} to get an instance.
  *
  * @author Florian Kelbert
  *
  */
-class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
+class ThriftPipClientHandler extends PipClientHandler {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPipClientHandler.class);
+
+	private TAny2Pip.Client _handle;
+
+	private final ThriftConnector<TAny2Pip.Client> _connector;
 
 	/**
 	 * Creates a {@link ThriftPipClientHandler} that will be
@@ -47,7 +50,7 @@ class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	 * @param port the port of the remote point
 	 */
 	ThriftPipClientHandler(String address, int port) {
-		super(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
+		_connector = new ThriftConnector<>(address, port, TAny2Pip.Client.class);
 	}
 
 	/**
@@ -60,6 +63,17 @@ class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	 */
 	ThriftPipClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
+	}
+
+	@Override
+	public void connect() throws Exception {
+		_handle = _connector.connect();
+	}
+
+	@Override
+	public void disconnect() {
+		_connector.disconnect();
+		_handle = null;
 	}
 
 	@Override
@@ -103,9 +117,9 @@ class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 
 
 	@Override
-	public IStatus notifyActualEvent(IEvent event) {
+	public IStatus update(IEvent event) {
 		try {
-			return ThriftConverter.fromThrift(_handle.notifyActualEvent(ThriftConverter.toThrift(event)));
+			return ThriftConverter.fromThrift(_handle.update(ThriftConverter.toThrift(event)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

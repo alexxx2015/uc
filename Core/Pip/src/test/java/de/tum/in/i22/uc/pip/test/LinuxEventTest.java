@@ -174,10 +174,10 @@ public class LinuxEventTest {
 		 * Test: Is the connection reflected in PIP (i.e. alias between the two)?
 		 */
 		_ifModelManager.reset();
-		_pipHandler.notifyActualEvent(eventClientSocket);
-		_pipHandler.notifyActualEvent(eventServerSocket);
-		_pipHandler.notifyActualEvent(eventClientConnect);
-		_pipHandler.notifyActualEvent(eventServerAccept);
+		_pipHandler.update(eventClientSocket);
+		_pipHandler.update(eventServerSocket);
+		_pipHandler.update(eventClientConnect);
+		_pipHandler.update(eventServerAccept);
 
 		clientCont = _ifModel.getContainer(FiledescrName.create(serverHost, Integer.valueOf(clientPid), 3));
 		serverCont = _ifModel.getContainer(FiledescrName.create(serverHost, Integer.valueOf(serverPid), 5));
@@ -192,10 +192,10 @@ public class LinuxEventTest {
 		 * Test: Is the connection reflected in PIP (i.e. alias between the two)?
 		 */
 		_ifModelManager.reset();
-		_pipHandler.notifyActualEvent(eventClientSocket);
-		_pipHandler.notifyActualEvent(eventServerSocket);
-		_pipHandler.notifyActualEvent(eventServerAccept);
-		_pipHandler.notifyActualEvent(eventClientConnect);
+		_pipHandler.update(eventClientSocket);
+		_pipHandler.update(eventServerSocket);
+		_pipHandler.update(eventServerAccept);
+		_pipHandler.update(eventClientConnect);
 
 		clientCont = _ifModel.getContainer(FiledescrName.create(serverHost, Integer.valueOf(clientPid), 3));
 		serverCont = _ifModel.getContainer(FiledescrName.create(serverHost, Integer.valueOf(serverPid), 5));
@@ -269,15 +269,15 @@ public class LinuxEventTest {
 		 * Test: Is server processes' data propagated to client process?
 		 */
 		_ifModelManager.reset();
-		_pipHandler.notifyActualEvent(eventServerExecve);
-		_pipHandler.notifyActualEvent(eventClientExecve);
+		_pipHandler.update(eventServerExecve);
+		_pipHandler.update(eventClientExecve);
 		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));
-		_pipHandler.notifyActualEvent(eventClientSocket);
-		_pipHandler.notifyActualEvent(eventServerSocket);
-		_pipHandler.notifyActualEvent(eventServerAccept);
-		_pipHandler.notifyActualEvent(eventServerWrite);
-		_pipHandler.notifyActualEvent(eventClientConnect);
-		_pipHandler.notifyActualEvent(eventClientRead);
+		_pipHandler.update(eventClientSocket);
+		_pipHandler.update(eventServerSocket);
+		_pipHandler.update(eventServerAccept);
+		_pipHandler.update(eventServerWrite);
+		_pipHandler.update(eventClientConnect);
+		_pipHandler.update(eventClientRead);
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, clientPid));
 		Assert.assertEquals(true, _ifModel.getDataInContainer(procCont).contains(data));
@@ -289,15 +289,15 @@ public class LinuxEventTest {
 		 * Test: Is client processes' data propagated to server process?
 		 */
 		_ifModelManager.reset();
-		_pipHandler.notifyActualEvent(eventServerExecve);
-		_pipHandler.notifyActualEvent(eventClientExecve);
+		_pipHandler.update(eventServerExecve);
+		_pipHandler.update(eventClientExecve);
 		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, clientPid)));
-		_pipHandler.notifyActualEvent(eventClientSocket);
-		_pipHandler.notifyActualEvent(eventServerSocket);
-		_pipHandler.notifyActualEvent(eventClientConnect);
-		_pipHandler.notifyActualEvent(eventClientWrite);
-		_pipHandler.notifyActualEvent(eventServerAccept);
-		_pipHandler.notifyActualEvent(eventServerRead);
+		_pipHandler.update(eventClientSocket);
+		_pipHandler.update(eventServerSocket);
+		_pipHandler.update(eventClientConnect);
+		_pipHandler.update(eventClientWrite);
+		_pipHandler.update(eventServerAccept);
+		_pipHandler.update(eventServerRead);
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, serverPid));
 		Assert.assertEquals(true, _ifModel.getDataInContainer(procCont).contains(data));

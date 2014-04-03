@@ -56,7 +56,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 		}
 
 
-		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR)))
+		if (finalStatus.isSameStatus(EStatus.ERROR))
 			finalStatus.setErrorMessage(errorString);
 
 		return finalStatus;

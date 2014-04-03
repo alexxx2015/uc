@@ -82,7 +82,7 @@ public class PipTest {
 	@Test
 	public void testNotifyActualEvent() {
 		IEvent event = new EventBasic("x", Collections.EMPTY_MAP);
-		IStatus status = _pip.notifyActualEvent(event);
+		IStatus status = _pip.update(event);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);
 	}

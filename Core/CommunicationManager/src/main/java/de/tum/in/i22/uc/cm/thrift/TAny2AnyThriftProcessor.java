@@ -38,7 +38,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	public TAny2AnyThriftProcessor() {
 		_requestHandler = RequestHandler.getInstance();
 	}
-	
+
 	@Override
 	public TResponse notifyEventSync(TEvent e) throws TException {
 		_logger.debug("TAny2Pdp: notifyEventSync");
@@ -55,17 +55,17 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	public void notifyEventAsync(TEvent e) throws TException {
 
 		//identical to sync version, but discards the response
-		
+
 		_logger.debug("TAny2Pdp: notifyEventAsync");
 
 		IEvent ev = ThriftConverter.fromThrift(e);
 		NotifyEventPdpRequest request = new NotifyEventPdpRequest(ev);
 
 		_requestHandler.addRequest(request, this);
-		
+
 		//do we need this in the async?
 		waitForResponse(request);
-		
+
 	}
 
 
@@ -109,7 +109,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 		_requestHandler.addRequest(request, this);
 		return ThriftConverter.toThrift(waitForResponse(request));
 	}
-	
+
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
@@ -120,7 +120,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 		m.put("mystring", l);
 		return m;
 	}
-	
+
 	@Override
 	public TStatus initialRepresentation(TContainer container, TData data)
 			throws TException {
@@ -158,7 +158,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public TStatus notifyActualEvent(TEvent event) throws TException {
+	public TStatus update(TEvent event) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyActualEvent");
 		return TStatus.ERROR;

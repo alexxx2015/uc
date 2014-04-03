@@ -50,7 +50,7 @@ public interface IAny2Pip {
     /*
      * From PDP & PIP
      */
-	public IStatus notifyActualEvent(IEvent event);
+	public IStatus update(IEvent event);
 
 	/*
 	 * From PMP & PIP

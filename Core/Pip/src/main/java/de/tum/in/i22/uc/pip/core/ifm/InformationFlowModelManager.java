@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;

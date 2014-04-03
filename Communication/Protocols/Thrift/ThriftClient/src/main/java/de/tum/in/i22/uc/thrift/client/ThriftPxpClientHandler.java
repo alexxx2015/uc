@@ -26,8 +26,12 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * @author Enrico  Lovat
  *
  */
-class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
+class ThriftPxpClientHandler extends PxpClientHandler {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPxpClientHandler.class);
+
+	private TAny2Pxp.Client _handle;
+
+	private final ThriftConnector<TAny2Pxp.Client> _connector;
 
 	/**
 	 * Creates a {@link ThriftPxpClientHandler} that will be
@@ -40,7 +44,7 @@ class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	 * @param port the port of the remote point
 	 */
 	ThriftPxpClientHandler(String address, int port) {
-		super(new ThriftConnector<>(address, port, TAny2Pxp.Client.class));
+		_connector = new ThriftConnector<>(address, port, TAny2Pxp.Client.class);
 	}
 
 	/**
@@ -56,6 +60,17 @@ class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	}
 
 	@Override
+	public void connect() throws Exception {
+		_handle = _connector.connect();
+	}
+
+	@Override
+	public void disconnect() {
+		_connector.disconnect();
+		_handle = null;
+	}
+
+	@Override
 	public IStatus executeSync(List<IEvent> event) {
 		try {
 			return ThriftConverter.fromThrift(
@@ -66,7 +81,7 @@ class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public void executeAsync(List<IEvent> event) {
 		try {

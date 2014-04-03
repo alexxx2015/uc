@@ -4,17 +4,17 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 
-public class NotifyActualEventPipRequest extends PipRequest<IStatus> {
+public class UpdatePipRequest extends PipRequest<IStatus> {
 
 	private final IEvent _event;
 
-	public NotifyActualEventPipRequest(IEvent event) {
+	public UpdatePipRequest(IEvent event) {
 		_event = event;
 	}
 
 	@Override
 	public IStatus process(PipProcessor processor) {
-		return processor.notifyActualEvent(_event);
+		return processor.update(_event);
 	}
 
 }

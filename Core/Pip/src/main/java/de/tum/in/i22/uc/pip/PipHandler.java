@@ -57,7 +57,7 @@ public class PipHandler extends PipProcessor {
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
 		// initialize data flow according to settings
-		notifyActualEvent(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
+		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public IStatus notifyActualEvent(IEvent event) {
+	public IStatus update(IEvent event) {
 		String action = event.getPrefixedName();
 		IEventHandler actionHandler = null;
 		IStatus result;
@@ -205,7 +205,7 @@ public class PipHandler extends PipProcessor {
 		if (_ifModelManager.startSimulation().getEStatus() == EStatus.OKAY) {
 			_logger.trace("Updating PIP semantics with current event ("
 					+ (event == null ? "null" : event.getPrefixedName()) + ")");
-			notifyActualEvent(event);
+			update(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");
 			res = evaluatePredicateCurrentState(predicate);

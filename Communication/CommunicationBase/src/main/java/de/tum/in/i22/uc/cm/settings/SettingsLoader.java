@@ -9,7 +9,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SettingsLoader {
+public class SettingsLoader {
 	private static final Logger _logger = LoggerFactory.getLogger(SettingsLoader.class);
 
 	protected Properties _props;

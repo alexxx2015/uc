@@ -62,7 +62,7 @@ public class PxpManager {
 				IPxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
-					PxpClientHandler<?> client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
+					PxpClientHandler client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
 
 					try {
 						client.connect();
@@ -76,7 +76,7 @@ public class PxpManager {
 					for (Param p : execAction.getParams()){
 						par.put(p.getName(),p.getValue().toString());
 					}
-					
+
 					// Parameter olderthan is added as a string parameter
 					// instead of short
 
@@ -84,7 +84,7 @@ public class PxpManager {
 
 					if (synchronous==true) res = client.executeSync(listOfEventsToBeExecuted);
 					else client.executeAsync(listOfEventsToBeExecuted);
-					
+
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -95,7 +95,7 @@ public class PxpManager {
 		if (res == null)
 			return false;
 		else
-			return res.isSameStatus(new StatusBasic(EStatus.OKAY));
+			return res.isSameStatus(EStatus.OKAY);
 	}
 
 	public boolean registerPxp(IPxpSpec pxp) {

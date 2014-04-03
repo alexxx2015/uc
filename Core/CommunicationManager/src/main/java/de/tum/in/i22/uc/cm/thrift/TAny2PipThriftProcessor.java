@@ -23,7 +23,7 @@ import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
-import de.tum.in.i22.uc.pip.requests.NotifyActualEventPipRequest;
+import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
@@ -88,10 +88,10 @@ public class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny
 	}
 
 	@Override
-	public TStatus notifyActualEvent(TEvent event) throws TException {
+	public TStatus update(TEvent event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
 
-		NotifyActualEventPipRequest request = new NotifyActualEventPipRequest(ThriftConverter.fromThrift(event));
+		UpdatePipRequest request = new UpdatePipRequest(ThriftConverter.fromThrift(event));
 		_requestHandler.addRequest(request, this);
 		return ThriftConverter.toThrift(waitForResponse(request));
 	}

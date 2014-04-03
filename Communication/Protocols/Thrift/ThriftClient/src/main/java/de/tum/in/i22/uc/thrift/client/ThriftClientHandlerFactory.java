@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 public class ThriftClientHandlerFactory implements ClientHandlerFactory {
 
 	@Override
-	public ThriftPdpClientHandler createPdpClientHandler(Location location) {
+	public PdpClientHandler createPdpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPdpClientHandler((IPLocation) location);
 		}
@@ -20,7 +20,7 @@ public class ThriftClientHandlerFactory implements ClientHandlerFactory {
 	}
 
 	@Override
-	public ThriftPipClientHandler createPipClientHandler(Location location) {
+	public PipClientHandler createPipClientHandler(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPipClientHandler((IPLocation) location);
 		}
@@ -28,7 +28,7 @@ public class ThriftClientHandlerFactory implements ClientHandlerFactory {
 	}
 
 	@Override
-	public ThriftPmpClientHandler createPmpClientHandler(Location location) {
+	public PmpClientHandler createPmpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPmpClientHandler((IPLocation) location);
 		}
@@ -36,7 +36,7 @@ public class ThriftClientHandlerFactory implements ClientHandlerFactory {
 	}
 
 	@Override
-	public ThriftPxpClientHandler createPxpClientHandler(Location location) {
+	public PxpClientHandler createPxpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPxpClientHandler((IPLocation) location);
 		}

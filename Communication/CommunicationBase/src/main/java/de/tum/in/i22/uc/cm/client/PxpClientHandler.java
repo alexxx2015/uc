@@ -14,32 +14,9 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pxp;
  * @author Enrico Lovat
  *
  */
-public abstract class PxpClientHandler<HandleType> implements IConnectable<HandleType>, IAny2Pxp {
-	protected static final Logger _logger = LoggerFactory.getLogger(PxpClientHandler.class);
+public abstract class PxpClientHandler implements IAny2Pxp {
 
-	private final Connector<HandleType> _connector;
+	public abstract void connect() throws Exception;
 
-	protected HandleType _handle;
-
-	/**
-	 * Creates a new {@link PxpClientHandler} that will connect to a
-	 * remote {@link PxpProcessor} by using the specified connector.
-	 *
-	 * @param connector the connector that will be used to connect to the remote {@link PxpProcessor}.
-	 */
-	public PxpClientHandler(Connector<HandleType> connector) {
-		_connector = connector;
-	}
-
-	@Override
-	public final HandleType connect() throws Exception {
-		_handle = _connector.connect();
-		return _handle;
-	}
-
-	@Override
-	public final void disconnect() {
-		_connector.disconnect();
-		_handle = null;
-	}
+	public abstract void disconnect();
 }

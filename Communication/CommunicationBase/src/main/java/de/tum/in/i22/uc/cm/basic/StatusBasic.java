@@ -53,13 +53,8 @@ public class StatusBasic implements IStatus {
 	}
 
 	@Override
-	public boolean isSameStatus(IStatus status) {
-		boolean isEqual = false;
-		if (status instanceof StatusBasic) {
-			StatusBasic o = (StatusBasic)status;
-			isEqual = Objects.equals(_eStatus, o.getEStatus());
-		}
-		return isEqual;
+	public boolean isSameStatus(EStatus status) {
+		return status == _eStatus;
 	}
 
 

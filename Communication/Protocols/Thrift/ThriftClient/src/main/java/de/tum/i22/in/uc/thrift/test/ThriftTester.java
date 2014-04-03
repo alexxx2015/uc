@@ -3,9 +3,6 @@ package de.tum.i22.in.uc.thrift.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
-
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
@@ -20,7 +17,7 @@ public class ThriftTester {
 		ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
 
 		int x = 0;
-			PdpClientHandler<?> clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
+			PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
 			try {
 				System.out.println("connect pdp handler");
 				clientPdp.connect();
@@ -58,8 +55,8 @@ public class ThriftTester {
 			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientPdp.deployPolicyURI("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml"));
-			
+					+ clientPdp.deployPolicyURI("/home/florian/GIT/pdp/Core/Pdp/src/main/resources/testTUM.xml"));
+
 			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 
 			System.out.println("Test " + (x++) + ": " + clientPdp.registerPxp(new PxpSpec(null, x, null, null)));

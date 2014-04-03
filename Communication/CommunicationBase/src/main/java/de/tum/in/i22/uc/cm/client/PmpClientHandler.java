@@ -14,32 +14,9 @@ import de.tum.in.i22.uc.cm.server.PmpProcessor;
  * @author Florian Kelbert
  *
  */
-public abstract class PmpClientHandler<HandleType> extends PmpProcessor implements IConnectable<HandleType> {
-	protected static final Logger _logger = LoggerFactory.getLogger(PmpClientHandler.class);
+public abstract class PmpClientHandler extends PmpProcessor {
 
-	private final Connector<HandleType> _connector;
+	public abstract void connect() throws Exception;
 
-	protected HandleType _handle;
-
-	/**
-	 * Creates a new {@link PmpClientHandler} that will connect to a
-	 * remote {@link PmpProcessor} by using the specified connector.
-	 *
-	 * @param connector the connector that will be used to connect to the remote {@link PmpProcessor}.
-	 */
-	public PmpClientHandler(Connector<HandleType> connector) {
-		_connector = connector;
-	}
-
-	@Override
-	public final HandleType connect() throws Exception {
-		_handle = _connector.connect();
-		return _handle;
-	}
-
-	@Override
-	public final void disconnect() {
-		_connector.disconnect();
-		_handle = null;
-	}
+	public abstract void disconnect();
 }
