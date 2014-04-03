@@ -518,6 +518,8 @@ public final class BasicInformationFlowModel {
 			dstData = new HashSet<IData>();
 			_containerToDataMap.put(container, dstData);
 		}
+
+		_logger.info("Adding data " + data + " to container " + container);;
 		dstData.addAll(data);
 	}
 

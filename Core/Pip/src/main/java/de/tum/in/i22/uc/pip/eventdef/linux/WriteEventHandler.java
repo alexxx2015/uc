@@ -33,4 +33,15 @@ public class WriteEventHandler extends BaseEventHandler {
 				basicIfModel.getContainer(ProcessName.create(host, pid)),
 				basicIfModel.getContainer(FiledescrName.create(host, pid, fd)));
 	}
+
+
+	@Override
+	public boolean executeIfDesired() {
+		return true;
+	}
+
+	@Override
+	public boolean executeIfActual() {
+		return true;
+	}
 }

@@ -49,8 +49,11 @@ public abstract class BaseEventHandler implements IEventHandler {
 		/*
 		 * Update the ifModel according to the single event semantics
 		 */
-		_logger.info(this.getClass().getSimpleName() + " event handler execute");
-		execute();
+		if (_event.isActual() && executeIfActual()
+				|| !_event.isActual() && executeIfDesired()) {
+			_logger.info(this.getClass().getSimpleName() + " event handler execute");
+			execute();
+		}
 
 
 		if (finalStatus.isSameStatus(_messageFactory.createStatus(EStatus.ERROR)))
@@ -77,5 +80,15 @@ public abstract class BaseEventHandler implements IEventHandler {
 			throw new ParameterNotFoundException(key);
 		}
 		return value;
+	}
+
+	@Override
+	public boolean executeIfActual() {
+		return true;
+	}
+
+	@Override
+	public boolean executeIfDesired() {
+		return false;
 	}
 }

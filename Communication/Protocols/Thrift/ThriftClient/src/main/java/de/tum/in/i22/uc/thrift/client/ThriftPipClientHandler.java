@@ -183,6 +183,7 @@ class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		_logger.debug("Calling server: " + containerName + ", " + data);
 		try {
 			return ThriftConverter.fromThrift(_handle.initialRepresentation(ThriftConverter.toThrift(containerName), ThriftConverter.toThriftDataSet(data)));
 		} catch (TException e) {

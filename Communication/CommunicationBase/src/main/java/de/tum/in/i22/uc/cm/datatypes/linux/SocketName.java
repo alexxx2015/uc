@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import java.util.Objects;
-
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.distribution.Network;
 
@@ -54,23 +52,6 @@ public class SocketName extends NameBasic {
 
 	public int getRemotePort() {
 		return _remotePort;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof SocketName) {
-			SocketName o = (SocketName) obj;
-			return Objects.equals(_localIP, o._localIP)
-					&& Objects.equals(_localPort, o._localPort)
-					&& Objects.equals(_remoteIP, o._remoteIP)
-					&& Objects.equals(_remotePort, o._remotePort);
-		}
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(_localIP, _localPort, _remoteIP, _remotePort);
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class PipHandler extends PipProcessor {
 	public IStatus notifyActualEvent(IEvent event) {
 		String action = event.getPrefixedName();
 		IEventHandler actionHandler = null;
+		IStatus result;
 
 		try {
 			actionHandler = EventHandlerManager.createEventHandler(event);
@@ -100,10 +101,12 @@ public class PipHandler extends PipProcessor {
 			return new StatusBasic(EStatus.ERROR);
 		}
 
+		actionHandler.setEvent(event);
 
-		_logger.info(System.lineSeparator() + event);
-		IStatus result = actionHandler.setEvent(event).executeEvent();
+		_logger.info(System.lineSeparator() + "Executing PipHandler for " + event);
+		result = actionHandler.executeEvent();
 		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
+
 		return result;
 	}
 
@@ -248,6 +251,8 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		_logger.debug("initialRepresentation(" + containerName + "," + data + ")");
+
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {
 			container = new ContainerBasic();

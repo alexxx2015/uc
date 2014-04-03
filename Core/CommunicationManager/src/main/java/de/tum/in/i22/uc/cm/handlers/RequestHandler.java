@@ -224,6 +224,8 @@ public class RequestHandler implements Runnable {
 			IForwarder forwarder = requestWrapper.getForwarder();
 			Object response = null;
 
+			_logger.debug("Processing " + request);
+
 			if (request instanceof PdpRequest) {
 				response = ((PdpRequest<?>) request).process(PDP);
 			} else if (request instanceof PipRequest) {
@@ -237,7 +239,7 @@ public class RequestHandler implements Runnable {
 			if (forwarder != null) {
 				forwarder.forwardResponse(request, response);
 			}
-			_logger.trace("response forwarded");
+			_logger.debug("response forwarded");
 		}
 
 		// the thread is interrupted, stop processing the events

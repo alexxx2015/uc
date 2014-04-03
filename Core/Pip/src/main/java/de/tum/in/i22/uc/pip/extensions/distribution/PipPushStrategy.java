@@ -2,6 +2,9 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.client.PipClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
@@ -12,9 +15,9 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 
 public class PipPushStrategy extends DistributedPipStrategy {
+	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
 	public PipPushStrategy(EDistributedPipStrategy eStrategy) {
 		super(eStrategy);
@@ -46,18 +49,7 @@ public class PipPushStrategy extends DistributedPipStrategy {
 
 	@Override
 	public IStatus initialRepresentation(Location location, IName containerName, Set<IData> data) {
-//		Pip2PipImp pip2pip = new Pip2PipImp(connector);
-//
-//		try {
-//			ConnectionManager.MAIN.obtain(pip2pip);
-//		} catch (IOException e) {
-//			return new StatusBasic(EStatus.ERROR, "Unable to connect to " + pip2pip);
-//		}
-//
-////		pip2pip.notifyDataTransfer(containerName, data);
-//		System.out.println("XXXXXXXXXXXXXX Notify " + containerName);
-//
-//		ConnectionManager.MAIN.release(pip2pip);
+		_logger.debug("initialRepresentation(" + location + "," + containerName + "," + data + ")");
 
 		PipClientHandler<?> pip = _clientHandlerFactory.createPipClientHandler(location);
 		try {
@@ -66,10 +58,10 @@ public class PipPushStrategy extends DistributedPipStrategy {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		pip.initialRepresentation(containerName, data);
+		IStatus result = pip.initialRepresentation(containerName, data);
 		pip.disconnect();
 
-		return new StatusBasic(EStatus.OKAY);
+		return result;
 	}
 
 	@Override

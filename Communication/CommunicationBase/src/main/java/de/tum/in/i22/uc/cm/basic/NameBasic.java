@@ -18,7 +18,7 @@ public class NameBasic implements IName {
 	}
 
 	@Override
-	public String getName() {
+	public final String getName() {
 		return _name;
 	}
 
@@ -30,12 +30,12 @@ public class NameBasic implements IName {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return Objects.hash(_name);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj instanceof NameBasic) {
 			return Objects.equals(_name, ((NameBasic) obj)._name);
 		}
