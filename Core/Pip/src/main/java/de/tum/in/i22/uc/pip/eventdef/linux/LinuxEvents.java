@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
@@ -149,7 +150,7 @@ public class LinuxEvents {
 	}
 
 
-	static IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
+	static IStatus copyDataTransitive(IEvent event, IContainer srcCont, IContainer dstCont) {
 		_logger.debug("CopyDataTransitive(" + srcCont + "," + dstCont + ")");
 
 		if (srcCont == null || dstCont == null) {

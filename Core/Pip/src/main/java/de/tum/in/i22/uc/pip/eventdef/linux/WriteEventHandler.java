@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
@@ -29,19 +30,9 @@ public class WriteEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		return LinuxEvents.copyDataTransitive(
-				basicIfModel.getContainer(ProcessName.create(host, pid)),
-				basicIfModel.getContainer(FiledescrName.create(host, pid, fd)));
-	}
+		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, pid));
+		IContainer dstCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 
-
-	@Override
-	public boolean executeIfDesired() {
-		return true;
-	}
-
-	@Override
-	public boolean executeIfActual() {
-		return true;
+		return LinuxEvents.copyDataTransitive(_event, srcCont, dstCont);
 	}
 }

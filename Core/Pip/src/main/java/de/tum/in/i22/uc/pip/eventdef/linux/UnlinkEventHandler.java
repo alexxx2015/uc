@@ -26,22 +26,4 @@ public class UnlinkEventHandler extends BaseEventHandler {
 
 		return STATUS_OKAY;
 	}
-
-	@Override
-	public boolean executeIfActual() {
-		return true;
-	}
-
-	@Override
-	public boolean executeIfDesired() {
-		/*
-		 * TODO:
-		 * Cf. comment in Linux Pep: The problem is
-		 * that we cannot easily retrieve the unlinked
-		 * filename _after_ execution, which is why we
-		 * do the update if the event is desired.
-		 * This behavior is wrong, though, if the call fails.
-		 */
-		return true;
-	}
 }

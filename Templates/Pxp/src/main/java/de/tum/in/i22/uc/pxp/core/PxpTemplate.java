@@ -19,29 +19,29 @@ public class PxpTemplate {
 	private static ThriftServer _pxpServer1,_pxpServer2;
 	private static Settings _settings = Settings.getInstance();
 
-	
+
 	public static void main(String[] args) {
-		
+
 		/****
 		 * Example class to register a new PXP server to the PDP
 		 * PXP Server functionality is described in TAny2PxpThriftProcessor
 		 */
-		
-		
+
+
 		String pdpIp="localhost";
 		int pdpPort=_settings.getPdpListenerPort();
-		
+
 		String pxpIp1="localhost";
 		String pxpId1="myPxp1";
 		String pxpDescription1="Oh Yeah!";
 		int pxpPort1=_settings.getPxpListenerPort();
-		
+
 		String pxpIp2="localhost";
 		String pxpId2="myPxp2";
 		String pxpDescription2="Oh Yeah!";
 		int pxpPort2=_settings.getPxpListenerPort()+1;
-		
-		
+
+
 		//create new thrift server 1
 		try {
 			System.out.println("creating pxp server "+pxpId1 +" on port "+pxpPort1);
@@ -64,35 +64,34 @@ public class PxpTemplate {
 			_pxpServer2 = null;
 		}
 
-		
-		
+
+
 		//start server1
 		if (_pxpServer1 != null) {
 			System.out.println("starting pxp server "+pxpId1);
 			new Thread(_pxpServer1).start();
 		}
-		
+
 		//start server2
 		if (_pxpServer2 != null) {
 			System.out.println("starting pxp server "+pxpId1);
 			new Thread(_pxpServer2).start();
 		}
-		
+
 		//register them
 		System.out.println("getting pdp handler ");
-		PdpClientHandler<?> clientPdp = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
-			
-		
+		PdpClientHandler clientPdp = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
+
+
 		try {
 			boolean b;
 			System.out.print("connecting to pdp handler...");
-			Object c=clientPdp.connect();
-			System.out.println(c);
-			
+			clientPdp.connect();
+
 			System.out.print("registering pxp " +pxpId1+" ...");
 			b=clientPdp.registerPxp(new PxpSpec(pxpIp1, pxpPort1, pxpId1, pxpDescription1));
 			System.out.println(b);
-			
+
 			System.out.print("registering pxp " +pxpId2+" ...");
 			b=clientPdp.registerPxp(new PxpSpec(pxpIp2, pxpPort2, pxpId2, pxpDescription2));
 			System.out.println(b);
@@ -100,12 +99,12 @@ public class PxpTemplate {
 			System.out.print("disconnecting from pdp handler...");
 			clientPdp.disconnect();
 			System.out.println("OK");
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		//that's it
 
 	}

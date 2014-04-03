@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.basic;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,11 +10,13 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 public class EventBasic implements IEvent {
 
 	public static final String PEP_PARAMETER_KEY = "PEP";
+	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = "allowImpliesActual";
 
 	private static final String PREFIX_SEPARATOR = "_";
 
 	private String _name = null;
 	private String _pep = null;
+	private boolean _allowImpliesActual = false;
 	private boolean _isActual = false;
 	private final Map<String, String> _parameters = new HashMap<>();
 	private long _timestamp;
@@ -23,6 +26,7 @@ public class EventBasic implements IEvent {
 		if (map != null) {
 			_parameters.putAll(map);
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
+			_allowImpliesActual = Boolean.valueOf(_parameters.get(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY));
 		}
 	}
 
@@ -67,7 +71,7 @@ public class EventBasic implements IEvent {
 
 	@Override
 	public Map<String, String> getParameters() {
-		return _parameters;
+		return Collections.unmodifiableMap(_parameters);
 	}
 
 	@Override
@@ -78,6 +82,7 @@ public class EventBasic implements IEvent {
 				.add("_isActual", _isActual)
 				.add("_parameters", _parameters)
 				.add("_timestamp", _timestamp)
+				.add(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY, _allowImpliesActual)
 				.toString();
 	}
 
@@ -102,5 +107,10 @@ public class EventBasic implements IEvent {
 
 	public String niceString() {
 		return _name + (_isActual ? "[Actual]" : "[Desired]") +_parameters;
+	}
+
+	@Override
+	public boolean allowImpliesActual() {
+		return _allowImpliesActual;
 	}
 }

@@ -254,13 +254,13 @@ public class LinuxEventTest {
 		IEvent eventServerExecve = createLinuxExecveEvent(serverHost, serverPid, "/bin/server.exe", true);
 		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
 		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, serverIP, clientPort, 4, 5, true);
-		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, true);
+		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, false);
 		IEvent eventServerRead = createLinuxReadEvent(serverHost, serverPid, 5, true);
 
 		IEvent eventClientExecve = createLinuxExecveEvent(serverHost, clientPid, "/bin/client.exe", true);
 		IEvent eventClientSocket = createLinuxSocketEvent(serverHost, clientPid, INET, STREAM, 3, true);
 		IEvent eventClientConnect = createLinuxConnectEvent(serverHost, clientPid, serverIP, clientPort, serverIP, serverPort, 3, true);
-		IEvent eventClientWrite = createLinuxWriteEvent(serverHost, clientPid, 3, true);
+		IEvent eventClientWrite = createLinuxWriteEvent(serverHost, clientPid, 3, false);
 		IEvent eventClientRead = createLinuxReadEvent(serverHost, clientPid, 3, true);
 
 		/*
@@ -310,7 +310,7 @@ public class LinuxEventTest {
 		IEvent eventServerExecve = createLinuxExecveEvent(serverHost, serverPid, "/bin/server.exe", true);
 		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
 		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, clientIP, clientPort, 4, 5, true);
-		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, true);
+		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, false);
 
 		IEvent eventClientExecve = createLinuxExecveEvent(clientHost, clientPid, "/bin/client.exe", true);
 		IEvent eventClientSocket = createLinuxSocketEvent(clientHost, clientPid, INET, STREAM, 3, true);

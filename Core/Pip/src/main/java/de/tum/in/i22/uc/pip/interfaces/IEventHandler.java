@@ -12,16 +12,4 @@ public interface IEventHandler {
 	 * @return the event handler itself
 	 */
 	public IEventHandler setEvent(IEvent event);
-
-	/**
-	 * Returns true if this event shall be executed in case it is actual
-	 * @return
-	 */
-	public boolean executeIfActual();
-
-	/**
-	 * Returns true if this event shall be executed in case it is desired
-	 * @return
-	 */
-	public boolean executeIfDesired();
 }

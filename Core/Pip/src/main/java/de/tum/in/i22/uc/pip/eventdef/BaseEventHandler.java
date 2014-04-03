@@ -17,13 +17,12 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 	protected static final Logger _logger = LoggerFactory.getLogger(BaseEventHandler.class);
 
-	private IEvent _event;
+	protected IEvent _event;
 
 	protected BasicInformationFlowModel basicIfModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
-
 
 	public BaseEventHandler() {	}
 
@@ -49,11 +48,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 		/*
 		 * Update the ifModel according to the single event semantics
 		 */
-		if (_event.isActual() && executeIfActual()
-				|| !_event.isActual() && executeIfDesired()) {
-			_logger.info(this.getClass().getSimpleName() + " event handler execute");
-			execute();
-		}
+		execute();
 
 
 		if (finalStatus.isSameStatus(EStatus.ERROR))
@@ -80,15 +75,5 @@ public abstract class BaseEventHandler implements IEventHandler {
 			throw new ParameterNotFoundException(key);
 		}
 		return value;
-	}
-
-	@Override
-	public boolean executeIfActual() {
-		return true;
-	}
-
-	@Override
-	public boolean executeIfDesired() {
-		return false;
 	}
 }
