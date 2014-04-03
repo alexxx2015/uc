@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
@@ -36,6 +39,8 @@ import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
  *
  */
 public class LinuxEvents {
+
+	protected static final Logger _logger = LoggerFactory.getLogger(LinuxEvents.class);
 
 	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
 
@@ -145,6 +150,8 @@ public class LinuxEvents {
 
 
 	static IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
+		_logger.debug("CopyDataTransitive(" + srcCont + "," + dstCont + ")");
+
 		if (srcCont == null || dstCont == null) {
 			return STATUS_OKAY;
 		}
@@ -154,9 +161,12 @@ public class LinuxEvents {
 			return messageFactory.createStatus(EStatus.OKAY);
 		}
 
+		_logger.debug("Data is " + data);
+
 		// copy into all containers aliased from the destination container
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 			if (c instanceof RemoteSocketContainer) {
+				_logger.debug("Sending to " + c);
 				distributedPipManager.notifyDataTransfer(
 						((RemoteSocketContainer) c).getLocation(),
 						((RemoteSocketContainer) c).getSocketName(), data);

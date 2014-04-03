@@ -8,14 +8,16 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class InitialRepresentationPipRequest extends PipRequest<IStatus> {
-	private IName name;
-	private Set<IData> data;
+	private final IName _name;
+	private final Set<IData> _data;
 
 	public InitialRepresentationPipRequest(IName containerName, Set<IData> data) {
+		_name = containerName;
+		_data = data;
 	}
 
 	@Override
 	public IStatus process(PipProcessor processor) {
-		return processor.initialRepresentation(name, data);
+		return processor.initialRepresentation(_name, _data);
 	}
 }
