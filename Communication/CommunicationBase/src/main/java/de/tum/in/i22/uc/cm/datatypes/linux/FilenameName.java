@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import java.util.Objects;
-
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 /**
@@ -37,23 +35,6 @@ public class FilenameName extends NameBasic {
 
 	public String getFilename() {
 		return _filename;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof FilenameName) {
-			FilenameName o = (FilenameName) obj;
-			return Objects.equals(_host, o._host)
-					&& Objects.equals(_filename, o._filename);
-		}
-		return super.equals(obj);
-	}
-
-
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(_host, _filename);
 	}
 
 	@Override

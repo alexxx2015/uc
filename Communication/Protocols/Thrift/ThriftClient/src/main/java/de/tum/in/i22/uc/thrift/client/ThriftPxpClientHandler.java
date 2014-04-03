@@ -21,6 +21,8 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * (using {@link PxpClientHandler#connect()}) and
  * do calls on a remote {@link PxpProcessor}.
  *
+ * Use {@link ThriftClientHandlerFactory} to get an instance.
+ *
  * @author Enrico  Lovat
  *
  */
@@ -32,6 +34,8 @@ class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 	 * connected (upon calling {@link PxpClientHandler#connect()})
 	 * the the specified thrift server on the specified address/port.
 	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
@@ -39,6 +43,14 @@ class ThriftPxpClientHandler extends PxpClientHandler<TAny2Pxp.Client> {
 		super(new ThriftConnector<>(address, port, TAny2Pxp.Client.class));
 	}
 
+	/**
+	 * Creates a new {@link ThriftPxpClientHandler} that will be connected
+	 * to the specified {@link IPLocation}.
+	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
+	 * @param location the location of the remote point
+	 */
 	ThriftPxpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
 	}

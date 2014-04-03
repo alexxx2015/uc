@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import java.util.Objects;
-
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 /**
@@ -35,22 +33,6 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	public int getPid() {
 		return _pid;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof ProcessName) {
-			ProcessName o = (ProcessName) obj;
-			return Objects.equals(_host, o._host)
-					&& Objects.equals(_pid, o._pid);
-		}
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(_host, _pid);
-	}
-
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)

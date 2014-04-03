@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import java.util.Objects;
-
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 /**
@@ -42,22 +40,6 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 
 	public int getFd() {
 		return _fd;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof FiledescrName) {
-			FiledescrName o = (FiledescrName) obj;
-			return Objects.equals(_host, o._host)
-					&& Objects.equals(_pid, o._pid)
-					&& Objects.equals(_fd, o._fd);
-		}
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(_host, _pid, _fd);
 	}
 
 	@Override

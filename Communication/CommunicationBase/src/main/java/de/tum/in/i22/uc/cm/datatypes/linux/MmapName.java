@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import java.util.Objects;
-
 import de.tum.in.i22.uc.cm.basic.NameBasic;
 
 /**
@@ -49,22 +47,6 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 
 	public String getAddr() {
 		return _addr;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof MmapName) {
-			MmapName o = (MmapName) obj;
-			return Objects.equals(_host, o._host)
-					&& Objects.equals(_pid, o._pid)
-					&& Objects.equals(_addr, o._addr);
-		}
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(_host, _pid, _addr);
 	}
 
 	@Override
