@@ -1,28 +1,12 @@
 package de.tum.i22.in.uc.thrift.test;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-import de.tum.i22.in.uc.thrift.types.TContainer;
-import de.tum.i22.in.uc.thrift.types.TData;
-import de.tum.i22.in.uc.thrift.types.TEvent;
-import de.tum.i22.in.uc.thrift.types.TName;
-import de.tum.i22.in.uc.thrift.types.TPxpSpec;
-
-import de.tum.i22.in.uc.thrift.types.TAny2Any;
-import de.tum.i22.in.uc.thrift.types.TAny2Pip;
-import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -36,7 +20,6 @@ public class ThriftTester {
 		ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
 
 		int x = 0;
-		try {
 			PdpClientHandler<?> clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
 			try {
 				System.out.println("connect pdp handler");
@@ -212,11 +195,6 @@ public class ThriftTester {
 //			System.out.println("Test " + (x++) + ": " + clientAny.listMechanismsPmp());
 //
 //			transportAny.close();
-		} catch (TTransportException e) {
-			e.printStackTrace();
-		} catch (TException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 }
