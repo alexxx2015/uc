@@ -2,16 +2,29 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.util.Objects;
 
+import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
 import de.tum.in.i22.uc.cm.distribution.AbstractStrategy;
 import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.cm.distribution.pip.IDistributedPipStrategy;
+import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
 public abstract class DistributedPipStrategy extends AbstractStrategy implements IDistributedPipStrategy {
 
 	private final EDistributedPipStrategy _eStrategy;
 
+	protected final ClientHandlerFactory _clientHandlerFactory;
+
 	public DistributedPipStrategy(EDistributedPipStrategy eStrategy) {
 		_eStrategy = eStrategy;
+
+		switch (Settings.getInstance().getCommunicationProtocol()) {
+			case THRIFT:
+				_clientHandlerFactory = new ThriftClientHandlerFactory();
+				break;
+			default:
+				throw new RuntimeException("Unsupported communication protocol.");
+		}
 	}
 
 	@Override

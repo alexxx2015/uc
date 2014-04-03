@@ -24,16 +24,20 @@ import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.MechanismBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.thrift.client.ThriftPdpClientHandler;
+import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
 public class ThriftTester {
 
 	public static void main(String[] args) {
+
+		ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+
 		int x = 0;
-//		try {
-			System.out.println("create pdp handler");
-			ThriftPdpClientHandler clientPdp = new ThriftPdpClientHandler("localhost", Settings.getInstance().getPdpListenerPort());
+		try {
+			PdpClientHandler<?> clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
 			try {
 				System.out.println("connect pdp handler");
 				clientPdp.connect();
@@ -208,11 +212,11 @@ public class ThriftTester {
 //			System.out.println("Test " + (x++) + ": " + clientAny.listMechanismsPmp());
 //
 //			transportAny.close();
-//		} catch (TTransportException e) {
-//			e.printStackTrace();
-//		} catch (TException ex) {
-//			ex.printStackTrace();
-//		}
+		} catch (TTransportException e) {
+			e.printStackTrace();
+		} catch (TException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

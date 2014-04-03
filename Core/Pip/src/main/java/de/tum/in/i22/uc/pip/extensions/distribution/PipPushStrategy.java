@@ -1,16 +1,18 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
-import java.util.Collection;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.Connector;
+import de.tum.in.i22.uc.cm.client.PipClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
+import de.tum.in.i22.uc.thrift.ThriftConverter;
 
 public class PipPushStrategy extends DistributedPipStrategy {
 
@@ -19,33 +21,31 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	}
 
 	@Override
-	public boolean hasAllData(Connector connector, Collection<IData> data) {
+	public boolean hasAllData(Location location, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean hasAnyData(Connector connector, Collection<IData> data) {
+	public boolean hasAnyData(Location location, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean hasAllContainers(Connector connector,
-			Collection<IContainer> containers) {
+	public boolean hasAllContainers(Location location, Set<IContainer> containers) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean hasAnyContainer(Connector connector,
-			Collection<IContainer> containers) {
+	public boolean hasAnyContainer(Location location, Set<IContainer> containers) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public IStatus notifyDataTransfer(Connector connector, IName containerName, Collection<IData> data) {
+	public IStatus initialRepresentation(Location location, IName containerName, Set<IData> data) {
 //		Pip2PipImp pip2pip = new Pip2PipImp(connector);
 //
 //		try {
@@ -58,12 +58,22 @@ public class PipPushStrategy extends DistributedPipStrategy {
 //		System.out.println("XXXXXXXXXXXXXX Notify " + containerName);
 //
 //		ConnectionManager.MAIN.release(pip2pip);
-//
+
+		PipClientHandler<?> pip = _clientHandlerFactory.createPipClientHandler(location);
+		try {
+			pip.connect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pip.initialRepresentation(containerName, data);
+		pip.disconnect();
+
 		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
-	public IStatus notifyActualEvent(Connector connector, IEvent event) {
+	public IStatus notifyActualEvent(Location location, IEvent event) {
 //		Pip2PipImp pip2pip = new Pip2PipImp(connector);
 //
 //		try {

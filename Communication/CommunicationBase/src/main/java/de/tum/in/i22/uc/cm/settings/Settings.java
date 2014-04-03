@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.distribution.ECommunicationProtocol;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -33,25 +34,26 @@ public class Settings extends SettingsLoader {
 	private int _anyListenerPort = 21004;
 
 	private int _pxpListenerPort = 30003;
-	
+
 	private boolean _pmpListenerEnabled = true;
 	private boolean _pipListenerEnabled = true;
 	private boolean _pdpListenerEnabled = true;
 	private boolean _anyListenerEnabled = true;
 
 	private boolean _pxpListenerEnabled = true;
-	
+
 	private Location _pdpLocation = new LocalLocation();
 	private Location _pipLocation = new LocalLocation();
 	private Location _pmpLocation = new LocalLocation();
 
 	private String _pipEnabledInformationFlowModels = "scope";
-
 	private String _pipEventHandlerSuffix 			= "EventHandler";
 	private String _pipEventHandlerPackage 			= "de.tum.in.i22.uc.pip.eventdef.";
 	private String _pipInitializerEvent 			= "SchemaInitializer";
 	private String _pipPersistenceDirectory			= "pipdb";
 	private boolean _pipDeletePersistenceDirectory	= true;
+
+	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
 	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
 
@@ -123,6 +125,7 @@ public class Settings extends SettingsLoader {
 		_pipDeletePersistenceDirectory 		= loadSetting("pip_empty_persistence_directory", _pipDeletePersistenceDirectory);
 
 		_distributedPipStrategy = loadSetting("distributed_pip_strategy", _distributedPipStrategy);
+		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -144,10 +147,31 @@ public class Settings extends SettingsLoader {
 	private EDistributedPipStrategy loadSetting(String propName, EDistributedPipStrategy defaultValue) {
 		EDistributedPipStrategy loadedValue = defaultValue;
 
-		boolean success = true;
+		boolean success = false;
 
 		try {
 			loadedValue = EDistributedPipStrategy.from((String) _props.get(propName));
+			if (loadedValue != null) {
+				success = true;
+			}
+		}
+		catch (Exception e) {
+			success = false;
+		}
+
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
+	}
+
+	private ECommunicationProtocol loadSetting(String propName, ECommunicationProtocol defaultValue) {
+		ECommunicationProtocol loadedValue = defaultValue;
+
+		boolean success = false;
+
+		try {
+			loadedValue = ECommunicationProtocol.from((String) _props.get(propName));
+			if (loadedValue != null) {
+				success = true;
+			}
 		}
 		catch (Exception e) {
 			success = false;
@@ -239,5 +263,8 @@ public class Settings extends SettingsLoader {
 		return _pipDeletePersistenceDirectory;
 	}
 
+	public ECommunicationProtocol getCommunicationProtocol() {
+		return _communicationProtocol;
+	}
 }
 

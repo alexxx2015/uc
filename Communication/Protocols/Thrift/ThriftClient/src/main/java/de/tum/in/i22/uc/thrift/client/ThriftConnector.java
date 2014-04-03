@@ -17,7 +17,7 @@ import de.tum.in.i22.uc.cm.client.TcpConnector;
  * @author Florian Kelbert
  *
  */
-public class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<HandleType> {
+class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<HandleType> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftConnector.class);
 
 	private TTransport _transport;
@@ -32,7 +32,7 @@ public class ThriftConnector<HandleType extends TServiceClient> extends TcpConne
 	 * @param port the server's port
 	 * @param iface the Thrift interface to be used for the connection
 	 */
-	public ThriftConnector(String address, int port, Class<HandleType> iface) {
+	ThriftConnector(String address, int port, Class<HandleType> iface) {
 		super(address, port);
 		_iface = iface;
 	}

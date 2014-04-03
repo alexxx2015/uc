@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 
@@ -27,10 +28,12 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * (using {@link PipClientHandler#connect()}) and
  * do calls on a remote {@link PipProcessor}.
  *
+ * Use {@link ThriftClientHandlerFactory} to get an instance.
+ *
  * @author Florian Kelbert
  *
  */
-public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
+class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPipClientHandler.class);
 
 	/**
@@ -38,11 +41,25 @@ public class ThriftPipClientHandler extends PipClientHandler<TAny2Pip.Client> {
 	 * connected (upon calling {@link PipClientHandler#connect()})
 	 * the the specified thrift server on the specified address/port.
 	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	public ThriftPipClientHandler(String address, int port) {
+	ThriftPipClientHandler(String address, int port) {
 		super(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
+	}
+
+	/**
+	 * Creates a new {@link ThriftPipClientHandler} that will be connected
+	 * to the specified {@link IPLocation}.
+	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
+	 * @param location the location of the remote point
+	 */
+	ThriftPipClientHandler(IPLocation location) {
+		this(location.getHost(), location.getPort());
 	}
 
 	@Override

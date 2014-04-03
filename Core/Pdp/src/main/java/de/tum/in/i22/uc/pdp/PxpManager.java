@@ -5,28 +5,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.client.PxpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
-import de.tum.in.i22.uc.thrift.client.ThriftPxpClientHandler;
 
 /**
  * This class manages the connection with the Pxp. It handles the registrations
  * of Pxp components and it dispatches the to-be-executed action to the proper
  * Pxp.
- * 
+ *
  * @author Enrico Lovat
- * 
+ *
  */
 
 public class PxpManager {
@@ -62,8 +62,7 @@ public class PxpManager {
 				IPxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
-					ThriftPxpClientHandler client = new ThriftPxpClientHandler(
-							pxp.getIp(), pxp.getPort());
+					PxpClientHandler<?> client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
 
 					try {
 						client.connect();

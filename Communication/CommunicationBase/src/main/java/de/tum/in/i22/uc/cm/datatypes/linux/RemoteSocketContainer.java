@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.datatypes.linux;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.client.Connector;
+import de.tum.in.i22.uc.cm.distribution.Location;
 
 /**
  * Represents a remote container of which we only know a name and its location.
@@ -13,9 +13,9 @@ import de.tum.in.i22.uc.cm.client.Connector;
  */
 public class RemoteSocketContainer extends SocketContainer {
 	/**
-	 * How we can connect to the remote location
+	 * The location of this remote container
 	 */
-	private final Connector _connector;
+	private final Location _location;
 
 	/**
 	 * Its unique remote name, for convenience.
@@ -23,14 +23,14 @@ public class RemoteSocketContainer extends SocketContainer {
 	private final SocketName _socketName;
 
 
-	public RemoteSocketContainer(SocketName socketName, Domain domain, Type type, Connector connector) {
+	public RemoteSocketContainer(SocketName socketName, Domain domain, Type type, Location location) {
 		super(domain, type);
-		_connector = connector;
+		_location = location;
 		_socketName = socketName;
 	}
 
-	public Connector getConnector() {
-		return _connector;
+	public Location getLocation() {
+		return _location;
 	}
 
 	public SocketName getSocketName() {
@@ -42,7 +42,7 @@ public class RemoteSocketContainer extends SocketContainer {
 		if (obj instanceof RemoteSocketContainer) {
 			RemoteSocketContainer o = (RemoteSocketContainer) obj;
 			return super.equals(obj)
-					&& Objects.equals(_connector, o._connector)
+					&& Objects.equals(_location, o._location)
 					&& Objects.equals(_socketName, o._socketName);
 		}
 		return super.equals(obj);
@@ -50,7 +50,7 @@ public class RemoteSocketContainer extends SocketContainer {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.getId(), super.getClass(), _connector, _socketName);
+		return Objects.hash(super.getId(), super.getClass(), _location, _socketName);
 	}
 
 }

@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 
@@ -25,14 +26,16 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
  * Create a instance of this class, connect it
  * (using {@link PdpClientHandler#connect()}) and
  * do calls on a remote {@link PdpProcessor}.
- *
+ * 
  * The goal of this class is usually to convert types from/to thrift types,
  * invoke the respective dual method "on the other side", and convert back the result
+ * 
+ * Use {@link ThriftClientHandlerFactory} to get an instance.
  *
  * @author Florian Kelbert & Enrico Lovat
  *
  */
-public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
+class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPdpClientHandler.class);
 
 	/**
@@ -40,11 +43,25 @@ public class ThriftPdpClientHandler extends PdpClientHandler<TAny2Pdp.Client> {
 	 * connected (upon calling {@link PdpClientHandler#connect()})
 	 * the the specified thrift server on the specified address/port.
 	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	public ThriftPdpClientHandler(String address, int port) {
+	ThriftPdpClientHandler(String address, int port) {
 		super(new ThriftConnector<>(address, port, TAny2Pdp.Client.class));
+	}
+
+	/**
+	 * Creates a new {@link ThriftPdpClientHandler} that will be connected
+	 * to the specified {@link IPLocation}.
+	 *
+	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 *
+	 * @param location the location of the remote point
+	 */
+	ThriftPdpClientHandler(IPLocation location) {
+		this(location.getHost(), location.getPort());
 	}
 
 	@Override
