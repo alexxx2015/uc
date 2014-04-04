@@ -27,16 +27,27 @@
 				<groupId>org.apache.thrift.tools</groupId>
 				<artifactId>maven-thrift-plugin</artifactId>
 				<version>0.1.10</version>
-				<configuration>
-					<outputDirectory>${basedir}/src/main/java</outputDirectory>
-				</configuration>
 				<executions>
 					<execution>
 						<id>thrift-sources</id>
 						<phase>generate-sources</phase>
+						<configuration>
+							<generator>java</generator>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<compileOutput>true</compileOutput>
+						</configuration>
 						<goals>
 							<goal>compile</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>generate-thrift-csharp</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generator>csharp</generator>
+							<outputDirectory>${basedir}/src/main/csharp</outputDirectory>
+							<compileOutput>false</compileOutput>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
