@@ -33,8 +33,6 @@ public class NotifyEventPdpRequest extends PdpRequest<IResponse> {
 		 *     as actual event.
 		 */
 
-		System.out.println("processing " + _event);
-
 		if (_event.isActual()) {
 			processor.getPip().update(_event);
 		}

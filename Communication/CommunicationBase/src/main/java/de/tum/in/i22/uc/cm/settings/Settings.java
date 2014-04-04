@@ -67,7 +67,7 @@ public class Settings extends SettingsLoader {
 
 	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
-	private EDistributedPipStrategy _distributedPipStrategy = EDistributedPipStrategy.PUSH;
+	private EDistributedPipStrategy _pipDistributionStrategy = EDistributedPipStrategy.PUSH;
 
 
 	private Settings() {
@@ -136,8 +136,8 @@ public class Settings extends SettingsLoader {
 		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
 		_pipInitialRepresentations			= loadSetting("pip_initial_representations", _pipInitialRepresentations);
 
-		_distributedPipStrategy = loadSetting("distributed_pip_strategy", _distributedPipStrategy);
-		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol);
+		_pipDistributionStrategy = loadSetting("pip_distribution_strategy", _pipDistributionStrategy, EDistributedPipStrategy.class);
+		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol, ECommunicationProtocol.class);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -156,31 +156,14 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	private EDistributedPipStrategy loadSetting(String propName, EDistributedPipStrategy defaultValue) {
-		EDistributedPipStrategy loadedValue = defaultValue;
+
+	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue, Class<E> cls) {
+		E loadedValue = defaultValue;
 
 		boolean success = false;
 
 		try {
-			loadedValue = EDistributedPipStrategy.from((String) _props.get(propName));
-			if (loadedValue != null) {
-				success = true;
-			}
-		}
-		catch (Exception e) {
-			success = false;
-		}
-
-		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
-	}
-
-	private ECommunicationProtocol loadSetting(String propName, ECommunicationProtocol defaultValue) {
-		ECommunicationProtocol loadedValue = defaultValue;
-
-		boolean success = false;
-
-		try {
-			loadedValue = ECommunicationProtocol.from((String) _props.get(propName));
+			loadedValue = E.valueOf(cls, (String) _props.get(propName));
 			if (loadedValue != null) {
 				success = true;
 			}
@@ -286,8 +269,8 @@ public class Settings extends SettingsLoader {
 		return _anyListenerEnabled;
 	}
 
-	public EDistributedPipStrategy getDistributedPipStrategy() {
-		return _distributedPipStrategy;
+	public EDistributedPipStrategy getPipDistributionStrategy() {
+		return _pipDistributionStrategy;
 	}
 
 	public String getPipEventHandlerPackage() {

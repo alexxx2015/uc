@@ -30,17 +30,7 @@ public class ShutdownEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		Shut how = null;
-
-		switch (howStr) {
-		case "RD":
-			how = Shut.SHUT_RD;
-			break;
-		case "WR":
-			how = Shut.SHUT_WR;
-		case "RDWR":
-			how = Shut.SHUT_RDWR;
-		}
+		Shut how = Shut.valueOf(howStr);
 
 		SocketContainer cont = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 		LinuxEvents.shutdownSocket(cont, how);
@@ -49,9 +39,9 @@ public class ShutdownEventHandler extends BaseEventHandler {
 	}
 
 	public static enum Shut {
-		SHUT_RDWR,
-		SHUT_RD,
-		SHUT_WR
+		RDWR,
+		RD,
+		WR;
 	}
 }
 

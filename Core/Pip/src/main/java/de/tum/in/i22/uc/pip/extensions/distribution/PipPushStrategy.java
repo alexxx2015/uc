@@ -51,34 +51,37 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	public IStatus initialRepresentation(Location location, IName containerName, Set<IData> data) {
 		_logger.debug("initialRepresentation(" + location + "," + containerName + "," + data + ")");
 
-		PipClientHandler pip = _clientHandlerFactory.createPipClientHandler(location);
-		try {
-			pip.connect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		PipClientHandler pip = _pipClientHandlers.get(location);
+
+		if (pip == null) {
+			pip = _clientHandlerFactory.createPipClientHandler(location);
+			try {
+				pip.connect();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+
 		IStatus result = pip.initialRepresentation(containerName, data);
-		pip.disconnect();
+//		pip.disconnect();
 
 		return result;
 	}
 
 	@Override
-	public IStatus notifyActualEvent(Location location, IEvent event) {
-//		Pip2PipImp pip2pip = new Pip2PipImp(connector);
-//
+	public IStatus update(Location location, IEvent event) {
+		_logger.debug("update(" + location + "," + event + ")");
+
+//		PipClientHandler pip = _clientHandlerFactory.createPipClientHandler(location);
 //		try {
-//			ConnectionManager.MAIN.obtain(pip2pip);
-//		} catch (IOException e) {
-//			return new StatusBasic(EStatus.ERROR, "Unable to connect to " + pip2pip);
+//			pip.connect();
+//		} catch (Exception e) {
+//			e.printStackTrace();
 //		}
-//
-////		pip2pip.notifyActualEvent(event);
-//		System.out.println("XXXXXXXXXXXXXX Notify " +event);
-//
-//		ConnectionManager.MAIN.release(pip2pip);
-//
-		return new StatusBasic(EStatus.OKAY);
+//		IStatus result = pip.update(event);
+//		pip.disconnect();
+//		return result;
+		return null;
 	}
 }
