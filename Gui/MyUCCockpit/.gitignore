@@ -1,6 +1,6 @@
 /*
-!src/main/java/*
+!src/
 !docs/
 !pom.xml
 !.gitignore
-/target
+!lib/
