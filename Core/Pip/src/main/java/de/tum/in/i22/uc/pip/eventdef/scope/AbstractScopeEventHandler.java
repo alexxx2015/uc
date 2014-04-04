@@ -113,7 +113,8 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
 
-		IStatus finalStatus = _messageFactory.createStatus(EStatus.OKAY);
+		IStatus finalStatus;
+
 		String errorString = "";
 
 		/*
@@ -132,8 +133,6 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 							+ scope.getHumanReadableName());
 					IStatus is = openScope(scope);
 					if (!is.isSameStatus(EStatus.OKAY)) {
-						finalStatus = _messageFactory
-								.createStatus(EStatus.ERROR);
 						errorString = errorString + "\n" + is.getErrorMessage();
 					}
 				}
@@ -157,16 +156,18 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 							+ scope.getHumanReadableName());
 					IStatus is = closeScope(scope);
 					if (!is.isSameStatus(EStatus.OKAY)) {
-						finalStatus = _messageFactory
-								.createStatus(EStatus.ERROR);
 						errorString = errorString + "\n" + is.getErrorMessage();
 					}
 				}
 			}
 		}
 
-		if (finalStatus.isSameStatus(EStatus.ERROR))
-			finalStatus.setErrorMessage(errorString);
+		if (errorString.length() > 0) {
+			finalStatus = _messageFactory.createStatus(EStatus.ERROR, errorString);
+		}
+		else {
+			finalStatus = _messageFactory.createStatus(EStatus.OKAY);
+		}
 
 		return finalStatus;
 

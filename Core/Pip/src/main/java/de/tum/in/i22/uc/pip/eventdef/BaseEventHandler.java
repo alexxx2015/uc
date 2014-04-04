@@ -37,24 +37,15 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	@Override
 	public IStatus executeEvent() {
-
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-
-		IStatus finalStatus = _messageFactory.createStatus(EStatus.OKAY);
-		String errorString = "";
-
 
 		/*
 		 * Update the ifModel according to the single event semantics
 		 */
 		execute();
 
-
-		if (finalStatus.isSameStatus(EStatus.ERROR))
-			finalStatus.setErrorMessage(errorString);
-
-		return finalStatus;
+		return _messageFactory.createStatus(EStatus.OKAY);
 
 	}
 

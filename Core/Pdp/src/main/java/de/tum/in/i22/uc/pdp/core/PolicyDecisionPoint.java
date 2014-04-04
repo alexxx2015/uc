@@ -54,20 +54,21 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				if (instance == null){
 					instance = new PolicyDecisionPoint();
 //					instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
+//					instance.deployPolicyURI("/home/florian/testTUM.xml");
 				}
 			}
 		}
 		return instance;
 	}
 
-	
+
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
 		log.error("deployXML not yet supported");
 		return false;
 	}
 
-	
+
 	@Override
 	public boolean deployPolicyURI(String policyFilename) {
 		if (policyFilename.endsWith(".xml"))
@@ -155,7 +156,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		}
 		List<IPdpMechanism> mlist = this.policyTable.get(policyName);
 		if (mlist==null) return false;
-		
+
 		for (IPdpMechanism mech : mlist) {
 			log.info("Revoking mechanism: {}", mech.getMechanismName());
 			ret = mech.revoke();
@@ -226,7 +227,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public Map<String, List<String>> listDeployedMechanisms() {
 		 Map<String, List<String>> map = new HashMap<String, List<String>>();
-		 
+
 		 for (String policyName : this.policyTable.keySet()) {
 			 List<String> mechanismList = new ArrayList<String>();
 			 for (IPdpMechanism m: this.policyTable.get(policyName)){
@@ -234,7 +235,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			 }
 			 map.put(policyName, mechanismList);
 		 }
-		
+
 		 return map;
 	}
 

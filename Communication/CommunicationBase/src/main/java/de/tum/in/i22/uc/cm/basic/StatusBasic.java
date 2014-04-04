@@ -21,10 +21,6 @@ public class StatusBasic implements IStatus {
 		this(eStatus, null);
 	}
 
-	public void seteStatus(EStatus eStatus) {
-		_eStatus = eStatus;
-	}
-
 	@Override
 	public EStatus getEStatus() {
 		return _eStatus;
@@ -66,10 +62,4 @@ public class StatusBasic implements IStatus {
 				.add("_errorMessage", _errorMessage)
 				.toString();
 	}
-
-	@Override
-	public void setErrorMessage(String error) {
-		_errorMessage=error;
-	}
-
 }
