@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +62,7 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_handle = _connector.connect();
 	}
 

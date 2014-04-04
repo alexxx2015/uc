@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.client;
 
+import java.io.IOException;
+
 /**
  * An interface for classes that can be connected to some remote point.
  *
@@ -10,9 +12,9 @@ interface IConnectable {
 	/**
 	 * Connects this object to the remote point
 	 *
-	 * @throws Exception if the connection cannot be established
+	 * @throws IOException if the connection cannot be established
 	 */
-	public void connect() throws Exception;
+	public void connect() throws IOException;
 
 	/**
 	 * Disconnects.

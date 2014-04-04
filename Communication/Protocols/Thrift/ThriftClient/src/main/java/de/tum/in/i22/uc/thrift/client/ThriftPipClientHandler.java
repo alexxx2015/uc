@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -71,7 +72,7 @@ class ThriftPipClientHandler extends PipClientHandler {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_handle = _connector.connect();
 	}
 

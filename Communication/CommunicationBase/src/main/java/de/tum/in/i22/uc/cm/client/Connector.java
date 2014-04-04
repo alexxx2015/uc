@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.client;
 
+import java.io.IOException;
+
 /**
  * Abstract class defining a connector that will operate on
  * a specific HandleType. Using this class as a superclass
@@ -17,7 +19,7 @@ public abstract class Connector<HandleType> {
 	@Override
 	public abstract boolean equals(Object obj);
 
-	public abstract HandleType connect() throws Exception;
+	public abstract HandleType connect() throws IOException;
 
 	public abstract void disconnect();
 }

@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.thrift.TException;
@@ -65,7 +66,7 @@ class ThriftPxpClientHandler extends PxpClientHandler {
 	}
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_handle = _connector.connect();
 	}
 

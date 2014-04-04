@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.io.IOException;
+
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -39,7 +41,7 @@ class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<Ha
 
 
 	@Override
-	public HandleType connect() throws Exception {
+	public HandleType connect() throws IOException {
 		HandleType handle = null;
 		_transport = new TSocket(_address, _port);
 
@@ -49,7 +51,7 @@ class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<Ha
 		} catch (Exception e) {
 			_logger.debug("Failed to establish connection.", e);
 			disconnect();
-			throw e;
+			throw new IOException(e.getMessage(), e);
 		}
 
 		return handle;

@@ -16,6 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * that have been least-recently-used. Using this manager, {@link IConnectable}s
  * can safely be shared across threads.
  *
+ * {@link IConnectable}s used with this manager must properly implement
+ * {@link IConnectable#hashCode()} and {@link IConnectable#equals(Object)}.
+ *
  * For this reason, this manager's methods {@link ConnectionManager#obtain(IConnectable)}
  * and {@link ConnectionManager#release(IConnectable)} must be used (see their documentation).
  *
@@ -23,10 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Florian Kelbert
  *
  */
-public class ConnectionManager {
-
-	// TODO Move to configuration file
-	private static final int DEFAULT_MAX_ENTRIES = 20;
+public class ConnectionManager<C extends IConnectable> {
 
 	private final PoolMap connectionPool;;
 
@@ -40,14 +40,22 @@ public class ConnectionManager {
 	private final Map<PoolMapEntry, PoolMapEntry> toClose;
 
 
-	public ConnectionManager() {
-		connectionPool = new PoolMap(DEFAULT_MAX_ENTRIES);
+	/**
+	 * Creates a new {@link ConnectionManager} of the specified size.
+	 * @param size the number of entries (i.e. connections) to keep alive
+	 */
+	public ConnectionManager(int size) {
+		connectionPool = new PoolMap(size);
 		toClose = new ConcurrentHashMap<>();
 	}
 
 
 	/**
 	 * Connects and reserves the specified connection for the caller.
+	 *
+	 *
+	 * {@link IConnectable}s used with this manager must properly implement
+	 * {@link IConnectable#hashCode()} and {@link IConnectable#equals(Object)}.
 	 *
 	 * Note, that the returned {@link IConnectable} might be a different instance than the one that has been
 	 * passed as an argument. The reason is, that another ("similar") instance might have been
@@ -73,7 +81,7 @@ public class ConnectionManager {
 	 * @return
 	 * @throws IOException
 	 */
-	public IConnectable obtain(IConnectable connectable) throws IOException {
+	public C obtain(C connectable) throws IOException {
 		if (connectable == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -92,6 +100,7 @@ public class ConnectionManager {
 						throw new IOException("Unable to connect.", e);
 					}
 					entry = new PoolMapEntry(connectable, false);
+					connectionPool.put(connectable, entry);
 				}
 				else if (entry.inuse == true) {
 					try {
@@ -103,7 +112,6 @@ public class ConnectionManager {
 			}
 
 			entry.inuse = true;
-			connectionPool.put(connectable, entry);
 		}
 
 		return entry.connectable;
@@ -125,7 +133,7 @@ public class ConnectionManager {
 	 * @param connectable
 	 * @throws IOException
 	 */
-	public void release(IConnectable connectable) {
+	public void release(C connectable) {
 		release(connectable, false);
 	}
 
@@ -144,7 +152,7 @@ public class ConnectionManager {
 	 * @param connectable
 	 * @throws IOException
 	 */
-	public void close(IConnectable connectable) throws IOException {
+	public void close(C connectable) throws IOException {
 		release(connectable, true);
 	}
 
@@ -175,7 +183,7 @@ public class ConnectionManager {
 	 * @param forceClose
 	 * @throws IOException
 	 */
-	private void release(IConnectable connectable, boolean forceClose) {
+	private void release(C connectable, boolean forceClose) {
 		if (connectable == null) {
 			throw new NullPointerException("No connection provided.");
 		}
@@ -208,18 +216,18 @@ public class ConnectionManager {
 
 
 
-	private class PoolMap implements Map<IConnectable, PoolMapEntry> {
+	private class PoolMap implements Map<C, PoolMapEntry> {
 		private final int _maxEntries;
 
-		private final Map<IConnectable, PoolMapEntry> _backMap;
+		private final Map<C, PoolMapEntry> _backMap;
 
 		public PoolMap(int maxEntries) {
 			_maxEntries = maxEntries;
-			_backMap = Collections.synchronizedMap(new LinkedHashMap<IConnectable, PoolMapEntry>(maxEntries, 0.75f, true) {
+			_backMap = Collections.synchronizedMap(new LinkedHashMap<C, PoolMapEntry>(maxEntries, 0.75f, true) {
 				private static final long serialVersionUID = -3139938026277477159L;
 
 				@Override
-				protected boolean removeEldestEntry(Map.Entry<IConnectable,PoolMapEntry> eldest) {
+				protected boolean removeEldestEntry(Map.Entry<C,PoolMapEntry> eldest) {
 					boolean result = size() > _maxEntries;
 
 					if (result) {
@@ -269,7 +277,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public PoolMapEntry put(IConnectable key, PoolMapEntry value) {
+		public PoolMapEntry put(C key, PoolMapEntry value) {
 			return _backMap.put(key, value);
 		}
 
@@ -279,7 +287,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public void putAll(Map<? extends IConnectable, ? extends PoolMapEntry> m) {
+		public void putAll(Map<? extends C, ? extends PoolMapEntry> m) {
 			_backMap.putAll(m);
 		}
 
@@ -289,7 +297,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public Set<IConnectable> keySet() {
+		public Set<C> keySet() {
 			return _backMap.keySet();
 		}
 
@@ -299,7 +307,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public Set<java.util.Map.Entry<IConnectable, PoolMapEntry>> entrySet() {
+		public Set<java.util.Map.Entry<C, PoolMapEntry>> entrySet() {
 			return _backMap.entrySet();
 		}
 	}
@@ -309,10 +317,10 @@ public class ConnectionManager {
 	 * Groups a connection and its current state, i.e. whether it is currently in use.
 	 */
 	private class PoolMapEntry {
-		IConnectable connectable;
+		C connectable;
 		boolean inuse;
 
-		public PoolMapEntry(IConnectable connection, boolean inuse) {
+		public PoolMapEntry(C connection, boolean inuse) {
 			this.connectable = connection;
 			this.inuse = inuse;
 		}

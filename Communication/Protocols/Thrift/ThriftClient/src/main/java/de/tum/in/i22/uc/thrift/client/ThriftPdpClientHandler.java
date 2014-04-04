@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ class ThriftPdpClientHandler extends PdpClientHandler {
 
 
 	@Override
-	public void connect() throws Exception {
+	public void connect() throws IOException {
 		_handle = _connector.connect();
 	}
 
