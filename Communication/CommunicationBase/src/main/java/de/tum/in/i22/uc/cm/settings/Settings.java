@@ -1,11 +1,18 @@
 package de.tum.in.i22.uc.cm.settings;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.basic.DataBasic;
+import de.tum.in.i22.uc.cm.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.distribution.ECommunicationProtocol;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
@@ -51,6 +58,12 @@ public class Settings extends SettingsLoader {
 	private String _pipEventHandlerPackage 			= "de.tum.in.i22.uc.pip.eventdef.";
 	private String _pipInitializerEvent 			= "SchemaInitializer";
 	private String _pipPersistenceDirectory			= "pipdb";
+
+	private Map<IName,IData> _pipInitialRepresentations = new HashMap<IName,IData>() {
+		private static final long serialVersionUID = -2810488356921449504L;
+	{
+		put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
+	}};
 
 	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
@@ -121,6 +134,7 @@ public class Settings extends SettingsLoader {
 		_pipInitializerEvent 				= loadSetting("pip_initializer_event", _pipInitializerEvent);
 		_pipEnabledInformationFlowModels 	= loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
 		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
+		_pipInitialRepresentations			= loadSetting("pip_initial_representations", _pipInitialRepresentations);
 
 		_distributedPipStrategy = loadSetting("distributed_pip_strategy", _distributedPipStrategy);
 		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol);
@@ -174,6 +188,57 @@ public class Settings extends SettingsLoader {
 		catch (Exception e) {
 			success = false;
 		}
+
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
+	}
+
+
+	/**
+	 * Loads the initial representations for the Pip.
+	 * They are expected to be in the format
+	 * <ContainerName1>:<DataId1>;<ContainerName2>:<DataId2>; ...
+	 *
+	 * @param propName the property name
+	 * @param defaultValue
+	 * @return
+	 */
+	private Map<IName,IData> loadSetting(String propName, Map<IName,IData> defaultValue) {
+		Map<IName,IData> loadedValue = new HashMap<>();
+
+		boolean success = false;
+		String stringRead = null;
+
+		try {
+			stringRead = (String) _props.get(propName);
+		}
+		catch (Exception e) {
+			stringRead = null;
+			success = false;
+		}
+
+		if (stringRead != null && stringRead.length() > 0) {
+
+			// entries are divided by semicolon (;)
+			String[] entries = stringRead.split(";");
+
+			if (entries != null && entries.length > 0) {
+
+				for (String entry : entries) {
+
+					// each entry is divided by exactly one colon
+					// first part: container name; second part: data ID
+					String[] entryParts = entry.split(":");
+					if (entryParts != null && entryParts.length == 2) {
+						loadedValue.put(new NameBasic(entryParts[0]), new DataBasic(entryParts[1]));
+					}
+					else {
+						_logger.debug("Incorrect entry format: " + entry);
+					}
+				}
+			}
+		}
+
+		success = loadedValue.size() > 0;
 
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
@@ -259,6 +324,10 @@ public class Settings extends SettingsLoader {
 
 	public ECommunicationProtocol getCommunicationProtocol() {
 		return _communicationProtocol;
+	}
+
+	public Map<IName, IData> getPipInitialRepresentations() {
+		return Collections.unmodifiableMap(_pipInitialRepresentations);
 	}
 }
 

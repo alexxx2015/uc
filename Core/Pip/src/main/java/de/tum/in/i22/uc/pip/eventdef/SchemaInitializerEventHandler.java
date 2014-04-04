@@ -1,12 +1,16 @@
 package de.tum.in.i22.uc.pip.eventdef;
 
-import de.tum.in.i22.uc.cm.basic.NameBasic;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import de.tum.in.i22.uc.cm.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FileContainer;
-import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class SchemaInitializerEventHandler extends BaseEventHandler {
 
@@ -17,40 +21,25 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 	@Override
 	public IStatus execute() {
 
-		//This event is used only during tests to initialize the information flow schema to a specific state
+		Map<IName,IData> initialRepresentations = Settings.getInstance().getPipInitialRepresentations();
 
-		String contName="TEST_C";
-		String dataName="TEST_D";
-
-
-		IContainer cont = basicIfModel.getContainer(new NameBasic(
-				contName));
-
-		_logger.debug("cont = " + cont);
-
-		if (cont == null) {
-			cont = _messageFactory.createContainer("TestContainer",contName);
-			basicIfModel.addName(new NameBasic(contName), cont);
-
-			IData d= _messageFactory.createData(dataName);
-			basicIfModel.addDataToContainer(d, cont);
-			_logger.debug(basicIfModel.toString());
-		} else {
-			_logger.error("cont = " + cont+" Already exists!!!! IMPOSSIBRU!!!");
-		_logger.debug(basicIfModel.toString());
+		if (initialRepresentations == null) {
+			return new StatusBasic(EStatus.OKAY);
 		}
 
+		for (Entry<IName, IData> entry : initialRepresentations.entrySet()) {
+			IName name = entry.getKey();
+			IData data = entry.getValue();
 
-		/*
-		 * for FK.
-		 */
-		IContainer file1 = new FileContainer();
-		IContainer file2 = new FileContainer();
-		IData data = _messageFactory.createData("MY_DATA");
-		basicIfModel.addName(FilenameName.create("machineA", "/tmp/datasrc"), file1);
-		basicIfModel.addName(FilenameName.create("machineA", "/home/anonymous/tainted"), file2);
-		basicIfModel.addDataToContainer(data, file1);
-		basicIfModel.addDataToContainer(data, file2);
+			if (name != null && data != null) {
+				IContainer cont = basicIfModel.getContainer(name);
+				if (cont == null) {
+					cont = new ContainerBasic();
+					basicIfModel.addName(name, cont);
+				}
+				basicIfModel.addDataToContainer(data, cont);
+			}
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
