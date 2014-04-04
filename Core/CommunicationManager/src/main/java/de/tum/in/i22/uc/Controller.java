@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import org.apache.commons.cli.CommandLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -11,6 +13,7 @@ import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class Controller {
+	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
 	private static Settings _settings;
 
@@ -41,7 +44,7 @@ public class Controller {
 	        }
 	    }
 	}
-	
+
 	static void loadProperties(String[] args){
 		CommandLine cl = CommandLineOptions.init(args);
 		if (cl!=null && cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
@@ -62,7 +65,7 @@ public class Controller {
 	}
 
 	public static void main(String[] args) {
-	
+
 		if (start(args)){
 		/*
 		 * Lock forever
@@ -74,21 +77,21 @@ public class Controller {
 			System.exit(1);
 		}
 	}
-	
+
 	public static boolean start(){
 		return start(null);
 	}
-	
+
 	public static boolean start(String[] args){
 		/*
 		 *  Load properties (if provided via parameter)
 		 */
 		loadProperties(args);
-	
+
 		/*
 		 *  If ports are available...
 		 */
-		if (testIfPortsAreAvailable()){ 
+		if (testIfPortsAreAvailable()){
 
 			/*
 			 *  ..start UC infrastructure
@@ -101,16 +104,16 @@ public class Controller {
 		 */
 		return false;
 	}
-	
-	
-	
+
+
+
 	public static boolean started() {
 		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
 				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
 				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
 				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
 	}
-	
+
 	private static void startUC(){
 		/*
 		 * Start the queue handler
@@ -123,8 +126,8 @@ public class Controller {
 		 */
 		startListeners(requestHandler);
 	}
-	
-	
+
+
 	private static void startListeners(RequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
 			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
@@ -166,7 +169,7 @@ public class Controller {
 		boolean isPipPortAvailable=isPortAvailable(_settings.getPipListenerPort());
 		boolean isPmpPortAvailable=isPortAvailable(_settings.getPmpListenerPort());
 		boolean isAnyPortAvailable=isPortAvailable(_settings.getAnyListenerPort());
-		
+
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable|| !isAnyPortAvailable){
 			_logger.error("One of the ports is not available.");
 			_logger.error("pdpPort:	"+(isPdpPortAvailable?"":"NOT ")+"AVAILABLE");
