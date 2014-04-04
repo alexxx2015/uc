@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc;
 
 import org.apache.commons.cli.CommandLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -10,8 +8,6 @@ import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class Controller {
-
-	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
 	private static Settings _settings;
 

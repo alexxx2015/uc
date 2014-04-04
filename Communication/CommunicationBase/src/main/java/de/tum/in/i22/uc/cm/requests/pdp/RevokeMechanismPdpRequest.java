@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.requests.pdp;
 
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
 
@@ -12,7 +10,7 @@ public class RevokeMechanismPdpRequest extends PdpRequest<IStatus> {
 	public RevokeMechanismPdpRequest(String policyName, String mechName) {
 		_policyName= policyName;
 		_mechName= mechName;
-		
+
 	}
 
 	@Override

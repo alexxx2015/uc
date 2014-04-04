@@ -17,7 +17,7 @@ public abstract class PipProcessor extends Processor<PdpProcessor,PmpProcessor> 
 	 * Returns the PMP associated with this PIP.
 	 * @return
 	 */
-	protected IAny2Pmp getPmp() {
+	public IAny2Pmp getPmp() {
 		return _iface2;
 	}
 
@@ -25,7 +25,7 @@ public abstract class PipProcessor extends Processor<PdpProcessor,PmpProcessor> 
 	 * Returns the PDP associated with this PIP.
 	 * @return
 	 */
-	protected IAny2Pdp getPdp() {
+	public IAny2Pdp getPdp() {
 		return _iface1;
 	}
 }
