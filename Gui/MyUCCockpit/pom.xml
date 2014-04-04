@@ -11,42 +11,22 @@
 
 	<parent>
 		<groupId>UsageControlSystem</groupId>
-		<artifactId>Core</artifactId>
+		<artifactId>Gui</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>CommunicationManager</artifactId>
+	<artifactId>MyUCCockpit</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pdp</artifactId>
+			<artifactId>CommunicationManager</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pip</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>Pmp</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>CommunicationBase</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftStubs</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftDefinitions</artifactId>
-			<version>1.0</version>
+			<groupId>edu.kit</groupId>
+			<artifactId>joana</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 		
 		<!--
@@ -73,7 +53,7 @@
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>de.tum.in.i22.uc.Controller</mainClass>
+									<mainClass>de.tum.in.i22.uc.gui.MyUCCockpit</mainClass>
 								</manifest>
 							</archive>
 						</configuration>
