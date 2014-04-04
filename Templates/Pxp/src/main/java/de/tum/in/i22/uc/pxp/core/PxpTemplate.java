@@ -23,9 +23,8 @@ public class PxpTemplate {
 
 		/****
 		 * Example class to register a new PXP server to the PDP
-		 * PXP  Server functionality is described in TAny2PxpThriftProcessor
+		 * PXP  Server functionality is described in TAny2PxpThriftServer
 		 */
-
 
 		String pdpIp="localhost";
 		int pdpPort=_settings.getPdpListenerPort();

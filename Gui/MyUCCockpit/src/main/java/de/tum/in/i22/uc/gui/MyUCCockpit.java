@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc;
+package de.tum.in.i22.uc.gui;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,13 +31,12 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
+import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import edu.tum.XMLtools.OffsetParameter;
 import edu.tum.XMLtools.OffsetTable;
 import edu.tum.XMLtools.StaticAnalysis;
@@ -66,7 +64,7 @@ public class MyUCCockpit {
 	private JTextArea pipTextArea;
 	private JTextArea pipTextFormula;
 
-	private static Logger _logger = Logger.getLogger(Controller.class);
+	private static Logger _logger = Logger.getLogger(MyUCCockpit.class);
 
 	private Thread pdpThread;
 
@@ -830,7 +828,7 @@ public class MyUCCockpit {
 			// load PDP properties
 			Settings.getInstance();
 
-			Controller.startUC();
+			Controller.start();
 
 			/*
 			 * Guice.createInjector() takes your Modules, and returns a new Injector

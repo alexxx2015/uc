@@ -24,12 +24,7 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftServer</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftClient</artifactId>
+			<artifactId>ThriftStubs</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

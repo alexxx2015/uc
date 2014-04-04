@@ -55,7 +55,7 @@ public class ThriftTester {
 			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 
 			System.out.println("Test " + (x++) + ": "
-					+ clientPdp.deployPolicyURI("/home/florian/GIT/pdp/Core/Pdp/src/main/resources/testTUM.xml"));
+					+ clientPdp.deployPolicyURI("C:\\GIT\\pdp\\Core\\Pdp\\src\\test\\resources\\testPolicies\\testDuring.xml"));
 
 			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 

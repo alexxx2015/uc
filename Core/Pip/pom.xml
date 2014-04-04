@@ -19,7 +19,7 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftClient</artifactId>
+			<artifactId>ThriftStubs</artifactId>
 			<version>1.0</version>
 		</dependency>		
 	</dependencies>

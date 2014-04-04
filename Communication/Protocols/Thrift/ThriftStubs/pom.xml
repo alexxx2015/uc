@@ -9,15 +9,26 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>ThriftServer</artifactId>
+	<artifactId>ThriftStubs</artifactId>
 	<packaging>jar</packaging>
-	
+
+	<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
+		* -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>CommunicationBase</artifactId>
-			<version>1.0</version>
-		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>ThriftDefinitions</artifactId>
@@ -25,13 +36,8 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftClient</artifactId>
+			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
-		</dependency>			
-		<!--
-		   *
-		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
-		   * 
-		 -->
+		</dependency>
 	</dependencies>
 </project>

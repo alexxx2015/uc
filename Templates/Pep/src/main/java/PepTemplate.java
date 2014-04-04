@@ -6,16 +6,16 @@
 //
 //import com.google.common.base.Stopwatch;
 //
-//import de.tum.in.i22.pep2pdp.Pep2PdpPipeImp;
-//import de.tum.in.i22.pep2pdp.Pep2PdpTcpImp;
 //import de.tum.in.i22.uc.cm.basic.EventBasic;
+//import de.tum.in.i22.uc.cm.client.ConnectionManager;
 //import de.tum.in.i22.uc.cm.datatypes.IEvent;
 //import de.tum.in.i22.uc.cm.datatypes.IResponse;
-//import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
-//import de.tum.in.i22.uc.cm.out.ConnectionManager;
+//import de.tum.in.i22.uc.cm.distribution.IPLocation;
+//import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
+//import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 //
 //
-//public class Main {
+//public class Pep {
 //	public static final String PDP1_HOST = "localhost";
 //	public static final int PDP1_PORT = 51001;
 //
@@ -32,7 +32,9 @@
 //
 //	public static void main(String[] args) throws IOException {
 ////		Pep2PdpPipeImp pdp1 = connectPipePDP("/tmp/pdp2pep", "/tmp/pep2pdp");
-//		IPep2Pdp pdp1 = connectPDP(PDP1_HOST, PDP1_PORT);
+//		ThriftClientHandlerFactory tf= new ThriftClientHandlerFactory();
+//		
+//		IAny2Pdp pdp1 = tf.createPdpClientHandler(new IPLocation(PDP1_HOST, PDP1_PORT));
 ////		Pep2PdpFastImp pdp2 = connectPDP(PDP2_HOST, PDP2_PORT);
 //
 //		pdp1 = ConnectionManager.MAIN.obtain(pdp1);

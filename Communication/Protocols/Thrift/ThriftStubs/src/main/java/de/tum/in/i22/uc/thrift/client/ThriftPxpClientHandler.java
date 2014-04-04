@@ -53,7 +53,7 @@ class ThriftPxpClientHandler extends PxpClientHandler {
 	 * to the specified {@link IPLocation}.
 	 *
 	 * Use {@link ThriftClientHandlerFactory} to get an instance.
-	 *
+	 *--
 	 * @param location the location of the remote point
 	 */
 	ThriftPxpClientHandler(IPLocation location) {

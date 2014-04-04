@@ -37,7 +37,8 @@ abstract class CommandLineOptions {
 		return options;
 	}
 
-	static CommandLine init(String[] args) {
+	protected static CommandLine init(String[] args) {
+		if (args==null) return null;
 		CommandLine line = null;
 		HelpFormatter formatter = new HelpFormatter();
 
