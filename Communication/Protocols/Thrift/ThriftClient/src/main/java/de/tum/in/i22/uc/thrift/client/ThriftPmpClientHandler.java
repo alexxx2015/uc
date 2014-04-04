@@ -38,8 +38,8 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	ThriftPmpClientHandler(String address, int port) {
-		_connector = new ThriftConnector<>(address, port, TAny2Pmp.Client.class);
+	private ThriftPmpClientHandler(String address, int port) {
+		this(new ThriftConnector<>(address, port, TAny2Pmp.Client.class));
 	}
 
 	/**
@@ -52,6 +52,11 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	 */
 	ThriftPmpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
+	}
+
+	private ThriftPmpClientHandler(ThriftConnector<TAny2Pmp.Client> connector) {
+		super(connector);
+		_connector = connector;
 	}
 
 	@Override

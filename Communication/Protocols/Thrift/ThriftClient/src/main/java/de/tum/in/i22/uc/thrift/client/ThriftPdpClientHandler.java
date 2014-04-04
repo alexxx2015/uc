@@ -51,8 +51,8 @@ class ThriftPdpClientHandler extends PdpClientHandler {
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	ThriftPdpClientHandler(String address, int port) {
-		_connector = new ThriftConnector<>(address, port, TAny2Pdp.Client.class);
+	private ThriftPdpClientHandler(String address, int port) {
+		this(new ThriftConnector<>(address, port, TAny2Pdp.Client.class));
 	}
 
 	/**
@@ -66,6 +66,12 @@ class ThriftPdpClientHandler extends PdpClientHandler {
 	ThriftPdpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
 	}
+
+	private ThriftPdpClientHandler(ThriftConnector<TAny2Pdp.Client> connector) {
+		super(connector);
+		_connector = connector;
+	}
+
 
 	@Override
 	public void connect() throws Exception {
@@ -179,5 +185,4 @@ class ThriftPdpClientHandler extends PdpClientHandler {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-
 }

@@ -43,8 +43,8 @@ class ThriftPxpClientHandler extends PxpClientHandler {
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	ThriftPxpClientHandler(String address, int port) {
-		_connector = new ThriftConnector<>(address, port, TAny2Pxp.Client.class);
+	private ThriftPxpClientHandler(String address, int port) {
+		this(new ThriftConnector<>(address, port, TAny2Pxp.Client.class));
 	}
 
 	/**
@@ -57,6 +57,11 @@ class ThriftPxpClientHandler extends PxpClientHandler {
 	 */
 	ThriftPxpClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
+	}
+
+	private ThriftPxpClientHandler(ThriftConnector<TAny2Pxp.Client> connector) {
+		super(connector);
+		_connector = connector;
 	}
 
 	@Override

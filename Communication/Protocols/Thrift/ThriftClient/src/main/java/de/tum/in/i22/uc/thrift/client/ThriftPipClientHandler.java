@@ -49,8 +49,8 @@ class ThriftPipClientHandler extends PipClientHandler {
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	ThriftPipClientHandler(String address, int port) {
-		_connector = new ThriftConnector<>(address, port, TAny2Pip.Client.class);
+	private ThriftPipClientHandler(String address, int port) {
+		this(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
 	}
 
 	/**
@@ -63,6 +63,11 @@ class ThriftPipClientHandler extends PipClientHandler {
 	 */
 	ThriftPipClientHandler(IPLocation location) {
 		this(location.getHost(), location.getPort());
+	}
+
+	private ThriftPipClientHandler(ThriftConnector<TAny2Pip.Client> connector) {
+		super(connector);
+		_connector = connector;
 	}
 
 	@Override

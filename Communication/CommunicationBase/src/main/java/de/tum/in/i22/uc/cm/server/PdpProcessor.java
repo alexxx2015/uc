@@ -28,7 +28,4 @@ public abstract class PdpProcessor extends Processor<PipProcessor,PmpProcessor> 
 	public IAny2Pip getPip() {
 		return _iface1;
 	}
-
-	@Override
-	public abstract boolean equals(Object obj);
 }
