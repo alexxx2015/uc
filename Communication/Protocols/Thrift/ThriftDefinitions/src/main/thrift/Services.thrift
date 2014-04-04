@@ -1,6 +1,6 @@
-namespace cpp de.tum.i22.in.uc.thrift.types
-namespace csharp de.tum.i22.in.uc.thrift.types
-namespace java de.tum.i22.in.uc.thrift.types
+namespace cpp de.tum.in.i22.uc.thrift.types
+namespace csharp de.tum.in.i22.uc.thrift.types
+namespace java de.tum.in.i22.uc.thrift.types
 
 include "Types.thrift"
 

@@ -4,19 +4,18 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.TAny2Pdp.Client;
-import de.tum.i22.in.uc.thrift.types.TAny2Pxp;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pxp.thrift.TAny2PxpThriftProcessor;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
-import de.tum.in.i22.uc.thrift.server.ThriftServer;
+import de.tum.in.i22.uc.thrift.server.IThriftServer;
+import de.tum.in.i22.uc.thrift.server.ThriftProcessorFactory;
+import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 
 public class PxpTemplate {
 	private static Logger _logger = LoggerFactory.getLogger(PxpTemplate.class);
-	private static ThriftServer _pxpServer1,_pxpServer2;
+	private static IThriftServer _pxpServer1,_pxpServer2;
 	private static Settings _settings = Settings.getInstance();
 
 
@@ -43,27 +42,12 @@ public class PxpTemplate {
 
 
 		//create new thrift server 1
-		try {
-			System.out.println("creating pxp server "+pxpId1 +" on port "+pxpPort1);
-			_pxpServer1 = new ThriftServer(
-								pxpPort1,
-								new TAny2Pxp.Processor<TAny2PxpThriftProcessor>(new TAny2PxpThriftProcessor()));
-		} catch (TTransportException e) {
-			_logger.warn("Unable to start PXP server "+pxpId1 +": " + e);
-			_pxpServer1 = null;
-		}
+		System.out.println("creating pxp server "+pxpId1 +" on port "+pxpPort1);
+		_pxpServer1 = ThriftProcessorFactory.createPxpThriftServer(pxpPort1);
 
 		//create new thrift server 2
-		try {
-			System.out.println("creating pxp server "+pxpId2 +" on port "+pxpPort1);
-			_pxpServer2 = new ThriftServer(
-								pxpPort2,
-								new TAny2Pxp.Processor<TAny2PxpThriftProcessor>(new TAny2PxpThriftProcessor()));
-		} catch (TTransportException e) {
-			_logger.warn("Unable to start PXP server "+pxpId2 +": " + e);
-			_pxpServer2 = null;
-		}
-
+		System.out.println("creating pxp server "+pxpId2 +" on port "+pxpPort2);
+		_pxpServer2 = ThriftProcessorFactory.createPxpThriftServer(pxpPort2);
 
 
 		//start server1

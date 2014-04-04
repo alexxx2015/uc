@@ -18,22 +18,23 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.requests.pdp.PdpRequest;
+import de.tum.in.i22.uc.cm.requests.pip.PipRequest;
 import de.tum.in.i22.uc.cm.server.IForwarder;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.cm.server.PmpProcessor;
 import de.tum.in.i22.uc.cm.server.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pdp.requests.PdpRequest;
 import de.tum.in.i22.uc.pip.PipHandler;
-import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.PmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
 
-public class RequestHandler implements Runnable {
+public class RequestHandler implements Runnable, IRequestHandler {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -201,8 +202,7 @@ public class RequestHandler implements Runnable {
 		return true;
 	}
 
-
-
+	@Override
 	public void addRequest(Request<?,?> request, IForwarder forwarder) {
 		System.out.println("Enqueueing: " + request);
 		_instance._requestQueue.add(new RequestWrapper(request, forwarder));

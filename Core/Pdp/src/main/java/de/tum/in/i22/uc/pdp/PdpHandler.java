@@ -33,7 +33,7 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public IStatus revokePolicy(String policyName) {
 		boolean b=_lpdp.revokePolicy(policyName);
-		return (b==true? 
+		return (b==true?
 				new StatusBasic(EStatus.OKAY):
 					new StatusBasic(EStatus.ERROR,"revokePolicy failed"));
 	}
@@ -42,26 +42,26 @@ public class PdpHandler extends PdpProcessor {
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		//TODO: sanitize inputs
 		boolean b=_lpdp.revokeMechanism(policyName, mechName);
-		return (b==true? 
+		return (b==true?
 				new StatusBasic(EStatus.OKAY):
 					new StatusBasic(EStatus.ERROR,"revokeMechanism failed"));
 	}
 
 	@Override
 	public IStatus deployPolicyURI(String policyFilePath) {
-		return (_lpdp.deployPolicyURI(policyFilePath) ? 
+		return (_lpdp.deployPolicyURI(policyFilePath) ?
 				new StatusBasic(EStatus.OKAY):
 					new StatusBasic(EStatus.ERROR,"deploy policy failed"));
 	}
 
 	@Override
 	public IStatus deployPolicyXML(String XMLPolicy) {
-		return (_lpdp.deployPolicyXML(XMLPolicy) ? 
+		return (_lpdp.deployPolicyXML(XMLPolicy) ?
 				new StatusBasic(EStatus.OKAY):
 					new StatusBasic(EStatus.ERROR,"deploy policy failed"));
 	}
 
-	
+
 	@Override
 	public Map<String, List<String>> listMechanisms() {
 		return _lpdp.listDeployedMechanisms();

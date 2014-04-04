@@ -1,21 +1,13 @@
 package de.tum.in.i22.uc;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.TAny2Any;
-import de.tum.i22.in.uc.thrift.types.TAny2Pdp;
-import de.tum.i22.in.uc.thrift.types.TAny2Pip;
-import de.tum.i22.in.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.cm.thrift.TAny2AnyThriftProcessor;
-import de.tum.in.i22.uc.cm.thrift.TAny2PdpThriftProcessor;
-import de.tum.in.i22.uc.cm.thrift.TAny2PipThriftProcessor;
-import de.tum.in.i22.uc.cm.thrift.TAny2PmpThriftProcessor;
-import de.tum.in.i22.uc.thrift.server.ThriftServer;
+import de.tum.in.i22.uc.thrift.server.IThriftServer;
+import de.tum.in.i22.uc.thrift.server.ThriftProcessorFactory;
 
 public class Controller {
 
@@ -23,10 +15,10 @@ public class Controller {
 
 	private static Settings _settings;
 
-	private static ThriftServer _pdpServer;
-	private static ThriftServer _pipServer;
-	private static ThriftServer _pmpServer;
-	private static ThriftServer _anyServer;
+	private static IThriftServer _pdpServer;
+	private static IThriftServer _pipServer;
+	private static IThriftServer _pmpServer;
+	private static IThriftServer _anyServer;
 
 	public static void main(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
@@ -53,22 +45,17 @@ public class Controller {
 	static void startUC(){
 		_settings = Settings.getInstance();
 
-		new Thread(RequestHandler.getInstance()).start();
+		RequestHandler requestHandler = RequestHandler.getInstance();
 
-		startListeners();
+		new Thread(requestHandler).start();
+
+		startListeners(requestHandler);
 	}
 
 
-	private static void startListeners() {
+	private static void startListeners(RequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
-			try {
-				_pdpServer = new ThriftServer(
-									_settings.getPdpListenerPort(),
-									new TAny2Pdp.Processor<TAny2PdpThriftProcessor>(new TAny2PdpThriftProcessor()));
-			} catch (TTransportException e) {
-				_logger.warn("Unable to start PDP server: " + e);
-				_pdpServer = null;
-			}
+			_pdpServer = ThriftProcessorFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -77,14 +64,7 @@ public class Controller {
 
 
 		if (_settings.isPipListenerEnabled()) {
-			try {
-				_pipServer = new ThriftServer(
-									_settings.getPipListenerPort(),
-									new TAny2Pip.Processor<TAny2PipThriftProcessor>(new TAny2PipThriftProcessor()));
-			} catch (TTransportException e) {
-				_logger.warn("Unable to start PIP server: " + e);
-				_pipServer = null;
-			}
+			_pipServer = ThriftProcessorFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -92,14 +72,7 @@ public class Controller {
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			try {
-				_pmpServer = new ThriftServer(
-									_settings.getPmpListenerPort(),
-									new TAny2Pmp.Processor<TAny2PmpThriftProcessor>(new TAny2PmpThriftProcessor()));
-			} catch (TTransportException e) {
-				_logger.warn("Unable to start PMP server: " + e);
-				_pmpServer = null;
-			}
+			_pmpServer = ThriftProcessorFactory.createPmpThriftServer(_settings.getPmpListenerPort(), requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -107,14 +80,7 @@ public class Controller {
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			try {
-				_anyServer = new ThriftServer(
-									_settings.getAnyListenerPort(),
-									new TAny2Any.Processor<TAny2AnyThriftProcessor>(new TAny2AnyThriftProcessor()));
-			} catch (TTransportException e) {
-				_logger.warn("Unable to start Any2Any server: " + e);
-				_anyServer = null;
-			}
+			_anyServer = ThriftProcessorFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();

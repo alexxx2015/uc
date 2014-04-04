@@ -12,10 +12,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Main Thrift server class.
  *
+ * Use {@link ThriftProcessorFactory} to get instances.
+ *
  * @author Florian Kelbert
  *
  */
-public class ThriftServer implements Runnable {
+class ThriftServer implements IThriftServer {
 	protected static Logger _logger = LoggerFactory.getLogger(ThriftServer.class);
 
 	private TServer _server = null;
@@ -32,7 +34,7 @@ public class ThriftServer implements Runnable {
 	 * @param processor the processor
 	 * @throws TTransportException
 	 */
-	public ThriftServer(int port, TProcessor processor) throws TTransportException {
+	ThriftServer(int port, TProcessor processor) throws TTransportException {
 		TServerTransport serverTransport = new TServerSocket(port);
 
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
@@ -40,7 +42,8 @@ public class ThriftServer implements Runnable {
 		_logger.info("ThriftServer listening on port: " + port);
 	}
 
-	public void stop(){
+	@Override
+	public void stop() {
 		_server.stop();
 	}
 
@@ -56,6 +59,7 @@ public class ThriftServer implements Runnable {
 	 *
 	 * @return true if the server has been started
 	 */
+	@Override
 	public boolean started() {
 		return _started;
 	}

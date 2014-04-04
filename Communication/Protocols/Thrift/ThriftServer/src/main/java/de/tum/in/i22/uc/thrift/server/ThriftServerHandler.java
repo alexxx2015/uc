@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.cm.server.Request;
  * @author Florian Kelbert
  *
  */
-public abstract class ThriftServerHandler implements IForwarder {
+abstract class ThriftServerHandler implements IForwarder {
 	/**
 	 * Waits for the specified request to be processed.
 	 * Once the corresponding response is ready, execution

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.thrift;
+package de.tum.in.i22.uc.thrift.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,32 +11,38 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.i22.in.uc.thrift.types.TAny2Any;
-import de.tum.i22.in.uc.thrift.types.TContainer;
-import de.tum.i22.in.uc.thrift.types.TData;
-import de.tum.i22.in.uc.thrift.types.TEvent;
-import de.tum.i22.in.uc.thrift.types.TName;
-import de.tum.i22.in.uc.thrift.types.TPxpSpec;
-import de.tum.i22.in.uc.thrift.types.TResponse;
-import de.tum.i22.in.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
-import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
-import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
-import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
-import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
-import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.DeployPolicyURIPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.DeployPolicyXMLPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.NotifyEventPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.RegisterPxpPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.RevokeMechanismPdpRequest;
+import de.tum.in.i22.uc.cm.requests.pdp.RevokePolicyPdpRequest;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
-import de.tum.in.i22.uc.thrift.server.ThriftServerHandler;
+import de.tum.in.i22.uc.thrift.types.TAny2Any;
+import de.tum.in.i22.uc.thrift.types.TContainer;
+import de.tum.in.i22.uc.thrift.types.TData;
+import de.tum.in.i22.uc.thrift.types.TEvent;
+import de.tum.in.i22.uc.thrift.types.TName;
+import de.tum.in.i22.uc.thrift.types.TPxpSpec;
+import de.tum.in.i22.uc.thrift.types.TResponse;
+import de.tum.in.i22.uc.thrift.types.TStatus;
 
 
-public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny2Any.Iface {
-	protected static Logger _logger = LoggerFactory.getLogger(TAny2AnyThriftProcessor.class);
-	private final RequestHandler _requestHandler;
+/**
+ * Use {@link ThriftProcessorFactory} to create an instance.
+ *
+ * @author Enrico Lovat & Florian Kelbert
+ *
+ */
+class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny2Any.Iface {
+	private static Logger _logger = LoggerFactory.getLogger(TAny2AnyThriftProcessor.class);
 
-	public TAny2AnyThriftProcessor() {
-		_requestHandler = RequestHandler.getInstance();
+	private final IRequestHandler _requestHandler;
+
+	TAny2AnyThriftProcessor(IRequestHandler requestHandler) {
+		_requestHandler = requestHandler;
 	}
 
 	@Override
@@ -61,11 +67,7 @@ public class TAny2AnyThriftProcessor extends ThriftServerHandler implements TAny
 		IEvent ev = ThriftConverter.fromThrift(e);
 		NotifyEventPdpRequest request = new NotifyEventPdpRequest(ev);
 
-		_requestHandler.addRequest(request, this);
-
-		//do we need this in the async?
-		waitForResponse(request);
-
+		_requestHandler.addRequest(request, null);
 	}
 
 

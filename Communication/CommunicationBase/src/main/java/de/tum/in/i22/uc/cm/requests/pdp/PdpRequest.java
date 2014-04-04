@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.requests;
+package de.tum.in.i22.uc.cm.requests.pdp;
 
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
 import de.tum.in.i22.uc.cm.server.Request;
