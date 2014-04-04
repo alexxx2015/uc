@@ -51,7 +51,6 @@ public class Settings extends SettingsLoader {
 	private String _pipEventHandlerPackage 			= "de.tum.in.i22.uc.pip.eventdef.";
 	private String _pipInitializerEvent 			= "SchemaInitializer";
 	private String _pipPersistenceDirectory			= "pipdb";
-	private boolean _pipDeletePersistenceDirectory	= true;
 
 	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
@@ -122,7 +121,6 @@ public class Settings extends SettingsLoader {
 		_pipInitializerEvent 				= loadSetting("pip_initializer_event", _pipInitializerEvent);
 		_pipEnabledInformationFlowModels 	= loadSetting("pip_enabled_information_flow_models", _pipEnabledInformationFlowModels);
 		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
-		_pipDeletePersistenceDirectory 		= loadSetting("pip_empty_persistence_directory", _pipDeletePersistenceDirectory);
 
 		_distributedPipStrategy = loadSetting("distributed_pip_strategy", _distributedPipStrategy);
 		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol);
@@ -257,10 +255,6 @@ public class Settings extends SettingsLoader {
 
 	public String getPipPersistenceDirectory() {
 		return _pipPersistenceDirectory;
-	}
-
-	public boolean pipDeletePersistenceDirectory() {
-		return _pipDeletePersistenceDirectory;
 	}
 
 	public ECommunicationProtocol getCommunicationProtocol() {

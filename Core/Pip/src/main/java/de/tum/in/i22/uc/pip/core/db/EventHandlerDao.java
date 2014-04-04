@@ -27,20 +27,12 @@ public class EventHandlerDao {
 
 	private static final Logger _logger = LoggerFactory.getLogger(EventHandlerDao.class);
 
-	private final EntityManager _entityManager;
+	private EntityManager _entityManager;
 
 	public EventHandlerDao() {
 		Settings settings = Settings.getInstance();
 
 		File persistencePath = new File(settings.getPipPersistenceDirectory());
-
-		if (persistencePath.exists() && settings.pipDeletePersistenceDirectory()) {
-			try {
-				FileUtils.deleteDirectory(persistencePath);
-			} catch (IOException e) {
-				_logger.warn(e.toString());;
-			}
-		}
 
 		_logger.info("Create entity manager for: " + persistencePath);
 
@@ -48,7 +40,22 @@ public class EventHandlerDao {
 		Map<String, String> connectProps1 = new HashMap<String, String>();
 		connectProps1.put("javax.persistence.jdbc.url", "jdbc:derby:" + persistencePath.getName() + ";create=true");
 
-		_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
+		try {
+			_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
+		}
+		catch (Exception e) {
+			// if an exception occurs, we can hopefully get around the problem by deleting the
+			// persistence directory and recreating it.
+			if (persistencePath.exists()) {
+				try {
+					_logger.info("Had trouble initiating Database. Deleting persistence directory and trying again...");
+					FileUtils.deleteDirectory(persistencePath);
+				} catch (IOException ioe) {
+					_logger.warn(ioe.toString());;
+				}
+			}
+			_entityManager = Persistence.createEntityManagerFactory("PIP", connectProps1).createEntityManager();
+		}
 	}
 
 	public EventHandlerDefinition getEventHandlerDefinition(String className) {
