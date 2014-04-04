@@ -52,18 +52,20 @@ public class PipPushStrategy extends DistributedPipStrategy {
 
 	@Override
 	public IStatus remoteEventUpdate(Location location, IEvent event) {
-		_logger.debug("update(" + location + "," + event + ")");
+		_logger.debug("remoteEventUpdate(" + location + "," + event + ")");
 
-//		PipClientHandler pip = _clientHandlerFactory.createPipClientHandler(location);
-//		try {
-//			pip.connect();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		IStatus result = pip.update(event);
-//		pip.disconnect();
-//		return result;
-		return null;
+		try {
+			PipClientHandler pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
+
+			pipHandle.update(event);
+
+			_connectionManager.release(pipHandle);
+		} catch (IOException e) {
+			_logger.warn("remoteEventUpdate failed: " + e.getMessage());
+			return new StatusBasic(EStatus.ERROR, e.getMessage());
+		}
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override

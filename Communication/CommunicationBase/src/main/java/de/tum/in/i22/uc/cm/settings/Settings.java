@@ -68,6 +68,11 @@ public class Settings extends SettingsLoader {
 	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
 	private EDistributedPipStrategy _pipDistributionStrategy = EDistributedPipStrategy.PUSH;
+	private int _pipDistributionMaxConnections = 5;
+
+	private int _pdpDistributionMaxConnections = 5;
+
+	private int _pmpDistributionMaxConnections = 5;
 
 
 	private Settings() {
@@ -137,6 +142,12 @@ public class Settings extends SettingsLoader {
 		_pipInitialRepresentations			= loadSetting("pip_initial_representations", _pipInitialRepresentations);
 
 		_pipDistributionStrategy = loadSetting("pip_distribution_strategy", _pipDistributionStrategy, EDistributedPipStrategy.class);
+		_pipDistributionMaxConnections = loadSetting("pip_distribution_max_connections", _pipDistributionMaxConnections);
+
+		_pdpDistributionMaxConnections = loadSetting("pdp_distribution_max_connections", _pdpDistributionMaxConnections);
+
+		_pmpDistributionMaxConnections = loadSetting("pmp_distribution_max_connections", _pmpDistributionMaxConnections);
+
 		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol, ECommunicationProtocol.class);
 	}
 
@@ -311,6 +322,18 @@ public class Settings extends SettingsLoader {
 
 	public Map<IName, IData> getPipInitialRepresentations() {
 		return Collections.unmodifiableMap(_pipInitialRepresentations);
+	}
+
+	public int getPipDistributionMaxConnections() {
+		return _pipDistributionMaxConnections;
+	}
+
+	public int getPdpDistributionMaxConnections() {
+		return _pdpDistributionMaxConnections;
+	}
+
+	public int getPmpDistributionMaxConnections() {
+		return _pmpDistributionMaxConnections;
 	}
 }
 
