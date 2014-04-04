@@ -19,8 +19,8 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
  * @author Florian Kelbert
  *
  */
-public class ThriftProcessorFactory {
-	private static Logger _logger = LoggerFactory.getLogger(ThriftProcessorFactory.class);
+public class ThriftServerFactory {
+	private static Logger _logger = LoggerFactory.getLogger(ThriftServerFactory.class);
 
 	/**
 	 * Creates a Pdp Thrift server listening on the specified port and redirecting
@@ -34,7 +34,7 @@ public class ThriftProcessorFactory {
 	 */
 	public static IThriftServer createPdpThriftServer(int port, IRequestHandler requestHandler) {
 		return createThriftServer(port,
-				new TAny2Pdp.Processor<TAny2PdpThriftProcessor>(new TAny2PdpThriftProcessor(requestHandler)));
+				new TAny2Pdp.Processor<TAny2PdpThriftServer>(new TAny2PdpThriftServer(requestHandler)));
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class ThriftProcessorFactory {
 	 */
 	public static IThriftServer createPipThriftServer(int port, IRequestHandler requestHandler) {
 		return createThriftServer(port,
-				new TAny2Pip.Processor<TAny2PipThriftProcessor>(new TAny2PipThriftProcessor(requestHandler)));
+				new TAny2Pip.Processor<TAny2PipThriftServer>(new TAny2PipThriftServer(requestHandler)));
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class ThriftProcessorFactory {
 	 */
 	public static IThriftServer createPmpThriftServer(int port, IRequestHandler requestHandler) {
 		return createThriftServer(port,
-				new TAny2Pmp.Processor<TAny2PmpThriftProcessor>(new TAny2PmpThriftProcessor(requestHandler)));
+				new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(requestHandler)));
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class ThriftProcessorFactory {
 	 */
 	public static IThriftServer createAnyThriftServer(int port, IRequestHandler requestHandler) {
 		return createThriftServer(port,
-				new TAny2Any.Processor<TAny2AnyThriftProcessor>(new TAny2AnyThriftProcessor(requestHandler)));
+				new TAny2Any.Processor<TAny2AnyThriftServer>(new TAny2AnyThriftServer(requestHandler)));
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class ThriftProcessorFactory {
 	 */
 	public static IThriftServer createPxpThriftServer(int port) {
 		return createThriftServer(port,
-				new TAny2Pxp.Processor<TAny2PxpThriftProcessor>(new TAny2PxpThriftProcessor()));
+				new TAny2Pxp.Processor<TAny2PxpThriftServer>(new TAny2PxpThriftServer()));
 	}
 
 	private static IThriftServer createThriftServer(int port, TProcessor processor) {

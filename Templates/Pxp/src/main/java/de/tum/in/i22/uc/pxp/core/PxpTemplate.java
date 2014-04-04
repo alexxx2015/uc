@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
-import de.tum.in.i22.uc.thrift.server.ThriftProcessorFactory;
+import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 
 public class PxpTemplate {
@@ -23,7 +23,7 @@ public class PxpTemplate {
 
 		/****
 		 * Example class to register a new PXP server to the PDP
-		 * PXP Server functionality is described in TAny2PxpThriftProcessor
+		 * PXP  Server functionality is described in TAny2PxpThriftProcessor
 		 */
 
 
@@ -43,11 +43,11 @@ public class PxpTemplate {
 
 		//create new thrift server 1
 		System.out.println("creating pxp server "+pxpId1 +" on port "+pxpPort1);
-		_pxpServer1 = ThriftProcessorFactory.createPxpThriftServer(pxpPort1);
+		_pxpServer1 = ThriftServerFactory.createPxpThriftServer(pxpPort1);
 
 		//create new thrift server 2
 		System.out.println("creating pxp server "+pxpId2 +" on port "+pxpPort2);
-		_pxpServer2 = ThriftProcessorFactory.createPxpThriftServer(pxpPort2);
+		_pxpServer2 = ThriftServerFactory.createPxpThriftServer(pxpPort2);
 
 
 		//start server1

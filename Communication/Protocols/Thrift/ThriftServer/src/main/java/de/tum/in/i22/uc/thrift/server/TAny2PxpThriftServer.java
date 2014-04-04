@@ -12,14 +12,14 @@ import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 
 /**
- * Use {@link ThriftProcessorFactory} to create an instance.
+ * Use {@link ThriftServerFactory} to create an instance.
  *
  * @author Florian Kelbert & ?
  *
  */
-class TAny2PxpThriftProcessor extends ThriftServerHandler implements TAny2Pxp.Iface {
+class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface {
 
-	private static Logger _logger = LoggerFactory.getLogger(TAny2PxpThriftProcessor.class);
+	private static Logger _logger = LoggerFactory.getLogger(TAny2PxpThriftServer.class);
 
 	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {

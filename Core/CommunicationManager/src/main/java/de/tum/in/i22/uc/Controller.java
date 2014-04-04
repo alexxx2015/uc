@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
-import de.tum.in.i22.uc.thrift.server.ThriftProcessorFactory;
+import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class Controller {
 
@@ -55,7 +55,7 @@ public class Controller {
 
 	private static void startListeners(RequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = ThriftProcessorFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -64,7 +64,7 @@ public class Controller {
 
 
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = ThriftProcessorFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
+			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -72,7 +72,7 @@ public class Controller {
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = ThriftProcessorFactory.createPmpThriftServer(_settings.getPmpListenerPort(), requestHandler);
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(_settings.getPmpListenerPort(), requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -80,7 +80,7 @@ public class Controller {
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = ThriftProcessorFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
+			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();

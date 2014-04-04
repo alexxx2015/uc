@@ -30,17 +30,17 @@ import de.tum.in.i22.uc.thrift.types.TStatus;
 
 
 /**
- * Use {@link ThriftProcessorFactory} to create an instance.
+ * Use {@link ThriftServerFactory} to create an instance.
  *
  * @author Florian Kelbert
  *
  */
-class TAny2PipThriftProcessor extends ThriftServerHandler implements TAny2Pip.Iface {
-	private static Logger _logger = LoggerFactory.getLogger(TAny2PipThriftProcessor.class);
+class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface {
+	private static Logger _logger = LoggerFactory.getLogger(TAny2PipThriftServer.class);
 
 	private final IRequestHandler _requestHandler;
 
-	TAny2PipThriftProcessor(IRequestHandler requestHandler) {
+	TAny2PipThriftServer(IRequestHandler requestHandler) {
 		_requestHandler = requestHandler;
 	}
 

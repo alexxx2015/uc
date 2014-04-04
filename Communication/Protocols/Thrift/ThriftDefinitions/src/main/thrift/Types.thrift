@@ -3,7 +3,7 @@ namespace csharp de.tum.in.i22.uc.thrift.types
 namespace java de.tum.in.i22.uc.thrift.types
 /*
  * Typedef for platform-dependent definitions.
- *
+ * 
  * Change the values for the platform and language you are compiling for
  */
 

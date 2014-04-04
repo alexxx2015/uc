@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Main Thrift server class.
  *
- * Use {@link ThriftProcessorFactory} to get instances.
+ * Use {@link ThriftServerFactory} to get instances.
  *
  * @author Florian Kelbert
  *
