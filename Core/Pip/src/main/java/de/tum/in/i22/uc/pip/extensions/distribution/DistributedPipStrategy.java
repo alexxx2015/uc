@@ -17,13 +17,13 @@ public abstract class DistributedPipStrategy extends AbstractStrategy implements
 
 	protected final ClientHandlerFactory _clientHandlerFactory;
 
-	protected ConnectionManager<PipClientHandler> _connectionManager;
+	protected final ConnectionManager<PipClientHandler> _connectionManager;
 
 	public DistributedPipStrategy(EDistributedPipStrategy eStrategy) {
 		_eStrategy = eStrategy;
 
 		// TODO: Move size to settings
-		_connectionManager = new ConnectionManager<>(5);
+		_connectionManager = new ConnectionManager<>(Settings.getInstance().getPipDistributionMaxConnections());
 
 		switch (Settings.getInstance().getCommunicationProtocol()) {
 			case THRIFT:
