@@ -20,6 +20,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.pip.PipStatus;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
@@ -52,7 +53,7 @@ public class PipHandler extends PipProcessor {
 
 	public PipHandler() {
 		_pipManager = PipManager.getInstance();
-		_distributedPipManager = DistributedPipManager.getInstance();
+		_distributedPipManager = new DistributedPipManager();
 		_ifModelManager = InformationFlowModelManager.getInstance();
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
@@ -91,10 +92,8 @@ public class PipHandler extends PipProcessor {
 
 		try {
 			actionHandler = EventHandlerManager.createEventHandler(event);
-		} catch (IllegalAccessException | InstantiationException e) {
-			return new StatusBasic(EStatus.ERROR, "Failed to create event handler for action " + action);
-		} catch (ClassNotFoundException e) {
-			return new StatusBasic(EStatus.ERROR, "Class not found for event handler " + action);
+		} catch (Exception e) {
+			return new StatusBasic(EStatus.ERROR, "Could not instantiate event handler for " + action + ", " + e.getMessage());
 		}
 
 		if (actionHandler == null) {
@@ -104,7 +103,23 @@ public class PipHandler extends PipProcessor {
 		actionHandler.setEvent(event);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for " + event);
+
 		result = actionHandler.executeEvent();
+
+		// Potentially, we need to do some more work ...
+		if (result.isSameStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && result instanceof PipStatus) {
+			// TODO: PIP communication and PMP communication
+			// can be improved by either doing only one call
+			// or by doing them in parallel
+
+			// .... remote data flow tracking ....
+			_distributedPipManager.remoteDataFlow(((PipStatus) result).getDataflow());
+
+			// .... and remote policy transfer
+			// TODO: notify PMP
+		}
+
+
 		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 
 		return result;

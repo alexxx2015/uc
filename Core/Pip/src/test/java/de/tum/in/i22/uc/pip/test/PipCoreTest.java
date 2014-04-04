@@ -61,7 +61,7 @@ public class PipCoreTest {
 	public void testReadFileActionMissingParameters() {
 		IEvent event = createWindowsEvent("ReadFile", null);
 		IStatus status = _pipHandler.update(event);
-		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+		Assert.assertEquals(EStatus.ERROR_EVENT_PARAMETER_MISSING, status.getEStatus());
 	}
 
 	@Test

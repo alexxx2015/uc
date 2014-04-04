@@ -1,11 +1,16 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.client.PipClientHandler;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
@@ -46,29 +51,7 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	}
 
 	@Override
-	public IStatus initialRepresentation(Location location, IName containerName, Set<IData> data) {
-		_logger.debug("initialRepresentation(" + location + "," + containerName + "," + data + ")");
-
-		PipClientHandler pip = _pipClientHandlers.get(location);
-
-		if (pip == null) {
-			pip = _clientHandlerFactory.createPipClientHandler(location);
-			try {
-				pip.connect();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		IStatus result = pip.initialRepresentation(containerName, data);
-//		pip.disconnect();
-
-		return result;
-	}
-
-	@Override
-	public IStatus update(Location location, IEvent event) {
+	public IStatus remoteEventUpdate(Location location, IEvent event) {
 		_logger.debug("update(" + location + "," + event + ")");
 
 //		PipClientHandler pip = _clientHandlerFactory.createPipClientHandler(location);
@@ -81,5 +64,35 @@ public class PipPushStrategy extends DistributedPipStrategy {
 //		pip.disconnect();
 //		return result;
 		return null;
+	}
+
+	@Override
+	public IStatus remoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow) {
+		_logger.info("Performing remote data flow transfer: " + dataflow);
+
+		String errorString = "";
+		for (Location location : dataflow.keySet()) {
+			try {
+				PipClientHandler _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
+
+				// TODO: Update Thrift to get rid of this loop. Possible?
+				for (Entry<IName,Set<IData>> entry : dataflow.get(location).entrySet()) {
+					_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
+				}
+
+				_connectionManager.release(_pipHandle);
+
+			} catch (IOException e) {
+				errorString += "Unable to perform remote data transfer: " + e + System.lineSeparator();
+			}
+		}
+
+		if (errorString.length() == 0) {
+			return new StatusBasic(EStatus.OKAY);
+		}
+		else {
+			_logger.warn("remoteDataFlow failed: " + errorString);
+			return new StatusBasic(EStatus.ERROR, errorString);
+		}
 	}
 }

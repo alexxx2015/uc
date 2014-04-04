@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution.pip;
 
+import java.util.Map;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -18,6 +19,7 @@ public interface IDistributedPipStrategy {
 	boolean hasAllContainers(Location location, Set<IContainer> containers);
 	boolean hasAnyContainer(Location location, Set<IContainer> containers);
 
-	IStatus initialRepresentation(Location location, IName containerName, Set<IData> data);
-	IStatus update(Location location, IEvent event);
+	IStatus remoteEventUpdate(Location location, IEvent event);
+
+	IStatus remoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow);
 }

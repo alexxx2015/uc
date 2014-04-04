@@ -81,16 +81,16 @@ public class PipCoreClassReloadingTest {
 
 		event = _messageFactory.createActualEvent("TestBe", null);
 		status = _pipHandler.update(event);
-		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+		Assert.assertEquals(EStatus.ERROR_EVENT_PARAMETER_MISSING, status.getEStatus());
 
 		event = _messageFactory.createActualEvent("TestCe", null);
 		status = _pipHandler.update(event);
-		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+		Assert.assertEquals(EStatus.ALLOW, status.getEStatus());
 
 		_pipHandler.updateInformationFlowSemantics(null, getJarFile("eventHandlerDefTest1.jar"), EConflictResolution.OVERWRITE);
 		event = _messageFactory.createActualEvent("TestCe", null);
 		status = _pipHandler.update(event);
-		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+		Assert.assertEquals(EStatus.ALLOW, status.getEStatus());
 
 		//FIXME: change expected results previous tests
 

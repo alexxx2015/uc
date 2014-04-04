@@ -28,10 +28,11 @@ import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
+import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.pip.PipStatus;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -46,8 +47,6 @@ public class LinuxEvents {
 	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
 
 	private static final BasicInformationFlowModel ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
-
-	private static final DistributedPipManager distributedPipManager = DistributedPipManager.getInstance();
 
 	private static final IStatus STATUS_OKAY = messageFactory.createStatus(EStatus.OKAY);
 
@@ -150,8 +149,9 @@ public class LinuxEvents {
 
 		params.put("how", how.toString());
 
-		distributedPipManager.update(remoteContainer.getLocation(),
-				new EventBasic("Shutdown", params, true));
+		// TODO
+//		distributedPipManager.update(remoteContainer.getLocation(),
+//				new EventBasic("Shutdown", params, true));
 	}
 
 
@@ -169,13 +169,22 @@ public class LinuxEvents {
 
 		_logger.debug("Data is " + data);
 
+		Map<Location,Map<IName,Set<IData>>> remoteDataFlows = new HashMap<>();
+
 		// copy into all containers aliased from the destination container
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 			if (c instanceof RemoteSocketContainer) {
-				_logger.debug("Sending to " + c);
-				distributedPipManager.initialRepresentation(
-						((RemoteSocketContainer) c).getLocation(),
-						((RemoteSocketContainer) c).getSocketName(), data);
+				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
+				_logger.debug("Adding to " + c);
+//				distributedPipManager.initialRepresentation(
+//						((RemoteSocketContainer) c).getLocation(),
+//						((RemoteSocketContainer) c).getSocketName(), data);
+				Map<IName,Set<IData>> map = remoteDataFlows.get(rsc.getLocation());
+				if (map == null) {
+					map = new HashMap<>();
+					remoteDataFlows.put(rsc.getLocation(), map);
+				}
+				map.put(rsc.getSocketName(), data);
 
 			}
 			else {
@@ -187,6 +196,10 @@ public class LinuxEvents {
 		// ... but only if it is not a socket.
 		if (!(dstCont instanceof SocketContainer)) {
 			ifModel.addDataToContainer(data, dstCont);
+		}
+
+		if (remoteDataFlows.size() > 0) {
+			return PipStatus.createRemoteDataFlowStatus(remoteDataFlows);
 		}
 
 		return STATUS_OKAY;
