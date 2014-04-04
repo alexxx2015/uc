@@ -9,11 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PxpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
@@ -32,7 +31,7 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 public class PxpManager {
 	private static Logger _logger = LoggerFactory.getLogger(PxpManager.class);
 	private static PxpManager _instance;
-	public static HashMap<String, IPxpSpec> pxpSpec = new HashMap<String, IPxpSpec>();
+	public static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
 
 	public static PxpManager getInstance() {
 		/*
@@ -59,7 +58,7 @@ public class PxpManager {
 		IStatus res = null;
 		if (pxpId != null) {
 			if (pxpSpec.containsKey(pxpId)) {
-				IPxpSpec pxp = pxpSpec.get(pxpId);
+				PxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
 					PxpClientHandler client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
@@ -98,7 +97,7 @@ public class PxpManager {
 			return res.isSameStatus(EStatus.OKAY);
 	}
 
-	public boolean registerPxp(IPxpSpec pxp) {
+	public boolean registerPxp(PxpSpec pxp) {
 		boolean b = false;
 		if (!pxpSpec.containsKey(pxp.getId())) {
 			b = pxpSpec.put(pxp.getId(), pxp) == null;

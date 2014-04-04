@@ -1,11 +1,11 @@
 package de.tum.in.i22.uc.cm;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 
@@ -20,5 +20,5 @@ public interface IMessageFactory {
 	public IEvent createDesiredEvent(String name, Map<String, String> map);
 	public IContainer createContainer(String classValue, String id);
 
-	public IPxpSpec createPxpSpec();
+	public PxpSpec createPxpSpec();
 }

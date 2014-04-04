@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 /**
@@ -75,7 +74,7 @@ public class MessageFactory implements IMessageFactory {
 	}
 
 	@Override
-	public IPxpSpec createPxpSpec() {
+	public PxpSpec createPxpSpec() {
 		// TODO Auto-generated method stub
 		return new PxpSpec(null,0,null,null);
 	}

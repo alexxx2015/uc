@@ -21,7 +21,6 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.thrift.types.TContainer;
@@ -64,7 +63,7 @@ public final class ThriftConverter {
 		return new EventBasic(e.name, e.parameters, e.isActual);
 	}
 
-	public static IPxpSpec fromThrift(TPxpSpec p) {
+	public static PxpSpec fromThrift(TPxpSpec p) {
 		if (p == null) {
 			_logger.debug("TPxpSpec was null.");
 			return null;
@@ -201,7 +200,7 @@ public final class ThriftConverter {
 		return new TName(n.getName());
 	}
 
-	public static TPxpSpec toThrift(IPxpSpec p) {
+	public static TPxpSpec toThrift(PxpSpec p) {
 		if (p == null) {
 			_logger.debug("IPxpSpec was null.");
 			return null;

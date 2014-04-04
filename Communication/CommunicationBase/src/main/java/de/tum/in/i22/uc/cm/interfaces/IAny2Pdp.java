@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.cm.interfaces;
 import java.util.List;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
@@ -35,5 +35,5 @@ public interface IAny2Pdp {
 	/*
 	 * From PXP
 	 */
-	public boolean registerPxp(IPxpSpec pxp);
+	public boolean registerPxp(PxpSpec pxp);
 }

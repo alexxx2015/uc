@@ -8,10 +8,10 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -144,7 +144,7 @@ class ThriftPdpClientHandler extends PdpClientHandler {
 	}
 
 	@Override
-	public boolean registerPxp(IPxpSpec pxp) {
+	public boolean registerPxp(PxpSpec pxp) {
 		_logger.debug("registerPxp (Pdp client)");
 		boolean b =false;
 		try {

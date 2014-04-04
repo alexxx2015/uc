@@ -1,4 +1,4 @@
-package de.tum.i22.in.uc.thrift.test;
+package de.tum.in.i22.uc.thrift.test;
 
 import java.util.HashMap;
 import java.util.Map;

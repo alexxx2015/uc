@@ -3,12 +3,12 @@ package de.tum.in.i22.uc.pdp;
 import java.util.List;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
@@ -68,7 +68,7 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public boolean registerPxp(IPxpSpec pxp) {
+	public boolean registerPxp(PxpSpec pxp) {
 		return PxpManager.getInstance().registerPxp(pxp);
 	}
 

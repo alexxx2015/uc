@@ -1,13 +1,11 @@
 package de.tum.in.i22.uc.cm.basic;
 
-import de.tum.in.i22.uc.cm.datatypes.IPxpSpec;
+public class PxpSpec {
+	private final String ip;
+	private final int port;
+	private final String description;
+	private final String id;
 
-public class PxpSpec implements IPxpSpec {
-	private String ip;
-	private int port;
-	private String description;
-	private String id;
-	
 	public PxpSpec(String ip, int port, String id, String description){
 		this.id = id;
 		this.ip = ip;
@@ -30,8 +28,8 @@ public class PxpSpec implements IPxpSpec {
 	public String getId() {
 		return id;
 	}
-	
-	
+
+
 
 //	@Override
 //	public void setIp(String ip) {
