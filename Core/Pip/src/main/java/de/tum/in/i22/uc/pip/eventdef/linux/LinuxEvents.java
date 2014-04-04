@@ -50,7 +50,6 @@ public class LinuxEvents {
 	private static final DistributedPipManager distributedPipManager = DistributedPipManager.getInstance();
 
 	private static final IStatus STATUS_OKAY = messageFactory.createStatus(EStatus.OKAY);
-	private static final IStatus STATUS_ERROR = messageFactory.createStatus(EStatus.ERROR);
 
 	/*
 	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
@@ -62,7 +61,7 @@ public class LinuxEvents {
 		return toRealPath(file, "");
 	}
 
-	static String toRealPath(String dir, String file) {
+	private static String toRealPath(String dir, String file) {
 		Path p = new File(dir, new File(file).getName()).toPath();
 		try {
 			return p.toRealPath().toString();
@@ -96,7 +95,7 @@ public class LinuxEvents {
 
 		if (cont instanceof SocketContainer) {
 			if (ifModel.getAllNames(cont, FiledescrName.class).size() == 0) {
-				shutdownSocket((SocketContainer) cont, Shut.SHUT_RDWR);
+				shutdownSocket((SocketContainer) cont, Shut.RDWR);
 			}
 		}
 	}
@@ -104,18 +103,25 @@ public class LinuxEvents {
 	static void shutdownSocket(SocketContainer cont, Shut how) {
 		List<SocketName> allSocketNames = ifModel.getAllNames(cont, SocketName.class);
 
-		if (how == Shut.SHUT_RD || how == Shut.SHUT_RDWR) {
+		if (how == Shut.RD || how == Shut.RDWR) {
 			// disallow reception
 			ifModel.emptyContainer(cont);
 			ifModel.removeAllAliasesTo(cont);
 		}
 
-		if (how == Shut.SHUT_WR || how == Shut.SHUT_RDWR) {
+		if (how == Shut.WR || how == Shut.RDWR) {
 			// disallow transmission
+
+			// we remove all SocketNames for all aliased containers
+			for (IContainer aliased : ifModel.getAliasesFrom(cont)) {
+				for (IName name : ifModel.getAllNames(aliased, SocketName.class)) {
+					ifModel.removeName(name);
+				}
+			}
 			ifModel.removeAllAliasesFrom(cont);
 		}
 
-		if (how == Shut.SHUT_RDWR) {
+		if (how == Shut.RDWR) {
 			// disallow transmission and reception,
 			// therefore delete all socket identifiers
 			for (SocketName n : allSocketNames) {
@@ -131,22 +137,21 @@ public class LinuxEvents {
 		}
 	}
 
-	static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut howLocal) {
+	private static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut how) {
 		SocketName remoteName = remoteContainer.getSocketName();
 
 		Map<String,String> params = new HashMap<String,String>();
 
 		params.put(EventBasic.PEP_PARAMETER_KEY, "Linux");
-		params.put("localIP", remoteName.getLocalIP());
-		params.put("localPort", String.valueOf(remoteName.getLocalPort()));
-		params.put("remoteIP", remoteName.getRemoteIP());
-		params.put("remotePort", String.valueOf(remoteName.getRemotePort()));
+		params.put("localIP", remoteName.getRemoteIP());
+		params.put("localPort", String.valueOf(remoteName.getRemotePort()));
+		params.put("remoteIP", remoteName.getLocalIP());
+		params.put("remotePort", String.valueOf(remoteName.getLocalPort()));
 
-//		params.put("how", ); TODO
-//
-//		distributedPipManager.notifyActualEvent(
-//				remoteContainer.getConnector(),
-//				new EventBasic("RemoteShutdown", params, true));
+		params.put("how", how.toString());
+
+		distributedPipManager.update(remoteContainer.getLocation(),
+				new EventBasic("Shutdown", params, true));
 	}
 
 
@@ -168,7 +173,7 @@ public class LinuxEvents {
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 			if (c instanceof RemoteSocketContainer) {
 				_logger.debug("Sending to " + c);
-				distributedPipManager.notifyDataTransfer(
+				distributedPipManager.initialRepresentation(
 						((RemoteSocketContainer) c).getLocation(),
 						((RemoteSocketContainer) c).getSocketName(), data);
 

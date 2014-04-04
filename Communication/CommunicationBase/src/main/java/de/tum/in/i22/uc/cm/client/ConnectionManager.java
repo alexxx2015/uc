@@ -12,14 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Manages and synchronizes connections.
  *
- * Singleton.
- *
  * Any manager instance keeps a fixed amount of connections open, closing connections
- * that have been least-recently-used. Using this manager, {@link Connection}s
+ * that have been least-recently-used. Using this manager, {@link IConnectable}s
  * can safely be shared across threads.
  *
- * For this reason, this manager's methods {@link ConnectionManager#obtain(IConnection)}
- * and {@link ConnectionManager#release(IConnection)} must be used (see their documentation).
+ * For this reason, this manager's methods {@link ConnectionManager#obtain(IConnectable)}
+ * and {@link ConnectionManager#release(IConnectable)} must be used (see their documentation).
  *
  *
  * @author Florian Kelbert
@@ -29,8 +27,6 @@ public class ConnectionManager {
 
 	// TODO Move to configuration file
 	private static final int DEFAULT_MAX_ENTRIES = 20;
-
-	private static ConnectionManager _instance;
 
 	private final PoolMap connectionPool;;
 
@@ -50,31 +46,14 @@ public class ConnectionManager {
 	}
 
 
-	public static ConnectionManager getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (ConnectionManager.class) {
-				if (_instance == null) _instance = new ConnectionManager();
-			}
-		}
-		return _instance;
-	}
-
-
-
 	/**
 	 * Connects and reserves the specified connection for the caller.
 	 *
-	 * Note, that the returned connection might be different instance than the one that has been
+	 * Note, that the returned {@link IConnectable} might be a different instance than the one that has been
 	 * passed as an argument. The reason is, that another ("similar") instance might have been
 	 * opened before, is still available, and thus returned.
 	 * In any case, the caller must use the _returned_ connection.
-	 * The returned connection is connected and ready to be used by the caller.
+	 * The returned {@link IConnectable} object is connected and ready to be used by the caller.
 	 *
 	 * If the connection was not known to the {@link ConnectionManager} before,
 	 * it gets
@@ -88,106 +67,98 @@ public class ConnectionManager {
 	 *   (b) if not currently in use: reserves the connection for the caller.
 	 *
 	 * Once no longer needed, the caller must "free" the reserved connection
-	 * by calling method {@link ConnectionManager#release(IConnection)}.
+	 * by calling method {@link ConnectionManager#release(IConnectable)}.
 	 *
-	 * @param iconnection
+	 * @param connectable
 	 * @return
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
-	public <C extends IConnection> C obtain(C iconnection) throws IOException {
-		if (iconnection == null) {
+	public IConnectable obtain(IConnectable connectable) throws IOException {
+		if (connectable == null) {
 			throw new NullPointerException("No connection provided.");
 		}
-
-		if (!(iconnection instanceof Connection)) {
-			throw new RuntimeException(iconnection + " is not a " + Connection.class);
-		}
-
-		Connection connection = (Connection) iconnection;
 
 		PoolMapEntry entry = null;
 
 		synchronized (connectionPool) {
 			while (entry == null || entry.inuse != false) {
-				entry = connectionPool.get(connection);
+				entry = connectionPool.get(connectable);
 
 				if (entry == null) {
 					// connection is not known
 					try {
-						connection.connect();
+						connectable.connect();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new IOException("Unable to connect.", e);
 					}
-					entry = new PoolMapEntry(connection, false);
+					entry = new PoolMapEntry(connectable, false);
 				}
 				else if (entry.inuse == true) {
 					try {
 						connectionPool.wait();
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						throw new IOException("InterruptedException.", e);
 					}
 				}
 			}
 
 			entry.inuse = true;
-			connectionPool.put(connection, entry);
+			connectionPool.put(connectable, entry);
 		}
 
-		return (C) entry.connection;
+		return entry.connectable;
 	}
 
 
 	/**
-	 * Returns the specified connection to the connection pool and
+	 * Returns the specified {@link IConnectable} to the connection pool and
 	 * makes it available to other threads. The connection is *not*
 	 * closed (at least not immediately; it might get closed after
 	 * some time, though).
 	 *
-	 * After returning the connection, the caller must no longer
+	 * After returning the {@link IConnectable}, the caller must no longer
 	 * use the connection, as this would lead to unspecified results.
 	 *
-	 * Method {@link ConnectionManager#close(IConnection)} might be
+	 * Method {@link ConnectionManager#close(IConnectable)} might be
 	 * used to force closing of a connection.
 	 *
-	 * @param iconnection
+	 * @param connectable
 	 * @throws IOException
 	 */
-	public void release(IConnection iconnection) {
-		release(iconnection, false);
+	public void release(IConnectable connectable) {
+		release(connectable, false);
 	}
 
 
 	/**
-	 * Returns and closes the specified connection, irrespective of whether
+	 * Returns and closes the specified {@link IConnectable}, irrespective of whether
 	 * it might still be in use by other threads.
 	 *
 	 * After returning the connection, the caller must no longer
 	 * use the connection, as this would lead to unspecified results.
 	 *
-	 * Also consider calling {@link ConnectionManager#release(IConnection)}
+	 * Also consider calling {@link ConnectionManager#release(IConnectable)}
 	 * instead, which will also return the connection to the connection
 	 * manager but allow other threads to reuse the same connection.
 	 *
-	 * @param iconnection
+	 * @param connectable
 	 * @throws IOException
 	 */
-	public void close(IConnection iconnection) throws IOException {
-		release(iconnection, true);
+	public void close(IConnectable connectable) throws IOException {
+		release(connectable, true);
 	}
 
 	public void closeAll() {
 		synchronized (connectionPool) {
 			for (PoolMapEntry pme : connectionPool.values()) {
-				pme.connection.disconnect();
-				connectionPool.remove(pme.connection);
+				pme.connectable.disconnect();
+				connectionPool.remove(pme.connectable);
 			}
 
 
 			for (PoolMapEntry pme : toClose.keySet()) {
-				pme.connection.disconnect();
-				toClose.remove(pme.connection);
+				pme.connectable.disconnect();
+				toClose.remove(pme.connectable);
 			}
 
 			connectionPool.notifyAll();
@@ -195,42 +166,36 @@ public class ConnectionManager {
 	}
 
 	/**
-	 * Returns the specified connection to the connection pool.
+	 * Returns the specified {@link IConnectable} to the connection pool.
 	 * If forceClose is true, then the connection is forced to be
-	 * close, irrespective of whether it might still be in use by
+	 * closed, irrespective of whether it might still be in use by
 	 * other threads.
 	 *
-	 * @param iconnection
+	 * @param connectable
 	 * @param forceClose
 	 * @throws IOException
 	 */
-	private void release(IConnection iconnection, boolean forceClose) {
-		if (iconnection == null) {
+	private void release(IConnectable connectable, boolean forceClose) {
+		if (connectable == null) {
 			throw new NullPointerException("No connection provided.");
 		}
 
-		if (!(iconnection instanceof Connection)) {
-			throw new RuntimeException(iconnection + " is not a " + Connection.class);
-		}
-
-		Connection connection = (Connection) iconnection;
-
 		synchronized (connectionPool) {
-			PoolMapEntry pme = connectionPool.get(connection);
+			PoolMapEntry pme = connectionPool.get(connectable);
 
 			if (pme == null) {
 				// It may be the case that the connection has been removed from the pool
 				// while it was in use. In this case we get the connection from the 'toClose' map
 				// and close it.
-				if ((pme = toClose.remove(connection)) != null) {
-					pme.connection.disconnect();
+				if ((pme = toClose.remove(connectable)) != null) {
+					pme.connectable.disconnect();
 				}
 			}
 			else {
 				if (forceClose) {
 					// force the connection to be closed
-					pme.connection.disconnect();
-					connectionPool.remove(pme.connection);
+					pme.connectable.disconnect();
+					connectionPool.remove(pme.connectable);
 				}
 				else {
 					// set the connection to be reusable
@@ -243,21 +208,18 @@ public class ConnectionManager {
 
 
 
-
-
-
-	private class PoolMap implements Map<Connection, PoolMapEntry> {
+	private class PoolMap implements Map<IConnectable, PoolMapEntry> {
 		private final int _maxEntries;
 
-		private final Map<Connection, PoolMapEntry> _backMap;
+		private final Map<IConnectable, PoolMapEntry> _backMap;
 
 		public PoolMap(int maxEntries) {
 			_maxEntries = maxEntries;
-			_backMap = Collections.synchronizedMap(new LinkedHashMap<Connection, PoolMapEntry>(maxEntries, 0.75f, true) {
+			_backMap = Collections.synchronizedMap(new LinkedHashMap<IConnectable, PoolMapEntry>(maxEntries, 0.75f, true) {
 				private static final long serialVersionUID = -3139938026277477159L;
 
 				@Override
-				protected boolean removeEldestEntry(Map.Entry<Connection,PoolMapEntry> eldest) {
+				protected boolean removeEldestEntry(Map.Entry<IConnectable,PoolMapEntry> eldest) {
 					boolean result = size() > _maxEntries;
 
 					if (result) {
@@ -268,7 +230,7 @@ public class ConnectionManager {
 							// soon as it is released, cf. release().
 							PoolMapEntry pme = eldest.getValue();
 							if (pme.inuse == false) {
-								pme.connection.disconnect();
+								pme.connectable.disconnect();
 							}
 							else {
 								toClose.put(pme, pme);
@@ -307,7 +269,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public PoolMapEntry put(Connection key, PoolMapEntry value) {
+		public PoolMapEntry put(IConnectable key, PoolMapEntry value) {
 			return _backMap.put(key, value);
 		}
 
@@ -317,7 +279,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public void putAll(Map<? extends Connection, ? extends PoolMapEntry> m) {
+		public void putAll(Map<? extends IConnectable, ? extends PoolMapEntry> m) {
 			_backMap.putAll(m);
 		}
 
@@ -327,7 +289,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public Set<Connection> keySet() {
+		public Set<IConnectable> keySet() {
 			return _backMap.keySet();
 		}
 
@@ -337,7 +299,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public Set<java.util.Map.Entry<Connection, PoolMapEntry>> entrySet() {
+		public Set<java.util.Map.Entry<IConnectable, PoolMapEntry>> entrySet() {
 			return _backMap.entrySet();
 		}
 	}
@@ -347,17 +309,17 @@ public class ConnectionManager {
 	 * Groups a connection and its current state, i.e. whether it is currently in use.
 	 */
 	private class PoolMapEntry {
-		Connection connection;
+		IConnectable connectable;
 		boolean inuse;
 
-		public PoolMapEntry(Connection connection, boolean inuse) {
-			this.connection = connection;
+		public PoolMapEntry(IConnectable connection, boolean inuse) {
+			this.connectable = connection;
 			this.inuse = inuse;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hashCode(connection);
+			return Objects.hashCode(connectable);
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.client;
 
-
-
 /**
  * Abstract class defining a connector that will operate on
  * a specific HandleType. Using this class as a superclass

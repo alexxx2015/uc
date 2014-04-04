@@ -19,5 +19,5 @@ public interface IDistributedPipStrategy {
 	boolean hasAnyContainer(Location location, Set<IContainer> containers);
 
 	IStatus initialRepresentation(Location location, IName containerName, Set<IData> data);
-	IStatus notifyActualEvent(Location location, IEvent event);
+	IStatus update(Location location, IEvent event);
 }

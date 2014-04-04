@@ -6,7 +6,7 @@ package de.tum.in.i22.uc.cm.client;
  * @author Florian Kelbert
  *
  */
-public interface IConnectable {
+interface IConnectable {
 	/**
 	 * Connects this object to the remote point
 	 *
