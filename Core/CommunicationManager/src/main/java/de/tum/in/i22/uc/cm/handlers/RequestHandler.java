@@ -18,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.server.Request;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.ListMechanismsPdpRequest;
@@ -58,7 +57,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		 * -FK-
 		 */
 		if (_instance == null) {
-			synchronized (Settings.class) {
+			synchronized (RequestHandler.class) {
 				if (_instance == null) _instance = new RequestHandler();
 			}
 		}

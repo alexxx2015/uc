@@ -18,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -35,10 +34,6 @@ public class ThriftTester {
 
 	@Test
 	public void thriftTest() throws Exception {
-		/*
-		 * Start the requestHandler
-		 */
-		IRequestHandler reqHandler = RequestHandler.getInstance();
 
 		/*
 		 * Start the PDP server

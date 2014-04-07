@@ -34,8 +34,6 @@ class RequestQueueManager implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestQueueManager.class);
 
-	private static RequestQueueManager _instance;
-
 	private final Settings _settings;
 
 	// Do _NOT_ use an ArrayBlockingQueue. It swallowed up 2/3 of all requests added to the queue
@@ -185,12 +183,13 @@ class RequestQueueManager implements Runnable {
 
 	void addRequest(Request<?,?> request, IForwarder forwarder) {
 		_logger.debug("Enqueuing " + request);
-		_instance._requestQueue.add(new RequestWrapper(request, forwarder));
+		_requestQueue.add(new RequestWrapper(request, forwarder));
 	}
 
 	@Override
 	public void run() {
 		_logger.debug("Request handler run method");
+
 		while (!Thread.interrupted()) {
 			RequestWrapper requestWrapper = null;
 			try {
@@ -219,7 +218,6 @@ class RequestQueueManager implements Runnable {
 			if (forwarder != null) {
 				forwarder.forwardResponse(request, response);
 			}
-			_logger.debug("response forwarded");
 		}
 
 		// the thread is interrupted, stop processing the events
