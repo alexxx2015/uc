@@ -13,7 +13,6 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
@@ -40,24 +39,14 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	@Override
 	public TStatus remotePolicyTransfer(Set<String> policies) throws TException {
 		_logger.debug("TAny2Pmp: remotePolicyTransfer");
-		IStatus result = _requestHandler.remotePolicyTransfer(policies);
+		IStatus result = _requestHandler.policyTransfer(policies);
 		return ThriftConverter.toThrift(result);
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String address, int port, Map<TName, Set<TData>> dataflow) throws TException {
-		Map<IName,Set<IData>> map = new HashMap<>();
-
-		for (Entry<TName, Set<TData>> entryName : dataflow.entrySet()) {
-			IName name = ThriftConverter.fromThrift(entryName.getKey());
-			Set<IData> data = ThriftConverter.fromThriftDataSet(entryName.getValue());
-			map.put(name, data);
-		}
-
-		Map<Location, Map<IName,Set<IData>>> df = new HashMap<>();
-		df.put(new IPLocation(address, port), map);
-
-		IStatus status = _requestHandler.informRemoteDataFlow(df);
+	public TStatus informRemoteDataFlow(String address, int port, Set<TData> data) throws TException {
+		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
+		IStatus status = _requestHandler.informRemoteDataFlow(new IPLocation(address, port), d);
 		return ThriftConverter.toThrift(status);
 	}
 }

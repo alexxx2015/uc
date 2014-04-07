@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.client.PmpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -84,7 +82,7 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(Set<String> policies) {
+	public IStatus policyTransfer(Set<String> policies) {
 		try {
 			TStatus status = _handle.remotePolicyTransfer(policies);
 			return ThriftConverter.fromThrift(status);
@@ -94,7 +92,7 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow) {
+	public IStatus informRemoteDataFlow(Location location, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

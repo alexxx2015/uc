@@ -39,6 +39,7 @@ import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RemotePolicyTransferPmpRequest;
 
 public class RequestHandler implements IRequestHandler, IForwarder {
@@ -225,15 +226,17 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(Set<String> policies) {
+	public IStatus policyTransfer(Set<String> policies) {
 		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(policies);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow) {
-		throw new UnsupportedOperationException("This event is never supposed to be put into the queue.");
+	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
+		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(location, dataflow);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
 	}
 
 

@@ -1,23 +1,39 @@
 package de.tum.in.i22.uc.pmp.extensions.distribution;
 
+import java.io.IOException;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.client.PmpClientHandler;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.distribution.EDistributedStrategy;
+import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
-public class PmpPushStrategy extends DistributedPmpStrategy {
+public class PmpPushStrategy extends PmpDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PmpPushStrategy.class);
 
-	public PmpPushStrategy(EDistributedStrategy eStrategy) {
+	public PmpPushStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(Location location, String policy) {
-		return null;
+	public IStatus remotePolicyTransfer(Location location, Set<String> policies) {
+		_logger.info("Performing remote policy transfer: " + policies);
 
+		try {
+			PmpClientHandler _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createPmpClientHandler(location));
+			_pmpHandle.policyTransfer(policies);
+			_connectionManager.release(_pmpHandle);
+		}
+		catch (IOException e) {
+			_logger.warn("Unable to perform remote data transfer: " + e + System.lineSeparator());
+			return new StatusBasic(EStatus.ERROR, "Unable to perform remote data transfer: " + e);
+		}
+
+		return new StatusBasic(EStatus.OKAY);
 	}
-
 }

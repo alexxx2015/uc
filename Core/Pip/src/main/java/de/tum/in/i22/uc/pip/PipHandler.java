@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -20,13 +21,14 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
+import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
@@ -45,7 +47,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
-	private final DistributedPipManager _distributedPipManager;
+	private final PipDistributionManager _distributedPipManager;
 
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
@@ -53,7 +55,7 @@ public class PipHandler extends PipProcessor {
 
 	public PipHandler() {
 		_pipManager = new PipManager();
-		_distributedPipManager = new DistributedPipManager();
+		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = InformationFlowModelManager.getInstance();
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
@@ -111,11 +113,19 @@ public class PipHandler extends PipProcessor {
 			// can be improved by either doing only one call
 			// or by doing them in parallel
 
-			// .... remote data flow tracking ....
-			_distributedPipManager.remoteDataFlow(((DistributedPipStatus) result).getDataflow());
+			Map<Location, Map<IName, Set<IData>>> dataflow = ((DistributedPipStatus) result).getDataflow();
+			for (Location location : dataflow.keySet()) {
+				// .... remote data flow tracking ....
+				_distributedPipManager.remoteDataFlow(location, dataflow.get(location));
 
-			// .... and remote policy transfer
-			getPmp().informRemoteDataFlow(((DistributedPipStatus) result).getDataflow());
+				// .... and remote policy transfer
+				Set<IData> data = new HashSet<>();
+				for (Set<IData> d : dataflow.get(location).values()) {
+					data.addAll(d);
+				}
+				getPmp().informRemoteDataFlow(location, data);
+			}
+
 		}
 
 

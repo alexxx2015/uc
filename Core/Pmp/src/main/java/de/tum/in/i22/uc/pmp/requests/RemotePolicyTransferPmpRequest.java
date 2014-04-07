@@ -14,6 +14,6 @@ public class RemotePolicyTransferPmpRequest extends PmpRequest<IStatus> {
 
 	@Override
 	public IStatus process(PmpProcessor processor) {
-		return processor.remotePolicyTransfer(_policies);
+		return processor.policyTransfer(_policies);
 	}
 }

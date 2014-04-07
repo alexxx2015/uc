@@ -7,8 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.distribution.EDistributedStrategy;
-import de.tum.in.i22.uc.cm.distribution.IDistributedPipStrategy;
+import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
@@ -21,19 +20,19 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * @author Florian Kelbert
  *
  */
-public class DistributedPipManager {
-	private static IDistributedPipStrategy _strategy;
+public class PipDistributionManager {
+	private static PipDistributionStrategy _strategy;
 
-	public DistributedPipManager() {
-		_strategy = DistributedPipStrategy.create(Settings.getInstance().getDistributionStrategy());
+	public PipDistributionManager() {
+		_strategy = PipDistributionStrategy.create(Settings.getInstance().getDistributionStrategy());
 	}
 
-	public static EDistributedStrategy getStrategy() {
+	public static EDistributionStrategy getStrategy() {
 		return _strategy.getStrategy();
 	}
 
-	public IStatus remoteDataFlow(Map<Location,Map<IName,Set<IData>>> dataflow) {
-		return _strategy.remoteDataFlow(dataflow);
+	public IStatus remoteDataFlow(Location location, Map<IName,Set<IData>> dataflow) {
+		return _strategy.remoteDataFlow(location, dataflow);
 	}
 
 	public IStatus update(Location location, IEvent event) {

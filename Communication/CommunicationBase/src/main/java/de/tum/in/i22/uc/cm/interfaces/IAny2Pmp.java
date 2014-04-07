@@ -19,10 +19,28 @@ public interface IAny2Pmp {
 	/*
 	 * From _local_ PIP
 	 */
-	IStatus informRemoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow);
+
+	/**
+	 * Called from a PIP to tell the PMP that some remote data flow happened.
+	 * The PMP is then in charge of transferring the corresponding policies.
+	 *
+	 * @param location the location to which the data was transferred.
+	 * @param dataflow the data that was transferred
+	 * @return
+	 */
+	IStatus informRemoteDataFlow(Location location, Set<IData> dataflow);
+
 
 	/*
 	 * From PMP
 	 */
-	IStatus remotePolicyTransfer(Set<String> policies);
+
+	/**
+	 * Transfers the specified policies to this PMP, which
+	 * will then 'manage' them and deploy them at the PDP.
+	 *
+	 * @param policies the transferred policies
+	 * @return
+	 */
+	IStatus policyTransfer(Set<String> policies);
 }
