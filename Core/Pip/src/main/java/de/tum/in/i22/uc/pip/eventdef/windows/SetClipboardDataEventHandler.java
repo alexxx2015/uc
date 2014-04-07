@@ -14,7 +14,7 @@ public class SetClipboardDataEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String pid = null;
 		String processName = null;
 		try {

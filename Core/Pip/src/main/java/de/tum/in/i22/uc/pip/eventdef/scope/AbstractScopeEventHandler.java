@@ -108,7 +108,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 */
 	@Override
 	public
-	final IStatus executeEvent() {
+	final IStatus performUpdate() {
 
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
@@ -132,7 +132,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 					_logger.info("Opening scope "
 							+ scope.getHumanReadableName());
 					IStatus is = openScope(scope);
-					if (!is.isSameStatus(EStatus.OKAY)) {
+					if (!is.isStatus(EStatus.OKAY)) {
 						errorString = errorString + "\n" + is.getErrorMessage();
 					}
 				}
@@ -144,7 +144,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		 */
 
 		_logger.info(this.getClass().getSimpleName() + " event handler execute");
-		execute();
+		update();
 
 		/*
 		 * 4) Closes all the scopes to be closed
@@ -155,7 +155,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 					_logger.info("Closing scope "
 							+ scope.getHumanReadableName());
 					IStatus is = closeScope(scope);
-					if (!is.isSameStatus(EStatus.OKAY)) {
+					if (!is.isStatus(EStatus.OKAY)) {
 						errorString = errorString + "\n" + is.getErrorMessage();
 					}
 				}

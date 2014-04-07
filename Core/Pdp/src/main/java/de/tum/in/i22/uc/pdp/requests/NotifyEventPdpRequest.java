@@ -36,7 +36,7 @@ public class NotifyEventPdpRequest extends PdpRequest<IResponse> {
 		if (_event.isActual()) {
 			processor.getPip().update(_event);
 		}
-		else if (res.getAuthorizationAction().isSameStatus(EStatus.ALLOW) && _event.allowImpliesActual()) {
+		else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && _event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(_event.getName(), _event.getParameters(), true);
 			// TODO: Check whether this order is correct. Enrico?
 			processor.getPip().update(ev2);

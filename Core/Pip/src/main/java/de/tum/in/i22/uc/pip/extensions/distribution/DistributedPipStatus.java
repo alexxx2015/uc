@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.pip;
+package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,16 +10,16 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
-public class PipStatus extends StatusBasic {
+public class DistributedPipStatus extends StatusBasic {
 	private final Map<Location,Map<IName,Set<IData>>> _dataflow;
 
-	private PipStatus(EStatus eStatus, Map<Location,Map<IName,Set<IData>>> dataflow) {
+	private DistributedPipStatus(EStatus eStatus, Map<Location,Map<IName,Set<IData>>> dataflow) {
 		super(eStatus);
 		_dataflow = dataflow;
 	}
 
-	public static PipStatus createRemoteDataFlowStatus(Map<Location,Map<IName,Set<IData>>> dataflow) {
-		return new PipStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED, dataflow);
+	public static DistributedPipStatus createRemoteDataFlowStatus(Map<Location,Map<IName,Set<IData>>> dataflow) {
+		return new DistributedPipStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED, dataflow);
 	}
 
 	public Map<Location,Map<IName,Set<IData>>> getDataflow() {

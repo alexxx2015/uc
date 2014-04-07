@@ -13,7 +13,7 @@ public class TestBeEventHandler extends BaseEventHandler{
 			.getLogger(EmptyCliboardEventHandler.class);
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 		_logger.info("TestBeEventHandler execute");
 		return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 	}

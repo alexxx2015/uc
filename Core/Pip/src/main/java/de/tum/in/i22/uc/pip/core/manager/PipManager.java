@@ -36,11 +36,9 @@ public class PipManager {
 
 	private static final IMessageFactory _mf = MessageFactoryCreator.createMessageFactory();
 
-	private static PipManager _instance;
-
 	private final EventHandlerDao _eventHandlerDao;
 
-	private PipManager() {
+	public PipManager() {
 		_eventHandlerDao = new EventHandlerDao();
 
 		// read the database and store class definitions in the event handler manager
@@ -48,21 +46,6 @@ public class PipManager {
 		for (EventHandlerDefinition eventHandlerDefinition : eventHandlerDefinitions) {
 			EventHandlerManager.setClassToBeLoaded(eventHandlerDefinition);
 		}
-	}
-
-	public static PipManager getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (PipManager.class) {
-				if (_instance == null) _instance = new PipManager();
-			}
-		}
-		return _instance;
 	}
 
 	public IStatus updateInformationFlowSemantics(

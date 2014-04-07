@@ -19,7 +19,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 
 		Map<IName,IData> initialRepresentations = Settings.getInstance().getPipInitialRepresentations();
 

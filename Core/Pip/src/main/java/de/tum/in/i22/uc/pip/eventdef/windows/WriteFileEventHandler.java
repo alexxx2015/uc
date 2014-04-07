@@ -15,7 +15,7 @@ public class WriteFileEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String fileName = null;
 		String pid = null;
 		// currently not used

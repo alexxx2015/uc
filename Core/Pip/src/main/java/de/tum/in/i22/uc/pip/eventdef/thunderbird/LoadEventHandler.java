@@ -53,7 +53,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 	}
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		return null;
 	}
 

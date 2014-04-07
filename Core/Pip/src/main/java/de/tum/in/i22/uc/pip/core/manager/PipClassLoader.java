@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class PipClassLoader extends ClassLoader {
+class PipClassLoader extends ClassLoader {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PipClassLoader.class);
 

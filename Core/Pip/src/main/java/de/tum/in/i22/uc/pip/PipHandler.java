@@ -20,7 +20,6 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.distribution.pip.PipStatus;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
@@ -28,6 +27,7 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipManager;
+import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
@@ -52,7 +52,7 @@ public class PipHandler extends PipProcessor {
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
-		_pipManager = PipManager.getInstance();
+		_pipManager = new PipManager();
 		_distributedPipManager = new DistributedPipManager();
 		_ifModelManager = InformationFlowModelManager.getInstance();
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
@@ -103,17 +103,16 @@ public class PipHandler extends PipProcessor {
 		actionHandler.setEvent(event);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for " + event);
-
-		result = actionHandler.executeEvent();
+		result = actionHandler.performUpdate();
 
 		// Potentially, we need to do some more work ...
-		if (result.isSameStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && result instanceof PipStatus) {
+		if (result.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && result instanceof DistributedPipStatus) {
 			// TODO: PIP communication and PMP communication
 			// can be improved by either doing only one call
 			// or by doing them in parallel
 
 			// .... remote data flow tracking ....
-			_distributedPipManager.remoteDataFlow(((PipStatus) result).getDataflow());
+			_distributedPipManager.remoteDataFlow(((DistributedPipStatus) result).getDataflow());
 
 			// .... and remote policy transfer
 			// TODO: notify PMP

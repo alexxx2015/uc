@@ -4,13 +4,12 @@ import java.io.File;
 
 import org.apache.commons.io.filefilter.IOFileFilter;
 
-public class JavaFilesFileFilter implements IOFileFilter {
+class JavaFilesFileFilter implements IOFileFilter {
 
 	@Override
 	public boolean accept(File file) {
 		String fileName = file.getName();
-		boolean res = fileName.endsWith(".class") || fileName.endsWith(".java");
-		return res;
+		return fileName.endsWith(".class") || fileName.endsWith(".java");
 	}
 
 	@Override

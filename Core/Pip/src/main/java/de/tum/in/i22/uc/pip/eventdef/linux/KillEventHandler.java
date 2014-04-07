@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class KillEventHandler extends BaseEventHandler {
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String host = null;
 		int srcPid;
 		int dstPid;

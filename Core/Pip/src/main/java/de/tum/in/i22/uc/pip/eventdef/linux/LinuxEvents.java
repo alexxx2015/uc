@@ -29,10 +29,10 @@ import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.pip.PipStatus;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
+import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -199,7 +199,7 @@ public class LinuxEvents {
 		}
 
 		if (remoteDataFlows.size() > 0) {
-			return PipStatus.createRemoteDataFlowStatus(remoteDataFlows);
+			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlows);
 		}
 
 		return STATUS_OKAY;

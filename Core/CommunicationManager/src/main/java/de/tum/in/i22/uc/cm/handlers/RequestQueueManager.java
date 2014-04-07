@@ -223,20 +223,20 @@ class RequestQueueManager implements Runnable {
 		// the thread is interrupted, stop processing the events
 	}
 
-	class RequestWrapper {
+	private class RequestWrapper {
 		private final IForwarder _forwarder;
 		private final Request<?,?> _request;
 
-		public RequestWrapper(Request<?,?> request, IForwarder forwarder) {
+		RequestWrapper(Request<?,?> request, IForwarder forwarder) {
 			_forwarder = forwarder;
 			_request = request;
 		}
 
-		public IForwarder getForwarder() {
+		IForwarder getForwarder() {
 			return _forwarder;
 		}
 
-		public Request<?,?> getRequest() {
+		Request<?,?> getRequest() {
 			return _request;
 		}
 	}

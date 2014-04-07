@@ -16,7 +16,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 
 		//This event is used only during tests to update the information flow schema to a specific state
 		// It assumes the state contains a container TEST_C containing TEST_D (see SchemaInitializer) and removes it

@@ -12,7 +12,7 @@ public class DefaultEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 		return new StatusBasic(EStatus.OKAY);
 	}
 }

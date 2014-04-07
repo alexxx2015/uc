@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class UnlinkEventHandler extends BaseEventHandler {
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String host = null;
 		String filename = null;
 
