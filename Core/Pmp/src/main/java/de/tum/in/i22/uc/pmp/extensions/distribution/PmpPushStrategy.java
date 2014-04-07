@@ -26,7 +26,7 @@ public class PmpPushStrategy extends PmpDistributionStrategy {
 
 		try {
 			PmpClientHandler _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createPmpClientHandler(location));
-			_pmpHandle.policyTransfer(policies);
+			_pmpHandle.receivePolicies(policies);
 			_connectionManager.release(_pmpHandle);
 		}
 		catch (IOException e) {

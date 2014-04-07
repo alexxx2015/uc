@@ -40,7 +40,7 @@ import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.RemotePolicyTransferPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
 
 public class RequestHandler implements IRequestHandler, IForwarder {
 	private final RequestQueueManager _requestQueueManager;
@@ -226,8 +226,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus policyTransfer(Set<String> policies) {
-		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(policies);
+	public IStatus receivePolicies(Set<String> policies) {
+		ReceivePoliciesPmpRequest request = new ReceivePoliciesPmpRequest(policies);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

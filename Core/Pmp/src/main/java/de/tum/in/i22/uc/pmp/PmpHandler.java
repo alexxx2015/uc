@@ -30,9 +30,10 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus policyTransfer(Set<String> policies) {
+	public IStatus receivePolicies(Set<String> policies) {
 		// TODO: Do sth. cool with the policies
 		// - manage them
+		// - deploy them at PDP.
 
 		for (String s : policies) {
 			getPdp().deployPolicyXML(s);

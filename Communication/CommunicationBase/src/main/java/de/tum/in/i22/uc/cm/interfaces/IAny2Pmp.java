@@ -42,5 +42,5 @@ public interface IAny2Pmp {
 	 * @param policies the transferred policies
 	 * @return
 	 */
-	IStatus policyTransfer(Set<String> policies);
+	IStatus receivePolicies(Set<String> policies);
 }

@@ -82,7 +82,7 @@ class ThriftPmpClientHandler extends PmpClientHandler {
 	}
 
 	@Override
-	public IStatus policyTransfer(Set<String> policies) {
+	public IStatus receivePolicies(Set<String> policies) {
 		try {
 			TStatus status = _handle.remotePolicyTransfer(policies);
 			return ThriftConverter.fromThrift(status);
