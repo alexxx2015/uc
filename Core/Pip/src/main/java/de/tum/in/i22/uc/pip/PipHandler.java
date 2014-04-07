@@ -62,7 +62,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Boolean evaluatePredicateCurrentState(String predicate) {
+	public boolean evaluatePredicateCurrentState(String predicate) {
 		IStateBasedPredicate pred;
 
 		try {
@@ -212,7 +212,7 @@ public class PipHandler extends PipProcessor {
 	 * @return the result of the formula
 	 */
 	@Override
-	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
+	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
 		_logger.info("Saving PIP current state");
 
 		Boolean res = null;

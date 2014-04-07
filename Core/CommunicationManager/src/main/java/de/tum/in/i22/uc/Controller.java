@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -118,8 +119,7 @@ public class Controller {
 		/*
 		 * Start the queue handler
 		 */
-		RequestHandler requestHandler = RequestHandler.getInstance();
-		new Thread(requestHandler).start();
+		IRequestHandler requestHandler = RequestHandler.getInstance();
 
 		/*
 		 * Start the request handlers
@@ -128,7 +128,7 @@ public class Controller {
 	}
 
 
-	private static void startListeners(RequestHandler requestHandler) {
+	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
 			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
 

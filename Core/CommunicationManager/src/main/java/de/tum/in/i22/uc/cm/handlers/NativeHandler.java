@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.requests.pdp.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.Request;
 
@@ -26,31 +25,43 @@ public class NativeHandler {
 	}
 
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
+//		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
+//		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
+//		Object response = null;
+//
+//		if (event != null) {
+//			if (isActual) {
+//				RequestHandler.getInstance().addRequest(req, new IForwarder() {
+//
+//					@Override
+//					public void forwardResponse(Request<?,?> request, Object response) {
+//					}
+//				});
+//			}
+//			else {
+//				synchronized(responses) {
+//					RequestHandler.getInstance().addRequest(req, new NativeForwarder(event));
+//				}
+//
+//				synchronized (responses) {
+//					response = responses.remove(event);
+//					while (response == null) {
+//						responses.wait();
+//						response = responses.remove(event);
+//					}
+//				}
+//			}
+//		}
+
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
 		Object response = null;
 
 		if (event != null) {
 			if (isActual) {
-				RequestHandler.getInstance().addRequest(req, new IForwarder() {
-
-					@Override
-					public void forwardResponse(Request<?,?> request, Object response) {
-					}
-				});
+				RequestHandler.getInstance().notifyEventAsync(event);
 			}
 			else {
-				synchronized(responses) {
-					RequestHandler.getInstance().addRequest(req, new NativeForwarder(event));
-				}
-
-				synchronized (responses) {
-					response = responses.remove(event);
-					while (response == null) {
-						responses.wait();
-						response = responses.remove(event);
-					}
-				}
+				response = RequestHandler.getInstance().notifyEventSync(event);
 			}
 		}
 

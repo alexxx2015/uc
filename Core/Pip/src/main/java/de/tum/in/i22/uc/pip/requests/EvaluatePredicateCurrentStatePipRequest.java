@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.requests.pip;
+package de.tum.in.i22.uc.pip.requests;
 
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.requests.pip;
+package de.tum.in.i22.uc.pip.requests;
 
 import java.util.Set;
 

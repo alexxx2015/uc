@@ -1,73 +1,119 @@
-package de.tum.in.i22.uc.thrift.test;
+package uctests;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.google.common.collect.Maps;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.datatypes.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.server.IThriftServer;
+import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class ThriftTester {
 
-	public static void main(String[] args) {
+	private static final String policyFile = "target" + File.separator
+												+ "test-classes" + File.separator
+												+ "testTUM.xml";
 
-		ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+	private static int pdpPort = 60000;
+
+	private static ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+
+	@Test
+	public void thriftTest() throws Exception {
+
+		/*
+		 * Start the PDP server
+		 */
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, RequestHandler.getInstance());
+		new Thread(pdpServer).start();
+
+		/*
+		 * Connect to the PDP server
+		 */
+		PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		clientPdp.connect();
 
 		int x = 0;
-			PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
-			try {
-				System.out.println("connect pdp handler");
-				clientPdp.connect();
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
 
-//			TTransport transportPip = new TSocket("localhost", Settings.getInstance().getPipListenerPort());
-//			transportPip.open();
-//			TProtocol protocolPip = new TBinaryProtocol(transportPip);
-//			TAny2Pip.Client clientPip = new TAny2Pip.Client(protocolPip);
+		IResponse response;
+		IStatus status;
+		Map<String, List<String>> mechanisms;
+
+		Map<String,String> map = new HashMap<>();
+		map.put("name1", "value1");
+
+		System.out.println(x++);
+
+		/*
+		 * Signal sync event
+		 */
+		response = clientPdp.notifyEventSync(new EventBasic("t", map, false));
+		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
+
+		System.out.println(x++);
+
+		/*
+		 * list all mechanisms. Expected result is empty.
+		 */
+		mechanisms = clientPdp.listMechanisms();
+		Assert.assertEquals(Maps.newHashMap(), mechanisms);
+		Assert.assertEquals(0, mechanisms.size());
+
+		System.out.println(x++);
+
+		/*
+		 * deploy a mechanism
+		 */
+		status = clientPdp.deployPolicyURI(policyFile);
+		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
+
+		System.out.println(x++);
+
+		/*
+		 * list all mechanisms. Expected size of list is now 1.
+		 */
+		mechanisms = clientPdp.listMechanisms();
+		Assert.assertEquals(1, mechanisms.size());
+
+		System.out.println(x++);
+
+		/*
+		 * try to register a PXP.
+		 */
+		Assert.assertTrue(clientPdp.registerPxp(new PxpSpec(null, 0, null, null)));
+
+		System.out.println(x++);
+
+
+
+
+		/*
+		 * TODO
+		 * FK: I do not really know what the expected behavior for the remaining tests is and whether
+		 * the corresponding implementations actually work.
+		 */
+
+		// Assert.assertEquals(EStatus.OKAY, clientPdp.revokeMechanism("testPolicy", "prev2").getEStatus());
+
+//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 //
-//			TTransport transportPmp = new TSocket("localhost", Settings.getInstance().getPmpListenerPort());
-//			transportPmp.open();
-//			TProtocol protocolPmp = new TBinaryProtocol(transportPmp);
-//			TAny2Pmp.Client clientPmp = new TAny2Pmp.Client(protocolPmp);
+//		System.out.println("Test " + (x++) + ": " + clientPdp.revokePolicy("testPolicy"));
 //
-//			TTransport transportAny = new TSocket("localhost", Settings.getInstance().getAnyListenerPort());
-//			transportAny.open();
-//			TProtocol protocolAny = new TBinaryProtocol(transportAny);
-//			TAny2Any.Client clientAny = new TAny2Any.Client(protocolAny);
-
-			System.out.println("\n----------------");
-			System.out.println("Testing TAny2Pdp");
-			System.out.println("----------------");
-
-			x = 0;
-
-			Map<String,String> map = new HashMap<>();
-			map.put("name1", "value1");
-
-			System.out.println("Test " + (x++) + ": "
-					+ clientPdp.notifyEventSync(new EventBasic("t", map, false)));
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
-
-			System.out.println("Test " + (x++) + ": "
-					+ clientPdp.deployPolicyURI("C:\\GIT\\pdp\\Core\\Pdp\\src\\test\\resources\\testPolicies\\testDuring.xml"));
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.registerPxp(new PxpSpec(null, x, null, null)));
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.revokeMechanism("testPolicy", "prev2"));
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.revokePolicy("testPolicy"));
-
-			System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
+//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 //
 //			System.out.println("\n----------------");
 //			System.out.println("Testing TAny2Pip");
