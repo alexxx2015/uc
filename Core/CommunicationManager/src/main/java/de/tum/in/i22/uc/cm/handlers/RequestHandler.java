@@ -204,6 +204,7 @@ public class RequestHandler implements Runnable, IRequestHandler {
 
 	@Override
 	public void addRequest(Request<?,?> request, IForwarder forwarder) {
+		_logger.debug("Enqueuing " + request);
 		_instance._requestQueue.add(new RequestWrapper(request, forwarder));
 	}
 
