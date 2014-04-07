@@ -139,7 +139,7 @@ service TAny2Any  {
 	///////////////	
 	// PMP 2 PIP //
 	///////////////	
-	Types.TStatus initialRepresentation(1: Types.TContainer container,2: Types.TData data),
+	Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data),
 	
 	    
 	///////////////	

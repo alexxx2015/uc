@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -30,53 +31,80 @@ public class ThriftTester {
 
 	private static int pdpPort = 60000;
 
+	private static ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+
 	@Test
 	public void thriftTest() throws Exception {
-		RequestHandler reqHandler = RequestHandler.getInstance();
-		new Thread(reqHandler).start();
+		/*
+		 * Start the requestHandler
+		 */
+		IRequestHandler reqHandler = new RequestHandler();
 
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, reqHandler);
+		/*
+		 * Start the PDP server
+		 */
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler());
 		new Thread(pdpServer).start();
 
-		ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+		/*
+		 * Connect to the PDP server
+		 */
+		PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		clientPdp.connect();
 
 		int x = 0;
-
-		PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
-		try {
-			System.out.println("connect pdp handler");
-			clientPdp.connect();
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
 
 		IResponse response;
 		IStatus status;
 		Map<String, List<String>> mechanisms;
 
-		System.out.println("\n----------------");
-		System.out.println("Testing TAny2Pdp");
-		System.out.println("----------------");
-
 		Map<String,String> map = new HashMap<>();
 		map.put("name1", "value1");
 
+		System.out.println(x++);
+
+		/*
+		 * Signal sync event
+		 */
 		response = clientPdp.notifyEventSync(new EventBasic("t", map, false));
 		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
 
+		System.out.println(x++);
+
+		/*
+		 * list all mechanisms. Expected result is empty.
+		 */
 		mechanisms = clientPdp.listMechanisms();
 		Assert.assertEquals(Maps.newHashMap(), mechanisms);
 		Assert.assertEquals(0, mechanisms.size());
 
+		System.out.println(x++);
+
+		/*
+		 * deploy a mechanism
+		 */
 		status = clientPdp.deployPolicyURI(policyFile);
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 
+		System.out.println(x++);
+
+		/*
+		 * list all mechanisms. Expected size of list is now 1.
+		 */
 		mechanisms = clientPdp.listMechanisms();
 		Assert.assertEquals(1, mechanisms.size());
 
-		Assert.assertTrue(clientPdp.registerPxp(new PxpSpec(null, x, null, null)));
+		System.out.println(x++);
 
-		Assert.assertEquals(EStatus.OKAY, clientPdp.revokeMechanism("testPolicy", "prev2").getEStatus());
+		/*
+		 * try to register a PXP.
+		 */
+		Assert.assertTrue(clientPdp.registerPxp(new PxpSpec(null, 0, null, null)));
+
+		System.out.println(x++);
+
+
+
 
 		/*
 		 * TODO
@@ -84,11 +112,13 @@ public class ThriftTester {
 		 * the corresponding implementations actually work.
 		 */
 
-		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
+		// Assert.assertEquals(EStatus.OKAY, clientPdp.revokeMechanism("testPolicy", "prev2").getEStatus());
 
-		System.out.println("Test " + (x++) + ": " + clientPdp.revokePolicy("testPolicy"));
-
-		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
+//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
+//
+//		System.out.println("Test " + (x++) + ": " + clientPdp.revokePolicy("testPolicy"));
+//
+//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
 //
 //			System.out.println("\n----------------");
 //			System.out.println("Testing TAny2Pip");

@@ -6,9 +6,8 @@ import org.junit.Test;
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.client.PdpClientHandler;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.server.IForwarder;
+import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
-import de.tum.in.i22.uc.cm.server.Request;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -28,7 +27,7 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 5 and start the pdp server
 		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new FakeRequestHandler();
+		IRequestHandler requestHandler = new RequestHandler();
 
 		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, requestHandler);
 		new Thread(pdpServer).start();
@@ -91,7 +90,7 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 5 and start the pdp server
 		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new FakeRequestHandler();
+		IRequestHandler requestHandler = new RequestHandler();
 
 		/*
 		 * Start three servers
@@ -154,13 +153,5 @@ public class TestConnectionManager {
 		Assert.assertTrue(pdpClient1b == pdpClientRef);
 		Assert.assertTrue(pdpClient1a != pdpClientRef);
 		manager.release(pdpClient1b);
-	}
-
-
-	class FakeRequestHandler implements IRequestHandler {
-
-		@Override
-		public void addRequest(Request<?, ?> request, IForwarder forwarder) {
-		}
 	}
 }

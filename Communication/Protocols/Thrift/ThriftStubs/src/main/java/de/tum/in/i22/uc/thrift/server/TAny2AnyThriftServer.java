@@ -11,13 +11,12 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.requests.pdp.DeployPolicyURIPdpRequest;
-import de.tum.in.i22.uc.cm.requests.pdp.DeployPolicyXMLPdpRequest;
-import de.tum.in.i22.uc.cm.requests.pdp.NotifyEventPdpRequest;
-import de.tum.in.i22.uc.cm.requests.pdp.RegisterPxpPdpRequest;
-import de.tum.in.i22.uc.cm.requests.pdp.RevokeMechanismPdpRequest;
-import de.tum.in.i22.uc.cm.requests.pdp.RevokePolicyPdpRequest;
+import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
@@ -47,75 +46,59 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 
 	@Override
 	public TResponse notifyEventSync(TEvent e) throws TException {
-		_logger.debug("TAny2Pdp: notifyEventSync");
-
+		_logger.debug("TAny2Any: notifyEventSync");
 		IEvent ev = ThriftConverter.fromThrift(e);
-		NotifyEventPdpRequest request = new NotifyEventPdpRequest(ev);
-
-		_requestHandler.addRequest(request, this);
-		waitForResponse(request);
-		return ThriftConverter.toThrift(request.getResponse());
+		IResponse r = _requestHandler.notifyEventSync(ev);
+		return ThriftConverter.toThrift(r);
 	}
 
 	@Override
 	public void notifyEventAsync(TEvent e) throws TException {
-
 		//identical to sync version, but discards the response
-
-		_logger.debug("TAny2Pdp: notifyEventAsync");
-
+		_logger.debug("TAny2Any: notifyEventAsync");
 		IEvent ev = ThriftConverter.fromThrift(e);
-		NotifyEventPdpRequest request = new NotifyEventPdpRequest(ev);
-
-		_requestHandler.addRequest(request, null);
+		_requestHandler.notifyEventAsync(ev);
 	}
 
 
 	@Override
 	public boolean registerPxp(TPxpSpec pxp) throws TException {
-		_logger.debug("TAny2Pdp: registerPxp");
-		RegisterPxpPdpRequest request = new RegisterPxpPdpRequest(ThriftConverter.fromThrift(pxp));
-		_requestHandler.addRequest(request, this);
-		return waitForResponse(request);
+		_logger.debug("TAny2Any: registerPxp");
+		return _requestHandler.registerPxp(ThriftConverter.fromThrift(pxp));
 	}
 
 	@Override
 	public TStatus revokePolicy(String policyName) throws TException {
-		_logger.debug("TAny2Pdp: revokePolicy");
-		RevokePolicyPdpRequest request = new RevokePolicyPdpRequest(policyName);
-		_requestHandler.addRequest(request, this);
-		return ThriftConverter.toThrift(waitForResponse(request));
+		_logger.debug("TAny2Any: revokePolicy");
+		IStatus status = _requestHandler.revokePolicy(policyName);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
-	public TStatus revokeMechanism(String policyName, String mechName)
-			throws TException {
-		_logger.debug("TAny2Pdp: revokeMechanism");
-		RevokeMechanismPdpRequest request = new RevokeMechanismPdpRequest(policyName, mechName);
-		_requestHandler.addRequest(request, this);
-		return ThriftConverter.toThrift(waitForResponse(request));
+	public TStatus revokeMechanism(String policyName, String mechName) throws TException {
+		_logger.debug("TAny2Any: revokeMechanism");
+		IStatus status = _requestHandler.revokeMechanism(policyName, mechName);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus deployPolicyURI(String policyFilePath) throws TException {
-		_logger.debug("TAny2Pdp: deployPolicy");
-		DeployPolicyURIPdpRequest request = new DeployPolicyURIPdpRequest(policyFilePath);
-		_requestHandler.addRequest(request, this);
-		return ThriftConverter.toThrift(waitForResponse(request));
+		_logger.debug("TAny2Any: deployPolicy");
+		IStatus status = _requestHandler.deployPolicyURI(policyFilePath);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus deployPolicyXML(String XMLPolicy) throws TException {
-		_logger.debug("TAny2Pdp: deployPolicy");
-		DeployPolicyXMLPdpRequest request = new DeployPolicyXMLPdpRequest(XMLPolicy);
-		_requestHandler.addRequest(request, this);
-		return ThriftConverter.toThrift(waitForResponse(request));
+		_logger.debug("TAny2Any: deployPolicy");
+		IStatus status = _requestHandler.deployPolicyXML(XMLPolicy);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		// TODO Auto-generated method stub
-		_logger.debug("TAny2Pdp: listMech");
+		_logger.debug("TAny2Any: listMech");
 		HashMap<String, List<String>> m = new HashMap<String, List<String>>();
 		List<String> l = new ArrayList<String>();
 		l.add("test");
@@ -124,105 +107,107 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus initialRepresentation(TContainer container, TData data)
-			throws TException {
-		// TODO Auto-generated method stub
+	public TStatus initialRepresentation(TName container, Set<TData> data) throws TException {
 		_logger.debug("TAny2Any: initrep");
-		return TStatus.ERROR;
+		IName name = ThriftConverter.fromThrift(container);
+		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
+		IStatus status = _requestHandler.initialRepresentation(name, d);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public boolean hasAllData(Set<TData> data) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAllData");
-		return false;
+		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
+		return _requestHandler.hasAllData(d);
 	}
 
 	@Override
 	public boolean hasAnyData(Set<TData> data) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAnyData");
-		return false;
+		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
+		return _requestHandler.hasAnyData(d);
 	}
 
 	@Override
 	public boolean hasAllContainers(Set<TContainer> container) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAllContainers");
-		return false;
+		Set<IContainer> c = ThriftConverter.fromThriftContainerSet(container);
+		return _requestHandler.hasAllContainers(c);
 	}
 
 	@Override
 	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: hasAnycontainers");
-		return false;
+		Set<IContainer> c = ThriftConverter.fromThriftContainerSet(container);
+		return _requestHandler.hasAnyContainer(c);
 	}
 
 	@Override
 	public TStatus update(TEvent event) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyActualEvent");
-		return TStatus.ERROR;
+		IEvent ev = ThriftConverter.fromThrift(event);
+		IStatus status = _requestHandler.update(ev);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
-	public TStatus notifyDataTransfer(TName containerName, Set<TData> data)
-			throws TException {
+	public TStatus notifyDataTransfer(TName containerName, Set<TData> data) throws TException {
 		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: notifyDatatransfer");
 		return TStatus.ERROR;
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(TEvent event,
-			String predicate) throws TException {
-		// TODO Auto-generated method stub
+	public boolean evaluatePredicateSimulatingNextState(TEvent event, String predicate) throws TException {
 		_logger.debug("TAny2Any: evaluatePredicateSimulatingNextState");
-		return false;
+		IEvent ev = ThriftConverter.fromThrift(event);
+		return _requestHandler.evaluatePredicateSimulatingNextState(ev, predicate);
 	}
 
 	@Override
-	public boolean evaluatePredicatCurrentState(String predicate)
-			throws TException {
-		// TODO Auto-generated method stub
+	public boolean evaluatePredicatCurrentState(String predicate) throws TException {
 		_logger.debug("TAny2Any: evaluatePredicateCurrentState");
-		return false;
+		return _requestHandler.evaluatePredicateCurrentState(predicate);
 	}
 
 	@Override
 	public Set<TContainer> getContainerForData(TData data) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: getContainerforData");
-		return new HashSet<TContainer>();
+
+		IData d = ThriftConverter.fromThrift(data);
+		Set<IContainer> result = _requestHandler.getContainersForData(d);
+
+		return ThriftConverter.toThriftContainerSet(result);
 	}
 
 	@Override
 	public Set<TData> getDataInContainer(TContainer container) throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: getDataInContainer");
-		return new HashSet<TData>();
+
+		IContainer c = ThriftConverter.fromThrift(container);
+		Set<IData> result = _requestHandler.getDataInContainer(c);
+		return ThriftConverter.toThriftDataSet(result);
 	}
 
 	@Override
 	public TStatus startSimulation() throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: startsimulation");
-		return TStatus.ERROR;
+		IStatus result = _requestHandler.startSimulation();
+		return ThriftConverter.toThrift(result);
 	}
 
 	@Override
 	public TStatus stopSimulation() throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: stopSimulation");
-		return TStatus.ERROR;
+		IStatus status = _requestHandler.stopSimulation();
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public boolean isSimulating() throws TException {
-		// TODO Auto-generated method stub
 		_logger.debug("TAny2Any: isSimulating");
-		return false;
+		return _requestHandler.isSimulating();
 	}
 
 

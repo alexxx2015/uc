@@ -6,9 +6,9 @@ import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.requests.pdp.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.Request;
+import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 
 /**
  * This class will be used via JNI to dispatch events.
@@ -30,29 +30,29 @@ public class NativeHandler {
 		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
 		Object response = null;
 
-		if (event != null) {
-			if (isActual) {
-				RequestHandler.getInstance().addRequest(req, new IForwarder() {
-
-					@Override
-					public void forwardResponse(Request<?,?> request, Object response) {
-					}
-				});
-			}
-			else {
-				synchronized(responses) {
-					RequestHandler.getInstance().addRequest(req, new NativeForwarder(event));
-				}
-
-				synchronized (responses) {
-					response = responses.remove(event);
-					while (response == null) {
-						responses.wait();
-						response = responses.remove(event);
-					}
-				}
-			}
-		}
+//		if (event != null) {
+//			if (isActual) {
+//				RequestHandler.getInstance().addRequest(req, new IForwarder() {
+//
+//					@Override
+//					public void forwardResponse(Request<?,?> request, Object response) {
+//					}
+//				});
+//			}
+//			else {
+//				synchronized(responses) {
+//					RequestHandler.getInstance().addRequest(req, new NativeForwarder(event));
+//				}
+//
+//				synchronized (responses) {
+//					response = responses.remove(event);
+//					while (response == null) {
+//						responses.wait();
+//						response = responses.remove(event);
+//					}
+//				}
+//			}
+//		}
 
 		return response;
 	}

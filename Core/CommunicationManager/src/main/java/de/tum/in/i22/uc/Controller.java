@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -118,8 +119,7 @@ public class Controller {
 		/*
 		 * Start the queue handler
 		 */
-		RequestHandler requestHandler = RequestHandler.getInstance();
-		new Thread(requestHandler).start();
+		IRequestHandler requestHandler = new RequestHandler();
 
 		/*
 		 * Start the request handlers
@@ -128,9 +128,9 @@ public class Controller {
 	}
 
 
-	private static void startListeners(RequestHandler requestHandler) {
+	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), new RequestHandler());
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -139,7 +139,7 @@ public class Controller {
 
 
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
+			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), new RequestHandler());
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -147,7 +147,7 @@ public class Controller {
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = ThriftServerFactory.createPmpThriftServer(_settings.getPmpListenerPort(), requestHandler);
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(_settings.getPmpListenerPort(), new RequestHandler());
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -155,7 +155,7 @@ public class Controller {
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
+			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), new RequestHandler());
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();

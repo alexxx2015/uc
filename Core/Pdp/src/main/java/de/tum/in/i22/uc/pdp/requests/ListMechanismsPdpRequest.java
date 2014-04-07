@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.requests.pdp;
+package de.tum.in.i22.uc.pdp.requests;
 
 import java.util.List;
 import java.util.Map;

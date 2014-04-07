@@ -83,7 +83,7 @@ class ThriftPipClientHandler extends PipClientHandler {
 	}
 
 	@Override
-	public Boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
+	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
 		try {
 			return _handle.evaluatePredicateSimulatingNextState(ThriftConverter.toThrift(event), predicate);
 		} catch (TException e) {
@@ -93,7 +93,7 @@ class ThriftPipClientHandler extends PipClientHandler {
 
 
 	@Override
-	public Boolean evaluatePredicateCurrentState(String predicate) {
+	public boolean evaluatePredicateCurrentState(String predicate) {
 		try {
 			return _handle.evaluatePredicatCurrentState(predicate);
 		} catch (TException e) {
