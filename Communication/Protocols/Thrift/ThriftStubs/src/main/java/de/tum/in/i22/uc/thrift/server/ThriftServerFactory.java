@@ -77,6 +77,19 @@ public class ThriftServerFactory {
 	 * @param requestHandler the {@link IRequestHandler} to which requests are dispatched
 	 * @return the server instance on success, null on failure
 	 */
+
+	/**
+	 * Creates a Any Thrift server listening on the specified port and redirecting
+	 * requests to the specified Pdp/Pip/Pmp servers.
+	 *
+	 * The server's run method will not yet be executed.
+	 *
+	 * @param port the port to listen on
+	 * @param pdpPort the local port to which Pdp requests will be redirected
+	 * @param pipPort the local port to which Pip requests will be redirected
+	 * @param pmpPort the local port to which Pmp requests will be redirected
+	 * @return the server instance on success, null on failure
+	 */
 	public static IThriftServer createAnyThriftServer(int port, int pdpPort, int pipPort, int pmpPort) {
 		return createThriftServer(port,
 				new TAny2Any.Processor<TAny2AnyThriftServer>(new TAny2AnyThriftServer(pdpPort, pipPort, pmpPort)));
