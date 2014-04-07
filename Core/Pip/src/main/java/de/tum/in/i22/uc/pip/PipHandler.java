@@ -115,7 +115,7 @@ public class PipHandler extends PipProcessor {
 			_distributedPipManager.remoteDataFlow(((DistributedPipStatus) result).getDataflow());
 
 			// .... and remote policy transfer
-			// TODO: notify PMP
+			getPmp().informRemoteDataFlow(((DistributedPipStatus) result).getDataflow());
 		}
 
 

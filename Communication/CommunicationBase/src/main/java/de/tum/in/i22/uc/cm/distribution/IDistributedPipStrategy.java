@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.pip;
+package de.tum.in.i22.uc.cm.distribution;
 
 import java.util.Map;
 import java.util.Set;
@@ -8,10 +8,9 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 
 public interface IDistributedPipStrategy {
-	EDistributedPipStrategy getStrategy();
+	EDistributedStrategy getStrategy();
 
 	boolean hasAllData(Location location, Set<IData> data);
 	boolean hasAnyData(Location location, Set<IData> data);

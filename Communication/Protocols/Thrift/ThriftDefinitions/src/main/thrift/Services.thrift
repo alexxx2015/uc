@@ -84,7 +84,15 @@ service TAny2Pip  {
 
 
 service TAny2Pmp  {
-
+	///////////////	
+	// PMP 2 PMP //
+	///////////////
+	Types.TStatus remotePolicyTransfer(1: set<string> policies)
+	
+	///////////////	
+	// PIP 2 PMP //
+	///////////////
+	Types.TStatus informRemoteDataFlow(1: string address, Types.int port, map<Types.TName,set<Types.TData>> dataflow)
 }
 
 
@@ -150,7 +158,6 @@ service TAny2Any  {
     bool hasAllContainers(1: set<Types.TContainer> container),
     bool hasAnyContainer(1: set<Types.TContainer> container),
     Types.TStatus update(1:Types.TEvent event),
-    Types.TStatus notifyDataTransfer(1:Types.TName containerName, 2:set<Types.TData> data)
 	
 	
 	///////////////	
@@ -168,7 +175,12 @@ service TAny2Any  {
 	///////////////	
 	// PMP 2 PMP //
     ///////////////	
+	Types.TStatus remotePolicyTransfer(1: set<string> policies)
 	
+	///////////////	
+	// PIP 2 PMP //
+	///////////////
+	Types.TStatus informRemoteDataFlow(1: string address, Types.int port, map<Types.TName,set<Types.TData>> dataflow)
 }
 
 

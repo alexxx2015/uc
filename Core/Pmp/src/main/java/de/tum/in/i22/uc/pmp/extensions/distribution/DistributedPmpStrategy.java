@@ -1,24 +1,24 @@
-package de.tum.in.i22.uc.pip.extensions.distribution;
+package de.tum.in.i22.uc.pmp.extensions.distribution;
 
 import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.client.PipClientHandler;
 import de.tum.in.i22.uc.cm.distribution.AbstractStrategy;
 import de.tum.in.i22.uc.cm.distribution.EDistributedStrategy;
-import de.tum.in.i22.uc.cm.distribution.IDistributedPipStrategy;
+import de.tum.in.i22.uc.cm.distribution.IDistributedPmpStrategy;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
-public abstract class DistributedPipStrategy extends AbstractStrategy implements IDistributedPipStrategy {
+public abstract class DistributedPmpStrategy extends AbstractStrategy implements IDistributedPmpStrategy {
 
 	protected final ClientHandlerFactory _clientHandlerFactory;
 
 	protected final ConnectionManager<PipClientHandler> _connectionManager;
 
-	public DistributedPipStrategy(EDistributedStrategy eStrategy) {
+	public DistributedPmpStrategy(EDistributedStrategy eStrategy) {
 		super(eStrategy);
 
-		_connectionManager = new ConnectionManager<>(Settings.getInstance().getPipDistributionMaxConnections());
+		_connectionManager = new ConnectionManager<>(Settings.getInstance().getPmpDistributionMaxConnections());
 
 		switch (Settings.getInstance().getCommunicationProtocol()) {
 			case THRIFT:
@@ -29,10 +29,10 @@ public abstract class DistributedPipStrategy extends AbstractStrategy implements
 		}
 	}
 
-	static final DistributedPipStrategy create(EDistributedStrategy strategy) {
+	static final DistributedPmpStrategy create(EDistributedStrategy strategy) {
 		switch (strategy) {
-		case PUSH:
-			return new PipPushStrategy(strategy);
+			case PUSH:
+				return new PmpPushStrategy(strategy);
 		}
 
 		throw new RuntimeException("No such DistributedPipStrategy: " + strategy);

@@ -16,13 +16,13 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.EDistributedStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
 
 public class PipPushStrategy extends DistributedPipStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
-	public PipPushStrategy(EDistributedPipStrategy eStrategy) {
+	public PipPushStrategy(EDistributedStrategy eStrategy) {
 		super(eStrategy);
 	}
 
