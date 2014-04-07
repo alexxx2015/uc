@@ -119,7 +119,7 @@ public class Controller {
 		/*
 		 * Start the queue handler
 		 */
-		IRequestHandler requestHandler = new RequestHandler();
+		IRequestHandler requestHandler = RequestHandler.getInstance();
 
 		/*
 		 * Start the request handlers
@@ -130,7 +130,7 @@ public class Controller {
 
 	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
-			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), new RequestHandler());
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -139,7 +139,7 @@ public class Controller {
 
 
 		if (_settings.isPipListenerEnabled()) {
-			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), new RequestHandler());
+			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -147,7 +147,7 @@ public class Controller {
 		}
 
 		if (_settings.isPmpListenerEnabled()) {
-			_pmpServer = ThriftServerFactory.createPmpThriftServer(_settings.getPmpListenerPort(), new RequestHandler());
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(_settings.getPmpListenerPort(), requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -155,7 +155,7 @@ public class Controller {
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), new RequestHandler());
+			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();

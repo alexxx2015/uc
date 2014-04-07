@@ -38,12 +38,12 @@ public class ThriftTester {
 		/*
 		 * Start the requestHandler
 		 */
-		IRequestHandler reqHandler = new RequestHandler();
+		IRequestHandler reqHandler = RequestHandler.getInstance();
 
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler());
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, RequestHandler.getInstance());
 		new Thread(pdpServer).start();
 
 		/*

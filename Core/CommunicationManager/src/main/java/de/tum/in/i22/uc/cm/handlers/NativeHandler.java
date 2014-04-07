@@ -26,10 +26,10 @@ public class NativeHandler {
 	}
 
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
-		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
-		Object response = null;
-
+//		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
+//		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
+//		Object response = null;
+//
 //		if (event != null) {
 //			if (isActual) {
 //				RequestHandler.getInstance().addRequest(req, new IForwarder() {
@@ -53,6 +53,18 @@ public class NativeHandler {
 //				}
 //			}
 //		}
+
+		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
+		Object response = null;
+
+		if (event != null) {
+			if (isActual) {
+				RequestHandler.getInstance().notifyEventAsync(event);
+			}
+			else {
+				response = RequestHandler.getInstance().notifyEventSync(event);
+			}
+		}
 
 		return response;
 	}
