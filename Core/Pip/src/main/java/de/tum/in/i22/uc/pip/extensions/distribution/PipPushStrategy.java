@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
-public class PipPushStrategy extends PipDistributionStrategy {
+public class PipPushStrategy extends PipDistributionStrategy{
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
 	public PipPushStrategy(EDistributionStrategy eStrategy) {
@@ -51,7 +51,7 @@ public class PipPushStrategy extends PipDistributionStrategy {
 	}
 
 	@Override
-	public IStatus remoteEventUpdate(Location location, IEvent event) {
+	public IStatus doRemoteEventUpdate(Location location, IEvent event) {
 		_logger.debug("remoteEventUpdate(" + location + "," + event + ")");
 
 		try {
@@ -69,7 +69,7 @@ public class PipPushStrategy extends PipDistributionStrategy {
 	}
 
 	@Override
-	public IStatus remoteDataFlow(Location location, Map<IName, Set<IData>> dataflow) {
+	public IStatus doRemoteDataFlow(Location location, Map<IName, Set<IData>> dataflow) {
 		_logger.info("Performing remote data flow transfer: " + dataflow);
 
 		try {

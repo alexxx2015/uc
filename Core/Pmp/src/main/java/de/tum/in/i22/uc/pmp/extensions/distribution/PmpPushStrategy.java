@@ -21,7 +21,7 @@ public class PmpPushStrategy extends PmpDistributionStrategy {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(Location location, Set<String> policies) {
+	public IStatus doRemotePolicyTransfer(Location location, Set<String> policies) {
 		_logger.info("Performing remote policy transfer: " + policies);
 
 		try {

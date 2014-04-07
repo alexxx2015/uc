@@ -16,14 +16,15 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * @author Florian Kelbert
  *
  */
-public class PmpDistributionManager {
+public class PmpDistributionManager implements IPmpDistributionStrategy {
 	private static PmpDistributionStrategy _strategy;
 
 	public PmpDistributionManager() {
 		_strategy = PmpDistributionStrategy.create(Settings.getInstance().getDistributionStrategy());
 	}
 
-	public IStatus remotePolicyTransfer(Location location, Set<String> policies) {
-		return _strategy.remotePolicyTransfer(location, policies);
+	@Override
+	public IStatus doRemotePolicyTransfer(Location location, Set<String> policies) {
+		return _strategy.doRemotePolicyTransfer(location, policies);
 	}
 }

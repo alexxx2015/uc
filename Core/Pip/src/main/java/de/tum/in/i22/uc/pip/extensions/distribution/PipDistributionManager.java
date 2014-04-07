@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
@@ -20,7 +21,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * @author Florian Kelbert
  *
  */
-public class PipDistributionManager {
+public class PipDistributionManager implements IPipDistributionStrategy {
 	private static PipDistributionStrategy _strategy;
 
 	public PipDistributionManager() {
@@ -31,11 +32,37 @@ public class PipDistributionManager {
 		return _strategy.getStrategy();
 	}
 
-	public IStatus remoteDataFlow(Location location, Map<IName,Set<IData>> dataflow) {
-		return _strategy.remoteDataFlow(location, dataflow);
+	@Override
+	public IStatus doRemoteDataFlow(Location location, Map<IName,Set<IData>> dataflow) {
+		return _strategy.doRemoteDataFlow(location, dataflow);
 	}
 
-	public IStatus update(Location location, IEvent event) {
-		return _strategy.remoteEventUpdate(location, event);
+	@Override
+	public IStatus doRemoteEventUpdate(Location location, IEvent event) {
+		return _strategy.doRemoteEventUpdate(location, event);
+	}
+
+	@Override
+	public boolean hasAllData(Location location, Set<IData> data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasAnyData(Location location, Set<IData> data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasAllContainers(Location location, Set<IContainer> containers) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasAnyContainer(Location location, Set<IContainer> containers) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

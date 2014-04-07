@@ -116,7 +116,7 @@ public class PipHandler extends PipProcessor {
 			Map<Location, Map<IName, Set<IData>>> dataflow = ((DistributedPipStatus) result).getDataflow();
 			for (Location location : dataflow.keySet()) {
 				// .... remote data flow tracking ....
-				_distributedPipManager.remoteDataFlow(location, dataflow.get(location));
+				_distributedPipManager.doRemoteDataFlow(location, dataflow.get(location));
 
 				// .... and remote policy transfer
 				Set<IData> data = new HashSet<>();
