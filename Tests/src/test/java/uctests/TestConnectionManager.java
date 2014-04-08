@@ -27,7 +27,9 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 5 and start the pdp server
 		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = RequestHandler.getInstance();
+		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
+															new IPLocation("localhost", pdpPort + 1),
+															new IPLocation("localhost", pdpPort + 2));
 
 		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, requestHandler);
 		new Thread(pdpServer).start();
@@ -90,7 +92,9 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 5 and start the pdp server
 		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = RequestHandler.getInstance();
+		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
+															new IPLocation("localhost", pdpPort + 1),
+															new IPLocation("localhost", pdpPort + 2));
 
 		/*
 		 * Start three servers

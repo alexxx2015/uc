@@ -1,11 +1,22 @@
 package de.tum.in.i22.uc.cm.handlers;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.PipClientHandler;
+import de.tum.in.i22.uc.cm.client.PmpClientHandler;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -15,10 +26,16 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
+import de.tum.in.i22.uc.cm.server.PdpProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
+import de.tum.in.i22.uc.cm.server.PmpProcessor;
 import de.tum.in.i22.uc.cm.server.Request;
+import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.ListMechanismsPdpRequest;
@@ -26,6 +43,7 @@ import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
+import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
@@ -39,32 +57,159 @@ import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
+import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 
 public class RequestHandler implements IRequestHandler, IForwarder {
+
+	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
+
 	private final RequestQueueManager _requestQueueManager;
 
-	private static RequestHandler _instance = null;
+	private final Set<Integer> _portsUsed;
+	private final Settings _settings;
+	private final ThriftClientHandlerFactory thriftClientFactory;
 
-	private RequestHandler() {
-		_requestQueueManager = new RequestQueueManager();
+	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+		_settings = Settings.getInstance();
+		_portsUsed = portsInUse();
+		thriftClientFactory = new ThriftClientHandlerFactory();
+
+		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
+		PdpProcessor pdp = createPdpHandler(pdpLocation);
+		PipProcessor pip = createPipHandler(pipLocation);
+		PmpProcessor pmp = createPmpHandler(pmpLocation);
+
+		while (pdp == null || pip == null || pmp == null) {
+			if (pdp == null) pdp = createPdpHandler(pdpLocation);
+			if (pip == null) pip = createPipHandler(pipLocation);
+			if (pmp == null) pmp = createPmpHandler(pmpLocation);
+
+			try {
+				int sleep = _settings.getConnectionAttemptInterval();
+				_logger.info("One of the connections failed. Trying again in " + sleep + " milliseconds.");
+				Thread.sleep(sleep);
+			} catch (InterruptedException e) {	}
+		}
+
+		pdp.init(pip, pmp);
+		pip.init(pdp, pmp);
+		pmp.init(pip, pdp);
+
+		_requestQueueManager = new RequestQueueManager(pdp, pip, pmp);
 		new Thread(_requestQueueManager).start();
 	}
 
-	public static RequestHandler getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (RequestHandler.class) {
-				if (_instance == null) _instance = new RequestHandler();
-			}
+	private PdpProcessor createPdpHandler(Location loc) {
+		switch (loc.getLocation()) {
+			case IP:
+				IPLocation iploc = (IPLocation) loc;
+				if (isConnectionAllowed(iploc)) {
+					PdpClientHandler pdp = thriftClientFactory.createPdpClientHandler(loc);
+					try {
+						pdp.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pdp.", e);
+						return null;
+					}
+					return pdp;
+				}
+				break;
+			case LOCAL:
+			default:
+				return new PdpHandler();
 		}
-		return _instance;
+
+		return null;
+	}
+
+	private PmpProcessor createPmpHandler(Location loc) {
+		switch (loc.getLocation()) {
+			case IP:
+				IPLocation iploc = (IPLocation) loc;
+				if (isConnectionAllowed(iploc)) {
+					PmpClientHandler pmp = thriftClientFactory.createPmpClientHandler(loc);
+					try {
+						pmp.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pmp.", e);
+						return null;
+					}
+					return pmp;
+				}
+				break;
+			case LOCAL:
+			default:
+				return new PmpHandler();
+		}
+
+		return null;
+	}
+
+	private PipProcessor createPipHandler(Location loc) {
+		switch (loc.getLocation()) {
+			case IP:
+				IPLocation iploc = (IPLocation) loc;
+				if (isConnectionAllowed(iploc)) {
+					PipClientHandler pip = thriftClientFactory.createPipClientHandler(loc);
+					try {
+						pip.connect();
+					} catch (Exception e) {
+						_logger.error("Unable to connect to remote Pip.", e);
+						return null;
+					}
+					return pip;
+				}
+				break;
+			case LOCAL:
+			default:
+				return new PipHandler();
+		}
+
+		return null;
+	}
+
+	private Set<Integer> portsInUse() {
+		Set<Integer> result = new HashSet<>();
+
+		if (_settings.isPdpListenerEnabled()) {
+			result.add(_settings.getPdpListenerPort());
+		}
+
+		if (_settings.isPipListenerEnabled()) {
+			result.add(_settings.getPipListenerPort());
+		}
+
+		if (_settings.isPmpListenerEnabled()) {
+			result.add(_settings.getPmpListenerPort());
+		}
+
+		if (_settings.isAnyListenerEnabled()) {
+			result.add(_settings.getAnyListenerPort());
+		}
+
+		return result;
+	}
+
+	private boolean isConnectionAllowed(IPLocation loc) {
+		RuntimeException rte = new RuntimeException("Not allowed to forward PIP/PMP/PDP requests to " + loc + ". "
+				+ "Rethink your setup/configuration.");
+
+		InetAddress addr;
+
+		try {
+			addr = InetAddress.getByName(loc.getHost());
+		} catch (UnknownHostException e) {
+			throw rte;
+		}
+
+		if ((addr.isAnyLocalAddress() || addr.isLoopbackAddress()) && _portsUsed.contains(loc.getPort())) {
+			throw rte;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -269,5 +414,35 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			request.setResponse(response);
 			notifyAll();
 		}
+	}
+
+	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
+		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
+		Object response = null;
+
+		if (event != null) {
+			if (isActual) {
+				notifyEventAsync(event);
+			}
+			else {
+				notifyEventSync(event);
+			}
+		}
+
+		return response;
+	}
+
+	private static IEvent assembleEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
+		if (name == null || paramKeys == null || paramValues == null
+				|| paramKeys.length != paramValues.length || name.isEmpty()) {
+			return null;
+		}
+
+		Map<String,String> params = new HashMap<String,String>();
+		for (int i = 0; i < paramKeys.length; i++) {
+			params.put(paramKeys[i], paramValues[i]);
+		}
+
+		return new EventBasic(name, params, isActual);
 	}
 }

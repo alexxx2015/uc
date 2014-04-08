@@ -23,6 +23,8 @@ public class Controller {
 	private static IThriftServer _pmpServer;
 	private static IThriftServer _anyServer;
 
+	private static IRequestHandler _requestHandler;
+
 	private static boolean isPortAvailable(int port) {
 	    _logger.debug("--------------Testing port " + port);
 	    Socket s = null;
@@ -68,10 +70,10 @@ public class Controller {
 	public static void main(String[] args) {
 
 		if (start(args)){
-		/*
-		 * Lock forever
-		 */
-		lock();
+			/*
+			 * Lock forever
+			 */
+			lock();
 		}
 		else{
 			_logger.error("Exiting with status code 1");
@@ -116,15 +118,9 @@ public class Controller {
 	}
 
 	private static void startUC(){
-		/*
-		 * Start the queue handler
-		 */
-		IRequestHandler requestHandler = RequestHandler.getInstance();
+		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
 
-		/*
-		 * Start the request handlers
-		 */
-		startListeners(requestHandler);
+		startListeners(_requestHandler);
 	}
 
 
@@ -184,4 +180,7 @@ public class Controller {
 		return true;
 	}
 
+	public static IRequestHandler getRequestHandler() {
+		return _requestHandler;
+	}
 }

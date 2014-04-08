@@ -3,8 +3,10 @@ package de.tum.in.i22.uc.cm.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.server.IRequestHandler;
 
 /**
  * This class will be used via JNI to dispatch events.
@@ -12,16 +14,19 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
  *
  */
 public class NativeHandler {
+
+	private static final IRequestHandler requestHandler = Controller.getRequestHandler();
+
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
 		Object response = null;
 
 		if (event != null) {
 			if (isActual) {
-				RequestHandler.getInstance().notifyEventAsync(event);
+				requestHandler.notifyEventAsync(event);
 			}
 			else {
-				response = RequestHandler.getInstance().notifyEventSync(event);
+				response = requestHandler.notifyEventSync(event);
 			}
 		}
 

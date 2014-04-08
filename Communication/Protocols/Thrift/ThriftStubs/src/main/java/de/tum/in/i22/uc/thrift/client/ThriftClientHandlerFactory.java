@@ -42,5 +42,4 @@ public class ThriftClientHandlerFactory implements ClientHandlerFactory {
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
-
 }

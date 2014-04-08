@@ -59,6 +59,7 @@ public class IPLocation extends Location {
 
 	public enum ELocation {
 		LOCAL,
-		IP;
+		IP,
+		NONE;
 	}
 }

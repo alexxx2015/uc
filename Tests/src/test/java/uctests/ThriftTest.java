@@ -38,7 +38,10 @@ public class ThriftTest {
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, RequestHandler.getInstance());
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler(
+				new IPLocation("localhost", pdpPort),
+				new IPLocation("localhost", pdpPort + 1),
+				new IPLocation("localhost", pdpPort + 2)));
 		new Thread(pdpServer).start();
 
 		/*
