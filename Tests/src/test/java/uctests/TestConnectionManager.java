@@ -41,9 +41,9 @@ public class TestConnectionManager {
 		/*
 		 * Tests to make sure that we got indeed three different instances above.
 		 */
-		Assert.assertTrue(pdpClient1 != pdpClient2);
-		Assert.assertTrue(pdpClient2 != pdpClient3);
-		Assert.assertTrue(pdpClient1 != pdpClient3);
+		Assert.assertNotSame(pdpClient1, pdpClient2);
+		Assert.assertNotSame(pdpClient2, pdpClient3);
+		Assert.assertNotSame(pdpClient1, pdpClient3);
 
 		/*
 		 * First test, first connection.
@@ -52,7 +52,7 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient1);
-		Assert.assertTrue(pdpClientRef == pdpClient1);
+		Assert.assertSame(pdpClientRef, pdpClient1);
 		manager.release(pdpClient1);
 
 		/*
@@ -63,8 +63,8 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient2);
-		Assert.assertTrue(pdpClientRef == pdpClient1);
-		Assert.assertTrue(pdpClientRef != pdpClient2);
+		Assert.assertSame(pdpClientRef, pdpClient1);
+		Assert.assertNotSame(pdpClientRef, pdpClient2);
 		manager.release(pdpClient2);
 
 		/*
@@ -74,8 +74,8 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient3);
-		Assert.assertTrue(pdpClientRef == pdpClient1);
-		Assert.assertTrue(pdpClientRef != pdpClient3);
+		Assert.assertSame(pdpClientRef, pdpClient1);
+		Assert.assertNotSame(pdpClientRef, pdpClient3);
 		manager.release(pdpClient3);
 	}
 
@@ -117,7 +117,7 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient1a);
-		Assert.assertTrue(pdpClient1a == pdpClientRef);
+		Assert.assertSame(pdpClient1a, pdpClientRef);
 		manager.release(pdpClient1a);
 
 		/*
@@ -127,7 +127,7 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient2);
-		Assert.assertTrue(pdpClient2 == pdpClientRef);
+		Assert.assertSame(pdpClient2, pdpClientRef);
 		manager.release(pdpClient2);
 
 		/*
@@ -138,7 +138,7 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient3);
-		Assert.assertTrue(pdpClient3 == pdpClientRef);
+		Assert.assertSame(pdpClient3, pdpClientRef);
 		manager.release(pdpClient3);
 
 		/*
@@ -150,8 +150,8 @@ public class TestConnectionManager {
 		 */
 		pdpClientRef = null;
 		pdpClientRef = manager.obtain(pdpClient1b);
-		Assert.assertTrue(pdpClient1b == pdpClientRef);
-		Assert.assertTrue(pdpClient1a != pdpClientRef);
+		Assert.assertSame(pdpClient1b, pdpClientRef);
+		Assert.assertNotSame(pdpClient1a, pdpClientRef);
 		manager.release(pdpClient1b);
 	}
 }
