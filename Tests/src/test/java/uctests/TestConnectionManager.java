@@ -6,6 +6,7 @@ import org.junit.Test;
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
@@ -27,9 +28,9 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 5 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
-															new IPLocation("localhost", pdpPort + 1),
-															new IPLocation("localhost", pdpPort + 2));
+		IRequestHandler requestHandler = new RequestHandler(new LocalLocation(),
+															new LocalLocation(),
+															new LocalLocation());
 
 		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, requestHandler);
 		new Thread(pdpServer).start();
@@ -90,11 +91,10 @@ public class TestConnectionManager {
 		 */
 
 
-		// create a new connection manager of size 5 and start the pdp server
+		// create a new connection manager of size 2 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
-															new IPLocation("localhost", pdpPort + 1),
-															new IPLocation("localhost", pdpPort + 2));
+		IRequestHandler requestHandler = new RequestHandler(new LocalLocation(),
+				new LocalLocation(), new LocalLocation());
 
 		/*
 		 * Start three servers

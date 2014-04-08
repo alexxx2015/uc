@@ -8,10 +8,9 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith(Suite.class)
+//@RunWith(Suite.class)
 
-@SuiteClasses({ PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class,
-		TestPmp2PdpCommunication.class, ThriftTest.class })
+//@SuiteClasses({  })
 
 public class AllTests {
 

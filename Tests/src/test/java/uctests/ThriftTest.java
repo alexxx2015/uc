@@ -29,7 +29,7 @@ public class ThriftTest {
 												+ "test-classes" + File.separator
 												+ "testTUM.xml";
 
-	private static int pdpPort = 60000;
+	private static int pdpPort = 60002;
 
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 
@@ -45,6 +45,7 @@ public class ThriftTest {
 				new LocalLocation()));
 		new Thread(pdpServer).start();
 
+		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */

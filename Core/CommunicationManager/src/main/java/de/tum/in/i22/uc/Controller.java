@@ -121,6 +121,12 @@ public class Controller {
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
 
 		startListeners(_requestHandler);
+		while (!started()) {
+			try {
+				_logger.info("Waiting for startup of thrift servers.");
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {		}
+		}
 	}
 
 
