@@ -1,11 +1,14 @@
 package de.tum.in.i22.uc.pdp.core;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,20 +67,33 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
-		log.error("deployXML not yet supported");
-		return false;
+		log.debug("deployPolicyXML (before)");
+		InputStream is = new ByteArrayInputStream(XMLPolicy.getBytes() );
+		log.debug("deployPolicyXML (IS created)");
+		boolean b=deployXML(is);
+		log.debug("deployPolicyXML (after)");
+		return b;
 	}
 
 
 	@Override
 	public boolean deployPolicyURI(String policyFilename) {
-		if (policyFilename.endsWith(".xml"))
-			return deployXML(policyFilename);
+		if (policyFilename.endsWith(".xml")){
+			InputStream inp = null;
+			try {
+				inp = new FileInputStream(policyFilename);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return deployXML(inp);
+		}	
 		log.warn("Unsupported message format of policy!");
 		return false;
 	}
-
-	public boolean deployXML(String xmlFilename) {
+	
+	public boolean deployXML(InputStream inp) {
+		if (inp==null) return false;
 		try {
 			JAXBContext jc = JAXBContext
 					.newInstance("de.tum.in.i22.uc.pdp.xsd");
@@ -92,9 +108,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			// u.setSchema(schema);
 			// u.setEventHandler(new PolicyValidationEventHandler());
 
-			log.info("Deploying policy from file [{}]", xmlFilename);
 			JAXBElement<?> poElement = (JAXBElement<?>) u
-					.unmarshal(new FileInputStream(xmlFilename));
+					.unmarshal(inp);
 			PolicyType curPolicy = (PolicyType) poElement.getValue();
 
 			log.debug("curPolicy [name={}]: {}", curPolicy.getName(),
@@ -141,7 +156,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			return true;
 		} catch (UnmarshalException e) {
 			log.error("Syntax error in policy: " + e.getMessage());
-		} catch (JAXBException | FileNotFoundException | ClassCastException e) {
+		} catch (JAXBException |  ClassCastException e) {
 			e.printStackTrace();
 		}
 		return false;
