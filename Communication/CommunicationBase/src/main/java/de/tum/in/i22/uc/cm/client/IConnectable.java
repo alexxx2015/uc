@@ -8,7 +8,7 @@ import java.io.IOException;
  * @author Florian Kelbert
  *
  */
-interface IConnectable {
+public interface IConnectable {
 	/**
 	 * Connects this object to the remote point
 	 *

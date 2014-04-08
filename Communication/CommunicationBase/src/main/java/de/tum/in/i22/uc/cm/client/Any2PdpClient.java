@@ -2,27 +2,27 @@ package de.tum.in.i22.uc.cm.client;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pxp;
+import de.tum.in.i22.uc.cm.server.PdpProcessor;
 
 /**
- * This class represents the client side of a remote Pxp
+ * This class represents the client side of a remote {@link PdpProcessor}
  * and is thus {@link IConnectable} to that remote point.
  *
  * @author Florian Kelbert
  *
  */
-public abstract class PxpClientHandler implements IAny2Pxp, IConnectable {
+public abstract class Any2PdpClient extends PdpProcessor implements IConnectable {
 
 	private final Connector<?> _connector;
 
-	protected PxpClientHandler(Connector<?> connector) {
+	protected Any2PdpClient(Connector<?> connector) {
 		_connector = connector;
 	}
 
 	@Override
 	public final boolean equals(Object obj) {
-		if (obj instanceof PxpClientHandler) {
-			return _connector.equals(((PxpClientHandler) obj)._connector);
+		if (obj instanceof Any2PdpClient) {
+			return _connector.equals(((Any2PdpClient) obj)._connector);
 		}
 		return false;
 	}

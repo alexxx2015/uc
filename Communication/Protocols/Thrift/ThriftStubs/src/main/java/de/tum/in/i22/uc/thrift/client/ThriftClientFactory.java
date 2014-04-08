@@ -1,44 +1,44 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
-import de.tum.in.i22.uc.cm.client.PipClientHandler;
-import de.tum.in.i22.uc.cm.client.PmpClientHandler;
-import de.tum.in.i22.uc.cm.client.PxpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.client.Any2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
 
-public class ThriftClientHandlerFactory implements ClientHandlerFactory {
+public class ThriftClientFactory implements ClientHandlerFactory {
 
 	@Override
-	public PdpClientHandler createPdpClientHandler(Location location) {
+	public Any2PdpClient createPdpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
-			return new ThriftPdpClientHandler((IPLocation) location);
+			return new ThriftAny2PdpClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
 
 	@Override
-	public PipClientHandler createPipClientHandler(Location location) {
+	public Any2PipClient createPipClientHandler(Location location) {
 		if (location instanceof IPLocation) {
-			return new ThriftPipClientHandler((IPLocation) location);
+			return new ThriftAny2PipClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
 
 	@Override
-	public PmpClientHandler createPmpClientHandler(Location location) {
+	public Any2PmpClient createPmpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
-			return new ThriftPmpClientHandler((IPLocation) location);
+			return new ThriftAny2PmpClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
 
 	@Override
-	public PxpClientHandler createPxpClientHandler(Location location) {
+	public Any2PxpClient createPxpClientHandler(Location location) {
 		if (location instanceof IPLocation) {
-			return new ThriftPxpClientHandler((IPLocation) location);
+			return new ThriftAny2PxpClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}

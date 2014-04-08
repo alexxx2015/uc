@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
@@ -31,45 +31,45 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
  * The goal of this class is usually to convert types from/to thrift types,
  * invoke the respective dual method "on the other side", and convert back the result
  *
- * Use {@link ThriftClientHandlerFactory} to get an instance.
+ * Use {@link ThriftClientFactory} to get an instance.
  *
  * @author Florian Kelbert & Enrico Lovat
  *
  */
-class ThriftPdpClientHandler extends PdpClientHandler {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPdpClientHandler.class);
+class ThriftAny2PdpClient extends Any2PdpClient {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpClient.class);
 
 	private TAny2Pdp.Client _handle;
 
 	private final ThriftConnector<TAny2Pdp.Client> _connector;
 
 	/**
-	 * Creates a {@link ThriftPdpClientHandler} that will be
-	 * connected (upon calling {@link PdpClientHandler#connect()})
+	 * Creates a {@link ThriftAny2PdpClient} that will be
+	 * connected (upon calling {@link Any2PdpClient#connect()})
 	 * the the specified thrift server on the specified address/port.
 	 *
-	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	private ThriftPdpClientHandler(String address, int port) {
+	private ThriftAny2PdpClient(String address, int port) {
 		this(new ThriftConnector<>(address, port, TAny2Pdp.Client.class));
 	}
 
 	/**
-	 * Creates a new {@link ThriftPdpClientHandler} that will be connected
+	 * Creates a new {@link ThriftAny2PdpClient} that will be connected
 	 * to the specified {@link IPLocation}.
 	 *
-	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
 	 * @param location the location of the remote point
 	 */
-	ThriftPdpClientHandler(IPLocation location) {
+	ThriftAny2PdpClient(IPLocation location) {
 		this(location.getHost(), location.getPort());
 	}
 
-	private ThriftPdpClientHandler(ThriftConnector<TAny2Pdp.Client> connector) {
+	private ThriftAny2PdpClient(ThriftConnector<TAny2Pdp.Client> connector) {
 		super(connector);
 		_connector = connector;
 	}

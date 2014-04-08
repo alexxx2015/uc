@@ -184,6 +184,9 @@ service TAny2Any  {
 }
 
 
+service TPep2Pdp {
+	Types.TResponse notifyEventSync(1: Types.TEvent e)
+}
 
 
 /*****************************************

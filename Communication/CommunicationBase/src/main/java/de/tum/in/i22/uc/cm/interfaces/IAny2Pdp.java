@@ -6,6 +6,6 @@ package de.tum.in.i22.uc.cm.interfaces;
  * @author Kelbert & Lovat
  *
  */
-public interface IAny2Pdp extends IPep2Pdp,IPxp2Pdp,IPmp2Pdp{
+public interface IAny2Pdp extends IPep2Pdp, IPxp2Pdp, IPmp2Pdp {
 
 }

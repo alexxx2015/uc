@@ -1,1 +1,3 @@
+* Ensure all tests are run by maven
 * parameterize test classes
+* deploy policies as a string

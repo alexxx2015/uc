@@ -12,13 +12,14 @@ import com.google.common.collect.Maps;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
@@ -30,7 +31,7 @@ public class ThriftTest {
 
 	private static int pdpPort = 60000;
 
-	private static ThriftClientHandlerFactory thriftClientFactory = new ThriftClientHandlerFactory();
+	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 
 	@Test
 	public void thriftTest() throws Exception {
@@ -39,15 +40,15 @@ public class ThriftTest {
 		 * Start the PDP server
 		 */
 		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler(
-				new IPLocation("localhost", pdpPort),
-				new IPLocation("localhost", pdpPort + 1),
-				new IPLocation("localhost", pdpPort + 2)));
+				new LocalLocation(),
+				new LocalLocation(),
+				new LocalLocation()));
 		new Thread(pdpServer).start();
 
 		/*
 		 * Connect to the PDP server
 		 */
-		PdpClientHandler clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
 		clientPdp.connect();
 
 		int x = 0;

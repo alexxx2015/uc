@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 @RunWith(Suite.class)
 
 @SuiteClasses({ PipTest.class, PdpTest.class, TestPep2PdpCommunication.class, TestPmp2PipCommunication.class,
-		TestPmp2PdpCommunication.class })
+		TestPmp2PdpCommunication.class, ThriftTest.class })
+
 public class AllTests {
 
 	private static Logger _logger = LoggerFactory.getLogger(AllTests.class);

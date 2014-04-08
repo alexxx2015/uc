@@ -4,11 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
@@ -26,7 +26,7 @@ public class TestConnectionManager {
 		 */
 
 		// create a new connection manager of size 5 and start the pdp server
-		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
+		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
 		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
 															new IPLocation("localhost", pdpPort + 1),
 															new IPLocation("localhost", pdpPort + 2));
@@ -35,10 +35,10 @@ public class TestConnectionManager {
 		new Thread(pdpServer).start();
 
 		// create 6 different
-		PdpClientHandler pdpClient1 = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
-		PdpClientHandler pdpClient2 = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
-		PdpClientHandler pdpClient3 = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
-		PdpClientHandler pdpClientRef;
+		Any2PdpClient pdpClient1 = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClient2 = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClient3 = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClientRef;
 
 		/*
 		 * Tests to make sure that we got indeed three different instances above.
@@ -91,7 +91,7 @@ public class TestConnectionManager {
 
 
 		// create a new connection manager of size 5 and start the pdp server
-		ConnectionManager<PdpClientHandler> manager = new ConnectionManager<>(2);
+		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
 		IRequestHandler requestHandler = new RequestHandler(new IPLocation("localhost", pdpPort),
 															new IPLocation("localhost", pdpPort + 1),
 															new IPLocation("localhost", pdpPort + 2));
@@ -109,11 +109,11 @@ public class TestConnectionManager {
 		/*
 		 * Create three clients
 		 */
-		PdpClientHandler pdpClient1a = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 1));
-		PdpClientHandler pdpClient1b = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 1));
-		PdpClientHandler pdpClient2 = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 2));
-		PdpClientHandler pdpClient3 = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 3));
-		PdpClientHandler pdpClientRef;
+		Any2PdpClient pdpClient1a = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 1));
+		Any2PdpClient pdpClient1b = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 1));
+		Any2PdpClient pdpClient2 = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 2));
+		Any2PdpClient pdpClient3 = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", pdpPort + 3));
+		Any2PdpClient pdpClientRef;
 
 		/*
 		 * First connection. We expect the connection to be returned

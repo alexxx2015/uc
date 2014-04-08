@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
@@ -63,7 +63,7 @@ public class PxpTemplate {
 
 		//register them
 		System.out.println("getting pdp handler ");
-		PdpClientHandler clientPdp = new ThriftClientHandlerFactory().createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
+		Any2PdpClient clientPdp = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
 
 
 		try {

@@ -8,7 +8,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.client.PipClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -29,45 +29,45 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pip;
  * Create a instance of this class, connects it
  * and does calls on a remote {@link PipProcessor}.
  *
- * Use {@link ThriftClientHandlerFactory} to get an instance.
+ * Use {@link ThriftClientFactory} to get an instance.
  *
  * @author Florian Kelbert
  *
  */
-class ThriftPipClientHandler extends PipClientHandler {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftPipClientHandler.class);
+class ThriftAny2PipClient extends Any2PipClient {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipClient.class);
 
 	private TAny2Pip.Client _handle;
 
 	private final ThriftConnector<TAny2Pip.Client> _connector;
 
 	/**
-	 * Creates a {@link ThriftPipClientHandler} that will be
-	 * connected (upon calling {@link PipClientHandler#connect()})
+	 * Creates a {@link ThriftAny2PipClient} that will be
+	 * connected (upon calling {@link Any2PipClient#connect()})
 	 * the the specified thrift server on the specified address/port.
 	 *
-	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
 	 * @param address the address of the remote point
 	 * @param port the port of the remote point
 	 */
-	private ThriftPipClientHandler(String address, int port) {
+	private ThriftAny2PipClient(String address, int port) {
 		this(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
 	}
 
 	/**
-	 * Creates a new {@link ThriftPipClientHandler} that will be connected
+	 * Creates a new {@link ThriftAny2PipClient} that will be connected
 	 * to the specified {@link IPLocation}.
 	 *
-	 * Use {@link ThriftClientHandlerFactory} to get an instance.
+	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
 	 * @param location the location of the remote point
 	 */
-	ThriftPipClientHandler(IPLocation location) {
+	ThriftAny2PipClient(IPLocation location) {
 		this(location.getHost(), location.getPort());
 	}
 
-	private ThriftPipClientHandler(ThriftConnector<TAny2Pip.Client> connector) {
+	private ThriftAny2PipClient(ThriftConnector<TAny2Pip.Client> connector) {
 		super(connector);
 		_connector = connector;
 	}

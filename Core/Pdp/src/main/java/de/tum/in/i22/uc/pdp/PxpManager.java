@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.client.PxpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PxpClient;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 /**
  * This class manages the connection with the Pxp. It handles the registrations
@@ -61,7 +61,7 @@ public class PxpManager {
 				PxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
-					PxpClientHandler client = new ThriftClientHandlerFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
+					Any2PxpClient client = new ThriftClientFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
 
 					try {
 						client.connect();

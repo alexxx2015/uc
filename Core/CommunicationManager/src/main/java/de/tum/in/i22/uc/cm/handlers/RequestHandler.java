@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.client.PdpClientHandler;
-import de.tum.in.i22.uc.cm.client.PipClientHandler;
-import de.tum.in.i22.uc.cm.client.PmpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -60,7 +60,7 @@ import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class RequestHandler implements IRequestHandler, IForwarder {
 
@@ -70,12 +70,12 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	private final Set<Integer> _portsUsed;
 	private final Settings _settings;
-	private final ThriftClientHandlerFactory thriftClientFactory;
+	private final ThriftClientFactory thriftClientFactory;
 
 	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
-		thriftClientFactory = new ThriftClientHandlerFactory();
+		thriftClientFactory = new ThriftClientFactory();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
 		PdpProcessor pdp = createPdpHandler(pdpLocation);
@@ -107,7 +107,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PdpClientHandler pdp = thriftClientFactory.createPdpClientHandler(loc);
+					Any2PdpClient pdp = thriftClientFactory.createPdpClientHandler(loc);
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -130,7 +130,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PmpClientHandler pmp = thriftClientFactory.createPmpClientHandler(loc);
+					Any2PmpClient pmp = thriftClientFactory.createPmpClientHandler(loc);
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -153,7 +153,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					PipClientHandler pip = thriftClientFactory.createPipClientHandler(loc);
+					Any2PipClient pip = thriftClientFactory.createPipClientHandler(loc);
 					try {
 						pip.connect();
 					} catch (Exception e) {

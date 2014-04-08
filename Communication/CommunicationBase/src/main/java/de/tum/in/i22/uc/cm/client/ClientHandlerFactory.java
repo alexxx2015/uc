@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.cm.client;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
 public interface ClientHandlerFactory {
-	PdpClientHandler createPdpClientHandler(Location location);
-	PipClientHandler createPipClientHandler(Location location);
-	PmpClientHandler createPmpClientHandler(Location location);
-	PxpClientHandler createPxpClientHandler(Location location);
+	Any2PdpClient createPdpClientHandler(Location location);
+	Any2PipClient createPipClientHandler(Location location);
+	Any2PmpClient createPmpClientHandler(Location location);
+	Any2PxpClient createPxpClientHandler(Location location);
 }

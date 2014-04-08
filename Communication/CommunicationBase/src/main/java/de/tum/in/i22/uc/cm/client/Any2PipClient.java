@@ -2,27 +2,27 @@ package de.tum.in.i22.uc.cm.client;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.server.PdpProcessor;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 /**
- * This class represents the client side of a remote {@link PdpProcessor}
+ * This class represents the client side of a remote {@link PipProcessor}
  * and is thus {@link IConnectable} to that remote point.
  *
  * @author Florian Kelbert
  *
  */
-public abstract class PdpClientHandler extends PdpProcessor implements IConnectable {
+public abstract class Any2PipClient extends PipProcessor implements IConnectable {
 
 	private final Connector<?> _connector;
 
-	protected PdpClientHandler(Connector<?> connector) {
+	protected Any2PipClient(Connector<?> connector) {
 		_connector = connector;
 	}
 
 	@Override
 	public final boolean equals(Object obj) {
-		if (obj instanceof PdpClientHandler) {
-			return _connector.equals(((PdpClientHandler) obj)._connector);
+		if (obj instanceof Any2PipClient) {
+			return _connector.equals(((Any2PipClient) obj)._connector);
 		}
 		return false;
 	}
