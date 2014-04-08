@@ -22,7 +22,7 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class ThriftTester {
+public class ThriftTest {
 
 	private static final String policyFile = "target" + File.separator
 												+ "test-classes" + File.separator
