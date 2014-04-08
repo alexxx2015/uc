@@ -8,10 +8,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//@RunWith(Suite.class)
-
-//@SuiteClasses({  })
-
 public class AllTests {
 
 	private static Logger _logger = LoggerFactory.getLogger(AllTests.class);
