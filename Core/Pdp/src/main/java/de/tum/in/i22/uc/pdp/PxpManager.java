@@ -94,7 +94,7 @@ public class PxpManager {
 		if (res == null)
 			return false;
 		else
-			return res.isSameStatus(EStatus.OKAY);
+			return res.isStatus(EStatus.OKAY);
 	}
 
 	public boolean registerPxp(PxpSpec pxp) {

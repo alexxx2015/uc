@@ -14,7 +14,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class RenameEventHandler extends BaseEventHandler {
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String host = null;
 		String oldName = null;
 		String newName = null;

@@ -21,29 +21,29 @@ public class NotifyEventPdpRequest extends PdpRequest<IResponse> {
 
 	@Override
 	public IResponse process(PdpProcessor processor) {
-		IResponse res = processor.notifyEventSync(_event);
-
-		/**
-		 * (1) If the event is actual, we update the PIP in any case
-		 *
-		 * (2) If the event is *not* actual
-		 * 		AND if the event was allowed by the PDP
-		 * 		AND if for this event allowance implies that the event is to be considered as actual event,
-		 * 	   then we create the corresponding actual event and signal it to both the PIP and the PDP
-		 *     as actual event.
-		 */
-
-		if (_event.isActual()) {
-			processor.getPip().update(_event);
-		}
-		else if (res.getAuthorizationAction().isSameStatus(EStatus.ALLOW) && _event.allowImpliesActual()) {
-			IEvent ev2 = new EventBasic(_event.getName(), _event.getParameters(), true);
-			// TODO: Check whether this order is correct. Enrico?
-			processor.getPip().update(ev2);
-			processor.notifyEventAsync(ev2);
-		}
-
-		return res;
+		return processor.notifyEventSync(_event);
+//
+//		/**
+//		 * (1) If the event is actual, we update the PIP in any case
+//		 *
+//		 * (2) If the event is *not* actual
+//		 * 		AND if the event was allowed by the PDP
+//		 * 		AND if for this event allowance implies that the event is to be considered as actual event,
+//		 * 	   then we create the corresponding actual event and signal it to both the PIP and the PDP
+//		 *     as actual event.
+//		 */
+//
+//		if (_event.isActual()) {
+//			processor.getPip().update(_event);
+//		}
+//		else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && _event.allowImpliesActual()) {
+//			IEvent ev2 = new EventBasic(_event.getName(), _event.getParameters(), true);
+//			// TODO: Check whether this order is correct. Enrico?
+//			processor.getPip().update(ev2);
+//			processor.notifyEventAsync(ev2);
+//		}
+//
+//		return res;
 	}
 
 }

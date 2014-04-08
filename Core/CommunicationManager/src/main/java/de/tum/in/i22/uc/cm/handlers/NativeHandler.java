@@ -1,13 +1,10 @@
 package de.tum.in.i22.uc.cm.handlers;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.server.IForwarder;
-import de.tum.in.i22.uc.cm.server.Request;
 
 /**
  * This class will be used via JNI to dispatch events.
@@ -15,44 +12,7 @@ import de.tum.in.i22.uc.cm.server.Request;
  *
  */
 public class NativeHandler {
-	private static final Map<IEvent, Object> responses = Collections.synchronizedMap(new HashMap<IEvent, Object>());
-
-	public static void addResponse(IEvent event, Object response) {
-		synchronized (responses) {
-			responses.put(event, response);
-			responses.notifyAll();
-		}
-	}
-
 	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
-//		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-//		NotifyEventPdpRequest req = new NotifyEventPdpRequest(event);
-//		Object response = null;
-//
-//		if (event != null) {
-//			if (isActual) {
-//				RequestHandler.getInstance().addRequest(req, new IForwarder() {
-//
-//					@Override
-//					public void forwardResponse(Request<?,?> request, Object response) {
-//					}
-//				});
-//			}
-//			else {
-//				synchronized(responses) {
-//					RequestHandler.getInstance().addRequest(req, new NativeForwarder(event));
-//				}
-//
-//				synchronized (responses) {
-//					response = responses.remove(event);
-//					while (response == null) {
-//						responses.wait();
-//						response = responses.remove(event);
-//					}
-//				}
-//			}
-//		}
-
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
 		Object response = null;
 
@@ -81,19 +41,5 @@ public class NativeHandler {
 
 		return new EventBasic(name, params, isActual);
 	}
-}
-
-class NativeForwarder implements IForwarder {
-	private final IEvent _event;
-
-	public NativeForwarder(IEvent ev) {
-		_event = ev;
-	}
-
-	@Override
-	public void forwardResponse(Request<?,?> request, Object response) {
-		NativeHandler.addResponse(_event, response);
-	}
-
 }
 

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp;
 import java.util.List;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
@@ -82,6 +83,28 @@ public class PdpHandler extends PdpProcessor {
 		if (event == null) {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		return _lpdp.notifyEvent(new Event(event)).getResponse();
+		IResponse res = _lpdp.notifyEvent(new Event(event)).getResponse();
+
+		/**
+		 * (1) If the event is actual, we update the PIP in any case
+		 *
+		 * (2) If the event is *not* actual
+		 * 		AND if the event was allowed by the PDP
+		 * 		AND if for this event allowance implies that the event is to be considered as actual event,
+		 * 	   then we create the corresponding actual event and signal it to both the PIP and the PDP
+		 *     as actual event.
+		 */
+
+		if (event.isActual()) {
+			getPip().update(event);
+		}
+		else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && event.allowImpliesActual()) {
+			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
+			// TODO: Check whether this order is correct. Enrico?
+			getPip().update(ev2);
+			notifyEventAsync(ev2);
+		}
+
+		return res;
 	}
 }

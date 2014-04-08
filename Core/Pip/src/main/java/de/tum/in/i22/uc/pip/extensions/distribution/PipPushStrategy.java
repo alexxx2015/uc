@@ -16,13 +16,13 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
 
-public class PipPushStrategy extends DistributedPipStrategy {
+public class PipPushStrategy extends PipDistributionStrategy{
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
-	public PipPushStrategy(EDistributedPipStrategy eStrategy) {
+	public PipPushStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
 	}
 
@@ -51,7 +51,7 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	}
 
 	@Override
-	public IStatus remoteEventUpdate(Location location, IEvent event) {
+	public IStatus doRemoteEventUpdate(Location location, IEvent event) {
 		_logger.debug("remoteEventUpdate(" + location + "," + event + ")");
 
 		try {
@@ -69,32 +69,24 @@ public class PipPushStrategy extends DistributedPipStrategy {
 	}
 
 	@Override
-	public IStatus remoteDataFlow(Map<Location, Map<IName, Set<IData>>> dataflow) {
+	public IStatus doRemoteDataFlow(Location location, Map<IName, Set<IData>> dataflow) {
 		_logger.info("Performing remote data flow transfer: " + dataflow);
 
-		String errorString = "";
-		for (Location location : dataflow.keySet()) {
-			try {
-				PipClientHandler _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
+		try {
+			PipClientHandler _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
 
-				// TODO: Update Thrift to get rid of this loop. Possible?
-				for (Entry<IName,Set<IData>> entry : dataflow.get(location).entrySet()) {
-					_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
-				}
-
-				_connectionManager.release(_pipHandle);
-
-			} catch (IOException e) {
-				errorString += "Unable to perform remote data transfer: " + e + System.lineSeparator();
+			// TODO: Update Thrift to get rid of this loop. Possible?
+			for (Entry<IName,Set<IData>> entry : dataflow.entrySet()) {
+				_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
 			}
+
+			_connectionManager.release(_pipHandle);
+
+		} catch (IOException e) {
+			_logger.warn("Unable to perform remote data transfer: " + e);
+			return new StatusBasic(EStatus.ERROR, "Unable to perform remote data transfer: " + e + System.lineSeparator());
 		}
 
-		if (errorString.length() == 0) {
-			return new StatusBasic(EStatus.OKAY);
-		}
-		else {
-			_logger.warn("remoteDataFlow failed: " + errorString);
-			return new StatusBasic(EStatus.ERROR, errorString);
-		}
+		return new StatusBasic(EStatus.OKAY);
 	}
 }

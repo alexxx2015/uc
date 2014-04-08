@@ -155,7 +155,9 @@ public class Controller {
 		}
 
 		if (_settings.isAnyListenerEnabled()) {
-			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(), requestHandler);
+			_anyServer = ThriftServerFactory.createAnyThriftServer(_settings.getAnyListenerPort(),
+												_settings.getPdpListenerPort(), _settings.getPipListenerPort(),
+												_settings.getPmpListenerPort());
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();

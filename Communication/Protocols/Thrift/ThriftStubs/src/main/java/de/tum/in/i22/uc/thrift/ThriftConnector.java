@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.thrift.client;
+package de.tum.in.i22.uc.thrift;
 
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.client.TcpConnector;
  * @author Florian Kelbert
  *
  */
-class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<HandleType> {
+public class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<HandleType> {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftConnector.class);
 
 	private TTransport _transport;
@@ -34,7 +34,7 @@ class ThriftConnector<HandleType extends TServiceClient> extends TcpConnector<Ha
 	 * @param port the server's port
 	 * @param iface the Thrift interface to be used for the connection
 	 */
-	ThriftConnector(String address, int port, Class<HandleType> iface) {
+	public ThriftConnector(String address, int port, Class<HandleType> iface) {
 		super(address, port);
 		_iface = iface;
 	}

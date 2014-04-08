@@ -14,10 +14,10 @@ import de.tum.in.i22.uc.cm.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.distribution.ECommunicationProtocol;
+import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.pip.EDistributedPipStrategy;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
@@ -67,7 +67,7 @@ public class Settings extends SettingsLoader {
 
 	private ECommunicationProtocol _communicationProtocol = ECommunicationProtocol.THRIFT;
 
-	private EDistributedPipStrategy _pipDistributionStrategy = EDistributedPipStrategy.PUSH;
+	private EDistributionStrategy _distributionStrategy = EDistributionStrategy.PUSH;
 	private int _pipDistributionMaxConnections = 5;
 
 	private int _pdpDistributionMaxConnections = 5;
@@ -141,7 +141,7 @@ public class Settings extends SettingsLoader {
 		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
 		_pipInitialRepresentations			= loadSetting("pip_initial_representations", _pipInitialRepresentations);
 
-		_pipDistributionStrategy = loadSetting("pip_distribution_strategy", _pipDistributionStrategy, EDistributedPipStrategy.class);
+		_distributionStrategy = loadSetting("pip_distribution_strategy", _distributionStrategy, EDistributionStrategy.class);
 		_pipDistributionMaxConnections = loadSetting("pip_distribution_max_connections", _pipDistributionMaxConnections);
 
 		_pdpDistributionMaxConnections = loadSetting("pdp_distribution_max_connections", _pdpDistributionMaxConnections);
@@ -280,8 +280,8 @@ public class Settings extends SettingsLoader {
 		return _anyListenerEnabled;
 	}
 
-	public EDistributedPipStrategy getPipDistributionStrategy() {
-		return _pipDistributionStrategy;
+	public EDistributionStrategy getDistributionStrategy() {
+		return _distributionStrategy;
 	}
 
 	public String getPipEventHandlerPackage() {

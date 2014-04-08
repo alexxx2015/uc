@@ -14,7 +14,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class SendfileEventHandler extends BaseEventHandler {
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String host = null;
 		int pid;
 		int infd;

@@ -24,19 +24,19 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
 
-	public BaseEventHandler() {	}
+	protected BaseEventHandler() {	}
 
 	/*
 	 * This function describes how the event updates the information flow model..
 	 */
-	protected abstract IStatus execute();
+	protected abstract IStatus update();
 
 	/*
 	 * In this function, we describe what happens when a certain event is
 	 * executed.
 	 */
 	@Override
-	public IStatus executeEvent() {
+	public IStatus performUpdate() {
 		if (_event == null) {
 			return _messageFactory.createStatus(EStatus.ERROR);
 		}
@@ -44,7 +44,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 		/*
 		 * Update the ifModel according to the single event semantics
 		 */
-		return execute();
+		return update();
 	}
 
 	@Override

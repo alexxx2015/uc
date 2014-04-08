@@ -17,7 +17,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 public class CloneEventHandler extends BaseEventHandler {
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String host = null;
 		int childPid;
 		int parentPid;

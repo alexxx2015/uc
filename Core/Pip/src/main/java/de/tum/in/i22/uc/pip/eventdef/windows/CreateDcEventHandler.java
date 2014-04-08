@@ -20,7 +20,7 @@ public class CreateDcEventHandler extends BaseEventHandler {
 	}
 
 	@Override
-	protected IStatus execute() {
+	protected IStatus update() {
 		String pid = null;
 		String processName = null;
 		String deviceName = null;

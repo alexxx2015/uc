@@ -13,7 +13,7 @@ public class TestCeEventHandler extends BaseEventHandler{
 			.getLogger(EmptyCliboardEventHandler.class);
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 		_logger.info("TestCeEventHandler execute");
 		return _messageFactory.createStatus(EStatus.ALLOW);
 	}

@@ -4,7 +4,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 
 public interface IEventHandler {
-	public IStatus executeEvent();
+	public IStatus performUpdate();
 
 	/**
 	 * Sets the event of this event handler and returns the event handler

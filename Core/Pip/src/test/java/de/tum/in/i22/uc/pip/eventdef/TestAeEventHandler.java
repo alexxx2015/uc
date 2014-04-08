@@ -12,7 +12,7 @@ public class TestAeEventHandler extends BaseEventHandler{
 	private static final Logger _logger = LoggerFactory.getLogger(EmptyCliboardEventHandler.class);
 
 	@Override
-	public IStatus execute() {
+	public IStatus update() {
 		_logger.info("TestAeEventHandler execute");
 		return _messageFactory.createStatus(EStatus.ERROR);
 	}

@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.server.Request;
@@ -38,6 +39,8 @@ import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
 
 public class RequestHandler implements IRequestHandler, IForwarder {
 	private final RequestQueueManager _requestQueueManager;
@@ -218,6 +221,20 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(containerName, data);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus receivePolicies(Set<String> policies) {
+		ReceivePoliciesPmpRequest request = new ReceivePoliciesPmpRequest(policies);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
+		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(location, dataflow);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

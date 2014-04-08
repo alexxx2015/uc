@@ -49,7 +49,7 @@ public class StatusBasic implements IStatus {
 	}
 
 	@Override
-	public boolean isSameStatus(EStatus status) {
+	public boolean isStatus(EStatus status) {
 		return status == _eStatus;
 	}
 
