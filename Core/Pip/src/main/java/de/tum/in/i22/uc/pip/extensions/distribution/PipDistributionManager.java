@@ -33,8 +33,8 @@ public class PipDistributionManager implements IPipDistributionStrategy {
 	}
 
 	@Override
-	public IStatus doRemoteDataFlow(Location location, Map<IName,Set<IData>> dataflow) {
-		return _strategy.doRemoteDataFlow(location, dataflow);
+	public IStatus remoteDataFlow(Location srcLocation, Location dstLocation, Map<IName,Set<IData>> dataflow) {
+		return _strategy.remoteDataFlow(srcLocation, dstLocation, dataflow);
 	}
 
 	@Override

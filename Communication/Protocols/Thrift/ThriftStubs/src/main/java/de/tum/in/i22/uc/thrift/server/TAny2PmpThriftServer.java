@@ -39,9 +39,9 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String address, int port, Set<TData> data) throws TException {
+	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		IStatus status = _requestHandler.informRemoteDataFlow(new IPLocation(address, port), d);
+		IStatus status = _requestHandler.informRemoteDataFlow(new IPLocation(srcAddress, srcPort), new IPLocation(dstAddress, dstPort), d);
 		return ThriftConverter.toThrift(status);
 	}
 }

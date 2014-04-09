@@ -50,7 +50,7 @@ public class RemoteSocketContainer extends SocketContainer {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.getId(), super.getClass(), _location, _socketName);
+		return Objects.hash(_location, _socketName);
 	}
 
 }

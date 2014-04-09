@@ -396,8 +396,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
-		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(location, dataflow);
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
+		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

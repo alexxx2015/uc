@@ -20,14 +20,6 @@ public class PmpHandler extends PmpProcessor {
 		_distributedPmpManager = new PmpDistributionManager();
 	}
 
-	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> data) {
-		Set<IData> d = new HashSet<>();
-
-		// TODO: Get policies for data and send them
-
-		return new StatusBasic(EStatus.ERROR);
-	}
 
 	@Override
 	public IStatus receivePolicies(Set<String> policies) {
@@ -41,5 +33,14 @@ public class PmpHandler extends PmpProcessor {
 
 		// TODO: proper return value.
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
+		Set<IData> d = new HashSet<>();
+
+		// TODO: Get policies for data and send them
+
+		return new StatusBasic(EStatus.ERROR);
 	}
 }

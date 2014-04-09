@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 
 public class PipPushStrategy extends PipDistributionStrategy{
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
@@ -89,21 +90,28 @@ public class PipPushStrategy extends PipDistributionStrategy{
 	}
 
 	@Override
-	public IStatus doRemoteDataFlow(Location location, Map<IName, Set<IData>> dataflow) {
-		_logger.info("Performing remote data flow transfer: " + dataflow);
+	public IStatus remoteDataFlow(Location srcLocation, Location dstLocation, Map<IName, Set<IData>> dataflow) {
+		if (dstLocation.getLocation() == ELocation.LOCAL) {
+			// TODO: Update local information
+		}
+		else {
+			// tell the remote site about data transfer
 
-		try {
-			Pip2PipClient _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(location));
+			_logger.info("Performing remote data flow transfer: " + dataflow);
 
-			for (Entry<IName,Set<IData>> entry : dataflow.entrySet()) {
-				_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
+			try {
+				Pip2PipClient _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(dstLocation));
+
+				for (Entry<IName,Set<IData>> entry : dataflow.entrySet()) {
+					_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
+				}
+
+				_connectionManager.release(_pipHandle);
+
+			} catch (IOException e) {
+				_logger.warn("Unable to perform remote data transfer: " + e);
+				return new StatusBasic(EStatus.ERROR, "Unable to perform remote data transfer: " + e + System.lineSeparator());
 			}
-
-			_connectionManager.release(_pipHandle);
-
-		} catch (IOException e) {
-			_logger.warn("Unable to perform remote data transfer: " + e);
-			return new StatusBasic(EStatus.ERROR, "Unable to perform remote data transfer: " + e + System.lineSeparator());
 		}
 
 		return new StatusBasic(EStatus.OKAY);

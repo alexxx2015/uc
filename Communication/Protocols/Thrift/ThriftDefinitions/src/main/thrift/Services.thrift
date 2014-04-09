@@ -1,6 +1,6 @@
 /* 
  * Auto-generated Thrift definitions.
- * Generated on 2014/04/09, 10:07:36
+ * Generated on 2014/04/09, 17:46:24
  * from the following interface definitions:
  * - de.tum.in.i22.uc.cm.interfaces.IPdp2Pip
  * - de.tum.in.i22.uc.cm.interfaces.IPip2Pmp
@@ -66,8 +66,8 @@ service TPdp2Pip {
  * de.tum.in.i22.uc.cm.interfaces.IPip2Pmp
  */
 service TPip2Pmp {
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
-	Types.TStatus informRemoteDataFlow(1: string address, 2: Types.int port, 3: set<Types.TData> data)
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
+	Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data)
 }
 
 
@@ -99,9 +99,6 @@ service TAny2Pxp {
  * de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp
  */
 service TPmp2Pdp {
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
-	// TODO,
-
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.revokePolicy(java.lang.String)
 	Types.TStatus revokePolicy (1: string policyName),
 
@@ -115,7 +112,10 @@ service TPmp2Pdp {
 	Types.TStatus deployPolicyXML (1: string XMLPolicy),
 
 	// public abstract java.util.Map de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.listMechanisms()
-	map<string,list<string>> listMechanisms()
+	map<string,list<string>> listMechanisms(),
+
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
+	// TODO
 }
 
 
@@ -161,8 +161,8 @@ service TPdp2Any {
  * de.tum.in.i22.uc.cm.interfaces.IAny2Pmp
  */
 service TAny2Pmp {
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
-	Types.TStatus informRemoteDataFlow(1: string address, 2: Types.int port, 3: set<Types.TData> data),
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
+	Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data),
 
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp.receivePolicies(java.util.Set)
 	Types.TStatus remotePolicyTransfer(1: set<string> policies)
@@ -198,8 +198,8 @@ service TPip2Any {
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pip.update(de.tum.in.i22.uc.cm.datatypes.IEvent)
 	Types.TStatus update(1:Types.TEvent event),
 
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
-	Types.TStatus informRemoteDataFlow(1: string address, 2: Types.int port, 3: set<Types.TData> data)
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
+	Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data)
 }
 
 
@@ -237,9 +237,6 @@ service TAny2Any {
 	// public abstract boolean de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp.registerPxp(de.tum.in.i22.uc.cm.basic.PxpSpec)
 	bool registerPxp(1: Types.TPxpSpec pxp),
 
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
-	// TODO,
-
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.revokePolicy(java.lang.String)
 	Types.TStatus revokePolicy (1: string policyName),
 
@@ -254,6 +251,9 @@ service TAny2Any {
 
 	// public abstract java.util.Map de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.listMechanisms()
 	map<string,list<string>> listMechanisms(),
+
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
+	// TODO,
 
 	// public abstract boolean de.tum.in.i22.uc.cm.interfaces.IPdp2Pip.evaluatePredicateSimulatingNextState(de.tum.in.i22.uc.cm.datatypes.IEvent,java.lang.String)
 	bool evaluatePredicateSimulatingNextState(1:Types.TEvent event, 2:string predicate),
@@ -297,8 +297,8 @@ service TAny2Any {
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pip.initialRepresentation(de.tum.in.i22.uc.cm.datatypes.IName,java.util.Set)
 	Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data),
 
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
-	Types.TStatus informRemoteDataFlow(1: string address, 2: Types.int port, 3: set<Types.TData> data),
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPip2Pmp.informRemoteDataFlow(de.tum.in.i22.uc.cm.distribution.Location,de.tum.in.i22.uc.cm.distribution.Location,java.util.Set)
+	Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data),
 
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp.receivePolicies(java.util.Set)
 	Types.TStatus remotePolicyTransfer(1: set<string> policies),
@@ -419,9 +419,6 @@ service TPep2Pip {
  * de.tum.in.i22.uc.cm.interfaces.IPmp2Any
  */
 service TPmp2Any {
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
-	// TODO,
-
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.revokePolicy(java.lang.String)
 	Types.TStatus revokePolicy (1: string policyName),
 
@@ -436,6 +433,9 @@ service TPmp2Any {
 
 	// public abstract java.util.Map de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.listMechanisms()
 	map<string,list<string>> listMechanisms(),
+
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
+	// TODO,
 
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pip.initialRepresentation(de.tum.in.i22.uc.cm.datatypes.IName,java.util.Set)
 	Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data),
@@ -485,9 +485,6 @@ service TAny2Pdp {
 	// public abstract boolean de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp.registerPxp(de.tum.in.i22.uc.cm.basic.PxpSpec)
 	bool registerPxp(1: Types.TPxpSpec pxp),
 
-	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
-	// TODO,
-
 	// public abstract de.tum.in.i22.uc.cm.datatypes.IStatus de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.revokePolicy(java.lang.String)
 	Types.TStatus revokePolicy (1: string policyName),
 
@@ -501,7 +498,10 @@ service TAny2Pdp {
 	Types.TStatus deployPolicyXML (1: string XMLPolicy),
 
 	// public abstract java.util.Map de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.listMechanisms()
-	map<string,list<string>> listMechanisms()
+	map<string,list<string>> listMechanisms(),
+
+	// public abstract de.tum.in.i22.uc.cm.datatypes.IMechanism de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp.exportMechanism(java.lang.String)
+	// TODO
 }
 
 

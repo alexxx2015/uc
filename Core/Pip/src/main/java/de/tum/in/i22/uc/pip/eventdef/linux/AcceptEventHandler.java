@@ -83,8 +83,13 @@ public class AcceptEventHandler extends BaseEventHandler {
 			localAcceptedSocket = new SocketContainer(domain, type);
 			basicIfModel.addName(localSocketName, localAcceptedSocket);
 
+			/*
 			// add alias from new local container to remote proxy container
 			basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+			*/
+			// add alias on both directions
+			basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+			basicIfModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
 		}
 		else {
 			// client is local

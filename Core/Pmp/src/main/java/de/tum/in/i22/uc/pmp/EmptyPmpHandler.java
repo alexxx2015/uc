@@ -11,12 +11,12 @@ import de.tum.in.i22.uc.cm.server.PmpProcessor;
 public class EmptyPmpHandler extends PmpProcessor {
 
 	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
+	public IStatus receivePolicies(Set<String> policies) {
 		throw new UnsupportedOperationException("No PmpHandler deployed.");
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
 		throw new UnsupportedOperationException("No PmpHandler deployed.");
 	}
 }

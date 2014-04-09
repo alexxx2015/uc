@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.IMessageFactory;
 import de.tum.in.i22.uc.cm.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
+import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -27,11 +28,13 @@ import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
+import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -168,50 +171,106 @@ public class LinuxEvents {
 
 		_logger.debug("Data is " + data);
 
-		// this map will remember the remote data flows that have occurred.
-		Map<Location,Map<IName,Set<IData>>> remoteDataFlows = new HashMap<>();
+//		// this map will remember the remote data flows that have occurred.
+//		Map<Location,Map<IName,Set<IData>>> remoteDataFlows = new HashMap<>();
+//
+//		// copy into all containers aliased from the destination container
+//		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
+//
+//			/*
+//			 * In case we are copying to a RemoteSocketContainer, we
+//			 * know that a remote data transfer is happening. Thus,
+//			 * we assemble the information which data has flown remotely.
+//			 */
+//			if (c instanceof RemoteSocketContainer) {
+//				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
+//				_logger.debug("Preparing to copy data " + data + " to container " + c);
+//
+//				Map<IName,Set<IData>> map = remoteDataFlows.get(rsc.getLocation());
+//				if (map == null) {
+//					map = new HashMap<>();
+//					remoteDataFlows.put(rsc.getLocation(), map);
+//				}
+//				map.put(rsc.getSocketName(), data);
+//
+//			}
+//			else {
+//				// this is regular, local, data flow
+//				ifModel.addDataToContainer(data, c);
+//			}
+//		}
+//
+//		/*
+//		 * Now, also copy into the actual (direct) destination container ...
+//		 * ... but only if it is not a socket.
+//		 */
+//		if (!(dstCont instanceof SocketContainer)) {
+//			ifModel.addDataToContainer(data, dstCont);
+//		}
+//
+//
+//		/*
+//		 * Finally, check whether remote data flow has happened. If
+//		 * so, return a corresponding status.
+//		 */
+//		if (remoteDataFlows.size() > 0) {
+//			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlows);
+//		}
+//
+//		return STATUS_OKAY;
 
-		// copy into all containers aliased from the destination container
-		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
 
-			/*
-			 * In case we are copying to a RemoteSocketContainer, we
-			 * know that a remote data transfer is happening. Thus,
-			 * we assemble the information which data has flown remotely.
-			 */
-			if (c instanceof RemoteSocketContainer) {
-				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
-				_logger.debug("Preparing to copy data " + data + " to container " + c);
+		Location srcLocation = null;
 
-				Map<IName,Set<IData>> map = remoteDataFlows.get(rsc.getLocation());
-				if (map == null) {
-					map = new HashMap<>();
-					remoteDataFlows.put(rsc.getLocation(), map);
+		if (srcCont instanceof SocketContainer) {
+			Set<IContainer> aliases = ifModel.getAliasesTo(srcCont);
+			if (aliases.size() > 1) {
+				_logger.error("There should exist at most one such alias. Something went wrong. Somewhere.");
+				return new StatusBasic(EStatus.ERROR, "There should exist at most one such alias. Something went wrong. Somewhere.");
+			}
+
+			for (IContainer c : aliases) {
+				if (c instanceof RemoteSocketContainer) {
+					srcLocation = ((RemoteSocketContainer) c).getLocation();
 				}
-				map.put(rsc.getSocketName(), data);
+			}
+		}
 
+		RemoteDataFlowInfo remoteDataFlow = null;
+
+		if (srcLocation != null) {
+			// there is incoming remote data flow
+			remoteDataFlow = new RemoteDataFlowInfo(srcLocation);
+		}
+		else {
+			// did not yet detect any remote data flow, but
+			// we might have remote data flow to the outside
+			remoteDataFlow = new RemoteDataFlowInfo(new LocalLocation());
+		}
+
+		// copy into all aliased containers
+		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
+			if (c instanceof RemoteSocketContainer) {
+
+				/*
+				 * In case we are copying to a RemoteSocketContainer, we
+				 * know that a remote data transfer is happening. Thus,
+				 * we assemble the information which data has flown remotely.
+				 */
+				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
+				remoteDataFlow.addFlow(rsc.getLocation(), rsc.getSocketName(), data);
 			}
 			else {
-				// this is regular, local, data flow
 				ifModel.addDataToContainer(data, c);
 			}
 		}
 
 		/*
-		 * Now, also copy into the actual (direct) destination container ...
-		 * ... but only if it is not a socket.
-		 */
-		if (!(dstCont instanceof SocketContainer)) {
-			ifModel.addDataToContainer(data, dstCont);
-		}
-
-
-		/*
 		 * Finally, check whether remote data flow has happened. If
 		 * so, return a corresponding status.
 		 */
-		if (remoteDataFlows.size() > 0) {
-			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlows);
+		if (!remoteDataFlow.isEmpty()) {
+			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
 		}
 
 		return STATUS_OKAY;
