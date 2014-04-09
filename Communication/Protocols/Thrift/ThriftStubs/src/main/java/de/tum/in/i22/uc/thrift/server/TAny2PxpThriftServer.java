@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -18,8 +16,6 @@ import de.tum.in.i22.uc.thrift.types.TStatus;
  *
  */
 class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface {
-
-	private static Logger _logger = LoggerFactory.getLogger(TAny2PxpThriftServer.class);
 
 	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {

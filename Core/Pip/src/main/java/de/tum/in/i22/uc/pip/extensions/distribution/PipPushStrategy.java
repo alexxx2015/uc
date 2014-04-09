@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.PipClientHandler;
+import de.tum.in.i22.uc.cm.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
@@ -55,7 +55,7 @@ public class PipPushStrategy extends PipDistributionStrategy{
 		_logger.debug("remoteEventUpdate(" + location + "," + event + ")");
 
 		try {
-			PipClientHandler pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
+			Pip2PipClient pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(location));
 
 			pipHandle.update(event);
 
@@ -73,7 +73,7 @@ public class PipPushStrategy extends PipDistributionStrategy{
 		_logger.info("Performing remote data flow transfer: " + dataflow);
 
 		try {
-			PipClientHandler _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPipClientHandler(location));
+			Pip2PipClient _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(location));
 
 			// TODO: Update Thrift to get rid of this loop. Possible?
 			for (Entry<IName,Set<IData>> entry : dataflow.entrySet()) {

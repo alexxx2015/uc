@@ -2,17 +2,17 @@ package de.tum.in.i22.uc.pmp.extensions.distribution;
 
 import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.client.PmpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.AbstractDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.thrift.client.ThriftClientHandlerFactory;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public abstract class PmpDistributionStrategy extends AbstractDistributionStrategy implements IPmpDistributionStrategy {
 
 	protected final ClientHandlerFactory _clientHandlerFactory;
 
-	protected final ConnectionManager<PmpClientHandler> _connectionManager;
+	protected final ConnectionManager<Any2PmpClient> _connectionManager;
 
 	public PmpDistributionStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
@@ -21,7 +21,7 @@ public abstract class PmpDistributionStrategy extends AbstractDistributionStrate
 
 		switch (Settings.getInstance().getCommunicationProtocol()) {
 			case THRIFT:
-				_clientHandlerFactory = new ThriftClientHandlerFactory();
+				_clientHandlerFactory = new ThriftClientFactory();
 				break;
 			default:
 				throw new RuntimeException("Unsupported communication protocol.");

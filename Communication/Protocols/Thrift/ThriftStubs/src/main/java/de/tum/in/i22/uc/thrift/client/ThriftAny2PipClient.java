@@ -1,0 +1,154 @@
+package de.tum.in.i22.uc.thrift.client;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.server.PipProcessor;
+import de.tum.in.i22.uc.thrift.ThriftConnector;
+import de.tum.in.i22.uc.thrift.types.TAny2Pip;
+
+
+/**
+ * The client side of a remote Thrift {@link PipProcessor} server.
+ *
+ * Create a instance of this class, connects it
+ * and does calls on a remote {@link PipProcessor}.
+ *
+ * Use {@link ThriftClientFactory} to get an instance.
+ *
+ * @author Florian Kelbert
+ *
+ */
+class ThriftAny2PipClient extends Any2PipClient {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipClient.class);
+
+	private ThriftAny2PipImpl _impl;
+
+	private final ThriftConnector<TAny2Pip.Client> _connector;
+
+	/**
+	 * Creates a {@link ThriftAny2PipClient} that will be
+	 * connected (upon calling {@link Any2PipClient#connect()})
+	 * the the specified thrift server on the specified address/port.
+	 *
+	 * Use {@link ThriftClientFactory} to get an instance.
+	 *
+	 * @param address the address of the remote point
+	 * @param port the port of the remote point
+	 */
+	private ThriftAny2PipClient(String address, int port) {
+		this(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
+	}
+
+	/**
+	 * Creates a new {@link ThriftAny2PipClient} that will be connected
+	 * to the specified {@link IPLocation}.
+	 *
+	 * Use {@link ThriftClientFactory} to get an instance.
+	 *
+	 * @param location the location of the remote point
+	 */
+	ThriftAny2PipClient(IPLocation location) {
+		this(location.getHost(), location.getPort());
+	}
+
+	private ThriftAny2PipClient(ThriftConnector<TAny2Pip.Client> connector) {
+		super(connector);
+		_connector = connector;
+	}
+
+	@Override
+	public void connect() throws IOException {
+		_impl = new ThriftAny2PipImpl(_connector.connect());
+	}
+
+	@Override
+	public void disconnect() {
+		_connector.disconnect();
+		_impl = null;
+	}
+
+	@Override
+	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
+		return _impl.evaluatePredicateSimulatingNextState(event, predicate);
+	}
+
+	@Override
+	public boolean evaluatePredicateCurrentState(String predicate) {
+		return _impl.evaluatePredicateCurrentState(predicate);
+	}
+
+	@Override
+	public Set<IContainer> getContainersForData(IData data) {
+		return _impl.getContainersForData(data);
+	}
+
+	@Override
+	public Set<IData> getDataInContainer(IContainer container) {
+		return _impl.getDataInContainer(container);
+	}
+
+	@Override
+	public IStatus startSimulation() {
+		return _impl.startSimulation();
+	}
+
+	@Override
+	public IStatus stopSimulation() {
+		return _impl.stopSimulation();
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return _impl.isSimulating();
+	}
+
+	@Override
+	public IStatus update(IEvent event) {
+		return _impl.update(event);
+	}
+
+	@Override
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
+			EConflictResolution flagForTheConflictResolution) {
+		return _impl.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
+	}
+
+	@Override
+	public boolean hasAllData(Set<IData> data) {
+		return _impl.hasAllData(data);
+	}
+
+	@Override
+	public boolean hasAnyData(Set<IData> data) {
+		return _impl.hasAnyData(data);
+	}
+
+	@Override
+	public boolean hasAllContainers(Set<IContainer> container) {
+		return _impl.hasAllContainers(container);
+	}
+
+	@Override
+	public boolean hasAnyContainer(Set<IContainer> container) {
+		return _impl.hasAnyContainer(container);
+	}
+
+	@Override
+	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		return _impl.initialRepresentation(containerName, data);
+	}
+}

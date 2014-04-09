@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.PmpClientHandler;
+import de.tum.in.i22.uc.cm.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
@@ -25,7 +25,7 @@ public class PmpPushStrategy extends PmpDistributionStrategy {
 		_logger.info("Performing remote policy transfer: " + policies);
 
 		try {
-			PmpClientHandler _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createPmpClientHandler(location));
+			Any2PmpClient _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createPmpClientHandler(location));
 			_pmpHandle.receivePolicies(policies);
 			_connectionManager.release(_pmpHandle);
 		}

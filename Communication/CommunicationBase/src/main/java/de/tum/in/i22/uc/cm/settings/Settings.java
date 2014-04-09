@@ -74,6 +74,11 @@ public class Settings extends SettingsLoader {
 
 	private int _pmpDistributionMaxConnections = 5;
 
+	/**
+	 * The amount of milliseconds to wait between two attempts to connect to a remote point
+	 */
+	private int _connectionAttemptInterval = 1000;
+
 
 	private Settings() {
 		try {
@@ -149,6 +154,8 @@ public class Settings extends SettingsLoader {
 		_pmpDistributionMaxConnections = loadSetting("pmp_distribution_max_connections", _pmpDistributionMaxConnections);
 
 		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol, ECommunicationProtocol.class);
+
+		_connectionAttemptInterval = loadSetting("connection_attempt_interval", _connectionAttemptInterval);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -334,6 +341,10 @@ public class Settings extends SettingsLoader {
 
 	public int getPmpDistributionMaxConnections() {
 		return _pmpDistributionMaxConnections;
+	}
+
+	public int getConnectionAttemptInterval() {
+		return _connectionAttemptInterval ;
 	}
 }
 
