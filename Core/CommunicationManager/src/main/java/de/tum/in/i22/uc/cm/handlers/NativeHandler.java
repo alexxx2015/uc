@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.cm.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
@@ -15,25 +14,29 @@ import de.tum.in.i22.uc.cm.server.IRequestHandler;
  */
 public class NativeHandler {
 
-	private static final IRequestHandler requestHandler = Controller.getRequestHandler();
+	private final IRequestHandler _requestHandler;
 
-	public static Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
+	public NativeHandler(IRequestHandler requestHandler) {
+		_requestHandler = requestHandler;
+	}
+
+	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
 		Object response = null;
 
 		if (event != null) {
 			if (isActual) {
-				requestHandler.notifyEventAsync(event);
+				_requestHandler.notifyEventAsync(event);
 			}
 			else {
-				response = requestHandler.notifyEventSync(event);
+				response = _requestHandler.notifyEventSync(event);
 			}
 		}
 
 		return response;
 	}
 
-	private static IEvent assembleEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
+	private IEvent assembleEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
 		if (name == null || paramKeys == null || paramValues == null
 				|| paramKeys.length != paramValues.length || name.isEmpty()) {
 			return null;

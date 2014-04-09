@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.cm.handlers;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.client.Any2PipClient;
@@ -27,6 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.IForwarder;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
@@ -72,6 +71,16 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private final Settings _settings;
 	private final ThriftClientFactory thriftClientFactory;
 
+	/**
+	 * Creates a new RequestHandler. The parameters specify where the corresponding
+	 * components are run. If a location is an instance of {@link LocalLocation}, a
+	 * new local handler will be started. Otherwise, the {@link RequestHandler} will
+	 * connect to the remote location and make use of that remote handler.
+	 *
+	 * @param pdpLocation
+	 * @param pipLocation
+	 * @param pmpLocation
+	 */
 	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
@@ -83,15 +92,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		PmpProcessor pmp = createPmpHandler(pmpLocation);
 
 		while (pdp == null || pip == null || pmp == null) {
-			if (pdp == null) pdp = createPdpHandler(pdpLocation);
-			if (pip == null) pip = createPipHandler(pipLocation);
-			if (pmp == null) pmp = createPmpHandler(pmpLocation);
-
 			try {
 				int sleep = _settings.getConnectionAttemptInterval();
 				_logger.info("One of the connections failed. Trying again in " + sleep + " milliseconds.");
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {	}
+
+			if (pdp == null) pdp = createPdpHandler(pdpLocation);
+			if (pip == null) pip = createPipHandler(pipLocation);
+			if (pmp == null) pmp = createPmpHandler(pmpLocation);
 		}
 
 		pdp.init(pip, pmp);
@@ -414,35 +423,5 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			request.setResponse(response);
 			notifyAll();
 		}
-	}
-
-	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
-		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
-		Object response = null;
-
-		if (event != null) {
-			if (isActual) {
-				notifyEventAsync(event);
-			}
-			else {
-				notifyEventSync(event);
-			}
-		}
-
-		return response;
-	}
-
-	private static IEvent assembleEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
-		if (name == null || paramKeys == null || paramValues == null
-				|| paramKeys.length != paramValues.length || name.isEmpty()) {
-			return null;
-		}
-
-		Map<String,String> params = new HashMap<String,String>();
-		for (int i = 0; i < paramKeys.length; i++) {
-			params.put(paramKeys[i], paramValues[i]);
-		}
-
-		return new EventBasic(name, params, isActual);
 	}
 }

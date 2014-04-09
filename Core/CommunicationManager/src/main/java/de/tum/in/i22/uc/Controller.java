@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.handlers.NativeHandler;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -25,58 +26,20 @@ public class Controller {
 
 	private static IRequestHandler _requestHandler;
 
-	private static boolean isPortAvailable(int port) {
-	    _logger.debug("--------------Testing port " + port);
-	    Socket s = null;
-	    try {
-	        s = new Socket("localhost", port);
-	        // If the code makes it this far without an exception it means
-	        // something is using the port and has responded.
-	        _logger.debug("--------------Port " + port + " is not available");
-	        return false;
-	    } catch (IOException e) {
-	        _logger.debug("--------------Port " + port + " is available");
-	        return true;
-	    } finally {
-	        if( s != null){
-	            try {
-	                s.close();
-	            } catch (IOException e) {
-	                throw new RuntimeException("You should handle this error." , e);
-	            }
-	        }
-	    }
-	}
-
-	static void loadProperties(String[] args){
-		CommandLine cl = CommandLineOptions.init(args);
-		if (cl!=null && cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
-			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
-		}
-		_settings = Settings.getInstance();
-	}
-
-	private static void lock() {
-		Object lock = new Object();
-		synchronized (lock) {
-			try {
-				lock.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	/**
+	 * This field is in fact used by native code via JNI.
+	 */
+	@SuppressWarnings("unused")
+	private static NativeHandler _nativeHandler;
 
 	public static void main(String[] args) {
 
 		if (start(args)){
-			/*
-			 * Lock forever
-			 */
+			// lock forever
 			lock();
 		}
 		else{
-			_logger.error("Exiting with status code 1");
+			_logger.error("Unable to start UC infrastructure. Exiting.");
 			System.exit(1);
 		}
 	}
@@ -85,40 +48,27 @@ public class Controller {
 		return start(null);
 	}
 
+
 	public static boolean start(String[] args){
-		/*
-		 *  Load properties (if provided via parameter)
-		 */
+		// Load properties (if provided via parameter)
 		loadProperties(args);
 
-		/*
-		 *  If ports are available...
-		 */
-		if (testIfPortsAreAvailable()){
-
-			/*
-			 *  ..start UC infrastructure
-			 */
+		// If ports are available...
+		if (arePortsAvailable()){
+			// ..start UC infrastructure
 			startUC();
 			return true;
 		}
-		/*
-		 * ..otherwise return false
-		 */
+
+		// ..otherwise return false
 		return false;
 	}
 
 
-
-	public static boolean started() {
-		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
-				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
-				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
-				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
-	}
-
 	private static void startUC(){
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
+
+		_nativeHandler = new NativeHandler(_requestHandler);
 
 		startListeners(_requestHandler);
 		while (!started()) {
@@ -131,6 +81,14 @@ public class Controller {
 	}
 
 
+	public static boolean started() {
+		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
+				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
+				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
+				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
+	}
+
+
 	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {
 			_pdpServer = ThriftServerFactory.createPdpThriftServer(_settings.getPdpListenerPort(), requestHandler);
@@ -139,7 +97,6 @@ public class Controller {
 				new Thread(_pdpServer).start();
 			}
 		}
-
 
 		if (_settings.isPipListenerEnabled()) {
 			_pipServer = ThriftServerFactory.createPipThriftServer(_settings.getPipListenerPort(), requestHandler);
@@ -169,25 +126,58 @@ public class Controller {
 	}
 
 
-	private static boolean testIfPortsAreAvailable() {
-		boolean isPdpPortAvailable=isPortAvailable(_settings.getPdpListenerPort());
-		boolean isPipPortAvailable=isPortAvailable(_settings.getPipListenerPort());
-		boolean isPmpPortAvailable=isPortAvailable(_settings.getPmpListenerPort());
-		boolean isAnyPortAvailable=isPortAvailable(_settings.getAnyListenerPort());
+	private static boolean arePortsAvailable() {
+		boolean isPdpPortAvailable = _settings.isPdpListenerEnabled() && isPortAvailable(_settings.getPdpListenerPort());
+		boolean isPipPortAvailable = _settings.isPipListenerEnabled() && isPortAvailable(_settings.getPipListenerPort());
+		boolean isPmpPortAvailable = _settings.isPmpListenerEnabled() && isPortAvailable(_settings.getPmpListenerPort());
+		boolean isAnyPortAvailable = _settings.isAnyListenerEnabled() && isPortAvailable(_settings.getAnyListenerPort());
 
-		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable|| !isAnyPortAvailable){
+		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable || !isAnyPortAvailable) {
 			_logger.error("One of the ports is not available.");
-			_logger.error("pdpPort:	"+(isPdpPortAvailable?"":"NOT ")+"AVAILABLE");
-			_logger.error("pipPort:	"+(isPipPortAvailable?"":"NOT ")+"AVAILABLE");
-			_logger.error("pmpPort:	"+(isPmpPortAvailable?"":"NOT ")+"AVAILABLE");
-			_logger.error("anyPort:	"+(isAnyPortAvailable?"":"NOT ")+"AVAILABLE");
 			_logger.error("\nAre you sure you are not running another instance on the same ports?");
 			return false;
 		}
 		return true;
 	}
 
-	public static IRequestHandler getRequestHandler() {
-		return _requestHandler;
+	private static boolean isPortAvailable(int port) {
+	    Socket s = null;
+	    try {
+	        s = new Socket("localhost", port);
+	        // If the code makes it this far without an exception it means
+	        // that the port is available
+	        _logger.debug("Port " + port + " is not available");
+	        return false;
+	    } catch (IOException e) {
+	        _logger.debug("Port " + port + " is available");
+	        return true;
+	    } finally {
+	        if( s != null){
+	            try {
+	                s.close();
+	            } catch (IOException e) {
+	                throw new RuntimeException("You should handle this error." , e);
+	            }
+	        }
+	    }
+	}
+
+	static void loadProperties(String[] args){
+		CommandLine cl = CommandLineOptions.init(args);
+		if (cl!=null && cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
+			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
+		}
+		_settings = Settings.getInstance();
+	}
+
+	private static void lock() {
+		Object lock = new Object();
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

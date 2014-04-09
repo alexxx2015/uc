@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
 import de.tum.in.i22.uc.cm.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.AbstractDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -12,7 +12,7 @@ public abstract class PipDistributionStrategy extends AbstractDistributionStrate
 
 	protected final ClientHandlerFactory _clientHandlerFactory;
 
-	protected final ConnectionManager<Any2PipClient> _connectionManager;
+	protected final ConnectionManager<Pip2PipClient> _connectionManager;
 
 	public PipDistributionStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
