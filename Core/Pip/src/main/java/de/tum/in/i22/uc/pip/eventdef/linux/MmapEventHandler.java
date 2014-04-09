@@ -78,9 +78,6 @@ public class MmapEventHandler extends BaseEventHandler {
 			basicIfModel.addAlias(procCont, mmapCont);
 		}
 
-		// now copy data from file to mmap container and its aliases
-		basicIfModel.addDataToContainerAndAliases(basicIfModel.getDataInContainer(fileCont), mmapCont);
-
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(fileCont, mmapCont);
 	}
 }

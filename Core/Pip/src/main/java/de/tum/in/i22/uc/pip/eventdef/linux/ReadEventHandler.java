@@ -1,12 +1,10 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
-import java.util.Set;
-
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -38,20 +36,13 @@ public class ReadEventHandler extends BaseEventHandler {
 			return STATUS_OKAY;
 		}
 
-		IContainer procCont = basicIfModel.getContainer(ProcessName.create(host, pid));
+		ProcessName procName = ProcessName.create(host, pid);
+		IContainer procCont = basicIfModel.getContainer(procName);
 		if (procCont == null) {
-			return STATUS_OKAY;
+			procCont = new ProcessContainer(host, pid);
+			basicIfModel.addName(procName, procCont);
 		}
 
-		Set<IData> data = basicIfModel.getDataInContainer(fileCont);
-		if (data == null || data.size() == 0) {
-			return STATUS_OKAY;
-		}
-
-		for (IContainer c : basicIfModel.getAliasTransitiveReflexiveClosure(procCont)) {
-			basicIfModel.addDataToContainer(data, c);
-		}
-
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(fileCont, procCont);
 	}
 }

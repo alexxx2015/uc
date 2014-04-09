@@ -32,12 +32,6 @@ public class KillEventHandler extends BaseEventHandler {
 		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, srcPid));
 		IContainer dstCont = basicIfModel.getContainer(ProcessName.create(host, dstPid));
 
-		if (srcCont != null) {
-			for (IContainer c : basicIfModel.getAliasTransitiveReflexiveClosure(dstCont)) {
-				basicIfModel.copyData(srcCont, c);
-			}
-		}
-
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
 	}
 }

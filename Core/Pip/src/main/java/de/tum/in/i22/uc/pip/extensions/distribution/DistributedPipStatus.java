@@ -23,7 +23,7 @@ public class DistributedPipStatus extends StatusBasic {
 	}
 
 	public Map<Location,Map<IName,Set<IData>>> getDataflow() {
-		// TODO?! Inner map and set are still modifiable.
+		// TODO: Inner map and set are still modifiable.
 		return Collections.unmodifiableMap(_dataflow);
 	}
 }

@@ -18,7 +18,6 @@ import de.tum.in.i22.uc.cm.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
@@ -155,7 +154,7 @@ public class LinuxEvents {
 	}
 
 
-	static IStatus copyDataTransitive(IEvent event, IContainer srcCont, IContainer dstCont) {
+	static IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
 		_logger.debug("CopyDataTransitive(" + srcCont + "," + dstCont + ")");
 
 		if (srcCont == null || dstCont == null) {
@@ -169,16 +168,21 @@ public class LinuxEvents {
 
 		_logger.debug("Data is " + data);
 
+		// this map will remember the remote data flows that have occurred.
 		Map<Location,Map<IName,Set<IData>>> remoteDataFlows = new HashMap<>();
 
 		// copy into all containers aliased from the destination container
 		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
+
+			/*
+			 * In case we are copying to a RemoteSocketContainer, we
+			 * know that a remote data transfer is happening. Thus,
+			 * we assemble the information which data has flown remotely.
+			 */
 			if (c instanceof RemoteSocketContainer) {
 				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
-				_logger.debug("Adding to " + c);
-//				distributedPipManager.initialRepresentation(
-//						((RemoteSocketContainer) c).getLocation(),
-//						((RemoteSocketContainer) c).getSocketName(), data);
+				_logger.debug("Preparing to copy data " + data + " to container " + c);
+
 				Map<IName,Set<IData>> map = remoteDataFlows.get(rsc.getLocation());
 				if (map == null) {
 					map = new HashMap<>();
@@ -188,16 +192,24 @@ public class LinuxEvents {
 
 			}
 			else {
+				// this is regular, local, data flow
 				ifModel.addDataToContainer(data, c);
 			}
 		}
 
-		// now, also copy into the actual (direct) destination container ...
-		// ... but only if it is not a socket.
+		/*
+		 * Now, also copy into the actual (direct) destination container ...
+		 * ... but only if it is not a socket.
+		 */
 		if (!(dstCont instanceof SocketContainer)) {
 			ifModel.addDataToContainer(data, dstCont);
 		}
 
+
+		/*
+		 * Finally, check whether remote data flow has happened. If
+		 * so, return a corresponding status.
+		 */
 		if (remoteDataFlows.size() > 0) {
 			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlows);
 		}

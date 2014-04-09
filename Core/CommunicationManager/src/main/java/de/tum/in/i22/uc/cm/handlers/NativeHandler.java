@@ -13,14 +13,13 @@ import de.tum.in.i22.uc.cm.server.IRequestHandler;
  *
  */
 public class NativeHandler {
-
 	private final IRequestHandler _requestHandler;
 
 	public NativeHandler(IRequestHandler requestHandler) {
 		_requestHandler = requestHandler;
 	}
 
-	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) throws InterruptedException {
+	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
 		IEvent event = assembleEvent(name, paramKeys, paramValues, isActual);
 		Object response = null;
 

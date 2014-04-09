@@ -1,12 +1,15 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.client.Pip2PipClient;
@@ -22,31 +25,48 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 public class PipPushStrategy extends PipDistributionStrategy{
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
+	private final Map<Location, Set<IData>> _hasData;
+	private final Map<Location, Set<IContainer>> _hasContainers;
+
 	public PipPushStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
+		_hasData = new HashMap<>();
+		_hasContainers = new HashMap<>();
 	}
 
 	@Override
 	public boolean hasAllData(Location location, Set<IData> data) {
-		// TODO Auto-generated method stub
+		Set<IData> has = _hasData.get(location);
+		if (has != null) {
+			return has.containsAll(data);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyData(Location location, Set<IData> data) {
-		// TODO Auto-generated method stub
+		Set<IData> has = _hasData.get(location);
+		if (has != null) {
+			return Sets.intersection(has, data).size() > 0;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean hasAllContainers(Location location, Set<IContainer> containers) {
-		// TODO Auto-generated method stub
+		Set<IContainer> has = _hasContainers.get(location);
+		if (has != null) {
+			return has.containsAll(containers);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyContainer(Location location, Set<IContainer> containers) {
-		// TODO Auto-generated method stub
+		Set<IContainer> has = _hasContainers.get(location);
+		if (has != null) {
+			return Sets.intersection(has, containers).size() > 0;
+		}
 		return false;
 	}
 
@@ -75,7 +95,6 @@ public class PipPushStrategy extends PipDistributionStrategy{
 		try {
 			Pip2PipClient _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(location));
 
-			// TODO: Update Thrift to get rid of this loop. Possible?
 			for (Entry<IName,Set<IData>> entry : dataflow.entrySet()) {
 				_pipHandle.initialRepresentation(entry.getKey(), entry.getValue());
 			}

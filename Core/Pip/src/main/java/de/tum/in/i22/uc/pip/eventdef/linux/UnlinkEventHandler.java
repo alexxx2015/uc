@@ -21,7 +21,6 @@ public class UnlinkEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		System.out.println(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
 		basicIfModel.removeName(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
 
 		return STATUS_OKAY;

@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
@@ -31,12 +31,14 @@ public class TeeEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IName srcName = FiledescrName.create(host, pid, srcfd);
-		IName dstName = FiledescrName.create(host, pid, dstfd);
+		/*
+		 * TODO: Semantics are equivalent to splice()
+		 */
 
-		basicIfModel.copyData(srcName, dstName);
+		IContainer srcCont = basicIfModel.getContainer(FiledescrName.create(host, pid, srcfd));
+		IContainer dstCont = basicIfModel.getContainer(FiledescrName.create(host, pid, dstfd));
 
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
 	}
 
 }
