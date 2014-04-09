@@ -158,4 +158,16 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	public TStatus informRemoteDataFlow(String address, int port, Set<TData> data) throws TException {
 		return _pmpServer.informRemoteDataFlow(address, port, data);
 	}
+
+	@Override
+	public void executeAsync(List<TEvent> eventList) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TStatus executeSync(List<TEvent> eventList) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

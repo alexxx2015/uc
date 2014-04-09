@@ -1,13 +1,8 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.client.Any2PdpClient;
@@ -18,7 +13,6 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.server.PdpProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 
 
@@ -37,11 +31,10 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
  *
  */
 class ThriftAny2PdpClient extends Any2PdpClient {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpClient.class);
-
-	private TAny2Pdp.Client _handle;
 
 	private final ThriftConnector<TAny2Pdp.Client> _connector;
+
+	private ThriftAny2PdpImpl _impl;
 
 	/**
 	 * Creates a {@link ThriftAny2PdpClient} that will be
@@ -77,114 +70,58 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 
 	@Override
 	public void connect() throws IOException {
-		_handle = _connector.connect();
+		_impl = new ThriftAny2PdpImpl(_connector.connect());
 	}
 
 	@Override
 	public void disconnect() {
 		_connector.disconnect();
-		_handle = null;
-	}
-
-	@Override
-	public IMechanism exportMechanism(String par) {
-		// TODO Method not yet supported
-		_logger.error("exportMechanism method not yet supported");
-		return null;
-	}
-
-	@Override
-	public IStatus revokePolicy(String policyName) {
-		_logger.debug("revoke policy (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(_handle.revokePolicy(policyName));
-		} catch (TException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public IStatus revokeMechanism(String policyName, String mechName) {
-		_logger.debug("revoke mechanism (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(_handle.revokeMechanism(policyName, mechName));
-		} catch (TException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		_logger.debug("deploy policy (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(_handle.deployPolicyURI(policyFilePath));
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
-		_logger.debug("deploy policy (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(_handle.deployPolicyXML(XMLPolicy));
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public Map<String, List<String>> listMechanisms() {
-		_logger.debug("listMechanisms (Pdp client)");
-		try {
-			return _handle.listMechanisms();
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Collections.emptyMap();
-	}
-
-	@Override
-	public boolean registerPxp(PxpSpec pxp) {
-		_logger.debug("registerPxp (Pdp client)");
-		boolean b =false;
-		try {
-			b=_handle.registerPxp(ThriftConverter.toThrift(pxp));
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return b;
+		_impl = null;
 	}
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		_logger.debug("notify event async (Pdp client)");
-		try{
-			_handle.notifyEventAsync(ThriftConverter.toThrift(event));
-		} catch (TException e){
-			e.printStackTrace();
-		}
+		_impl.notifyEventAsync(event);
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		_logger.debug("notify event sync (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(
-					_handle.
-					notifyEventSync(
-							ThriftConverter.
-							toThrift(event)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.notifyEventSync(event);
 	}
+
+	@Override
+	public boolean registerPxp(PxpSpec pxp) {
+		return _impl.registerPxp(pxp);
+	}
+
+	@Override
+	public IMechanism exportMechanism(String par) {
+		return _impl.exportMechanism(par);
+	}
+
+	@Override
+	public IStatus revokePolicy(String policyName) {
+		return _impl.revokePolicy(policyName);
+	}
+
+	@Override
+	public IStatus revokeMechanism(String policyName, String mechName) {
+		return _impl.revokeMechanism(policyName, mechName);
+	}
+
+	@Override
+	public IStatus deployPolicyURI(String policyFilePath) {
+		return _impl.deployPolicyURI(policyFilePath);
+	}
+
+	@Override
+	public IStatus deployPolicyXML(String XMLPolicy) {
+		return _impl.deployPolicyXML(XMLPolicy);
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanisms() {
+		return _impl.listMechanisms();
+	}
+
 }

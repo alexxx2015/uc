@@ -6,25 +6,38 @@ import de.tum.in.i22.uc.cm.datatypes.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
+import de.tum.in.i22.uc.thrift.generator.AThriftService;
 
 /**
  * Interface defining methods a PDP can invoke on a PIP.
  * @author Kelbert & Lovat
  *
  */
+@AThriftService(name="TPdp2Pip")
 public interface IPdp2Pip {
-	
+	@AThriftMethod(signature="bool evaluatePredicateSimulatingNextState(1:Types.TEvent event, 2:string predicate)")
 	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
-	public boolean evaluatePredicateCurrentState(String predicate);
-	public Set<IContainer> getContainersForData(IData data);
-	public Set<IData> getDataInContainer(IContainer container);
-	IStatus startSimulation();
-	IStatus stopSimulation();
-	boolean isSimulating();
 
-	/*
-     * From PDP & PIP
-     */
+	@AThriftMethod(signature="bool evaluatePredicatCurrentState(1:string predicate)")
+	public boolean evaluatePredicateCurrentState(String predicate);
+
+	@AThriftMethod(signature="set<Types.TContainer> getContainerForData(1:Types.TData data)")
+	public Set<IContainer> getContainersForData(IData data);
+
+	@AThriftMethod(signature="set<Types.TData> getDataInContainer(1:Types.TContainer container)")
+	public Set<IData> getDataInContainer(IContainer container);
+
+	@AThriftMethod(signature="Types.TStatus startSimulation()")
+	public IStatus startSimulation();
+
+	@AThriftMethod(signature="Types.TStatus stopSimulation()")
+	public IStatus stopSimulation();
+
+	@AThriftMethod(signature="bool isSimulating()")
+	public boolean isSimulating();
+
+	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent event)")
 	public IStatus update(IEvent event);
 
 }

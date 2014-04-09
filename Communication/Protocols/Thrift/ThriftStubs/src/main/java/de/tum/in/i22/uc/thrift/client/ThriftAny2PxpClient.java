@@ -3,16 +3,11 @@ package de.tum.in.i22.uc.thrift.client;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.client.Any2PxpClient;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 
 
@@ -29,11 +24,10 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
  *
  */
 class ThriftAny2PxpClient extends Any2PxpClient {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PxpClient.class);
-
-	private TAny2Pxp.Client _handle;
 
 	private final ThriftConnector<TAny2Pxp.Client> _connector;
+
+	private ThriftAny2PxpImpl _impl;
 
 	/**
 	 * Creates a {@link ThriftAny2PxpClient} that will be
@@ -66,36 +60,26 @@ class ThriftAny2PxpClient extends Any2PxpClient {
 		_connector = connector;
 	}
 
+
 	@Override
 	public void connect() throws IOException {
-		_handle = _connector.connect();
+		_impl = new ThriftAny2PxpImpl(_connector.connect());
 	}
 
 	@Override
 	public void disconnect() {
 		_connector.disconnect();
-		_handle = null;
+		_impl = null;
 	}
 
 	@Override
 	public IStatus executeSync(List<IEvent> event) {
-		try {
-			return ThriftConverter.fromThrift(
-					_handle.executeSync(
-							ThriftConverter.toThriftEventList(
-									event)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.executeSync(event);
 	}
 
 	@Override
 	public void executeAsync(List<IEvent> event) {
-		try {
-			_handle.executeAsync(ThriftConverter.toThriftEventList(event));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		_impl.executeAsync(event);
 	}
 
 }

@@ -127,6 +127,7 @@ public class Controller {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {		}
 		}
+		_logger.info("Done.");
 	}
 
 

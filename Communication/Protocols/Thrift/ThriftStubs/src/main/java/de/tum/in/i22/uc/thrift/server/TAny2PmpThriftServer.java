@@ -1,8 +1,5 @@
 package de.tum.in.i22.uc.thrift.server;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -10,14 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.server.IRequestHandler;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TData;
-import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 
 

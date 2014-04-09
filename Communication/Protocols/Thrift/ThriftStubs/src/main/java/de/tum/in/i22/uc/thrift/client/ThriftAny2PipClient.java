@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 
 
@@ -37,7 +35,7 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 class ThriftAny2PipClient extends Any2PipClient {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipClient.class);
 
-	private TAny2Pip.Client _handle;
+	private ThriftAny2PipImpl _impl;
 
 	private final ThriftConnector<TAny2Pip.Client> _connector;
 
@@ -74,152 +72,83 @@ class ThriftAny2PipClient extends Any2PipClient {
 
 	@Override
 	public void connect() throws IOException {
-		_handle = _connector.connect();
+		_impl = new ThriftAny2PipImpl(_connector.connect());
 	}
 
 	@Override
 	public void disconnect() {
 		_connector.disconnect();
-		_handle = null;
+		_impl = null;
 	}
 
 	@Override
 	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
-		try {
-			return _handle.evaluatePredicateSimulatingNextState(ThriftConverter.toThrift(event), predicate);
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.evaluatePredicateSimulatingNextState(event, predicate);
 	}
-
 
 	@Override
 	public boolean evaluatePredicateCurrentState(String predicate) {
-		try {
-			return _handle.evaluatePredicatCurrentState(predicate);
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.evaluatePredicateCurrentState(predicate);
 	}
-
 
 	@Override
 	public Set<IContainer> getContainersForData(IData data) {
-		try {
-			return ThriftConverter.fromThriftContainerSet(_handle.getContainerForData(ThriftConverter.toThrift(data)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.getContainersForData(data);
 	}
-
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
-		try {
-			return ThriftConverter.fromThriftDataSet(_handle.getDataInContainer(ThriftConverter.toThrift(container)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.getDataInContainer(container);
 	}
-
-
-	@Override
-	public IStatus update(IEvent event) {
-		try {
-			return ThriftConverter.fromThrift(_handle.update(ThriftConverter.toThrift(event)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
 
 	@Override
 	public IStatus startSimulation() {
-		try {
-			return ThriftConverter.fromThrift(_handle.startSimulation());
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.startSimulation();
 	}
-
 
 	@Override
 	public IStatus stopSimulation() {
-		try {
-			return ThriftConverter.fromThrift(_handle.stopSimulation());
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.stopSimulation();
 	}
-
 
 	@Override
 	public boolean isSimulating() {
-		try {
-			return _handle.isSimulating();
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAllData(Set<IData> data) {
-		try {
-			return _handle.hasAllData(ThriftConverter.toThriftDataSet(data));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		try {
-			return _handle.hasAnyData(ThriftConverter.toThriftDataSet(data));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAllContainers(Set<IContainer> containers) {
-		try {
-			return _handle.hasAllContainers(ThriftConverter.toThriftContainerSet(containers));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAnyContainer(Set<IContainer> containers) {
-		try {
-			return _handle.hasAnyContainer(ThriftConverter.toThriftContainerSet(containers));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return _impl.isSimulating();
 	}
 
 	@Override
-	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		_logger.debug("Calling server: " + containerName + ", " + data);
-		try {
-			return ThriftConverter.fromThrift(_handle.initialRepresentation(ThriftConverter.toThrift(containerName), ThriftConverter.toThriftDataSet(data)));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+	public IStatus update(IEvent event) {
+		return _impl.update(event);
 	}
-
 
 	@Override
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
 			EConflictResolution flagForTheConflictResolution) {
-		// TODO Auto-generated method stub
-		// not yet supported by thrift interface
-		return null;
+		return _impl.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 
+	@Override
+	public boolean hasAllData(Set<IData> data) {
+		return _impl.hasAllData(data);
+	}
 
+	@Override
+	public boolean hasAnyData(Set<IData> data) {
+		return _impl.hasAnyData(data);
+	}
+
+	@Override
+	public boolean hasAllContainers(Set<IContainer> container) {
+		return _impl.hasAllContainers(container);
+	}
+
+	@Override
+	public boolean hasAnyContainer(Set<IContainer> container) {
+		return _impl.hasAnyContainer(container);
+	}
+
+	@Override
+	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		return _impl.initialRepresentation(containerName, data);
+	}
 }
