@@ -18,7 +18,7 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 
 class ThriftAny2PdpImpl implements IAny2Pdp {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpClient.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpImpl.class);
 
 	private final TAny2Pdp.Client _handle;
 

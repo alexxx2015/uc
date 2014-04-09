@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 
 class ThriftAny2PmpImpl implements IAny2Pmp {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpClient.class);
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PmpImpl.class);
 
 	private final TAny2Pmp.Client _handle;
 
