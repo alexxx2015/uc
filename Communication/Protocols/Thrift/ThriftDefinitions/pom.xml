@@ -24,10 +24,38 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>ThriftSpecificationGenerator</groupId>
+				<artifactId>thrift-specification-generator-maven-plugin</artifactId>
+				<version>0.1</version>
+				<executions>
+					<execution>
+						<id>x</id>
+						<phase>compile</phase>
+						<configuration>
+							<folder>../CommunicationBase/target/classes</folder>
+							<interfaces>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pdp</param>
+							</interfaces>
+							<includes>
+								<param>Types.thrift</param>
+							</includes>
+							<namespaces>
+								<param>java de.tum.in.i22.uc.thrift.types</param>
+							</namespaces>
+							<outfile>x</outfile>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.thrift.tools</groupId>
 				<artifactId>maven-thrift-plugin</artifactId>
 				<version>0.1.10</version>
-				<executions>
+				<executions>					
 					<execution>
 						<id>thrift-sources</id>
 						<phase>generate-sources</phase>

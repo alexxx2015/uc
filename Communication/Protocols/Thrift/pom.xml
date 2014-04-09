@@ -15,5 +15,6 @@
 	<modules>
 		<module>ThriftDefinitions</module>
 		<module>ThriftStubs</module>
+		<module>ThriftSpecificationGenerator</module>
 	</modules>
 </project>

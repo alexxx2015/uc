@@ -15,9 +15,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftSpecificationGenerator</artifactId>
-			<version>1.0</version>
+			<groupId>ThriftSpecificationGenerator</groupId>
+			<artifactId>Generator</artifactId>
+			<version>0.1</version>
 		</dependency>
 	</dependencies>
 
