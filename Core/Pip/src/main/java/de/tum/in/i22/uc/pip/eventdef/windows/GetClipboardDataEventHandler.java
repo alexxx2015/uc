@@ -40,7 +40,7 @@ public class GetClipboardDataEventHandler extends BaseEventHandler {
          //add data to transitive reflexive closure of process container
          for (IContainer tempContainer : basicIfModel.getAliasTransitiveReflexiveClosure(processContainer))
          {
-             basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(clipboardContainer), tempContainer);
+             basicIfModel.addData(basicIfModel.getData(clipboardContainer), tempContainer);
          }
 
          return _messageFactory.createStatus(EStatus.OKAY);

@@ -42,13 +42,13 @@ public class WriteFileEventHandler extends BaseEventHandler {
 			fileContainer = _messageFactory.createContainer();
 			IData data = _messageFactory.createData();
 
-			basicIfModel.addDataToContainer(data, fileContainer);
+			basicIfModel.addData(data, fileContainer);
 
 			basicIfModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
-		basicIfModel.addDataToContainer(
-				basicIfModel.getDataInContainer(processContainer), fileContainer);
+		basicIfModel.addData(
+				basicIfModel.getData(processContainer), fileContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

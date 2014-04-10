@@ -24,7 +24,7 @@ public class IsOnlyIn extends StateBasedPredicate {
 
 		Set<String> limit = new HashSet<String>(Arrays.asList(_param2.split(SEPARATOR2)));
 
-		Set<IContainer> containers = _ifModel.getContainersForData(new DataBasic(_param1));
+		Set<IContainer> containers = _ifModel.getContainers(new DataBasic(_param1));
 
 		for (IContainer cont : containers) {
 			NameBasic pname = new NameBasic(cont.getId());

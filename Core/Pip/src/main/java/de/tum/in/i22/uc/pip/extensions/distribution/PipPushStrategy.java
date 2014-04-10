@@ -23,7 +23,7 @@ import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 
-public class PipPushStrategy extends PipDistributionStrategy{
+public class PipPushStrategy extends PipDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
 	private final Map<Location, Set<IData>> _hasData;

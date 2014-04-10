@@ -44,9 +44,9 @@ public class ReadFileEventHandler extends BaseEventHandler {
 
 		// add data to transitive reflexive closure of process container
 		Set<IContainer> transitiveReflexiveClosure = basicIfModel.getAliasTransitiveReflexiveClosure(processContainer);
-		Set<IData> dataSet = basicIfModel.getDataInContainer(fileContainer);
+		Set<IData> dataSet = basicIfModel.getData(fileContainer);
 		for (IContainer tempContainer : transitiveReflexiveClosure) {
-			basicIfModel.addDataToContainer(dataSet, tempContainer);
+			basicIfModel.addData(dataSet, tempContainer);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

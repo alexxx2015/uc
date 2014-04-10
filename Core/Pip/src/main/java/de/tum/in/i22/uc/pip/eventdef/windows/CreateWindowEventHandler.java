@@ -38,7 +38,7 @@ public class CreateWindowEventHandler extends BaseEventHandler {
 			basicIfModel.addName(new NameBasic(windowHandle), containerIdByWindowHandle);
 		}
 
-		basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(processContainer), containerIdByWindowHandle);
+		basicIfModel.addData(basicIfModel.getData(processContainer), containerIdByWindowHandle);
 		basicIfModel.addAlias(processContainer, containerIdByWindowHandle);
 
 		return _messageFactory.createStatus(EStatus.OKAY);

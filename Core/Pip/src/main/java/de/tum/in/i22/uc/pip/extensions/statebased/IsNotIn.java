@@ -24,11 +24,11 @@ public class IsNotIn extends StateBasedPredicate {
 		// TODO This is for sure optimizable. -FK-
 
 		IContainer container = _ifModel.getContainerRelaxed(new NameBasic(_param1));
-		Set<IData> data = _ifModel.getDataInContainer(container);
+		Set<IData> data = _ifModel.getData(container);
 
 		containers = _param2.split(SEPARATOR2);
 		for (IData d : data) {
-			s = _ifModel.getContainersForData(d);
+			s = _ifModel.getContainers(d);
 			// _logger.debug("size of s: "+s.size());
 			if (s.size() > 0) {
 				for (String cont : containers) {

@@ -17,8 +17,8 @@ public class IsCombinedWith extends StateBasedPredicate {
 
 	@Override
 	public Boolean evaluate() {
-		Set<IContainer> s1= _ifModel.getContainersForData(new DataBasic(_param1));
-		Set<IContainer> s2= _ifModel.getContainersForData(new DataBasic(_param2));
+		Set<IContainer> s1= _ifModel.getContainers(new DataBasic(_param1));
+		Set<IContainer> s2= _ifModel.getContainers(new DataBasic(_param2));
 
 		Set<IContainer> small;
 		Set<IContainer> large;

@@ -84,7 +84,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 			}
 
 			// copy data
-			basicIfModel.addDataToContainerAndAliases(basicIfModel.getDataInContainer(tmpContainer), localConnectingSocket);
+			basicIfModel.addDataTransitively(basicIfModel.getData(tmpContainer), localConnectingSocket);
 
 			// remove temporary container
 			basicIfModel.remove(tmpContainer);

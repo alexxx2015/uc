@@ -164,7 +164,7 @@ public class LinuxEvents {
 			return STATUS_OKAY;
 		}
 
-		Set<IData> data = ifModel.getDataInContainer(srcCont);
+		Set<IData> data = ifModel.getData(srcCont);
 		if (data == null || data.size() == 0) {
 			return messageFactory.createStatus(EStatus.OKAY);
 		}
@@ -261,7 +261,7 @@ public class LinuxEvents {
 				remoteDataFlow.addFlow(rsc.getLocation(), rsc.getSocketName(), data);
 			}
 			else {
-				ifModel.addDataToContainer(data, c);
+				ifModel.addData(data, c);
 			}
 		}
 

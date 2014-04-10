@@ -45,8 +45,8 @@ public class CreateDcEventHandler extends BaseEventHandler {
 			basicIfModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
-		basicIfModel.addDataToContainer(
-				basicIfModel.getDataInContainer(processContainer),
+		basicIfModel.addData(
+				basicIfModel.getData(processContainer),
 				deviceContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
