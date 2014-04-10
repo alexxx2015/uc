@@ -1,7 +1,5 @@
 /*
-!src/main/thrift/*
+!src/main/thrift/Types.thrift
 !docs/
 !pom.xml
 !.gitignore
-/target
-/target
