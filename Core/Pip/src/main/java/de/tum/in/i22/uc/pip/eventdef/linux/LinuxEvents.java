@@ -164,7 +164,7 @@ public class LinuxEvents {
 			return STATUS_OKAY;
 		}
 
-		Set<IData> data = ifModel.getDataInContainer(srcCont);
+		Set<IData> data = ifModel.getData(srcCont);
 		if (data == null || data.size() == 0) {
 			return STATUS_OKAY;
 		}
@@ -200,7 +200,7 @@ public class LinuxEvents {
 						 * data flow information object and return it.
 						 */
 
-						ifModel.addDataToContainerAndAliases(data, dstCont);
+						ifModel.addDataTransitively(data, dstCont);
 
 						Location localLocation = new LocalLocation();
 						Location remoteLocation = ((RemoteSocketContainer) c).getLocation();
@@ -221,7 +221,7 @@ public class LinuxEvents {
 
 		// copy data into all aliased containers
 		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
-			ifModel.addDataToContainer(data, c);
+			ifModel.addData(data, c);
 
 			if (c instanceof RemoteSocketContainer) {
 

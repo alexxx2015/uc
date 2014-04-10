@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
-public class PipPushStrategy extends PipDistributionStrategy{
+public class PipPushStrategy extends PipDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
 	private final Map<Location, Set<IData>> _hasData;
@@ -109,13 +109,13 @@ public class PipPushStrategy extends PipDistributionStrategy{
 		if (srcCont == null) {
 			_ifModel.addName(srcLocation, srcCont = new ContainerBasic());
 		}
-		_ifModel.addDataToContainer(allData, srcCont);
+		_ifModel.addData(allData, srcCont);
 
 		IContainer dstCont = _ifModel.getContainer(dstLocation);
 		if (dstCont == null) {
 			_ifModel.addName(dstLocation, dstCont = new ContainerBasic());
 		}
-		_ifModel.addDataToContainer(allData, dstCont);
+		_ifModel.addData(allData, dstCont);
 
 
 

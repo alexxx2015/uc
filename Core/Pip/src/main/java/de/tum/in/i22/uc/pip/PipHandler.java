@@ -79,12 +79,12 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public Set<IContainer> getContainersForData(IData data) {
-		return _ifModel.getContainersForData(data);
+		return _ifModel.getContainers(data);
 	}
 
 	@Override
 	public Set<IData> getDataInContainer(IContainer container) {
-		return _ifModel.getDataInContainer(container);
+		return _ifModel.getData(container);
 	}
 
 	@Override
@@ -272,7 +272,7 @@ public class PipHandler extends PipProcessor {
 	public boolean hasAllData(Set<IData> data) {
 		Set<IData> all = new HashSet<>();
 		for (IContainer c : _ifModel.getAllContainers()) {
-			all.addAll(_ifModel.getDataInContainer(c));
+			all.addAll(_ifModel.getData(c));
 		}
 		return all.containsAll(data);
 	}
@@ -280,7 +280,7 @@ public class PipHandler extends PipProcessor {
 	@Override
 	public boolean hasAnyData(Set<IData> data) {
 		for (IContainer c : _ifModel.getAllContainers()) {
-			if (_ifModel.getDataInContainer(c).contains(data)) {
+			if (_ifModel.getData(c).contains(data)) {
 				return true;
 			}
 		}
@@ -306,7 +306,7 @@ public class PipHandler extends PipProcessor {
 			container = new ContainerBasic();
 			_ifModel.addName(containerName, container);
 		}
-		_ifModel.addDataToContainerAndAliases(data, container);
+		_ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
 	}
 

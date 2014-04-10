@@ -369,12 +369,12 @@ public final class BasicInformationFlowModel {
 	 * @param data the data to add
 	 * @param container to which container the data is added.
 	 */
-	public void addDataToContainer(IData data, IContainer container) {
+	public void addData(IData data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}
 
-		addDataToContainer(Collections.singleton(data), container);
+		addData(Collections.singleton(data), container);
 	}
 
 	/**
@@ -386,7 +386,7 @@ public final class BasicInformationFlowModel {
 	 * @param container the container from which the data will be removed
 	 * @return true, if the data has been removed
 	 */
-	public void removeDataFromContainer(IData data, IContainer container) {
+	public void removeData(IData data, IContainer container) {
 		Set<IData> dataSet;
 
 		if (container == null || data == null || (dataSet = _containerToDataMap.get(container)) == null) {
@@ -408,7 +408,7 @@ public final class BasicInformationFlowModel {
 	 * @param container the container of which we want to get the data
 	 * @return an immutable view onto the set of data items stored in the given container
 	 */
-	public Set<IData> getDataInContainer(IContainer container) {
+	public Set<IData> getData(IContainer container) {
 		Set<IData> result;
 		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
 			result = Collections.emptySet();
@@ -419,21 +419,21 @@ public final class BasicInformationFlowModel {
 
 	/**
 	 * Returns the data contained in the container identified by the given name,
-	 * cf. {@link #getDataInContainer(IContainer)}.
+	 * cf. {@link #getData(IContainer)}.
 	 *
 	 * ~ Double checked, 2014/03/14. FK.
 	 *
 	 * @param containerName a name of the container of which the containing data will be returned.
 	 * @return an immutable view onto the set of data within the container
 	 */
-	public Set<IData> getDataInContainer(IName containerName) {
+	public Set<IData> getData(IName containerName) {
 		IContainer cont;
 
 		if (containerName == null || (cont = _namingMap.get(containerName)) == null) {
 			return Collections.emptySet();
 		}
 
-		return getDataInContainer(cont);
+		return getData(cont);
 	}
 
 
@@ -473,33 +473,42 @@ public final class BasicInformationFlowModel {
 		return true;
 	}
 
-	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
+	public void addDataTransitively(Collection<IData> data, IName dstContainerName) {
 		if (dstContainerName == null) {
 			return;
 		}
 
-		addDataToContainerAndAliases(data, getContainer(dstContainerName));
+		addDataTransitively(data, getContainer(dstContainerName));
 	}
 
-	public void addDataToContainerAndAliases(Set<IData> data, IContainer dstContainer) {
+
+	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
 		if (data == null || data.size() == 0 || dstContainer == null) {
 			return;
 		}
 
-		addDataToContainer(data, dstContainer);
+		addData(data, dstContainer);
 		for (IContainer c : getAliasesFrom(dstContainer)) {
-			addDataToContainer(data, c);
+			addData(data, c);
 		}
 	}
 
 
 	/**
+	 * Returns all containers in which the specified data is in
 	 *
-	 * @param dataId
-	 * @return All container ids as a set for the data with the given id.
+	 * ~ Double checked, 2014/04/10. FK.
+	 *
+	 * @param data the data whose containers are returned.
+	 * @return The set of containers containing the specified data.
 	 */
-	public Set<IContainer> getContainersForData(IData data) {
+	public Set<IContainer> getContainers(IData data) {
+		if (data == null) {
+			return Collections.emptySet();
+		}
+
 		Set<IContainer> result = new HashSet<>();
+
 		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap.entrySet()) {
 			if (entry.getValue().contains(data)) {
 				result.add(entry.getKey());
@@ -508,7 +517,7 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
-	public void addDataToContainer(Set<IData> data, IContainer container) {
+	public void addData(Collection<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}
@@ -721,7 +730,15 @@ public final class BasicInformationFlowModel {
 	 * Returns all representations that correspond to the process with pid.
 	 *
 	 */
-	// TODO, FK: This method seems odd.
+	/*
+	 *  TODO
+	 *  This method seems odd.
+	 *  Moreover, it is layer-specific and should thus not go
+	 *  into this class.
+	 *  Fix, delete, move, ...
+	 *  -FK-
+	 */
+	@Deprecated
 	public List<IName> getAllNamingsFrom(IContainer pid) {
 		List<IName> result = new LinkedList<>();
 

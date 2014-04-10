@@ -72,7 +72,7 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 				basicIfModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-				basicIfModel.addDataToContainer(data, signatureCont);
+				basicIfModel.addData(data, signatureCont);
 				_logger.debug(basicIfModel.toString());
 			} else {
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");

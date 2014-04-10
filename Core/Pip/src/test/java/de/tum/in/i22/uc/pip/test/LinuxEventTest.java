@@ -271,7 +271,7 @@ public class LinuxEventTest {
 		_ifModelManager.reset();
 		_pipHandler.update(eventServerExecve);
 		_pipHandler.update(eventClientExecve);
-		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));
+		_ifModel.addData(data, _ifModel.getContainer(ProcessName.create(serverHost, serverPid)));
 		_pipHandler.update(eventClientSocket);
 		_pipHandler.update(eventServerSocket);
 		_pipHandler.update(eventServerAccept);
@@ -280,7 +280,7 @@ public class LinuxEventTest {
 		_pipHandler.update(eventClientRead);
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, clientPid));
-		Assert.assertEquals(true, _ifModel.getDataInContainer(procCont).contains(data));
+		Assert.assertEquals(true, _ifModel.getData(procCont).contains(data));
 
 
 		/*
@@ -291,7 +291,7 @@ public class LinuxEventTest {
 		_ifModelManager.reset();
 		_pipHandler.update(eventServerExecve);
 		_pipHandler.update(eventClientExecve);
-		_ifModel.addDataToContainer(data, _ifModel.getContainer(ProcessName.create(serverHost, clientPid)));
+		_ifModel.addData(data, _ifModel.getContainer(ProcessName.create(serverHost, clientPid)));
 		_pipHandler.update(eventClientSocket);
 		_pipHandler.update(eventServerSocket);
 		_pipHandler.update(eventClientConnect);
@@ -300,7 +300,7 @@ public class LinuxEventTest {
 		_pipHandler.update(eventServerRead);
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, serverPid));
-		Assert.assertEquals(true, _ifModel.getDataInContainer(procCont).contains(data));
+		Assert.assertEquals(true, _ifModel.getData(procCont).contains(data));
 	}
 
 	@Test

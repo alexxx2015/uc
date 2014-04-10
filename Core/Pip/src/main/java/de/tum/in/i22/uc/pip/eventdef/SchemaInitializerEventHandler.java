@@ -37,7 +37,7 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 					cont = new ContainerBasic();
 					basicIfModel.addName(name, cont);
 				}
-				basicIfModel.addDataToContainer(data, cont);
+				basicIfModel.addData(data, cont);
 			}
 		}
 

@@ -34,7 +34,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR);
 		}
 
-		Set<IData> dataIds=basicIfModel.getDataInContainer(cont);
+		Set<IData> dataIds=basicIfModel.getData(cont);
 
 		if ((dataIds == null)||(dataIds.size()!=1)){
 			_logger.error("content of "+ contName+" different from expected. is dataIds empty? "+(dataIds == null));
@@ -48,7 +48,7 @@ public class SchemaUpdaterEventHandler extends BaseEventHandler {
 		basicIfModel.remove((IData)dataIds.toArray()[0]);
 
 
-		_logger.debug("number of data elements in container TEST_C = "+ basicIfModel.getDataInContainer(cont).size());
+		_logger.debug("number of data elements in container TEST_C = "+ basicIfModel.getData(cont).size());
 
 
 		_logger.debug(basicIfModel.toString());

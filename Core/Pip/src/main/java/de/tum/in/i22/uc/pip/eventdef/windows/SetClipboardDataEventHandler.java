@@ -36,7 +36,7 @@ public class SetClipboardDataEventHandler extends BaseEventHandler {
         };
 
         basicIfModel.emptyContainer(clipboardContainer);
-        basicIfModel.addDataToContainer(basicIfModel.getDataInContainer(processContainer), clipboardContainer);
+        basicIfModel.addData(basicIfModel.getData(processContainer), clipboardContainer);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}
