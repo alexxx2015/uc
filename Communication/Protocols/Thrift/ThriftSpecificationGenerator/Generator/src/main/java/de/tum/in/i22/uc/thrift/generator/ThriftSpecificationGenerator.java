@@ -59,8 +59,6 @@ public class ThriftSpecificationGenerator {
 				continue;
 			}
 
-			System.out.println(cls.getAnnotations().length);
-
 			/*
 			 * read the interface's ThriftService annotation
 			 */

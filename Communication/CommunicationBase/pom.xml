@@ -21,4 +21,58 @@
 		</dependency>
 	</dependencies>
 
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>ThriftSpecificationGenerator</groupId>
+				<artifactId>thrift-specification-generator-maven-plugin</artifactId>
+				<version>0.1</version>
+				<executions>
+					<execution>
+						<id>generate-thrift-specification</id>
+						<phase>compile</phase>
+						<configuration>
+							<folder>${basedir}/target/classes</folder>
+							<interfaces>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pxp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pxp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Any</param>
+							</interfaces>
+							<includes>
+								<param>Types.thrift</param>
+							</includes>
+							<namespaces>
+								<param>java de.tum.in.i22.uc.thrift.types</param>
+								<param>csharp de.tum.in.i22.uc.thrift.types</param>
+								<param>cpp de.tum.in.i22.uc.thrift.types</param>
+							</namespaces>
+							<outfile>${project.parent.basedir}/Protocols/Thrift/ThriftDefinitions/src/main/thrift/Services.thrift</outfile>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

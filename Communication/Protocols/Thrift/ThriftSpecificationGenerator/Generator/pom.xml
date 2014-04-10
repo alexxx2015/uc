@@ -13,8 +13,6 @@
 	<packaging>jar</packaging>
 	<version>0.1</version>
 
-	<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
-		* -->
 	<build>
 		<plugins>
 			<plugin>
