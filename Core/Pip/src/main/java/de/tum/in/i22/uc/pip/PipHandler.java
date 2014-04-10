@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
+import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
@@ -113,17 +114,22 @@ public class PipHandler extends PipProcessor {
 			// can be improved by either doing only one call
 			// or by doing them in parallel
 
-			Map<Location, Map<IName, Set<IData>>> dataflow = ((DistributedPipStatus) result).getDataflow();
-			for (Location location : dataflow.keySet()) {
+//			Map<Location, Map<IName, Set<IData>>> dataflow = ((DistributedPipStatus) result).getDataflow();
+			RemoteDataFlowInfo df = ((DistributedPipStatus) result).getDataflow();
+			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
+
+			Location srcLocation = df.getSrcLocation();
+
+			for (Location dstlocation : dataflow.keySet()) {
 				// .... remote data flow tracking ....
-				_distributedPipManager.doRemoteDataFlow(location, dataflow.get(location));
+				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation, dataflow.get(dstlocation));
 
 				// .... and remote policy transfer
 				Set<IData> data = new HashSet<>();
-				for (Set<IData> d : dataflow.get(location).values()) {
+				for (Set<IData> d : dataflow.get(dstlocation).values()) {
 					data.addAll(d);
 				}
-				getPmp().informRemoteDataFlow(location, data);
+				getPmp().informRemoteDataFlow(srcLocation, dstlocation, data);
 			}
 
 		}

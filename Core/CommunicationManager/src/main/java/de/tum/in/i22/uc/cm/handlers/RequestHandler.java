@@ -34,6 +34,7 @@ import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.cm.server.PmpProcessor;
 import de.tum.in.i22.uc.cm.server.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.EmptyPdpHandler;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
@@ -42,6 +43,7 @@ import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
+import de.tum.in.i22.uc.pip.EmptyPipHandler;
 import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
@@ -56,6 +58,7 @@ import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pmp.EmptyPmpHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
@@ -127,8 +130,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 				}
 				break;
 			case LOCAL:
-			default:
 				return new PdpHandler();
+			case NONE:
+			default:
+				return new EmptyPdpHandler();
 		}
 
 		return null;
@@ -150,8 +155,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 				}
 				break;
 			case LOCAL:
-			default:
 				return new PmpHandler();
+			case NONE:
+			default:
+				return new EmptyPmpHandler();
 		}
 
 		return null;
@@ -173,8 +180,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 				}
 				break;
 			case LOCAL:
-			default:
 				return new PipHandler();
+			case NONE:
+			default:
+				return new EmptyPipHandler();
 		}
 
 		return null;
@@ -387,8 +396,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
-		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(location, dataflow);
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
+		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

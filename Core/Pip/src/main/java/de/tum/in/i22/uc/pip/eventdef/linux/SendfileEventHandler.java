@@ -30,7 +30,7 @@ public class SendfileEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		return LinuxEvents.copyDataTransitive(_event,
+		return LinuxEvents.copyDataTransitive(
 				basicIfModel.getContainer(FiledescrName.create(host, pid, infd)),
 				basicIfModel.getContainer(FiledescrName.create(host, pid, outfd)));
 	}

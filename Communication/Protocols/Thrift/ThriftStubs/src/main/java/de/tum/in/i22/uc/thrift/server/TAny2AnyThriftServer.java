@@ -155,11 +155,6 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String address, int port, Set<TData> data) throws TException {
-		return _pmpServer.informRemoteDataFlow(address, port, data);
-	}
-
-	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {
 		// TODO Auto-generated method stub
 
@@ -169,5 +164,10 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	public TStatus executeSync(List<TEvent> eventList) throws TException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
+		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress, dstPort, data);
 	}
 }

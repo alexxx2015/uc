@@ -33,6 +33,6 @@ public class WriteEventHandler extends BaseEventHandler {
 		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, pid));
 		IContainer dstCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
 
-		return LinuxEvents.copyDataTransitive(_event, srcCont, dstCont);
+		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
 	}
 }

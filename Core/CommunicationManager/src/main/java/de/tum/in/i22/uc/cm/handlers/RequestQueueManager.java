@@ -15,7 +15,6 @@ import de.tum.in.i22.uc.pdp.requests.PdpRequest;
 import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.requests.PmpRequest;
 
-
 class RequestQueueManager implements Runnable {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestQueueManager.class);

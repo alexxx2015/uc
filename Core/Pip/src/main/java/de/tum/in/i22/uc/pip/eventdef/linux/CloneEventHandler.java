@@ -71,12 +71,7 @@ public class CloneEventHandler extends BaseEventHandler {
 			basicIfModel.addAlias(cont, newProcCont);
 		}
 
-		// Copy all data from old process
-		for (IContainer cont : basicIfModel.getAliasTransitiveClosure(newProcCont)) {
-			basicIfModel.copyData(oldProcCont, cont);
-		}
-
-		return STATUS_OKAY;
+		return LinuxEvents.copyDataTransitive(oldProcCont, newProcCont);
 	}
 
 }

@@ -27,7 +27,7 @@
 				<groupId>org.apache.thrift.tools</groupId>
 				<artifactId>maven-thrift-plugin</artifactId>
 				<version>0.1.10</version>
-				<executions>
+				<executions>					
 					<execution>
 						<id>thrift-sources</id>
 						<phase>generate-sources</phase>

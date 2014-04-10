@@ -35,7 +35,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> data) {
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

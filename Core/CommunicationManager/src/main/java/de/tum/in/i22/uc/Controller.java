@@ -66,17 +66,19 @@ public class Controller {
 
 
 	private static void startUC(){
+
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
 
 		_nativeHandler = new NativeHandler(_requestHandler);
 
+		_logger.info("Starting up thrift servers");
 		startListeners(_requestHandler);
-		while (!started()) {
+		do {
 			try {
-				_logger.info("Waiting for startup of thrift servers.");
-				Thread.sleep(1000);
+				_logger.info("... waiting ...");
+				Thread.sleep(100);
 			} catch (InterruptedException e) {		}
-		}
+		} while (!started());
 		_logger.info("Done.");
 	}
 

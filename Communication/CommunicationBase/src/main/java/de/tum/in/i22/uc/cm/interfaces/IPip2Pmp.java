@@ -24,6 +24,6 @@ public interface IPip2Pmp {
 	 * @param dataflow the data that was transferred
 	 * @return
 	 */
-	@AThriftMethod(signature="Types.TStatus informRemoteDataFlow(1: string address, 2: Types.int port, 3: set<Types.TData> data)")
-	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow);
+	@AThriftMethod(signature="Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data)")
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow);
 }

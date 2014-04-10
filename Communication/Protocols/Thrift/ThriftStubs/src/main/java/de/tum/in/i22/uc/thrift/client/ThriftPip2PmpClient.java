@@ -44,8 +44,8 @@ class ThriftPip2PmpClient extends Pip2PmpClient {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location location, Set<IData> dataflow) {
-		return _impl.informRemoteDataFlow(location, dataflow);
+	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
+		return _impl.informRemoteDataFlow(srcLocation, dstLocation, dataflow);
 	}
 
 }

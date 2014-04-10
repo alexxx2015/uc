@@ -19,5 +19,5 @@ public interface IPipDistributionStrategy {
 
 	public abstract IStatus doRemoteEventUpdate(Location location, IEvent event);
 
-	public abstract IStatus doRemoteDataFlow(Location location, Map<IName, Set<IData>> dataflow);
+	public abstract IStatus remoteDataFlow(Location srcLocation, Location dstlocation, Map<IName, Set<IData>> dataflow);
 }

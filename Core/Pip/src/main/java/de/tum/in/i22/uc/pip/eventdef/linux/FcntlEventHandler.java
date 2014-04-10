@@ -29,11 +29,11 @@ public class FcntlEventHandler extends BaseEventHandler {
 		}
 
 		switch (operation) {
-		case "dupfd":
-			IName oldName = FiledescrName.create(host, pid, oldfd);
-			IName newName = FiledescrName.create(host, pid, newfd);
-			basicIfModel.addName(oldName, newName);
-			break;
+			case "dupfd":
+				IName oldName = FiledescrName.create(host, pid, oldfd);
+				IName newName = FiledescrName.create(host, pid, newfd);
+				basicIfModel.addName(oldName, newName);
+				break;
 		}
 
 		return STATUS_OKAY;
