@@ -26,7 +26,7 @@ public class TestConnectionManager {
 		 * returns the correct result (i.e. the connection obtained earlier).
 		 */
 
-		// create a new connection manager of size 5 and start the pdp server
+		// create a new connection manager of size 2 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
 		IRequestHandler requestHandler = new RequestHandler(new LocalLocation(),
 															new LocalLocation(),

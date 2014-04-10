@@ -101,7 +101,7 @@ public class PipPushStrategy extends PipDistributionStrategy{
 
 
 		/*
-		 *  in any case we know that srcLocation and dstLocation
+		 *  In any case we know that srcLocation and dstLocation
 		 *  contain the specified data.
 		 */
 
