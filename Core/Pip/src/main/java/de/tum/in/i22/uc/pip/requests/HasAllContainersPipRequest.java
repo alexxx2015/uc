@@ -2,13 +2,13 @@ package de.tum.in.i22.uc.pip.requests;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class HasAllContainersPipRequest extends PipRequest<Boolean> {
-	private final Set<IContainer> _containers;
+	private final Set<IName> _containers;
 
-	public HasAllContainersPipRequest(Set<IContainer> container) {
+	public HasAllContainersPipRequest(Set<IName> container) {
 		_containers = container;
 	}
 

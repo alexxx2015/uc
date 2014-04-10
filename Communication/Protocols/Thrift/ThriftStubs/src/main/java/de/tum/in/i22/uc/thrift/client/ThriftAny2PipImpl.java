@@ -124,9 +124,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> containers) {
+	public boolean hasAllContainers(Set<IName> containers) {
 		try {
-			return _handle.hasAllContainers(ThriftConverter.toThriftContainerSet(containers));
+			return _handle.hasAllContainers(ThriftConverter.toThriftNameSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -134,9 +134,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> containers) {
+	public boolean hasAnyContainer(Set<IName> containers) {
 		try {
-			return _handle.hasAnyContainer(ThriftConverter.toThriftContainerSet(containers));
+			return _handle.hasAnyContainer(ThriftConverter.toThriftNameSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

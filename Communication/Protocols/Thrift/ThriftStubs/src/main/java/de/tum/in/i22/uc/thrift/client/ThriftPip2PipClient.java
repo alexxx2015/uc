@@ -75,12 +75,12 @@ class ThriftPip2PipClient extends Pip2PipClient {
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> container) {
+	public boolean hasAllContainers(Set<IName> container) {
 		return _impl.hasAllContainers(container);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> container) {
+	public boolean hasAnyContainer(Set<IName> container) {
 		return _impl.hasAnyContainer(container);
 	}
 

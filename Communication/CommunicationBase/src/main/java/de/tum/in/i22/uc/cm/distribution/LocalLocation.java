@@ -23,4 +23,9 @@ public class LocalLocation extends Location {
 	public int hashCode() {
 		return Objects.hash(this.getClass());
 	}
+
+	@Override
+	public String getName() {
+		return PREFIX_LOCATION + "Local";
+	}
 }

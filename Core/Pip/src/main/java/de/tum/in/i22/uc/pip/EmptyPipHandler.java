@@ -71,12 +71,12 @@ public class EmptyPipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> container) {
+	public boolean hasAllContainers(Set<IName> container) {
 		throw new UnsupportedOperationException("No PipHandler deployed.");
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> container) {
+	public boolean hasAnyContainer(Set<IName> container) {
 		throw new UnsupportedOperationException("No PipHandler deployed.");
 	}
 

@@ -23,11 +23,11 @@ public interface IPip2Pip {
 	@AThriftMethod(signature="bool hasAnyData(1: set<Types.TData> data)")
     public boolean hasAnyData(Set<IData> data);
 
-	@AThriftMethod(signature="bool hasAllContainers(1: set<Types.TContainer> container)")
-    public boolean hasAllContainers(Set<IContainer> container);
+	@AThriftMethod(signature="bool hasAllContainers(1: set<Types.TName> container)")
+    public boolean hasAllContainers(Set<IName> container);
 
-	@AThriftMethod(signature="bool hasAnyContainer(1: set<Types.TContainer> container)")
-    public boolean hasAnyContainer(Set<IContainer> container);
+	@AThriftMethod(signature="bool hasAnyContainer(1: set<Types.TName> container)")
+    public boolean hasAnyContainer(Set<IName> container);
 
 	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent event)")
 	public IStatus update(IEvent event);

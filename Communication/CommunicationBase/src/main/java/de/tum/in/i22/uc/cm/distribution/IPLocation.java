@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
+import java.security.InvalidParameterException;
 import java.util.Objects;
 
 
@@ -9,6 +10,9 @@ public class IPLocation extends Location {
 
 	public IPLocation(String host, int port) {
 		super(ELocation.IP);
+		if (host == null || port < 0) {
+			throw new InvalidParameterException("[" + host + ":" + port + "]");
+		}
 		_host = host;
 		_port = port;
 	}
@@ -33,7 +37,7 @@ public class IPLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_host, _port);
+		return _host.hashCode() ^ _port;
 	}
 
 	public String getHost() {
@@ -55,6 +59,11 @@ public class IPLocation extends Location {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String getName() {
+		return PREFIX_LOCATION + _host;
 	}
 
 	public enum ELocation {

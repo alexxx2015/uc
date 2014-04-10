@@ -473,7 +473,7 @@ public final class BasicInformationFlowModel {
 		return true;
 	}
 
-	public void addDataToContainerAndAliases(Collection<IData> data, IName dstContainerName) {
+	public void addDataToContainerAndAliases(Set<IData> data, IName dstContainerName) {
 		if (dstContainerName == null) {
 			return;
 		}
@@ -481,7 +481,7 @@ public final class BasicInformationFlowModel {
 		addDataToContainerAndAliases(data, getContainer(dstContainerName));
 	}
 
-	public void addDataToContainerAndAliases(Collection<IData> data, IContainer dstContainer) {
+	public void addDataToContainerAndAliases(Set<IData> data, IContainer dstContainer) {
 		if (data == null || data.size() == 0 || dstContainer == null) {
 			return;
 		}
@@ -508,7 +508,7 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
-	public void addDataToContainer(Collection<IData> data, IContainer container) {
+	public void addDataToContainer(Set<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
 		}

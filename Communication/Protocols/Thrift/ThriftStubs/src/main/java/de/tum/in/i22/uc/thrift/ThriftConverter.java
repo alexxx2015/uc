@@ -281,4 +281,28 @@ public final class ThriftConverter {
 		}
 		return res;
 	}
+
+	public static Set<TName> toThriftNameSet(Set<IName> names) {
+		if (names == null || names.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<TName> res = new HashSet<>();
+		for (IName n : names) {
+			res.add(ThriftConverter.toThrift(n));
+		}
+		return res;
+	}
+
+	public static Set<IName> fromThriftNameSet(Set<TName> names) {
+		if (names == null || names.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<IName> res = new HashSet<>();
+		for (TName n : names) {
+			res.add(ThriftConverter.fromThrift(n));
+		}
+		return res;
+	}
 }

@@ -100,13 +100,13 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<TContainer> container) throws TException {
-		return _pipServer.hasAllContainers(container);
+	public boolean hasAllContainers(Set<TName> names) throws TException {
+		return _pipServer.hasAllContainers(names);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
-		return _pipServer.hasAnyContainer(container);
+	public boolean hasAnyContainer(Set<TName> names) throws TException {
+		return _pipServer.hasAnyContainer(names);
 	}
 
 	@Override

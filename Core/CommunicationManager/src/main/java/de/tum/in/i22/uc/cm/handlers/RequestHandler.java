@@ -361,15 +361,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> container) {
-		HasAllContainersPipRequest request = new HasAllContainersPipRequest(container);
+	public boolean hasAllContainers(Set<IName> names) {
+		HasAllContainersPipRequest request = new HasAllContainersPipRequest(names);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> container) {
-		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(container);
+	public boolean hasAnyContainer(Set<IName> names) {
+		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(names);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
