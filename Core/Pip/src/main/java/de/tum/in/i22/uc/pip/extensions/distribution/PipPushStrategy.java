@@ -22,37 +22,27 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
-import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 
 public class PipPushStrategy extends PipDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
-	private final Map<Location, Set<IData>> _hasData;
 	private final Map<Location, Set<IName>> _hasContainers;
 
 	public PipPushStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
-		_hasData = new HashMap<>();
 		_hasContainers = new HashMap<>();
 	}
 
 	@Override
 	public boolean hasAllData(Location location, Set<IData> data) {
-		Set<IData> has = _hasData.get(location);
-		if (has != null) {
-			return has.containsAll(data);
-		}
-		return false;
+		return _ifModel.getData(location).containsAll(data);
 	}
 
 	@Override
 	public boolean hasAnyData(Location location, Set<IData> data) {
-		Set<IData> has = _hasData.get(location);
-		if (has != null) {
-			return Sets.intersection(has, data).size() > 0;
-		}
-		return false;
+		return Sets.intersection(_ifModel.getData(location), data).size() > 0;
 	}
 
 	@Override

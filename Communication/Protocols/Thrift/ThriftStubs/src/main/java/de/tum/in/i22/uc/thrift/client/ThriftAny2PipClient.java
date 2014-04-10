@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -150,5 +151,10 @@ class ThriftAny2PipClient extends Any2PipClient {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _impl.initialRepresentation(containerName, data);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+		return _impl.whoHasData(data, askRecursively);
 	}
 }

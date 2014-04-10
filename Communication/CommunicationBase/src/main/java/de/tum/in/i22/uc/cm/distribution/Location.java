@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
 import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 
 public abstract class Location implements IName {
 	private final ELocation _location;
@@ -21,7 +20,17 @@ public abstract class Location implements IName {
 	@Override
 	public abstract int hashCode();
 
+	public abstract String asString();
+
 	public ELocation getLocation() {
 		return _location;
+	}
+
+
+
+	public enum ELocation {
+		LOCAL,
+		IP,
+		NONE;
 	}
 }

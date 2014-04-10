@@ -132,4 +132,10 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 		_logger.debug("TAny2Pip: isSimulating");
 		return _requestHandler.isSimulating();
 	}
+
+	@Override
+	public Set<String> whoHasData(Set<TData> data, boolean askRecursively) throws TException {
+		_logger.debug("TAny2Pip: whoHasData");
+		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(ThriftConverter.fromThriftDataSet(data), askRecursively));
+	}
 }

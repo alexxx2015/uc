@@ -27,13 +27,8 @@ public final class BasicInformationFlowModel {
 
 	private static BasicInformationFlowModel _instance;
 
-	// [Container.identifier -> List[Data.identifier]]
 	private Map<IContainer, Set<IData>> _containerToDataMap;
-
-	// [Container.identifier -> List[Container.identifier]]
 	private Map<IContainer, Set<IContainer>> _aliasesMap;
-
-	// the naming set [name -> Container.identifier]
 	private Map<IName, IContainer> _namingMap;
 
 	// BACKUP TABLES FOR SIMULATION
@@ -256,7 +251,7 @@ public final class BasicInformationFlowModel {
 		Set<IContainer> result;
 
 		if (container == null || (result = _aliasesMap.get(container)) == null) {
-			result = Collections.emptySet();
+			return Collections.emptySet();
 		}
 
 		return Collections.unmodifiableSet(result);
@@ -411,7 +406,7 @@ public final class BasicInformationFlowModel {
 	public Set<IData> getData(IContainer container) {
 		Set<IData> result;
 		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
-			result = Collections.emptySet();
+			return Collections.emptySet();
 		}
 		return Collections.unmodifiableSet(result);
 	}

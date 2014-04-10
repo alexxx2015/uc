@@ -3,13 +3,43 @@ package de.tum.in.i22.uc.cm.distribution;
 import java.security.InvalidParameterException;
 import java.util.Objects;
 
+import de.tum.in.i22.uc.cm.datatypes.IName;
+
 
 public class IPLocation extends Location {
 	private final String _host;
 	private final int _port;
 
+	/**
+	 * Creates an {@link IPLocation} from
+	 * a string of format <host>:<port>, as
+	 * returned by {@link IPLocation#asString()}.
+	 *
+	 * @see IPLocation#asString()
+	 *
+	 * @param s the string
+	 */
+	public IPLocation(String s) {
+		super(ELocation.IP);
+
+		String[] arr;
+
+		if (s != null && (arr = s.split(":")).length == 2) {
+			try {
+				_host = arr[0];
+				_port = Integer.valueOf(arr[1]);
+			} catch (Exception e) {
+				throw new InvalidParameterException("Unable to create IPLocation out of string [" + s + "].");
+			}
+		}
+		else {
+			throw new InvalidParameterException("Unable to create IPLocation out of string [" + s + "].");
+		}
+	}
+
 	public IPLocation(String host, int port) {
 		super(ELocation.IP);
+
 		if (host == null || port < 0) {
 			throw new InvalidParameterException("[" + host + ":" + port + "]");
 		}
@@ -48,27 +78,26 @@ public class IPLocation extends Location {
 		return _port;
 	}
 
-	public static IPLocation from(String s) {
-		String[] arr;
-		IPLocation result = null;
 
-		if (s != null && (arr = s.split(":")).length == 2) {
-			try {
-				result = new IPLocation(arr[0], Integer.valueOf(arr[1]));
-			} catch (Exception e) {	}
-		}
 
-		return result;
+	/**
+	 * As prescribed by {@link Location}.
+	 * Returns <host>:<port>.
+	 *
+	 * @see IPLocation#IPLocation(String)
+	 */
+	@Override
+	public String asString() {
+		return _host + ":" + _port;
 	}
 
+	/**
+	 * As prescribed by {@link IName}.
+	 * Returns this {@link IPLocation}'s host
+	 * prefixed by {@link Location#PREFIX_LOCATION}.
+	 */
 	@Override
 	public String getName() {
 		return PREFIX_LOCATION + _host;
-	}
-
-	public enum ELocation {
-		LOCAL,
-		IP,
-		NONE;
 	}
 }

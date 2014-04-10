@@ -15,9 +15,6 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  */
 @AThriftService(name="TPep2Pip")
 public interface IPep2Pip {
-	@AThriftMethod(signature="// public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, ConflictResolution flagForTheConflictResolution)")
-	public IStatus updateInformationFlowSemantics(
-			IPipDeployer deployer,
-			File jarFile,
-			EConflictResolution flagForTheConflictResolution);
+	@AThriftMethod(signature="// public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, ConflictResolution conflictResolutionFlag)")
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag);
 }

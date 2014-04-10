@@ -7,6 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.IData;
 import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 
@@ -40,4 +41,20 @@ public interface IPip2Pip {
 
 	@AThriftMethod(signature="Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data)")
 	public IStatus initialRepresentation(IName containerName, Set<IData> data);
+
+	/**
+	 * Returns a set of {@link Location}s that are 'aware' of at least one element
+	 * within the specified data set. The returned set of {@link Location}s
+	 * is not necessarily a complete set, i.e. there might exist further
+	 * {@link Location}s that are aware of the data but that are not included
+	 * in the returned set. If parameter askRecursively is set, the callee
+	 * will perform a recursive lookup.
+	 *
+	 * @param data the set of data items to look for
+	 * @param askRecursively whether the callee should ask recursively
+	 * @return a set of {@link Location}s aware of at least one element of
+	 * 		the specified data set. The returned set might not be complete.
+	 */
+	@AThriftMethod(signature="set<string> whoHasData(1: set<Types.TData> data, 2: bool askRecursively)")
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively);
 }

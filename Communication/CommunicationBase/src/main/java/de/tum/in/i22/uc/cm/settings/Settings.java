@@ -164,7 +164,7 @@ public class Settings extends SettingsLoader {
 		boolean success = false;
 
 		try {
-			loadedValue = IPLocation.from(_props.getProperty(propName));
+			loadedValue = new IPLocation(_props.getProperty(propName));
 			if (loadedValue != null) {
 				success = true;
 			}

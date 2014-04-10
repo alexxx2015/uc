@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.IContainer;
@@ -12,11 +14,14 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 
 class ThriftAny2PipImpl implements IAny2Pip {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipImpl.class);
+
 	private final TAny2Pip.Client _handle;
 
 	public ThriftAny2PipImpl(TAny2Pip.Client handle) {
@@ -153,11 +158,19 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
-			EConflictResolution flagForTheConflictResolution) {
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag) {
 		// TODO Auto-generated method stub
 		// not yet supported by thrift interface
 		return null;
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+		try {
+			return ThriftConverter.fromThriftLocationSet(_handle.whoHasData(ThriftConverter.toThriftDataSet(data), askRecursively));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 }

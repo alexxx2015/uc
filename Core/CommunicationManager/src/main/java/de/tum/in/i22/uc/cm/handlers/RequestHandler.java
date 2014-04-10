@@ -57,7 +57,9 @@ import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
+import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.EmptyPmpHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
@@ -292,9 +294,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution flagForTheConflictResolution) {
-		// TODO not yet implemented
-		return null;
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag) {
+		UpdateInformationFlowSemanticsPipRequest request = new UpdateInformationFlowSemanticsPipRequest(deployer, jarFile, conflictResolutionFlag);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
 	}
 
 	@Override
@@ -398,6 +401,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
 		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, askRecursively);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

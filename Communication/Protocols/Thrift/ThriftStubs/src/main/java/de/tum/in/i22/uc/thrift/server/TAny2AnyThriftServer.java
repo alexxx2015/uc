@@ -170,4 +170,9 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
 		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress, dstPort, data);
 	}
+
+	@Override
+	public Set<String> whoHasData(Set<TData> data, boolean askRecursively) throws TException {
+		return _pipServer.whoHasData(data, askRecursively);
+	}
 }

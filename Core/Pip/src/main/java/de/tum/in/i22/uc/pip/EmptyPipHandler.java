@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class EmptyPipHandler extends PipProcessor {
@@ -82,6 +83,11 @@ public class EmptyPipHandler extends PipProcessor {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
+		throw new UnsupportedOperationException("No PipHandler deployed.");
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
 		throw new UnsupportedOperationException("No PipHandler deployed.");
 	}
 }

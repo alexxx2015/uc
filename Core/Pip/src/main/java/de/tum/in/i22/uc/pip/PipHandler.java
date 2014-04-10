@@ -159,9 +159,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
-			File jarFile, EConflictResolution flagForTheConflictResolution) {
-
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution flagForTheConflictResolution) {
 		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 
@@ -308,6 +306,12 @@ public class PipHandler extends PipProcessor {
 		}
 		_ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
