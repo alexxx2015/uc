@@ -1,8 +1,8 @@
-package de.tum.in.i22.uc.cm.client;
+package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.server.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 /**
  * This class represents the client side of a remote {@link PmpProcessor}

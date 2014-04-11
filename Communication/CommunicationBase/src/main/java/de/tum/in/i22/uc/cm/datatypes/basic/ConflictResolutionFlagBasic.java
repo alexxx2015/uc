@@ -1,9 +1,8 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
-import de.tum.in.i22.uc.cm.datatypes.IConflictResolutionFlag;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IConflictResolutionFlag;
 
 public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 	private EConflictResolution _eConflictResolution = null;
@@ -39,5 +38,9 @@ public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 				.toString();
 	}
 
-
+	public enum EConflictResolution {
+		OVERWRITE ,
+		IGNORE_UPDATES, //currently not used
+		KEEP_ALL ; // currently not used
+	}
 }

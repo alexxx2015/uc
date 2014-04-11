@@ -3,12 +3,12 @@ package de.tum.in.i22.uc.pmp;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.server.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
 
 

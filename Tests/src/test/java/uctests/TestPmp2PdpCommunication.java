@@ -8,17 +8,17 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.basic.ConditionBasic;
-import de.tum.in.i22.uc.cm.basic.DataBasic;
-import de.tum.in.i22.uc.cm.basic.DataEventMapBasic;
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.basic.MechanismBasic;
-import de.tum.in.i22.uc.cm.basic.OslFormulaBasic;
-import de.tum.in.i22.uc.cm.basic.SimplifiedTemporalLogicBasic;
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.ConditionBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataEventMapBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.OslFormulaBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.SimplifiedTemporalLogicBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 

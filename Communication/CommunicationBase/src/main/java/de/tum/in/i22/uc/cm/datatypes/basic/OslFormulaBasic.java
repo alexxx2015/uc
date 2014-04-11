@@ -1,8 +1,8 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOslFormula;
 
 public class OslFormulaBasic implements IOslFormula {
 	private final String _stringRepresentation;

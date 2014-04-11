@@ -1,8 +1,8 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 /**
  * A container can have several representations.

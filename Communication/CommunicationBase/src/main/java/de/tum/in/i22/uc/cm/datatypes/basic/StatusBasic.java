@@ -1,9 +1,8 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
 public class StatusBasic implements IStatus {
 	private EStatus _eStatus = null;
@@ -62,4 +61,15 @@ public class StatusBasic implements IStatus {
 				.add("_errorMessage", _errorMessage)
 				.toString();
 	}
+
+	public enum EStatus {
+		OKAY ,
+		ERROR,
+		INHIBIT,
+		ALLOW,
+		MODIFY,
+		ERROR_EVENT_PARAMETER_MISSING,
+		REMOTE_DATA_FLOW_HAPPENED;
+	}
+
 }

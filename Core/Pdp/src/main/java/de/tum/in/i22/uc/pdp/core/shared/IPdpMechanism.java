@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.pdp.core.shared;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 
 public interface IPdpMechanism {
 

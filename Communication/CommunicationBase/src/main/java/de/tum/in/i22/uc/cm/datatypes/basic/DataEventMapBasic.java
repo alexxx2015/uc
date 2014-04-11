@@ -1,11 +1,11 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Map;
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IDataEventMap;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDataEventMap;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 
 public class DataEventMapBasic implements IDataEventMap {
 	private final Map<IData, IEvent> _map;

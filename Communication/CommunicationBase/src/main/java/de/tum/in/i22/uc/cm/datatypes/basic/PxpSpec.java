@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 public class PxpSpec {
 	private final String ip;

@@ -1,11 +1,11 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.ICondition;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IHistory;
-import de.tum.in.i22.uc.cm.datatypes.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IHistory;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 
 public class MechanismBasic implements IMechanism {
 	private ICondition _condition;

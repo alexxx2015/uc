@@ -10,7 +10,7 @@ import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.client.TcpConnector;
+import de.tum.in.i22.uc.cm.distribution.client.TcpConnector;
 
 /**
  * A class representing a {@link ThriftConnector}, i.e. a {@link TcpConnector}

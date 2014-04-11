@@ -1,11 +1,11 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.IDataEventMap;
-import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
-import de.tum.in.i22.uc.cm.datatypes.ISimplifiedTemporalLogic;
-import de.tum.in.i22.uc.cm.datatypes.IStateEventMap;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDataEventMap;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOslFormula;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ISimplifiedTemporalLogic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStateEventMap;
 
 public class SimplifiedTemporalLogicBasic
 	implements ISimplifiedTemporalLogic {

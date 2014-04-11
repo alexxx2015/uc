@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.cm.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.server.IRequestHandler;
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 
 /**
  * This class will be used via JNI to dispatch events.

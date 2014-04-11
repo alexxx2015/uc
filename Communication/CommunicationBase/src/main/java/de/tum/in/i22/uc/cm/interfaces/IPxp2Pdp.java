@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 

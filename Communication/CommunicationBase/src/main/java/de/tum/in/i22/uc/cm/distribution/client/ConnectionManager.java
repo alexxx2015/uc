@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.client;
+package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.io.IOException;
 import java.util.Collection;

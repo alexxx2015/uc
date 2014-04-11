@@ -1,6 +1,19 @@
-package de.tum.in.i22.uc.cm.client;
+package de.tum.in.i22.uc.cm.factories;
 
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 
 public interface ClientHandlerFactory {
 	Any2PdpClient createPdpClientHandler(Location location);

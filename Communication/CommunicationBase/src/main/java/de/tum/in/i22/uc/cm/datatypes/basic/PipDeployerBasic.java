@@ -1,9 +1,9 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 
 public class PipDeployerBasic implements IPipDeployer {
 

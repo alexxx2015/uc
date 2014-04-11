@@ -1,9 +1,9 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class ContainerBasic implements IContainer {
 	private String _classValue;

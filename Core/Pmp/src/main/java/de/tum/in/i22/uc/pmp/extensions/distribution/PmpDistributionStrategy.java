@@ -1,10 +1,10 @@
 package de.tum.in.i22.uc.pmp.extensions.distribution;
 
-import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
-import de.tum.in.i22.uc.cm.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.AbstractDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
+import de.tum.in.i22.uc.cm.factories.ClientHandlerFactory;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 

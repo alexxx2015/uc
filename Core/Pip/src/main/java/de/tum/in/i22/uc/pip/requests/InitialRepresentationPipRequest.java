@@ -2,10 +2,10 @@ package de.tum.in.i22.uc.pip.requests;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
-import de.tum.in.i22.uc.cm.server.PipProcessor;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 public class InitialRepresentationPipRequest extends PipRequest<IStatus> {
 	private final IName _name;

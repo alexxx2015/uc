@@ -1,8 +1,8 @@
-package de.tum.in.i22.uc.cm.client;
+package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.server.PdpProcessor;
+import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 /**
  * This class represents the client side of a remote {@link PdpProcessor}

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm;
+package de.tum.in.i22.uc.cm.factories;
 
 /**
  * This class should be use for IMessageFactory creation.

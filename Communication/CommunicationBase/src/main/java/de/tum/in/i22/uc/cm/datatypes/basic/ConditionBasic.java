@@ -1,10 +1,10 @@
-package de.tum.in.i22.uc.cm.basic;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.datatypes.ICondition;
-import de.tum.in.i22.uc.cm.datatypes.IOslFormula;
-import de.tum.in.i22.uc.cm.datatypes.ISimplifiedTemporalLogic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOslFormula;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ISimplifiedTemporalLogic;
 
 public class ConditionBasic implements ICondition {
 	private IOslFormula _condition;
