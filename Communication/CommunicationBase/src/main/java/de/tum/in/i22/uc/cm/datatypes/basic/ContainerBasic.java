@@ -6,25 +6,18 @@ import java.util.UUID;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class ContainerBasic implements IContainer {
-	private final String _classValue;
 	private final String _id;
 
 	public ContainerBasic() {
-		this(null, null);
+		this(null);
 	}
 
-	public ContainerBasic(String classValue, String id) {
+	public ContainerBasic(String id) {
 		if (id == null) {
 			id = UUID.randomUUID().toString();
 		}
-		_classValue = classValue;
+
 		_id = id;
-	}
-
-
-	@Override
-	public String getClassValue() {
-		return _classValue;
 	}
 
 	@Override
@@ -32,30 +25,21 @@ public class ContainerBasic implements IContainer {
 		return _id;
 	}
 
-
-
 	@Override
 	public boolean equals(Object obj) {
-		boolean isEqual = false;
-		if (obj instanceof ContainerBasic) {
-			ContainerBasic o = (ContainerBasic)obj;
-			isEqual = Objects.equals(_id, o._id) &&
-					Objects.equals(_classValue, o._classValue);
-		}
-
-		return isEqual;
+		return (obj instanceof ContainerBasic)
+				&& Objects.equals(_id, ((ContainerBasic) obj)._id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_id, _classValue);
+		return _id.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
 				.add("_id", _id)
-				.add("_classValue", _classValue)
 				.toString();
 	}
 
