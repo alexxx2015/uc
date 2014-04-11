@@ -18,7 +18,7 @@ public interface IMessageFactory {
 	public IData createData();
 	public IData createData(String id);
 	public IEvent createDesiredEvent(String name, Map<String, String> map);
-	public IContainer createContainer(String classValue, String id);
+	public IContainer createContainer(String id);
 
 	public PxpSpec createPxpSpec();
 }

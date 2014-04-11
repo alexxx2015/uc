@@ -54,8 +54,7 @@ struct TPxpSpec{
 }
 
 struct TContainer {
-	1: string classValue,
-	2: required string id
+	1: required string id
 }
 
 struct TData {

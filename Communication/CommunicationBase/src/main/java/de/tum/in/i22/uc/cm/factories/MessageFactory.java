@@ -68,9 +68,8 @@ public class MessageFactory implements IMessageFactory {
 	}
 
 	@Override
-	public IContainer createContainer(String classValue, String id) {
-		IContainer cont = new ContainerBasic(classValue, id);
-		return cont;
+	public IContainer createContainer(String id) {
+		return new ContainerBasic(id);
 	}
 
 	@Override

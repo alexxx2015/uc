@@ -1,30 +1,38 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class ContainerBasic implements IContainer {
-	private final String _classValue;
 	private final String _id;
 
+	private final Map<EAttributeName,IAttribute<?>> _attributes;
+
 	public ContainerBasic() {
-		this(null, null);
+		this((String) null);
 	}
 
-	public ContainerBasic(String classValue, String id) {
-		if (id == null) {
+	public ContainerBasic(IAttribute<?> ... attributes) {
+		this(null, attributes);
+	}
+
+	public ContainerBasic(String id, IAttribute<?> ... attributes) {
+		if (id == null || id.isEmpty()) {
 			id = UUID.randomUUID().toString();
 		}
-		_classValue = classValue;
+
 		_id = id;
-	}
 
-
-	@Override
-	public String getClassValue() {
-		return _classValue;
+		_attributes = new HashMap<>();
+		for (IAttribute<?> attr : attributes) {
+			_attributes.put(attr.getName(), attr);
+		}
 	}
 
 	@Override
@@ -32,30 +40,29 @@ public class ContainerBasic implements IContainer {
 		return _id;
 	}
 
+	public boolean hasAttribute(EAttributeName name) {
+		return _attributes.keySet().contains(name);
+	}
 
+	public IAttribute<?> getAttribute(EAttributeName name) {
+		return _attributes.get(name);
+	}
 
 	@Override
 	public boolean equals(Object obj) {
-		boolean isEqual = false;
-		if (obj instanceof ContainerBasic) {
-			ContainerBasic o = (ContainerBasic)obj;
-			isEqual = Objects.equals(_id, o._id) &&
-					Objects.equals(_classValue, o._classValue);
-		}
-
-		return isEqual;
+		return (obj instanceof ContainerBasic)
+				&& Objects.equals(_id, ((ContainerBasic) obj)._id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_id, _classValue);
+		return _id.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
 				.add("_id", _id)
-				.add("_classValue", _classValue)
 				.toString();
 	}
 

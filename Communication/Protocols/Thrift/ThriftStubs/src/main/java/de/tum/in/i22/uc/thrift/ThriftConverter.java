@@ -44,7 +44,7 @@ public final class ThriftConverter {
 			return null;
 		}
 
-		return new ContainerBasic(c.getClassValue(), c.getId());
+		return new ContainerBasic(c.getId());
 	}
 
 	public static IData fromThrift(TData d) {
@@ -171,7 +171,7 @@ public final class ThriftConverter {
 			return null;
 		}
 
-		return new TContainer(c.getClassValue(), c.getId());
+		return new TContainer(c.getId());
 	}
 
 	public static TData toThrift(IData d) {
