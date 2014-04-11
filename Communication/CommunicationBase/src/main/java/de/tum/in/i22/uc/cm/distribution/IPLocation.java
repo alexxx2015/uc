@@ -2,13 +2,15 @@ package de.tum.in.i22.uc.cm.distribution;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
-
+import org.apache.commons.validator.routines.InetAddressValidator;
 import de.tum.in.i22.uc.cm.datatypes.IName;
 
 
 public class IPLocation extends Location {
 	private final String _host;
 	private final int _port;
+
+	private static final InetAddressValidator validator = InetAddressValidator.getInstance();
 
 	/**
 	 * Creates an {@link IPLocation} from
@@ -23,18 +25,27 @@ public class IPLocation extends Location {
 		super(ELocation.IP);
 
 		String[] arr;
+		boolean success = false;
 
-		if (s != null && (arr = s.split(":")).length == 2) {
+		String hostValue = "";
+		int portValue = 0;
+
+		if (s != null && (arr = s.split(":")).length == 2 && validator.isValid(arr[0])) {
 			try {
-				_host = arr[0];
-				_port = Integer.valueOf(arr[1]);
+				hostValue = arr[0];
+				portValue = Integer.valueOf(arr[1]);
+				success = true;
 			} catch (Exception e) {
-				throw new InvalidParameterException("Unable to create IPLocation out of string [" + s + "].");
+				success = false;
 			}
 		}
-		else {
+
+		if (!success) {
 			throw new InvalidParameterException("Unable to create IPLocation out of string [" + s + "].");
 		}
+
+		_host = hostValue;
+		_port = portValue;
 	}
 
 	public IPLocation(String host, int port) {
