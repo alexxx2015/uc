@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -12,11 +14,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 
 class ThriftAny2PipImpl implements IAny2Pip {
+	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipImpl.class);
+
 	private final TAny2Pip.Client _handle;
 
 	public ThriftAny2PipImpl(TAny2Pip.Client handle) {
@@ -124,9 +129,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> containers) {
+	public boolean hasAllContainers(Set<IName> containers) {
 		try {
-			return _handle.hasAllContainers(ThriftConverter.toThriftContainerSet(containers));
+			return _handle.hasAllContainers(ThriftConverter.toThriftNameSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -134,9 +139,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> containers) {
+	public boolean hasAnyContainer(Set<IName> containers) {
 		try {
-			return _handle.hasAnyContainer(ThriftConverter.toThriftContainerSet(containers));
+			return _handle.hasAnyContainer(ThriftConverter.toThriftNameSet(containers));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -153,11 +158,19 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
-			EConflictResolution flagForTheConflictResolution) {
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag) {
 		// TODO Auto-generated method stub
 		// not yet supported by thrift interface
 		return null;
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		try {
+			return ThriftConverter.fromThriftLocationSet(_handle.whoHasData(ThriftConverter.toThriftDataSet(data), recursionDepth));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 }

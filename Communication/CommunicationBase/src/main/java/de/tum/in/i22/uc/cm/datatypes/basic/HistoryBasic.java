@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,7 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IHistory;
 
 public class HistoryBasic implements IHistory {
 
-	private List<IEvent> _trace;
+	private final List<IEvent> _trace;
 
 	public HistoryBasic(List<IEvent> trace) {
 		super();
@@ -17,7 +18,7 @@ public class HistoryBasic implements IHistory {
 
 	@Override
 	public List<IEvent> getTrace() {
-		return _trace;
+		return Collections.unmodifiableList(_trace);
 	}
 
 

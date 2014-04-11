@@ -54,25 +54,12 @@ public class MechanismBasic implements IMechanism {
 		return _triggerEvent;
 	}
 
+	// I doubt that these setters are necessary. Use an appropriate constructor instead.
+	@Deprecated
 	public void setCondition(ICondition condition) {
 		_condition = condition;
 	}
 
-	public void setMechanismName(String mechanismName) {
-		_mechanismName = mechanismName;
-	}
-
-	public void setResponse(Object response) {
-		_response = response;
-	}
-
-	public void setState(IHistory state) {
-		_state = state;
-	}
-
-	public void setTriggerEvent(IEvent triggerEvent) {
-		_triggerEvent = triggerEvent;
-	}
 
 
 	@Override

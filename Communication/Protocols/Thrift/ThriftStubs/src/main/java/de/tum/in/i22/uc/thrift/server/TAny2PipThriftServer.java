@@ -60,16 +60,16 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<TContainer> container) throws TException {
+	public boolean hasAllContainers(Set<TName> names) throws TException {
 		_logger.debug("TAny2Pip: hasAllContainers");
-		Set<IContainer> c = ThriftConverter.fromThriftContainerSet(container);
+		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
 		return _requestHandler.hasAllContainers(c);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
+	public boolean hasAnyContainer(Set<TName> names) throws TException {
 		_logger.debug("TAny2Pip: hasAnyContainer");
-		Set<IContainer> c = ThriftConverter.fromThriftContainerSet(container);
+		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
 		return _requestHandler.hasAnyContainer(c);
 	}
 
@@ -131,5 +131,11 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	public boolean isSimulating() throws TException {
 		_logger.debug("TAny2Pip: isSimulating");
 		return _requestHandler.isSimulating();
+	}
+
+	@Override
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
+		_logger.debug("TAny2Pip: whoHasData");
+		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(ThriftConverter.fromThriftDataSet(data), recursionDepth));
 	}
 }

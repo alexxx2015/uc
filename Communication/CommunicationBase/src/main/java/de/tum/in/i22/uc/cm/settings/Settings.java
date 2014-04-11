@@ -18,7 +18,7 @@ import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
+import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
@@ -155,7 +155,7 @@ public class Settings extends SettingsLoader {
 		boolean success = false;
 
 		try {
-			loadedValue = IPLocation.from(_props.getProperty(propName));
+			loadedValue = new IPLocation(_props.getProperty(propName));
 			if (loadedValue != null) {
 				success = true;
 			}

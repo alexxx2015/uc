@@ -10,6 +10,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
+/**
+ * Remembers which remote data flows have occurred.
+ * The source {@link Location} of the data flow is fixed,
+ * but there might be many destination {@link Location}s
+ * to which different data has flown to different containers.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class RemoteDataFlowInfo {
 	/**
 	 * the location from which the data has flown
@@ -32,6 +41,14 @@ public class RemoteDataFlowInfo {
 		return _srcLocation;
 	}
 
+	/**
+	 * Adds the information that data has flown from this object's
+	 * source {@link Location} to the specified destination {@link Location}.
+	 *
+	 * @param dstLocation the location to which the data has flown
+	 * @param contName the name of the container into which the data has flown
+	 * @param data the data that has flown
+	 */
 	public void addFlow(Location dstLocation, IName contName, Set<IData> data) {
 		if (_dataflow == null) {
 			_dataflow = new HashMap<>();
@@ -39,14 +56,12 @@ public class RemoteDataFlowInfo {
 
 		Map<IName,Set<IData>> map = _dataflow.get(dstLocation);
 		if (map == null) {
-			map = new HashMap<>();
-			_dataflow.put(dstLocation, map);
+			_dataflow.put(dstLocation, map = new HashMap<>());
 		}
 
 		Set<IData> flow = map.get(contName);
 		if (flow == null) {
-			flow = new HashSet<>();
-			map.put(contName, flow);
+			map.put(contName, flow = new HashSet<>());
 		}
 		flow.addAll(data);
 	}
@@ -56,6 +71,11 @@ public class RemoteDataFlowInfo {
 		return Collections.unmodifiableMap(_dataflow);
 	}
 
+	/**
+	 * Whether data has flown from this object's source {@link Location}.
+	 * @return true if there is at least one destination {@link Location}
+	 * 			to which data has flown; false otherwise.
+	 */
 	public boolean isEmpty() {
 		return _dataflow == null || _dataflow.size() == 0;
 	}

@@ -1,17 +1,17 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import java.util.Objects;
-
-import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 
 public class LocalLocation extends Location {
+
+	private static final String local = "local";
+
 	public LocalLocation() {
 		super(ELocation.LOCAL);
 	}
 
 	@Override
 	public String toString() {
-		return "local";
+		return local;
 	}
 
 	@Override
@@ -21,6 +21,16 @@ public class LocalLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getClass());
+		return this.getClass().hashCode();
+	}
+
+	@Override
+	public String getName() {
+		return PREFIX_LOCATION + local;
+	}
+
+	@Override
+	public String asString() {
+		return local;
 	}
 }

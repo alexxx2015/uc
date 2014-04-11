@@ -35,11 +35,6 @@ public class EventBasic implements IEvent {
 		_isActual = isActual;
 	}
 
-
-	public void addParameter(String key, String value) {
-		_parameters.put(key, value);
-	}
-
 	@Override
 	public long getTimestamp() {
 		return _timestamp;

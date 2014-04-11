@@ -100,13 +100,13 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<TContainer> container) throws TException {
-		return _pipServer.hasAllContainers(container);
+	public boolean hasAllContainers(Set<TName> names) throws TException {
+		return _pipServer.hasAllContainers(names);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<TContainer> container) throws TException {
-		return _pipServer.hasAnyContainer(container);
+	public boolean hasAnyContainer(Set<TName> names) throws TException {
+		return _pipServer.hasAnyContainer(names);
 	}
 
 	@Override
@@ -169,5 +169,10 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	@Override
 	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
 		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress, dstPort, data);
+	}
+
+	@Override
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
+		return _pipServer.whoHasData(data, recursionDepth);
 	}
 }

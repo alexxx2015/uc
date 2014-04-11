@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ public class StateEventMapBasic
 
 	@Override
 	public Map<String, IEvent> getMap() {
-		return _map;
+		return Collections.unmodifiableMap(_map);
 	}
 
 

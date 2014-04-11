@@ -23,6 +23,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -280,5 +282,57 @@ public final class ThriftConverter {
 			res.add(ThriftConverter.toThrift(e));
 		}
 		return res;
+	}
+
+	public static Set<TName> toThriftNameSet(Set<IName> names) {
+		if (names == null || names.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<TName> res = new HashSet<>();
+		for (IName n : names) {
+			res.add(ThriftConverter.toThrift(n));
+		}
+		return res;
+	}
+
+	public static Set<IName> fromThriftNameSet(Set<TName> names) {
+		if (names == null || names.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<IName> res = new HashSet<>();
+		for (TName n : names) {
+			res.add(ThriftConverter.fromThrift(n));
+		}
+		return res;
+	}
+
+	public static Set<Location> fromThriftLocationSet(Set<String> locations) {
+		if (locations == null || locations.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<Location> result = new HashSet<>();
+		for (String loc : locations) {
+			try {
+				result.add(new IPLocation(loc));
+			} catch (Exception e) {
+				_logger.warn("Unable to cast [" + loc + "] to " + IPLocation.class.getSimpleName());
+			}
+		}
+		return result;
+	}
+
+	public static Set<String> toThriftLocationSet(Set<Location> locations) {
+		if (locations == null || locations.size() == 0) {
+			return Collections.emptySet();
+		}
+
+		Set<String> result = new HashSet<>();
+		for (Location loc : locations) {
+			result.add(loc.asString());
+		}
+		return result;
 	}
 }

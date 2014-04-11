@@ -91,7 +91,13 @@ public class PipHandler extends PipProcessor {
 	public IStatus update(IEvent event) {
 		String action = event.getPrefixedName();
 		IEventHandler actionHandler = null;
-		IStatus result;
+		IStatus status;
+
+		/*
+		 * Get the event handler and perform the
+		 * information flow update according to
+		 * its implemented semantics
+		 */
 
 		try {
 			actionHandler = EventHandlerManager.createEventHandler(event);
@@ -106,16 +112,28 @@ public class PipHandler extends PipProcessor {
 		actionHandler.setEvent(event);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for " + event);
-		result = actionHandler.performUpdate();
+		status = actionHandler.performUpdate();
 
-		// Potentially, we need to do some more work ...
-		if (result.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && result instanceof DistributedPipStatus) {
+
+		/*
+		 * The returned status will tell us whether we have to
+		 * do some more work, namely remote data flow tracking
+		 * and policy shipment
+		 */
+
+		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && (status instanceof DistributedPipStatus)) {
+
 			// TODO: PIP communication and PMP communication
 			// can be improved by either doing only one call
 			// or by doing them in parallel
 
-//			Map<Location, Map<IName, Set<IData>>> dataflow = ((DistributedPipStatus) result).getDataflow();
-			RemoteDataFlowInfo df = ((DistributedPipStatus) result).getDataflow();
+			/*
+			 * Get the information about the remote data flow from
+			 * the returned status and inform both the
+			 * distributed Pip manager and the Pmp.
+			 */
+
+			RemoteDataFlowInfo df = ((DistributedPipStatus) status).getDataflow();
 			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
 
 			Location srcLocation = df.getSrcLocation();
@@ -137,13 +155,11 @@ public class PipHandler extends PipProcessor {
 
 		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 
-		return result;
+		return status;
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
-			File jarFile, EConflictResolution flagForTheConflictResolution) {
-
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution flagForTheConflictResolution) {
 		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
 	}
 
@@ -270,12 +286,12 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> containers) {
+	public boolean hasAllContainers(Set<IName> containers) {
 		return _ifModel.getAllContainers().containsAll(containers);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> containers) {
+	public boolean hasAnyContainer(Set<IName> containers) {
 		return Sets.intersection(containers, _ifModel.getAllContainers()).size() >= 1;
 	}
 
@@ -290,6 +306,12 @@ public class PipHandler extends PipProcessor {
 		}
 		_ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

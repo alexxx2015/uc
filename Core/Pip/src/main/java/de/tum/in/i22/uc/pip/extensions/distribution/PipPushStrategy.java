@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -19,43 +21,35 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
-import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
+
+
 
 public class PipPushStrategy extends PipDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);
 
-	private final Map<Location, Set<IData>> _hasData;
-	private final Map<Location, Set<IContainer>> _hasContainers;
+	private final Map<Location, Set<IName>> _hasContainers;
 
 	public PipPushStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
-		_hasData = new HashMap<>();
 		_hasContainers = new HashMap<>();
 	}
 
 	@Override
 	public boolean hasAllData(Location location, Set<IData> data) {
-		Set<IData> has = _hasData.get(location);
-		if (has != null) {
-			return has.containsAll(data);
-		}
-		return false;
+		return _ifModel.getData(location).containsAll(data);
 	}
 
 	@Override
 	public boolean hasAnyData(Location location, Set<IData> data) {
-		Set<IData> has = _hasData.get(location);
-		if (has != null) {
-			return Sets.intersection(has, data).size() > 0;
-		}
-		return false;
+		return Sets.intersection(_ifModel.getData(location), data).size() > 0;
 	}
 
 	@Override
-	public boolean hasAllContainers(Location location, Set<IContainer> containers) {
-		Set<IContainer> has = _hasContainers.get(location);
+	public boolean hasAllContainers(Location location, Set<IName> containers) {
+		Set<IName> has = _hasContainers.get(location);
 		if (has != null) {
 			return has.containsAll(containers);
 		}
@@ -63,8 +57,8 @@ public class PipPushStrategy extends PipDistributionStrategy {
 	}
 
 	@Override
-	public boolean hasAnyContainer(Location location, Set<IContainer> containers) {
-		Set<IContainer> has = _hasContainers.get(location);
+	public boolean hasAnyContainer(Location location, Set<IName> containers) {
+		Set<IName> has = _hasContainers.get(location);
 		if (has != null) {
 			return Sets.intersection(has, containers).size() > 0;
 		}
@@ -91,13 +85,40 @@ public class PipPushStrategy extends PipDistributionStrategy {
 
 	@Override
 	public IStatus remoteDataFlow(Location srcLocation, Location dstLocation, Map<IName, Set<IData>> dataflow) {
+
+		Set<IData> allData = new HashSet<>();
+		for (Set<IData> d : dataflow.values()) {
+			allData.addAll(d);
+		}
+
+
+		/*
+		 *  In any case we know that srcLocation and dstLocation
+		 *  contain the specified data.
+		 */
+
+		IContainer srcCont = _ifModel.getContainer(srcLocation);
+		if (srcCont == null) {
+			_ifModel.addName(srcLocation, srcCont = new ContainerBasic());
+		}
+		_ifModel.addData(allData, srcCont);
+
+		IContainer dstCont = _ifModel.getContainer(dstLocation);
+		if (dstCont == null) {
+			_ifModel.addName(dstLocation, dstCont = new ContainerBasic());
+		}
+		_ifModel.addData(allData, dstCont);
+
+
+
 		if (dstLocation.getLocation() == ELocation.LOCAL) {
-			// TODO: Update local information
+			// data was transferred to this local location.
+			_logger.info("Data was transferred from [" + srcLocation + "] to [" + dstLocation + "]: " + dataflow);
 		}
 		else {
 			// tell the remote site about data transfer
 
-			_logger.info("Performing remote data flow transfer: " + dataflow);
+			_logger.info("Performing remote data flow transfer from [" + srcLocation + "] to [" + dstLocation + "]: " + dataflow);
 
 			try {
 				Pip2PipClient _pipHandle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(dstLocation));

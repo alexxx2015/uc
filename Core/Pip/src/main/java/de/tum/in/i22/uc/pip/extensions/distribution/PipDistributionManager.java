@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -44,25 +43,21 @@ public class PipDistributionManager implements IPipDistributionStrategy {
 
 	@Override
 	public boolean hasAllData(Location location, Set<IData> data) {
-		// TODO Auto-generated method stub
-		return false;
+		return _strategy.hasAllData(location, data);
 	}
 
 	@Override
 	public boolean hasAnyData(Location location, Set<IData> data) {
-		// TODO Auto-generated method stub
-		return false;
+		return _strategy.hasAnyData(location, data);
 	}
 
 	@Override
-	public boolean hasAllContainers(Location location, Set<IContainer> containers) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAllContainers(Location location, Set<IName> containers) {
+		return _strategy.hasAllContainers(location, containers);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Location location, Set<IContainer> containers) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasAnyContainer(Location location, Set<IName> containers) {
+		return _strategy.hasAnyContainer(location, containers);
 	}
 }

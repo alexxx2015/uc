@@ -55,11 +55,14 @@ import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
+import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
+import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
+
 
 public class RequestHandler implements IRequestHandler, IForwarder {
 
@@ -280,9 +283,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution flagForTheConflictResolution) {
-		// TODO not yet implemented
-		return null;
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag) {
+		UpdateInformationFlowSemanticsPipRequest request = new UpdateInformationFlowSemanticsPipRequest(deployer, jarFile, conflictResolutionFlag);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
 	}
 
 	@Override
@@ -349,15 +353,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public boolean hasAllContainers(Set<IContainer> container) {
-		HasAllContainersPipRequest request = new HasAllContainersPipRequest(container);
+	public boolean hasAllContainers(Set<IName> names) {
+		HasAllContainersPipRequest request = new HasAllContainersPipRequest(names);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
 
 	@Override
-	public boolean hasAnyContainer(Set<IContainer> container) {
-		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(container);
+	public boolean hasAnyContainer(Set<IName> names) {
+		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(names);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -386,6 +390,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
 		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

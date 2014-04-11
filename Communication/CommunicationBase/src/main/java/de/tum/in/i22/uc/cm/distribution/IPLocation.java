@@ -1,14 +1,61 @@
 package de.tum.in.i22.uc.cm.distribution;
 
+import java.security.InvalidParameterException;
 import java.util.Objects;
+
+import org.apache.commons.validator.routines.InetAddressValidator;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 
 public class IPLocation extends Location {
 	private final String _host;
 	private final int _port;
 
+	private static final InetAddressValidator validator = InetAddressValidator.getInstance();
+
+	/**
+	 * Creates an {@link IPLocation} from
+	 * a string of format <host>:<port>, as
+	 * returned by {@link IPLocation#asString()}.
+	 *
+	 * @see IPLocation#asString()
+	 *
+	 * @param s the string
+	 */
+	public IPLocation(String s) {
+		super(ELocation.IP);
+
+		String[] arr;
+		boolean success = false;
+
+		String hostValue = "";
+		int portValue = 0;
+
+		if (s != null && (arr = s.split(":")).length == 2 && validator.isValid(arr[0])) {
+			try {
+				hostValue = arr[0];
+				portValue = Integer.valueOf(arr[1]);
+				success = true;
+			} catch (Exception e) {
+				success = false;
+			}
+		}
+
+		if (!success) {
+			throw new InvalidParameterException("Unable to create IPLocation out of string [" + s + "].");
+		}
+
+		_host = hostValue;
+		_port = portValue;
+	}
+
 	public IPLocation(String host, int port) {
 		super(ELocation.IP);
+
+		if (host == null || port < 0) {
+			throw new InvalidParameterException("[" + host + ":" + port + "]");
+		}
 		_host = host;
 		_port = port;
 	}
@@ -33,7 +80,7 @@ public class IPLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_host, _port);
+		return _host.hashCode() ^ _port;
 	}
 
 	public String getHost() {
@@ -44,21 +91,26 @@ public class IPLocation extends Location {
 		return _port;
 	}
 
-	public static IPLocation from(String s) {
-		String[] arr;
-		IPLocation result = null;
 
-		if (s != null && (arr = s.split(":")).length == 2) {
-			try {
-				result = new IPLocation(arr[0], Integer.valueOf(arr[1]));
-			} catch (Exception e) {	}
-		}
 
-		return result;
+	/**
+	 * As prescribed by {@link Location}.
+	 * Returns <host>:<port>.
+	 *
+	 * @see IPLocation#IPLocation(String)
+	 */
+	@Override
+	public String asString() {
+		return _host + ":" + _port;
 	}
 
-	public enum ELocation {
-		LOCAL,
-		IP;
+	/**
+	 * As prescribed by {@link IName}.
+	 * Returns this {@link IPLocation}'s host
+	 * prefixed by {@link Location#PREFIX_LOCATION}.
+	 */
+	@Override
+	public String getName() {
+		return PREFIX_LOCATION + _host;
 	}
 }

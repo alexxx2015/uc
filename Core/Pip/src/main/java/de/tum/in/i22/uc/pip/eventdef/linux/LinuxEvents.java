@@ -166,102 +166,76 @@ public class LinuxEvents {
 
 		Set<IData> data = ifModel.getData(srcCont);
 		if (data == null || data.size() == 0) {
-			return messageFactory.createStatus(EStatus.OKAY);
+			return STATUS_OKAY;
 		}
 
 		_logger.debug("Data is " + data);
 
-//		// this map will remember the remote data flows that have occurred.
-//		Map<Location,Map<IName,Set<IData>>> remoteDataFlows = new HashMap<>();
-//
-//		// copy into all containers aliased from the destination container
-//		for (IContainer c : ifModel.getAliasTransitiveClosure(dstCont)) {
-//
-//			/*
-//			 * In case we are copying to a RemoteSocketContainer, we
-//			 * know that a remote data transfer is happening. Thus,
-//			 * we assemble the information which data has flown remotely.
-//			 */
-//			if (c instanceof RemoteSocketContainer) {
-//				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
-//				_logger.debug("Preparing to copy data " + data + " to container " + c);
-//
-//				Map<IName,Set<IData>> map = remoteDataFlows.get(rsc.getLocation());
-//				if (map == null) {
-//					map = new HashMap<>();
-//					remoteDataFlows.put(rsc.getLocation(), map);
-//				}
-//				map.put(rsc.getSocketName(), data);
-//
-//			}
-//			else {
-//				// this is regular, local, data flow
-//				ifModel.addDataToContainer(data, c);
-//			}
-//		}
-//
-//		/*
-//		 * Now, also copy into the actual (direct) destination container ...
-//		 * ... but only if it is not a socket.
-//		 */
-//		if (!(dstCont instanceof SocketContainer)) {
-//			ifModel.addDataToContainer(data, dstCont);
-//		}
-//
-//
-//		/*
-//		 * Finally, check whether remote data flow has happened. If
-//		 * so, return a corresponding status.
-//		 */
-//		if (remoteDataFlows.size() > 0) {
-//			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlows);
-//		}
-//
-//		return STATUS_OKAY;
-
-
-		Location srcLocation = null;
-
-		if (srcCont instanceof SocketContainer) {
-			Set<IContainer> aliases = ifModel.getAliasesTo(srcCont);
-			if (aliases.size() > 1) {
-				_logger.error("There should exist at most one such alias. Something went wrong. Somewhere.");
-				return new StatusBasic(EStatus.ERROR, "There should exist at most one such alias. Something went wrong. Somewhere.");
-			}
-
-			for (IContainer c : aliases) {
-				if (c instanceof RemoteSocketContainer) {
-					srcLocation = ((RemoteSocketContainer) c).getLocation();
-				}
-			}
-		}
 
 		RemoteDataFlowInfo remoteDataFlow = null;
 
-		if (srcLocation != null) {
-			// there is incoming remote data flow
-			remoteDataFlow = new RemoteDataFlowInfo(srcLocation);
-		}
-		else {
-			// did not yet detect any remote data flow, but
-			// we might have remote data flow to the outside
-			remoteDataFlow = new RemoteDataFlowInfo(new LocalLocation());
+		if (srcCont instanceof SocketContainer) {
+			/*
+			 * We are reading from a socket...
+			 */
+
+			Set<IContainer> aliases = ifModel.getAliasesTo(srcCont);
+
+			switch (aliases.size()) {
+				case 0:
+					// ... but there are no aliases to that socket, so there is nothing to do
+					break;
+				case 1:
+					// ... there is exactly one alias to it
+					IContainer c = aliases.iterator().next();
+
+					if (c instanceof RemoteSocketContainer) {
+
+						/*
+						 * There is incoming remote data flow.
+						 * We now know that both the local location
+						 * and the remote location are aware of the data.
+						 *
+						 * We update the model, assemble the remote
+						 * data flow information object and return it.
+						 */
+
+						ifModel.addDataTransitively(data, dstCont);
+
+						Location localLocation = new LocalLocation();
+						Location remoteLocation = ((RemoteSocketContainer) c).getLocation();
+
+						remoteDataFlow = new RemoteDataFlowInfo(remoteLocation);
+						remoteDataFlow.addFlow(localLocation, localLocation, data);
+
+						return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
+					}
+
+					break;
+				default:
+					_logger.error("There should exist at most one such alias. Something went wrong. Somewhere.");
+					return new StatusBasic(EStatus.ERROR, "There should exist at most one such alias. Something went wrong. Somewhere.");
+			}
 		}
 
-		// copy into all aliased containers
+
+		// copy data into all aliased containers
 		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
+			ifModel.addData(data, c);
+
 			if (c instanceof RemoteSocketContainer) {
 
 				/*
 				 * In case we are copying to a RemoteSocketContainer, we
 				 * know that a remote data transfer is happening. Thus,
-				 * we assemble the information which data has flown remotely.
+				 * we assemble the information about which data has flown remotely.
 				 */
+				if (remoteDataFlow == null) {
+					remoteDataFlow = new RemoteDataFlowInfo(new LocalLocation());
+				}
+
 				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
 				remoteDataFlow.addFlow(rsc.getLocation(), rsc.getSocketName(), data);
-			}
-			else {
-				ifModel.addData(data, c);
 			}
 		}
 
@@ -269,7 +243,7 @@ public class LinuxEvents {
 		 * Finally, check whether remote data flow has happened. If
 		 * so, return a corresponding status.
 		 */
-		if (!remoteDataFlow.isEmpty()) {
+		if (remoteDataFlow != null && !remoteDataFlow.isEmpty()) {
 			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
 		}
 
