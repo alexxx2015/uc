@@ -1,28 +1,51 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class ContainerBasic implements IContainer {
 	private final String _id;
 
+	private final Map<EAttributeName,IAttribute<?>> _attributes;
+
 	public ContainerBasic() {
-		this(null);
+		this((String) null);
 	}
 
-	public ContainerBasic(String id) {
-		if (id == null) {
+	public ContainerBasic(IAttribute<?> ... attributes) {
+		this(null, attributes);
+	}
+
+	public ContainerBasic(String id, IAttribute<?> ... attributes) {
+		if (id == null || id.isEmpty()) {
 			id = UUID.randomUUID().toString();
 		}
 
 		_id = id;
+
+		_attributes = new HashMap<>();
+		for (IAttribute<?> attr : attributes) {
+			_attributes.put(attr.getName(), attr);
+		}
 	}
 
 	@Override
 	public String getId() {
 		return _id;
+	}
+
+	public boolean hasAttribute(EAttributeName name) {
+		return _attributes.keySet().contains(name);
+	}
+
+	public IAttribute<?> getAttribute(EAttributeName name) {
+		return _attributes.get(name);
 	}
 
 	@Override
