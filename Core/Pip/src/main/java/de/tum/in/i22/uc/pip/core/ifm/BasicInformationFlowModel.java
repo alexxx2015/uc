@@ -512,6 +512,46 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
+
+	/**
+	 * Returns all containers of the specified type
+	 * in which the specified data is in.
+	 *
+	 * ~ Double checked, 2014/04/11. FK.
+	 *
+	 * @param data the data whose containers are returned.
+	 * @return The set of containers containing the specified data.
+	 */
+
+	/**
+	 * Returns all containers of the specified type
+	 * in which the specified data is in.
+	 *
+	 * ~ Double checked, 2014/04/11. FK.
+	 *
+	 * @param data the data whose containers are returned.
+	 * @param type the type of the container to be returned
+	 * @return all containers of type <T> containing the specified data.
+	 */
+	public <T extends IContainer> Set<T> getContainers(IData data, Class<T> type) {
+		if (data == null) {
+			return Collections.emptySet();
+		}
+
+		Set<T> result = new HashSet<>();
+
+		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap.entrySet()) {
+			if (entry.getValue().contains(data)) {
+
+				IContainer container = entry.getKey();
+				if (type.isInstance(container)) {
+					result.add(type.cast(container));
+				}
+			}
+		}
+		return result;
+	}
+
 	public void addData(Collection<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
@@ -660,6 +700,27 @@ public final class BasicInformationFlowModel {
 		return Collections.unmodifiableCollection(_namingMap.keySet());
 	}
 
+	/**
+	 * Returns an unmodifiable view onto all names
+	 * of the specified type.
+	 *
+	 * ~ Double checked, 2014/04/1. FK.
+	 *
+	 * @param the type of the names to be returned.
+	 * @return an unmodifiable view onto all names of the specified type.
+	 */
+	public <T extends IName> Collection<T> getAllNames(Class<T> type) {
+		Collection<T> result = new LinkedList<>();
+
+		for (IName name : _namingMap.keySet()) {
+			if (type.isInstance(name)) {
+				result.add(type.cast(name));
+			}
+		}
+
+		return Collections.unmodifiableCollection(result);
+	}
+
 
 	/**
 	 * Returns an unmodifiable view onto all names
@@ -701,20 +762,21 @@ public final class BasicInformationFlowModel {
 	}
 
 	/**
-	 * Get all names of the specified container
+	 * Get all names of the specified container.
 	 * It is ensured that all names within the result are of the specified type.
-	 * @param containerName
-	 * @param type
-	 * @return
+	 *
+	 * ~ Double checked, 2014/04/11. FK.
+	 *
+	 * @param cont the {@link IContainer} whose {@link IName}s will be returned
+	 * @param type the type of the {@link IName}s to be returned
+	 * @return all names of type <T> of the specified container
 	 */
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
 		List<T> result = new LinkedList<>();
 
 		for (IName name : _namingMap.keySet()) {
-			if (type.isInstance(name)) {
-				if (_namingMap.get(name).equals(cont)) {
-					result.add(type.cast(name));
-				}
+			if (_namingMap.get(name).equals(cont) && type.isInstance(name)) {
+				result.add(type.cast(name));
 			}
 		}
 

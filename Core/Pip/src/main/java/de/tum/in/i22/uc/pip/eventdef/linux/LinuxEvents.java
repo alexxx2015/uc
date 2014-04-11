@@ -202,7 +202,7 @@ public class LinuxEvents {
 
 						ifModel.addDataTransitively(data, dstCont);
 
-						Location localLocation = new LocalLocation();
+						Location localLocation = LocalLocation.getInstance();
 						Location remoteLocation = ((RemoteSocketContainer) c).getLocation();
 
 						remoteDataFlow = new RemoteDataFlowInfo(remoteLocation);
@@ -231,7 +231,7 @@ public class LinuxEvents {
 				 * we assemble the information about which data has flown remotely.
 				 */
 				if (remoteDataFlow == null) {
-					remoteDataFlow = new RemoteDataFlowInfo(new LocalLocation());
+					remoteDataFlow = new RemoteDataFlowInfo(LocalLocation.getInstance());
 				}
 
 				RemoteSocketContainer rsc = (RemoteSocketContainer) c;

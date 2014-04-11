@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +22,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
@@ -134,7 +137,46 @@ public class PipPushStrategy extends PipDistributionStrategy {
 
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-//		_ifModel.getContainers(data); TODO
-		return null;
+		Set<Location> hasIt = new HashSet<>();
+
+		/*
+		 * Retrieve all (remote!) locations of which we know that they 'have' the data.
+		 * Do not yet add LocalLocation.
+		 */
+		for (Location location : _ifModel.getAllNames(Location.class)) {
+			if (location.getLocation() != ELocation.LOCAL &&
+					Sets.intersection(data, _ifModel.getData(location)).size() > 0) {
+				hasIt.add(location);
+			}
+		}
+
+		/*
+		 * We ask the other locations recursively.
+		 * TODO: This can be done in parallel.
+		 * TODO: The recursive lookup should not be implemented in a push strategy :-o
+		 */
+		if (recursionDepth > 0) {
+			Pip2PipClient _handle;
+			Set<Location> additionalLocations = new HashSet<>();
+			for (Location location : hasIt) {
+				try {
+					_handle = _connectionManager.obtain(_clientHandlerFactory.createPip2PipClient(location));
+
+					additionalLocations.addAll(_handle.whoHasData(data, recursionDepth - 1));
+
+					_connectionManager.release(_handle);
+				} catch (IOException e) {
+					_logger.warn("Unable to ask for data at " + location);
+				}
+			}
+		}
+
+		// also add LocalLocation, if we 'have' the data locally.
+		LocalLocation localLocation = LocalLocation.getInstance();
+		if (Sets.intersection(data, _ifModel.getData(localLocation)).size() > 0) {
+			hasIt.add(IPLocation.localIpLocation);
+		}
+
+		return Collections.unmodifiableSet(hasIt);
 	}
 }

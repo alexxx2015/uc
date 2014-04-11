@@ -31,6 +31,21 @@ enum TConflictResolution {
 	KEEP_ALL = 3  // currently not used
 }
 
+enum TAttributeName {
+	WILDCARD = 1,
+	TYPE = 2,
+	OWNER = 3,
+	CLASS = 4,
+	CREATION_TIME = 5,
+	MODIFICATION_TIME = 6,
+	SIZE = 7
+}
+
+struct TAttribute {
+	1: required TAttributeName name,
+	2: required string value
+}
+
 struct TEvent {
 	1: required string name,
 	2: map<string,string> parameters,
@@ -54,7 +69,8 @@ struct TPxpSpec{
 }
 
 struct TContainer {
-	1: required string id
+	1: required string id,
+	2: required list<TAttribute> attributes
 }
 
 struct TData {

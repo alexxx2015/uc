@@ -15,6 +15,11 @@ public class IPLocation extends Location {
 	private static final InetAddressValidator validator = InetAddressValidator.getInstance();
 
 	/**
+	 * The localhost represented as {@link IPLocation}.
+	 */
+	public static final IPLocation localIpLocation = new IPLocation(Network.localInetAddress.getHostAddress());
+
+	/**
 	 * Creates an {@link IPLocation} from
 	 * a string of format <host>:<port>, as
 	 * returned by {@link IPLocation#asString()}.
@@ -32,13 +37,16 @@ public class IPLocation extends Location {
 		String hostValue = "";
 		int portValue = 0;
 
-		if (s != null && (arr = s.split(":")).length == 2 && validator.isValid(arr[0])) {
+		if (s != null && (arr = s.split(":")).length >= 1 && validator.isValid(arr[0])) {
 			try {
 				hostValue = arr[0];
-				portValue = Integer.valueOf(arr[1]);
 				success = true;
 			} catch (Exception e) {
 				success = false;
+			}
+
+			if (arr.length >= 2) {
+				portValue = Integer.valueOf(arr[1]);
 			}
 		}
 
@@ -59,6 +67,7 @@ public class IPLocation extends Location {
 		_host = host;
 		_port = port;
 	}
+
 
 	@Override
 	public String toString() {

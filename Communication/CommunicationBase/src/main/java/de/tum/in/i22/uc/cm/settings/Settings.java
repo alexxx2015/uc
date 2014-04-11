@@ -44,9 +44,9 @@ public class Settings extends SettingsLoader {
 	private int _pxpListenerPort = 30003;
 	private boolean _anyListenerEnabled = true;
 
-	private Location _pdpLocation = new LocalLocation();
-	private Location _pipLocation = new LocalLocation();
-	private Location _pmpLocation = new LocalLocation();
+	private Location _pdpLocation = LocalLocation.getInstance();
+	private Location _pipLocation = LocalLocation.getInstance();
+	private Location _pmpLocation = LocalLocation.getInstance();
 
 	private String _pipEnabledInformationFlowModels = "scope";
 	private String _pipEventHandlerSuffix 			= "EventHandler";

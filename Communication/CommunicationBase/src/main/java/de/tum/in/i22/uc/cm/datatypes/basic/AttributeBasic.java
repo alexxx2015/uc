@@ -3,27 +3,23 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 
 /**
  * A basic attribute.
  *
- * Parameter <V> describes the type of the attribute's value.
- *
  * @author Florian Kelbert
  *
- * @param <V>
  */
-public class AttributeBasic<V> implements IAttribute<V> {
+public class AttributeBasic implements IAttribute {
 
 	private final EAttributeName _name;
-	private final V _value;
-	private final Class<V> _valueType;
+	private final String _value;
 
-	public AttributeBasic(EAttributeName name, V value, Class<V> valueType) {
+	public AttributeBasic(EAttributeName name, String value) {
 		_name = name;
 		_value = value;
-		_valueType = valueType;
 	}
 
 	@Override
@@ -32,19 +28,14 @@ public class AttributeBasic<V> implements IAttribute<V> {
 	}
 
 	@Override
-	public V getValue() {
+	public String getValue() {
 		return _value;
-	}
-
-	@Override
-	public Class<V> getValueType() {
-		return _valueType;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AttributeBasic) {
-			AttributeBasic<?> other = (AttributeBasic<?>) obj;
+			AttributeBasic other = (AttributeBasic) obj;
 			return Objects.equals(_name, other._name)
 					&& Objects.equals(_value, other._value);
 		}
@@ -57,8 +48,26 @@ public class AttributeBasic<V> implements IAttribute<V> {
 	}
 
 
+	/**
+	 * {@link EAttributeName#WILDCARD} might be used
+	 * for custom attribute names without extending this enum.
+	 * In this case, the developer is supposed to encode all
+	 * information needed in the value. Note, that in this case
+	 * {@link AttributeBasic#equals(Object)} or
+	 * {@link IContainer#matches(java.util.Collection)} might not
+	 * work anymore as expected. The developer would need to
+	 * implement this functionalities.
+	 *
+	 * @author Florian Kelbert
+	 *
+	 */
 	public enum EAttributeName {
+		WILDCARD,
 		TYPE,
-		OWNER;
+		OWNER,
+		CLASS,
+		CREATION_TIME,
+		MODIFICATION_TIME,
+		SIZE;
 	}
 }
