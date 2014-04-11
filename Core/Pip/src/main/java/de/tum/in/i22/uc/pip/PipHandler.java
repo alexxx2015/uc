@@ -8,8 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
-
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
@@ -173,65 +171,6 @@ public class PipHandler extends PipProcessor {
 		return _ifModelManager.stopSimulation();
 	}
 
-//    /**
-//     * If @param event is a desired event, simulates the new state in the PIP, update the cache, and then revert.
-//     * If @param event is an actual event, does the same, but the PIP remains in the new state.
-//     * @param event
-//     * @return
-//     */
-//	@Override
-//	public ICacheUpdate refresh (IEvent e) {
-//		if (e==null) {
-//			_logger.error("null event received. returning null");
-//			return null;
-//		}
-//		ICacheUpdate res = new CacheUpdateBasic();
-//		Map<IKey,Boolean> map=new HashMap<IKey,Boolean>();
-//
-//
-//		res.setMap(map);
-//		res.setScopeId("<GET SCOPE ID STILL NOT IMPLEMENTED>");
-//
-//		int counter=0;
-//		_logger.debug("refreshing cache with event "+e);
-//
-//		if (!e.isActual()){
-//			_logger.debug("event " + e.getPrefixedName() + " is a desired event. Simulating new state.");
-//			if (!isSimulating()){
-//				startSimulation();
-//			} else {
-//				_logger.error("Pip is already simulating. returning null");
-//				return null;
-//			}
-//		} else {
-//			_logger.debug("event " + e.getPrefixedName() + " is an actual event");
-//		}
-//		_logger.debug("Updating PIP with event " + e.getPrefixedName() );
-//		notifyActualEvent(e);
-//		_logger.debug("Creating cache response");
-//		for (String key : _predicatesToEvaluate.keySet()){
-//			Boolean b = evaluatePredicatCurrentState(key);
-//			_logger.debug("("+counter+") ["+key+"]="+b);
-//			map.put(_predicatesToEvaluate.get(key), b);
-//			counter++;
-//		}
-//
-//		if (!e.isActual()){
-//			_logger.debug("Reverting simulation");
-//			if (isSimulating()){
-//				stopSimulation();
-//			} else {
-//				_logger.error("Pip is not simulating. ERROR!!!! returning null");
-//				return null;
-//			}
-//		} else {
-//			_logger.debug("Done!");
-//		}
-//
-//		return res;
-//	}
-
-
 	@Override
 	public boolean isSimulating() {
 		return _ifModelManager.isSimulating();
@@ -287,12 +226,14 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public boolean hasAllContainers(Set<IName> containers) {
-		return _ifModel.getAllContainers().containsAll(containers);
+		// TODO
+		return false;
 	}
 
 	@Override
 	public boolean hasAnyContainer(Set<IName> containers) {
-		return Sets.intersection(containers, _ifModel.getAllContainers()).size() >= 1;
+		// TODO
+		return false;
 	}
 
 	@Override
@@ -301,8 +242,7 @@ public class PipHandler extends PipProcessor {
 
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {
-			container = new ContainerBasic();
-			_ifModel.addName(containerName, container);
+			_ifModel.addName(containerName, container = new ContainerBasic());
 		}
 		_ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
@@ -310,8 +250,7 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		// TODO Auto-generated method stub
-		return null;
+		return _distributedPipManager.whoHasData(data, recursionDepth);
 	}
 
 	@Override

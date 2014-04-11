@@ -60,4 +60,9 @@ public class PipDistributionManager implements IPipDistributionStrategy {
 	public boolean hasAnyContainer(Location location, Set<IName> containers) {
 		return _strategy.hasAnyContainer(location, containers);
 	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		return _strategy.whoHasData(data, recursionDepth);
+	}
 }

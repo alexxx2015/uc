@@ -16,10 +16,10 @@ import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 
 public interface ClientHandlerFactory {
-	Any2PdpClient createPdpClientHandler(Location location);
-	Any2PipClient createPipClientHandler(Location location);
-	Any2PmpClient createPmpClientHandler(Location location);
-	Any2PxpClient createPxpClientHandler(Location location);
+	Any2PdpClient createAny2PdpClientHandler(Location location);
+	Any2PipClient createAny2PipClientHandler(Location location);
+	Any2PmpClient createAny2PmpClientHandler(Location location);
+	Any2PxpClient createAny2PxpClientHandler(Location location);
 
 	Pep2PipClient createPep2PipClient(Location location);
 	Pdp2PipClient createPdp2PipClient(Location location);

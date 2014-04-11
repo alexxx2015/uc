@@ -49,7 +49,7 @@ public class ThriftTest {
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createPdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
 		clientPdp.connect();
 
 		int x = 0;

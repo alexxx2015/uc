@@ -119,7 +119,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PdpClient pdp = thriftClientFactory.createPdpClientHandler(loc);
+					Any2PdpClient pdp = thriftClientFactory.createAny2PdpClientHandler(loc);
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -141,7 +141,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PmpClient pmp = thriftClientFactory.createPmpClientHandler(loc);
+					Any2PmpClient pmp = thriftClientFactory.createAny2PmpClientHandler(loc);
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -163,7 +163,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PipClient pip = thriftClientFactory.createPipClientHandler(loc);
+					Any2PipClient pip = thriftClientFactory.createAny2PipClientHandler(loc);
 					try {
 						pip.connect();
 					} catch (Exception e) {

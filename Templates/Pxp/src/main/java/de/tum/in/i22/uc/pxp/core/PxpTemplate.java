@@ -61,7 +61,7 @@ public class PxpTemplate {
 
 		//register them
 		System.out.println("getting pdp handler ");
-		Any2PdpClient clientPdp = new ThriftClientFactory().createPdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
+		Any2PdpClient clientPdp = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", Settings.getInstance().getPdpListenerPort()));
 
 
 		try {

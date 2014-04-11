@@ -10,13 +10,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
 public interface IPipDistributionStrategy {
-	public abstract boolean hasAllData(Location location, Set<IData> data);
-	public abstract boolean hasAnyData(Location location, Set<IData> data);
+	public boolean hasAllData(Location location, Set<IData> data);
+	public boolean hasAnyData(Location location, Set<IData> data);
 
-	public abstract boolean hasAllContainers(Location location, Set<IName> containers);
-	public abstract boolean hasAnyContainer(Location location, Set<IName> containers);
+	public boolean hasAllContainers(Location location, Set<IName> containers);
+	public boolean hasAnyContainer(Location location, Set<IName> containers);
 
-	public abstract IStatus doRemoteEventUpdate(Location location, IEvent event);
+	public IStatus doRemoteEventUpdate(Location location, IEvent event);
 
-	public abstract IStatus remoteDataFlow(Location srcLocation, Location dstlocation, Map<IName, Set<IData>> dataflow);
+	public IStatus remoteDataFlow(Location srcLocation, Location dstlocation, Map<IName, Set<IData>> dataflow);
+
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth);
 }
