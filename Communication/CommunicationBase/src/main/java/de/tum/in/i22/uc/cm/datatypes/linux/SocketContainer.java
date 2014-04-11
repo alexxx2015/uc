@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import de.tum.in.i22.uc.cm.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 
 /**
  * Class representing socket containers.

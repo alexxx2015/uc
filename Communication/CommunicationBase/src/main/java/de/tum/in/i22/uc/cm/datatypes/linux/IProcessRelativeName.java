@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
-import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 /**
  * This interface indicates that a container name is relative to a process.

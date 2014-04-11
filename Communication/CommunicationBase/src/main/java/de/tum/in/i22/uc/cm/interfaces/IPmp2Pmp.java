@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 

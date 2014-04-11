@@ -3,12 +3,12 @@ package uctests;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.tum.in.i22.uc.cm.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.server.IRequestHandler;
+import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;

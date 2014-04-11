@@ -6,11 +6,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.server.IForwarder;
-import de.tum.in.i22.uc.cm.server.PdpProcessor;
-import de.tum.in.i22.uc.cm.server.PipProcessor;
-import de.tum.in.i22.uc.cm.server.PmpProcessor;
-import de.tum.in.i22.uc.cm.server.Request;
+import de.tum.in.i22.uc.cm.processing.IForwarder;
+import de.tum.in.i22.uc.cm.processing.PdpProcessor;
+import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.pdp.requests.PdpRequest;
 import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.requests.PmpRequest;

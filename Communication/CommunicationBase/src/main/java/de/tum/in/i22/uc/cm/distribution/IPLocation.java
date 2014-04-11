@@ -2,8 +2,10 @@ package de.tum.in.i22.uc.cm.distribution;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
+
 import org.apache.commons.validator.routines.InetAddressValidator;
-import de.tum.in.i22.uc.cm.datatypes.IName;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 
 public class IPLocation extends Location {

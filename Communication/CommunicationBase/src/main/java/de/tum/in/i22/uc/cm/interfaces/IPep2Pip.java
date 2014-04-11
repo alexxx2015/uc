@@ -2,9 +2,9 @@ package de.tum.in.i22.uc.cm.interfaces;
 
 import java.io.File;
 
-import de.tum.in.i22.uc.cm.datatypes.EConflictResolution;
-import de.tum.in.i22.uc.cm.datatypes.IPipDeployer;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 

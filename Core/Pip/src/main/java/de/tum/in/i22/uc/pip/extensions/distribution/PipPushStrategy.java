@@ -12,18 +12,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import de.tum.in.i22.uc.cm.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.Pip2PipClient;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IName;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
+import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
+
+
 
 public class PipPushStrategy extends PipDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PipPushStrategy.class);

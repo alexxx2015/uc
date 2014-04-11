@@ -6,12 +6,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.client.Any2PmpClient;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 
 public class PmpPushStrategy extends PmpDistributionStrategy {
 	protected static final Logger _logger = LoggerFactory.getLogger(PmpPushStrategy.class);

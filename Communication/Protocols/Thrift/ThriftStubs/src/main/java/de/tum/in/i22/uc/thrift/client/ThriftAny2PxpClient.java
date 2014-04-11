@@ -3,10 +3,10 @@ package de.tum.in.i22.uc.thrift.client;
 import java.io.IOException;
 import java.util.List;
 
-import de.tum.in.i22.uc.cm.client.Any2PxpClient;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 

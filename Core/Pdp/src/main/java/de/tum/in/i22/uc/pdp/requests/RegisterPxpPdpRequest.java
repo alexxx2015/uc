@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pdp.requests;
 
-import de.tum.in.i22.uc.cm.basic.PxpSpec;
-import de.tum.in.i22.uc.cm.server.PdpProcessor;
+import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 public class RegisterPxpPdpRequest extends PdpRequest<Boolean> {
 	private final PxpSpec _pxp;

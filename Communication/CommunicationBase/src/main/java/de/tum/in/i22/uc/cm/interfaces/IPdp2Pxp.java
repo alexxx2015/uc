@@ -2,8 +2,8 @@ package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.List;
 
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 

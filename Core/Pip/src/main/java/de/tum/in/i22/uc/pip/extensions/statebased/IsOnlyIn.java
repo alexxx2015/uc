@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.basic.DataBasic;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class IsOnlyIn extends StateBasedPredicate {
 	private final String _param1;

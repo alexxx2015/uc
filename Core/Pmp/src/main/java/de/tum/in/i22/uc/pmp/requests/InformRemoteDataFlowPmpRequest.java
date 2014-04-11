@@ -2,10 +2,10 @@ package de.tum.in.i22.uc.pmp.requests;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.IData;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.server.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 public class InformRemoteDataFlowPmpRequest extends PmpRequest<IStatus> {
 	private final Location _srcLocation;

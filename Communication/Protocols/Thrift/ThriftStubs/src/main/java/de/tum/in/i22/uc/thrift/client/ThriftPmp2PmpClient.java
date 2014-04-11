@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.thrift.client;
 import java.io.IOException;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.client.Pmp2PmpClient;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 

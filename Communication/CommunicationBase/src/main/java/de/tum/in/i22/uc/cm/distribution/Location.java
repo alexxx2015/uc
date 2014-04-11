@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import de.tum.in.i22.uc.cm.datatypes.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 public abstract class Location implements IName {
 	private final ELocation _location;

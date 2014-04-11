@@ -2,9 +2,9 @@ package de.tum.in.i22.uc.pip.extensions.statebased;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.IData;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 
 public class IsNotIn extends StateBasedPredicate {
 	private final String _param1;

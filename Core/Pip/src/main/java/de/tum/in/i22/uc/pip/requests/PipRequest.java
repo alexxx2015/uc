@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pip.requests;
 
-import de.tum.in.i22.uc.cm.server.PipProcessor;
-import de.tum.in.i22.uc.cm.server.Request;
+import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.processing.Request;
 
 /**
  * Class for handling remote PIP requests.

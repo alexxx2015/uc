@@ -2,11 +2,11 @@ package de.tum.in.i22.uc.pip.eventdef.scope;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.IMessageFactory;
-import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.factories.IMessageFactory;
+import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;

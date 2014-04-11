@@ -1,21 +1,21 @@
 package de.tum.in.i22.uc.thrift.client;
 
-import de.tum.in.i22.uc.cm.client.Any2PdpClient;
-import de.tum.in.i22.uc.cm.client.Any2PipClient;
-import de.tum.in.i22.uc.cm.client.Any2PmpClient;
-import de.tum.in.i22.uc.cm.client.Any2PxpClient;
-import de.tum.in.i22.uc.cm.client.ClientHandlerFactory;
-import de.tum.in.i22.uc.cm.client.Pdp2PipClient;
-import de.tum.in.i22.uc.cm.client.Pdp2PxpClient;
-import de.tum.in.i22.uc.cm.client.Pep2PdpClient;
-import de.tum.in.i22.uc.cm.client.Pep2PipClient;
-import de.tum.in.i22.uc.cm.client.Pip2PipClient;
-import de.tum.in.i22.uc.cm.client.Pip2PmpClient;
-import de.tum.in.i22.uc.cm.client.Pmp2PdpClient;
-import de.tum.in.i22.uc.cm.client.Pmp2PipClient;
-import de.tum.in.i22.uc.cm.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.factories.ClientHandlerFactory;
 
 
 public class ThriftClientFactory implements ClientHandlerFactory {

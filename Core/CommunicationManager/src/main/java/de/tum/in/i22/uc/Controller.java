@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.handlers.NativeHandler;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.server.IRequestHandler;
+import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;

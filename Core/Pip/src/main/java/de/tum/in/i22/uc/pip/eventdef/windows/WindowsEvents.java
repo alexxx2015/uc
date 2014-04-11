@@ -1,9 +1,9 @@
 package de.tum.in.i22.uc.pip.eventdef.windows;
 
-import de.tum.in.i22.uc.cm.IMessageFactory;
-import de.tum.in.i22.uc.cm.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.factories.IMessageFactory;
+import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 

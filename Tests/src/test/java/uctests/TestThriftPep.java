@@ -8,12 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.tum.in.i22.uc.Controller;
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.client.Pep2PdpClient;
-import de.tum.in.i22.uc.cm.client.Pep2PipClient;
-import de.tum.in.i22.uc.cm.datatypes.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 

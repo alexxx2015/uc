@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import de.tum.in.i22.uc.cm.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 
 public class Event implements Serializable {
 	private static final long serialVersionUID = 6399332064987815074L;

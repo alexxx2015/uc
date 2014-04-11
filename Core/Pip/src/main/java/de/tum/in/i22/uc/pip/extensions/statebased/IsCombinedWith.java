@@ -2,8 +2,8 @@ package de.tum.in.i22.uc.pip.extensions.statebased;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.basic.DataBasic;
-import de.tum.in.i22.uc.cm.datatypes.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class IsCombinedWith extends StateBasedPredicate {
 	private final String _param1;
