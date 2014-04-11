@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,14 +12,13 @@ public class DataEventMapBasic implements IDataEventMap {
 	private final Map<IData, IEvent> _map;
 
 	public DataEventMapBasic(Map<IData, IEvent> map) {
-		super();
 		_map = map;
 	}
 
 
 	@Override
 	public Map<IData, IEvent> getMap() {
-		return _map;
+		return Collections.unmodifiableMap(_map);
 	}
 
 

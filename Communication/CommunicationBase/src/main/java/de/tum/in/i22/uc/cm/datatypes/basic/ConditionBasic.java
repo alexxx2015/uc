@@ -30,10 +30,14 @@ public class ConditionBasic implements ICondition {
 		return _conditionSimp;
 	}
 
+	// I doubt that these setters are necessary. Use an appropriate constructor instead.
+	@Deprecated
 	public void setCondition(IOslFormula condition) {
 		_condition = condition;
 	}
 
+	// I doubt that these setters are necessary. Use an appropriate constructor instead.
+	@Deprecated
 	public void setConditionSimp(ISimplifiedTemporalLogic conditionSimp) {
 		_conditionSimp = conditionSimp;
 	}

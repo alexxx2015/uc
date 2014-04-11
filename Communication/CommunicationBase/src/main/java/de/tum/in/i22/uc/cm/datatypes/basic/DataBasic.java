@@ -7,15 +7,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 
 public class DataBasic implements IData {
 
-	private String _id;
+	private final String _id;
 
 	public DataBasic() {
-		// generate unique id
-		_id = UUID.randomUUID().toString();
+		this(UUID.randomUUID().toString());
 	}
 
 	public DataBasic(String id) {
-		this();
 		_id = id;
 	}
 
@@ -38,7 +36,7 @@ public class DataBasic implements IData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_id);
+		return _id.hashCode();
 	}
 
 	@Override

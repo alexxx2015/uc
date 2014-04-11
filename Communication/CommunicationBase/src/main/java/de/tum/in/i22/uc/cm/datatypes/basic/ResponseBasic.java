@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public List<IEvent> getExecuteActions() {
-		return _executeActions;
+		return Collections.unmodifiableList(_executeActions);
 	}
 
 	@Override

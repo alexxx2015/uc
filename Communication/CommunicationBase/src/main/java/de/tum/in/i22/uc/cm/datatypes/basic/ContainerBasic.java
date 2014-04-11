@@ -6,8 +6,8 @@ import java.util.UUID;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
 public class ContainerBasic implements IContainer {
-	private String _classValue;
-	private String _id;
+	private final String _classValue;
+	private final String _id;
 
 	public ContainerBasic() {
 		this(null, null);

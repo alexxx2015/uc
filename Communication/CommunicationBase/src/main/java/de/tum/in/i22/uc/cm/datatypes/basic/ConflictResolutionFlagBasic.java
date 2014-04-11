@@ -28,7 +28,7 @@ public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_eConflictResolution);
+		return _eConflictResolution.hashCode();
 	}
 
 	@Override
