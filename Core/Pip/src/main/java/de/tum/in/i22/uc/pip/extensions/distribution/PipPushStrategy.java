@@ -49,19 +49,13 @@ public class PipPushStrategy extends PipDistributionStrategy {
 
 	@Override
 	public boolean hasAllContainers(Location location, Set<IName> containers) {
-		Set<IName> has = _hasContainers.get(location);
-		if (has != null) {
-			return has.containsAll(containers);
-		}
+		// TODO
 		return false;
 	}
 
 	@Override
 	public boolean hasAnyContainer(Location location, Set<IName> containers) {
-		Set<IName> has = _hasContainers.get(location);
-		if (has != null) {
-			return Sets.intersection(has, containers).size() > 0;
-		}
+		// TODO
 		return false;
 	}
 
@@ -136,5 +130,11 @@ public class PipPushStrategy extends PipDistributionStrategy {
 		}
 
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+//		_ifModel.getContainers(data); TODO
+		return null;
 	}
 }

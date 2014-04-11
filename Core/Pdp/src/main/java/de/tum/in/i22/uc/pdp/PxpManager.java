@@ -61,7 +61,7 @@ public class PxpManager {
 				PxpSpec pxp = pxpSpec.get(pxpId);
 
 				try {
-					Any2PxpClient client = new ThriftClientFactory().createPxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
+					Any2PxpClient client = new ThriftClientFactory().createAny2PxpClientHandler(new IPLocation(pxp.getIp(), pxp.getPort()));
 
 					try {
 						client.connect();
