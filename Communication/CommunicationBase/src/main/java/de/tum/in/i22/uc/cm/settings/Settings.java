@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.IName;
 import de.tum.in.i22.uc.cm.distribution.ECommunicationProtocol;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.IPLocation.ELocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
@@ -41,13 +42,7 @@ public class Settings extends SettingsLoader {
 	private int _anyListenerPort = 21004;
 
 	private int _pxpListenerPort = 30003;
-
-	private boolean _pmpListenerEnabled = true;
-	private boolean _pipListenerEnabled = true;
-	private boolean _pdpListenerEnabled = true;
 	private boolean _anyListenerEnabled = true;
-
-	private boolean _pxpListenerEnabled = true;
 
 	private Location _pdpLocation = new LocalLocation();
 	private Location _pipLocation = new LocalLocation();
@@ -126,9 +121,6 @@ public class Settings extends SettingsLoader {
 		_pipLocation = loadSetting("pip_location", _pipLocation);
 		_pdpLocation = loadSetting("pdp_location", _pdpLocation);
 
-		_pmpListenerEnabled = loadSetting("pmp_listener_enabled", _pmpListenerEnabled);
-		_pipListenerEnabled = loadSetting("pip_listener_enabled", _pipListenerEnabled);
-		_pdpListenerEnabled = loadSetting("pdp_listener_enabled", _pdpListenerEnabled);
 		_anyListenerEnabled = loadSetting("any_listener_enabled", _anyListenerEnabled);
 
 		_pmpListenerPort = loadSetting("pmp_listener_port", _pmpListenerPort);
@@ -137,7 +129,6 @@ public class Settings extends SettingsLoader {
 		_anyListenerPort = loadSetting("any_listener_port", _anyListenerPort);
 
 		_pxpListenerPort = loadSetting("pxp_listener_port", _pxpListenerPort);
-		_pxpListenerEnabled = loadSetting("pxp_listener_enabled", _pxpListenerEnabled);
 
 		_pipEventHandlerPackage 			= loadSetting("pip_event_handler_package", _pipEventHandlerPackage);
 		_pipEventHandlerSuffix 				= loadSetting("pip_event_handler_suffix", _pipEventHandlerSuffix);
@@ -268,19 +259,15 @@ public class Settings extends SettingsLoader {
 	}
 
 	public boolean isPmpListenerEnabled() {
-		return _pmpListenerEnabled;
+		return _pmpLocation.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPipListenerEnabled() {
-		return _pipListenerEnabled;
+		return _pipLocation.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPdpListenerEnabled() {
-		return _pdpListenerEnabled;
-	}
-
-	public boolean isPxpListenerEnabled() {
-		return _pxpListenerEnabled;
+		return _pdpLocation.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isAnyListenerEnabled() {

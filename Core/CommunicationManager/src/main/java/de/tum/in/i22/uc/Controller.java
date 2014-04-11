@@ -79,7 +79,7 @@ public class Controller {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {		}
 		} while (!started());
-		_logger.info("Done.");
+		_logger.info("Done. Thrift servers started.");
 	}
 
 
@@ -129,10 +129,10 @@ public class Controller {
 
 
 	private static boolean arePortsAvailable() {
-		boolean isPdpPortAvailable = _settings.isPdpListenerEnabled() && isPortAvailable(_settings.getPdpListenerPort());
-		boolean isPipPortAvailable = _settings.isPipListenerEnabled() && isPortAvailable(_settings.getPipListenerPort());
-		boolean isPmpPortAvailable = _settings.isPmpListenerEnabled() && isPortAvailable(_settings.getPmpListenerPort());
-		boolean isAnyPortAvailable = _settings.isAnyListenerEnabled() && isPortAvailable(_settings.getAnyListenerPort());
+		boolean isPdpPortAvailable = !_settings.isPdpListenerEnabled() || isPortAvailable(_settings.getPdpListenerPort());
+		boolean isPipPortAvailable = !_settings.isPipListenerEnabled() || isPortAvailable(_settings.getPipListenerPort());
+		boolean isPmpPortAvailable = !_settings.isPmpListenerEnabled() || isPortAvailable(_settings.getPmpListenerPort());
+		boolean isAnyPortAvailable = !_settings.isAnyListenerEnabled() || isPortAvailable(_settings.getAnyListenerPort());
 
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable || !isAnyPortAvailable) {
 			_logger.error("One of the ports is not available.");
