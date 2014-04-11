@@ -30,7 +30,6 @@ public abstract class Location implements IName {
 
 	public enum ELocation {
 		LOCAL,
-		IP,
-		NONE;
+		IP;
 	}
 }

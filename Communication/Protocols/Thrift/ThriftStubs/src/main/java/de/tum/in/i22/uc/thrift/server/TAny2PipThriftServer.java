@@ -134,8 +134,8 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public Set<String> whoHasData(Set<TData> data, boolean askRecursively) throws TException {
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
 		_logger.debug("TAny2Pip: whoHasData");
-		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(ThriftConverter.fromThriftDataSet(data), askRecursively));
+		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(ThriftConverter.fromThriftDataSet(data), recursionDepth));
 	}
 }

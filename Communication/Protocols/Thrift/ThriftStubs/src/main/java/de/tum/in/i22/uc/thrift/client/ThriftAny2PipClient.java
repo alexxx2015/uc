@@ -154,7 +154,7 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
-		return _impl.whoHasData(data, askRecursively);
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		return _impl.whoHasData(data, recursionDepth);
 	}
 }

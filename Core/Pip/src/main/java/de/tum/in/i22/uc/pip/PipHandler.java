@@ -309,7 +309,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		// TODO Auto-generated method stub
 		return null;
 	}

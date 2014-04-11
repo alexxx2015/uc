@@ -165,9 +165,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		try {
-			return ThriftConverter.fromThriftLocationSet(_handle.whoHasData(ThriftConverter.toThriftDataSet(data), askRecursively));
+			return ThriftConverter.fromThriftLocationSet(_handle.whoHasData(ThriftConverter.toThriftDataSet(data), recursionDepth));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

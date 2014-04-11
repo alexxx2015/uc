@@ -394,8 +394,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively) {
-		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, askRecursively);
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
+		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

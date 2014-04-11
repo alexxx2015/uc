@@ -8,15 +8,15 @@ import de.tum.in.i22.uc.cm.server.PipProcessor;
 
 public class WhoHasDataPipRequest extends PipRequest<Set<Location>> {
 	private final Set<IData> _data;
-	private final boolean _askRecursively;
+	private final int _recursionDepth;
 
-	public WhoHasDataPipRequest(Set<IData> data, boolean askRecursively) {
+	public WhoHasDataPipRequest(Set<IData> data, int recursionDepth) {
 		_data = data;
-		_askRecursively = askRecursively;
+		_recursionDepth = recursionDepth;
 	}
 
 	@Override
 	public Set<Location> process(PipProcessor processor) {
-		return processor.whoHasData(_data, _askRecursively);
+		return processor.whoHasData(_data, _recursionDepth);
 	}
 }

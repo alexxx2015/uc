@@ -47,14 +47,14 @@ public interface IPip2Pip {
 	 * within the specified data set. The returned set of {@link Location}s
 	 * is not necessarily a complete set, i.e. there might exist further
 	 * {@link Location}s that are aware of the data but that are not included
-	 * in the returned set. If parameter askRecursively is set, the callee
-	 * will perform a recursive lookup.
+	 * in the returned set. Parameter recursionDepth describes how many recursive
+	 * lookups shall be made.
 	 *
 	 * @param data the set of data items to look for
-	 * @param askRecursively whether the callee should ask recursively
+	 * @param the amount of recursive lookups to be made
 	 * @return a set of {@link Location}s aware of at least one element of
 	 * 		the specified data set. The returned set might not be complete.
 	 */
-	@AThriftMethod(signature="set<string> whoHasData(1: set<Types.TData> data, 2: bool askRecursively)")
-	public Set<Location> whoHasData(Set<IData> data, boolean askRecursively);
+	@AThriftMethod(signature="set<string> whoHasData(1: set<Types.TData> data, 2: Types.int recursionDepth)")
+	public Set<Location> whoHasData(Set<IData> data, int recursionDepth);
 }

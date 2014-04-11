@@ -172,7 +172,7 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public Set<String> whoHasData(Set<TData> data, boolean askRecursively) throws TException {
-		return _pipServer.whoHasData(data, askRecursively);
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
+		return _pipServer.whoHasData(data, recursionDepth);
 	}
 }
