@@ -15,10 +15,10 @@ import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
-import de.tum.in.i22.uc.cm.factories.ClientHandlerFactory;
+import de.tum.in.i22.uc.cm.factories.IClientHandlerFactory;
 
 
-public class ThriftClientFactory implements ClientHandlerFactory {
+public class ThriftClientFactory implements IClientHandlerFactory {
 
 	@Override
 	public Any2PdpClient createAny2PdpClientHandler(Location location) {
