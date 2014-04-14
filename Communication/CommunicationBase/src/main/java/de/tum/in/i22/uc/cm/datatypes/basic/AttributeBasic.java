@@ -14,16 +14,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
  *
  * @param <V>
  */
-public class AttributeBasic<V> implements IAttribute<V> {
+public class AttributeBasic implements IAttribute {
 
 	private final EAttributeName _name;
-	private final V _value;
-	private final Class<V> _valueType;
+	private final String _value;
 
-	public AttributeBasic(EAttributeName name, V value, Class<V> valueType) {
+	public AttributeBasic(EAttributeName name, String value) {
 		_name = name;
 		_value = value;
-		_valueType = valueType;
 	}
 
 	@Override
@@ -32,19 +30,14 @@ public class AttributeBasic<V> implements IAttribute<V> {
 	}
 
 	@Override
-	public V getValue() {
+	public String getValue() {
 		return _value;
-	}
-
-	@Override
-	public Class<V> getValueType() {
-		return _valueType;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AttributeBasic) {
-			AttributeBasic<?> other = (AttributeBasic<?>) obj;
+			AttributeBasic other = (AttributeBasic) obj;
 			return Objects.equals(_name, other._name)
 					&& Objects.equals(_value, other._value);
 		}
