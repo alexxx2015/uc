@@ -5,6 +5,7 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
@@ -25,8 +26,8 @@ public interface IPdp2Pip {
 	@AThriftMethod(signature="set<Types.TContainer> getContainerForData(1:Types.TData data)")
 	public Set<IContainer> getContainersForData(IData data);
 
-	@AThriftMethod(signature="set<Types.TData> getDataInContainer(1:Types.TContainer container)")
-	public Set<IData> getDataInContainer(IContainer container);
+	@AThriftMethod(signature="set<Types.TData> getDataInContainer(1:Types.TName containerName)")
+	public Set<IData> getDataInContainer(IName containerName);
 
 	@AThriftMethod(signature="Types.TStatus startSimulation()")
 	public IStatus startSimulation();

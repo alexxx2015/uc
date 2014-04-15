@@ -19,11 +19,11 @@
     <restriction base="string">
       <enumeration value="string" />
       <enumeration value="data" />
-      <enumeration value="binary" />
+<!--      <enumeration value="binary" />
       <enumeration value="int" />
       <enumeration value="long" />
       <enumeration value="bool" />
-      <enumeration value="stringArray" />
+      <enumeration value="stringArray" /> -->
     </restriction>
   </simpleType>
     

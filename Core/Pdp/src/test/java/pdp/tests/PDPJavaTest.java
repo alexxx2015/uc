@@ -25,7 +25,7 @@ public class PDPJavaTest {
 		Event e;
 		Decision d;
 		log.debug("PDPJavaTest");
-		lpdp = PolicyDecisionPoint.getInstance();
+		lpdp = PolicyDecisionPoint.getInstance(null);
 
 		log.debug("lpdp: " + lpdp);
 		boolean ret = lpdp.deployPolicyURI("src/test/resources/testTUM.xml");
@@ -243,8 +243,6 @@ public class PDPJavaTest {
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		System.out.println(e + "\n" + d + "\n");
-
-		
 
 		
 		System.out.println("\nTest Not Equals Comparison Operator:");

@@ -109,7 +109,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		pdp.init(pip, pmp);
 		pip.init(pdp, pmp);
 		pmp.init(pip, pdp);
-
+		
 		_requestQueueManager = new RequestQueueManager(pdp, pip, pmp);
 		new Thread(_requestQueueManager).start();
 	}
@@ -311,8 +311,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		GetDataInContainerPipRequest request = new GetDataInContainerPipRequest(container);
+	public Set<IData> getDataInContainer(IName containerName) {
+		GetDataInContainerPipRequest request = new GetDataInContainerPipRequest(containerName);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

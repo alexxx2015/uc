@@ -163,6 +163,7 @@
   <simpleType name="ComparisonOperatorTypes">
     <restriction base="string">
       <enumeration value="equals" />
+	  <enumeration value="dataInContainer" />
 	  <enumeration value="gt" />
 	  <enumeration value="ge" />
 	  <enumeration value="lt" />

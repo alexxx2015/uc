@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -81,8 +83,8 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		return _ifModel.getData(container);
+	public Set<IData> getDataInContainer(IName containerName) {
+		return _ifModel.getData(containerName);
 	}
 
 	@Override
@@ -244,7 +246,9 @@ public class PipHandler extends PipProcessor {
 		if ((container = _ifModel.getContainer(containerName)) == null) {
 			_ifModel.addName(containerName, container = new ContainerBasic());
 		}
-		_ifModel.addDataTransitively(data, container);
+		if ((data==null)||(data==Collections.EMPTY_SET)){
+			_ifModel.addData(new DataBasic(),container);
+		} else _ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
 	}
 

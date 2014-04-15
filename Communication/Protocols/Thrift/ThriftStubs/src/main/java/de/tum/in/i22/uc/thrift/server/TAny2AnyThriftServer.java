@@ -130,8 +130,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public Set<TData> getDataInContainer(TContainer container) throws TException {
-		return _pipServer.getDataInContainer(container);
+	public Set<TData> getDataInContainer(TName containerName) throws TException {
+		return _pipServer.getDataInContainer(containerName);
 	}
 
 	@Override
