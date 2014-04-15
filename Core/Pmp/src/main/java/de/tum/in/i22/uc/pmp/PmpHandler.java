@@ -9,24 +9,23 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.pmp.core.PmpDecisionPoint;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
 
 
 public class PmpHandler extends PmpProcessor {
 
 	private final PmpDistributionManager _distributedPmpManager;
+	private final PmpDecisionPoint _pmp;
 
 	public PmpHandler() {
 		_distributedPmpManager = new PmpDistributionManager();
+		_pmp = PmpDecisionPoint.getInstance();
 	}
 
 
 	@Override
 	public IStatus receivePolicies(Set<String> policies) {
-		// TODO: Do sth. cool with the policies
-		// - manage them
-		// - deploy them at PDP.
-
 		for (String s : policies) {
 			getPdp().deployPolicyXML(s);
 		}
