@@ -14,6 +14,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pxp2PdpClient;
 
 public interface IClientHandlerFactory {
 	Any2PdpClient createAny2PdpClientHandler(Location location);
@@ -33,4 +34,6 @@ public interface IClientHandlerFactory {
 	Pmp2PmpClient createPmp2PmpClient(Location location);
 
 	Pdp2PxpClient createPdp2PxpClient(Location location);
+
+	Pxp2PdpClient createPxp2PdpClient(Location location);
 }
