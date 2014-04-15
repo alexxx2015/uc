@@ -13,11 +13,14 @@ import com.google.common.collect.Maps;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.factories.IMessageFactory;
+import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -33,6 +36,58 @@ public class ThriftTest {
 
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 
+		
+	@Test
+	public void testDataContEventMatching() throws Exception{
+		/*
+		 * Start the PDP server
+		 */
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler(
+				new LocalLocation(),
+				new LocalLocation(),
+				new LocalLocation()));
+		new Thread(pdpServer).start();
+
+		Thread.sleep(1000);
+		/*
+		 * Connect to the PDP server
+		 */
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
+		clientPdp.connect();
+
+		IResponse response;
+		IStatus status;
+		Map<String, List<String>> mechanisms;
+
+		Map<String,String> map = new HashMap<>();
+		Map<String,String> map2 = new HashMap<>();
+		map.put("target", "generic target");
+		map2.put("target", "/tmp/datasrc");
+
+		/*
+		 * 	Deploy policy
+		 */
+		IStatus ret = clientPdp.deployPolicyURI("src/test/resources/testTUM.xml");
+		System.out.println("deploy policy: "+ret);
+		System.out.println("Deployed Mechanisms: "+clientPdp.listMechanisms());
+
+		
+		/*
+		 * Signal sync event
+		 */
+		response = clientPdp.notifyEventSync(new EventBasic("importantEvent", map, false));
+		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
+
+		System.out.println("\nDeploying policy returned: " + response+"\n");
+		
+		response = clientPdp.notifyEventSync(new EventBasic("importantEvent", map2, false));
+		Assert.assertEquals(EStatus.INHIBIT, response.getAuthorizationAction().getEStatus());
+
+		
+		System.out.println("\nDeploying policy returned: " + response+"\n");
+		
+	}
+	
 	@Test
 	public void thriftTest() throws Exception {
 

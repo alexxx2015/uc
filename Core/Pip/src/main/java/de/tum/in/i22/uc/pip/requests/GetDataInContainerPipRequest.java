@@ -2,20 +2,20 @@ package de.tum.in.i22.uc.pip.requests;
 
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 public class GetDataInContainerPipRequest extends PipRequest<Set<IData>> {
 
-	private final IContainer _container;
+	private final IName _containerName;
 
-	public GetDataInContainerPipRequest(IContainer container) {
-		_container = container;
+	public GetDataInContainerPipRequest(IName containerName) {
+		_containerName = containerName;
 	}
 
 	@Override
 	public Set<IData> process(PipProcessor processor) {
-		return processor.getDataInContainer(_container);
+		return processor.getDataInContainer(_containerName);
 	}
 }

@@ -4,13 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-/**
- * Class for a generic Comparison operator.
- * @author Enrico Lovat
- *
- * @param <T1>
- * @param <T2>
- */
+
 public class ListInListComparisonOperator extends GenericComparisonOperator{
 	public boolean compare(String parameter1, String parameter2){
 		if (parameter2==null) return false;

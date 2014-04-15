@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EqualsComparisonOperator;
@@ -75,6 +77,14 @@ public class ParamMatch extends ParamMatchType
 			break;
 		case STARTS_WITH:			
 			compOp=new StartsWithComparisonOperator();
+			break;
+		case DATA_IN_CONTAINER:
+			IPdp2Pip pip=PolicyDecisionPoint.getInstance().get_pip();
+			if (pip==null){
+				log.error("Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");
+				throw new RuntimeException("Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");						
+			}
+			compOp=new DataInContainerComparisonOperator(pip);
 			break;
 		case SUBSTRING:
 			compOp=new SubstringComparisonOperator();

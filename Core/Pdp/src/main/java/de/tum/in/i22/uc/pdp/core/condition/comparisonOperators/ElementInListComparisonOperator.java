@@ -2,13 +2,6 @@ package de.tum.in.i22.uc.pdp.core.condition.comparisonOperators;
 
 import java.util.StringTokenizer;
 
-/**
- * Class for a generic Comparison operator.
- * @author moka
- *
- * @param <T1>
- * @param <T2>
- */
 public class ElementInListComparisonOperator extends GenericComparisonOperator{
 	public boolean compare(String parameter1, String parameter2){
 		if (parameter1==null) return false;

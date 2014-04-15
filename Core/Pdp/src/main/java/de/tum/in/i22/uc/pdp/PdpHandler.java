@@ -3,6 +3,9 @@ package de.tum.in.i22.uc.pdp;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
@@ -12,12 +15,17 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
+import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 
 public class PdpHandler extends PdpProcessor {
+
+	private static Logger _logger = LoggerFactory.getLogger(PdpHandler.class);
 
 	private final IPolicyDecisionPoint _lpdp;
 
@@ -106,5 +114,13 @@ public class PdpHandler extends PdpProcessor {
 		}
 
 		return res;
+	}
+
+	@Override
+	public void init(PipProcessor iface1, PmpProcessor iface2) {
+		super.init(iface1, iface2);
+		IPdp2Pip pip = getPip();
+		_logger.debug("initializing PDP. Pip reference is " + (pip!=null?"not ":"") + "NULL");
+		PolicyDecisionPoint.getInstance(pip);
 	}
 }

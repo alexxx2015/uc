@@ -20,7 +20,7 @@ public class OperatorTest
   public OperatorTest()
   {
     log.info("OperatorTest");
-    lpdp = PolicyDecisionPoint.getInstance();
+    lpdp = PolicyDecisionPoint.getInstance(null);
     log.debug("lpdp: " + lpdp);
   }
 

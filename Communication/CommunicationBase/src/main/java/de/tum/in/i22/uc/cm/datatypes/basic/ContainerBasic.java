@@ -12,17 +12,17 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 public class ContainerBasic implements IContainer {
 	private final String _id;
 
-	private final Map<EAttributeName,IAttribute> _attributes;
+	private final Map<EAttributeName, IAttribute> _attributes;
 
 	public ContainerBasic() {
 		this((String) null);
 	}
 
-	public ContainerBasic(IAttribute ... attributes) {
+	public ContainerBasic(IAttribute... attributes) {
 		this(null, attributes);
 	}
 
-	public ContainerBasic(String id, IAttribute ... attributes) {
+	public ContainerBasic(String id, IAttribute... attributes) {
 		if (id == null || id.isEmpty()) {
 			id = UUID.randomUUID().toString();
 		}
@@ -30,8 +30,10 @@ public class ContainerBasic implements IContainer {
 		_id = id;
 
 		_attributes = new HashMap<>();
-		for (IAttribute attr : attributes) {
-			_attributes.put(attr.getName(), attr);
+		if (attributes != null) {
+			for (IAttribute attr : attributes) {
+				_attributes.put(attr.getName(), attr);
+			}
 		}
 	}
 
@@ -62,8 +64,7 @@ public class ContainerBasic implements IContainer {
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_id", _id)
-				.toString();
+				.add("_id", _id).toString();
 	}
 
 }

@@ -19,6 +19,8 @@ public class EventMatch extends EventMatchingOperatorType {
 		this.setAction(op.getAction());
 		this.setTryEvent(op.isTryEvent());
 		for (ParamMatchType paramMatch : op.getParams()) {
+			//if paramMatch.getType()= 
+			//initialization
 			this.getParams().add(paramMatch);
 		}
 	}

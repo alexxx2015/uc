@@ -98,8 +98,8 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		return _impl.getDataInContainer(container);
+	public Set<IData> getDataInContainer(IName containerName) {
+		return _impl.getDataInContainer(containerName);
 	}
 
 	@Override
