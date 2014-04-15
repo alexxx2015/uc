@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pxp2PdpClient;
 import de.tum.in.i22.uc.cm.factories.IClientHandlerFactory;
 
 
@@ -120,6 +121,14 @@ public class ThriftClientFactory implements IClientHandlerFactory {
 	public Pdp2PxpClient createPdp2PxpClient(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPdp2PxpClient((IPLocation) location);
+		}
+		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
+	}
+
+	@Override
+	public Pxp2PdpClient createPxp2PdpClient(Location location) {
+		if (location instanceof IPLocation) {
+			return new ThriftPxp2PdpClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
