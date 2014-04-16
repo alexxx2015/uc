@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.server;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -43,5 +45,35 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
 		IStatus status = _requestHandler.informRemoteDataFlow(new IPLocation(srcAddress, srcPort), new IPLocation(dstAddress, dstPort), d);
 		return ThriftConverter.toThrift(status);
+	}
+
+	@Override
+	public TStatus revokeMechanismPmp(String policyName, String mechName)
+			throws TException {
+		return null;
+	}
+
+	@Override
+	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TStatus deployPolicyXMLPmp(String XMLPolicy) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TStatus revokePolicyPmp(String policyName) throws TException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

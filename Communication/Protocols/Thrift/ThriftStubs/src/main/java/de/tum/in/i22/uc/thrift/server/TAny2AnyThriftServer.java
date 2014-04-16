@@ -180,4 +180,30 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
 		return _pipServer.whoHasData(data, recursionDepth);
 	}
+
+	@Override
+	public TStatus revokePolicyPmp(String policyName) throws TException {
+		return _pdpServer.revokePolicy(policyName);
+	}
+
+	@Override
+	public TStatus revokeMechanismPmp(String policyName, String mechName) throws TException {
+		return _pdpServer.revokeMechanism(policyName, mechName);
+	}
+
+	@Override
+	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
+		return _pdpServer.deployPolicyURI(policyFilePath);
+	}
+
+	@Override
+	public TStatus deployPolicyXMLPmp(String XMLPolicy) throws TException {
+		return _pdpServer.deployPolicyXML(XMLPolicy);
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() throws TException {
+		return _pdpServer.listMechanisms();
+	}
+
 }

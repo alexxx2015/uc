@@ -93,6 +93,15 @@ public final class ThriftConverter {
 				ThriftConverter.fromThrift(r.getModifiedEvents()));
 	}
 
+	
+	public static Location fromThrift(String location) {
+		if (location == null || location.equals("")) {
+			return null;
+		}
+		return new IPLocation(location);
+	}
+
+	
 	public static IStatus fromThrift(TStatus s) {
 		if (s == null) {
 			_logger.debug("TStatus was null.");
@@ -222,6 +231,13 @@ public final class ThriftConverter {
 				.getAuthorizationAction()));
 	}
 
+	public static String toThrift(Location location) {
+		if (location == null) {
+			return "";
+		}
+		return location.asString();
+	}
+
 	public static TStatus toThrift(IStatus s) {
 		if (s == null) {
 			_logger.debug("IStatus was null.");
@@ -316,7 +332,7 @@ public final class ThriftConverter {
 		Set<Location> result = new HashSet<>();
 		for (String loc : locations) {
 			try {
-				result.add(new IPLocation(loc));
+				result.add(fromThrift(loc));
 			} catch (Exception e) {
 				_logger.warn("Unable to cast [" + loc + "] to " + IPLocation.class.getSimpleName());
 			}
@@ -331,7 +347,7 @@ public final class ThriftConverter {
 
 		Set<String> result = new HashSet<>();
 		for (Location loc : locations) {
-			result.add(loc.asString());
+			result.add(toThrift(loc));
 		}
 		return result;
 	}

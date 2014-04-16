@@ -21,12 +21,15 @@
 
 package de.tum.in.i22.uc.cm.processing.dummy;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
@@ -48,6 +51,54 @@ public class DummyPmpProcessor extends PmpProcessor {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("informRemoteDataFlow method invoked");
+		return null;
+	}
+
+	@Override
+	public IMechanism exportMechanismPmp(String par) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("exportMechanism method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus revokePolicyPmp(String policyName) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("revokePolicy method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus revokeMechanismPmp(String policyName, String mechName) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("revokeMechanism method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus deployPolicyURIPmp(String policyFilePath) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("deployPolicyURI method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("deployPolicyXML method invoked");
+		return null;
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("listMechanisms method invoked");
 		return null;
 	}
 	
