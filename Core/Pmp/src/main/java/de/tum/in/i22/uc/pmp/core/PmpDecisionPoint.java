@@ -1,0 +1,302 @@
+package de.tum.in.i22.uc.pmp.core;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pip;
+import de.tum.in.i22.uc.pmp.core.exceptions.InvalidMechanismException;
+import de.tum.in.i22.uc.pmp.core.shared.Constants;
+import de.tum.in.i22.uc.pmp.core.shared.Decision;
+import de.tum.in.i22.uc.pmp.core.shared.Event;
+import de.tum.in.i22.uc.pmp.core.shared.IPmpMechanism;
+import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
+import de.tum.in.i22.uc.pmp.xsd.PolicyType;
+
+public class PmpDecisionPoint implements Serializable {
+	private static Logger log = LoggerFactory
+			.getLogger(PmpDecisionPoint.class);
+	private static final long serialVersionUID = -6823961095919408237L;
+
+	private static IPmp2Pip _pip;
+
+	private static PmpDecisionPoint instance = null;
+	private ActionDescriptionStore actionDescriptionStore = null;
+	private final HashMap<String, ArrayList<IPmpMechanism>> policyTable = new HashMap<String, ArrayList<IPmpMechanism>>();
+
+	private PmpDecisionPoint() {
+		this.actionDescriptionStore = ActionDescriptionStore.getInstance();
+	}
+
+	public static PmpDecisionPoint getInstance() {
+		return getInstance(null);
+	}
+
+	public static PmpDecisionPoint getInstance(IPmp2Pip pip) {
+		/*
+		 * This implementation may seem odd, overengineered, redundant, or all
+		 * of it. Yet, it is the best way to implement a thread-safe singleton,
+		 * cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
+		 * -with-example-code -FK-
+		 */
+		if (instance == null) {
+			synchronized (PmpDecisionPoint.class) {
+				if (instance == null) {
+					instance = new PmpDecisionPoint();
+					log.debug("new PDP instance created");
+					// instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pmp \\src\\main\\resources\\testTUM.xml");
+					// instance.deployPolicyURI("/home/florian/testTUM.xml");
+				}
+			}
+		}
+		/**
+		 * This code looks ugly, but it is needed in order to allow the PDP test to run without the need of a PIP reference.
+		 * When getInstance was invoked the first time, if pip was null, the code used to crash.
+		 * This forced the first invocation to getInstance to provide a proper PIP reference.
+		 * But this cannot be created within the PDP (because the PIP is not visible from within this scope).
+		 * Therefore we decided to allow the creation of PDPs without valid PIP reference.
+		 * As soon as one valid reference is provided, that is permanently set for the PDP.
+		 * This explains why we do it using the getInstance method and we do not use a setter instead:
+		 * this value should be set only once.
+		 */
+		
+		if (_pip == null && pip != null) {
+			synchronized (PmpDecisionPoint.class) {
+				log.debug("PIP reference for PDP instance initialized");
+				_pip = pip;
+			}
+		}
+		return instance;
+	}
+
+	public boolean deployPolicyXML(String XMLPolicy) {
+		log.debug("deployPolicyXML (before)");
+		InputStream is = new ByteArrayInputStream(XMLPolicy.getBytes());
+		log.debug("deployPolicyXML (IS created)");
+		boolean b = deployXML(is);
+		log.debug("deployPolicyXML (after)");
+		return b;
+	}
+
+	
+	public boolean deployPolicyURI(String policyFilename) {
+		if (policyFilename.endsWith(".xml")) {
+			InputStream inp = null;
+			try {
+				inp = new FileInputStream(policyFilename);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return deployXML(inp);
+		}
+		log.warn("Unsupported message format of policy!");
+		return false;
+	}
+
+	public boolean deployXML(InputStream inp) {
+		if (inp == null)
+			return false;
+		try {
+			JAXBContext jc = JAXBContext
+					.newInstance("de.tum.in.i22.uc.pmp.xsd");
+			Unmarshaller u = jc.createUnmarshaller();
+
+			// SchemaFactory sf = SchemaFactory.newInstance(
+			// XMLConstants.W3C_XML_SCHEMA_NS_URI );
+			// Schema schema = sf.newSchema( new
+			// File("src/main/resources/xsd/enfLanguage.xsd"));
+			// //Schema schema = sf.newSchema(
+			// PmpDecisionPoint.class.getResource("xsd/enfLanguage.xsd").toURI().toURL());
+			// u.setSchema(schema);
+			// u.setEventHandler(new PolicyValidationEventHandler());
+
+			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
+			PolicyType curPolicy = (PolicyType) poElement.getValue();
+
+			log.debug("curPolicy [name={}]: {}", curPolicy.getName(),
+					curPolicy.toString());
+
+			List<MechanismBaseType> mechanisms = curPolicy
+					.getDetectiveMechanismOrPreventiveMechanism();
+
+			if (this.policyTable.containsKey(curPolicy.getName())) {
+				// log.error("Policy [{}] already deployed! Aborting...",
+				// curPolicy.getName());
+				// return false;
+			}
+
+			for (MechanismBaseType mech : mechanisms) {
+				try {
+					log.debug("Processing mechanism: {}", mech.getName());
+
+					IPmpMechanism curMechanism = new Mechanism(mech);
+					ArrayList<IPmpMechanism> mechanismList = this.policyTable
+							.get(curPolicy.getName());
+					if (mechanismList == null)
+						mechanismList = new ArrayList<IPmpMechanism>();
+					if (mechanismList.contains(curMechanism)) {
+						log.error(
+								"Mechanism [{}] is already deployed for policy [{}]",
+								curMechanism.getMechanismName(),
+								curPolicy.getName());
+						continue;
+					}
+
+					mechanismList.add(curMechanism);
+					this.policyTable.put(curPolicy.getName(), mechanismList);
+
+					log.debug("Starting mechanism update thread...");
+					if (curMechanism instanceof Mechanism) {
+						((Mechanism) curMechanism).init(this);
+					}
+					log.info("Mechanism {} started...",
+							curMechanism.getMechanismName());
+				} catch (InvalidMechanismException e) {
+					log.error("Invalid mechanism specified: {}", e.getMessage());
+					return false;
+				}
+			}
+			return true;
+		} catch (UnmarshalException e) {
+			log.error("Syntax error in policy: " + e.getMessage());
+		} catch (JAXBException | ClassCastException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	
+	public boolean revokePolicy(String policyName) {
+		boolean ret = false;
+		if (this.policyTable == null) {
+			log.error("Empty Policy Table. impossible to revoke policy");
+			return false;
+		}
+		List<IPmpMechanism> mlist = this.policyTable.get(policyName);
+		if (mlist == null)
+			return false;
+
+		for (IPmpMechanism mech : mlist) {
+			log.info("Revoking mechanism: {}", mech.getMechanismName());
+			ret = mech.revoke();
+		}
+		return ret;
+	}
+
+	
+	public boolean revokeMechanism(String policyName, String mechName) {
+		boolean ret = false;
+		if (this.policyTable == null) {
+			log.error("Empty Policy Table. impossible to revoke policy");
+			return false;
+		}
+		ArrayList<IPmpMechanism> mechanisms = this.policyTable.get(policyName);
+		if (mechanisms != null) {
+			IPmpMechanism mech = null;
+			for (IPmpMechanism m : mechanisms) {
+				if (m.getMechanismName().equals(mechName)) {
+					log.info("Revoking mechanism: {}", m.getMechanismName());
+					ret = m.revoke();
+					mech = m;
+					break;
+				}
+			}
+			if (mech != null) {
+				mechanisms.remove(mech);
+				if (mech instanceof Mechanism) {
+					this.actionDescriptionStore
+							.removeMechanism(((Mechanism) mech)
+									.getTriggerEvent().getAction());
+				}
+			}
+		}
+		return ret;
+	}
+
+	
+	public Decision notifyEvent(Event event) {
+		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
+				.getEventList(event.getEventAction());
+		if (eventMatchList == null)
+			eventMatchList = new ArrayList<EventMatch>();
+		log.debug(
+				"Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
+				event.getEventAction(), eventMatchList.size());
+		for (EventMatch eventMatch : eventMatchList) {
+			log.info("Processing EventMatchOperator for event [{}]",
+					eventMatch.getAction());
+			eventMatch.evaluate(event);
+		}
+
+		ArrayList<Mechanism> mechanismList = this.actionDescriptionStore
+				.getMechanismList(event.getEventAction());
+		if (mechanismList == null)
+			mechanismList = new ArrayList<Mechanism>();
+		log.debug(
+				"Searching for triggered mechanisms for event=[{}] -> subscriptions: {}",
+				event.getEventAction(), mechanismList.size());
+
+		Decision d = new Decision(new AuthorizationAction("default",
+				Constants.AUTHORIZATION_ALLOW));
+		for (Mechanism mech : mechanismList) {
+			log.info("Processing mechanism [{}] for event [{}]",
+					mech.getMechanismName(), event.getEventAction());
+			mech.notifyEvent(event, d);
+		}
+		return d;
+	}
+
+	public Map<String, List<String>> listDeployedMechanisms() {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+
+		for (String policyName : this.policyTable.keySet()) {
+			List<String> mechanismList = new ArrayList<String>();
+			for (IPmpMechanism m : this.policyTable.get(policyName)) {
+				mechanismList.add(m.getMechanismName());
+			}
+			map.put(policyName, mechanismList);
+		}
+
+		return map;
+	}
+
+	private String readFile(String file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		String line = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		String ls = System.getProperty("line.separator");
+
+		while ((line = reader.readLine()) != null) {
+			stringBuilder.append(line);
+			stringBuilder.append(ls);
+		}
+		reader.close();
+		return stringBuilder.toString();
+	}
+
+	public IPmp2Pip get_pip() {
+		return _pip;
+	}
+
+
+}
