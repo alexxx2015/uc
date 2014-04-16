@@ -90,6 +90,11 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
+	public TData newInitialRepresentation(TName container) throws TException {
+		return _pipServer.newInitialRepresentation(container);
+	}
+
+	@Override
 	public boolean hasAllData(Set<TData> data) throws TException {
 		return _pipServer.hasAllData(data);
 	}

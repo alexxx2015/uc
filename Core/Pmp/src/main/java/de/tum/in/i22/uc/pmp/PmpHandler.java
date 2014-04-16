@@ -1,38 +1,187 @@
 package de.tum.in.i22.uc.pmp;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.pdp.xsd.ComparisonOperatorTypes;
+import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
+import de.tum.in.i22.uc.pdp.xsd.ObjectFactory;
+import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
+import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
 
 
 public class PmpHandler extends PmpProcessor {
+	private static Logger log = LoggerFactory.getLogger(PmpHandler.class);
 
 	private final PmpDistributionManager _distributedPmpManager;
-
+	
+	private final ObjectFactory of = new ObjectFactory();
+	
+	private final static String _DATAUSAGE="dataUsage";
+	private final static String _DATA="data";
+	
 	public PmpHandler() {
 		_distributedPmpManager = new PmpDistributionManager();
 	}
 
+	private PolicyType XMLtoPolicy(String XMLPolicy) {
+		PolicyType curPolicy=null;
+		log.debug("XMLtoPolicy");
+		log.trace("Policyto be converted: "+XMLPolicy);
+		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
+		try {
+			JAXBContext jc = JAXBContext
+					.newInstance("de.tum.in.i22.uc.pdp.xsd");
+			Unmarshaller u = jc.createUnmarshaller();
+
+			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
+			
+			curPolicy = (PolicyType) poElement.getValue();
+
+			log.debug("curPolicy [name="+ curPolicy.getName()+", "+	curPolicy.toString());
+
+		} catch (UnmarshalException e) {
+			log.error("Syntax error in policy: " + e.getMessage());
+		} catch (JAXBException | ClassCastException e) {
+			e.printStackTrace();
+		}
+		return curPolicy;
+	}
+
+
+	private String PolicyToXML(PolicyType policy) {
+		String result="";
+		log.debug("PolicyToXML conversion...");
+		log.trace("Policy to convert: "+ policy);
+		ObjectFactory of= new ObjectFactory();
+		JAXBElement<PolicyType> pol = of.createPolicy(policy);
+        try {
+			JAXBContext jc = JAXBContext
+					.newInstance("de.tum.in.i22.uc.pdp.xsd");
+			Marshaller m = jc.createMarshaller();
+  		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			StringWriter res = new StringWriter();
+		    m.marshal(pol, res);
+			
+		    result=res.toString();
+		    
+		    log.trace("converted policy: " + result);
+
+//		} catch (MarshalException e) {
+//			log.error("Syntax error in policy: " + e.getMessage());
+		} catch (JAXBException | ClassCastException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 
 	@Override
 	public IStatus receivePolicies(Set<String> policies) {
-		// TODO: Do sth. cool with the policies
-		// - manage them
-		// - deploy them at PDP.
+		String output=convertPolicies(policies);
 
-		for (String s : policies) {
-			getPdp().deployPolicyXML(s);
-		}
-
-		// TODO: proper return value.
+		//HERE GOES THE DEPLOYMENT TO THE PDP
+		getPdp().deployPolicyXML(output);
+		
 		return new StatusBasic(EStatus.OKAY);
+	}
+	
+
+	public String convertPolicies(Set<String> policies) {
+		String output="";
+		
+		IAny2Pip pip = getPip();
+		
+		if (pip==null) {
+			log.error("PIP NOT AVAILABLE. Better crash now than living like this.");
+			throw new RuntimeException("PIP NOT AVAILABLE for policy conversion");
+		}
+		
+		for (String ps : policies) {
+			log.info("converting policy string into object");
+			PolicyType policy=XMLtoPolicy(ps);
+
+			List<MechanismBaseType> mechanisms = policy
+					.getDetectiveMechanismOrPreventiveMechanism();
+
+			for (MechanismBaseType mech : mechanisms) {
+				List<ParamMatchType> paramList=mech.getTrigger().getParams();
+				for (ParamMatchType p: paramList){
+					if (p.getType().equals(_DATAUSAGE)){
+						String dataId=null;
+						String value=p.getValue();
+						String name=p.getName();
+						String newValue= null;
+						//ComparisonOperatorTypes cmpOp=p.getCmpOp();
+						
+						if (p.isSetDataID()) {
+							dataId=p.getDataID();
+							Set<IData> dataSet= createDataSetFromParamValue(dataId);
+							IStatus status=getPip().initialRepresentation(new NameBasic(value), dataSet);
+							newValue=dataId;
+							if (status.isStatus(EStatus.ERROR)){
+								log.error("impossible to initialize representation for container " + value +" with data id(s) " + dataSet);
+								log.error(status.getErrorMessage());
+								throw new RuntimeException(status.getErrorMessage());
+							}
+						} else {
+							IData newData=getPip().newInitialRepresentation(new NameBasic(value));
+							newValue=newData.getId();
+						}
+
+						ParamMatchType newP = of.createParamMatchType();
+						newP.setName(name);
+						newP.setValue(newValue);
+						newP.setCmpOp(ComparisonOperatorTypes.DATA_IN_CONTAINER);
+						newP.setType(_DATA);
+						
+						paramList.remove(p);
+						paramList.add(newP);
+					}
+				}
+			} 
+					
+			log.info("converting object into policy string");
+			output=PolicyToXML(policy);
+		}
+		return output;
+	}
+
+	private Set<IData> createDataSetFromParamValue(String value) {
+		if ((value==null)||(value.equals(""))) return Collections.emptySet();
+		
+		Set<IData> res=new HashSet<IData>();
+		StringTokenizer st = new StringTokenizer(value);
+		while (st.hasMoreTokens()) {
+	         res.add(new DataBasic(st.nextToken()));
+	    }
+		return res;
 	}
 
 	@Override

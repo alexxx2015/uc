@@ -156,7 +156,7 @@
   
   <simpleType name="ParamMatchDataTypes">
     <restriction base="string">
-      <pattern value="string|dataUsage|contUsage|data"/>
+      <pattern value="string|dataUsage|container|data"/>
     </restriction>
   </simpleType>
   
@@ -184,7 +184,6 @@
     <attribute name="type"    type="tns:ParamMatchDataTypes" 	 use="optional" default="string" />
   	<attribute name="cmpOp"   type="tns:ComparisonOperatorTypes" use="optional" default="equals" />
     <attribute name="dataID"  type="string"                  	 use="optional" default="" />
-    <attribute name="negate"  type="boolean"                 	 use="optional" default="false" />
   </complexType>
 
   <complexType name="EventMatchingOperatorType" abstract="true">

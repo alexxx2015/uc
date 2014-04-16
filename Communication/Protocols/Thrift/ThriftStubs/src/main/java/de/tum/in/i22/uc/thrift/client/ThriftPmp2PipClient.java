@@ -51,4 +51,10 @@ class ThriftPmp2PipClient extends Pmp2PipClient {
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _impl.initialRepresentation(containerName, data);
 	}
+
+	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		return _impl.newInitialRepresentation(containerName);
+	}
+
 }

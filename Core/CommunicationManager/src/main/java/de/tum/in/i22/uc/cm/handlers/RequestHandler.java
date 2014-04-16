@@ -53,6 +53,7 @@ import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
+import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
@@ -376,6 +377,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(containerName, data);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
