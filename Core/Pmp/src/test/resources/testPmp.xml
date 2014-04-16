@@ -5,7 +5,7 @@
 
 	name="testPolicy">
 
-	<preventiveMechanism name="testPmp">
+	<preventiveMechanism name="testPmp1">
 		<description>...</description>
 		<timestep amount="10" unit="SECONDS" />
 		<trigger action="testEvent" tryEvent="true">
@@ -20,4 +20,19 @@
 		</authorizationAction>
 	</preventiveMechanism>
 
+
+	<preventiveMechanism name="testPmp2">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="testEvent" tryEvent="true">
+			<paramMatch name="name" value="value" cmpOp="equals" type="dataUsage" dataID="myId"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
 </policy>

@@ -9,7 +9,7 @@
 		<description>...</description>
 		<timestep amount="10" unit="SECONDS" />
 		<trigger action="testEvent" tryEvent="true">
-			<paramMatch name="name" value="value" cmpOp="equals" type="dataUsage" dataID="myId" />
+			<paramMatch name="name" value="initialContainer" cmpOp="equals" type="dataUsage" dataID="myId" />
 		</trigger>
 		<condition>
 			<true />
