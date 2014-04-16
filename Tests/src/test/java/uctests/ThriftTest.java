@@ -108,7 +108,6 @@ public class ThriftTest {
 		clientPdp.connect();
 
 		int x = 0;
-
 		IResponse response;
 		IStatus status;
 		Map<String, List<String>> mechanisms;
