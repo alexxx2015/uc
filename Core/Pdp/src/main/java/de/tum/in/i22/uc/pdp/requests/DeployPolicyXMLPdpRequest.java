@@ -14,5 +14,4 @@ public class DeployPolicyXMLPdpRequest extends PdpRequest<IStatus> {
 	public IStatus process(PdpProcessor processor) {
 		return processor.deployPolicyXML(_policyPath);
 	}
-
 }
