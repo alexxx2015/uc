@@ -7,7 +7,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.handlers.NativeHandler;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -25,12 +24,6 @@ public class Controller {
 	private static IThriftServer _anyServer;
 
 	protected static IRequestHandler _requestHandler;
-
-	/**
-	 * This field is in fact used by native code via JNI.
-	 */
-	@SuppressWarnings("unused")
-	private static NativeHandler _nativeHandler;
 
 	public static void main(String[] args) {
 		if (start(args)){
@@ -67,8 +60,6 @@ public class Controller {
 	private static void startUC(){
 
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
-
-		_nativeHandler = new NativeHandler(_requestHandler);
 
 		_logger.info("Starting up thrift servers");
 		startListeners(_requestHandler);
