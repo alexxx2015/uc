@@ -34,7 +34,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
-public class MyUCCockpit extends Controller{
+public class UcManager extends Controller{
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
@@ -53,7 +53,7 @@ public class MyUCCockpit extends Controller{
 	private JLabel pdpInfoLabel;
 	private JLabel pipInfoLabel;
 	private JTextArea pipTextArea;
-	private static Logger _logger = Logger.getLogger(MyUCCockpit.class);
+	private static Logger _logger = Logger.getLogger(UcManager.class);
 
 	private Thread pdpThread;	
 	
@@ -74,7 +74,7 @@ public class MyUCCockpit extends Controller{
 	 * de.fraunhofer.iese.pef.pdp.example.MyPDP
 	 */
 
-	public MyUCCockpit() {
+	public UcManager() {
 		this.clientFactory = new ThriftClientFactory();
 		if(this.clientFactory != null){
 			this.pipClient = this.clientFactory.createPep2PipClient(new IPLocation("localhost", 21002));
@@ -84,7 +84,7 @@ public class MyUCCockpit extends Controller{
 
 	
 	public static void main(String args[]) {
-		MyUCCockpit myUCC = new MyUCCockpit();
+		UcManager myUCC = new UcManager();
 		myUCC.showGUI();
 	}
 
@@ -127,11 +127,7 @@ public class MyUCCockpit extends Controller{
 						public void mouseReleased(MouseEvent e) {
 							String pipModelText = "Start UC";
 							if (ucIsRunning == true) {
-								String t="";
-								if(pipClient != null){
-									t = pipClient.toString();
-								}
-								pipTextArea.setText(t);
+								pipTextArea.setText(_requestHandler.getIfModel());
 							}
 							pipInfoLabel.setText("REFRESHED!");
 						}
@@ -460,8 +456,7 @@ public class MyUCCockpit extends Controller{
 		_return.add(this.policyDeployBtn, gbc);
 
 		Object[] colNames = { "Policy Name", "Mechanism" };
-		DefaultTableModel dtm = new DefaultTableModel(new Object[][] {},
-				colNames) {
+		DefaultTableModel dtm = new DefaultTableModel(new Object[][] {}, colNames) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
