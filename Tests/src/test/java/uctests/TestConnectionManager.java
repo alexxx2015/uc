@@ -36,9 +36,9 @@ public class TestConnectionManager {
 		new Thread(pdpServer).start();
 
 		// create 6 different
-		Any2PdpClient pdpClient1 = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
-		Any2PdpClient pdpClient2 = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
-		Any2PdpClient pdpClient3 = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClient1 = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClient2 = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort));
+		Any2PdpClient pdpClient3 = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort));
 		Any2PdpClient pdpClientRef;
 
 		/*
@@ -109,10 +109,10 @@ public class TestConnectionManager {
 		/*
 		 * Create three clients
 		 */
-		Any2PdpClient pdpClient1a = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort + 1));
-		Any2PdpClient pdpClient1b = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort + 1));
-		Any2PdpClient pdpClient2 = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort + 2));
-		Any2PdpClient pdpClient3 = new ThriftClientFactory().createAny2PdpClientHandler(new IPLocation("localhost", pdpPort + 3));
+		Any2PdpClient pdpClient1a = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort + 1));
+		Any2PdpClient pdpClient1b = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort + 1));
+		Any2PdpClient pdpClient2 = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort + 2));
+		Any2PdpClient pdpClient3 = new ThriftClientFactory().createAny2PdpClient(new IPLocation("localhost", pdpPort + 3));
 		Any2PdpClient pdpClientRef;
 
 		/*

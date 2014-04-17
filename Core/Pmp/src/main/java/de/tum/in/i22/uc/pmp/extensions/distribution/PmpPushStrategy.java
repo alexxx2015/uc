@@ -25,7 +25,7 @@ public class PmpPushStrategy extends PmpDistributionStrategy {
 		_logger.info("Performing remote policy transfer: " + policies);
 
 		try {
-			Any2PmpClient _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createAny2PmpClientHandler(location));
+			Any2PmpClient _pmpHandle = _connectionManager.obtain(_clientHandlerFactory.createAny2PmpClient(location));
 			_pmpHandle.receivePolicies(policies);
 			_connectionManager.release(_pmpHandle);
 		}

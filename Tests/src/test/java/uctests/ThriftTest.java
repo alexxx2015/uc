@@ -29,27 +29,24 @@ public class ThriftTest {
 												+ "test-classes" + File.separator
 												+ "testTUM.xml";
 
-	private static int pdpPort = 60002;
+	private static int pdpPort = 50003;
 
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 
-		
+
 	@Test
 	public void testDataContEventMatching() throws Exception{
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler(
-				new LocalLocation(),
-				new LocalLocation(),
-				new LocalLocation()));
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler());
 		new Thread(pdpServer).start();
 
 		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort));
 		clientPdp.connect();
 
 		IResponse response;
@@ -65,7 +62,7 @@ public class ThriftTest {
 		System.out.println("deploy policy: "+ret);
 		System.out.println("Deployed Mechanisms: "+clientPdp.listMechanisms());
 
-		
+
 		/*
 		 * Signal sync event
 		 */
@@ -73,32 +70,31 @@ public class ThriftTest {
 		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
 
 		System.out.println("\nDeploying policy returned: " + response+"\n");
-		
+
 		response = clientPdp.notifyEventSync(new EventBasic("importantEvent", map2, false));
 		Assert.assertEquals(EStatus.INHIBIT, response.getAuthorizationAction().getEStatus());
 
-		
+
 		System.out.println("\nDeploying policy returned: " + response+"\n");
-		
+
+		pdpServer.stop();
+
 	}
-	
+
 	@Test
 	public void thriftTest() throws Exception {
 
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler(
-				new LocalLocation(),
-				new LocalLocation(),
-				new LocalLocation()));
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort + 1, new RequestHandler());
 		new Thread(pdpServer).start();
 
 		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClientHandler(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort + 1));
 		clientPdp.connect();
 
 		int x = 0;
@@ -151,7 +147,7 @@ public class ThriftTest {
 
 		System.out.println(x++);
 
-
+		pdpServer.stop();
 
 
 		/*
