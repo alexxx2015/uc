@@ -248,7 +248,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		NotifyEventPdpRequest request = new NotifyEventPdpRequest(event);
+		NotifyEventPdpRequest request = new NotifyEventPdpRequest(event,true);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
