@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
 import de.tum.in.i22.uc.pip.interfaces.EScopeType;
@@ -37,6 +39,7 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 			_logger.error(e.getMessage());
 			return 0;
 		}
+
 
 		String HRscope = scopeName(delimiter);
 

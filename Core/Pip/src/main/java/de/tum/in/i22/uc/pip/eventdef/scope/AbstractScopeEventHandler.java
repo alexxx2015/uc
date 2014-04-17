@@ -10,8 +10,8 @@ import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
-import de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
+import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 
 
 public abstract class AbstractScopeEventHandler extends BaseEventHandler {
@@ -19,7 +19,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 	private IEvent _event;
 
-	protected IScopeInformationFlowModel ifScopeModel;
+	protected ScopeInformationFlowModel ifScopeModel;
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
