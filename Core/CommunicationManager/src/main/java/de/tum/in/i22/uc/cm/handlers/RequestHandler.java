@@ -53,14 +53,20 @@ import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
+import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -276,6 +282,47 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
+	public IMechanism exportMechanismPmp(String par) {
+		// TODO Not yet implemented
+		return null;
+	}
+
+	@Override
+	public IStatus revokePolicyPmp(String policyName) {
+		RevokePolicyPmpPmpRequest request = new RevokePolicyPmpPmpRequest(policyName);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus revokeMechanismPmp(String policyName, String mechName) {
+		RevokeMechanismPmpPmpRequest request = new RevokeMechanismPmpPmpRequest(policyName, mechName);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus deployPolicyURIPmp(String policyFilePath) {
+		DeployPolicyURIPmpPmpRequest request = new DeployPolicyURIPmpPmpRequest(policyFilePath);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+		DeployPolicyXMLPmpPmpRequest request = new DeployPolicyXMLPmpPmpRequest(XMLPolicy);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() {
+		ListMechanismsPmpPmpRequest request = new ListMechanismsPmpPmpRequest();
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
 	public boolean registerPxp(PxpSpec pxp) {
 		RegisterPxpPdpRequest request = new RegisterPxpPdpRequest(pxp);
 		_requestQueueManager.addRequest(request, this);
@@ -376,6 +423,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		InitialRepresentationPipRequest request = new InitialRepresentationPipRequest(containerName, data);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

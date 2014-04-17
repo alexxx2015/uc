@@ -60,35 +60,35 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	@Override
 	public TStatus revokePolicy(String policyName) throws TException {
 		_logger.debug("TAny2Pdp: revokePolicy");
-		IStatus status = _requestHandler.revokePolicy(policyName);
+		IStatus status = _requestHandler.revokePolicyPmp(policyName);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus revokeMechanism(String policyName, String mechName) throws TException {
 		_logger.debug("TAny2Pdp: revokeMechanism");
-		IStatus status = _requestHandler.revokeMechanism(policyName, mechName);
+		IStatus status = _requestHandler.revokeMechanismPmp(policyName, mechName);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus deployPolicyURI(String policyFilePath) throws TException {
 		_logger.debug("TAny2Pdp: deployPolicy");
-		IStatus status = _requestHandler.deployPolicyURI(policyFilePath);
+		IStatus status = _requestHandler.deployPolicyURIPmp(policyFilePath);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus deployPolicyXML(String XMLPolicy) throws TException {
 		_logger.debug("TAny2Pdp: deployPolicy");
-		IStatus status = _requestHandler.deployPolicyXML(XMLPolicy);
+		IStatus status = _requestHandler.deployPolicyXMLPmp(XMLPolicy);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		_logger.debug("TAny2Pdp: listMech");
-		return _requestHandler.listMechanisms();
+		return _requestHandler.listMechanismsPmp();
 	}
 
 }

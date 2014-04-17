@@ -46,6 +46,14 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
+	public TData newInitialRepresentation(TName containerName) throws TException {
+		_logger.debug("TAny2Pip: newInitialRepresentation");
+		IName name = ThriftConverter.fromThrift(containerName);
+		IData _data = _requestHandler.newInitialRepresentation(name);
+		return ThriftConverter.toThrift(_data);
+	}
+
+	@Override
 	public boolean hasAllData(Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: hasAllData");
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
