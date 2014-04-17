@@ -13,14 +13,11 @@ import com.google.common.collect.Maps;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
-import de.tum.in.i22.uc.cm.factories.IMessageFactory;
-import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -53,9 +50,6 @@ public class ThriftTest {
 		clientPdp.connect();
 
 		IResponse response;
-		IStatus status;
-		Map<String, List<String>> mechanisms;
-
 		Map<String,String> map = new HashMap<>();
 		Map<String,String> map2 = new HashMap<>();
 		map.put("target", "generic target");

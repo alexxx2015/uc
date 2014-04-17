@@ -12,7 +12,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>MyUCCockpit</module>
+		<module>UcManager</module>
 		<module>Jni</module>
 	</modules>
 </project>

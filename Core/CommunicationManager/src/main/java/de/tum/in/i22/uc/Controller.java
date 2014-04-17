@@ -68,12 +68,14 @@ public class Controller {
 				_logger.info("... waiting ...");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {		}
-		} while (!started());
+		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
 	}
 
 
-	public static boolean started() {
+	public static boolean isStarted() {
+		if(_settings == null)
+			return false;
 		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
 				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
 				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
