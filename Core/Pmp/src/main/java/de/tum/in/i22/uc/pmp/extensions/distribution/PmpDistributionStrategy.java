@@ -4,13 +4,13 @@ import de.tum.in.i22.uc.cm.distribution.AbstractDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.factories.IClientHandlerFactory;
+import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public abstract class PmpDistributionStrategy extends AbstractDistributionStrategy implements IPmpDistributionStrategy {
 
-	protected final IClientHandlerFactory _clientHandlerFactory;
+	protected final IClientFactory _clientHandlerFactory;
 
 	protected final ConnectionManager<Any2PmpClient> _connectionManager;
 
