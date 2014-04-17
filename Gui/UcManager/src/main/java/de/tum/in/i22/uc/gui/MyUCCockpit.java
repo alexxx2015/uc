@@ -10,13 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,26 +29,16 @@ import org.apache.log4j.Logger;
 
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
-import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
-import edu.tum.XMLtools.OffsetParameter;
-import edu.tum.XMLtools.OffsetTable;
-import edu.tum.XMLtools.StaticAnalysis;
 
 
-public class MyUCCockpit {
+public class MyUCCockpit extends Controller{
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private final LinkedList<String> deployedPolicies = new LinkedList<String>();
-	
-	private ThriftClientFactory clientFactory;
-	private Any2PipClient pipClient;
-	private Any2PdpClient pdpClient;
-
+	private final LinkedList<String> deployedPolicies = new LinkedList<String>();	
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -68,32 +53,36 @@ public class MyUCCockpit {
 	private JLabel pdpInfoLabel;
 	private JLabel pipInfoLabel;
 	private JTextArea pipTextArea;
-	private JTextArea pipTextFormula;
-
 	private static Logger _logger = Logger.getLogger(MyUCCockpit.class);
 
-	private Thread pdpThread;
+	private Thread pdpThread;	
+	
+	private ThriftClientFactory clientFactory;
+	private Pep2PipClient pipClient;
+	private Any2PmpClient pmpClient;
 
-	private Controller pdpCtrl;
 
-	// -Djava.rmi.server.hostname=172.16.195.143
-	// static{
-	// System.setProperty("java.rmi.server.hostname", "172.16.195.181");
-	// }
 	/*
+	 *	-Djava.rmi.server.hostname=172.16.195.143
+	 *	static{
+	 *		System.setProperty("java.rmi.server.hostname", "172.16.195.181");
+	 *	}	 
 	 * -agentlib:jdwp=transport=dt_socket ,suspend=y ,address=localhost:47163
 	 * -Djava.library.path=/home/uc/workspace/pef/bin/linux/components/pdp
 	 * -Dfile.encoding=UTF-8 -classpath
 	 * /home/uc/workspace/pef/bin/java:/home/uc/workspace/LibPIP/bin
 	 * de.fraunhofer.iese.pef.pdp.example.MyPDP
 	 */
+
 	public MyUCCockpit() {
 		this.clientFactory = new ThriftClientFactory();
 		if(this.clientFactory != null){
-			this.pipClient = this.clientFactory.createAny2PipClientHandler(new IPLocation("localhost", 21002));
+			this.pipClient = this.clientFactory.createPep2PipClient(new IPLocation("localhost", 21002));
+			this.pmpClient = this.clientFactory.createAny2PmpClient(new IPLocation("localhost", 21001));
 		}
 	}
 
+	
 	public static void main(String args[]) {
 		MyUCCockpit myUCC = new MyUCCockpit();
 		myUCC.showGUI();
@@ -162,15 +151,9 @@ public class MyUCCockpit {
 					dtm.getDataVector().removeAllElements();
 					dtm.fireTableDataChanged();
 					deployedPolicies.clear();
-					if(pdpClient == null){
-						pdpClient = clientFactory.createAny2PdpClientHandler(new IPLocation("localhost", 21003));
-						try {
-							pdpClient.connect();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
+					
+					if(!isStarted())
+						start();
 					pdpInfoLabel.setText("PDP running");
 					ucIsRunning = true;
 					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
@@ -178,12 +161,10 @@ public class MyUCCockpit {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
+			public void mouseEntered(MouseEvent e) {}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-			}
+			public void mouseExited(MouseEvent e) {}
 		});
 		framePane.add(this.startBtn, gbc);
 
@@ -274,20 +255,16 @@ public class MyUCCockpit {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-			}
+			public void mousePressed(MouseEvent e) {}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
+			public void mouseReleased(MouseEvent e) {}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
+			public void mouseEntered(MouseEvent e) {}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-			}
+			public void mouseExited(MouseEvent e) {}
 		});
 		_return.add(this.pipPopulateBtn, gbc);
 
@@ -557,7 +534,7 @@ public class MyUCCockpit {
 					table.getSelectedRow(), 1);
 			String policy = (String) table.getModel().getValueAt(
 					table.getSelectedRow(), 0);
-			pdpClient.revokeMechanism(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
+			pmpClient.revokeMechanismPmp(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
 
 			((DefaultTableModel) table.getModel()).removeRow(Integer.parseInt(e
 					.getActionCommand()));
@@ -574,6 +551,6 @@ public class MyUCCockpit {
 	}
 
 	public void deployPolicy(String policyFile) {
-		this.pdpClient.deployPolicyURI(policyFile);
+		this.pmpClient.deployPolicyURIPmp(policyFile);
 	}
 }
