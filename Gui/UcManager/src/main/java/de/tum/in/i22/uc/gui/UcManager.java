@@ -10,8 +10,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,12 +33,13 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -53,12 +62,11 @@ public class UcManager extends Controller{
 	private JLabel pdpInfoLabel;
 	private JLabel pipInfoLabel;
 	private JTextArea pipTextArea;
-	private static Logger _logger = Logger.getLogger(UcManager.class);
+	private static Logger _logger = LoggerFactory.getLogger(UcManager.class);
 
 	private Thread pdpThread;	
 	
 	private ThriftClientFactory clientFactory;
-	private Pep2PipClient pipClient;
 	private Any2PmpClient pmpClient;
 
 
@@ -77,8 +85,8 @@ public class UcManager extends Controller{
 	public UcManager() {
 		this.clientFactory = new ThriftClientFactory();
 		if(this.clientFactory != null){
-			this.pipClient = this.clientFactory.createPep2PipClient(new IPLocation("localhost", 21002));
 			this.pmpClient = this.clientFactory.createAny2PmpClient(new IPLocation("localhost", 21001));
+//			this.pmpClient = this.clientFactory.createPmp2PdpClient(new IPLocation("localhost", 21003));
 		}
 	}
 
@@ -142,14 +150,14 @@ public class UcManager extends Controller{
 					deployedPolicyTable.setEnabled(true);
 					policyDeployBtn.setEnabled(true);
 
-					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
-							.getModel();
+					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable.getModel();
 					dtm.getDataVector().removeAllElements();
 					dtm.fireTableDataChanged();
 					deployedPolicies.clear();
 					
-					if(!isStarted())
-						start();
+					if(!isStarted()){
+						start();						
+					}
 					pdpInfoLabel.setText("PDP running");
 					ucIsRunning = true;
 					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
@@ -430,13 +438,28 @@ public class UcManager extends Controller{
 										.getAbsolutePath());
 							}
 						}
-						System.out.println("FILE: "
-								+ jfc.getSelectedFile().getAbsoluteFile());
+
+						_logger.info("Deployed File " + jfc.getSelectedFile().getAbsoluteFile());
 
 						DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
 								.getModel();
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
+						
+						Map<String, List<String>> deployedMech = pmpClient.listMechanismsPmp();
+						Iterator<String> arIt = deployedMech.keySet().iterator();
+						while (arIt.hasNext()) {
+							String policyName = (String) arIt.next();
+							List<String> mechanism = deployedMech.get(policyName);
+							Iterator<String> mechIt = mechanism.iterator();
+							while(mechIt.hasNext()){
+								String m = mechIt.next();
+								((DefaultTableModel) deployedPolicyTable
+										.getModel()).addRow(new Object[] {
+										policyName,
+										m });
+							}
+						}
 					}
 				}
 			}
@@ -546,6 +569,24 @@ public class UcManager extends Controller{
 	}
 
 	public void deployPolicy(String policyFile) {
+		try {
+			this.pmpClient.connect();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String policy = "";
+		try {
+			FileReader fr = new FileReader(policyFile);
+			BufferedReader br = new BufferedReader(fr);
+			String line;
+			while((line = br.readLine()) != null)
+				policy += line;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+//		this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
 	}
 }
