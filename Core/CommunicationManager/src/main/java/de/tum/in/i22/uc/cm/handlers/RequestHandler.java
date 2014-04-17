@@ -48,6 +48,7 @@ import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
+import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllContainersPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
@@ -463,6 +464,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public String getIfModel() {
+		GetIfModelPipRequest request = new GetIfModelPipRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

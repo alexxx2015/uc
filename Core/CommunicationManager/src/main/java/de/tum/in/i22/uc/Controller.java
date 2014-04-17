@@ -24,7 +24,7 @@ public class Controller {
 	private static IThriftServer _pmpServer;
 	private static IThriftServer _anyServer;
 
-	private static IRequestHandler _requestHandler;
+	protected static IRequestHandler _requestHandler;
 
 	/**
 	 * This field is in fact used by native code via JNI.
