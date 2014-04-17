@@ -53,7 +53,8 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	@Override
 	public TStatus revokeMechanismPmp(String policyName, String mechName)
 			throws TException {
-		return null;
+		IStatus status = _requestHandler.revokeMechanismPmp(policyName, mechName);
+		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
@@ -78,6 +79,7 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	@Override
 	public TStatus revokePolicyPmp(String policyName) throws TException {
 		// TODO Auto-generated method stub
-		return null;
+		IStatus status = _requestHandler.revokePolicy(policyName);
+		return ThriftConverter.toThrift(status);
 	}
 }
