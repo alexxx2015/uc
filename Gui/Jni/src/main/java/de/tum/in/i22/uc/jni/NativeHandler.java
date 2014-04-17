@@ -1,22 +1,21 @@
-package de.tum.in.i22.uc.cm.handlers;
+package de.tum.in.i22.uc.jni;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 
 /**
  * This class will be used via JNI to dispatch events.
  * @author Florian Kelbert
  *
  */
-public class NativeHandler {
-	private final IRequestHandler _requestHandler;
+public class NativeHandler extends Controller {
 
-	public NativeHandler(IRequestHandler requestHandler) {
-		_requestHandler = requestHandler;
+	public static void main(String[] args) {
+		Controller.main(args);
 	}
 
 	public Object notifyEvent(String name, String[] paramKeys, String[] paramValues, boolean isActual) {
