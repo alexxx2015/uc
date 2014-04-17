@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,9 +38,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.Controller;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
+import de.tum.in.i22.uc.cm.factories.IMessageFactory;
+import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
+import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
+import de.tum.in.i22.uc.gui.analysis.OffsetTable;
+import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -68,6 +76,7 @@ public class UcManager extends Controller{
 	
 	private ThriftClientFactory clientFactory;
 	private Any2PmpClient pmpClient;
+	private Pep2PdpClient pdpClient;
 
 
 	/*
@@ -86,7 +95,7 @@ public class UcManager extends Controller{
 		this.clientFactory = new ThriftClientFactory();
 		if(this.clientFactory != null){
 			this.pmpClient = this.clientFactory.createAny2PmpClient(new IPLocation("localhost", 21001));
-//			this.pmpClient = this.clientFactory.createPmp2PdpClient(new IPLocation("localhost", 21003));
+			this.pdpClient = this.clientFactory.createPep2PdpClient(new IPLocation("localhost", 21003));
 		}
 	}
 
@@ -253,7 +262,7 @@ public class UcManager extends Controller{
 						String policy = jfc.getSelectedFile().getName();
 						pipInfoLabel.setText(policy + " deployed");
 
-//						populate(jfc.getSelectedFile());
+						populate(jfc.getSelectedFile());
 					}
 				}
 			}
@@ -305,79 +314,86 @@ public class UcManager extends Controller{
 		return _return;
 	}
 
-//	protected void populate(File f){
-//
-//		StaticAnalysis.importXML(f.getAbsolutePath());
-//
-//		IMessageFactory _messageFactory = MessageFactoryCreator
-//				.createMessageFactory();
-//
-//		// Initialize if model with TEST_C --> TEST_D
-//		_logger.debug("Initialize PIP with sources and sinkes from "+f.getAbsolutePath());
-//
-//		Map<String, String> param = new HashMap<String, String>();
-//		param.put("PEP", "Java");
-//
-//
-//		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
-//		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
-//		Map<String, String[]> flowsMap = StaticAnalysis.getFlowsMap();
-//
-//		try {
-//			param.put("type", "source");
-//			for (String source : sourcesMap.keySet()) {
-//				OffsetTable ot = sourcesMap.get(source);
-//				for (int offset : ot.getSet().keySet()) {
-//					OffsetParameter on = ot.get(offset);
-//
-//					String genericSig = on.getSignature();
-//					param.put("offset", String.valueOf(offset));
-//					param.put("location", source);
-//					param.put("signature", on.getSignature());
-//					for (int parameter : on.getType().keySet()) {
-//						String id = on.getIdOfPar(parameter);
-//						param.put("id", id);
-//						param.put("parampos", String.valueOf(parameter));
-//						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-//						req.getPIP().update(initEvent);
-//					}
-//				}
-//			}
-//
-//		} catch (Exception e) {
-//			System.err.println("Error while pasrsing sources. ");
-//			e.printStackTrace();
-//		}
-//
-////		/*
-////		 * generate sinks
-////		 */
-//		try {
-//			param.put("type", "sink");
-//			for (String sink : sinksMap.keySet()) {
-//				OffsetTable ot = sinksMap.get(sink);
-//				for (int offset : ot.getSet().keySet()) {
-//					OffsetParameter on = ot.get(offset);
-//
-//					String genericSig = on.getSignature();
-//					param.put("offset", String.valueOf(offset));
-//					param.put("location", sink);
-//					param.put("signature", on.getSignature());
-//					for (int parameter : on.getType().keySet()) {
-//						String id = on.getIdOfPar(parameter);
-//						param.put("id", id);
-//						param.put("parampos", String.valueOf(parameter));
-//						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-//						req.getPIP().update(initEvent);
-//					}
-//				}
-//			}
-//
-//		} catch (Exception e) {
-//			System.err.println("Error while pasrsing sinks. ");
-//			e.printStackTrace();
-//		}
-//	}
+	protected void populate(File f){
+		
+		try {
+			this.pdpClient.connect();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		StaticAnalysis.importXML(f.getAbsolutePath());
+
+		IMessageFactory _messageFactory = MessageFactoryCreator
+				.createMessageFactory();
+
+		// Initialize if model with TEST_C --> TEST_D
+		_logger.debug("Initialize PIP with sources and sinkes from "+f.getAbsolutePath());
+
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("PEP", "Java");
+
+
+		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
+		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
+		Map<String, String[]> flowsMap = StaticAnalysis.getFlowsMap();
+
+		try {
+			param.put("type", "source");
+			for (String source : sourcesMap.keySet()) {
+				OffsetTable ot = sourcesMap.get(source);
+				for (int offset : ot.getSet().keySet()) {
+					OffsetParameter on = ot.get(offset);
+
+					String genericSig = on.getSignature();
+					param.put("offset", String.valueOf(offset));
+					param.put("location", source);
+					param.put("signature", on.getSignature());
+					for (int parameter : on.getType().keySet()) {
+						String id = on.getIdOfPar(parameter);
+						param.put("id", id);
+						param.put("parampos", String.valueOf(parameter));
+						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
+						pdpClient.notifyEventAsync(initEvent);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			System.err.println("Error while pasrsing sources. ");
+			e.printStackTrace();
+		}
+
+//		/*
+//		 * generate sinks
+//		 */
+		try {
+			param.put("type", "sink");
+			for (String sink : sinksMap.keySet()) {
+				OffsetTable ot = sinksMap.get(sink);
+				for (int offset : ot.getSet().keySet()) {
+					OffsetParameter on = ot.get(offset);
+
+					String genericSig = on.getSignature();
+					param.put("offset", String.valueOf(offset));
+					param.put("location", sink);
+					param.put("signature", on.getSignature());
+					for (int parameter : on.getType().keySet()) {
+						String id = on.getIdOfPar(parameter);
+						param.put("id", id);
+						param.put("parampos", String.valueOf(parameter));
+						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
+						pdpClient.notifyEventAsync(initEvent);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			System.err.println("Error while pasrsing sinks. ");
+			e.printStackTrace();
+		}
+	}
 
 	private JPanel createPDPPanel() {
 		JPanel _return = new JPanel();

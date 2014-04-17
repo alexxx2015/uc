@@ -111,7 +111,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			}
 			return deployXML(inp);
 		}
-		log.warn("Unsupported message format of policy!");
+		log.warn("Unsupported message format of policy! "+policyFilename );
 		return false;
 	}
 
