@@ -17,4 +17,8 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
 public interface IPmp2Pip {
 	@AThriftMethod(signature="Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data)")
 	public IStatus initialRepresentation(IName containerName, Set<IData> data);
+	
+	@AThriftMethod(signature="Types.TData newInitialRepresentation(1: Types.TName container)")
+	public IData newInitialRepresentation(IName containerName);
+	
 }

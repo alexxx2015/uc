@@ -1,12 +1,15 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -85,6 +88,36 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	@Override
 	public IStatus receivePolicies(Set<String> policies) {
 		return _impl.receivePolicies(policies);
+	}
+
+	@Override
+	public IMechanism exportMechanismPmp(String par) {
+		return _impl.exportMechanismPmp(par);
+	}
+
+	@Override
+	public IStatus revokePolicyPmp(String policyName) {
+		return _impl.revokePolicyPmp(policyName)	;
+	}
+
+	@Override
+	public IStatus revokeMechanismPmp(String policyName, String mechName) {
+		return _impl.revokeMechanismPmp(policyName, mechName);
+	}
+
+	@Override
+	public IStatus deployPolicyURIPmp(String policyFilePath) {
+		return _impl.deployPolicyURIPmp(policyFilePath);
+	}
+
+	@Override
+	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+		return _impl.deployPolicyXMLPmp(XMLPolicy);
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() {
+		return _impl.listMechanismsPmp();
 	}
 
 }

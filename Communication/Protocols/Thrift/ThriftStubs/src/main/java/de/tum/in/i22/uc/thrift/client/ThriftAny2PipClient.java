@@ -154,6 +154,11 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		return _impl.newInitialRepresentation(containerName);
+	}
+
+	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		return _impl.whoHasData(data, recursionDepth);
 	}
