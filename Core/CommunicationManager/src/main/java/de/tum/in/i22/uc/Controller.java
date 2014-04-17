@@ -33,7 +33,6 @@ public class Controller {
 	private static NativeHandler _nativeHandler;
 
 	public static void main(String[] args) {
-
 		if (start(args)){
 			// lock forever
 			lock();
@@ -90,6 +89,13 @@ public class Controller {
 				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
 	}
 
+	public static void stop() {
+		if (_pdpServer != null) _pdpServer.stop();
+		if (_pipServer != null) _pipServer.stop();
+		if (_pmpServer != null) _pmpServer.stop();
+		if (_anyServer != null) _anyServer.stop();
+		System.exit(0);
+	}
 
 	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {

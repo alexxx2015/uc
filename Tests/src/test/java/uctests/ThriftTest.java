@@ -32,7 +32,7 @@ public class ThriftTest {
 												+ "test-classes" + File.separator
 												+ "testTUM.xml";
 
-	private static int pdpPort = 60003;
+	private static int pdpPort = 50003;
 
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 
@@ -83,6 +83,8 @@ public class ThriftTest {
 
 		System.out.println("\nDeploying policy returned: " + response+"\n");
 
+		pdpServer.stop();
+
 	}
 
 	@Test
@@ -91,14 +93,14 @@ public class ThriftTest {
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler());
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort + 1, new RequestHandler());
 		new Thread(pdpServer).start();
 
 		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort + 1));
 		clientPdp.connect();
 
 		int x = 0;
@@ -151,7 +153,7 @@ public class ThriftTest {
 
 		System.out.println(x++);
 
-
+		pdpServer.stop();
 
 
 		/*
