@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
@@ -50,10 +51,45 @@ public final class ThriftConverter {
 			return null;
 		}
 
+		return new ContainerBasic(c.getId(), ThriftConverter.fromThriftAttributeList(c.getAttributes()));
+	}
 
-		//TODO convert Attributes from Thrift
-		// Left compiler failure on purpose.
-		return new ContainerBasic(c.getId()
+	private static List<IAttribute> fromThriftAttributeList(List<TAttribute> attributes) {
+		if (attributes == null || attributes.size() == 0) {
+			return Collections.emptyList();
+		}
+
+		List<IAttribute> result = new LinkedList<>();
+		for (TAttribute attr : attributes) {
+			result.add(ThriftConverter.fromThrift(attr));
+		}
+		return result;
+	}
+
+	private static IAttribute fromThrift(TAttribute attr) {
+		return new AttributeBasic(ThriftConverter.fromThrift(attr.name), attr.value);
+	}
+
+	private static EAttributeName fromThrift(TAttributeName name) {
+		switch (name) {
+			case CLASS:
+				return EAttributeName.CLASS;
+			case CREATION_TIME:
+				return EAttributeName.CREATION_TIME;
+			case MODIFICATION_TIME:
+				return EAttributeName.MODIFICATION_TIME;
+			case OWNER:
+				return EAttributeName.OWNER;
+			case SIZE:
+				return EAttributeName.SIZE;
+			case TYPE:
+				return EAttributeName.TYPE;
+			case WILDCARD:
+				return EAttributeName.WILDCARD;
+			default:
+				_logger.warn("Unknown AttributeName [" + name + "]. Returning null.");
+				return null;
+		}
 	}
 
 	public static IData fromThrift(TData d) {
@@ -130,7 +166,7 @@ public final class ThriftConverter {
 			eStatus = EStatus.OKAY;
 			break;
 		default:
-			_logger.debug("Unknown Status. Returning null.");
+			_logger.warn("Unknown Status [" + s + "]. Returning null.");
 			return null;
 		}
 
@@ -251,7 +287,7 @@ public final class ThriftConverter {
 		case OKAY:
 			return TStatus.OKAY;
 		default:
-			_logger.debug("Unknown Status. Returning null.");
+			_logger.warn("Unknown Status [" + s.getEStatus() + "]. Returning null.");
 			return null;
 		}
 	}
@@ -379,7 +415,7 @@ public final class ThriftConverter {
 			case WILDCARD:
 				return TAttributeName.WILDCARD;
 			default:
-				_logger.info("EAttributeName is null.");
+				_logger.warn("Unkown AttributeName [" + name + "]. Returning null.");
 				return null;
 		}
 	}

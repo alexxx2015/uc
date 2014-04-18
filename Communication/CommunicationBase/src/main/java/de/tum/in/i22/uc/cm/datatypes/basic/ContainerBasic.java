@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,14 +23,18 @@ public class ContainerBasic implements IContainer {
 	private final Map<EAttributeName,IAttribute> _attributes;
 
 	public ContainerBasic() {
-		this((String) null);
+		this((String) null, null);
 	}
 
-	public ContainerBasic(IAttribute ... attributes) {
+	public ContainerBasic(String id) {
+		this(id, null);
+	}
+
+	public ContainerBasic(List<IAttribute> attributes) {
 		this(null, attributes);
 	}
 
-	public ContainerBasic(String id, IAttribute ... attributes) {
+	public ContainerBasic(String id, List<IAttribute> attributes) {
 		if (id == null || id.isEmpty()) {
 			id = UUID.randomUUID().toString();
 		}
@@ -37,10 +42,12 @@ public class ContainerBasic implements IContainer {
 		_id = id;
 
 		_attributes = new HashMap<>();
-		for (IAttribute attr : attributes) {
-			if (_attributes.put(attr.getName(), attr) != null) {
-				_logger.warn("Overwriting existing attribute " + attr.getName() + ". "
-						+ "This is likely not a behavior you want, as you specified the same container attribute twice.");
+		if (attributes != null) {
+			for (IAttribute attr : attributes) {
+				if (_attributes.put(attr.getName(), attr) != null) {
+					_logger.warn("Overwriting existing attribute " + attr.getName() + ". "
+							+ "This is likely not a behavior you want, as you specified the same container attribute twice.");
+				}
 			}
 		}
 	}
