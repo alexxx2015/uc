@@ -89,7 +89,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	 * with all parameters set to {@link LocalLocation}.
 	 */
 	public RequestHandler() {
-		this(new LocalLocation(), new LocalLocation(), new LocalLocation());
+		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 	}
 
 

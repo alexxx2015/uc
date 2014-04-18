@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,6 +11,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
@@ -17,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -25,6 +30,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.thrift.types.TAttribute;
+import de.tum.in.i22.uc.thrift.types.TAttributeName;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -44,7 +51,45 @@ public final class ThriftConverter {
 			return null;
 		}
 
-		return new ContainerBasic(c.getId());
+		return new ContainerBasic(c.getId(), ThriftConverter.fromThriftAttributeList(c.getAttributes()));
+	}
+
+	private static List<IAttribute> fromThriftAttributeList(List<TAttribute> attributes) {
+		if (attributes == null || attributes.size() == 0) {
+			return Collections.emptyList();
+		}
+
+		List<IAttribute> result = new LinkedList<>();
+		for (TAttribute attr : attributes) {
+			result.add(ThriftConverter.fromThrift(attr));
+		}
+		return result;
+	}
+
+	private static IAttribute fromThrift(TAttribute attr) {
+		return new AttributeBasic(ThriftConverter.fromThrift(attr.name), attr.value);
+	}
+
+	private static EAttributeName fromThrift(TAttributeName name) {
+		switch (name) {
+			case CLASS:
+				return EAttributeName.CLASS;
+			case CREATION_TIME:
+				return EAttributeName.CREATION_TIME;
+			case MODIFICATION_TIME:
+				return EAttributeName.MODIFICATION_TIME;
+			case OWNER:
+				return EAttributeName.OWNER;
+			case SIZE:
+				return EAttributeName.SIZE;
+			case TYPE:
+				return EAttributeName.TYPE;
+			case WILDCARD:
+				return EAttributeName.WILDCARD;
+			default:
+				_logger.warn("Unknown AttributeName [" + name + "]. Returning null.");
+				return null;
+		}
 	}
 
 	public static IData fromThrift(TData d) {
@@ -130,7 +175,7 @@ public final class ThriftConverter {
 			eStatus = EStatus.OKAY;
 			break;
 		default:
-			_logger.debug("Unknown Status. Returning null.");
+			_logger.warn("Unknown Status [" + s + "]. Returning null.");
 			return null;
 		}
 
@@ -167,7 +212,7 @@ public final class ThriftConverter {
 			return Collections.emptyList();
 		}
 
-		List<IEvent> res = new LinkedList<>();
+		List<IEvent> res = new ArrayList<>(events.size());
 		for (TEvent e : events) {
 			res.add(ThriftConverter.fromThrift(e));
 		}
@@ -180,7 +225,7 @@ public final class ThriftConverter {
 			return null;
 		}
 
-		return new TContainer(c.getId());
+		return new TContainer(c.getId(), ThriftConverter.toThriftAttributeList(c.getAttributes()));
 	}
 
 	public static TData toThrift(IData d) {
@@ -258,7 +303,7 @@ public final class ThriftConverter {
 		case OKAY:
 			return TStatus.OKAY;
 		default:
-			_logger.debug("Unknown Status. Returning null.");
+			_logger.warn("Unknown Status [" + s.getEStatus() + "]. Returning null.");
 			return null;
 		}
 	}
@@ -351,4 +396,45 @@ public final class ThriftConverter {
 		}
 		return result;
 	}
+
+
+	private static List<TAttribute> toThriftAttributeList(Collection<IAttribute> attributes) {
+		if (attributes == null || attributes.size() == 0) {
+			return Collections.emptyList();
+		}
+
+		List<TAttribute> result = new ArrayList<>(attributes.size());
+		for (IAttribute attr : attributes) {
+			result.add(ThriftConverter.toThrift(attr));
+		}
+		return result;
+	}
+
+	private static TAttribute toThrift(IAttribute attr) {
+		return new TAttribute(ThriftConverter.toThrift(attr.getName()), attr.getValue());
+	}
+
+	private static TAttributeName toThrift(EAttributeName name) {
+		switch (name) {
+			case CLASS:
+				return TAttributeName.CLASS;
+			case CREATION_TIME:
+				return TAttributeName.CREATION_TIME;
+			case MODIFICATION_TIME:
+				return TAttributeName.MODIFICATION_TIME;
+			case OWNER:
+				return TAttributeName.OWNER;
+			case SIZE:
+				return TAttributeName.SIZE;
+			case TYPE:
+				return TAttributeName.TYPE;
+			case WILDCARD:
+				return TAttributeName.WILDCARD;
+			default:
+				_logger.warn("Unkown AttributeName [" + name + "]. Returning null.");
+				return null;
+		}
+	}
+
+
 }
