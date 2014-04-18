@@ -59,9 +59,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
+	public Set<IData> getDataInContainer(IName containerName) {
 		try {
-			return ThriftConverter.fromThriftDataSet(_handle.getDataInContainer(ThriftConverter.toThrift(container)));
+			return ThriftConverter.fromThriftDataSet(_handle.getDataInContainer(ThriftConverter.toThrift(containerName)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -156,6 +156,14 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 	}
 
+	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		try {
+			return ThriftConverter.fromThrift(_handle.newInitialRepresentation(ThriftConverter.toThrift(containerName)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
 	@Override
 	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution conflictResolutionFlag) {

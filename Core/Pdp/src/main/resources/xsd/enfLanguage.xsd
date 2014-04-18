@@ -156,16 +156,34 @@
   
   <simpleType name="ParamMatchDataTypes">
     <restriction base="string">
-      <pattern value="string|dataUsage|xpath|regex|binary|int|long|bool|stringArray|context"/>
+      <pattern value="string|dataUsage|container|data"/>
+    </restriction>
+  </simpleType>
+  
+  <simpleType name="ComparisonOperatorTypes">
+    <restriction base="string">
+      <enumeration value="equals" />
+	  <enumeration value="dataInContainer" />
+	  <enumeration value="gt" />
+	  <enumeration value="ge" />
+	  <enumeration value="lt" />
+	  <enumeration value="le" />
+	  <enumeration value="notEquals" />
+	  <enumeration value="elementInList" />
+	  <enumeration value="listInList" />
+	  <enumeration value="startsWith" />
+	  <enumeration value="endsWith" />
+	  <enumeration value="substring" />
+	  <enumeration value="equalsIgnoreCase"/>
     </restriction>
   </simpleType>
     
   <complexType name="ParamMatchType">
-    <attribute name="name"    type="string"                  use="required" />
-    <attribute name="value"   type="string"                  use="required" />
-    <attribute name="type"    type="tns:ParamMatchDataTypes" use="optional" default="string" />
-    <attribute name="dataID"  type="string"                  use="optional" default="" />
-    <attribute name="negate"  type="boolean"                 use="optional" default="false" />
+    <attribute name="name"    type="string"                  	 use="required" />
+    <attribute name="value"   type="string"                  	 use="required" />
+    <attribute name="type"    type="tns:ParamMatchDataTypes" 	 use="optional" default="string" />
+  	<attribute name="cmpOp"   type="tns:ComparisonOperatorTypes" use="optional" default="equals" />
+    <attribute name="dataID"  type="string"                  	 use="optional" default="" />
   </complexType>
 
   <complexType name="EventMatchingOperatorType" abstract="true">

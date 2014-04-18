@@ -7,7 +7,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.handlers.NativeHandler;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -24,16 +23,9 @@ public class Controller {
 	private static IThriftServer _pmpServer;
 	private static IThriftServer _anyServer;
 
-	private static IRequestHandler _requestHandler;
-
-	/**
-	 * This field is in fact used by native code via JNI.
-	 */
-	@SuppressWarnings("unused")
-	private static NativeHandler _nativeHandler;
+	protected static IRequestHandler _requestHandler;
 
 	public static void main(String[] args) {
-
 		if (start(args)){
 			// lock forever
 			lock();
@@ -69,8 +61,6 @@ public class Controller {
 
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(), _settings.getPipLocation(), _settings.getPmpLocation());
 
-		_nativeHandler = new NativeHandler(_requestHandler);
-
 		_logger.info("Starting up thrift servers");
 		startListeners(_requestHandler);
 		do {
@@ -78,18 +68,27 @@ public class Controller {
 				_logger.info("... waiting ...");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {		}
-		} while (!started());
+		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
 	}
 
 
-	public static boolean started() {
+	public static boolean isStarted() {
+		if(_settings == null)
+			return false;
 		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer.started()))
 				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer.started()))
 				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer.started()))
 				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer.started()));
 	}
 
+	public static void stop() {
+		if (_pdpServer != null) _pdpServer.stop();
+		if (_pipServer != null) _pipServer.stop();
+		if (_pmpServer != null) _pmpServer.stop();
+		if (_anyServer != null) _anyServer.stop();
+		System.exit(0);
+	}
 
 	private static void startListeners(IRequestHandler requestHandler) {
 		if (_settings.isPdpListenerEnabled()) {

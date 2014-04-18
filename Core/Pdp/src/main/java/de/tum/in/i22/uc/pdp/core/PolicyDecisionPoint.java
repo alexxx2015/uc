@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +22,7 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
@@ -37,6 +37,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			.getLogger(PolicyDecisionPoint.class);
 	private static final long serialVersionUID = -6823961095919408237L;
 
+	private static IPdp2Pip _pip;
+
 	private static IPolicyDecisionPoint instance = null;
 	private ActionDescriptionStore actionDescriptionStore = null;
 	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
@@ -46,39 +48,60 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	public static IPolicyDecisionPoint getInstance() {
+		return getInstance(null);
+	}
+
+	public static IPolicyDecisionPoint getInstance(IPdp2Pip pip) {
 		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
+		 * This implementation may seem odd, overengineered, redundant, or all
+		 * of it. Yet, it is the best way to implement a thread-safe singleton,
+		 * cf.
+		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
+		 * -with-example-code -FK-
 		 */
 		if (instance == null) {
 			synchronized (PolicyDecisionPoint.class) {
-				if (instance == null){
+				if (instance == null) {
 					instance = new PolicyDecisionPoint();
-//					instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
-//					instance.deployPolicyURI("/home/florian/testTUM.xml");
+					log.debug("new PDP instance created");
+					// instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
+					// instance.deployPolicyURI("/home/florian/testTUM.xml");
 				}
+			}
+		}
+		/**
+		 * This code looks ugly, but it is needed in order to allow the PDP test to run without the need of a PIP reference.
+		 * When getInstance was invoked the first time, if pip was null, the code used to crash.
+		 * This forced the first invocation to getInstance to provide a proper PIP reference.
+		 * But this cannot be created within the PDP (because the PIP is not visible from within this scope).
+		 * Therefore we decided to allow the creation of PDPs without valid PIP reference.
+		 * As soon as one valid reference is provided, that is permanently set for the PDP.
+		 * This explains why we do it using the getInstance method and we do not use a setter instead:
+		 * this value should be set only once.
+		 */
+		
+		if (_pip == null && pip != null) {
+			synchronized (PolicyDecisionPoint.class) {
+				log.debug("PIP reference for PDP instance initialized");
+				_pip = pip;
 			}
 		}
 		return instance;
 	}
 
-
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
 		log.debug("deployPolicyXML (before)");
-		InputStream is = new ByteArrayInputStream(XMLPolicy.getBytes() );
+		InputStream is = new ByteArrayInputStream(XMLPolicy.getBytes());
 		log.debug("deployPolicyXML (IS created)");
-		boolean b=deployXML(is);
+		boolean b = deployXML(is);
 		log.debug("deployPolicyXML (after)");
 		return b;
 	}
 
-
 	@Override
 	public boolean deployPolicyURI(String policyFilename) {
-		if (policyFilename.endsWith(".xml")){
+		if (policyFilename.endsWith(".xml")) {
 			InputStream inp = null;
 			try {
 				inp = new FileInputStream(policyFilename);
@@ -87,13 +110,14 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				e.printStackTrace();
 			}
 			return deployXML(inp);
-		}	
-		log.warn("Unsupported message format of policy!");
+		}
+		log.warn("Unsupported message format of policy! "+policyFilename );
 		return false;
 	}
-	
+
 	public boolean deployXML(InputStream inp) {
-		if (inp==null) return false;
+		if (inp == null)
+			return false;
 		try {
 			JAXBContext jc = JAXBContext
 					.newInstance("de.tum.in.i22.uc.pdp.xsd");
@@ -108,8 +132,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			// u.setSchema(schema);
 			// u.setEventHandler(new PolicyValidationEventHandler());
 
-			JAXBElement<?> poElement = (JAXBElement<?>) u
-					.unmarshal(inp);
+			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
 			PolicyType curPolicy = (PolicyType) poElement.getValue();
 
 			log.debug("curPolicy [name={}]: {}", curPolicy.getName(),
@@ -119,8 +142,9 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 					.getDetectiveMechanismOrPreventiveMechanism();
 
 			if (this.policyTable.containsKey(curPolicy.getName())) {
-//				log.error("Policy [{}] already deployed! Aborting...", curPolicy.getName());
-//				return false;
+				// log.error("Policy [{}] already deployed! Aborting...",
+				// curPolicy.getName());
+				// return false;
 			}
 
 			for (MechanismBaseType mech : mechanisms) {
@@ -128,7 +152,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 					log.debug("Processing mechanism: {}", mech.getName());
 
 					IPdpMechanism curMechanism = new Mechanism(mech);
-					ArrayList<IPdpMechanism> mechanismList = this.policyTable.get(curPolicy.getName());
+					ArrayList<IPdpMechanism> mechanismList = this.policyTable
+							.get(curPolicy.getName());
 					if (mechanismList == null)
 						mechanismList = new ArrayList<IPdpMechanism>();
 					if (mechanismList.contains(curMechanism)) {
@@ -156,7 +181,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			return true;
 		} catch (UnmarshalException e) {
 			log.error("Syntax error in policy: " + e.getMessage());
-		} catch (JAXBException |  ClassCastException e) {
+		} catch (JAXBException | ClassCastException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -165,12 +190,13 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public boolean revokePolicy(String policyName) {
 		boolean ret = false;
-		if (this.policyTable==null){
+		if (this.policyTable == null) {
 			log.error("Empty Policy Table. impossible to revoke policy");
 			return false;
 		}
 		List<IPdpMechanism> mlist = this.policyTable.get(policyName);
-		if (mlist==null) return false;
+		if (mlist == null)
+			return false;
 
 		for (IPdpMechanism mech : mlist) {
 			log.info("Revoking mechanism: {}", mech.getMechanismName());
@@ -182,7 +208,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public boolean revokeMechanism(String policyName, String mechName) {
 		boolean ret = false;
-		if (this.policyTable==null){
+		if (this.policyTable == null) {
 			log.error("Empty Policy Table. impossible to revoke policy");
 			return false;
 		}
@@ -200,7 +226,9 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			if (mech != null) {
 				mechanisms.remove(mech);
 				if (mech instanceof Mechanism) {
-					this.actionDescriptionStore.removeMechanism(((Mechanism) mech).getTriggerEvent().getAction());
+					this.actionDescriptionStore
+							.removeMechanism(((Mechanism) mech)
+									.getTriggerEvent().getAction());
 				}
 			}
 		}
@@ -230,7 +258,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				"Searching for triggered mechanisms for event=[{}] -> subscriptions: {}",
 				event.getEventAction(), mechanismList.size());
 
-		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW));
+		Decision d = new Decision(new AuthorizationAction("default",
+				Constants.AUTHORIZATION_ALLOW));
 		for (Mechanism mech : mechanismList) {
 			log.info("Processing mechanism [{}] for event [{}]",
 					mech.getMechanismName(), event.getEventAction());
@@ -241,17 +270,17 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public Map<String, List<String>> listDeployedMechanisms() {
-		 Map<String, List<String>> map = new HashMap<String, List<String>>();
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
 
-		 for (String policyName : this.policyTable.keySet()) {
-			 List<String> mechanismList = new ArrayList<String>();
-			 for (IPdpMechanism m: this.policyTable.get(policyName)){
-				 mechanismList.add(m.getMechanismName());
-			 }
-			 map.put(policyName, mechanismList);
-		 }
+		for (String policyName : this.policyTable.keySet()) {
+			List<String> mechanismList = new ArrayList<String>();
+			for (IPdpMechanism m : this.policyTable.get(policyName)) {
+				mechanismList.add(m.getMechanismName());
+			}
+			map.put(policyName, mechanismList);
+		}
 
-		 return map;
+		return map;
 	}
 
 	private String readFile(String file) throws IOException {
@@ -266,6 +295,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		}
 		reader.close();
 		return stringBuilder.toString();
+	}
+
+	@Override
+	public IPdp2Pip get_pip() {
+		return _pip;
 	}
 
 }

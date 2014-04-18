@@ -96,4 +96,205 @@
       </allow>
     </authorizationAction>
   </preventiveMechanism>
+  
+  
+  <preventiveMechanism name="testElemInListCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEvent" tryEvent="true">
+      <paramMatch name="name1" value="16" cmpOp="elementInList" />
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  <preventiveMechanism name="testEndsWithCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEvent" tryEvent="true">
+      <paramMatch name="name1" value="ing" cmpOp="endsWith" />
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+
+  <preventiveMechanism name="testEqCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEvent" tryEvent="true">
+      <paramMatch name="name1" value="the same" cmpOp="equals" />
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+  <preventiveMechanism name="testDefaultCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEvent" tryEvent="true">
+      <paramMatch name="name1" value="default value" />
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+  
+  <preventiveMechanism name="testEqualsIgnoreCaseCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEvent" tryEvent="true">
+      <paramMatch name="name1" value="VaLuE" cmpOp="equalsIgnoreCase"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+  <preventiveMechanism name="testGeCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventge" tryEvent="true">
+      <paramMatch name="name1" value="34" cmpOp="ge"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+
+  <preventiveMechanism name="testGtCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventgt" tryEvent="true">
+      <paramMatch name="name1" value="56" cmpOp="gt"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+
+  
+  
+    <preventiveMechanism name="testLeCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventle" tryEvent="true">
+      <paramMatch name="name1" value="34" cmpOp="le"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+
+
+  <preventiveMechanism name="testLtCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventlt" tryEvent="true">
+      <paramMatch name="name1" value="56" cmpOp="lt"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+  
+    <preventiveMechanism name="testListInListCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventList" tryEvent="true">
+      <paramMatch name="name1" value="A B C" cmpOp="listInList"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+      <preventiveMechanism name="testNotEqCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventNeq" tryEvent="true">
+      <paramMatch name="name1" value="ABC" cmpOp="notEquals"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+  
+        <preventiveMechanism name="testStartsWithCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventSW" tryEvent="true">
+      <paramMatch name="name1" value="ABC" cmpOp="startsWith"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+  
+        <preventiveMechanism name="testSubstringCompOp">
+    <description>...</description>
+    <timestep amount="10" unit="SECONDS" />
+    <trigger action="testEventSubstr" tryEvent="true">
+      <paramMatch name="name1" value="ABC" cmpOp="substring"/>
+    </trigger>  
+    <condition>
+    <true/>
+    </condition>
+    <authorizationAction name="default" start="true" fallback="fallback">
+    <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  
+  
+  
 </policy>

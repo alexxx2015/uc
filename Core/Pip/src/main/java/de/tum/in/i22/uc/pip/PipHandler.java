@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -35,7 +37,8 @@ import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends PipProcessor {
-	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
+	private static final Logger _logger = LoggerFactory
+			.getLogger(PipHandler.class);
 
 	private final BasicInformationFlowModel _ifModel;
 
@@ -59,7 +62,8 @@ public class PipHandler extends PipProcessor {
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
 		// initialize data flow according to settings
-		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(), null, true));
+		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
+				null, true));
 	}
 
 	@Override
@@ -81,8 +85,8 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		return _ifModel.getData(container);
+	public Set<IData> getDataInContainer(IName containerName) {
+		return _ifModel.getData(containerName);
 	}
 
 	@Override
@@ -92,15 +96,16 @@ public class PipHandler extends PipProcessor {
 		IStatus status;
 
 		/*
-		 * Get the event handler and perform the
-		 * information flow update according to
-		 * its implemented semantics
+		 * Get the event handler and perform the information flow update
+		 * according to its implemented semantics
 		 */
 
 		try {
 			actionHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
-			return new StatusBasic(EStatus.ERROR, "Could not instantiate event handler for " + action + ", " + e.getMessage());
+			return new StatusBasic(EStatus.ERROR,
+					"Could not instantiate event handler for " + action + ", "
+							+ e.getMessage());
 		}
 
 		if (actionHandler == null) {
@@ -109,36 +114,37 @@ public class PipHandler extends PipProcessor {
 
 		actionHandler.setEvent(event);
 
-		_logger.info(System.lineSeparator() + "Executing PipHandler for " + event);
+		_logger.info(System.lineSeparator() + "Executing PipHandler for "
+				+ event);
 		status = actionHandler.performUpdate();
 
-
 		/*
-		 * The returned status will tell us whether we have to
-		 * do some more work, namely remote data flow tracking
-		 * and policy shipment
+		 * The returned status will tell us whether we have to do some more
+		 * work, namely remote data flow tracking and policy shipment
 		 */
 
-		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED) && (status instanceof DistributedPipStatus)) {
+		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
+				&& (status instanceof DistributedPipStatus)) {
 
 			// TODO: PIP communication and PMP communication
 			// can be improved by either doing only one call
 			// or by doing them in parallel
 
 			/*
-			 * Get the information about the remote data flow from
-			 * the returned status and inform both the
-			 * distributed Pip manager and the Pmp.
+			 * Get the information about the remote data flow from the returned
+			 * status and inform both the distributed Pip manager and the Pmp.
 			 */
 
-			RemoteDataFlowInfo df = ((DistributedPipStatus) status).getDataflow();
+			RemoteDataFlowInfo df = ((DistributedPipStatus) status)
+					.getDataflow();
 			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
 
 			Location srcLocation = df.getSrcLocation();
 
 			for (Location dstlocation : dataflow.keySet()) {
 				// .... remote data flow tracking ....
-				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation, dataflow.get(dstlocation));
+				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation,
+						dataflow.get(dstlocation));
 
 				// .... and remote policy transfer
 				Set<IData> data = new HashSet<>();
@@ -150,15 +156,16 @@ public class PipHandler extends PipProcessor {
 
 		}
 
-
 		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 
 		return status;
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile, EConflictResolution flagForTheConflictResolution) {
-		return _pipManager.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
+			File jarFile, EConflictResolution flagForTheConflictResolution) {
+		return _pipManager.updateInformationFlowSemantics(deployer, jarFile,
+				flagForTheConflictResolution);
 	}
 
 	@Override
@@ -176,13 +183,15 @@ public class PipHandler extends PipProcessor {
 		return _ifModelManager.isSimulating();
 	}
 
-
 	/**
-	 * Evaluate the predicate in the state obtained simulating the execution of event.
+	 * Evaluate the predicate in the state obtained simulating the execution of
+	 * event.
+	 * 
 	 * @return the result of the formula
 	 */
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate){
+	public boolean evaluatePredicateSimulatingNextState(IEvent event,
+			String predicate) {
 		_logger.info("Saving PIP current state");
 
 		Boolean res = null;
@@ -197,8 +206,7 @@ public class PipHandler extends PipProcessor {
 			_logger.trace("Restoring PIP previous state...");
 			_ifModelManager.stopSimulation();
 			_logger.trace("done!");
-		}
-		else {
+		} else {
 			_logger.error("Failed! Stack not empty!");
 		}
 
@@ -238,14 +246,32 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		_logger.debug("initialRepresentation(" + containerName + "," + data + ")");
+		_logger.debug("initialRepresentation(" + containerName + "," + data
+				+ ")");
 
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {
 			_ifModel.addName(containerName, container = new ContainerBasic());
 		}
-		_ifModel.addDataTransitively(data, container);
+		if ((data == null) || (data == Collections.EMPTY_SET)) {
+			newInitialRepresentation(containerName);
+		} else
+			_ifModel.addDataTransitively(data, container);
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		_logger.debug("newInitialRepresentation(" + containerName + ")");
+		IContainer container;
+		IData d = new DataBasic();
+
+		if ((container = _ifModel.getContainer(containerName)) == null) {
+			_ifModel.addName(containerName, container = new ContainerBasic());
+		}
+
+		_ifModel.addDataTransitively(Collections.singleton(d), container);
+		return d;
 	}
 
 	@Override
@@ -255,6 +281,6 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public String toString() {
-        return _ifModelManager.niceString();
-    }
+		return _ifModelManager.niceString();
+	}
 }

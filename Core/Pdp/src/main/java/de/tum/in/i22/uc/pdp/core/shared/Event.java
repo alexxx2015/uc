@@ -119,31 +119,31 @@ public class Event implements Serializable {
 					Constants.PARAMETER_TYPE_STRING));
 	}
 
-	public void addIntParameter(String name, int value) {
-		addParam(new Param<Integer>(name, value, Constants.PARAMETER_TYPE_INT));
-	}
+//	public void addIntParameter(String name, int value) {
+//		addParam(new Param<Integer>(name, value, Constants.PARAMETER_TYPE_INT));
+//	}
+//
+//	public void addBooleanParameter(String name, boolean value) {
+//		addParam(new Param<Boolean>(name, value, Constants.PARAMETER_TYPE_BOOL));
+//	}
 
-	public void addBooleanParameter(String name, boolean value) {
-		addParam(new Param<Boolean>(name, value, Constants.PARAMETER_TYPE_BOOL));
-	}
+//	public void addLongParameter(String name, long value) {
+//		addParam(new Param<Long>(name, value, Constants.PARAMETER_TYPE_LONG));
+//	}
+//
+//	public void addStringArrayParameter(String name, String[] value) {
+//		if (value != null)
+//			addParam(new Param<String[]>(name, value,
+//					Constants.PARAMETER_TYPE_STRING_ARRAY));
+//	}
 
-	public void addLongParameter(String name, long value) {
-		addParam(new Param<Long>(name, value, Constants.PARAMETER_TYPE_LONG));
-	}
-
-	public void addStringArrayParameter(String name, String[] value) {
-		if (value != null)
-			addParam(new Param<String[]>(name, value,
-					Constants.PARAMETER_TYPE_STRING_ARRAY));
-	}
-
-	public void addByteArrayParameter(String name, byte[] value) {
-		if (value != null) {
-			Param<byte[]> param = new Param<byte[]>(name, value,
-					Constants.PARAMETER_TYPE_BINARY);
-			addParam(param);
-		}
-	}
+//	public void addByteArrayParameter(String name, byte[] value) {
+//		if (value != null) {
+//			Param<byte[]> param = new Param<byte[]>(name, value,
+//					Constants.PARAMETER_TYPE_BINARY);
+//			addParam(param);
+//		}
+//	}
 
 	public String getStringParameter(String name) {
 		try {

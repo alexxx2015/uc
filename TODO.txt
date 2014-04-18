@@ -1,3 +1,4 @@
 * Ensure all tests are run by maven
 * parameterize test classes
 * deploy policies as a string
+* extend pdp with cmp operator and 4 types of datausage

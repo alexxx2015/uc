@@ -20,7 +20,7 @@ public class ContainerBasic implements IContainer {
 
 	private final String _id;
 
-	private final Map<EAttributeName,IAttribute> _attributes;
+	private final Map<EAttributeName, IAttribute> _attributes;
 
 	public ContainerBasic() {
 		this((String) null, null);
@@ -98,8 +98,7 @@ public class ContainerBasic implements IContainer {
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_id", _id)
-				.toString();
+				.add("_id", _id).toString();
 	}
 
 }

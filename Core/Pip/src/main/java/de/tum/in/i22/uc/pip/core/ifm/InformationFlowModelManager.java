@@ -8,12 +8,12 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeManager;
+import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 
 public final class InformationFlowModelManager {
 	private static InformationFlowModelManager _instance;
 
-	private final Map<EInformationFlowModel,IInformationFlowModelExtension> _ifModelExtensions;
+	private final Map<EInformationFlowModel,InformationFlowModelExtension> _ifModelExtensions;
 
 	private final BasicInformationFlowModel _basicIfModel;
 
@@ -29,8 +29,7 @@ public final class InformationFlowModelManager {
 				case QUANTITIES:
 					break;
 				case SCOPE:
-					InformationFlowModelExtensionManager sm = new ScopeManager();
-					_ifModelExtensions.put(eifm, sm.getExtension());
+					_ifModelExtensions.put(eifm, new ScopeInformationFlowModel());
 					break;
 				default:
 					break;
@@ -62,7 +61,7 @@ public final class InformationFlowModelManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends IInformationFlowModelExtension> T getExtension(EInformationFlowModel ifm) {
+	public <T extends InformationFlowModelExtension> T getExtension(EInformationFlowModel ifm) {
 		return (T) _ifModelExtensions.get(ifm);
 	}
 
@@ -77,7 +76,7 @@ public final class InformationFlowModelManager {
 		_simulating = true;
 
 		_basicIfModel.push();
-		for (IInformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
 			ifme.push();
 		}
 
@@ -91,7 +90,7 @@ public final class InformationFlowModelManager {
 		_simulating = false;
 
 		_basicIfModel.pop();
-		for (IInformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
 			ifme.pop();
 		}
 
@@ -100,7 +99,7 @@ public final class InformationFlowModelManager {
 
 	public void reset() {
 		_basicIfModel.reset();
-		for (IInformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
 			ifme.reset();
 		}
 	}
@@ -108,7 +107,7 @@ public final class InformationFlowModelManager {
 	public String niceString() {
 		StringBuilder sb = new StringBuilder(_basicIfModel.niceString());
 
-		for (IInformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
 			sb.append(ifme.niceString());
 		}
 

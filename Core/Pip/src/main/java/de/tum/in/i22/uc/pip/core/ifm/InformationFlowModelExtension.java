@@ -8,7 +8,12 @@ import java.util.Objects;
  * @author Florian Kelbert
  *
  */
-public abstract class InformationFlowModelExtension implements IInformationFlowModelExtension {
+public abstract class InformationFlowModelExtension {
+
+	protected abstract void reset();
+	protected abstract void push();
+	protected abstract void pop();
+	protected abstract String niceString();
 
 	@Override
 	public final int hashCode() {

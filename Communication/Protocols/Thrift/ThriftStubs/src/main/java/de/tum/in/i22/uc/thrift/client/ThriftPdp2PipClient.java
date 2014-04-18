@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
@@ -65,8 +66,8 @@ class ThriftPdp2PipClient extends Pdp2PipClient {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		return _impl.getDataInContainer(container);
+	public Set<IData> getDataInContainer(IName containeNamer) {
+		return _impl.getDataInContainer(containeNamer);
 	}
 
 	@Override

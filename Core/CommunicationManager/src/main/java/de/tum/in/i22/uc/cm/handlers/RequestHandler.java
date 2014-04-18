@@ -27,6 +27,7 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -47,20 +48,27 @@ import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
+import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllContainersPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
+import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -72,7 +80,18 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	private final Set<Integer> _portsUsed;
 	private final Settings _settings;
-	private final ThriftClientFactory thriftClientFactory;
+	private final IClientFactory clientFactory;
+
+
+	/**
+	 * Creates a new {@link RequestHandler} by invoking
+	 * {@link RequestHandler#RequestHandler(Location, Location, Location)}
+	 * with all parameters set to {@link LocalLocation}.
+	 */
+	public RequestHandler() {
+		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
+	}
+
 
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
@@ -87,7 +106,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
-		thriftClientFactory = new ThriftClientFactory();
+		clientFactory = new ThriftClientFactory();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
 		PdpProcessor pdp = createPdpHandler(pdpLocation);
@@ -119,7 +138,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PdpClient pdp = thriftClientFactory.createAny2PdpClientHandler(loc);
+					Any2PdpClient pdp = clientFactory.createAny2PdpClient(loc);
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -141,7 +160,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PmpClient pmp = thriftClientFactory.createAny2PmpClientHandler(loc);
+					Any2PmpClient pmp = clientFactory.createAny2PmpClient(loc);
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -163,7 +182,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PipClient pip = thriftClientFactory.createAny2PipClientHandler(loc);
+					Any2PipClient pip = clientFactory.createAny2PipClient(loc);
 					try {
 						pip.connect();
 					} catch (Exception e) {
@@ -229,7 +248,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		NotifyEventPdpRequest request = new NotifyEventPdpRequest(event);
+		NotifyEventPdpRequest request = new NotifyEventPdpRequest(event,true);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -276,6 +295,47 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
+	public IMechanism exportMechanismPmp(String par) {
+		// TODO Not yet implemented
+		return null;
+	}
+
+	@Override
+	public IStatus revokePolicyPmp(String policyName) {
+		RevokePolicyPmpPmpRequest request = new RevokePolicyPmpPmpRequest(policyName);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus revokeMechanismPmp(String policyName, String mechName) {
+		RevokeMechanismPmpPmpRequest request = new RevokeMechanismPmpPmpRequest(policyName, mechName);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus deployPolicyURIPmp(String policyFilePath) {
+		DeployPolicyURIPmpPmpRequest request = new DeployPolicyURIPmpPmpRequest(policyFilePath);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+		DeployPolicyXMLPmpPmpRequest request = new DeployPolicyXMLPmpPmpRequest(XMLPolicy);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public Map<String, List<String>> listMechanismsPmp() {
+		ListMechanismsPmpPmpRequest request = new ListMechanismsPmpPmpRequest();
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
 	public boolean registerPxp(PxpSpec pxp) {
 		RegisterPxpPdpRequest request = new RegisterPxpPdpRequest(pxp);
 		_requestQueueManager.addRequest(request, this);
@@ -311,8 +371,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Set<IData> getDataInContainer(IContainer container) {
-		GetDataInContainerPipRequest request = new GetDataInContainerPipRequest(container);
+	public Set<IData> getDataInContainer(IName containerName) {
+		GetDataInContainerPipRequest request = new GetDataInContainerPipRequest(containerName);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -381,6 +441,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
+	public IData newInitialRepresentation(IName containerName) {
+		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
 	public IStatus receivePolicies(Set<String> policies) {
 		ReceivePoliciesPmpRequest request = new ReceivePoliciesPmpRequest(policies);
 		_requestQueueManager.addRequest(request, this);
@@ -397,6 +464,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public String getIfModel() {
+		GetIfModelPipRequest request = new GetIfModelPipRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

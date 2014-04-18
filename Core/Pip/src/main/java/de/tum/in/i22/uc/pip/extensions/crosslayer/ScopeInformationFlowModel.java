@@ -6,7 +6,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
@@ -17,10 +16,8 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
  * @author Florian Kelbert
  *
  */
-class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
+public final class ScopeInformationFlowModel extends InformationFlowModelExtension {
 	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);
-
-	private static IInformationFlowModelExtension _instance;
 
 	@Override
 	public String toString() {
@@ -35,22 +32,7 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	// BACKUP TABLES FOR SIMULATION
 	private Set<Scope> _scopeSetBackup;
 
-	private ScopeInformationFlowModel() {
-	}
-
-	static IInformationFlowModelExtension getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (ScopeInformationFlowModel.class) {
-				if (_instance == null) _instance = new ScopeInformationFlowModel();
-			}
-		}
-		return _instance;
+	public ScopeInformationFlowModel() {
 	}
 
 	@Override
@@ -91,7 +73,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 *         otherwise.
 	 *
 	 */
-	@Override
 	public boolean addScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.add(scope);
@@ -105,7 +86,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 * @return true if the scope is not already opened. false otherwise.
 	 *
 	 */
-	@Override
 	public boolean openScope(Scope scope) {
 		return addScope(scope);
 	}
@@ -117,7 +97,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 * @return true if the scope is successfully removed. false otherwise.
 	 *
 	 */
-	@Override
 	public boolean removeScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.remove(scope);
@@ -131,7 +110,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 * @return true if the scope is successfully closed. false otherwise.
 	 *
 	 */
-	@Override
 	public boolean closeScope(Scope scope) {
 		return removeScope(scope);
 	}
@@ -145,7 +123,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 * @return true if the scope is in the set. false otherwise.
 	 *
 	 */
-	@Override
 	public boolean isScopeOpened(Scope scope) {
 		return _scopeSet.contains(scope);
 	}
@@ -166,7 +143,6 @@ class ScopeInformationFlowModel extends InformationFlowModelExtension implements
 	 *         match is found.
 	 *
 	 */
-	@Override
 	public Scope getOpenedScope(Scope scope) {
 		// if at least one matching exists...
 		if (isScopeOpened(scope)) {

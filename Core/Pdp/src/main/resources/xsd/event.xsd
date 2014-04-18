@@ -18,11 +18,12 @@
   <simpleType name="EventParameterDataTypes">
     <restriction base="string">
       <enumeration value="string" />
-      <enumeration value="binary" />
+      <enumeration value="data" />
+<!--      <enumeration value="binary" />
       <enumeration value="int" />
       <enumeration value="long" />
       <enumeration value="bool" />
-      <enumeration value="stringArray" />
+      <enumeration value="stringArray" /> -->
     </restriction>
   </simpleType>
     
@@ -30,12 +31,13 @@
     <attribute name="name"  type="string"                      use="required" />
     <attribute name="value" type="string"                      use="required" />
     <attribute name="type"  type="tns:EventParameterDataTypes" use="optional" default="string" />
+    
   </complexType>
 
   <complexType name="EventType">
     <annotation>
       <documentation>
-        Events have a name as well parameters.
+        Events have a name and parameters.
         A try event represents an attempted usage event by a user.
 		</documentation>
     </annotation>
