@@ -84,6 +84,9 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public void notifyEventAsync(IEvent event) {
 		_lpdp.notifyEvent(new Event(event));
+		if(event.isActual()){
+			getPip().update(event);
+		}
 	}
 
 	@Override

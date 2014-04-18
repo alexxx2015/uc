@@ -355,7 +355,7 @@ public class UcManager extends Controller{
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-						pdpClient.notifyEventSync(initEvent);
+						pdpClient.notifyEventAsync(initEvent);
 					}
 				}
 			}
@@ -384,7 +384,7 @@ public class UcManager extends Controller{
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
-						pdpClient.notifyEventSync(initEvent);
+						pdpClient.notifyEventAsync(initEvent);
 					}
 				}
 			}
