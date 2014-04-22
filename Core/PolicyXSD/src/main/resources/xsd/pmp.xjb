@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<jxb:bindings version="1.0" 
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+  jxb:extensionBindingPrefixes="xjc">
+
+
+  <jxb:bindings schemaLocation="enfLanguage.xsd">
+    <jxb:schemaBindings>
+      <jxb:package name="de.tum.in.i22.uc.pdp.xsd" />
+    </jxb:schemaBindings>
+    <jxb:globalBindings choiceContentProperty="true" 
+                        generateIsSetMethod="true"
+                        collectionType="java.util.ArrayList" 
+                        underscoreBinding="asCharInWord" 
+                        enableJavaNamingConventions="true">
+    </jxb:globalBindings>    
+    
+    <jxb:bindings node="//xs:complexType[@name='EventMatchingOperatorType']">
+      <jxb:bindings node="//xs:element[@name='paramMatch']">
+        <jxb:property name="params" />
+      </jxb:bindings>
+    </jxb:bindings>
+
+  </jxb:bindings>
+
+  <jxb:bindings schemaLocation="event.xsd">
+    <jxb:schemaBindings>
+      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.event" />
+    </jxb:schemaBindings>  
+  </jxb:bindings>
+  
+  <jxb:bindings schemaLocation="action.xsd">
+    <jxb:schemaBindings>
+      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.action" />
+    </jxb:schemaBindings>  
+  </jxb:bindings>    
+
+  <jxb:bindings schemaLocation="time.xsd">
+    <jxb:schemaBindings>
+      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.time" />
+    </jxb:schemaBindings>  
+  </jxb:bindings>    
+  
+</jxb:bindings>

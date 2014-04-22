@@ -10,7 +10,14 @@ public abstract class Operator
   public Operator()
   {}
 
-  public abstract void initOperatorForMechanism(IPdpMechanism mech);
-  public abstract boolean evaluate(Event curEvent);
+//  public abstract void initOperatorForMechanism(IPdpMechanism mech);
+//  public abstract boolean evaluate(Event curEvent);
+  public void initOperatorForMechanism(IPdpMechanism mech)
+  {}
+  
+  public boolean evaluate(Event curEvent)
+  {
+    return false;
+  }
   
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 
 public class PDPJavaTest {

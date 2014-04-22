@@ -1,10 +1,7 @@
-/*
-!src/
-!docs/
-!pom.xml
-!.gitignore
+.classpath
+.project
+/bin
+target
 src/main/java/de/tum/in/i22/uc/pdp/xsd/
 src/main/java/META-INF/
-/target
-/target
 /target

@@ -26,72 +26,72 @@
     </sequence>
   </complexType>
 
-  <complexType name="NotType" abstract="true">
+  <complexType name="NotType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
   </complexType>
 
-  <complexType name="TrueType" abstract="true">
+  <complexType name="TrueType" >
     <sequence />
   </complexType>
 
-  <complexType name="FalseType" abstract="true">
+  <complexType name="FalseType" >
     <sequence />
   </complexType>
 
-  <complexType name="OrType" abstract="true">
+  <complexType name="OrType" >
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
   </complexType>
 
-  <complexType name="AndType" abstract="true">
+  <complexType name="AndType" >
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
   </complexType>
   
-  <complexType name="ImpliesType" abstract="true">
+  <complexType name="ImpliesType" >
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
   </complexType>
   
-  <complexType name="SinceType" abstract="true">
+  <complexType name="SinceType" >
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
   </complexType>  
   
-  <complexType name="AlwaysType" abstract="true">
+  <complexType name="AlwaysType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
   </complexType>
   
-  <complexType name="BeforeType" abstract="true">
+  <complexType name="BeforeType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
     <attributeGroup ref="time:TimeAmountAttributeGroup" />
   </complexType>
   
-  <complexType name="DuringType" abstract="true">
+  <complexType name="DuringType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
     <attributeGroup ref="time:TimeAmountAttributeGroup" />    
   </complexType>
   
-  <complexType name="WithinType" abstract="true">
+  <complexType name="WithinType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
     <attributeGroup ref="time:TimeAmountAttributeGroup" />
   </complexType>
 
-  <complexType name="RepLimType" abstract="true">
+  <complexType name="RepLimType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
@@ -100,28 +100,28 @@
     <attribute name="upperLimit" type="long" use="required" />
   </complexType>
 
-  <complexType name="RepSinceType" abstract="true">
+  <complexType name="RepSinceType" >
     <sequence>
       <group ref="tns:Operators" minOccurs="2" maxOccurs="2" />
     </sequence>
     <attribute name="limit" type="long" use="required" />
   </complexType>
   
-  <complexType name="RepMaxType" abstract="true">
+  <complexType name="RepMaxType" >
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
     <attribute name="limit" type="long" use="required" />
   </complexType>
   
-  <complexType name="StateBasedOperatorType" abstract="true">
+  <complexType name="StateBasedOperatorType" >
     <attribute name="operator" type="string" use="required" />
     <attribute name="param1"   type="string" use="required" />
     <attribute name="param2"   type="string" use="optional" />
     <attribute name="param3"   type="string" use="optional" />
   </complexType>
 
-  <complexType name="EvalOperatorType" abstract="true">
+  <complexType name="EvalOperatorType" >
     <sequence>
       <element name="content" type="string"/>
      </sequence>
@@ -186,7 +186,7 @@
     <attribute name="dataID"  type="string"                  	 use="optional" default="" />
   </complexType>
 
-  <complexType name="EventMatchingOperatorType" abstract="true">
+  <complexType name="EventMatchingOperatorType" >
     <sequence>
       <element name="paramMatch" type="tns:ParamMatchType" minOccurs="0" maxOccurs="unbounded" />
     </sequence>

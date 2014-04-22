@@ -57,7 +57,11 @@
 					</execution>
 				</executions>
 				<configuration>
-					<schemaDirectory>src/main/resources/xsd</schemaDirectory>
+					<schemaDirectory>${project.parent.basedir}/PolicyXSD/src/main/resources/xsd</schemaDirectory>
+					<bindingDirectory>${project.parent.basedir}/PolicyXSD/src/main/resources/xsd</bindingDirectory>
+			    <bindingIncludes>
+            <include>pdp.xjb</include>
+          </bindingIncludes>  
 					<args>
 						<arg>-XtoString</arg>
 						<arg>-Xinheritance</arg>
@@ -74,7 +78,7 @@
 					</plugins>
 				</configuration>
 			</plugin>
-
+			
 		</plugins>
 	</build>
 
