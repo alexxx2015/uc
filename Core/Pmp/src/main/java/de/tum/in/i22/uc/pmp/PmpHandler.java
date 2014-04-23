@@ -30,12 +30,12 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
-import de.tum.in.i22.uc.pdp.xsd.ComparisonOperatorTypes;
-import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
-import de.tum.in.i22.uc.pdp.xsd.ObjectFactory;
-import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
-import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
+import de.tum.in.i22.uc.pmp.xsd.ComparisonOperatorTypes;
+import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
+import de.tum.in.i22.uc.pmp.xsd.ObjectFactory;
+import de.tum.in.i22.uc.pmp.xsd.ParamMatchType;
+import de.tum.in.i22.uc.pmp.xsd.PolicyType;
 
 public class PmpHandler extends PmpProcessor {
 	private static Logger log = LoggerFactory.getLogger(PmpHandler.class);
@@ -58,7 +58,7 @@ public class PmpHandler extends PmpProcessor {
 		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
 		try {
 			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.uc.pdp.xsd");
+					.newInstance("de.tum.in.i22.uc.pmp.xsd");
 			Unmarshaller u = jc.createUnmarshaller();
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
@@ -84,7 +84,7 @@ public class PmpHandler extends PmpProcessor {
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {
 			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.uc.pdp.xsd");
+					.newInstance("de.tum.in.i22.uc.pmp.xsd");
 			Marshaller m = jc.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			StringWriter res = new StringWriter();

@@ -9,7 +9,7 @@
 
   <jxb:bindings schemaLocation="enfLanguage.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.uc.pdp.xsd" />
+      <jxb:package name="de.tum.in.i22.uc.pmp.xsd" />
     </jxb:schemaBindings>
     <jxb:globalBindings choiceContentProperty="true" 
                         generateIsSetMethod="true"
@@ -28,19 +28,19 @@
 
   <jxb:bindings schemaLocation="event.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.event" />
+      <jxb:package name="de.tum.in.i22.uc.pmp.xsd.event" />
     </jxb:schemaBindings>  
   </jxb:bindings>
   
   <jxb:bindings schemaLocation="action.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.action" />
+      <jxb:package name="de.tum.in.i22.uc.pmp.xsd.action" />
     </jxb:schemaBindings>  
   </jxb:bindings>    
 
   <jxb:bindings schemaLocation="time.xsd">
     <jxb:schemaBindings>
-      <jxb:package name="de.tum.in.i22.uc.pdp.xsd.time" />
+      <jxb:package name="de.tum.in.i22.uc.pmp.xsd.time" />
     </jxb:schemaBindings>  
   </jxb:bindings>    
   
