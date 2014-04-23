@@ -6,14 +6,11 @@
 //
 
 
-package de.tum.in.i22.uc.pmp.xsd.action;
+package de.tum.in.i22.uc.pmp.xsd;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.jvnet.jaxb2_commons.lang.JAXBToStringStrategy;
 import org.jvnet.jaxb2_commons.lang.ToString;
@@ -22,19 +19,17 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 
 
 /**
- * <p>Java class for ExecuteActionType complex type.
+ * <p>Java class for ConditionParamMatchType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExecuteActionType">
+ * &lt;complexType name="ConditionParamMatchType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="parameter" type="{http://www.iese.fhg.de/pef/1.0/action}ParameterType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="cmpOp" type="{http://www.iese.fhg.de/pef/1.0/enforcementLanguage}ComparisonOperatorTypes" default="equals" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -43,58 +38,16 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExecuteActionType", propOrder = {
-    "parameter"
-})
-@XmlSeeAlso({
-    ExecuteAsyncActionType.class
-})
-public class ExecuteActionType
-    implements ToString
+@XmlType(name = "ConditionParamMatchType")
+public class ConditionParamMatchType implements ToString
 {
 
-    protected List<ParameterType> parameter;
     @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute(name = "id")
-    protected String id;
-
-    /**
-     * Gets the value of the parameter property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ParameterType }
-     * 
-     * 
-     */
-    public List<ParameterType> getParameter() {
-        if (parameter == null) {
-            parameter = new ArrayList<ParameterType>();
-        }
-        return this.parameter;
-    }
-
-    public boolean isSetParameter() {
-        return ((this.parameter!= null)&&(!this.parameter.isEmpty()));
-    }
-
-    public void unsetParameter() {
-        this.parameter = null;
-    }
+    @XmlAttribute(name = "value", required = true)
+    protected String value;
+    @XmlAttribute(name = "cmpOp")
+    protected ComparisonOperatorTypes cmpOp;
 
     /**
      * Gets the value of the name property.
@@ -125,31 +78,63 @@ public class ExecuteActionType
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public boolean isSetId() {
-        return (this.id!= null);
+    public boolean isSetValue() {
+        return (this.value!= null);
+    }
+
+    /**
+     * Gets the value of the cmpOp property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ComparisonOperatorTypes }
+     *     
+     */
+    public ComparisonOperatorTypes getCmpOp() {
+        if (cmpOp == null) {
+            return ComparisonOperatorTypes.EQUALS;
+        } else {
+            return cmpOp;
+        }
+    }
+
+    /**
+     * Sets the value of the cmpOp property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ComparisonOperatorTypes }
+     *     
+     */
+    public void setCmpOp(ComparisonOperatorTypes value) {
+        this.cmpOp = value;
+    }
+
+    public boolean isSetCmpOp() {
+        return (this.cmpOp!= null);
     }
 
     public String toString() {
@@ -168,19 +153,19 @@ public class ExecuteActionType
 
     public StringBuilder appendFields(ObjectLocator locator, StringBuilder buffer, ToStringStrategy strategy) {
         {
-            List<ParameterType> theParameter;
-            theParameter = (this.isSetParameter()?this.getParameter():null);
-            strategy.appendField(locator, this, "parameter", buffer, theParameter);
-        }
-        {
             String theName;
             theName = this.getName();
             strategy.appendField(locator, this, "name", buffer, theName);
         }
         {
-            String theId;
-            theId = this.getId();
-            strategy.appendField(locator, this, "id", buffer, theId);
+            String theValue;
+            theValue = this.getValue();
+            strategy.appendField(locator, this, "value", buffer, theValue);
+        }
+        {
+            ComparisonOperatorTypes theCmpOp;
+            theCmpOp = this.getCmpOp();
+            strategy.appendField(locator, this, "cmpOp", buffer, theCmpOp);
         }
         return buffer;
     }

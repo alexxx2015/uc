@@ -32,6 +32,31 @@ public class PDPJavaTest {
 
 		log.debug("Deployed Mechanisms: [{}]", lpdp.listDeployedMechanisms());
 
+
+		
+		System.out.println("\nTest Condtion Parameter Match Operator:");
+
+		log.debug("Notifying event");
+		e = new Event("testCPMEvent", true, System.currentTimeMillis());
+		e.addStringParameter("name1", "xyz");
+		e.addStringParameter("name2", "value2");
+		d = lpdp.notifyEvent(e);
+		log.debug("d: [{}]", d);
+		System.out.println(e + "\n" + d + "\n");
+
+		log.debug("Notifying event");
+		e = new Event("testCPMEvent", true, System.currentTimeMillis());
+		e.addStringParameter("name1", "value123");
+		e.addStringParameter("name2", "value2");
+		d = lpdp.notifyEvent(e);
+		log.debug("d: [{}]", d);
+		System.out.println(e + "\n" + d + "\n");
+
+		
+		
+		
+		
+		
 		System.out.println("\nTest Element in list Comparison Operator:");
 
 		log.debug("Notifying event");

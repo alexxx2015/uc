@@ -25,6 +25,12 @@
       <group ref="tns:Operators" minOccurs="1" maxOccurs="1" />
     </sequence>
   </complexType>
+  
+  <complexType name="ConditionParamMatchType">
+    <attribute name="name"    type="string"                  	 use="required" />
+    <attribute name="value"   type="string"                  	 use="required" />
+  	<attribute name="cmpOp"   type="tns:ComparisonOperatorTypes" use="optional" default="equals" />
+  </complexType>  
 
   <complexType name="NotType" >
     <sequence>
@@ -85,6 +91,7 @@
   </complexType>
   
   <complexType name="WithinType" >
+
     <sequence>
       <group ref="tns:Operators" />
     </sequence>
@@ -138,6 +145,7 @@
       <element name="implies" type="tns:ImpliesType" />
 
       <element name="eventMatch" type="tns:EventMatchingOperatorType"/>
+	  <element name="conditionParamMatch" type="tns:ConditionParamMatchType"/>
 
       <element name="since"  type="tns:SinceType" />
       <element name="always" type="tns:AlwaysType" />

@@ -19,11 +19,6 @@
     <restriction base="string">
       <enumeration value="string" />
       <enumeration value="data" />
-<!--      <enumeration value="binary" />
-      <enumeration value="int" />
-      <enumeration value="long" />
-      <enumeration value="bool" />
-      <enumeration value="stringArray" /> -->
     </restriction>
   </simpleType>
     
@@ -31,7 +26,6 @@
     <attribute name="name"  type="string"                      use="required" />
     <attribute name="value" type="string"                      use="required" />
     <attribute name="type"  type="tns:EventParameterDataTypes" use="optional" default="string" />
-    
   </complexType>
 
   <complexType name="EventType">

@@ -41,44 +41,56 @@ public class ParamMatch extends ParamMatchType
     }
     if(this.getName().equals(param.getName()))
     {
-      log.trace("param name matches");
+      log.trace("param name ["+ this.getName() +"] matches");
       GenericComparisonOperator compOp;
       if (this.getCmpOp()!=null){
     	  switch (this.getCmpOp()){
 		case ELEMENT_IN_LIST:
+  	        log.debug("parameter value checked for \"element in list\" comparison");
 			compOp=new ElementInListComparisonOperator();
 			break;
 		case ENDS_WITH:
+  	        log.debug("parameter value checked for \"ends with\" comparison");
 			compOp=new EndsWithComparisonOperator();
 			break;
 		case EQUALS:
+  	        log.debug("parameter value checked for \"equals\" comparison");
 			compOp=new EqualsComparisonOperator();
 			break;
 		case EQUALS_IGNORE_CASE:
+  	        log.debug("parameter value checked for \"equals ignore case\" comparison");
 			compOp=new EqualsIgnoreCaseComparisonOperator();
 			break;
 		case GE:
+  	        log.debug("parameter value checked for \"greater or equal than\" comparison");
 			compOp=new GeComparisonOperator();
 			break;
 		case GT:
+			log.debug("parameter value checked for \"greater than\" comparison");
 			compOp=new GtComparisonOperator();
 			break;
 		case LE:
+			log.debug("parameter value checked for \"smaller or equal than\" comparison");
 			compOp=new LeComparisonOperator();
 			break;
 		case LIST_IN_LIST:
+			log.debug("parameter value checked for \"list in list\" comparison");
 			compOp=new ListInListComparisonOperator();
 			break;
 		case LT:
+			log.debug("parameter value checked for \"smaller than\" comparison");
 			compOp=new LtComparisonOperator();
 			break;
 		case NOT_EQUALS:
+			log.debug("parameter value checked for \"different than\" comparison");
 			compOp=new NotEqualsComparisonOperator();
 			break;
 		case STARTS_WITH:			
+			log.debug("parameter value checked for \"starts with\" comparison");
 			compOp=new StartsWithComparisonOperator();
 			break;
 		case DATA_IN_CONTAINER:
+			log.debug("parameter value checked for \"data in container\" comparison");
 			IPdp2Pip pip=PolicyDecisionPoint.getInstance().get_pip();
 			if (pip==null){
 				log.error("Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");
@@ -87,17 +99,20 @@ public class ParamMatch extends ParamMatchType
 			compOp=new DataInContainerComparisonOperator(pip);
 			break;
 		case SUBSTRING:
+			log.debug("parameter value checked for \"substring\" comparison");
 			compOp=new SubstringComparisonOperator();
 			break;
 		default:
+			log.debug("parameter value checked for default comparison (equals)");
 			compOp=new EqualsComparisonOperator(); //default comparison is equality
 			break;
     	  }
     	  matches=compOp.compare((String)param.getValue(),this.getValue());
       }
-      log.trace("param value does "+(matches?"":"NOT ")+"match");
+      log.trace("param value ["+(String)param.getValue()+"] does "+(matches?"":"NOT ")+"match ["+this.getValue()+"]");
       return matches;
     }
+    log.trace("param name ["+ this.getName() +"] does NOT match");
     return false;
   }
   

@@ -99,6 +99,11 @@
       <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
     </jxb:bindings>    
 
+    <jxb:bindings node="//xs:complexType[@name='ConditionParamMatchType']">
+      <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.ConditionParamMatchOperator" />
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+    </jxb:bindings>    
+
     <jxb:bindings node="//xs:complexType[@name='EventMatchingOperatorType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator" />
       <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 

@@ -14,7 +14,6 @@
 	<modules>
 		<module>CommunicationManager</module>
 		<module>Pdp</module>
-		<module>PolicyXSD</module>
 		<module>Pip</module>
 		<module>Pmp</module>
 	</modules>

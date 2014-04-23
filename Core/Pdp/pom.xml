@@ -57,8 +57,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<schemaDirectory>${project.parent.basedir}/PolicyXSD/src/main/resources/xsd</schemaDirectory>
-					<bindingDirectory>${project.parent.basedir}/PolicyXSD/src/main/resources/xsd</bindingDirectory>
+					<schemaDirectory>${CommunicationBase.path}/src/main/resources/xsd</schemaDirectory>
+					<bindingDirectory>${CommunicationBase.path}/src/main/resources/xsd</bindingDirectory>
 			    <bindingIncludes>
             <include>pdp.xjb</include>
           </bindingIncludes>  
