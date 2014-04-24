@@ -1,319 +1,336 @@
 <?xml version='1.0' standalone='yes' ?>
-<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" 
-        xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
-        xmlns:a="http://www.iese.fhg.de/pef/1.0/action" 
-        xmlns:e="http://www.iese.fhg.de/pef/1.0/event" 
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           
-        name="testPolicy">
+<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
+	xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
-<!--   <preventiveMechanism name="testTUM1"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="value1" /> -->
-<!--       <paramMatch name="name2" value="value2" /> -->
-<!--     </trigger> -->
-<!--     <condition> -->
-<!--       <or> -->
-<!--         <and> -->
-<!--           <not> -->
-<!--             <false /> -->
-<!--           </not> -->
-<!--           <before amount="20" unit="SECONDS"> -->
-<!--             <true /> -->
-<!--           </before> -->
-<!--         </and> -->
-<!--         <implies> -->
-<!--           <within amount="30" unit="SECONDS"> -->
-<!--             <false /> -->
-<!--           </within> -->
-<!--           <during amount="15" unit="SECONDS"> -->
-<!--             <eventMatch action="testEvent" tryEvent="false"> -->
-<!--               <paramMatch name="param1" value="value1"/> -->
-<!--             </eventMatch> -->
-<!--           </during> -->
-<!--         </implies> -->
-<!--       </or> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--       <allow> -->
-<!--         <delay amount="5" unit="MINUTES" /> -->
-<!--         <modify> -->
-<!--           <parameter name="name1" value="modified1" /> -->
-<!--           <parameter name="name2" value="blub" /> -->
-<!--         </modify>         -->
-<!--         <executeSyncAction name="deployPolicy"> -->
-<!--           <parameter name="file" value="abc.xml" /> -->
-<!--         </executeSyncAction> -->
-<!--       </allow> -->
-<!--     </authorizationAction> -->
-<!--     <authorizationAction name="fallback" fallback="fallback2"> -->
-<!--       <allow> -->
-<!--         <modify> -->
-<!--           <parameter name="path" value="dev/null" /> -->
-<!--         </modify> -->
-<!--       </allow> -->
-<!--     </authorizationAction> -->
-<!--     <authorizationAction name="fallback2"> -->
-<!--       <inhibit /> -->
-<!--     </authorizationAction> -->
-<!--     <executeAsyncAction name="log" processor="pep"> -->
-<!--       <parameter name="file" value="abc.xml" /> -->
-<!--     </executeAsyncAction> -->
-<!--     <executeAsyncAction name="log2" processor="pxp"> -->
-<!--       <parameter name="file" value="abc.xml" /> -->
-<!--     </executeAsyncAction> -->
-<!--   </preventiveMechanism> -->
-  
+	name="testPolicy">
 
-  <preventiveMechanism name="testConditionParamMatch">
-    <description>...</description>
-    <timestep amount="10" unit="SECONDS" />
-    <trigger action="testCPMEvent" tryEvent="true">
-      <paramMatch name="name2" value="value2" />
-    </trigger>
-    <condition>
-    	<conditionParamMatch name="name1" value="value1" cmpOp="startsWith"/>
-    </condition>
-    <authorizationAction name="authAct">
-      <inhibit />
-    </authorizationAction>
-    <executeAsyncAction name="log2" processor="pxp">
-      <parameter name="file" value="abc.xml" />
-    </executeAsyncAction>
-  </preventiveMechanism>
+	<preventiveMechanism name="testTUM1">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="testEvent" tryEvent="true">
+			<paramMatch name="name1" value="value1" />
+			<paramMatch name="name2" value="value2" />
+		</trigger>
+		<condition>
+			<or>
+				<and>
+					<not>
+						<false />
+					</not>
+					<before amount="20" unit="SECONDS">
+						<true />
+					</before>
+				</and>
+				<implies>
+					<within amount="30" unit="SECONDS">
+						<false />
+					</within>
+					<during amount="15" unit="SECONDS">
+						<eventMatch action="testEvent" tryEvent="false">
+							<paramMatch name="param1" value="value1" />
+						</eventMatch>
+					</during>
+				</implies>
+			</or>
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<allow>
+				<delay amount="5" unit="MINUTES" />
+				<modify>
+					<parameter name="name1" value="modified1" />
+					<parameter name="name2" value="blub" />
+				</modify>
+				<executeSyncAction name="deployPolicy">
+					<parameter name="file" value="abc.xml" />
+				</executeSyncAction>
+			</allow>
+		</authorizationAction>
+		<authorizationAction name="fallback" fallback="fallback2">
+			<allow>
+				<modify>
+					<parameter name="path" value="dev/null" />
+				</modify>
+			</allow>
+		</authorizationAction>
+		<authorizationAction name="fallback2">
+			<inhibit />
+		</authorizationAction>
+		<executeAsyncAction name="log" processor="pep">
+			<parameter name="file" value="abc.xml" />
+		</executeAsyncAction>
+		<executeAsyncAction name="log2" processor="pxp">
+			<parameter name="file" value="abc.xml" />
+		</executeAsyncAction>
+		<!-- </preventiveMechanism> -->
 
 
-<!--   <preventiveMechanism name="prev2"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="value1" /> -->
-<!--       <paramMatch name="name2" value="value2" /> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--       <or> -->
-<!--         <and> -->
-<!--           <eval type="XPATH"> -->
-<!--             <content>an arbitrary xpath formula</content> -->
-<!--           </eval> -->
-<!--           <eval type="MATH"><content> 3+2=5 </content></eval> -->
-<!--         </and> -->
-<!--         <stateBasedFormula operator="isNotIn" param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" /> -->
-<!--       </or> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--       <allow> -->
-<!--         <delay amount="5" unit="MINUTES" /> -->
-<!--         <modify> -->
-<!--           <parameter name="name1" value="modified2" /> -->
-<!--         </modify> -->
-<!--         <executeSyncAction name="blub"> -->
-<!--           <a:parameter name="file" value="bla.xml" /> -->
-<!--         </executeSyncAction> -->
-<!--       </allow> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-<!--   <preventiveMechanism name="testElemInListCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="16" cmpOp="elementInList" /> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-<!--   <preventiveMechanism name="testEndsWithCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="ing" cmpOp="endsWith" /> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-
-<!--   <preventiveMechanism name="testEqCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="the same" cmpOp="equals" /> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-
-<!--   <preventiveMechanism name="testDefaultCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="default value" /> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-  
-<!--   <preventiveMechanism name="testEqualsIgnoreCaseCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEvent" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="VaLuE" cmpOp="equalsIgnoreCase"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-
-<!--   <preventiveMechanism name="testGeCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventge" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="34" cmpOp="ge"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
+		<preventiveMechanism name="testConditionParamMatch">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testCPMEvent" tryEvent="true">
+				<paramMatch name="name2" value="value2" />
+			</trigger>
+			<condition>
+				<conditionParamMatch name="name1" value="value1"
+					cmpOp="startsWith" />
+			</condition>
+			<authorizationAction name="authAct">
+				<inhibit />
+			</authorizationAction>
+			<executeAsyncAction name="log2" processor="pxp">
+				<parameter name="file" value="abc.xml" />
+			</executeAsyncAction>
+		</preventiveMechanism>
 
 
-<!--   <preventiveMechanism name="testGtCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventgt" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="56" cmpOp="gt"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
+		<preventiveMechanism name="prev2">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="value1" />
+				<paramMatch name="name2" value="value2" />
+			</trigger>
+			<condition>
+				<or>
+					<and>
+						<eval type="XPATH">
+							<content>an arbitrary xpath formula</content>
+						</eval>
+						<eval type="MATH">
+							<content> 3+2=5 </content>
+						</eval>
+					</and>
+					<stateBasedFormula operator="isNotIn"
+						param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" />
+				</or>
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<allow>
+					<delay amount="5" unit="MINUTES" />
+					<modify>
+						<parameter name="name1" value="modified2" />
+					</modify>
+					<executeSyncAction name="blub">
+						<a:parameter name="file" value="bla.xml" />
+					</executeSyncAction>
+				</allow>
+			</authorizationAction>
+		</preventiveMechanism>
 
 
-  
-  
-<!--     <preventiveMechanism name="testLeCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventle" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="34" cmpOp="le"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
+		<preventiveMechanism name="testElemInListCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="16" cmpOp="elementInList" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+		<preventiveMechanism name="testEndsWithCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="ing" cmpOp="endsWith" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
 
 
-<!--   <preventiveMechanism name="testLtCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventlt" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="56" cmpOp="lt"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-  
-<!--     <preventiveMechanism name="testListInListCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventList" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="A B C" cmpOp="listInList"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-<!--       <preventiveMechanism name="testNotEqCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventNeq" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="ABC" cmpOp="notEquals"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-  
-<!--         <preventiveMechanism name="testStartsWithCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventSW" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="ABC" cmpOp="startsWith"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-  
-<!--         <preventiveMechanism name="testSubstringCompOp"> -->
-<!--     <description>...</description> -->
-<!--     <timestep amount="10" unit="SECONDS" /> -->
-<!--     <trigger action="testEventSubstr" tryEvent="true"> -->
-<!--       <paramMatch name="name1" value="ABC" cmpOp="substring"/> -->
-<!--     </trigger>   -->
-<!--     <condition> -->
-<!--     <true/> -->
-<!--     </condition> -->
-<!--     <authorizationAction name="default" start="true" fallback="fallback"> -->
-<!--     <inhibit/> -->
-<!--     </authorizationAction> -->
-<!--   </preventiveMechanism> -->
-  
-  
-  
+		<preventiveMechanism name="testEqCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="the same" cmpOp="equals" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+		<preventiveMechanism name="testDefaultCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="default value" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
+		<preventiveMechanism name="testEqualsIgnoreCaseCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEvent" tryEvent="true">
+				<paramMatch name="name1" value="VaLuE" cmpOp="equalsIgnoreCase" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+		<preventiveMechanism name="testGeCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventge" tryEvent="true">
+				<paramMatch name="name1" value="34" cmpOp="ge" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+		<preventiveMechanism name="testGtCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventgt" tryEvent="true">
+				<paramMatch name="name1" value="56" cmpOp="gt" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
+
+		<preventiveMechanism name="testLeCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventle" tryEvent="true">
+				<paramMatch name="name1" value="34" cmpOp="le" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+		<preventiveMechanism name="testLtCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventlt" tryEvent="true">
+				<paramMatch name="name1" value="56" cmpOp="lt" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
+		<preventiveMechanism name="testListInListCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventList" tryEvent="true">
+				<paramMatch name="name1" value="A B C" cmpOp="listInList" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+		<preventiveMechanism name="testNotEqCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventNeq" tryEvent="true">
+				<paramMatch name="name1" value="ABC" cmpOp="notEquals" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
+		<preventiveMechanism name="testStartsWithCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventSW" tryEvent="true">
+				<paramMatch name="name1" value="ABC" cmpOp="startsWith" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
+		<preventiveMechanism name="testSubstringCompOp">
+			<description>...</description>
+			<timestep amount="10" unit="SECONDS" />
+			<trigger action="testEventSubstr" tryEvent="true">
+				<paramMatch name="name1" value="ABC" cmpOp="substring" />
+			</trigger>
+			<condition>
+				<true />
+			</condition>
+			<authorizationAction name="default" start="true"
+				fallback="fallback">
+				<inhibit />
+			</authorizationAction>
+		</preventiveMechanism>
+
+
+
 </policy>

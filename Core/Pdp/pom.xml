@@ -11,10 +11,6 @@
 
 	<artifactId>Pdp</artifactId>
 	
-	<properties>
-     <CommunicationBase.path>../../Communication/CommunicationBase</CommunicationBase.path>
-  	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
@@ -61,8 +57,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<schemaDirectory>${CommunicationBase.path}/src/main/resources/xsd</schemaDirectory>
-					<bindingDirectory>${CommunicationBase.path}/src/main/resources/xsd</bindingDirectory>
+					<schemaDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</schemaDirectory>
+					<bindingDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</bindingDirectory>
 			    <bindingIncludes>
             <include>pdp.xjb</include>
           </bindingIncludes>  

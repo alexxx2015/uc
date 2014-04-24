@@ -53,6 +53,14 @@ public class Settings extends SettingsLoader {
 	private String _pipEventHandlerPackage 			= "de.tum.in.i22.uc.pip.eventdef.";
 	private String _pipInitializerEvent 			= "SchemaInitializer";
 	private String _pipPersistenceDirectory			= "pipdb";
+	
+	private String _separator1 = "@";
+	private String _separator2 = "#";
+	private String _prefixSeparator = "_";
+	
+	private String _pepParameterKey = "PEP";
+	private String _allowImpliesActualParameterKey = "allowImpliesActual";
+
 
 	private Map<IName,IData> _pipInitialRepresentations = new HashMap<IName,IData>() {
 		private static final long serialVersionUID = -2810488356921449504L;
@@ -147,6 +155,13 @@ public class Settings extends SettingsLoader {
 		_communicationProtocol = loadSetting("communication_protocol", _communicationProtocol, ECommunicationProtocol.class);
 
 		_connectionAttemptInterval = loadSetting("connection_attempt_interval", _connectionAttemptInterval);
+		
+		_separator1 = loadSetting("separator1", _separator1);
+		_separator2 = loadSetting("separator2", _separator2);
+		_prefixSeparator = loadSetting("prefixSeparator", _prefixSeparator);
+		
+		_pepParameterKey = loadSetting("pepParameterKey", _pepParameterKey);
+		_allowImpliesActualParameterKey = loadSetting("allowImpliesActualParameterKey", _allowImpliesActualParameterKey);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -333,5 +348,27 @@ public class Settings extends SettingsLoader {
 	public int getConnectionAttemptInterval() {
 		return _connectionAttemptInterval ;
 	}
+	
+	public String getSeparator1() {
+		return _separator1;
+	}
+
+	public String getSeparator2() {
+		return _separator2;
+	}
+	
+	public String getPrefixSeparator() {
+		return _prefixSeparator;
+	}
+
+	public String getPepParameterKey() {
+		return _pepParameterKey;
+	}
+	
+	public String getAllowImpliesActualParameterKey() {
+		return _allowImpliesActualParameterKey;
+	}
+	
+
 }
 

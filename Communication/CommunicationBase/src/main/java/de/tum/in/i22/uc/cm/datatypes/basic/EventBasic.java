@@ -6,13 +6,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class EventBasic implements IEvent {
 
-	public static final String PEP_PARAMETER_KEY = "PEP";
-	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = "allowImpliesActual";
+	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPepParameterKey();
+	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = Settings.getInstance().getAllowImpliesActualParameterKey();
 
-	private static final String PREFIX_SEPARATOR = "_";
+	private static final String PREFIX_SEPARATOR = Settings.getInstance().getPrefixSeparator();
 
 	private String _name = null;
 	private String _pep = null;

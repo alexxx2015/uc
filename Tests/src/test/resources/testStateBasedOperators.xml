@@ -1,0 +1,58 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
+	xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testStateBasedOperators">
+
+	<preventiveMechanism name="testIsNotIn">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="testSBOp" tryEvent="true">
+			<paramMatch name="curTest" value="isNotIn"/>
+			<paramMatch name="name" value="initialContainer" cmpOp="equals" type="dataUsage" dataID="myId" />
+		</trigger>
+		<condition>
+			<stateBasedFormula operator="isNotIn" param1="myId" param2="initialContainer" />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+	<preventiveMechanism name="testIsOnlyIn">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="testSBOp" tryEvent="true">
+			<paramMatch name="curTest" value="isOnlyIn"/>
+			<paramMatch name="name" value="initialContainer2" cmpOp="equals" type="dataUsage" dataID="myId" />
+		</trigger>
+		<condition>
+			<stateBasedFormula operator="isOnlyIn" param1="myId" param2="initialContainer2" />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+
+	<preventiveMechanism name="testIsCombinedWith">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="testSBOp" tryEvent="true">
+			<paramMatch name="curTest" value="isCombinedWith"/>
+			<paramMatch name="name" value="initialContainer3" cmpOp="equals" type="dataUsage" dataID="myId" />
+			<paramMatch name="name2" value="initialContainer3" cmpOp="equals" type="dataUsage" dataID="myId2" />
+		</trigger>
+		<condition>
+			<stateBasedFormula operator="isCombinedWith" param1="myId" param2="myId2" />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+</policy>

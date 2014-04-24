@@ -96,7 +96,7 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus update(IEvent event) {
-		String action = event.getPrefixedName();
+		String action = event.getName();
 		IEventHandler actionHandler = null;
 		IStatus status;
 
@@ -208,6 +208,7 @@ public class PipHandler extends PipProcessor {
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");
 			res = evaluatePredicateCurrentState(predicate);
+			_logger.trace("Result of the evaluation is " + res);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModelManager.stopSimulation();
 			_logger.trace("done!");

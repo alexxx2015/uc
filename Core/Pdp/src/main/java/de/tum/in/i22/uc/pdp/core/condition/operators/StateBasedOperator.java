@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
@@ -38,21 +40,18 @@ public class StateBasedOperator extends StateBasedOperatorType {
 	@Override
 	public boolean evaluate(Event curEvent) {
 
-		// Superstar fix here and above. code deleted during restructuring
-		// log.debug("eval StateBasedFormula");
-		// // TODO: stateBasedFormula evaluation NYI: forward to PIP for
-		// evaluation
-		// IPdpEngine2PipCacher engine2PipCacher =
-		// PolicyDecisionPoint.get_engine2PipCacher();
-		// if(engine2PipCacher != null){
-		// if(curEvent == null)
-		// return
-		// engine2PipCacher.evaluatePredicateCurrentState(this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
-		//
-		// return
-		// engine2PipCacher.evaluatePredicateSimulatingNextState(curEvent.toIEvent(),
-		// this.operator+"|"+this.param1+"|"+this.param2+"|"+this.param3);
-		// }
-		return false;
+		IPdp2Pip pip = this._pdp.get_pip();
+		String separator= Settings.getInstance().getSeparator1();
+		
+		if (pip == null) {
+			log.error("Impossible to evaluate state based operator ["
+					+ getOperator() + " [" + getParam1() + "][" + getParam2()
+					+ "][" + getParam3() + "]] without a pip reference");
+		}
+
+		return pip.evaluatePredicateSimulatingNextState(curEvent.toIEvent(),
+				this.operator + separator + this.param1 + separator
+						+ this.param2 + separator
+						+ this.param3);
 	}
 }

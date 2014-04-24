@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.extensions.statebased;
 
 import com.google.common.base.Objects;
 
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.interfaces.EStateBasedFormula;
@@ -12,8 +13,8 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 
 	private final String _predicate;
 
-	private final static String SEPARATOR1 = "\\|";
-	protected final static String SEPARATOR2 = "#";
+	private final static String SEPARATOR1 = Settings.getInstance().getSeparator1();
+	protected final static String SEPARATOR2 = Settings.getInstance().getSeparator2();
 
 
 	public StateBasedPredicate(String predicate) {

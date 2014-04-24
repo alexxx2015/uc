@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 
 public class IsOnlyIn extends StateBasedPredicate {
 	private final String _param1;
@@ -20,21 +22,23 @@ public class IsOnlyIn extends StateBasedPredicate {
 
 	@Override
 	public Boolean evaluate() {
-		// TODO FK: This implementation seems to be completely wrong.
 
-		Set<String> limit = new HashSet<String>(Arrays.asList(_param2.split(SEPARATOR2)));
+		// if one of the data in param1 is stored in a container that is not in
+		// param2 list, then return false.
+		// otherwise return true.
 
-		Set<IContainer> containers = _ifModel.getContainers(new DataBasic(_param1));
+		Set<String> limit = new HashSet<String>(Arrays.asList(_param2
+				.split(SEPARATOR2)));
 
-		for (IContainer cont : containers) {
-			NameBasic pname = new NameBasic(cont.getId());
-
-			if (!(limit.contains(_ifModel.getContainerRelaxed(pname)))) {
-				return false;
+		for (String d : _param1.split(SEPARATOR2)) {
+			Set<IContainer> dataLocations = _ifModel
+					.getContainers(new DataBasic(d));
+			for (String cs : limit) {
+				if (!(dataLocations.contains(new ContainerBasic(cs)))) {
+					return false;
+				}
 			}
 		}
-
 		return true;
 	}
-
 }

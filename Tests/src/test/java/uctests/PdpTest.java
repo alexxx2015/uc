@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataEventMapBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.MechanismBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.OslFormulaBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.SimplifiedTemporalLogicBasic;
@@ -61,10 +61,17 @@ public class PdpTest {
 
 	@BeforeClass
     public static void beforeClass() {
-		_pdp = new PdpHandler();
-		_pip = new PipHandler();
-		_pmp = new PmpHandler();
-			
+		PdpHandler pdpImp= new PdpHandler();
+		PipHandler pipImp = new PipHandler();
+		PmpHandler pmpImp = new PmpHandler();
+		_pdp = pdpImp;
+		_pip = pipImp;
+		_pmp = pmpImp;
+		
+		pdpImp.init(pipImp,pmpImp);
+		pipImp.init(pdpImp,pmpImp);
+		pmpImp.init(pipImp,pdpImp);
+		
 		startPepClient();
 	}
 
@@ -124,6 +131,7 @@ public class PdpTest {
 
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
+
 
 	private Map<String, String> createDummyMap() {
 		Map<String, String> map = new HashMap<String, String>();

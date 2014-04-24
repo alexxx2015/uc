@@ -1,8 +1,12 @@
 package de.tum.in.i22.uc.pmp;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -136,6 +140,7 @@ public class PmpHandler extends PmpProcessor {
 
 			for (MechanismBaseType mech : mechanisms) {
 				List<ParamMatchType> paramList = mech.getTrigger().getParams();
+				List<ParamMatchType> newParamList = new ArrayList<ParamMatchType>();
 				for (ParamMatchType p : paramList) {
 					if (p.getType().equals(_DATAUSAGE)) {
 						String dataId = null;
@@ -168,10 +173,13 @@ public class PmpHandler extends PmpProcessor {
 						newP.setCmpOp(ComparisonOperatorTypes.DATA_IN_CONTAINER);
 						newP.setType(_DATA);
 
-						paramList.remove(p);
-						paramList.add(newP);
+						newParamList.add(newP);
+					} else {
+						newParamList.add(p);
 					}
 				}
+				mech.getTrigger().getParams().clear();
+				mech.getTrigger().getParams().addAll(newParamList);
 			}
 
 			log.info("converting object into policy string");
@@ -219,12 +227,19 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
-		return getPdp().deployPolicyURI(policyFilePath);
+		if (policyFilePath.endsWith(".xml")) {
+			try {
+				return deployPolicyXMLPmp(com.google.common.io.Files.toString(new File(policyFilePath),Charset.defaultCharset()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return new StatusBasic(EStatus.ERROR,"Error while loading policy file " + policyFilePath);
 	}
 
 	@Override
 	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
-		return getPdp().deployPolicyXML(XMLPolicy);
+		return receivePolicies(Collections.singleton(XMLPolicy));
 	}
 
 	@Override
