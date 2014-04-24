@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public interface IPdpMechanism {
 
@@ -28,5 +29,7 @@ public interface IPdpMechanism {
 	public String getMechanismName();
 
 	public boolean revoke();
+	
+	public PolicyDecisionPoint getPolicyDecisionPoint();
 
 }

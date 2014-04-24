@@ -31,7 +31,8 @@ public class EventMatchOperator extends EventMatch
   @Override
   public void initOperatorForMechanism(IPdpMechanism mech)
   {
-    ActionDescriptionStore ads = ActionDescriptionStore.getInstance();
+    super.initOperatorForMechanism(mech);
+    ActionDescriptionStore ads = _pdp.getActionDescriptionStore();
     ads.addEventMatch(this);
   }  
   

@@ -43,32 +43,38 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private ActionDescriptionStore actionDescriptionStore = null;
 	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 
-	private PolicyDecisionPoint() {
-		this.actionDescriptionStore = ActionDescriptionStore.getInstance();
+	public PolicyDecisionPoint() {
+		this.actionDescriptionStore = new ActionDescriptionStore();
 	}
 
-	public static IPolicyDecisionPoint getInstance() {
-		return getInstance(null);
+	public PolicyDecisionPoint(IPdp2Pip pip) {
+		this.actionDescriptionStore = new ActionDescriptionStore();
+		this._pip=pip;
 	}
 
-	public static IPolicyDecisionPoint getInstance(IPdp2Pip pip) {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all
-		 * of it. Yet, it is the best way to implement a thread-safe singleton,
-		 * cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
-		 * -with-example-code -FK-
-		 */
-		if (instance == null) {
-			synchronized (PolicyDecisionPoint.class) {
-				if (instance == null) {
-					instance = new PolicyDecisionPoint();
-					log.debug("new PDP instance created");
-					// instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
-					// instance.deployPolicyURI("/home/florian/testTUM.xml");
-				}
-			}
-		}
+	
+//	public static IPolicyDecisionPoint getInstance() {
+//		return getInstance(null);
+//	}
+
+//	public static IPolicyDecisionPoint getInstance(IPdp2Pip pip) {
+//		/*
+//		 * This implementation may seem odd, overengineered, redundant, or all
+//		 * of it. Yet, it is the best way to implement a thread-safe singleton,
+//		 * cf.
+//		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
+//		 * -with-example-code -FK-
+//		 */
+//		if (instance == null) {
+//			synchronized (PolicyDecisionPoint.class) {
+//				if (instance == null) {
+//					instance = new PolicyDecisionPoint();
+//					log.debug("new PDP instance created");
+//					// instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
+//					// instance.deployPolicyURI("/home/florian/testTUM.xml");
+//				}
+//			}
+//		}
 		/**
 		 * This code looks ugly, but it is needed in order to allow the PDP test to run without the need of a PIP reference.
 		 * When getInstance was invoked the first time, if pip was null, the code used to crash.
@@ -79,15 +85,15 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		 * This explains why we do it using the getInstance method and we do not use a setter instead:
 		 * this value should be set only once.
 		 */
-		
-		if (_pip == null && pip != null) {
-			synchronized (PolicyDecisionPoint.class) {
-				log.debug("PIP reference for PDP instance initialized");
-				_pip = pip;
-			}
-		}
-		return instance;
-	}
+//		
+//		if (_pip == null && pip != null) {
+//			synchronized (PolicyDecisionPoint.class) {
+//				log.debug("PIP reference for PDP instance initialized");
+//				_pip = pip;
+//			}
+//		}
+//		return instance;
+//	}
 
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
@@ -150,8 +156,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			for (MechanismBaseType mech : mechanisms) {
 				try {
 					log.debug("Processing mechanism: {}", mech.getName());
-
-					IPdpMechanism curMechanism = new Mechanism(mech);
+					IPdpMechanism curMechanism = new Mechanism(mech,this);
 					ArrayList<IPdpMechanism> mechanismList = this.policyTable
 							.get(curPolicy.getName());
 					if (mechanismList == null)
@@ -169,7 +174,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 					log.debug("Starting mechanism update thread...");
 					if (curMechanism instanceof Mechanism) {
-						((Mechanism) curMechanism).init(this);
+						((Mechanism) curMechanism).init();
 					}
 					log.info("Mechanism {} started...",
 							curMechanism.getMechanismName());
@@ -300,6 +305,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public IPdp2Pip get_pip() {
 		return _pip;
+	}
+
+	@Override
+	public ActionDescriptionStore getActionDescriptionStore() {
+		return this.actionDescriptionStore;
 	}
 
 }

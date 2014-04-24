@@ -24,7 +24,7 @@ public class PDPJavaTest {
 		Event e;
 		Decision d;
 		log.debug("PDPJavaTest");
-		lpdp = PolicyDecisionPoint.getInstance(null);
+		lpdp = new PolicyDecisionPoint();
 
 		log.debug("lpdp: " + lpdp);
 		boolean ret = lpdp.deployPolicyURI("src/test/resources/testTUM.xml");

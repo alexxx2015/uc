@@ -16,7 +16,9 @@ public class EvalOperator extends EvalOperatorType
   
   @Override
   public void initOperatorForMechanism(IPdpMechanism mech)
-  {}  
+  {
+	  super.initOperatorForMechanism(mech);
+  }  
   
   @Override 
   public String toString()

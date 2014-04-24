@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 
 public interface IPolicyDecisionPoint {
 	// PDP exported methods
@@ -21,4 +22,6 @@ public interface IPolicyDecisionPoint {
 	
 	public IPdp2Pip get_pip();
 
+	public ActionDescriptionStore getActionDescriptionStore();
+	
 }

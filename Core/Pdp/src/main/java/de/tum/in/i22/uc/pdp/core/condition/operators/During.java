@@ -20,6 +20,7 @@ public class During extends DuringType
   @Override
   public void initOperatorForMechanism(IPdpMechanism mech)
   {
+	  super.initOperatorForMechanism(mech);
     this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
     
     // for evaluation without history set counter to interval for DURING

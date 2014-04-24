@@ -16,6 +16,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	public EventMatch(EventMatchingOperatorType op, Mechanism curMechanism) {
 		log.debug("Preparing eventMatch from EventMatchingOperatorType");
+		_pdp=curMechanism.getPolicyDecisionPoint();
 		this.setAction(op.getAction());
 		this.setTryEvent(op.isTryEvent());
 		for (ParamMatchType paramMatch : op.getParams()) {
@@ -27,6 +28,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public void initOperatorForMechanism(IPdpMechanism mech) {
+	    super.initOperatorForMechanism(mech);
 	}
 
 	public boolean eventMatches(Event curEvent) {
@@ -42,6 +44,8 @@ public class EventMatch extends EventMatchingOperatorType {
 				for (ParamMatchType p : this.getParams()) {
 					ParamMatch curParamMatch = (ParamMatch) p;
 					log.debug("Matching param [{}]", p);
+					log.debug("setting pdp for current parameter");
+					curParamMatch.setPdp(_pdp);
 					ret = curParamMatch.paramMatches(curEvent
 							.getParameterForName(p.getName()));
 					if (!ret)

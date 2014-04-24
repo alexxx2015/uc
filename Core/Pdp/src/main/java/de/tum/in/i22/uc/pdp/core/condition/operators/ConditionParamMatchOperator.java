@@ -18,7 +18,9 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType
   
   @Override
   public void initOperatorForMechanism(IPdpMechanism mech)
-  {}  
+  {
+	  super.initOperatorForMechanism(mech);
+  }  
   
   @Override 
   public String toString()
@@ -43,8 +45,9 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType
     pm.setCmpOp(this.getCmpOp());
     pm.setName(this.getName());
     pm.setValue(this.getValue());
-    
-    //use the parmMatches methdo for the evaluation
+   
+    pm.setPdp(_pdp);
+    //use the parmMatches method for the evaluation
     
 	return pm.paramMatches(curEvent.getParameterForName(pm.getName()));
   }
