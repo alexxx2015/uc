@@ -42,15 +42,6 @@ public class EventBasic implements IEvent {
 	}
 
 	@Override
-	public String getPrefixedName() {
-		if (_pep == null) {
-			return _name;
-		}
-
-		return _pep + PREFIX_SEPARATOR + _name;
-	}
-
-	@Override
 	public String getName() {
 		return _name;
 	}

@@ -203,7 +203,7 @@ public class PipHandler extends PipProcessor {
 
 		if (_ifModelManager.startSimulation().getEStatus() == EStatus.OKAY) {
 			_logger.trace("Updating PIP semantics with current event ("
-					+ (event == null ? "null" : event.getPrefixedName()) + ")");
+					+ (event == null ? "null" : event.getName()) + ")");
 			update(event);
 			_logger.trace("Evaluate predicate in new updated state ("
 					+ predicate + ")");

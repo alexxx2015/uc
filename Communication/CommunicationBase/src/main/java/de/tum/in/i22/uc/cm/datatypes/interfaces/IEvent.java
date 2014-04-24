@@ -4,12 +4,6 @@ import java.util.Map;
 
 public interface IEvent {
 	/**
-	 * This event's name, prefixed with the PEP that issued this event (if any).
-	 * @return the PEP-prefixed event name
-	 */
-	public String getPrefixedName();
-
-	/**
 	 * This event's name.
 	 * @return
 	 */
