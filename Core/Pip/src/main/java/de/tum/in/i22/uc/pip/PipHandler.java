@@ -23,6 +23,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
@@ -46,6 +48,7 @@ public class PipHandler extends PipProcessor {
 
 	private final PipManager _pipManager;
 
+
 	/**
 	 * Manages everything related to distributed data flow tracking
 	 */
@@ -56,6 +59,8 @@ public class PipHandler extends PipProcessor {
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
+		init(new DummyPdpProcessor(), new DummyPmpProcessor());
+
 		_pipManager = new PipManager();
 		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = InformationFlowModelManager.getInstance();
@@ -186,7 +191,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Evaluate the predicate in the state obtained simulating the execution of
 	 * event.
-	 * 
+	 *
 	 * @return the result of the formula
 	 */
 	@Override

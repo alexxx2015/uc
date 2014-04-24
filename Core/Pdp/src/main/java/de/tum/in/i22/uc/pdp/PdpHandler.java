@@ -19,6 +19,8 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
@@ -30,9 +32,7 @@ public class PdpHandler extends PdpProcessor {
 	private IPolicyDecisionPoint _lpdp;
 
 	public PdpHandler() {
-		// nothing is done here because in order to create a new
-		// PolicyDecisionPoint we need the reference to the pip.
-		// thus we do it in the init method.
+		init(new DummyPipProcessor(), new DummyPmpProcessor());
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class PdpHandler extends PdpProcessor {
 
 		/**
 		 * (1) If the event is actual, we update the PIP in any case
-		 * 
+		 *
 		 * (2) If the event is *not* actual AND if the event was allowed by the
 		 * PDP AND if for this event allowance implies that the event is to be
 		 * considered as actual event, then we create the corresponding actual

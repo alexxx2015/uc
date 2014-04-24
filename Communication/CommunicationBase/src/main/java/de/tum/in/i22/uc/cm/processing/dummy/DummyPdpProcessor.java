@@ -1,21 +1,21 @@
 /**
- *   
- * 
- *  THIS 
- *  
+ *
+ *
+ *  THIS
+ *
  *  CLASS
- *  
+ *
  *  IS
- *   
- *  FOR 
- *   
- *  TESTING 
- *  
- *  PURPOSES 
- *  
+ *
+ *  FOR
+ *
+ *  TESTING
+ *
+ *  PURPOSES
+ *
  *  ONLY
- * 
- * 
+ *
+ *
  */
 
 package de.tum.in.i22.uc.cm.processing.dummy;
@@ -33,7 +33,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
-public class DummyPdpProcessor extends PdpProcessor {
+public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 	private static Logger _logger = LoggerFactory.getLogger(DummyPdpProcessor.class);
 
 	@Override
@@ -97,7 +97,7 @@ public class DummyPdpProcessor extends PdpProcessor {
 		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("notifyEventAsync method invoked");
-		
+
 	}
 
 	@Override
@@ -107,5 +107,5 @@ public class DummyPdpProcessor extends PdpProcessor {
 		_logger.error("notifyEventSync method invoked");
 		return null;
 	}
-	
+
 }

@@ -1,21 +1,21 @@
 /**
- *   
- * 
- *  THIS 
- *  
+ *
+ *
+ *  THIS
+ *
  *  CLASS
- *  
+ *
  *  IS
- *   
- *  FOR 
- *   
- *  TESTING 
- *  
- *  PURPOSES 
- *  
+ *
+ *  FOR
+ *
+ *  TESTING
+ *
+ *  PURPOSES
+ *
  *  ONLY
- * 
- * 
+ *
+ *
  */
 
 
@@ -34,7 +34,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
-public class DummyPmpProcessor extends PmpProcessor {
+public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	private static Logger _logger = LoggerFactory.getLogger(DummyPmpProcessor.class);
 
 	@Override
@@ -101,5 +101,5 @@ public class DummyPmpProcessor extends PmpProcessor {
 		_logger.error("listMechanisms method invoked");
 		return null;
 	}
-	
+
 }

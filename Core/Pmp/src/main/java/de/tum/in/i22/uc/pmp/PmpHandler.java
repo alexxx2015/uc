@@ -30,6 +30,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
 import de.tum.in.i22.uc.pmp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
@@ -48,6 +50,7 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATA = "data";
 
 	public PmpHandler() {
+		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_distributedPmpManager = new PmpDistributionManager();
 	}
 
@@ -155,8 +158,7 @@ public class PmpHandler extends PmpProcessor {
 										status.getErrorMessage());
 							}
 						} else {
-							IData newData = getPip().newInitialRepresentation(
-									new NameBasic(value));
+							IData newData = getPip().newInitialRepresentation(new NameBasic(value));
 							newValue = newData.getId();
 						}
 

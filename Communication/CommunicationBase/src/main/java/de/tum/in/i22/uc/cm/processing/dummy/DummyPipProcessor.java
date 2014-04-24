@@ -1,21 +1,21 @@
 /**
- *   
- * 
- *  THIS 
- *  
+ *
+ *
+ *  THIS
+ *
  *  CLASS
- *  
+ *
  *  IS
- *   
- *  FOR 
- *   
- *  TESTING 
- *  
- *  PURPOSES 
- *  
+ *
+ *  FOR
+ *
+ *  TESTING
+ *
+ *  PURPOSES
+ *
  *  ONLY
- * 
- * 
+ *
+ *
  */
 
 package de.tum.in.i22.uc.cm.processing.dummy;
@@ -36,7 +36,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
-public class DummyPipProcessor extends PipProcessor {
+public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 	private static Logger _logger = LoggerFactory.getLogger(DummyPipProcessor.class);
 
 	@Override
@@ -168,7 +168,7 @@ public class DummyPipProcessor extends PipProcessor {
 		_logger.error("newInitialRepresentation method invoked");
 		return null;
 	}
-	
+
 
 
 }

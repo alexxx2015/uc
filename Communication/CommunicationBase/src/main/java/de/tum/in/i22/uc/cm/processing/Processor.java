@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.processing;
 
+import de.tum.in.i22.uc.cm.processing.dummy.IDummyProcessor;
+
 /**
  * A abstract processor. Taking two interfaces to two other processors as an argument.
  *
@@ -10,12 +12,12 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 	protected I1 _iface1;
 	protected I2 _iface2;
 
-	private boolean _initialized = false;
-
 	public void init(I1 iface1, I2 iface2) {
-		if (!_initialized) {
-			_initialized = true;
+		if (_iface1 == null || _iface1 instanceof IDummyProcessor) {
 			_iface1 = iface1;
+		}
+
+		if (_iface2 == null || _iface2 instanceof IDummyProcessor) {
 			_iface2 = iface2;
 		}
 	}

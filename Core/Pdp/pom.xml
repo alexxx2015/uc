@@ -10,6 +10,10 @@
 	</parent>
 
 	<artifactId>Pdp</artifactId>
+	
+	<properties>
+     <CommunicationBase.path>../../Communication/CommunicationBase</CommunicationBase.path>
+  	</properties>
 
 	<dependencies>
 		<dependency>
