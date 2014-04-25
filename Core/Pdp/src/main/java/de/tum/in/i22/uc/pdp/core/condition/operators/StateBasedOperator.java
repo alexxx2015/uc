@@ -49,9 +49,11 @@ public class StateBasedOperator extends StateBasedOperatorType {
 					+ "][" + getParam3() + "]] without a pip reference");
 		}
 
-		return pip.evaluatePredicateSimulatingNextState(curEvent.toIEvent(),
-				this.operator + separator + this.param1 + separator
-						+ this.param2 + separator
-						+ this.param3);
+		String p = this.operator + separator + this.param1 + separator
+				+ this.param2 + separator
+				+ this.param3;
+		
+		if (curEvent==null) return pip.evaluatePredicateCurrentState(p);
+		else return pip.evaluatePredicateSimulatingNextState(curEvent.toIEvent(),p);
 	}
 }

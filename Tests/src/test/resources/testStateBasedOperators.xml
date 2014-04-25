@@ -7,7 +7,7 @@
 
 	<preventiveMechanism name="testIsNotIn">
 		<description>...</description>
-		<timestep amount="10" unit="SECONDS" />
+		<timestep amount="100" unit="SECONDS" />
 		<trigger action="testSBOp" tryEvent="true">
 			<paramMatch name="curTest" value="isNotIn"/>
 			<paramMatch name="name" value="initialContainer" cmpOp="equals" type="dataUsage" dataID="myId" />
@@ -23,7 +23,7 @@
 
 	<preventiveMechanism name="testIsOnlyIn">
 		<description>...</description>
-		<timestep amount="10" unit="SECONDS" />
+		<timestep amount="100" unit="SECONDS" />
 		<trigger action="testSBOp" tryEvent="true">
 			<paramMatch name="curTest" value="isOnlyIn"/>
 			<paramMatch name="name" value="initialContainer2" cmpOp="equals" type="dataUsage" dataID="myId" />
@@ -40,14 +40,14 @@
 
 	<preventiveMechanism name="testIsCombinedWith">
 		<description>...</description>
-		<timestep amount="10" unit="SECONDS" />
+		<timestep amount="100" unit="SECONDS" />
 		<trigger action="testSBOp" tryEvent="true">
 			<paramMatch name="curTest" value="isCombinedWith"/>
-			<paramMatch name="name" value="initialContainer3" cmpOp="equals" type="dataUsage" dataID="myId" />
-			<paramMatch name="name2" value="initialContainer3" cmpOp="equals" type="dataUsage" dataID="myId2" />
+			<paramMatch name="name" value="initialContainer" cmpOp="equals" type="dataUsage" dataID="myId2" />
+			<paramMatch name="name2" value="initialContainer" cmpOp="equals" type="dataUsage" dataID="myId3" />
 		</trigger>
 		<condition>
-			<stateBasedFormula operator="isCombinedWith" param1="myId" param2="myId2" />
+			<stateBasedFormula operator="isCombinedWith" param1="myId3" param2="myId2" />
 		</condition>
 		<authorizationAction name="default" start="true"
 			fallback="fallback">

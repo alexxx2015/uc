@@ -163,6 +163,10 @@ public class PipHandler extends PipProcessor {
 
 		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 
+		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
+			_logger.debug(this.toString());
+		}
+		
 		return status;
 	}
 

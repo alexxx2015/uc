@@ -4,11 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 public class IsOnlyIn extends StateBasedPredicate {
 	private final String _param1;
@@ -26,17 +24,29 @@ public class IsOnlyIn extends StateBasedPredicate {
 		// if one of the data in param1 is stored in a container that is not in
 		// param2 list, then return false.
 		// otherwise return true.
+		
+		// notice that data in param1 could be stored in a container that has more than one name.
+		// at least one of the names must exists in param1 list, otherwise param1 data is not only in param2 list.
 
-		Set<String> limit = new HashSet<String>(Arrays.asList(_param2
-				.split(SEPARATOR2)));
+		if (_param1==null) return true;
+		String[] dataList=_param1.split(SEPARATOR2);
 
-		for (String d : _param1.split(SEPARATOR2)) {
-			Set<IContainer> dataLocations = _ifModel
-					.getContainers(new DataBasic(d));
-			for (String cs : limit) {
-				if (!(dataLocations.contains(new ContainerBasic(cs)))) {
-					return false;
+		String[] contList = new String[0];
+		if (_param2!=null) contList=_param2.split(SEPARATOR2);
+		
+		Set<String> contSet = new HashSet<String>(Arrays.asList(contList));
+		
+		for (String d : dataList) {
+			Set<IContainer> dataLocations = _ifModel.getContainers(new DataBasic(d));
+			for (IContainer c : dataLocations){
+				boolean oneOfTheNamesMatches = false;
+				for (IName n : _ifModel.getAllNames(c)){
+					if (contSet.contains(n.getName())) {
+						oneOfTheNamesMatches=true;
+						break;
+					}
 				}
+				if (!oneOfTheNamesMatches) return false;
 			}
 		}
 		return true;

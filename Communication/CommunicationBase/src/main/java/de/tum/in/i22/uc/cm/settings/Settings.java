@@ -54,6 +54,8 @@ public class Settings extends SettingsLoader {
 	private String _pipInitializerEvent 			= "SchemaInitializer";
 	private String _pipPersistenceDirectory			= "pipdb";
 	
+	private boolean _pipPrintAfterUpdate				= true;
+	
 	private String _separator1 = "@";
 	private String _separator2 = "#";
 	private String _prefixSeparator = "_";
@@ -145,6 +147,8 @@ public class Settings extends SettingsLoader {
 		_pipPersistenceDirectory 			= loadSetting("pip_persistence_directory", _pipPersistenceDirectory);
 		_pipInitialRepresentations			= loadSetting("pip_initial_representations", _pipInitialRepresentations);
 
+		_pipPrintAfterUpdate = loadSetting("pipPrintAfterUpdate", _pipPrintAfterUpdate);
+		
 		_distributionStrategy = loadSetting("pip_distribution_strategy", _distributionStrategy, EDistributionStrategy.class);
 		_pipDistributionMaxConnections = loadSetting("pip_distribution_max_connections", _pipDistributionMaxConnections);
 
@@ -325,6 +329,11 @@ public class Settings extends SettingsLoader {
 		return _pipPersistenceDirectory;
 	}
 
+
+	public boolean getPipPrintAfterUpdate(){
+		return _pipPrintAfterUpdate;
+	}
+	
 	public ECommunicationProtocol getCommunicationProtocol() {
 		return _communicationProtocol;
 	}

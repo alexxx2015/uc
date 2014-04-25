@@ -82,8 +82,9 @@
 						<content> 3+2=5 </content>
 					</eval>
 				</and>
-				<stateBasedFormula operator="isNotIn"
-					param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" />
+<!-- 			<stateBasedFormula operator="isNotIn"
+					param1="src_java.io.FileInputStream.read()I" param2="val2" param3="val3" /> -->
+					<true/>
 			</or>
 		</condition>
 		<authorizationAction name="default" start="true"
