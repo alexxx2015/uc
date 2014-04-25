@@ -19,16 +19,12 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 
-public class PmpTest {
+public class PmpTest extends AllTests{
 	private static Logger log = LoggerFactory.getLogger(PmpTest.class);
 
 	@Test
-	public void test() {
-
-		RequestHandler box = new RequestHandler();
-		IAny2Pmp pmp = box;
-		IAny2Pdp pdp = box;
-		IAny2Pip pip = box;
+	public void pmpTest() {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
 		String path="src/test/resources/testPmp.xml";
 

@@ -22,30 +22,20 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class ThriftTest {
+public class ThriftTest extends AllTests{
 
 	private static final String policyFile = "target" + File.separator
 												+ "test-classes" + File.separator
 												+ "testTUM.xml";
 
-	private static int pdpPort = 50003;
-
-	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
-
-
 	@Test
 	public void testDataContEventMatching() throws Exception{
-		/*
-		 * Start the PDP server
-		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, new RequestHandler());
-		new Thread(pdpServer).start();
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
-		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", PDP_SERVER_PORT));
 		clientPdp.connect();
 
 		IResponse response;
@@ -86,14 +76,14 @@ public class ThriftTest {
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort + 1, new RequestHandler());
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(PDP_SERVER_PORT + 1, new RequestHandler());
 		new Thread(pdpServer).start();
 
 		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", pdpPort + 1));
+		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", PDP_SERVER_PORT + 1));
 		clientPdp.connect();
 
 		int x = 0;

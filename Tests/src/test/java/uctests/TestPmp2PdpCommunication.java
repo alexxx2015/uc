@@ -22,22 +22,17 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 
-public class TestPmp2PdpCommunication {
+public class TestPmp2PdpCommunication extends AllTests{
 
 	private static Logger _logger = LoggerFactory.getLogger(TestPmp2PdpCommunication.class);
-
-	private static IAny2Pdp _pdp;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		_pdp = new PdpHandler();
-	}
 
 
 	@Test
 	public void testExportMechanism() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
 		// revoke
-		IMechanism mechanism = _pdp.exportMechanism("param2");
+		IMechanism mechanism = pdp.exportMechanism("param2");
 		_logger.debug("Received mechanism: " + mechanism);
 
 		// TODO Implementation is missing
@@ -46,9 +41,9 @@ public class TestPmp2PdpCommunication {
 
 	@Test
 	public void testRevokeMechanism() throws Exception {
-
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 		// revoke
-		IStatus status = _pdp.revokePolicy("param1");
+		IStatus status = pdp.revokePolicy("param1");
 		_logger.debug("Received status: " + status);
 
 		// check if status is not null
@@ -57,26 +52,4 @@ public class TestPmp2PdpCommunication {
 	}
 
 
-	private static IMechanism createMechanism() {
-		MechanismBasic m = new MechanismBasic();
-
-		// * set condition
-		ConditionBasic condition = new ConditionBasic();
-		// ** set condition condition
-		OslFormulaBasic formula = new OslFormulaBasic("Formula xxxx");
-		condition.setCondition(formula);
-		// ** set condition conditionSimp
-		SimplifiedTemporalLogicBasic conditionSimp = new SimplifiedTemporalLogicBasic();
-		conditionSimp.setFormula(new OslFormulaBasic("Formula yyyy"));
-
-		// *** set condition conditionSimp dataEventMap
-		Map<IData, IEvent> map1 = new HashMap<IData, IEvent>();
-		map1.put(new DataBasic("id1"), new EventBasic("event1", null));
-		DataEventMapBasic dataEventMap = new DataEventMapBasic(map1);
-		conditionSimp.setDataEventMap(dataEventMap);
-		condition.setConditionSimp(conditionSimp);
-		m.setCondition(condition);
-
-		return m;
-	}
 }

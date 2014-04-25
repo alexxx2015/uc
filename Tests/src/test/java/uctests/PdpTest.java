@@ -2,44 +2,27 @@ package uctests;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ConditionBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
-import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.DataEventMapBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.OslFormulaBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PipDeployerBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.SimplifiedTemporalLogicBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pip.PipHandler;
-import de.tum.in.i22.uc.pmp.PmpHandler;
 
-public class PdpTest {
+public class PdpTest extends AllTests{
 
 	private static Logger _logger = LoggerFactory.getLogger(PdpTest.class);
 
@@ -47,10 +30,6 @@ public class PdpTest {
 	private final static int NUM_OF_CALLS_FROM_PEP = 10;
 	// num of calls from pmp thread
 	private final static int NUM_OF_CALLS_FROM_PMP = 10;
-
-	private static IAny2Pdp _pdp;
-	private static IAny2Pip _pip;
-	private static IAny2Pmp _pmp;
 
 	private static Thread _threadPep;
 	private static Thread _threadPmp;
@@ -60,23 +39,14 @@ public class PdpTest {
 	}
 
 	@BeforeClass
-    public static void beforeClass() {
-		PdpHandler pdpImp= new PdpHandler();
-		PipHandler pipImp = new PipHandler();
-		PmpHandler pmpImp = new PmpHandler();
-		_pdp = pdpImp;
-		_pip = pipImp;
-		_pmp = pmpImp;
-		
-		pdpImp.init(pipImp,pmpImp);
-		pipImp.init(pdpImp,pmpImp);
-		pmpImp.init(pipImp,pdpImp);
-		
+    public static void beforeClass() throws Exception  {
 		startPepClient();
 	}
 
 	@Test
 	public void testNotifyTwoEvents() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
 		// create event
 		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 		String eventName1 = "event1";
@@ -85,10 +55,10 @@ public class PdpTest {
 		IEvent event1 = mf.createEvent(eventName1, map);
 		IEvent event2 = mf.createEvent(eventName2, map);
 
-		IResponse response1 = _pdp.notifyEventSync(event1);
+		IResponse response1 = pdp.notifyEventSync(event1);
 		_logger.debug("Received response as reply to event 1: " + response1);
 
-		IResponse response2 = _pdp.notifyEventSync(event2);
+		IResponse response2 = pdp.notifyEventSync(event2);
 		_logger.debug("Received response as reply to event 2: " + response2);
 
 
@@ -101,6 +71,8 @@ public class PdpTest {
 
 	@Test
 	public void multipleInvocationsOfNotifyEvent() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
 		for (int i = 0; i < 20; i++) {
 			testNotifyTwoEvents();
 		}
@@ -108,9 +80,11 @@ public class PdpTest {
 
 	@Test
 	public void testNotifyEventDelegatedToPipWhenActualEvent() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
 		IEvent event = new EventBasic("x", Collections.EMPTY_MAP);
 
-		IResponse response = _pdp.notifyEventSync(event);
+		IResponse response = pdp.notifyEventSync(event);
 
 		Assert.assertNotNull(response);
 	}
@@ -120,11 +94,12 @@ public class PdpTest {
 	 */
 	@Test
 	public void testUpdateIfFlowSemantics() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
 		IPipDeployer pipDeployer = new PipDeployerBasic("nameXYZ");
 		File file = FileUtils.toFile(TestPep2PdpCommunication.class.getResource("/test.jar"));
 
-		IStatus status = _pip.updateInformationFlowSemantics(
+		IStatus status = pip.updateInformationFlowSemantics(
 				pipDeployer,
 				file,
 				EConflictResolution.OVERWRITE);
@@ -133,31 +108,17 @@ public class PdpTest {
 	}
 
 
-	private Map<String, String> createDummyMap() {
-		Map<String, String> map = new HashMap<String, String>();
-		// add some entries
-		map.put("key1", "value1");
-		map.put("key2", "value2");
-		map.put("key3", "value3");
-		return map;
-	}
-
 	private static Thread startPepClient() {
 		_threadPep = new Thread(new Runnable() {
-
 			@Override
 			public void run() {
 				for (int i = 0; i < NUM_OF_CALLS_FROM_PEP; i++) {
 					String eventName1 = "event1";
-					Map<String, String> map = new HashMap<String, String>();
-					// add some entries
-					map.put("key1", "value1");
-					map.put("key2", "value2");
-					map.put("key3", "value3");
+					Map<String, String> map = createDummyMap();
 					IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 					IEvent event1 = mf.createEvent(eventName1, map);
 
-					_pdp.notifyEventSync(event1);
+					pdp.notifyEventSync(event1);
 
 					try {
 						Thread.sleep(20);
@@ -172,41 +133,5 @@ public class PdpTest {
 
 		return _threadPep;
 	}
-
-	private static IMechanism createMechanism() {
-		MechanismBasic m = new MechanismBasic();
-
-		// * set condition
-		ConditionBasic condition = new ConditionBasic();
-		// ** set condition condition
-		OslFormulaBasic formula = new OslFormulaBasic("Formula xxxx");
-		condition.setCondition(formula);
-		// ** set condition conditionSimp
-		SimplifiedTemporalLogicBasic conditionSimp = new SimplifiedTemporalLogicBasic();
-		conditionSimp.setFormula(new OslFormulaBasic("Formula yyyy"));
-
-		// *** set condition conditionSimp dataEventMap
-		Map<IData, IEvent> map1 = new HashMap<IData, IEvent>();
-		map1.put(new DataBasic("id1"), new EventBasic("event1", null));
-		DataEventMapBasic dataEventMap = new DataEventMapBasic(map1);
-		conditionSimp.setDataEventMap(dataEventMap);
-		condition.setConditionSimp(conditionSimp);
-		m.setCondition(condition);
-
-		return m;
-	}
-
-
-	@AfterClass
-    public static void afterClass() {
-//		_logger.info("After class");
-//		try {
-//			_t1.join();
-//			_t2.join();
-//			_t3.join();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-    }
 
 }

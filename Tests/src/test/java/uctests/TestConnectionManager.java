@@ -13,13 +13,14 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class TestConnectionManager {
+public class TestConnectionManager extends AllTests{
 
 	private static int pdpPort = 60000;
 
 
 	@Test
 	public void testObtainSameConnection() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 		/*
 		 * This is a simple test to see whether a second invocation
 		 * of ConnectionManager.obtain() with a different but equal object
@@ -28,9 +29,8 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 2 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new RequestHandler(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, requestHandler);
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(pdpPort, box);
 		new Thread(pdpServer).start();
 
 		// create 6 different
@@ -83,6 +83,8 @@ public class TestConnectionManager {
 
 	@Test
 	public void testMaxSize() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+		
 		/*
 		 * This test checks whether old connections are in fact removed
 		 * from the ConnectionManager once its maximum size is reached.
@@ -91,14 +93,13 @@ public class TestConnectionManager {
 
 		// create a new connection manager of size 2 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
-		IRequestHandler requestHandler = new RequestHandler(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
-
+		
 		/*
 		 * Start three servers
 		 */
-		IThriftServer pdpServer1 = ThriftServerFactory.createPdpThriftServer(pdpPort + 1, requestHandler);
-		IThriftServer pdpServer2 = ThriftServerFactory.createPdpThriftServer(pdpPort + 2, requestHandler);
-		IThriftServer pdpServer3 = ThriftServerFactory.createPdpThriftServer(pdpPort + 3, requestHandler);
+		IThriftServer pdpServer1 = ThriftServerFactory.createPdpThriftServer(pdpPort + 1, box);
+		IThriftServer pdpServer2 = ThriftServerFactory.createPdpThriftServer(pdpPort + 2, box);
+		IThriftServer pdpServer3 = ThriftServerFactory.createPdpThriftServer(pdpPort + 3, box);
 		new Thread(pdpServer1).start();
 		new Thread(pdpServer2).start();
 		new Thread(pdpServer3).start();
