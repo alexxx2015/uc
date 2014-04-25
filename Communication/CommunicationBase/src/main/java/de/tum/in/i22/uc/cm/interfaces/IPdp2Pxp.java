@@ -15,8 +15,8 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
 @AThriftService(name="TPdp2Pxp")
 public interface IPdp2Pxp {
 	@AThriftMethod(signature="Types.TStatus executeSync(1: list<Types.TEvent> eventList)")
-	public IStatus executeSync(List<IEvent> event);
+	public IStatus executeSync(List<IEvent> eventList);
 
 	@AThriftMethod(signature="oneway void executeAsync(1: list<Types.TEvent> eventList)")
-	public void executeAsync(List<IEvent> event);
+	public void executeAsync(List<IEvent> eventList);
 }

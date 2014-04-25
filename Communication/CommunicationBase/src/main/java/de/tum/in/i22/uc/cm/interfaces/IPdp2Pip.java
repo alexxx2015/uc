@@ -17,8 +17,8 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  */
 @AThriftService(name="TPdp2Pip")
 public interface IPdp2Pip {
-	@AThriftMethod(signature="bool evaluatePredicateSimulatingNextState(1:Types.TEvent event, 2:string predicate)")
-	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate);
+	@AThriftMethod(signature="bool evaluatePredicateSimulatingNextState(1:Types.TEvent eventToSimulate, 2:string predicate)")
+	public boolean evaluatePredicateSimulatingNextState(IEvent eventToSimulate, String predicate);
 
 	@AThriftMethod(signature="bool evaluatePredicatCurrentState(1:string predicate)")
 	public boolean evaluatePredicateCurrentState(String predicate);
@@ -38,7 +38,7 @@ public interface IPdp2Pip {
 	@AThriftMethod(signature="bool isSimulating()")
 	public boolean isSimulating();
 
-	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent event)")
-	public IStatus update(IEvent event);
+	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent updateEvent)")
+	public IStatus update(IEvent updateEvent);
 
 }

@@ -30,8 +30,8 @@ public interface IPip2Pip {
 	@AThriftMethod(signature="bool hasAnyContainer(1: set<Types.TName> container)")
     public boolean hasAnyContainer(Set<IName> container);
 
-	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent event)")
-	public IStatus update(IEvent event);
+	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent updateEvent)")
+	public IStatus update(IEvent updateEvent);
 
 	@AThriftMethod(signature="set<Types.TData> getDataInContainer(1:Types.TName containerName)")
 	public Set<IData> getDataInContainer(IName containerName);

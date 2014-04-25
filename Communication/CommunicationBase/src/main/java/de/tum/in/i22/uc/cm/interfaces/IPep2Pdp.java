@@ -12,9 +12,9 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  */
 @AThriftService(name="TPep2Pdp")
 public interface IPep2Pdp {
-	@AThriftMethod(signature="oneway void notifyEventAsync(1: Types.TEvent e)")
-	public void notifyEventAsync(IEvent event);
+	@AThriftMethod(signature="oneway void notifyEventAsync(1: Types.TEvent pepEvent)")
+	public void notifyEventAsync(IEvent pepEvent);
 
-	@AThriftMethod(signature="Types.TResponse notifyEventSync(1: Types.TEvent e)")
-	public IResponse notifyEventSync(IEvent event);
+	@AThriftMethod(signature="Types.TResponse notifyEventSync(1: Types.TEvent pepEvent)")
+	public IResponse notifyEventSync(IEvent pepEvent);
 }
