@@ -27,8 +27,6 @@ public final class StructuredInformationFlowModel extends
 	private static final Logger _logger = LoggerFactory
 			.getLogger(StructuredInformationFlowModel.class);
 
-	private BasicInformationFlowModel _bif;
-
 	// Structured data map
 	private Map<IData, Map<String, Set<IData>>> _structureMap;
 
@@ -41,8 +39,6 @@ public final class StructuredInformationFlowModel extends
 	 * information.
 	 */
 	public StructuredInformationFlowModel() {
-		_bif = InformationFlowModelManager.getInstance()
-				.getBasicInformationFlowModel();
 		this.reset();
 	}
 

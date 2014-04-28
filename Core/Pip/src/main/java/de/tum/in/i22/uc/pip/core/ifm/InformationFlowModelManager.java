@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
+import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 
 public final class InformationFlowModelManager {
 	private static InformationFlowModelManager _instance;
@@ -30,6 +31,9 @@ public final class InformationFlowModelManager {
 					break;
 				case SCOPE:
 					_ifModelExtensions.put(eifm, new ScopeInformationFlowModel());
+					break;
+				case STRUCTURE:
+					_ifModelExtensions.put(eifm, new StructuredInformationFlowModel());
 					break;
 				default:
 					break;

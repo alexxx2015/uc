@@ -35,12 +35,6 @@ public class Settings extends SettingsLoader {
 
 	private static String _propertiesFile = "uc.properties";
 
-	/**
-	 * The amount of milliseconds to wait between two attempts to connect to a
-	 * remote point
-	 */
-	private int _connectionAttemptInterval = 1000;
-
 	private Settings() {
 
 		_settings = new HashMap<>();
@@ -103,7 +97,7 @@ public class Settings extends SettingsLoader {
 		loadSetting("pipLocation", LocalLocation.getInstance());
 		loadSetting("pmpLocation", LocalLocation.getInstance());
 
-		loadSetting("pipEnabledInformationFlowModels", "scope");
+		loadSetting("pipEnabledInformationFlowModels", "scope@structure");
 		loadSetting("pipEventHandlerSuffix", "EventHandler");
 		loadSetting("pipEventHandlerPackage", "de.tum.in.i22.uc.pip.eventdef.");
 		loadSetting("pipInitializerEvent", "SchemaInitializer");
@@ -135,7 +129,8 @@ public class Settings extends SettingsLoader {
 		loadSetting("pdpDistributionMaxConnections", 5);
 
 		loadSetting("pmpDistributionMaxConnections", 5);
-
+		loadSetting("connectionAttemptInterval", 1000);
+		
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
