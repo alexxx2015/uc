@@ -21,6 +21,7 @@
 package de.tum.in.i22.uc.cm.processing.dummy;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -171,6 +172,22 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		// TODO Auto-generated method stub
 		_logger.error("PipProcessor DUMMY Implementation");
 		_logger.error("newInitialRepresentation method invoked");
+		return null;
+	}
+
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("newStructuredData method invoked");
+		return null;
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("getStructureOf method invoked");
 		return null;
 	}
 

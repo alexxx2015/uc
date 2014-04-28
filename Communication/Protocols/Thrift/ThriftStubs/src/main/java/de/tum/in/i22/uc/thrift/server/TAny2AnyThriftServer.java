@@ -1,13 +1,16 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
+import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -204,6 +207,16 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	@Override
 	public Map<String, List<String>> listMechanismsPmp() throws TException {
 		return _pdpServer.listMechanisms();
+	}
+
+	@Override
+	public TData newStructuredData(Map<String, Set<TData>> structure) throws TException{
+		return _pipServer.newStructuredData(structure);
+	}
+
+	@Override
+	public Map<String, Set<TData>> getStructureOf(TData data) throws TException {
+		return _pipServer.getStructureOf(data);
 	}
 
 }

@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.server;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -20,15 +22,16 @@ import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 
-
 /**
  * Use {@link ThriftServerFactory} to create an instance.
- *
+ * 
  * @author Florian Kelbert
- *
+ * 
  */
-class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface {
-	private static Logger _logger = LoggerFactory.getLogger(TAny2PipThriftServer.class);
+class TAny2PipThriftServer extends ThriftServerHandler implements
+		TAny2Pip.Iface {
+	private static Logger _logger = LoggerFactory
+			.getLogger(TAny2PipThriftServer.class);
 
 	private final IRequestHandler _requestHandler;
 
@@ -37,7 +40,8 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public TStatus initialRepresentation(TName containerName, Set<TData> data) throws TException {
+	public TStatus initialRepresentation(TName containerName, Set<TData> data)
+			throws TException {
 		_logger.debug("TAny2Pip: initialRepresentation");
 		IName name = ThriftConverter.fromThrift(containerName);
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
@@ -46,7 +50,8 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public TData newInitialRepresentation(TName containerName) throws TException {
+	public TData newInitialRepresentation(TName containerName)
+			throws TException {
 		_logger.debug("TAny2Pip: newInitialRepresentation");
 		IName name = ThriftConverter.fromThrift(containerName);
 		IData _data = _requestHandler.newInitialRepresentation(name);
@@ -90,14 +95,17 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(TEvent event, String predicate) throws TException {
+	public boolean evaluatePredicateSimulatingNextState(TEvent event,
+			String predicate) throws TException {
 		_logger.debug("TAny2Pip: evaluatePredicateSimulatingNextState");
 		IEvent ev = ThriftConverter.fromThrift(event);
-		return _requestHandler.evaluatePredicateSimulatingNextState(ev, predicate);
+		return _requestHandler.evaluatePredicateSimulatingNextState(ev,
+				predicate);
 	}
 
 	@Override
-	public boolean evaluatePredicatCurrentState(String predicate) throws TException {
+	public boolean evaluatePredicatCurrentState(String predicate)
+			throws TException {
 		_logger.debug("TAny2Pip: evaluatePredicateCurrentState");
 		return _requestHandler.evaluatePredicateCurrentState(predicate);
 	}
@@ -142,8 +150,37 @@ class TAny2PipThriftServer extends ThriftServerHandler implements TAny2Pip.Iface
 	}
 
 	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
+			throws TException {
 		_logger.debug("TAny2Pip: whoHasData");
-		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(ThriftConverter.fromThriftDataSet(data), recursionDepth));
+		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(
+				ThriftConverter.fromThriftDataSet(data), recursionDepth));
+	}
+
+	@Override
+	public TData newStructuredData(Map<String, Set<TData>> structure)
+			throws TException {
+		_logger.debug("TAny2Pip: newStructuredData");
+		if (structure == null)
+			throw new TException("structure==null");
+		Map<String, Set<IData>> map = new HashMap<String, Set<IData>>();
+		for (String s : structure.keySet()) {
+			map.put(s, ThriftConverter.fromThriftDataSet(structure.get(s)));
+		}
+		return ThriftConverter.toThrift(_requestHandler.newStructuredData(map));
+	}
+
+	@Override
+	public Map<String, Set<TData>> getStructureOf(TData data) throws TException {
+		_logger.debug("TAny2Pip: getStructureOf");
+		if (data == null)
+			throw new TException("TData==null");
+		Map<String, Set<IData>> map = _requestHandler
+				.getStructureOf(ThriftConverter.fromThrift(data));
+		Map<String, Set<TData>> res = new HashMap<String, Set<TData>>();
+		for (String s : map.keySet()) {
+			res.put(s, ThriftConverter.toThriftDataSet(map.get(s)));
+		}
+		return res;
 	}
 }

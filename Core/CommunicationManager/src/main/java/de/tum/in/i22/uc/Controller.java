@@ -426,5 +426,15 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.getIfModel();
 	}
 
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		return _requestHandler.newStructuredData(structure);
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		return _requestHandler.getStructureOf(data);
+	}
+
 
 }

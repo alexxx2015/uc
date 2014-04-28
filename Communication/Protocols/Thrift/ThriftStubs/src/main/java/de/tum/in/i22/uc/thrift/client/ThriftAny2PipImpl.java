@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
@@ -18,6 +20,7 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
+import de.tum.in.i22.uc.thrift.types.TData;
 
 class ThriftAny2PipImpl implements IAny2Pip {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipImpl.class);
@@ -181,4 +184,30 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 	}
 
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		try {
+			Map<String, Set<TData>> map = new HashMap<String, Set<TData>>();
+			for (String s: structure.keySet()){
+				map.put(s, ThriftConverter.toThriftDataSet(structure.get(s)));
+			}
+			return ThriftConverter.fromThrift(_handle.newStructuredData(map));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		try {
+			Map<String, Set<TData>> map = _handle.getStructureOf(ThriftConverter.toThrift(data));
+			Map<String, Set<IData>> res = new HashMap<String,Set<IData>>();
+			for (String s: map.keySet()){
+				res.put(s, ThriftConverter.fromThriftDataSet(map.get(s)));
+			}
+			return res;
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 }

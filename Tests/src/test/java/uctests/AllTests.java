@@ -15,6 +15,13 @@ import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
+/****
+ * This is the only class executed 
+ * @author moka
+ *
+ */
+
+
 @RunWith(Suite.class)
 @SuiteClasses({ PdpTest.class, PipTest.class, PmpTest.class,
 		StateBasedOperatorTest.class, TestConnectionManager.class,

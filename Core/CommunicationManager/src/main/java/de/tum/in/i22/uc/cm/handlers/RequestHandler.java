@@ -49,6 +49,7 @@ import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequ
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
+import de.tum.in.i22.uc.pip.requests.GetStructureOfPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllContainersPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAllDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
@@ -56,6 +57,7 @@ import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
+import de.tum.in.i22.uc.pip.requests.NewStructuredDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
@@ -523,6 +525,20 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	
 	public void stop() {
 		_requestQueueManager.stop();
+	}
+
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		NewStructuredDataPipRequest request = new NewStructuredDataPipRequest(structure);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		GetStructureOfPipRequest request = new GetStructureOfPipRequest(data);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
 	}
 	
 }

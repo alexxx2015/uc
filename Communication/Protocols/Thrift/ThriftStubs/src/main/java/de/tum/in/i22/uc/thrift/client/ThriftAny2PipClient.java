@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.thrift.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -161,5 +162,15 @@ class ThriftAny2PipClient extends Any2PipClient {
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
 		return _impl.whoHasData(data, recursionDepth);
+	}
+
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		return _impl.newStructuredData(structure);
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		return _impl.getStructureOf(data);
 	}
 }

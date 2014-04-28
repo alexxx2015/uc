@@ -305,4 +305,16 @@ public class PipHandler extends PipProcessor {
 	public String toString() {
 		return _ifModelManager.niceString();
 	}
+
+	@Override
+	public IData newStructuredData(Map<String, Set<IData>> structure) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Set<IData>> getStructureOf(IData data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
