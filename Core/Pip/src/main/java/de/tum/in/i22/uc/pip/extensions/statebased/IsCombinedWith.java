@@ -13,12 +13,17 @@ public class IsCombinedWith extends StateBasedPredicate {
 
 	public IsCombinedWith(String predicate, String param1, String param2) {
 		super(predicate);
-		_param1 = param1;
-		_param2 = param2;
+		_param1 = (param1 == null ? "" : param1);
+		_param2 = (param2 == null ? "" : param2);
 	}
 
 	@Override
-	public Boolean evaluate() {
+	public Boolean evaluate() throws InvalidStateBasedFormula {
+		
+		if ((_param1==null) || (_param2==null)){
+			throw new InvalidStateBasedFormula("Impossible to evaluate a formula where parameters have not been initialized [ param1 = "+_param1+" , param2 = "+_param2+"]");
+		}
+
 		Set<IContainer> s1= _ifModel.getContainers(new DataBasic(_param1));
 		Set<IContainer> s2= _ifModel.getContainers(new DataBasic(_param2));
 

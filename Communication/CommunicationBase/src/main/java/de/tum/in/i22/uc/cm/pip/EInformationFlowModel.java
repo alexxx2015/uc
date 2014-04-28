@@ -8,6 +8,7 @@ public enum EInformationFlowModel {
 	QUANTITIES;
 
 	public static Set<EInformationFlowModel> from(String str) {
+		if (str==null) return null;
 		Set<EInformationFlowModel> result = new HashSet<>();
 
 		for (String s : str.split(",")) {

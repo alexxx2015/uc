@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.io.IOException;
 
+import de.tum.in.i22.uc.cm.distribution.Location;
+
 /**
  * Abstract class defining a connector that will operate on
  * a specific HandleType. Using this class as a superclass
@@ -22,4 +24,6 @@ public abstract class Connector<HandleType> {
 	public abstract HandleType connect() throws IOException;
 
 	public abstract void disconnect();
+	
+	public abstract Location getLocation();
 }

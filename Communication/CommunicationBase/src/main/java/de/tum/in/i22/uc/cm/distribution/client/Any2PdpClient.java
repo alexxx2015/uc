@@ -16,6 +16,7 @@ public abstract class Any2PdpClient extends PdpProcessor implements IConnectable
 	private final Connector<?> _connector;
 
 	protected Any2PdpClient(Connector<?> connector) {
+		super(connector.getLocation());
 		_connector = connector;
 	}
 

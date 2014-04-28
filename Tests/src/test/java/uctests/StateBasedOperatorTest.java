@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
-public class StateBasedOperatorTest extends AllTests{
+public class StateBasedOperatorTest extends GenericTest{
 
 	private static Logger _logger = LoggerFactory
 			.getLogger(StateBasedOperatorTest.class);

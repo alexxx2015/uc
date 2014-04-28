@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.PipHandler;
 
-public class TestPep2PdpCommunication extends AllTests{
+public class TestPep2PdpCommunication extends GenericTest{
 
 	private static Logger _logger = LoggerFactory
 			.getLogger(TestPep2PdpCommunication.class);

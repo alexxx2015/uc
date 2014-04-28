@@ -14,13 +14,18 @@ public class IsOnlyIn extends StateBasedPredicate {
 
 	public IsOnlyIn(String predicate, String param1, String param2) {
 		super(predicate);
-		_param1 = param1;
-		_param2 = param2;
+		_param1 = (param1 == null ? "" : param1);
+		_param2 = (param2 == null ? "" : param2);
 	}
 
 	@Override
-	public Boolean evaluate() {
+	public Boolean evaluate() throws InvalidStateBasedFormula {
 
+		if ((_param1==null) || (_param2==null)){
+			throw new InvalidStateBasedFormula("Impossible to evaluate a formula where parameters have not been initialized [ param1 = "+_param1+" , param2 = "+_param2+"]");
+		}
+
+		
 		// if one of the data in param1 is stored in a container that is not in
 		// param2 list, then return false.
 		// otherwise return true.

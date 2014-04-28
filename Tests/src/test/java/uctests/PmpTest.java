@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 
-public class PmpTest extends AllTests{
+public class PmpTest extends GenericTest{
 	private static Logger log = LoggerFactory.getLogger(PmpTest.class);
 
 	@Test

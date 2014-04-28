@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.pip.PipHandler;
 
-public class TestPmp2PipCommunication extends AllTests{
+public class TestPmp2PipCommunication extends GenericTest{
 
 	private static Logger _logger = LoggerFactory.getLogger(TestPmp2PipCommunication.class);
 

@@ -31,9 +31,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
+	public DummyPdpProcessor() {
+		super(LocalLocation.getInstance());
+	}
+
 	private static Logger _logger = LoggerFactory.getLogger(DummyPdpProcessor.class);
 
 	@Override

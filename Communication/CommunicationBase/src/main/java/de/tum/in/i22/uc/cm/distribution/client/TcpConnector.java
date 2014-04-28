@@ -2,6 +2,9 @@ package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.util.Objects;
 
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.Location;
+
 
 /**
  * This class represents a {@link Connector} that can be connected to remote
@@ -14,6 +17,7 @@ import java.util.Objects;
 public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 	protected String _address;
 	protected int _port;
+	private Location _location;
 
 	/**
 	 * A {@link TcpConnector} featuring the specified address and port
@@ -21,8 +25,13 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 	 * @param port the remote port to connect to
 	 */
 	public TcpConnector(String address, int port) {
-		_address = address;
-		_port = port;
+		this(new IPLocation(address, port));
+	}
+	
+	private TcpConnector(IPLocation location) {
+		_location = location;
+		_address = location.getHost();
+		_port = location.getPort();
 	}
 
 	@Override
@@ -44,4 +53,9 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 		return false;
 	}
 
+
+	@Override
+	public Location getLocation() {
+		return _location;
+	}
 }

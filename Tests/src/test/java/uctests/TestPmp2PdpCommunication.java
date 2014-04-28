@@ -22,7 +22,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 
-public class TestPmp2PdpCommunication extends AllTests{
+public class TestPmp2PdpCommunication extends GenericTest{
 
 	private static Logger _logger = LoggerFactory.getLogger(TestPmp2PdpCommunication.class);
 

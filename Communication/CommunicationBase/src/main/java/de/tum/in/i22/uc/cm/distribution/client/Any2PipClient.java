@@ -16,6 +16,7 @@ public abstract class Any2PipClient extends PipProcessor implements IConnectable
 	private final Connector<?> _connector;
 
 	protected Any2PipClient(Connector<?> connector) {
+		super(connector.getLocation());
 		_connector = connector;
 	}
 

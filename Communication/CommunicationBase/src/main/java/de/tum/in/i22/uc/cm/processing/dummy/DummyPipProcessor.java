@@ -33,10 +33,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
+	public DummyPipProcessor() {
+		super(LocalLocation.getInstance());
+	}
+
 	private static Logger _logger = LoggerFactory.getLogger(DummyPipProcessor.class);
 
 	@Override

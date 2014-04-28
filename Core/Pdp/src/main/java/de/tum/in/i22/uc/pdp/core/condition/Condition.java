@@ -43,6 +43,10 @@ public class Condition
   public boolean evaluate(Event curEvent)
   {
     log.debug("Evaluating condition...");
+    if (operator==null) {
+    	log.error("condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
+    	return true;
+    }
     boolean ret=false;
     try
     {

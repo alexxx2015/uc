@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 public class SettingsLoader {
 	private static final Logger _logger = LoggerFactory.getLogger(SettingsLoader.class);
+
+	protected Map<String, Entry<?>> _settings;
 
 	protected Properties _props;
 
@@ -74,17 +77,20 @@ public class SettingsLoader {
 	}
 
 	protected <T extends Object> T loadSettingFinalize(boolean success, String propName, T loadedValue, T defaultValue) {
+		T returnValue=null;
 		if (success) {
 			_logger.info("Property [" + propName + "] loaded. Value: [" + loadedValue + "].");
-			return loadedValue;
+			returnValue=loadedValue;
 		}
 		else {
 			_logger.warn("Property [" + propName + "] not found. Using default value [" + defaultValue + "].");
-			return defaultValue;
+			returnValue=defaultValue;
 		}
+		_settings.put(propName, putValue(returnValue));
+		return returnValue;
 	}
 
-	protected int loadSetting(String propName, int defaultValue) {
+	public int loadSetting(String propName, int defaultValue) {
 		int loadedValue = defaultValue;
 
 		boolean success = true;
@@ -99,7 +105,7 @@ public class SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	protected String loadSetting(String propName, String defaultValue) {
+	public String loadSetting(String propName, String defaultValue) {
 		String loadedValue = defaultValue;
 
 		boolean success = false;
@@ -115,7 +121,7 @@ public class SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	protected boolean loadSetting(String propName, boolean defaultValue) {
+	public boolean loadSetting(String propName, boolean defaultValue) {
 		boolean loadedValue = defaultValue;
 
 		boolean success = false;
@@ -131,4 +137,43 @@ public class SettingsLoader {
 
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
+
+	public <T> void setProperty(String propName, T value) {
+		_settings.put(propName, new Entry<T>(value.getClass(), value));
+	}
+
+	protected Entry<Object> putValue(Object obj) {
+		return new Entry<Object>(obj.getClass(), obj);
+	}
+
+	protected <T> T getValue(String propName) {
+		@SuppressWarnings("unchecked")
+		Entry<T> e = (Entry<T>)  _settings.get(propName);
+		if (e==null) return null;
+		return e.getValue();
+	}
+
+	
+	protected class Entry<T> {
+		private Class<T> _type;
+		private T _value;
+
+		@SuppressWarnings("unchecked")
+		public Entry(Class<? extends Object> type, T value) {
+			_type = (Class<T>) type;
+			_value = value;
+		}
+
+		public T getValue() {
+			return _value;
+		}
+
+		public Class<T> getType() {
+			return _type;
+		}
+
+	}
+
+
+
 }

@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -32,6 +33,7 @@ public class PdpHandler extends PdpProcessor {
 	private IPolicyDecisionPoint _lpdp;
 
 	public PdpHandler() {
+		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPmpProcessor());
 	}
 

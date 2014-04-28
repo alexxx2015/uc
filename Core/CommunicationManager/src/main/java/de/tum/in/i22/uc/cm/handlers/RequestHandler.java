@@ -76,12 +76,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
-	private final RequestQueueManager _requestQueueManager;
+	private RequestQueueManager _requestQueueManager;
 
-	private final Set<Integer> _portsUsed;
-	private final Settings _settings;
-	private final IClientFactory clientFactory;
-
+	private Set<Integer> _portsUsed;
+	private Settings _settings;
+	private IClientFactory clientFactory;
+	
+	private PdpProcessor pdp;
+	private PipProcessor pip;
+	private PmpProcessor pmp;
 
 	/**
 	 * Creates a new {@link RequestHandler} by invoking
@@ -92,7 +95,11 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 	}
 
-
+	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+		init(pdpLocation, pipLocation, pmpLocation);
+	}
+	
+	
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
 	 * components are run. If a location is an instance of {@link LocalLocation}, a
@@ -103,15 +110,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	 * @param pipLocation
 	 * @param pmpLocation
 	 */
-	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+	private void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
 		clientFactory = new ThriftClientFactory();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
-		PdpProcessor pdp = createPdpHandler(pdpLocation);
-		PipProcessor pip = createPipHandler(pipLocation);
-		PmpProcessor pmp = createPmpHandler(pmpLocation);
+		pdp = createPdpHandler(pdpLocation);
+		pip = createPipHandler(pipLocation);
+		pmp = createPmpHandler(pmpLocation);
 
 		while (pdp == null || pip == null || pmp == null) {
 			try {
@@ -506,4 +513,16 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			notifyAll();
 		}
 	}
+
+
+	@Override
+	public void reset() {
+		_requestQueueManager.stop();
+		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
+	}
+	
+	public void stop() {
+		_requestQueueManager.stop();
+	}
+	
 }

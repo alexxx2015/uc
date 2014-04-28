@@ -17,7 +17,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
-public class TestThriftPep extends AllTests{
+public class TestThriftPep extends GenericTest{
 
 	@Test
 	public void testThriftPep() throws IOException {

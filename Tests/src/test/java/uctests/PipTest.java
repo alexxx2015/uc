@@ -24,7 +24,7 @@ import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 
-public class PipTest extends AllTests {
+public class PipTest extends GenericTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(PipTest.class);
 

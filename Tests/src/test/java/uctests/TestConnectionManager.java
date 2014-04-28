@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class TestConnectionManager extends AllTests{
+public class TestConnectionManager extends GenericTest{
 
 	private static int pdpPort = 60000;
 

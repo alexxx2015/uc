@@ -31,10 +31,16 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
+	public DummyPmpProcessor() {
+		super(LocalLocation.getInstance());
+	}
+
+
 	private static Logger _logger = LoggerFactory.getLogger(DummyPmpProcessor.class);
 
 	@Override

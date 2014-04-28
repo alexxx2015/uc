@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
@@ -59,6 +60,7 @@ public class PipHandler extends PipProcessor {
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
+		super(LocalLocation.getInstance());
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
@@ -81,7 +83,19 @@ public class PipHandler extends PipProcessor {
 			_logger.warn(e.toString());
 			return false;
 		}
-		return pred.evaluate();
+		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
+			_logger.debug(this.toString());
+		}
+		if (pred==null) {
+			_logger.error("Predicate to be evaluated is null. returning predefined value false. This shouldn't happen, though.");
+			return false;
+		}
+		try {
+			return pred.evaluate();
+		} catch (InvalidStateBasedFormula e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
@@ -160,8 +174,6 @@ public class PipHandler extends PipProcessor {
 			}
 
 		}
-
-		_logger.info(System.lineSeparator() + _ifModelManager.niceString());
 
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
 			_logger.debug(this.toString());

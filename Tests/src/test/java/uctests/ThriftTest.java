@@ -1,12 +1,15 @@
 package uctests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -22,51 +25,68 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class ThriftTest extends AllTests{
+public class ThriftTest extends GenericTest {
 
 	private static final String policyFile = "target" + File.separator
-												+ "test-classes" + File.separator
-												+ "testTUM.xml";
+			+ "test-classes" + File.separator + "testTUM.xml";
+
+	private static Logger _logger = LoggerFactory.getLogger(ThriftTest.class);
 
 	@Test
-	public void testDataContEventMatching() throws Exception{
+	public void testDataContEventMatching() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", PDP_SERVER_PORT));
-		clientPdp.connect();
-
+		Any2PdpClient clientPdp = thriftClientFactory
+				.createAny2PdpClient(new IPLocation("localhost",
+						PDP_SERVER_PORT));
+		boolean connected = false;
+		int attempts = 0;
+		while (!connected && attempts < 10) {
+			try {
+				clientPdp.connect();
+				connected = true;
+			} catch (IOException e) {
+				_logger.debug("Connection failed. Trying again (attempts num. "
+						+ attempts + "/10)");
+				attempts++;
+			}
+		}
+		if (attempts==10) Assert.fail("Impossible to connect clientPdp");
+		
 		IResponse response;
-		Map<String,String> map = new HashMap<>();
-		Map<String,String> map2 = new HashMap<>();
+		Map<String, String> map = new HashMap<>();
+		Map<String, String> map2 = new HashMap<>();
 		map.put("target", "generic target");
 		map2.put("target", "/tmp/datasrc");
 
 		/*
-		 * 	Deploy policy
+		 * Deploy policy
 		 */
-		IStatus ret = clientPdp.deployPolicyURI("src/test/resources/testTUM.xml");
-		System.out.println("deploy policy: "+ret);
-		System.out.println("Deployed Mechanisms: "+clientPdp.listMechanisms());
-
+		IStatus ret = clientPdp
+				.deployPolicyURI("src/test/resources/testTUM.xml");
+		System.out.println("deploy policy: " + ret);
+		System.out
+				.println("Deployed Mechanisms: " + clientPdp.listMechanisms());
 
 		/*
 		 * Signal sync event
 		 */
-		response = clientPdp.notifyEventSync(new EventBasic("importantEvent", map, false));
-		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
+		response = clientPdp.notifyEventSync(new EventBasic("importantEvent",
+				map, false));
+		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction()
+				.getEStatus());
 
-		System.out.println("\nDeploying policy returned: " + response+"\n");
+		System.out.println("\nNotifying important event returned: " + response + "\n");
 
-		response = clientPdp.notifyEventSync(new EventBasic("importantEvent", map2, false));
-		Assert.assertEquals(EStatus.INHIBIT, response.getAuthorizationAction().getEStatus());
+		response = clientPdp.notifyEventSync(new EventBasic("importantEvent",
+				map2, false));
+		Assert.assertEquals(EStatus.INHIBIT, response.getAuthorizationAction()
+				.getEStatus());
 
-
-		System.out.println("\nDeploying policy returned: " + response+"\n");
-
-		pdpServer.stop();
+		System.out.println("\n Notify important event number 2 returned: " + response + "\n");
 
 	}
 
@@ -76,14 +96,17 @@ public class ThriftTest extends AllTests{
 		/*
 		 * Start the PDP server
 		 */
-		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(PDP_SERVER_PORT + 1, new RequestHandler());
+		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(
+				PDP_SERVER_PORT + 100, new RequestHandler());
 		new Thread(pdpServer).start();
 
 		Thread.sleep(1000);
 		/*
 		 * Connect to the PDP server
 		 */
-		Any2PdpClient clientPdp = thriftClientFactory.createAny2PdpClient(new IPLocation("localhost", PDP_SERVER_PORT + 1));
+		Any2PdpClient clientPdp = thriftClientFactory
+				.createAny2PdpClient(new IPLocation("localhost",
+						PDP_SERVER_PORT + 100));
 		clientPdp.connect();
 
 		int x = 0;
@@ -91,7 +114,7 @@ public class ThriftTest extends AllTests{
 		IStatus status;
 		Map<String, List<String>> mechanisms;
 
-		Map<String,String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<>();
 		map.put("name1", "value1");
 
 		System.out.println(x++);
@@ -100,7 +123,8 @@ public class ThriftTest extends AllTests{
 		 * Signal sync event
 		 */
 		response = clientPdp.notifyEventSync(new EventBasic("t", map, false));
-		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction().getEStatus());
+		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction()
+				.getEStatus());
 
 		System.out.println(x++);
 
@@ -132,150 +156,198 @@ public class ThriftTest extends AllTests{
 		/*
 		 * try to register a PXP.
 		 */
-		Assert.assertTrue(clientPdp.registerPxp(new PxpSpec(null, 0, null, null)));
+		Assert.assertTrue(clientPdp
+				.registerPxp(new PxpSpec(null, 0, null, null)));
 
 		System.out.println(x++);
 
 		pdpServer.stop();
 
-
 		/*
-		 * TODO
-		 * FK: I do not really know what the expected behavior for the remaining tests is and whether
-		 * the corresponding implementations actually work.
+		 * TODO FK: I do not really know what the expected behavior for the
+		 * remaining tests is and whether the corresponding implementations
+		 * actually work.
 		 */
 
-		// Assert.assertEquals(EStatus.OKAY, clientPdp.revokeMechanism("testPolicy", "prev2").getEStatus());
+		// Assert.assertEquals(EStatus.OKAY,
+		// clientPdp.revokeMechanism("testPolicy", "prev2").getEStatus());
 
-//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
-//
-//		System.out.println("Test " + (x++) + ": " + clientPdp.revokePolicy("testPolicy"));
-//
-//		System.out.println("Test " + (x++) + ": " + clientPdp.listMechanisms());
-//
-//			System.out.println("\n----------------");
-//			System.out.println("Testing TAny2Pip");
-//			System.out.println("----------------");
-//
-//			x = 0;
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientPip.initialRepresentation(new TName("contid"), Collections.singleton(new TData("dataid"))));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.hasAllData(new HashSet<TData>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyData(new HashSet<TData>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.hasAllContainers(new HashSet<TContainer>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.hasAnyContainer(new HashSet<TContainer>()));
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientPip.notifyActualEvent(new TEvent("event", new HashMap<String, String>(), 0, true)));
-//
-//			System.out.println("Test "
-//					+ (x++)
-//					+ ": "
-//					+ clientPip.evaluatePredicateSimulatingNextState(new TEvent("event", new HashMap<String, String>(),
-//							0, true), "predicate"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.evaluatePredicatCurrentState("predicate"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.getContainerForData(new TData("id")));
-//
-//			System.out
-//					.println("Test " + (x++) + ": " + clientPip.getDataInContainer(new TContainer("classValue", "id")));
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.startSimulation());
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.stopSimulation());
-//
-//			System.out.println("Test " + (x++) + ": " + clientPip.isSimulating());
-//
-//			System.out.println("\n----------------");
-//			System.out.println("Testing TAny2Pmp");
-//			System.out.println("----------------");
-//
-//			x = 0;
-//
-////			System.out.println("Test " + (x++) + ": " + clientPmp.deployMechanismPmp("mechanism"));
-////
-////			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism1Pmp("policy"));
-////
-////			System.out.println("Test " + (x++) + ": " + clientPmp.revokeMechanism2Pmp("policy", "mech"));
-////
-////			System.out.println("Test " + (x++) + ": " + clientPmp.deployPolicyPmp("policyPath"));
-////
-////			System.out.println("Test " + (x++) + ": " + clientPmp.listMechanismsPmp());
-//
-//			System.out.println("\n----------------");
-//			System.out.println("Testing TAny2Any");
-//			System.out.println("----------------");
-//
-//			x = 0;
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientAny.notifyEventSync(new TEvent("event", new HashMap<String, String>(), 0, true)));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.registerPxp(new TPxpSpec()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.deployMechanism("mechanism"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.revokeMechanism1("policy"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.revokeMechanism2("policy", "mech"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.deployPolicy("policyPath"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.listMechanisms());
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientAny.initialRepresentation(new TContainer("classValue", "id"), new TData("id")));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.hasAllData(new HashSet<TData>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyData(new HashSet<TData>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.hasAllContainers(new HashSet<TContainer>()));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.hasAnyContainer(new HashSet<TContainer>()));
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientAny.notifyActualEvent(new TEvent("event", new HashMap<String, String>(), 0, true)));
-//
-//			System.out.println("Test " + (x++) + ": "
-//					+ clientAny.notifyDataTransfer(new TName("name"), new HashSet<TData>()));
-//
-//			System.out.println("Test "
-//					+ (x++)
-//					+ ": "
-//					+ clientAny.evaluatePredicateSimulatingNextState(new TEvent("event", new HashMap<String, String>(),
-//							0, true), "predicate"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.evaluatePredicatCurrentState("predicate"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.getContainerForData(new TData("id")));
-//
-//			System.out
-//					.println("Test " + (x++) + ": " + clientAny.getDataInContainer(new TContainer("classValue", "id")));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.startSimulation());
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.stopSimulation());
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.isSimulating());
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.deployMechanismPmp("mechanism"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.revokeMechanism1Pmp("policy"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.revokeMechanism2Pmp("policy", "mech"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.deployPolicyPmp("policyPath"));
-//
-//			System.out.println("Test " + (x++) + ": " + clientAny.listMechanismsPmp());
-//
-//			transportAny.close();
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPdp.listMechanisms());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPdp.revokePolicy("testPolicy"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPdp.listMechanisms());
+		//
+		// System.out.println("\n----------------");
+		// System.out.println("Testing TAny2Pip");
+		// System.out.println("----------------");
+		//
+		// x = 0;
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientPip.initialRepresentation(new TName("contid"),
+		// Collections.singleton(new TData("dataid"))));
+		//
+		// System.out.println("Test " + (x++) + ": " + clientPip.hasAllData(new
+		// HashSet<TData>()));
+		//
+		// System.out.println("Test " + (x++) + ": " + clientPip.hasAnyData(new
+		// HashSet<TData>()));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.hasAllContainers(new HashSet<TContainer>()));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.hasAnyContainer(new HashSet<TContainer>()));
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientPip.notifyActualEvent(new TEvent("event", new HashMap<String,
+		// String>(), 0, true)));
+		//
+		// System.out.println("Test "
+		// + (x++)
+		// + ": "
+		// + clientPip.evaluatePredicateSimulatingNextState(new TEvent("event",
+		// new HashMap<String, String>(),
+		// 0, true), "predicate"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.evaluatePredicatCurrentState("predicate"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.getContainerForData(new TData("id")));
+		//
+		// System.out
+		// .println("Test " + (x++) + ": " + clientPip.getDataInContainer(new
+		// TContainer("classValue", "id")));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.startSimulation());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.stopSimulation());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientPip.isSimulating());
+		//
+		// System.out.println("\n----------------");
+		// System.out.println("Testing TAny2Pmp");
+		// System.out.println("----------------");
+		//
+		// x = 0;
+		//
+		// // System.out.println("Test " + (x++) + ": " +
+		// clientPmp.deployMechanismPmp("mechanism"));
+		// //
+		// // System.out.println("Test " + (x++) + ": " +
+		// clientPmp.revokeMechanism1Pmp("policy"));
+		// //
+		// // System.out.println("Test " + (x++) + ": " +
+		// clientPmp.revokeMechanism2Pmp("policy", "mech"));
+		// //
+		// // System.out.println("Test " + (x++) + ": " +
+		// clientPmp.deployPolicyPmp("policyPath"));
+		// //
+		// // System.out.println("Test " + (x++) + ": " +
+		// clientPmp.listMechanismsPmp());
+		//
+		// System.out.println("\n----------------");
+		// System.out.println("Testing TAny2Any");
+		// System.out.println("----------------");
+		//
+		// x = 0;
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientAny.notifyEventSync(new TEvent("event", new HashMap<String,
+		// String>(), 0, true)));
+		//
+		// System.out.println("Test " + (x++) + ": " + clientAny.registerPxp(new
+		// TPxpSpec()));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.deployMechanism("mechanism"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.revokeMechanism1("policy"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.revokeMechanism2("policy", "mech"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.deployPolicy("policyPath"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.listMechanisms());
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientAny.initialRepresentation(new TContainer("classValue", "id"),
+		// new TData("id")));
+		//
+		// System.out.println("Test " + (x++) + ": " + clientAny.hasAllData(new
+		// HashSet<TData>()));
+		//
+		// System.out.println("Test " + (x++) + ": " + clientAny.hasAnyData(new
+		// HashSet<TData>()));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.hasAllContainers(new HashSet<TContainer>()));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.hasAnyContainer(new HashSet<TContainer>()));
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientAny.notifyActualEvent(new TEvent("event", new HashMap<String,
+		// String>(), 0, true)));
+		//
+		// System.out.println("Test " + (x++) + ": "
+		// + clientAny.notifyDataTransfer(new TName("name"), new
+		// HashSet<TData>()));
+		//
+		// System.out.println("Test "
+		// + (x++)
+		// + ": "
+		// + clientAny.evaluatePredicateSimulatingNextState(new TEvent("event",
+		// new HashMap<String, String>(),
+		// 0, true), "predicate"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.evaluatePredicatCurrentState("predicate"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.getContainerForData(new TData("id")));
+		//
+		// System.out
+		// .println("Test " + (x++) + ": " + clientAny.getDataInContainer(new
+		// TContainer("classValue", "id")));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.startSimulation());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.stopSimulation());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.isSimulating());
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.deployMechanismPmp("mechanism"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.revokeMechanism1Pmp("policy"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.revokeMechanism2Pmp("policy", "mech"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.deployPolicyPmp("policyPath"));
+		//
+		// System.out.println("Test " + (x++) + ": " +
+		// clientAny.listMechanismsPmp());
+		//
+		// transportAny.close();
 	}
 
 }

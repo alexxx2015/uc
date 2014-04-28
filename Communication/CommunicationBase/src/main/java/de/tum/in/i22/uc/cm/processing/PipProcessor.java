@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.processing;
 
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
@@ -12,6 +13,10 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
  *
  */
 public abstract class PipProcessor extends Processor<PdpProcessor,PmpProcessor> implements IAny2Pip {
+
+	public PipProcessor(Location location) {
+		super(location);
+	}
 
 	/**
 	 * Returns the PMP associated with this PIP.

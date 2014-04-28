@@ -16,6 +16,7 @@ public abstract class Any2PmpClient extends PmpProcessor implements IConnectable
 	private final Connector<?> _connector;
 
 	protected Any2PmpClient(Connector<?> connector) {
+		super(connector.getLocation());
 		_connector = connector;
 	}
 
