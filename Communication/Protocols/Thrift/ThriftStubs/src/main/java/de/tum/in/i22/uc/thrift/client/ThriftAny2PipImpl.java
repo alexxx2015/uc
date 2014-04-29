@@ -210,4 +210,14 @@ class ThriftAny2PipImpl implements IAny2Pip {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
+
+	@Override
+	public Set<IData> flattenStructure(IData data){
+		try {
+			return ThriftConverter.fromThriftDataSet(_handle.flattenStructure(ThriftConverter.toThrift(data)));
+		} catch (TException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

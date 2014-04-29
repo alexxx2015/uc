@@ -23,6 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
@@ -36,6 +37,7 @@ import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
+import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
@@ -44,11 +46,11 @@ public class PipHandler extends PipProcessor {
 			.getLogger(PipHandler.class);
 
 	private final BasicInformationFlowModel _ifModel;
+	private final StructuredInformationFlowModel _sifm;
 
 	private final InformationFlowModelManager _ifModelManager;
 
 	private final PipManager _pipManager;
-
 
 	/**
 	 * Manages everything related to distributed data flow tracking
@@ -67,7 +69,9 @@ public class PipHandler extends PipProcessor {
 		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = InformationFlowModelManager.getInstance();
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
-
+		_sifm = _ifModelManager.getExtension(EInformationFlowModel.STRUCTURE);
+		
+		
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
 				null, true));
@@ -83,10 +87,10 @@ public class PipHandler extends PipProcessor {
 			_logger.warn(e.toString());
 			return false;
 		}
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
+		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 			_logger.debug(this.toString());
 		}
-		if (pred==null) {
+		if (pred == null) {
 			_logger.error("Predicate to be evaluated is null. returning predefined value false. This shouldn't happen, though.");
 			return false;
 		}
@@ -175,10 +179,10 @@ public class PipHandler extends PipProcessor {
 
 		}
 
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
+		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 			_logger.debug(this.toString());
 		}
-		
+
 		return status;
 	}
 
@@ -207,7 +211,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Evaluate the predicate in the state obtained simulating the execution of
 	 * event.
-	 *
+	 * 
 	 * @return the result of the formula
 	 */
 	@Override
@@ -308,13 +312,16 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
-		// TODO Auto-generated method stub
-		return null;
+		return _sifm.newStructuredData(structure);
 	}
 
 	@Override
 	public Map<String, Set<IData>> getStructureOf(IData data) {
-		// TODO Auto-generated method stub
-		return null;
+		return _sifm.getStructureOf(data);
+	}
+
+	@Override
+	public Set<IData> flattenStructure(IData data) {
+		return _sifm.flattenStructure(data);
 	}
 }

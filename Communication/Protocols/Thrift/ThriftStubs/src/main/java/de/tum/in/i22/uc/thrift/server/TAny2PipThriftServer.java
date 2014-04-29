@@ -183,4 +183,10 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		}
 		return res;
 	}
+
+	@Override
+	public Set<TData> flattenStructure(TData data) throws TException {
+		return ThriftConverter.toThriftDataSet(_requestHandler
+				.flattenStructure(ThriftConverter.fromThrift(data)));
+	}
 }

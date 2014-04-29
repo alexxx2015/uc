@@ -219,4 +219,9 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 		return _pipServer.getStructureOf(data);
 	}
 
+	@Override
+	public Set<TData> flattenStructure(TData data) throws TException {
+		return _pipServer.flattenStructure(data);
+	}
+
 }

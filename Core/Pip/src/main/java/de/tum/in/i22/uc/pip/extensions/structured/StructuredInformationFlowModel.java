@@ -9,6 +9,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
@@ -134,6 +136,64 @@ public final class StructuredInformationFlowModel extends
 
 	}
 
+	/**
+	 * This method receives a (structured) data item in input and returns the
+	 * list of all the structured and non-structured data-items it corresponds
+	 * to. If the initial item is not structured, this method returns only it.
+	 * 
+	 * Because every structured data-item is freshly created, it is not possible
+	 * to have circular dependency that would lead to a loop.
+	 * 
+	 */
+	public Set<IData> flattenStructure(IData data) {
+		if (data == null) {
+			_logger.debug("flattening null data is pointless. returning null");
+			return null;
+		}
+		HashSet<IData> res = new HashSet<IData>();
+		// starting element
+		res.add(data);
+
+		boolean loopAgain = false;
+		do {
+			loopAgain = false;
+			HashSet<IData> tmp = new HashSet<IData>();
+			for (IData d : res) {
+				Map<String, Set<IData>> table = _structureMap.get(d);
+
+				// if data is structured (table!=null) we add all the data in
+				// the table to the result set.
+				// res.addAll returns true if the operation changed the previous
+				// value of res. if it returns false, it means all the elements
+				// were already present in the set.
+				// If at least one element is added, we re-iterate again over
+				// the whole set. Otherwise, we are done.
+				// The size of res keeps growing (monotonically) and is bounded
+				// by the maximum number of data elements in the system.Thus it
+				// converges and there cannot be any infinite loop.
+				if (table != null) {
+					tmp.addAll(getDataInStructure(table));
+				}
+			}
+			loopAgain = res.addAll(tmp); 
+			_logger.debug("loopAgain=" + loopAgain + ". resultSet("
+					+ res.size() + ")=[" + res + "]");
+		} while (loopAgain);
+		return res;
+	}
+
+	private Set<IData> getDataInStructure(Map<String, Set<IData>> structure) {
+		if (structure == null) {
+			_logger.error("no data in null structure. returning null");
+			return null;
+		}
+		Set<IData> res = new HashSet<IData>();
+		for (String s : structure.keySet()) {
+			res = Sets.union(res, structure.get(s));
+		}
+		return res;
+	}
+
 	@Override
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
@@ -155,9 +215,11 @@ public final class StructuredInformationFlowModel extends
 						sb.append(" ");
 					}
 				}
-				sb.append(String.format("%-10%s [%s]", s, set.get(s)));
+				sb.append(String.format("%-10s [%s]", s, set.get(s)));
+				sb.append(nl);
 			}
 		}
+		sb.append(nl);
 		return sb.toString();
 	}
 

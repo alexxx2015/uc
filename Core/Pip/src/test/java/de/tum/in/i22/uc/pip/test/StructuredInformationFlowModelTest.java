@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.pip.test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
@@ -108,6 +106,42 @@ public class StructuredInformationFlowModelTest {
 		Assert.assertEquals(res.get("lbl1").contains(a), true);
 		Assert.assertEquals(res.get("lbl1").contains(b), true);
 		Assert.assertEquals(res.get("lbl1").contains(c), false);
+		
+		
+		Set<IData> flat= _structureIfm.flattenStructure(a);
+		Assert.assertNotNull(flat);
+		Assert.assertEquals(flat.contains(a), true);
+		Assert.assertEquals(flat.contains(b), false);
+		Assert.assertEquals(flat.contains(c), false);
+		
+		flat= _structureIfm.flattenStructure(structData);
+		Assert.assertNotNull(flat);
+		Assert.assertEquals(flat.contains(a), true);
+		Assert.assertEquals(flat.contains(b), true);
+		Assert.assertEquals(flat.contains(c), true);
+		Assert.assertEquals(flat.contains(structData), true);
+
+	
+		HashSet<IData> set4= new HashSet<IData>();
+		HashSet<IData> set5= new HashSet<IData>();
+		
+		set4.add(a);
+		set4.add(structData);
+		set5.add(b);
+		set5.add(structData);
+				
+		HashMap<String,Set<IData>> map2= new HashMap<String,Set<IData>>();
+		map2.put("lbl1",set4);
+		map2.put("lbl2",set5);
+		IData structData2 = _structureIfm.newStructuredData(map2);
+		
+		flat= _structureIfm.flattenStructure(structData2);
+		Assert.assertNotNull(flat);
+		Assert.assertEquals(flat.contains(a), true);
+		Assert.assertEquals(flat.contains(b), true);
+		Assert.assertEquals(flat.contains(c), true);
+		Assert.assertEquals(flat.contains(structData), true);
+
 	}
 
 }

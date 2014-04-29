@@ -186,6 +186,7 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		sb.append("  Scope:" + nl);
 		sb.append("    not implemented." + nl);
 
+		sb.append(nl);
 		return sb.toString();
 	}
 }

@@ -436,5 +436,10 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.getStructureOf(data);
 	}
 
+	@Override
+	public Set<IData> flattenStructure(IData data) {
+		return _requestHandler.flattenStructure(data);
+	}
+
 
 }

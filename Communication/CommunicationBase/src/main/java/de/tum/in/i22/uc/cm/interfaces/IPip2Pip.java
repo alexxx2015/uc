@@ -59,11 +59,19 @@ public interface IPip2Pip {
 	@AThriftMethod(signature="set<string> whoHasData(1: set<Types.TData> data, 2: Types.int recursionDepth)")
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth);
 
+	
+	
+	/*
+	 * Structured dft methods
+	 */
+	
 	@AThriftMethod(signature="Types.TData newStructuredData(1: map<string,set<Types.TData>> structure)")
 	public IData newStructuredData(Map<String,Set<IData>> structure);
 
 	@AThriftMethod(signature="map<string,set<Types.TData>> getStructureOf(1: Types.TData data)")
 	public Map<String,Set<IData>>  getStructureOf(IData data);
 
-
+	@AThriftMethod(signature="set<Types.TData> flattenStructure(1: Types.TData data)")
+	public Set<IData>  flattenStructure(IData data);
+	
 }
