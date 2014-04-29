@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel;
 
 public interface IEventHandler {
 	public IStatus performUpdate();
@@ -12,4 +13,6 @@ public interface IEventHandler {
 	 * @return the event handler itself
 	 */
 	public IEventHandler setEvent(IEvent event);
+
+	public void setInformationFlowModel(IInformationFlowModel ifm);
 }

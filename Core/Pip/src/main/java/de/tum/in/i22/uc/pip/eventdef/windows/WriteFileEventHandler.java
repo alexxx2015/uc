@@ -5,10 +5,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class WriteFileEventHandler extends BaseEventHandler {
+public class WriteFileEventHandler extends WindowsEvents {
 
 	public WriteFileEventHandler() {
 		super();
@@ -31,9 +30,9 @@ public class WriteFileEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
-		IContainer fileContainer = basicIfModel
+		IContainer fileContainer = _informationFlowModel
 				.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container if
@@ -42,13 +41,13 @@ public class WriteFileEventHandler extends BaseEventHandler {
 			fileContainer = _messageFactory.createContainer();
 			IData data = _messageFactory.createData();
 
-			basicIfModel.addData(data, fileContainer);
+			_informationFlowModel.addData(data, fileContainer);
 
-			basicIfModel.addName(new NameBasic(fileName), fileContainer);
+			_informationFlowModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
-		basicIfModel.addData(
-				basicIfModel.getData(processContainer), fileContainer);
+		_informationFlowModel.addData(
+				_informationFlowModel.getData(processContainer), fileContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

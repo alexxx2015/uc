@@ -16,9 +16,12 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
  * @author Florian Kelbert
  *
  */
-public final class ScopeInformationFlowModel extends InformationFlowModelExtension {
+public final class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#toString()
+	 */
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
@@ -35,15 +38,17 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	public ScopeInformationFlowModel() {
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#reset()
+	 */
 	@Override
 	public void reset() {
 		_scopeSet = new HashSet<>();
 		_scopeSetBackup = null;
 	}
 
-	/**
-	 * Simulation step: push. Stores the current IF state, if not already stored
-	 * @return true if the state has been successfully pushed, false otherwise
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#push()
 	 */
 	@Override
 	public void push() {
@@ -54,9 +59,8 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 
 	}
 
-	/**
-	 * Simulation step: pop. Restore a previously pushed IF state, if any.
-	 * @return true if the state has been successfully restored, false otherwise
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#pop()
 	 */
 	@Override
 	public void pop() {
@@ -65,84 +69,52 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		_scopeSetBackup = null;
 	}
 
-	/**
-	 * Adds a new scope to the set.
-	 *
-	 * @param scope
-	 * @return true if the scope is not already present in the set. false
-	 *         otherwise.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#addScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public boolean addScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.add(scope);
 	}
 
-	/**
-	 * opens a new scope.
-	 *
-	 * @param the
-	 *            new scope to open
-	 * @return true if the scope is not already opened. false otherwise.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#openScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public boolean openScope(Scope scope) {
 		return addScope(scope);
 	}
 
-	/**
-	 * Removes a scope from the set.
-	 *
-	 * @param scope
-	 * @return true if the scope is successfully removed. false otherwise.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#removeScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public boolean removeScope(Scope scope) {
 		assert (scope != null);
 		return _scopeSet.remove(scope);
 	}
 
-	/**
-	 * Close a specific scope.
-	 *
-	 * @param the
-	 *            scope to be closed
-	 * @return true if the scope is successfully closed. false otherwise.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#closeScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public boolean closeScope(Scope scope) {
 		return removeScope(scope);
 	}
 
-	/**
-	 * Checks whether a specific scope has been opened. Note that the scope can
-	 * be under-specified with respect to the matching element in the set.
-	 *
-	 * @param the
-	 *            (possibly under-specified) scope to be found
-	 * @return true if the scope is in the set. false otherwise.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#isScopeOpened(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public boolean isScopeOpened(Scope scope) {
 		return _scopeSet.contains(scope);
 	}
 
-	/**
-	 * Returns the only element that should match the (possibly under-specified)
-	 * scope in the set of currently opened scopes. Note that if more than one
-	 * active (i.e. opened but not closed) scope matches the parameter, the
-	 * method returns null. Similarly, if no scope is found, the method returns
-	 * null.
-	 *
-	 * There must exists only one matching otherwise the information about the
-	 * scope are not enough to identify to which scope a certain event belongs
-	 *
-	 * @param the
-	 *            (possibly under-specified) scope to be found
-	 * @return the opened scope, if found. null if more than one match or no
-	 *         match is found.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#getOpenedScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
+	@Override
 	public Scope getOpenedScope(Scope scope) {
 		// if at least one matching exists...
 		if (isScopeOpened(scope)) {
@@ -177,6 +149,9 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	}
 
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#niceString()
+	 */
 	@Override
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();

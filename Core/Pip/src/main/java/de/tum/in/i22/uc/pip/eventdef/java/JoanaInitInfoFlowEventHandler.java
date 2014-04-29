@@ -62,36 +62,36 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 			if(data == null){
 				data = new DataBasic();//DataBasic(infoCont);
 			}
-			IContainer infoContId = basicIfModel.getContainer(new NameBasic(infoCont));
+			IContainer infoContId = _informationFlowModel.getContainer(new NameBasic(infoCont));
 
 			_logger.debug("contID = " + infoContId);
 
 			if (infoContId == null) {
 				IContainer signatureCont = _messageFactory.createContainer();
 
-				basicIfModel.addName(new NameBasic(infoCont), signatureCont);
+				_informationFlowModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-				basicIfModel.addData(data, signatureCont);
-				_logger.debug(basicIfModel.toString());
+				_informationFlowModel.addData(data, signatureCont);
+				_logger.debug(_informationFlowModel.toString());
 			} else {
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");
-			_logger.debug(basicIfModel.toString());
+			_logger.debug(_informationFlowModel.toString());
 			}
 		}
 
 //		Process alias relationship
-		IContainer id1 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[0]));
-		IContainer id2 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[1]));
-		IContainer id3 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[2]));
+		IContainer id1 = _informationFlowModel.getContainer(new NameBasic(prefix+infoConts[0]));
+		IContainer id2 = _informationFlowModel.getContainer(new NameBasic(prefix+infoConts[1]));
+		IContainer id3 = _informationFlowModel.getContainer(new NameBasic(prefix+infoConts[2]));
 
 		if(type.toLowerCase().equals("source")){
-			basicIfModel.addAlias(id1, id2);
-			basicIfModel.addAlias(id2, id3);
+			_informationFlowModel.addAlias(id1, id2);
+			_informationFlowModel.addAlias(id2, id3);
 		}
 		else if (type.toLowerCase().equals("sink")){
-			basicIfModel.addAlias(id3, id2);
-			basicIfModel.addAlias(id2, id1);
+			_informationFlowModel.addAlias(id3, id2);
+			_informationFlowModel.addAlias(id2, id1);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

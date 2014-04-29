@@ -28,10 +28,7 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.factories.IMessageFactory;
-import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
+import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
@@ -42,15 +39,9 @@ import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
  * @author Florian Kelbert
  *
  */
-public class LinuxEvents {
+public abstract class LinuxEvents extends BaseEventHandler {
 
 	protected static final Logger _logger = LoggerFactory.getLogger(LinuxEvents.class);
-
-	private static final IMessageFactory messageFactory = MessageFactoryCreator.createMessageFactory();
-
-	private static final BasicInformationFlowModel ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
-
-	private static final IStatus STATUS_OKAY = messageFactory.createStatus(EStatus.OKAY);
 
 	/*
 	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
@@ -72,66 +63,66 @@ public class LinuxEvents {
 	}
 
 
-	static void exit(String host, int pid) {
-		ProcessContainer procCont = (ProcessContainer) ifModel.getContainer(ProcessName.create(host, pid));
+	void exit(String host, int pid) {
+		ProcessContainer procCont = (ProcessContainer) _informationFlowModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return;
 		}
 
-		ifModel.emptyContainer(procCont);
-		ifModel.removeAllAliasesFrom(procCont);
-		ifModel.removeAllAliasesTo(procCont);
-		ifModel.remove(procCont);
+		_informationFlowModel.emptyContainer(procCont);
+		_informationFlowModel.removeAllAliasesFrom(procCont);
+		_informationFlowModel.removeAllAliasesTo(procCont);
+		_informationFlowModel.remove(procCont);
 
 		for (IName nm : getAllProcessRelativeNames(procCont.getPid())) {
-			LinuxEvents.close(nm);
+			close(nm);
 		}
 	}
 
 
-	static void close(IName name) {
-		IContainer cont = ifModel.getContainer(name);
+	void close(IName name) {
+		IContainer cont = _informationFlowModel.getContainer(name);
 
-		ifModel.removeName(name);
+		_informationFlowModel.removeName(name);
 
 		if (cont instanceof SocketContainer) {
-			if (ifModel.getAllNames(cont, FiledescrName.class).size() == 0) {
+			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
 				shutdownSocket((SocketContainer) cont, Shut.RDWR);
 			}
 		}
 	}
 
-	static void shutdownSocket(SocketContainer cont, Shut how) {
-		List<SocketName> allSocketNames = ifModel.getAllNames(cont, SocketName.class);
+	void shutdownSocket(SocketContainer cont, Shut how) {
+		List<SocketName> allSocketNames = _informationFlowModel.getAllNames(cont, SocketName.class);
 
 		if (how == Shut.RD || how == Shut.RDWR) {
 			// disallow reception
-			ifModel.emptyContainer(cont);
-			ifModel.removeAllAliasesTo(cont);
+			_informationFlowModel.emptyContainer(cont);
+			_informationFlowModel.removeAllAliasesTo(cont);
 		}
 
 		if (how == Shut.WR || how == Shut.RDWR) {
 			// disallow transmission
 
 			// we remove all SocketNames for all aliased containers
-			for (IContainer aliased : ifModel.getAliasesFrom(cont)) {
-				for (IName name : ifModel.getAllNames(aliased, SocketName.class)) {
-					ifModel.removeName(name);
+			for (IContainer aliased : _informationFlowModel.getAliasesFrom(cont)) {
+				for (IName name : _informationFlowModel.getAllNames(aliased, SocketName.class)) {
+					_informationFlowModel.removeName(name);
 				}
 			}
-			ifModel.removeAllAliasesFrom(cont);
+			_informationFlowModel.removeAllAliasesFrom(cont);
 		}
 
 		if (how == Shut.RDWR) {
 			// disallow transmission and reception,
 			// therefore delete all socket identifiers
 			for (SocketName n : allSocketNames) {
-				ifModel.removeName(n);
+				_informationFlowModel.removeName(n);
 			}
 		}
 
 		for (SocketName n : allSocketNames) {
-			IContainer remoteContainer = ifModel.getContainer(n);
+			IContainer remoteContainer = _informationFlowModel.getContainer(n);
 			if (remoteContainer instanceof RemoteSocketContainer) {
 				notifyRemoteShutdown((RemoteSocketContainer) remoteContainer, how);
 			}
@@ -157,14 +148,14 @@ public class LinuxEvents {
 	}
 
 
-	static IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
+	IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
 		_logger.debug("CopyDataTransitive(" + srcCont + "," + dstCont + ")");
 
 		if (srcCont == null || dstCont == null) {
 			return STATUS_OKAY;
 		}
 
-		Set<IData> data = ifModel.getData(srcCont);
+		Set<IData> data = _informationFlowModel.getData(srcCont);
 		if (data == null || data.size() == 0) {
 			return STATUS_OKAY;
 		}
@@ -179,7 +170,7 @@ public class LinuxEvents {
 			 * We are reading from a socket...
 			 */
 
-			Set<IContainer> aliases = ifModel.getAliasesTo(srcCont);
+			Set<IContainer> aliases = _informationFlowModel.getAliasesTo(srcCont);
 
 			switch (aliases.size()) {
 				case 0:
@@ -200,7 +191,7 @@ public class LinuxEvents {
 						 * data flow information object and return it.
 						 */
 
-						ifModel.addDataTransitively(data, dstCont);
+						_informationFlowModel.addDataTransitively(data, dstCont);
 
 						Location localLocation = LocalLocation.getInstance();
 						Location remoteLocation = ((RemoteSocketContainer) c).getLocation();
@@ -220,8 +211,8 @@ public class LinuxEvents {
 
 
 		// copy data into all aliased containers
-		for (IContainer c : ifModel.getAliasTransitiveReflexiveClosure(dstCont)) {
-			ifModel.addData(data, c);
+		for (IContainer c : _informationFlowModel.getAliasTransitiveReflexiveClosure(dstCont)) {
+			_informationFlowModel.addData(data, c);
 
 			if (c instanceof RemoteSocketContainer) {
 
@@ -251,10 +242,10 @@ public class LinuxEvents {
 	}
 
 
-	static List<IName> getAllProcessRelativeNames(int pid) {
+	List<IName> getAllProcessRelativeNames(int pid) {
 		List<IName> result = new ArrayList<IName>();
 
-		for (IName name : ifModel.getAllNames()) {
+		for (IName name : _informationFlowModel.getAllNames()) {
 			if (name instanceof IProcessRelativeName) {
 				IProcessRelativeName pname = (IProcessRelativeName) name;
 				if (pname.getPid() == pid) {

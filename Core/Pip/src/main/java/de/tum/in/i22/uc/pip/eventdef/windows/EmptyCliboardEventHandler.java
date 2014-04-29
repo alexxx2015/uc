@@ -14,17 +14,17 @@ public class EmptyCliboardEventHandler extends BaseEventHandler {
 
 	@Override
 	protected IStatus update() {
-		IContainer clipboardContainer = basicIfModel.getContainer(new NameBasic(
+		IContainer clipboardContainer = _informationFlowModel.getContainer(new NameBasic(
 				"clipboard"));
 
 		// check if container for clipboard exists and create new container if not
 		if (clipboardContainer == null) {
 			clipboardContainer = _messageFactory.createContainer();
-			basicIfModel.addName(new NameBasic("clipboard"), clipboardContainer);
+			_informationFlowModel.addName(new NameBasic("clipboard"), clipboardContainer);
 		}
 		;
 
-		basicIfModel.emptyContainer(clipboardContainer);
+		_informationFlowModel.emptyContainer(clipboardContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

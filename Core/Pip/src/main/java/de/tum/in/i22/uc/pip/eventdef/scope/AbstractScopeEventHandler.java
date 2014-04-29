@@ -17,10 +17,6 @@ import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
 
-	private IEvent _event;
-
-	protected ScopeInformationFlowModel ifScopeModel;
-
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
 
@@ -39,8 +35,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected Set<Scope> _scopesToBeClosed = null;
 
 	protected AbstractScopeEventHandler() {
-		ifScopeModel = InformationFlowModelManager.getInstance().getExtension(EInformationFlowModel.SCOPE);
-		if (ifScopeModel == null) {
+		if (_informationFlowModel == null) {
 			throw new RuntimeException("Scopes are not supported. Check the configuration.");
 		}
 	}
@@ -63,9 +58,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * final.
 	 */
 	protected final IStatus openScope(Scope scope) {
-		boolean isOpen = ifScopeModel.isScopeOpened(scope);
+		boolean isOpen = _informationFlowModel.isScopeOpened(scope);
 
-		if (isOpen | !(ifScopeModel.openScope(scope))) {
+		if (isOpen | !(_informationFlowModel.openScope(scope))) {
 			_logger.info("Scope " + scope + " is already opened");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already opened");
@@ -83,9 +78,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * It should be final.
 	 */
 	protected final IStatus closeScope(Scope scope) {
-		boolean isOpen = ifScopeModel.isScopeOpened(scope);
+		boolean isOpen = _informationFlowModel.isScopeOpened(scope);
 
-		if (!(isOpen) | !(ifScopeModel.closeScope(scope))) {
+		if (!(isOpen) | !(_informationFlowModel.closeScope(scope))) {
 			_logger.info("Scope " + scope + " is already closed");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already closed");

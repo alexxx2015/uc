@@ -6,7 +6,7 @@ import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -16,14 +16,15 @@ public abstract class PipDistributionStrategy extends AbstractDistributionStrate
 
 	protected final ConnectionManager<Pip2PipClient> _connectionManager;
 
-	protected final BasicInformationFlowModel _ifModel;
+	protected final IBasicInformationFlowModel _ifModel;
 
 	public PipDistributionStrategy(EDistributionStrategy eStrategy) {
 		super(eStrategy);
 
 		_connectionManager = new ConnectionManager<>(Settings.getInstance().getPipDistributionMaxConnections());
 
-		_ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
+		// FIXME Get the existing instance.
+		_ifModel = new InformationFlowModelManager();
 
 		switch (Settings.getInstance().getCommunicationProtocol()) {
 			case THRIFT:

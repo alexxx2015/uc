@@ -1,28 +1,48 @@
 package de.tum.in.i22.uc.pip.core.ifm;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 
-public final class InformationFlowModelManager {
-	private static InformationFlowModelManager _instance;
-
+public final class InformationFlowModelManager implements IInformationFlowModel, IBasicInformationFlowModel {
 	private final Map<EInformationFlowModel,InformationFlowModelExtension> _ifModelExtensions;
 
 	private final BasicInformationFlowModel _basicIfModel;
 
 	private boolean _simulating;
 
-	private InformationFlowModelManager() {
+	public InformationFlowModelManager() {
 		_ifModelExtensions = new HashMap<>();
 		_simulating = false;
-		_basicIfModel = BasicInformationFlowModel.getInstance();
+		_basicIfModel = new BasicInformationFlowModel();
+
+		DummyInformationFlowModel dummy = new DummyInformationFlowModel();
+
+		for (EInformationFlowModel eifm : EInformationFlowModel.values()) {
+			switch (eifm) {
+				case QUANTITIES:
+					_ifModelExtensions.put(eifm, dummy);
+					break;
+				case SCOPE:
+					_ifModelExtensions.put(eifm, dummy);
+					break;
+				default:
+					break;
+			}
+		}
 
 		for (EInformationFlowModel eifm : Settings.getInstance().getEnabledInformationFlowModels()) {
 			switch (eifm) {
@@ -37,25 +57,14 @@ public final class InformationFlowModelManager {
 		}
 	}
 
-	public static InformationFlowModelManager getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (InformationFlowModelManager.class) {
-				if (_instance == null) _instance = new InformationFlowModelManager();
-			}
-		}
-		return _instance;
-	}
-
-	public BasicInformationFlowModel getBasicInformationFlowModel() {
+	public IBasicInformationFlowModel getBasicInformationFlowModel() {
 		return _basicIfModel;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.in.i22.uc.cm.pip.EInformationFlowModel)
+	 */
+	@Override
 	public boolean isEnabled(EInformationFlowModel ifm) {
 		return _ifModelExtensions.containsKey(ifm);
 	}
@@ -65,10 +74,18 @@ public final class InformationFlowModelManager {
 		return (T) _ifModelExtensions.get(ifm);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isSimulating()
+	 */
+	@Override
 	public boolean isSimulating() {
 		return _simulating;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#startSimulation()
+	 */
+	@Override
 	public IStatus startSimulation() {
 		if (_simulating) {
 			return new StatusBasic(EStatus.ERROR, "Already simulating.");
@@ -83,6 +100,10 @@ public final class InformationFlowModelManager {
 		return new StatusBasic(EStatus.OKAY);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#stopSimulation()
+	 */
+	@Override
 	public IStatus stopSimulation() {
 		if (!_simulating) {
 			return new StatusBasic(EStatus.ERROR, "Not simulating.");
@@ -97,6 +118,10 @@ public final class InformationFlowModelManager {
 		return new StatusBasic(EStatus.OKAY);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#reset()
+	 */
+	@Override
 	public void reset() {
 		_basicIfModel.reset();
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
@@ -104,6 +129,10 @@ public final class InformationFlowModelManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#niceString()
+	 */
+	@Override
 	public String niceString() {
 		StringBuilder sb = new StringBuilder(_basicIfModel.niceString());
 
@@ -115,4 +144,226 @@ public final class InformationFlowModelManager {
 
 		return sb.toString();
 	}
+
+	@Override
+	public void remove(IData data) {
+		_basicIfModel.remove(data);
+	}
+
+	@Override
+	public void remove(IContainer cont) {
+		_basicIfModel.remove(cont);
+	}
+
+	@Override
+	public void emptyContainer(IContainer container) {
+		_basicIfModel.emptyContainer(container);
+	}
+
+	@Override
+	public void emptyContainer(IName containerName) {
+		_basicIfModel.emptyContainer(containerName);
+	}
+
+	@Override
+	public void addAlias(IContainer fromContainer, IContainer toContainer) {
+		_basicIfModel.addAlias(fromContainer, toContainer);
+	}
+
+	@Override
+	public void addAlias(IName fromContainerName, IName toContainerName) {
+		_basicIfModel.addAlias(fromContainerName, toContainerName);
+	}
+
+	@Override
+	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
+		_basicIfModel.removeAlias(fromContainer, toContainer);
+
+	}
+
+	@Override
+	public Collection<IContainer> getAliasesFrom(IContainer container) {
+		return _basicIfModel.getAliasesFrom(container);
+	}
+
+	@Override
+	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
+		return _basicIfModel.getAliasTransitiveReflexiveClosure(container);
+	}
+
+	@Override
+	public void removeAllAliasesFrom(IContainer fromContainer) {
+		_basicIfModel.removeAllAliasesFrom(fromContainer);
+	}
+
+	@Override
+	public void removeAllAliasesTo(IContainer toContainer) {
+		_basicIfModel.removeAllAliasesTo(toContainer);
+	}
+
+	@Override
+	public Set<IContainer> getAliasesTo(IContainer container) {
+		return _basicIfModel.getAliasesTo(container);
+	}
+
+	@Override
+	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
+		return _basicIfModel.getAliasTransitiveClosure(container);
+	}
+
+	@Override
+	public void addData(IData data, IContainer container) {
+		_basicIfModel.addData(data, container);
+	}
+
+	@Override
+	public void removeData(IData data, IContainer container) {
+		_basicIfModel.removeData(data, container);
+	}
+
+	@Override
+	public Set<IData> getData(IContainer container) {
+		return _basicIfModel.getData(container);
+	}
+
+	@Override
+	public Set<IData> getData(IName containerName) {
+		return _basicIfModel.getData(containerName);
+	}
+
+	@Override
+	public boolean copyData(IName srcContainerName, IName dstContainerName) {
+		return _basicIfModel.copyData(srcContainerName, dstContainerName);
+	}
+
+	@Override
+	public boolean copyData(IContainer srcContainer, IContainer dstContainer) {
+		return _basicIfModel.copyData(srcContainer, dstContainer);
+	}
+
+	@Override
+	public void addDataTransitively(Collection<IData> data, IName dstContainerName) {
+		_basicIfModel.addDataTransitively(data, dstContainerName);
+	}
+
+	@Override
+	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
+		_basicIfModel.addDataTransitively(data, dstContainer);
+	}
+
+	@Override
+	public Set<IContainer> getContainers(IData data) {
+		return _basicIfModel.getContainers(data);
+	}
+
+	@Override
+	public <T extends IContainer> Set<T> getContainers(IData data, Class<T> type) {
+		return _basicIfModel.getContainers(data, type);
+	}
+
+	@Override
+	public void addData(Collection<IData> data, IContainer container) {
+		_basicIfModel.addData(data, container);
+	}
+
+	@Override
+	public void addName(IName name, IContainer container) {
+		_basicIfModel.addName(name, container);
+	}
+
+	@Override
+	public void addName(IName oldName, IName newName) {
+		_basicIfModel.addName(oldName, newName);
+	}
+
+	@Override
+	public void removeName(IName name) {
+		_basicIfModel.removeName(name);
+	}
+
+	@Override
+	public IContainer getContainer(IName name) {
+		return _basicIfModel.getContainer(name);
+	}
+
+	@Override
+	public IContainer getContainerRelaxed(IName name) {
+		return _basicIfModel.getContainerRelaxed(name);
+	}
+
+	@Override
+	public Set<IContainer> getAllContainers() {
+		return _basicIfModel.getAllContainers();
+	}
+
+	@Override
+	public Collection<IName> getAllNames() {
+		return _basicIfModel.getAllNames();
+	}
+
+	@Override
+	public <T extends IName> Collection<T> getAllNames(Class<T> type) {
+		return _basicIfModel.getAllNames(type);
+	}
+
+	@Override
+	public Collection<IName> getAllNames(IContainer container) {
+		return _basicIfModel.getAllNames(container);
+	}
+
+	@Override
+	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
+		return _basicIfModel.getAllNames(containerName, type);
+	}
+
+	@Override
+	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
+		return _basicIfModel.getAllNames(cont, type);
+	}
+
+	@Override
+	public List<IName> getAllNamingsFrom(IContainer pid) {
+		return _basicIfModel.getAllNamingsFrom(pid);
+	}
+
+	@Override
+	public void push() {
+		_basicIfModel.push();
+	}
+
+	@Override
+	public void pop() {
+		_basicIfModel.pop();
+	}
+
+	@Override
+	public boolean addScope(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).addScope(scope);
+	}
+
+	@Override
+	public boolean openScope(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).openScope(scope);
+	}
+
+	@Override
+	public boolean removeScope(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).removeScope(scope);
+	}
+
+	@Override
+	public boolean closeScope(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).closeScope(scope);
+	}
+
+	@Override
+	public boolean isScopeOpened(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).isScopeOpened(scope);
+	}
+
+	@Override
+	public Scope getOpenedScope(Scope scope) {
+		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).getOpenedScope(scope);
+	}
+
 }

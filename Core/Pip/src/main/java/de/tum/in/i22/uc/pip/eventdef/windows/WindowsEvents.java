@@ -2,16 +2,9 @@ package de.tum.in.i22.uc.pip.eventdef.windows;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.factories.IMessageFactory;
-import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
+import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 
-public class WindowsEvents {
-
-	private final static BasicInformationFlowModel ifModel = InformationFlowModelManager.getInstance().getBasicInformationFlowModel();
-
-	private final static IMessageFactory _messageFactory = MessageFactoryCreator.createMessageFactory();
+public abstract class WindowsEvents extends BaseEventHandler {
 
 	/**
 	 * Checks if the process with given PID already exists, if not create a
@@ -21,14 +14,14 @@ public class WindowsEvents {
 	 *            Process ID (PID)
 	 * @return
 	 */
-	protected static IContainer instantiateProcess(String processId, String processName) {
-		IContainer container = ifModel.getContainer(new NameBasic(processId));
+	protected IContainer instantiateProcess(String processId, String processName) {
+		IContainer container = _informationFlowModel.getContainer(new NameBasic(processId));
 
 		// check if container for process exists and create new container if not
 		if (container == null) {
 			container = _messageFactory.createContainer();
-			ifModel.addName(new NameBasic(processId), container);
-			ifModel.addName(new NameBasic(processName), container);
+			_informationFlowModel.addName(new NameBasic(processId), container);
+			_informationFlowModel.addName(new NameBasic(processName), container);
 		}
 
 		return container;

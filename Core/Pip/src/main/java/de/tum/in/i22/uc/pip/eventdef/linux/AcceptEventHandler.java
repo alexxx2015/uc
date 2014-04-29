@@ -49,7 +49,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 		// get old container
 		SocketContainer listeningSocket = null;
 		try {
-			listeningSocket = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, oldFd));
+			listeningSocket = (SocketContainer) _informationFlowModel.getContainer(FiledescrName.create(host, pid, oldFd));
 		}
 		catch (ClassCastException e) {
 			_logger.error("Expected container did not exist or was of wrong type.");
@@ -77,33 +77,33 @@ public class AcceptEventHandler extends BaseEventHandler {
 			// create a 'proxy' container and name it.
 			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
 					new IPLocation(remoteIP, Settings.getInstance().getPipListenerPort()));
-			basicIfModel.addName(remoteSocketName, remoteConnectedSocket);
+			_informationFlowModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
 			localAcceptedSocket = new SocketContainer(domain, type);
-			basicIfModel.addName(localSocketName, localAcceptedSocket);
+			_informationFlowModel.addName(localSocketName, localAcceptedSocket);
 
 			/*
 			// add alias from new local container to remote proxy container
 			basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
 			*/
 			// add alias on both directions
-			basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
-			basicIfModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
+			_informationFlowModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+			_informationFlowModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
 		}
 		else {
 			// client is local
 
 			// see whether local container was already created
 			// which is the case if connect() already happened
-			localAcceptedSocket = basicIfModel.getContainer(localSocketName);
+			localAcceptedSocket = _informationFlowModel.getContainer(localSocketName);
 
 			if (localAcceptedSocket == null) {
 				// accept() happens before connect().
 
 				// create new container c and name it, f[(p,(sn(e),(a,x))) <- c]
 				localAcceptedSocket = new SocketContainer(domain, type);
-				basicIfModel.addName(localSocketName, localAcceptedSocket);
+				_informationFlowModel.addName(localSocketName, localAcceptedSocket);
 
 				/*
 				 * We create a temporary remote socket container.
@@ -117,17 +117,17 @@ public class AcceptEventHandler extends BaseEventHandler {
 				 * is called 'remoteSocketName' and that will be called 'localSocketName' upon connect().
 				 */
 				remoteConnectedSocket = new SocketContainer(domain, type);
-				basicIfModel.addName(remoteSocketName, remoteConnectedSocket);
+				_informationFlowModel.addName(remoteSocketName, remoteConnectedSocket);
 
 				// add aliases in both directions
-				basicIfModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
-				basicIfModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
+				_informationFlowModel.addAlias(localAcceptedSocket, remoteConnectedSocket);
+				_informationFlowModel.addAlias(remoteConnectedSocket, localAcceptedSocket);
 			}
 			// else: connect() happened before accept(); it created the container and both aliases
 		}
 
 		// f[((p,e)) <- c]
-		basicIfModel.addName(FiledescrName.create(host, pid, newFd), localAcceptedSocket);
+		_informationFlowModel.addName(FiledescrName.create(host, pid, newFd), localAcceptedSocket);
 
 		return STATUS_OKAY;
 	}

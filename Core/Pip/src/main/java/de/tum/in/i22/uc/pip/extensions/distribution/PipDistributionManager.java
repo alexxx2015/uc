@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pip.extensions.distribution;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.cassandra.service.CassandraDaemon;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -23,8 +25,14 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 public class PipDistributionManager implements IPipDistributionStrategy {
 	private static PipDistributionStrategy _strategy;
 
+//	private final CassandraDaemon _cassandra;
+
 	public PipDistributionManager() {
 		_strategy = PipDistributionStrategy.create(Settings.getInstance().getDistributionStrategy());
+//		_cassandra = new CassandraDaemon();
+//		_cassandra.activate();
+//		System.out.println("loop");
+//		while(true);
 	}
 
 	public static EDistributionStrategy getStrategy() {

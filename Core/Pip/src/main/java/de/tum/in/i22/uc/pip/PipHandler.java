@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
@@ -43,7 +43,7 @@ public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(PipHandler.class);
 
-	private final BasicInformationFlowModel _ifModel;
+	private final IBasicInformationFlowModel _ifModel;
 
 	private final InformationFlowModelManager _ifModelManager;
 
@@ -60,12 +60,16 @@ public class PipHandler extends PipProcessor {
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
+		this(new InformationFlowModelManager());
+	}
+
+	public PipHandler(InformationFlowModelManager ifmModelManager) {
 		super(LocalLocation.getInstance());
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
 		_distributedPipManager = new PipDistributionManager();
-		_ifModelManager = InformationFlowModelManager.getInstance();
+		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
 		// initialize data flow according to settings
@@ -78,7 +82,7 @@ public class PipHandler extends PipProcessor {
 		IStateBasedPredicate pred;
 
 		try {
-			pred = StateBasedPredicate.create(predicate);
+			pred = StateBasedPredicate.create(predicate, _ifModelManager);
 		} catch (InvalidStateBasedFormula e) {
 			_logger.warn(e.toString());
 			return false;
@@ -132,16 +136,17 @@ public class PipHandler extends PipProcessor {
 		}
 
 		actionHandler.setEvent(event);
+		actionHandler.setInformationFlowModel(_ifModelManager);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for "
 				+ event);
 		status = actionHandler.performUpdate();
 
+
 		/*
 		 * The returned status will tell us whether we have to do some more
 		 * work, namely remote data flow tracking and policy shipment
 		 */
-
 		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
 				&& (status instanceof DistributedPipStatus)) {
 
@@ -178,7 +183,7 @@ public class PipHandler extends PipProcessor {
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()){
 			_logger.debug(this.toString());
 		}
-		
+
 		return status;
 	}
 

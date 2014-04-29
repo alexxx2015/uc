@@ -50,7 +50,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		// c := f((pid,sfd))
 		try {
-			localConnectingSocket = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
+			localConnectingSocket = (SocketContainer) _informationFlowModel.getContainer(FiledescrName.create(host, pid, fd));
 		}
 		catch (ClassCastException e) {
 		}
@@ -66,28 +66,28 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
-		remoteAcceptedSocket = basicIfModel.getContainer(remoteSocketName);
+		remoteAcceptedSocket = _informationFlowModel.getContainer(remoteSocketName);
 
 		if (remoteAcceptedSocket != null && localIP.equals(remoteIP)) {
 			// server is local AND
 			// accept() happened before connect(); it created a temporary container.
 			// Compensate for this. We can identify this temporary container by 'localSocketName'.
 
-			IContainer tmpContainer = basicIfModel.getContainer(localSocketName);
+			IContainer tmpContainer = _informationFlowModel.getContainer(localSocketName);
 
 			// copy aliases
-			for (IContainer alias : basicIfModel.getAliasesFrom(tmpContainer)) {
-				basicIfModel.addAlias(localConnectingSocket, alias);;
+			for (IContainer alias : _informationFlowModel.getAliasesFrom(tmpContainer)) {
+				_informationFlowModel.addAlias(localConnectingSocket, alias);;
 			}
-			for (IContainer alias : basicIfModel.getAliasesTo(tmpContainer)) {
-				basicIfModel.addAlias(alias, localConnectingSocket);
+			for (IContainer alias : _informationFlowModel.getAliasesTo(tmpContainer)) {
+				_informationFlowModel.addAlias(alias, localConnectingSocket);
 			}
 
 			// copy data
-			basicIfModel.addDataTransitively(basicIfModel.getData(tmpContainer), localConnectingSocket);
+			_informationFlowModel.addDataTransitively(_informationFlowModel.getData(tmpContainer), localConnectingSocket);
 
 			// remove temporary container
-			basicIfModel.remove(tmpContainer);
+			_informationFlowModel.remove(tmpContainer);
 		}
 		else {
 			if (remoteAcceptedSocket == null) {
@@ -103,7 +103,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 				}
 
 				// assign the remote name
-				basicIfModel.addName(remoteSocketName, remoteAcceptedSocket);
+				_informationFlowModel.addName(remoteSocketName, remoteAcceptedSocket);
 			}
 			/*
 			 * Comment left for clarification.
@@ -116,8 +116,8 @@ public class ConnectEventHandler extends BaseEventHandler {
 			 */
 
 			// add aliases in both directions
-			basicIfModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
-			basicIfModel.addAlias(remoteAcceptedSocket, localConnectingSocket);
+			_informationFlowModel.addAlias(localConnectingSocket, remoteAcceptedSocket);
+			_informationFlowModel.addAlias(remoteAcceptedSocket, localConnectingSocket);
 		}
 
 		// Assign the local socket container's name
@@ -125,9 +125,9 @@ public class ConnectEventHandler extends BaseEventHandler {
 		// Also, we do not do this if there already exists a proxy remote socket container
 		// with the same name, as this means that two ip addreses are used locally and
 		// the existing container was already created by accept()
-		if (!(basicIfModel.getContainer(localSocketName) instanceof RemoteSocketContainer)) {
+		if (!(_informationFlowModel.getContainer(localSocketName) instanceof RemoteSocketContainer)) {
 			// f[(p,(sn(e),(a,x))) <- c];
-			basicIfModel.addName(localSocketName, localConnectingSocket);
+			_informationFlowModel.addName(localSocketName, localConnectingSocket);
 		}
 
 

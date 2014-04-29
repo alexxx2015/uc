@@ -4,7 +4,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -12,7 +11,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class KillEventHandler extends BaseEventHandler {
+public class KillEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -29,9 +28,9 @@ public class KillEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, srcPid));
-		IContainer dstCont = basicIfModel.getContainer(ProcessName.create(host, dstPid));
+		IContainer srcCont = _informationFlowModel.getContainer(ProcessName.create(host, srcPid));
+		IContainer dstCont = _informationFlowModel.getContainer(ProcessName.create(host, dstPid));
 
-		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
+		return copyDataTransitive(srcCont, dstCont);
 	}
 }

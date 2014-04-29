@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -11,7 +10,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class SendfileEventHandler extends BaseEventHandler {
+public class SendfileEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -30,8 +29,8 @@ public class SendfileEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		return LinuxEvents.copyDataTransitive(
-				basicIfModel.getContainer(FiledescrName.create(host, pid, infd)),
-				basicIfModel.getContainer(FiledescrName.create(host, pid, outfd)));
+		return copyDataTransitive(
+				_informationFlowModel.getContainer(FiledescrName.create(host, pid, infd)),
+				_informationFlowModel.getContainer(FiledescrName.create(host, pid, outfd)));
 	}
 }

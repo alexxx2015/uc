@@ -18,15 +18,16 @@ import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.pip.PipHandler;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class LinuxEventTest {
-	private static IAny2Pip _pipHandler = new PipHandler();
 
-	private static final InformationFlowModelManager _ifModelManager = InformationFlowModelManager.getInstance();
+	private static final InformationFlowModelManager _ifModelManager = new InformationFlowModelManager();
 
-	private static final BasicInformationFlowModel _ifModel = _ifModelManager.getBasicInformationFlowModel();
+	private static final IBasicInformationFlowModel _ifModel = _ifModelManager.getBasicInformationFlowModel();
+
+	private static IAny2Pip _pipHandler = new PipHandler(_ifModelManager);
 
 	private static final String PEP_PARAMETER_LINUX = "Linux";
 

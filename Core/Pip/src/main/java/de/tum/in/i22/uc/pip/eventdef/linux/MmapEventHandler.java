@@ -8,7 +8,6 @@ import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.MmapContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.MmapName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -16,7 +15,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class MmapEventHandler extends BaseEventHandler {
+public class MmapEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -52,32 +51,32 @@ public class MmapEventHandler extends BaseEventHandler {
 		 * They are not interesting.
 		 */
 
-		IContainer fileCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer fileCont = _informationFlowModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
 			return STATUS_OKAY;
 		}
 
-		IContainer procCont = basicIfModel.getContainer(ProcessName.create(host, pid));
+		IContainer procCont = _informationFlowModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return STATUS_OKAY;
 		}
 
 		IContainer mmapCont = new MmapContainer(host, pid, addr);
 
-		basicIfModel.addName(MmapName.create(host, pid, addr), mmapCont);
+		_informationFlowModel.addName(MmapName.create(host, pid, addr), mmapCont);
 
-		basicIfModel.addAlias(fileCont, mmapCont);
+		_informationFlowModel.addAlias(fileCont, mmapCont);
 
 		if (flags.contains("s")) {		// MAP_SHARED
-			basicIfModel.addAlias(mmapCont, fileCont);
+			_informationFlowModel.addAlias(mmapCont, fileCont);
 		}
 		if (flags.contains("r")) {		// PROT_READ
-			basicIfModel.addAlias(mmapCont, procCont);
+			_informationFlowModel.addAlias(mmapCont, procCont);
 		}
 		if (flags.contains("w")) {		// PROT_WRITE
-			basicIfModel.addAlias(procCont, mmapCont);
+			_informationFlowModel.addAlias(procCont, mmapCont);
 		}
 
-		return LinuxEvents.copyDataTransitive(fileCont, mmapCont);
+		return copyDataTransitive(fileCont, mmapCont);
 	}
 }

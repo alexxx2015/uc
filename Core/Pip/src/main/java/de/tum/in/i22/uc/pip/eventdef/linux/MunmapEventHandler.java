@@ -28,7 +28,7 @@ public class MunmapEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		basicIfModel.remove(basicIfModel.getContainer(MmapName.create(host, pid, addr)));
+		_informationFlowModel.remove(_informationFlowModel.getContainer(MmapName.create(host, pid, addr)));
 
 		return STATUS_OKAY;
 	}

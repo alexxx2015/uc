@@ -3,7 +3,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -11,7 +10,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class ShutdownEventHandler extends BaseEventHandler {
+public class ShutdownEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -32,8 +31,8 @@ public class ShutdownEventHandler extends BaseEventHandler {
 
 		Shut how = Shut.valueOf(howStr);
 
-		SocketContainer cont = (SocketContainer) basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
-		LinuxEvents.shutdownSocket(cont, how);
+		SocketContainer cont = (SocketContainer) _informationFlowModel.getContainer(FiledescrName.create(host, pid, fd));
+		shutdownSocket(cont, how);
 
 		return STATUS_OKAY;
 	}

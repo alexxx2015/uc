@@ -4,10 +4,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class CreateProcessEventHandler extends BaseEventHandler {
+public class CreateProcessEventHandler extends WindowsEvents {
 
 	public CreateProcessEventHandler() {
 		super();
@@ -34,11 +33,11 @@ public class CreateProcessEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-        IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
-        IContainer parentProcessContainer = WindowsEvents.instantiateProcess(parentPid, parentProcessName);
+        IContainer processContainer = instantiateProcess(pid, processName);
+        IContainer parentProcessContainer = instantiateProcess(parentPid, parentProcessName);
 
         //add data of parent process container to child process container
-        basicIfModel.addData(basicIfModel.getData(parentProcessContainer), processContainer);
+        _informationFlowModel.addData(_informationFlowModel.getData(parentProcessContainer), processContainer);
 
         //add initial windows of process to model
         //TODO: REGEX??
@@ -46,17 +45,17 @@ public class CreateProcessEventHandler extends BaseEventHandler {
 
         for (String handle : visibleWindowsArray)
         {
-            IContainer windowContainer = basicIfModel.getContainer(new NameBasic(handle));
+            IContainer windowContainer = _informationFlowModel.getContainer(new NameBasic(handle));
 
             if(windowContainer == null)
             {
             	windowContainer = _messageFactory.createContainer();
-                basicIfModel.addName(new NameBasic(handle), windowContainer);
+                _informationFlowModel.addName(new NameBasic(handle), windowContainer);
             }
 
-            basicIfModel.addData(basicIfModel.getData(processContainer), windowContainer);
+            _informationFlowModel.addData(_informationFlowModel.getData(processContainer), windowContainer);
 
-            basicIfModel.addAlias(processContainer, windowContainer);
+            _informationFlowModel.addAlias(processContainer, windowContainer);
         }
 
         return _messageFactory.createStatus(EStatus.OKAY);
