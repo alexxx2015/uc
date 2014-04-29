@@ -8,10 +8,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class ReadFileEventHandler extends BaseEventHandler {
+public class ReadFileEventHandler extends WindowsEvents {
 
 	public ReadFileEventHandler() {
 		super();
@@ -32,21 +31,21 @@ public class ReadFileEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
-		IContainer fileContainer = basicIfModel.getContainer(new NameBasic(fileName));
+		IContainer fileContainer = _informationFlowModel.getContainer(new NameBasic(fileName));
 
 		// check if container for filename exists and create new container
 		if (fileContainer == null) {
 			fileContainer = _messageFactory.createContainer();
-			basicIfModel.addName(new NameBasic(fileName), fileContainer);
+			_informationFlowModel.addName(new NameBasic(fileName), fileContainer);
 		}
 
 		// add data to transitive reflexive closure of process container
-		Set<IContainer> transitiveReflexiveClosure = basicIfModel.getAliasTransitiveReflexiveClosure(processContainer);
-		Set<IData> dataSet = basicIfModel.getData(fileContainer);
+		Set<IContainer> transitiveReflexiveClosure = _informationFlowModel.getAliasTransitiveReflexiveClosure(processContainer);
+		Set<IData> dataSet = _informationFlowModel.getData(fileContainer);
 		for (IContainer tempContainer : transitiveReflexiveClosure) {
-			basicIfModel.addData(dataSet, tempContainer);
+			_informationFlowModel.addData(dataSet, tempContainer);
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

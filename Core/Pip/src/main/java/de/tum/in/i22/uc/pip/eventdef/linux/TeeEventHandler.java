@@ -4,7 +4,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -12,7 +11,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class TeeEventHandler extends BaseEventHandler {
+public class TeeEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -35,10 +34,10 @@ public class TeeEventHandler extends BaseEventHandler {
 		 * TODO: Semantics are equivalent to splice()
 		 */
 
-		IContainer srcCont = basicIfModel.getContainer(FiledescrName.create(host, pid, srcfd));
-		IContainer dstCont = basicIfModel.getContainer(FiledescrName.create(host, pid, dstfd));
+		IContainer srcCont = _informationFlowModel.getContainer(FiledescrName.create(host, pid, srcfd));
+		IContainer dstCont = _informationFlowModel.getContainer(FiledescrName.create(host, pid, dstfd));
 
-		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
+		return copyDataTransitive(srcCont, dstCont);
 	}
 
 }

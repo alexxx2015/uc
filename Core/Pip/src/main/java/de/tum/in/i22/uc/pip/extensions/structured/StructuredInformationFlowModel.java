@@ -13,7 +13,7 @@ import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
@@ -25,7 +25,8 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
  * 
  */
 public final class StructuredInformationFlowModel extends
-		InformationFlowModelExtension {
+		InformationFlowModelExtension implements
+		IStructuredInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(StructuredInformationFlowModel.class);
 
@@ -63,8 +64,12 @@ public final class StructuredInformationFlowModel extends
 			for (IData d : _structureMap.keySet()) {
 				Map<String, Set<IData>> m = _structureMap.get(d);
 				Map<String, Set<IData>> mbackup = new HashMap<String, Set<IData>>();
-				for (String s : m.keySet()) {
-					mbackup.put(s, new HashSet<IData>(mbackup.get(d)));
+				if (m != null) {
+					for (String s : m.keySet()) {
+						Set<IData> set= mbackup.get(d);
+						if (set==null) set = new HashSet<IData>();
+						mbackup.put(s, new HashSet<IData>(set));
+					}
 				}
 				_structureBackup.put(d, mbackup);
 			}
@@ -175,7 +180,7 @@ public final class StructuredInformationFlowModel extends
 					tmp.addAll(getDataInStructure(table));
 				}
 			}
-			loopAgain = res.addAll(tmp); 
+			loopAgain = res.addAll(tmp);
 			_logger.debug("loopAgain=" + loopAgain + ". resultSet("
 					+ res.size() + ")=[" + res + "]");
 		} while (loopAgain);

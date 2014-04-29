@@ -32,7 +32,7 @@ public class FcntlEventHandler extends BaseEventHandler {
 			case "dupfd":
 				IName oldName = FiledescrName.create(host, pid, oldfd);
 				IName newName = FiledescrName.create(host, pid, newfd);
-				basicIfModel.addName(oldName, newName);
+				_informationFlowModel.addName(oldName, newName);
 				break;
 		}
 

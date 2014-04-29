@@ -92,7 +92,7 @@ public class ParamMatch extends ParamMatchType {
 					break;
 				case DATA_IN_CONTAINER:
 					log.debug("parameter value checked for \"data in container\" comparison");
-					IPdp2Pip pip = _pdp.get_pip();
+					IPdp2Pip pip = _pdp.getPip();
 					if (pip == null) {
 						log.error("Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");
 						throw new RuntimeException(

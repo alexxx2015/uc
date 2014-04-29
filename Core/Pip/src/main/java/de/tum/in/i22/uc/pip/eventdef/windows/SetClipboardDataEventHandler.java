@@ -4,10 +4,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class SetClipboardDataEventHandler extends BaseEventHandler {
+public class SetClipboardDataEventHandler extends WindowsEvents {
 
 	public SetClipboardDataEventHandler() {
 		super();
@@ -24,19 +23,19 @@ public class SetClipboardDataEventHandler extends BaseEventHandler {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-        IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
+        IContainer processContainer = instantiateProcess(pid, processName);
 
-        IContainer clipboardContainer = basicIfModel.getContainer(new NameBasic("clipboard"));
+        IContainer clipboardContainer = _informationFlowModel.getContainer(new NameBasic("clipboard"));
 
         //check if container for clipboard exists and create new container if not
         if (clipboardContainer == null)
         {
         	clipboardContainer = _messageFactory.createContainer();
-            basicIfModel.addName(new NameBasic("clipboard"), clipboardContainer);
+            _informationFlowModel.addName(new NameBasic("clipboard"), clipboardContainer);
         };
 
-        basicIfModel.emptyContainer(clipboardContainer);
-        basicIfModel.addData(basicIfModel.getData(processContainer), clipboardContainer);
+        _informationFlowModel.emptyContainer(clipboardContainer);
+        _informationFlowModel.addData(_informationFlowModel.getData(processContainer), clipboardContainer);
 
         return _messageFactory.createStatus(EStatus.OKAY);
 	}

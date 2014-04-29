@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.interfaces;
+package de.tum.in.i22.uc.cm.pip.interfaces;
 
 public enum EStateBasedFormula {
 	IS_NOT_IN,

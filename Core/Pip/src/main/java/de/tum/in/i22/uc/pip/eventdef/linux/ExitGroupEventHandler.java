@@ -2,10 +2,9 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class ExitGroupEventHandler extends BaseEventHandler {
+public class ExitGroupEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -21,7 +20,7 @@ public class ExitGroupEventHandler extends BaseEventHandler {
 		}
 
 		for (String pid : pids.split(":")) {
-			LinuxEvents.exit(host, Integer.valueOf(pid));
+			exit(host, Integer.valueOf(pid));
 		}
 
 		return STATUS_OKAY;

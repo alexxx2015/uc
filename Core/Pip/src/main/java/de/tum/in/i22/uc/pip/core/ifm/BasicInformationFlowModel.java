@@ -18,14 +18,13 @@ import com.google.common.collect.Sets;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
 
 /**
  * Information flow model Singleton.
  */
-public final class BasicInformationFlowModel {
+public final class BasicInformationFlowModel implements IBasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory.getLogger(BasicInformationFlowModel.class);
-
-	private static BasicInformationFlowModel _instance;
 
 	private Map<IContainer, Set<IData>> _containerToDataMap;
 	private Map<IContainer, Set<IContainer>> _aliasesMap;
@@ -38,27 +37,6 @@ public final class BasicInformationFlowModel {
 
 	BasicInformationFlowModel() {
 		reset();
-	}
-
-	/**
-	 * Visibility set to 'default' (i.e. package) on purpose.
-	 * Use {@link InformationFlowModelManager} to get an instance.
-	 *
-	 * @return
-	 */
-	static BasicInformationFlowModel getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all of it.
-		 * Yet, it is the best way to implement a thread-safe singleton, cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes-with-example-code
-		 * -FK-
-		 */
-		if (_instance == null) {
-			synchronized (BasicInformationFlowModel.class) {
-				if (_instance == null) _instance = new BasicInformationFlowModel();
-			}
-		}
-		return _instance;
 	}
 
 	/**
@@ -112,11 +90,10 @@ public final class BasicInformationFlowModel {
 		_namingSetBackup = null;
 	}
 
-	/**
-	 * Removes data object.
-	 *
-	 * @param data
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum.in.i22.uc.cm.datatypes.interfaces.IData)
 	 */
+	@Override
 	public void remove(IData data) {
 		if (data != null) {
 			for (IContainer cont : _containerToDataMap.keySet()) {
@@ -126,14 +103,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Removes the given container completely by deleting
-	 * associated names, aliases, and data.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param cont the container to be removed.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void remove(IContainer cont) {
 		if (cont != null) {
 			_logger.info("remove container: " + cont);
@@ -158,13 +131,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Removes all data from the specified container
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param container the container of which the data is to be removed.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void emptyContainer(IContainer container) {
 		if (container != null) {
 			_logger.info("Emptying container " + container);
@@ -172,24 +142,20 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Removes all data from the container identified by the given container name.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param containerName a name of the container that is to be emptied.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public void emptyContainer(IName containerName) {
 		if (containerName != null) {
 			emptyContainer(_namingMap.get(containerName));
 		}
 	}
 
-	/**
-	 * Adds an alias relation from one container to another.
-	 *
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void addAlias(IContainer fromContainer, IContainer toContainer) {
 		if (fromContainer == null || toContainer == null || fromContainer.equals(toContainer)) {
 			return;
@@ -206,6 +172,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.tum.in.i22.uc.cm.datatypes.interfaces.IName, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
+	 */
+	@Override
 	public void addAlias(IName fromContainerName, IName toContainerName) {
 		if (fromContainerName == null || toContainerName == null) {
 			return;
@@ -215,14 +185,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Removes the alias from fromContainer to toContainer.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param fromContainer the container of which the alias is outgoing
-	 * @param toContainer the container of which the alias is incoming
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAlias(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
 		if (fromContainer == null || toContainer == null) {
 			return;
@@ -239,14 +205,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Returns an immutable view onto the set of all aliases *from* the specified container.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param container the container whose outgoing aliases will be returned.
-	 * @return An immutable view onto the set of all aliases *from* the specified container.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesFrom(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Collection<IContainer> getAliasesFrom(IContainer container) {
 		Set<IContainer> result;
 
@@ -257,13 +219,10 @@ public final class BasicInformationFlowModel {
 		return Collections.unmodifiableSet(result);
 	}
 
-	/**
-	 * Returns the reflexive, transitive closure of the alias function for
-	 * container with id containerId.
-	 *
-	 * @param containerId
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasTransitiveReflexiveClosure(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
 		if (container == null) {
 			return Collections.emptySet();
@@ -274,22 +233,18 @@ public final class BasicInformationFlowModel {
 		return closure;
 	}
 
-	/**
-	 * Removes all aliases that start from the container with given id.
-	 *
-	 * @param fromContainerId
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesFrom(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void removeAllAliasesFrom(IContainer fromContainer) {
 		_aliasesMap.remove(fromContainer);
 	}
 
-	/**
-	 * Removes all aliases that end in the container with the given id.
-	 *
-	 * @param toContainerId
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesTo(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void removeAllAliasesTo(IContainer toContainer) {
 		if (toContainer == null) {
 			return;
@@ -311,14 +266,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Returns an immutable view onto the set of all aliases *to* the specified container.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param container the container whose incoming aliases will be returned.
-	 * @return An immutable view onto the set of all aliases *to* the specified container.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesTo(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Set<IContainer> getAliasesTo(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
 
@@ -333,12 +284,10 @@ public final class BasicInformationFlowModel {
 		return Collections.unmodifiableSet(result);
 	}
 
-	/**
-	 * Returns the non-reflexive transitive alias closure of the specified container.
-	 * The resulting set will NOT contain the specified container.
-	 * @param container
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasTransitiveClosure(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
 		getAliasTransitiveClosure(container, result);
@@ -355,15 +304,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Adds the given data to the given container. If data
-	 * or container is null, nothing will happen.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param data the data to add
-	 * @param container to which container the data is added.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(de.tum.in.i22.uc.cm.datatypes.interfaces.IData, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void addData(IData data, IContainer container) {
 		if (data == null || container == null) {
 			return;
@@ -372,15 +316,10 @@ public final class BasicInformationFlowModel {
 		addData(Collections.singleton(data), container);
 	}
 
-	/**
-	 * Removes the given data from the given container.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param data the data to remove
-	 * @param container the container from which the data will be removed
-	 * @return true, if the data has been removed
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeData(de.tum.in.i22.uc.cm.datatypes.interfaces.IData, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void removeData(IData data, IContainer container) {
 		Set<IData> dataSet;
 
@@ -394,15 +333,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Returns an immutable view onto the set of data within the given container.
-	 * In doubt, returns an empty set; never null.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param container the container of which we want to get the data
-	 * @return an immutable view onto the set of data items stored in the given container
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Set<IData> getData(IContainer container) {
 		Set<IData> result;
 		if (container == null ||  (result = _containerToDataMap.get(container)) == null) {
@@ -412,15 +346,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Returns the data contained in the container identified by the given name,
-	 * cf. {@link #getData(IContainer)}.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param containerName a name of the container of which the containing data will be returned.
-	 * @return an immutable view onto the set of data within the container
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public Set<IData> getData(IName containerName) {
 		IContainer cont;
 
@@ -432,14 +361,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Copies all data contained in the container identified by srcContainerName to
-	 * the container identified by dstContainerName.
-	 *
-	 * @param srcContainerName
-	 * @param dstContainerName
-	 * @return true if both containers existed and data (possibly none, if fromContainer was empty) was copied.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.tum.in.i22.uc.cm.datatypes.interfaces.IName, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public boolean copyData(IName srcContainerName, IName dstContainerName) {
 		if (srcContainerName == null || dstContainerName == null) {
 			return false;
@@ -449,6 +374,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
+	 */
+	@Override
 	public boolean copyData(IContainer srcContainer, IContainer dstContainer) {
 		if (srcContainer == null || dstContainer == null) {
 			return false;
@@ -468,6 +397,10 @@ public final class BasicInformationFlowModel {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively(java.util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
+	 */
+	@Override
 	public void addDataTransitively(Collection<IData> data, IName dstContainerName) {
 		if (dstContainerName == null) {
 			return;
@@ -477,6 +410,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively(java.util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
+	 */
+	@Override
 	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
 		if (data == null || data.size() == 0 || dstContainer == null) {
 			return;
@@ -489,14 +426,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Returns all containers in which the specified data is in
-	 *
-	 * ~ Double checked, 2014/04/10. FK.
-	 *
-	 * @param data the data whose containers are returned.
-	 * @return The set of containers containing the specified data.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers(de.tum.in.i22.uc.cm.datatypes.interfaces.IData)
 	 */
+	@Override
 	public Set<IContainer> getContainers(IData data) {
 		if (data == null) {
 			return Collections.emptySet();
@@ -523,16 +456,10 @@ public final class BasicInformationFlowModel {
 	 * @return The set of containers containing the specified data.
 	 */
 
-	/**
-	 * Returns all containers of the specified type
-	 * in which the specified data is in.
-	 *
-	 * ~ Double checked, 2014/04/11. FK.
-	 *
-	 * @param data the data whose containers are returned.
-	 * @param type the type of the container to be returned
-	 * @return all containers of type <T> containing the specified data.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers(de.tum.in.i22.uc.cm.datatypes.interfaces.IData, java.lang.Class)
 	 */
+	@Override
 	public <T extends IContainer> Set<T> getContainers(IData data, Class<T> type) {
 		if (data == null) {
 			return Collections.emptySet();
@@ -552,6 +479,10 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(java.util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
+	 */
+	@Override
 	public void addData(Collection<IData> data, IContainer container) {
 		if (data == null || container == null) {
 			return;
@@ -568,18 +499,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Makes the given name point to the given container.
-	 *
-	 * If the given name was already assigned to another container,
-	 * this old name/container mapping is overwritten. If this was the
-	 * last name for that container, the corresponding container is deleted.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param name the new name for the given container.
-	 * @param container the container for which the new name applies.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum.in.i22.uc.cm.datatypes.interfaces.IName, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public void addName(IName name, IContainer container) {
 		if (name == null || container == null) {
 			return;
@@ -598,15 +521,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Adds an additional name, newName, for the container that is
-	 * already identified by another name, oldName.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param oldName a name identifying an already existing container
-	 * @param newName the additional new name for the container identified by oldName.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum.in.i22.uc.cm.datatypes.interfaces.IName, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public void addName(IName oldName, IName newName) {
 		if (oldName == null || newName == null) {
 			return;
@@ -618,12 +536,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Removes the name.
-	 *
-	 * @param name
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public void removeName(IName name) {
 		if (name != null) {
 			_logger.info("removeName() " + name);
@@ -637,12 +553,10 @@ public final class BasicInformationFlowModel {
 		}
 	}
 
-	/**
-	 * Returns the container that is referenced by the naming name.
-	 *
-	 * @param name
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainer(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
+	@Override
 	public IContainer getContainer(IName name) {
 		if (name != null) {
 			return _namingMap.get(name);
@@ -651,15 +565,11 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Returns the container that is referenced by the naming name. The search
-	 * is done in a less strict way; it is enough that the name only partially
-	 * fits an entry in the naming mapping.
-	 * @deprecated Why would it be useful?. Should imo be deleted. -FK-
-	 * @param name
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainerRelaxed(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
 	 */
-// 	FK:  Why would it be useful???
+@Override
+	// 	FK:  Why would it be useful???
 //		If there is someone who agrees: Please delete this code.
 	@Deprecated
 	public IContainer getContainerRelaxed(IName name) {
@@ -678,37 +588,26 @@ public final class BasicInformationFlowModel {
 		return container;
 	}
 
-	/**
-	 * Returns an unmodifiable view onto all containers.
-	 *
-	 * ~ Double checked, 2014/03/30. FK.
-	 *
-	 * @return an unmodifiable view onto all containers.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllContainers()
 	 */
+	@Override
 	public Set<IContainer> getAllContainers() {
 		return Collections.unmodifiableSet(Sets.newHashSet(_namingMap.values()));
 	}
 
-	/**
-	 * Returns an unmodifiable view onto all names.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @return an unmodifiable view onto all names.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames()
 	 */
+	@Override
 	public Collection<IName> getAllNames() {
 		return Collections.unmodifiableCollection(_namingMap.keySet());
 	}
 
-	/**
-	 * Returns an unmodifiable view onto all names
-	 * of the specified type.
-	 *
-	 * ~ Double checked, 2014/04/1. FK.
-	 *
-	 * @param the type of the names to be returned.
-	 * @return an unmodifiable view onto all names of the specified type.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(java.lang.Class)
 	 */
+	@Override
 	public <T extends IName> Collection<T> getAllNames(Class<T> type) {
 		Collection<T> result = new LinkedList<>();
 
@@ -722,15 +621,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Returns an unmodifiable view onto all names
-	 * for the given container.
-	 *
-	 * ~ Double checked, 2014/03/14. FK.
-	 *
-	 * @param container the container whose names are returned.
-	 * @return an unmodifiable view onto all names for the given container
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	public Collection<IName> getAllNames(IContainer container) {
 		Collection<IName> result = new LinkedList<>();
 
@@ -744,13 +638,10 @@ public final class BasicInformationFlowModel {
 	}
 
 
-	/**
-	 * Get all names of the container identified by the given containerName.
-	 * It is ensured that all names within the result are of the specified type.
-	 * @param containerName
-	 * @param type
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(de.tum.in.i22.uc.cm.datatypes.interfaces.IName, java.lang.Class)
 	 */
+	@Override
 	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
 		IContainer cont;
 
@@ -761,16 +652,10 @@ public final class BasicInformationFlowModel {
 		return getAllNames(cont, type);
 	}
 
-	/**
-	 * Get all names of the specified container.
-	 * It is ensured that all names within the result are of the specified type.
-	 *
-	 * ~ Double checked, 2014/04/11. FK.
-	 *
-	 * @param cont the {@link IContainer} whose {@link IName}s will be returned
-	 * @param type the type of the {@link IName}s to be returned
-	 * @return all names of type <T> of the specified container
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, java.lang.Class)
 	 */
+	@Override
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
 		List<T> result = new LinkedList<>();
 
@@ -783,10 +668,10 @@ public final class BasicInformationFlowModel {
 		return Collections.unmodifiableList(result);
 	}
 
-	/**
-	 * Returns all representations that correspond to the process with pid.
-	 *
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNamingsFrom(de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
 	 */
+	@Override
 	/*
 	 *  TODO
 	 *  This method seems odd.
@@ -807,6 +692,10 @@ public final class BasicInformationFlowModel {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#niceString()
+	 */
+	@Override
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
 
@@ -882,6 +771,9 @@ public final class BasicInformationFlowModel {
 		return sb.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#toString()
+	 */
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)

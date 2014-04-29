@@ -33,22 +33,22 @@ public class PxpManager {
 	private static PxpManager _instance;
 	public static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
 
-	public static PxpManager getInstance() {
-		/*
-		 * This implementation may seem odd, overengineered, redundant, or all
-		 * of it. Yet, it is the best way to implement a thread-safe singleton,
-		 * cf.
-		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
-		 * -with-example-code -FK-
-		 */
-		if (_instance == null) {
-			synchronized (PxpManager.class) {
-				if (_instance == null)
-					_instance = new PxpManager();
-			}
-		}
-		return _instance;
-	}
+//	public static PxpManager getInstance() {
+//		/*
+//		 * This implementation may seem odd, overengineered, redundant, or all
+//		 * of it. Yet, it is the best way to implement a thread-safe singleton,
+//		 * cf.
+//		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
+//		 * -with-example-code -FK-
+//		 */
+//		if (_instance == null) {
+//			synchronized (PxpManager.class) {
+//				if (_instance == null)
+//					_instance = new PxpManager();
+//			}
+//		}
+//		return _instance;
+//	}
 
 	public boolean execute(IPdpExecuteAction execAction, boolean synchronous) {
 		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",

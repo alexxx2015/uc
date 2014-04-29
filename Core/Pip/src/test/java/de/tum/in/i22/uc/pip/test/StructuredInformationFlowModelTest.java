@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
-import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 
 public class StructuredInformationFlowModelTest {
 	protected final IMessageFactory _messageFactory = MessageFactoryCreator
@@ -29,10 +29,7 @@ public class StructuredInformationFlowModelTest {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(StructuredInformationFlowModelTest.class);
 
-	private static final BasicInformationFlowModel _ifModel = InformationFlowModelManager
-			.getInstance().getBasicInformationFlowModel();
-	private static final StructuredInformationFlowModel _structureIfm = InformationFlowModelManager
-			.getInstance().getExtension(EInformationFlowModel.STRUCTURE);
+	private static final InformationFlowModelManager _structureIfm = new InformationFlowModelManager();
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {

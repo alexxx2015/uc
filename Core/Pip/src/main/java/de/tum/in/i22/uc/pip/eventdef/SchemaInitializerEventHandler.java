@@ -32,12 +32,12 @@ public class SchemaInitializerEventHandler extends BaseEventHandler {
 			IData data = entry.getValue();
 
 			if (name != null && data != null) {
-				IContainer cont = basicIfModel.getContainer(name);
+				IContainer cont = _informationFlowModel.getContainer(name);
 				if (cont == null) {
 					cont = new ContainerBasic();
-					basicIfModel.addName(name, cont);
+					_informationFlowModel.addName(name, cont);
 				}
-				basicIfModel.addData(data, cont);
+				_informationFlowModel.addData(data, cont);
 			}
 		}
 

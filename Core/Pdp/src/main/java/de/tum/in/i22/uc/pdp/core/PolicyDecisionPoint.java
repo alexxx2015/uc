@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
@@ -40,61 +41,20 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static IPdp2Pip _pip;
 
 	private static IPolicyDecisionPoint instance = null;
-	private ActionDescriptionStore actionDescriptionStore = null;
+	private ActionDescriptionStore _actionDescriptionStore = null;
 	private final HashMap<String, ArrayList<IPdpMechanism>> policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
+	private PxpManager _pxpManager;
 
 	public PolicyDecisionPoint() {
-		this.actionDescriptionStore = new ActionDescriptionStore();
+		_actionDescriptionStore = new ActionDescriptionStore();
+		_pxpManager=new PxpManager();
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip) {
-		this.actionDescriptionStore = new ActionDescriptionStore();
-		this._pip=pip;
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
+		_pxpManager=pxpManager;
+		_actionDescriptionStore = new ActionDescriptionStore();
+		_pip=pip;
 	}
-
-	
-//	public static IPolicyDecisionPoint getInstance() {
-//		return getInstance(null);
-//	}
-
-//	public static IPolicyDecisionPoint getInstance(IPdp2Pip pip) {
-//		/*
-//		 * This implementation may seem odd, overengineered, redundant, or all
-//		 * of it. Yet, it is the best way to implement a thread-safe singleton,
-//		 * cf.
-//		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
-//		 * -with-example-code -FK-
-//		 */
-//		if (instance == null) {
-//			synchronized (PolicyDecisionPoint.class) {
-//				if (instance == null) {
-//					instance = new PolicyDecisionPoint();
-//					log.debug("new PDP instance created");
-//					// instance.deployPolicy("C:\\GIT\\pdp\\Core\\Pdp\\src\\main\\resources\\testTUM.xml");
-//					// instance.deployPolicyURI("/home/florian/testTUM.xml");
-//				}
-//			}
-//		}
-		/**
-		 * This code looks ugly, but it is needed in order to allow the PDP test to run without the need of a PIP reference.
-		 * When getInstance was invoked the first time, if pip was null, the code used to crash.
-		 * This forced the first invocation to getInstance to provide a proper PIP reference.
-		 * But this cannot be created within the PDP (because the PIP is not visible from within this scope).
-		 * Therefore we decided to allow the creation of PDPs without valid PIP reference.
-		 * As soon as one valid reference is provided, that is permanently set for the PDP.
-		 * This explains why we do it using the getInstance method and we do not use a setter instead:
-		 * this value should be set only once.
-		 */
-//		
-//		if (_pip == null && pip != null) {
-//			synchronized (PolicyDecisionPoint.class) {
-//				log.debug("PIP reference for PDP instance initialized");
-//				_pip = pip;
-//			}
-//		}
-//		return instance;
-//	}
-
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
 		log.debug("deployPolicyXML (before)");
@@ -128,15 +88,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			JAXBContext jc = JAXBContext
 					.newInstance("de.tum.in.i22.uc.pdp.xsd");
 			Unmarshaller u = jc.createUnmarshaller();
-
-			// SchemaFactory sf = SchemaFactory.newInstance(
-			// XMLConstants.W3C_XML_SCHEMA_NS_URI );
-			// Schema schema = sf.newSchema( new
-			// File("src/main/resources/xsd/enfLanguage.xsd"));
-			// //Schema schema = sf.newSchema(
-			// PolicyDecisionPoint.class.getResource("xsd/enfLanguage.xsd").toURI().toURL());
-			// u.setSchema(schema);
-			// u.setEventHandler(new PolicyValidationEventHandler());
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
 			PolicyType curPolicy = (PolicyType) poElement.getValue();
@@ -231,7 +182,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			if (mech != null) {
 				mechanisms.remove(mech);
 				if (mech instanceof Mechanism) {
-					this.actionDescriptionStore
+					this._actionDescriptionStore
 							.removeMechanism(((Mechanism) mech)
 									.getTriggerEvent().getAction());
 				}
@@ -242,7 +193,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public Decision notifyEvent(Event event) {
-		ArrayList<EventMatch> eventMatchList = this.actionDescriptionStore
+		ArrayList<EventMatch> eventMatchList = this._actionDescriptionStore
 				.getEventList(event.getEventAction());
 		if (eventMatchList == null)
 			eventMatchList = new ArrayList<EventMatch>();
@@ -255,7 +206,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			eventMatch.evaluate(event);
 		}
 
-		ArrayList<Mechanism> mechanismList = this.actionDescriptionStore
+		ArrayList<Mechanism> mechanismList = this._actionDescriptionStore
 				.getMechanismList(event.getEventAction());
 		if (mechanismList == null)
 			mechanismList = new ArrayList<Mechanism>();
@@ -264,7 +215,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				event.getEventAction(), mechanismList.size());
 
 		Decision d = new Decision(new AuthorizationAction("default",
-				Constants.AUTHORIZATION_ALLOW));
+				Constants.AUTHORIZATION_ALLOW),_pxpManager);
 		for (Mechanism mech : mechanismList) {
 			log.info("Processing mechanism [{}] for event [{}]",
 					mech.getMechanismName(), event.getEventAction());
@@ -303,13 +254,18 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public IPdp2Pip get_pip() {
+	public IPdp2Pip getPip() {
 		return _pip;
 	}
 
 	@Override
 	public ActionDescriptionStore getActionDescriptionStore() {
-		return this.actionDescriptionStore;
+		return this._actionDescriptionStore;
 	}
 
+	@Override
+	public PxpManager getPxpManager(){
+		return _pxpManager;
+	}
+	
 }

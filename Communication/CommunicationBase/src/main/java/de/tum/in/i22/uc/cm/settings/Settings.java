@@ -22,10 +22,10 @@ import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
- * 
+ *
  * @author Florian Kelbert Settings are read from the specified properties file.
  *         If no file is specified, file "uc.properties" is used.
- * 
+ *
  */
 public class Settings extends SettingsLoader {
 
@@ -35,8 +35,49 @@ public class Settings extends SettingsLoader {
 
 	private static String _propertiesFile = "uc.properties";
 
-	private Settings() {
+	private static final String PROP_NAME_pdpListenerPort = "pdpListenerPort";
+	private static final String PROP_NAME_pmpListenerPort = "pmpListenerPort";
+	private static final String PROP_NAME_pipListenerPort = "pipListenerPort";
+	private static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 
+	private static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
+	private static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
+
+	private static final String PROP_NAME_pdpLocation = "pdpLocation";
+	private static final String PROP_NAME_pipLocation = "pipLocation";
+	private static final String PROP_NAME_pmpLocation = "pmpLocation";
+
+	private static final String PROP_NAME_pipEnabledInformationFlowModels = "pipEnabledInformationFlowModels";
+	private static final String PROP_NAME_pipEventHandlerSuffix = "pipEventHandlerSuffix";
+	private static final String PROP_NAME_pipEventHandlerPackage = "pipEventHandlerPackage";
+	private static final String PROP_NAME_pipInitializerEvent = "pipInitializerEvent";
+	private static final String PROP_NAME_pipPersistenceDirectory = "pipPersistenceDirectory";
+
+	private static final String PROP_NAME_pipPrintAfterUpdate = "pipPrintAfterUpdate";
+
+	private static final String PROP_NAME_separator1 = "separator1";
+	private static final String PROP_NAME_separator2 = "separator2";
+	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
+
+	private static final String PROP_NAME_pepParameterKey = "pepParameterKey";
+	private static final String PROP_NAME_allowImpliesActualParameterKey = "allowImpliesActualParameterKey";
+
+	private static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
+
+	private static final String PROP_NAME_communicationProtocol = "communicationProtocol";
+
+	private static final String PROP_NAME_distributionStrategy = "distributionStrategy";
+	private static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
+
+	private static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
+
+	private static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
+
+	private static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
+
+
+
+	private Settings() {
 		_settings = new HashMap<>();
 
 		try {
@@ -83,54 +124,53 @@ public class Settings extends SettingsLoader {
 	}
 
 	private void loadProperties() {
+		loadSetting(PROP_NAME_pmpListenerPort, 21001);
+		loadSetting(PROP_NAME_pipListenerPort, 21002);
+		loadSetting(PROP_NAME_pdpListenerPort, 21003);
+		loadSetting(PROP_NAME_anyListenerPort, 21004);
 
-		loadSetting("pdpListenerPort", 100);
-		loadSetting("pmpListenerPort", 21001);
-		loadSetting("pipListenerPort", 21002);
-		loadSetting("pdpListenerPort", 21003);
-		loadSetting("anyListenerPort", 21004);
+		loadSetting(PROP_NAME_pxpListenerPort, 30003);
+		loadSetting(PROP_NAME_anyListenerEnabled, true);
 
-		loadSetting("pxpListenerPort", 30003);
-		loadSetting("anyListenerEnabled", true);
+		loadSetting(PROP_NAME_pdpLocation, LocalLocation.getInstance());
+		loadSetting(PROP_NAME_pipLocation, LocalLocation.getInstance());
+		loadSetting(PROP_NAME_pmpLocation, LocalLocation.getInstance());
 
-		loadSetting("pdpLocation", LocalLocation.getInstance());
-		loadSetting("pipLocation", LocalLocation.getInstance());
-		loadSetting("pmpLocation", LocalLocation.getInstance());
+		loadSetting(PROP_NAME_pipEnabledInformationFlowModels, "scope");
+		loadSetting(PROP_NAME_pipEventHandlerSuffix, "EventHandler");
+		loadSetting(PROP_NAME_pipEventHandlerPackage, "de.tum.in.i22.uc.pip.eventdef.");
+		loadSetting(PROP_NAME_pipInitializerEvent, "SchemaInitializer");
+		loadSetting(PROP_NAME_pipPersistenceDirectory, "pipdb");
 
-		loadSetting("pipEnabledInformationFlowModels", "scope@structure");
-		loadSetting("pipEventHandlerSuffix", "EventHandler");
-		loadSetting("pipEventHandlerPackage", "de.tum.in.i22.uc.pip.eventdef.");
-		loadSetting("pipInitializerEvent", "SchemaInitializer");
-		loadSetting("pipPersistenceDirectory", "pipdb");
+		loadSetting(PROP_NAME_pipPrintAfterUpdate, true);
 
-		loadSetting("pipPrintAfterUpdate", true);
+		loadSetting(PROP_NAME_separator1, "@");
+		loadSetting(PROP_NAME_separator2, "#");
+		loadSetting(PROP_NAME_prefixSeparator, "_");
 
-		loadSetting("separator1", "@");
-		loadSetting("separator2", "#");
-		loadSetting("prefixSeparator", "_");
+		loadSetting(PROP_NAME_pepParameterKey, "PEP");
+		loadSetting(PROP_NAME_allowImpliesActualParameterKey, "allowImpliesActual");
 
-		loadSetting("pepParameterKey", "PEP");
-		loadSetting("allowImpliesActualParameterKey", "allowImpliesActual");
-
-		loadSetting("pipInitialRepresentations", new HashMap<IName, IData>() {
+		loadSetting(PROP_NAME_pipInitialRepresentations, new HashMap<IName, IData>() {
 			private static final long serialVersionUID = -2810488356921449504L;
 			{
 				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
 			}
 		});
 
-		loadSetting("communicationProtocol", ECommunicationProtocol.THRIFT,
+		loadSetting(PROP_NAME_communicationProtocol, ECommunicationProtocol.THRIFT,
 				ECommunicationProtocol.class);
 
-		loadSetting("distributionStrategy", EDistributionStrategy.PUSH,
+		loadSetting(PROP_NAME_distributionStrategy, EDistributionStrategy.PUSH,
 				EDistributionStrategy.class);
-		loadSetting("pipDistributionMaxConnections", 5);
+		loadSetting(PROP_NAME_pipDistributionMaxConnections, 5);
 
-		loadSetting("pdpDistributionMaxConnections", 5);
+		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
 
-		loadSetting("pmpDistributionMaxConnections", 5);
+		loadSetting(PROP_NAME_pmpDistributionMaxConnections, 5);
 		loadSetting("connectionAttemptInterval", 1000);
 		
+		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -170,7 +210,7 @@ public class Settings extends SettingsLoader {
 	/**
 	 * Loads the initial representations for the Pip. They are expected to be in
 	 * the format <ContainerName1>:<DataId1>;<ContainerName2>:<DataId2>; ...
-	 * 
+	 *
 	 * @param propName
 	 *            the property name
 	 * @param defaultValue
@@ -222,127 +262,127 @@ public class Settings extends SettingsLoader {
 	}
 
 	public int getPmpListenerPort() {
-		return getValue("pmpListenerPort");
+		return getValue(PROP_NAME_pmpListenerPort);
 	}
 
 	public int getPipListenerPort() {
-		return getValue("pipListenerPort");
+		return getValue(PROP_NAME_pipListenerPort);
 	}
 
 	public int getPdpListenerPort() {
-		return getValue("pdpListenerPort");
+		return getValue(PROP_NAME_pdpListenerPort);
 	}
 
 	public int getPxpListenerPort() {
-		return getValue("pxpListenerPort");
+		return getValue(PROP_NAME_pxpListenerPort);
 	}
 
 	public int getAnyListenerPort() {
-		return getValue("anyListenerPort");
+		return getValue(PROP_NAME_anyListenerPort);
 	}
 
 	public boolean isPmpListenerEnabled() {
-		Location l = getValue("pmpLocation");
+		Location l = getValue(PROP_NAME_pmpLocation);
 		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
 	}
 
 	public boolean isPipListenerEnabled() {
-		Location l = getValue("pipLocation");
+		Location l = getValue(PROP_NAME_pipLocation);
 		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
 	}
 
 	public boolean isPdpListenerEnabled() {
-		Location l = getValue("pdpLocation");
+		Location l = getValue(PROP_NAME_pdpLocation);
 		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
 	}
 
 	public boolean isAnyListenerEnabled() {
-		return getValue("anyListenerEnabled");
+		return getValue(PROP_NAME_anyListenerEnabled);
 	}
 
 	public EDistributionStrategy getDistributionStrategy() {
-		return getValue("distributionStrategy");
+		return getValue(PROP_NAME_distributionStrategy);
 	}
 
 	public String getPipEventHandlerPackage() {
-		return getValue("pipEventHandlerPackage");
+		return getValue(PROP_NAME_pipEventHandlerPackage);
 	}
 
 	public String getPipEventHandlerSuffix() {
-		return getValue("pipEventHandlerSuffix");
+		return getValue(PROP_NAME_pipEventHandlerSuffix);
 	}
 
 	public Set<EInformationFlowModel> getEnabledInformationFlowModels() {
-		return EInformationFlowModel.from((String)getValue("pipEnabledInformationFlowModels"));
+		return EInformationFlowModel.from((String)getValue(PROP_NAME_pipEnabledInformationFlowModels));
 	}
 
 	public Location getPdpLocation() {
-		return getValue("pdpLocation");
+		return getValue(PROP_NAME_pdpLocation);
 	}
 
 	public Location getPipLocation() {
-		return getValue("pipLocation");
+		return getValue(PROP_NAME_pipLocation);
 	}
 
 	public Location getPmpLocation() {
-		return getValue("pmpLocation");
+		return getValue(PROP_NAME_pmpLocation);
 	}
 
 	public String getPipInitializerEvent() {
-		return getValue("pipInitializerEvent");
+		return getValue(PROP_NAME_pipInitializerEvent);
 	}
 
 	public String getPipPersistenceDirectory() {
-		return getValue("pipPersistenceDirectory");
+		return getValue(PROP_NAME_pipPersistenceDirectory);
 	}
 
 	public boolean getPipPrintAfterUpdate() {
-		return getValue("pipPrintAfterUpdate");
+		return getValue(PROP_NAME_pipPrintAfterUpdate);
 	}
 
 	public ECommunicationProtocol getCommunicationProtocol() {
-		return getValue("communicationProtocol");
+		return getValue(PROP_NAME_communicationProtocol);
 	}
 
 	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
-		return Collections.unmodifiableMap((Map<IName, IData>)getValue("pipInitialRepresentations"));
+		return Collections.unmodifiableMap((Map<IName, IData>)getValue(PROP_NAME_pipInitialRepresentations));
 	}
 
 	public int getPipDistributionMaxConnections() {
-		return getValue("pipDistributionMaxConnections");
+		return getValue(PROP_NAME_pipDistributionMaxConnections);
 	}
 
 	public int getPdpDistributionMaxConnections() {
-		return getValue("pdpDistributionMaxConnections");
+		return getValue(PROP_NAME_pdpDistributionMaxConnections);
 	}
 
 	public int getPmpDistributionMaxConnections() {
-		return getValue("pmpDistributionMaxConnections");
+		return getValue(PROP_NAME_pmpDistributionMaxConnections);
 	}
 
 	public int getConnectionAttemptInterval() {
-		return getValue("connectionAttemptInterval");
+		return getValue(PROP_NAME_connectionAttemptInterval);
 	}
 
 	public String getSeparator1() {
-		return getValue("separator1");
+		return getValue(PROP_NAME_separator1);
 	}
 
 	public String getSeparator2() {
-		return getValue("separator2");
+		return getValue(PROP_NAME_separator2);
 	}
 
 	public String getPrefixSeparator() {
-		return getValue("prefixSeparator");
+		return getValue(PROP_NAME_prefixSeparator);
 	}
 
 	public String getPepParameterKey() {
-		return getValue("pepParameterKey");
+		return getValue(PROP_NAME_pepParameterKey);
 	}
 
 	public String getAllowImpliesActualParameterKey() {
-		return getValue("allowImpliesActualParameterKey");
+		return getValue(PROP_NAME_allowImpliesActualParameterKey);
 	}
 
 }

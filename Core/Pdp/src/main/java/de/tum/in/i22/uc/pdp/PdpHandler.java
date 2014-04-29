@@ -32,8 +32,12 @@ public class PdpHandler extends PdpProcessor {
 
 	private IPolicyDecisionPoint _lpdp;
 
+	private PxpManager _pxpManager;
+	
+	
 	public PdpHandler() {
 		super(LocalLocation.getInstance());
+		_pxpManager=new PxpManager();
 		init(new DummyPipProcessor(), new DummyPmpProcessor());
 	}
 
@@ -78,7 +82,7 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public boolean registerPxp(PxpSpec pxp) {
-		return PxpManager.getInstance().registerPxp(pxp);
+		return _pxpManager.registerPxp(pxp);
 	}
 
 	@Override
@@ -126,6 +130,6 @@ public class PdpHandler extends PdpProcessor {
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is "
 				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip);
+		_lpdp = new PolicyDecisionPoint(pip,_pxpManager);
 	}
 }

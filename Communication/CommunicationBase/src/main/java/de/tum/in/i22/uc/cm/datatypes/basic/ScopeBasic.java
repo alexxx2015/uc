@@ -1,17 +1,18 @@
-package de.tum.in.i22.uc.pip.extensions.crosslayer;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import de.tum.in.i22.uc.pip.interfaces.EScopeType;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 
 /**
  * @author lovat
  *
  */
-public class Scope {
+public class ScopeBasic implements IScope {
 	// Define a class of scopes.
 	// This is used as a simple filter to rule out certain scopes when searching
 	// for a specific one
@@ -22,11 +23,11 @@ public class Scope {
 	private final Map<String, Object> _attributes;
 	private final EScopeType _scopeType;
 
-	public Scope() {
+	public ScopeBasic() {
 		this("<empty scope>", EScopeType.EMPTY, Collections.<String, Object> emptyMap());
 	}
 
-	public Scope(String humanReadableName, EScopeType st, Map<String, Object> attributes) {
+	public ScopeBasic(String humanReadableName, EScopeType st, Map<String, Object> attributes) {
 		_id = UUID.randomUUID().toString();
 		_humanReadableName = humanReadableName;
 		_attributes = attributes;
@@ -54,8 +55,8 @@ public class Scope {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof  Scope) {
-			Scope o = (Scope) obj;
+		if (obj instanceof  ScopeBasic) {
+			ScopeBasic o = (ScopeBasic) obj;
 			return Objects.equals(_scopeType, o._scopeType)
 					&& Objects.equals(_attributes, o._attributes);
 		}

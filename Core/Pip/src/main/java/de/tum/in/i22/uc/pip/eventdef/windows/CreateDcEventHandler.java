@@ -4,7 +4,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -13,7 +12,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Stoimenov
  *
  */
-public class CreateDcEventHandler extends BaseEventHandler {
+public class CreateDcEventHandler extends WindowsEvents {
 
 	public CreateDcEventHandler() {
 		super();
@@ -34,19 +33,19 @@ public class CreateDcEventHandler extends BaseEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer processContainer = WindowsEvents.instantiateProcess(pid, processName);
+		IContainer processContainer = instantiateProcess(pid, processName);
 
-		IContainer deviceContainer = basicIfModel.getContainer(new NameBasic(
+		IContainer deviceContainer = _informationFlowModel.getContainer(new NameBasic(
 				deviceName));
 
 		// check if container for device exists and create new container if not
 		if (deviceContainer == null) {
 			deviceContainer = _messageFactory.createContainer();
-			basicIfModel.addName(new NameBasic(deviceName), deviceContainer);
+			_informationFlowModel.addName(new NameBasic(deviceName), deviceContainer);
 		}
 
-		basicIfModel.addData(
-				basicIfModel.getData(processContainer),
+		_informationFlowModel.addData(
+				_informationFlowModel.getData(processContainer),
 				deviceContainer);
 
 		return _messageFactory.createStatus(EStatus.OKAY);

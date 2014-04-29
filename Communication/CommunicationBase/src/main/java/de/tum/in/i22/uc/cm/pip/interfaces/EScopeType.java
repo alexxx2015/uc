@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.interfaces;
+package de.tum.in.i22.uc.cm.pip.interfaces;
 
 
 // TODO Ugly. Generic type ScopeType should not contain layer/application specific parts.

@@ -31,9 +31,9 @@ public class RenameEventHandler extends BaseEventHandler {
 		IName oldN = FilenameName.create(host, LinuxEvents.toRealPath(oldName));
 		IName newN = FilenameName.create(host, LinuxEvents.toRealPath(newName));
 
-		basicIfModel.removeName(newN);
-		basicIfModel.addName(oldN, newN);
-		basicIfModel.removeName(oldN);
+		_informationFlowModel.removeName(newN);
+		_informationFlowModel.addName(oldN, newN);
+		_informationFlowModel.removeName(oldN);
 
 		return STATUS_OKAY;
 	}

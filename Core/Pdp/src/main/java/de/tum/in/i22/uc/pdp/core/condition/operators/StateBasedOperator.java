@@ -40,7 +40,7 @@ public class StateBasedOperator extends StateBasedOperatorType {
 	@Override
 	public boolean evaluate(Event curEvent) {
 
-		IPdp2Pip pip = this._pdp.get_pip();
+		IPdp2Pip pip = this._pdp.getPip();
 		String separator= Settings.getInstance().getSeparator1();
 		
 		if (pip == null) {

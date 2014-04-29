@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
+import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.pip.extensions.crosslayer.Scope;
-import de.tum.in.i22.uc.pip.interfaces.EScopeType;
 
 abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 	/*
@@ -64,18 +62,18 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 		}
 
 		if (delimiter.equals(_openDelimiter)) {
-			Scope scope = new Scope(HRscope + filename,
+			ScopeBasic scope = new ScopeBasic(HRscope + filename,
 					type, attributes);
 			// opening already handled at step 2 of executeEvent in BaseEventHandler
 			//			openScope(scope);
-			if (_scopesToBeOpened==null) _scopesToBeOpened=new HashSet<Scope>();
+			if (_scopesToBeOpened==null) _scopesToBeOpened=new HashSet<ScopeBasic>();
 			_scopesToBeOpened.add(scope);
 		} else if (delimiter.equals(_closeDelimiter)) {
-			Scope scope = new Scope(HRscope + filename,
+			ScopeBasic scope = new ScopeBasic(HRscope + filename,
 					type, attributes);
 			// closing already handled at step 4 of executeEvent in BaseEventHandler
 			//			closeScope(scope);
-			if (_scopesToBeClosed==null) _scopesToBeClosed=new HashSet<Scope>();
+			if (_scopesToBeClosed==null) _scopesToBeClosed=new HashSet<ScopeBasic>();
 			_scopesToBeClosed.add(scope);
 		}
 

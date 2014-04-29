@@ -41,12 +41,19 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	public boolean isStarted = false;
 	private Thread updateThread = null;
 
+	private PxpManager _pxpManager;
+	
 	public Mechanism() {
 	}
 
 	public Mechanism(MechanismBaseType mech, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		log.debug("Preparing mechanism from MechanismBaseType");
 		this.pdp = pdp;
+		if (pdp==null){
+			log.error("Impossible to take proper decision with a null pdp. failing miserably");
+			throw new RuntimeException();
+		}
+		this._pxpManager=pdp.getPxpManager();
 		this.mechanismName = mech.getName();
 		this.description = mech.getDescription();
 		this.lastUpdate = 0;
@@ -274,7 +281,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 						else {
 							log.debug("Execute asynchronous action [{}]",
 									execAction.getName());
-							PxpManager.getInstance().execute(execAction, false);
+							_pxpManager.execute(execAction, false);
 						}
 					}
 				}

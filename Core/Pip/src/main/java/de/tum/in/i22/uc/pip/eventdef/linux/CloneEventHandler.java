@@ -11,10 +11,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.IClonableForProcess;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class CloneEventHandler extends BaseEventHandler {
+public class CloneEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -39,12 +38,12 @@ public class CloneEventHandler extends BaseEventHandler {
 		IName oldProcName = ProcessName.create(host, parentPid);
 
 		IContainer newProcCont = new ProcessContainer(host, childPid);
-		ProcessContainer oldProcCont = (ProcessContainer) basicIfModel.getContainer(oldProcName);
+		ProcessContainer oldProcCont = (ProcessContainer) _informationFlowModel.getContainer(oldProcName);
 
 		// Add a container for the old process, if it did not yet exist (should not happen).
 		if (oldProcCont == null) {
 			oldProcCont = new ProcessContainer(host, parentPid);
-			basicIfModel.addName(oldProcName, oldProcCont);
+			_informationFlowModel.addName(oldProcName, oldProcCont);
 		}
 
 		if (flagSet.contains("CLONE_FILES")) {
@@ -53,25 +52,25 @@ public class CloneEventHandler extends BaseEventHandler {
 		}
 
 		// Add the container for the newly created child
-		basicIfModel.addName(newProcName, newProcCont);
+		_informationFlowModel.addName(newProcName, newProcCont);
 
 		// Copy all process relative names from the old parent process to the new child process
-		for (IName name : LinuxEvents.getAllProcessRelativeNames(oldProcCont.getPid())) {
+		for (IName name : getAllProcessRelativeNames(oldProcCont.getPid())) {
 			if (name instanceof IClonableForProcess) {
 				IClonableForProcess n = (IClonableForProcess) name;
-				basicIfModel.addName(n.cloneFor(childPid), basicIfModel.getContainer(n));
+				_informationFlowModel.addName(n.cloneFor(childPid), _informationFlowModel.getContainer(n));
 			}
 		}
 
 		// Clone all aliases
-		for (IContainer cont : basicIfModel.getAliasesFrom(oldProcCont)) {
-			basicIfModel.addAlias(newProcCont, cont);
+		for (IContainer cont : _informationFlowModel.getAliasesFrom(oldProcCont)) {
+			_informationFlowModel.addAlias(newProcCont, cont);
 		}
-		for (IContainer cont : basicIfModel.getAliasesTo(oldProcCont)) {
-			basicIfModel.addAlias(cont, newProcCont);
+		for (IContainer cont : _informationFlowModel.getAliasesTo(oldProcCont)) {
+			_informationFlowModel.addAlias(cont, newProcCont);
 		}
 
-		return LinuxEvents.copyDataTransitive(oldProcCont, newProcCont);
+		return copyDataTransitive(oldProcCont, newProcCont);
 	}
 
 }

@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -23,30 +24,26 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
+import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
-import de.tum.in.i22.uc.pip.extensions.statebased.InvalidStateBasedFormula;
 import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
-import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
-import de.tum.in.i22.uc.pip.interfaces.IEventHandler;
-import de.tum.in.i22.uc.pip.interfaces.IStateBasedPredicate;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(PipHandler.class);
 
-	private final BasicInformationFlowModel _ifModel;
-	private final StructuredInformationFlowModel _sifm;
+	private final IBasicInformationFlowModel _ifModel;
 
 	private final InformationFlowModelManager _ifModelManager;
 
@@ -62,16 +59,18 @@ public class PipHandler extends PipProcessor {
 	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
 
 	public PipHandler() {
+		this(new InformationFlowModelManager());
+	}
+
+	public PipHandler(InformationFlowModelManager ifmModelManager) {
 		super(LocalLocation.getInstance());
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
 		_distributedPipManager = new PipDistributionManager();
-		_ifModelManager = InformationFlowModelManager.getInstance();
+		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
-		_sifm = _ifModelManager.getExtension(EInformationFlowModel.STRUCTURE);
-		
-		
+
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
 				null, true));
@@ -82,8 +81,8 @@ public class PipHandler extends PipProcessor {
 		IStateBasedPredicate pred;
 
 		try {
-			pred = StateBasedPredicate.create(predicate);
-		} catch (InvalidStateBasedFormula e) {
+			pred = StateBasedPredicate.create(predicate, _ifModelManager);
+		} catch (InvalidStateBasedFormulaException e) {
 			_logger.warn(e.toString());
 			return false;
 		}
@@ -96,7 +95,7 @@ public class PipHandler extends PipProcessor {
 		}
 		try {
 			return pred.evaluate();
-		} catch (InvalidStateBasedFormula e) {
+		} catch (InvalidStateBasedFormulaException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -136,6 +135,7 @@ public class PipHandler extends PipProcessor {
 		}
 
 		actionHandler.setEvent(event);
+		actionHandler.setInformationFlowModel(_ifModelManager);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for "
 				+ event);
@@ -145,7 +145,6 @@ public class PipHandler extends PipProcessor {
 		 * The returned status will tell us whether we have to do some more
 		 * work, namely remote data flow tracking and policy shipment
 		 */
-
 		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
 				&& (status instanceof DistributedPipStatus)) {
 
@@ -312,16 +311,16 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
-		return _sifm.newStructuredData(structure);
+		return _ifModelManager.newStructuredData(structure);
 	}
 
 	@Override
 	public Map<String, Set<IData>> getStructureOf(IData data) {
-		return _sifm.getStructureOf(data);
+		return _ifModelManager.getStructureOf(data);
 	}
 
 	@Override
 	public Set<IData> flattenStructure(IData data) {
-		return _sifm.flattenStructure(data);
+		return _ifModelManager.flattenStructure(data);
 	}
 }

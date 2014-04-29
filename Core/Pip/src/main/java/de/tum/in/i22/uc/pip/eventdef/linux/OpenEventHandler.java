@@ -39,17 +39,17 @@ public class OpenEventHandler extends BaseEventHandler {
 		IName fnName = FilenameName.create(host, LinuxEvents.toRealPath(filename));
 
 		// get the file's container (if present)
-		IContainer cont = basicIfModel.getContainer(fnName);
+		IContainer cont = _informationFlowModel.getContainer(fnName);
 
 		if (cont == null) {
 			cont = new FileContainer();
-			basicIfModel.addName(fnName, cont);
+			_informationFlowModel.addName(fnName, cont);
 		}
 		else if (truncate) {
-			basicIfModel.emptyContainer(cont);
+			_informationFlowModel.emptyContainer(cont);
 		}
 
-		basicIfModel.addName(fdName, cont);
+		_informationFlowModel.addName(fdName, cont);
 
 		return STATUS_OKAY;
 	}

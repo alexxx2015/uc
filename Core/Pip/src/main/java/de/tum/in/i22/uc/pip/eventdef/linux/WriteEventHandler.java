@@ -5,7 +5,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -13,7 +12,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class WriteEventHandler extends BaseEventHandler {
+public class WriteEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -30,9 +29,9 @@ public class WriteEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer srcCont = basicIfModel.getContainer(ProcessName.create(host, pid));
-		IContainer dstCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer srcCont = _informationFlowModel.getContainer(ProcessName.create(host, pid));
+		IContainer dstCont = _informationFlowModel.getContainer(FiledescrName.create(host, pid, fd));
 
-		return LinuxEvents.copyDataTransitive(srcCont, dstCont);
+		return copyDataTransitive(srcCont, dstCont);
 	}
 }

@@ -6,7 +6,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
@@ -14,7 +13,7 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class ReadEventHandler extends BaseEventHandler {
+public class ReadEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -31,18 +30,18 @@ public class ReadEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer fileCont = basicIfModel.getContainer(FiledescrName.create(host, pid, fd));
+		IContainer fileCont = _informationFlowModel.getContainer(FiledescrName.create(host, pid, fd));
 		if (fileCont == null) {
 			return STATUS_OKAY;
 		}
 
 		ProcessName procName = ProcessName.create(host, pid);
-		IContainer procCont = basicIfModel.getContainer(procName);
+		IContainer procCont = _informationFlowModel.getContainer(procName);
 		if (procCont == null) {
 			procCont = new ProcessContainer(host, pid);
-			basicIfModel.addName(procName, procCont);
+			_informationFlowModel.addName(procName, procCont);
 		}
 
-		return LinuxEvents.copyDataTransitive(fileCont, procCont);
+		return copyDataTransitive(fileCont, procCont);
 	}
 }
