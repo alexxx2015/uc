@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cassandra.DistributionManager;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -84,10 +85,12 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private Set<Integer> _portsUsed;
 	private Settings _settings;
 	private IClientFactory clientFactory;
-	
+
 	private PdpProcessor pdp;
 	private PipProcessor pip;
 	private PmpProcessor pmp;
+
+	private DistributionManager _distributionManager;
 
 	/**
 	 * Creates a new {@link RequestHandler} by invoking
@@ -98,11 +101,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 	}
 
-	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
-		init(pdpLocation, pipLocation, pmpLocation);
-	}
-	
-	
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
 	 * components are run. If a location is an instance of {@link LocalLocation}, a
@@ -113,6 +111,11 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	 * @param pipLocation
 	 * @param pmpLocation
 	 */
+	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+		init(pdpLocation, pipLocation, pmpLocation);
+	}
+
+
 	private void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
@@ -523,7 +526,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.stop();
 		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
 	}
-	
+
 	public void stop() {
 		_requestQueueManager.stop();
 	}
@@ -548,5 +551,4 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
-	
 }
