@@ -6,7 +6,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -103,15 +102,15 @@ class RequestQueueManager implements Runnable {
 	}
 
 	public void stop() {
-		_requestQueue.add(new RequestWrapper(new PoisonPillRequest(), null));		
+		_requestQueue.add(new RequestWrapper(new PoisonPillRequest(), null));
 	}
-	
+
 	private class PoisonPillProcessor extends Processor<PoisonPillProcessor, PoisonPillProcessor>{
 
 		public PoisonPillProcessor() {
 			super(null);
 		}
-		
+
 	}
 	private class PoisonPillRequest extends Request<Object, PoisonPillProcessor>{
 
@@ -120,6 +119,6 @@ class RequestQueueManager implements Runnable {
 			run=false;
 			return null;
 		}
-		
+
 	}
 }

@@ -84,7 +84,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private Set<Integer> _portsUsed;
 	private Settings _settings;
 	private IClientFactory clientFactory;
-	
+
 	private PdpProcessor pdp;
 	private PipProcessor pip;
 	private PmpProcessor pmp;
@@ -101,8 +101,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		init(pdpLocation, pipLocation, pmpLocation);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
 	 * components are run. If a location is an instance of {@link LocalLocation}, a
@@ -212,21 +212,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private Set<Integer> portsInUse() {
 		Set<Integer> result = new HashSet<>();
 
-		if (_settings.isPdpListenerEnabled()) {
-			result.add(_settings.getPdpListenerPort());
-		}
-
-		if (_settings.isPipListenerEnabled()) {
-			result.add(_settings.getPipListenerPort());
-		}
-
-		if (_settings.isPmpListenerEnabled()) {
-			result.add(_settings.getPmpListenerPort());
-		}
-
-		if (_settings.isAnyListenerEnabled()) {
-			result.add(_settings.getAnyListenerPort());
-		}
+		if (_settings.isPdpListenerEnabled()) result.add(_settings.getPdpListenerPort());
+		if (_settings.isPipListenerEnabled()) result.add(_settings.getPipListenerPort());
+		if (_settings.isPmpListenerEnabled()) result.add(_settings.getPmpListenerPort());
+		if (_settings.isAnyListenerEnabled()) result.add(_settings.getAnyListenerPort());
 
 		return result;
 	}
@@ -249,6 +238,50 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 		return true;
 	}
+
+
+	/**
+	 * Waits for the specified request to be processed.
+	 * Once the corresponding response is ready, execution
+	 * continues and the request's response is returned.
+	 *
+	 * @param request the request for whose processing/response is waited for.
+	 * @return the response corresponding to the request.
+	 */
+	private <T> T waitForResponse(Request<T,?> request) {
+		T result = null;
+
+		synchronized (this) {
+			while (!request.responseReady()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {	}
+			}
+			result = request.getResponse();
+		}
+
+		return result;
+	}
+
+	@Override
+	public void forwardResponse(Request<?,?> request, Object response) {
+		synchronized (this) {
+			request.setResponse(response);
+			notifyAll();
+		}
+	}
+
+
+	@Override
+	public void reset() {
+		_requestQueueManager.stop();
+		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
+	}
+
+	public void stop() {
+		_requestQueueManager.stop();
+	}
+
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
@@ -485,49 +518,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return waitForResponse(request);
 	}
 
-
-	/**
-	 * Waits for the specified request to be processed.
-	 * Once the corresponding response is ready, execution
-	 * continues and the request's response is returned.
-	 *
-	 * @param request the request for whose processing/response is waited for.
-	 * @return the response corresponding to the request.
-	 */
-	private <T> T waitForResponse(Request<T,?> request) {
-		T result = null;
-
-		synchronized (this) {
-			while (!request.responseReady()) {
-				try {
-					wait();
-				} catch (InterruptedException e) {	}
-			}
-			result = request.getResponse();
-		}
-
-		return result;
-	}
-
-	@Override
-	public void forwardResponse(Request<?,?> request, Object response) {
-		synchronized (this) {
-			request.setResponse(response);
-			notifyAll();
-		}
-	}
-
-
-	@Override
-	public void reset() {
-		_requestQueueManager.stop();
-		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
-	}
-	
-	public void stop() {
-		_requestQueueManager.stop();
-	}
-
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
 		NewStructuredDataPipRequest request = new NewStructuredDataPipRequest(structure);
@@ -548,5 +538,5 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
-	
+
 }
