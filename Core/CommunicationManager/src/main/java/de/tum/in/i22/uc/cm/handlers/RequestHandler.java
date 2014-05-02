@@ -11,7 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cassandra.DistributionManager;
+import de.tum.in.i22.uc.cassandra.IDistributionManager;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -90,7 +90,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private PipProcessor pip;
 	private PmpProcessor pmp;
 
-	private DistributionManager _distributionManager;
+	private IDistributionManager _distributionManager;
 
 	/**
 	 * Creates a new {@link RequestHandler} by invoking
@@ -100,6 +100,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	public RequestHandler() {
 		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 	}
+
 
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
@@ -215,21 +216,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private Set<Integer> portsInUse() {
 		Set<Integer> result = new HashSet<>();
 
-		if (_settings.isPdpListenerEnabled()) {
-			result.add(_settings.getPdpListenerPort());
-		}
-
-		if (_settings.isPipListenerEnabled()) {
-			result.add(_settings.getPipListenerPort());
-		}
-
-		if (_settings.isPmpListenerEnabled()) {
-			result.add(_settings.getPmpListenerPort());
-		}
-
-		if (_settings.isAnyListenerEnabled()) {
-			result.add(_settings.getAnyListenerPort());
-		}
+		if (_settings.isPdpListenerEnabled()) result.add(_settings.getPdpListenerPort());
+		if (_settings.isPipListenerEnabled()) result.add(_settings.getPipListenerPort());
+		if (_settings.isPmpListenerEnabled()) result.add(_settings.getPmpListenerPort());
+		if (_settings.isAnyListenerEnabled()) result.add(_settings.getAnyListenerPort());
 
 		return result;
 	}
@@ -252,6 +242,50 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 		return true;
 	}
+
+
+	/**
+	 * Waits for the specified request to be processed.
+	 * Once the corresponding response is ready, execution
+	 * continues and the request's response is returned.
+	 *
+	 * @param request the request for whose processing/response is waited for.
+	 * @return the response corresponding to the request.
+	 */
+	private <T> T waitForResponse(Request<T,?> request) {
+		T result = null;
+
+		synchronized (this) {
+			while (!request.responseReady()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {	}
+			}
+			result = request.getResponse();
+		}
+
+		return result;
+	}
+
+	@Override
+	public void forwardResponse(Request<?,?> request, Object response) {
+		synchronized (this) {
+			request.setResponse(response);
+			notifyAll();
+		}
+	}
+
+
+	@Override
+	public void reset() {
+		_requestQueueManager.stop();
+		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
+	}
+
+	public void stop() {
+		_requestQueueManager.stop();
+	}
+
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
@@ -488,48 +522,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return waitForResponse(request);
 	}
 
-
-	/**
-	 * Waits for the specified request to be processed.
-	 * Once the corresponding response is ready, execution
-	 * continues and the request's response is returned.
-	 *
-	 * @param request the request for whose processing/response is waited for.
-	 * @return the response corresponding to the request.
-	 */
-	private <T> T waitForResponse(Request<T,?> request) {
-		T result = null;
-
-		synchronized (this) {
-			while (!request.responseReady()) {
-				try {
-					wait();
-				} catch (InterruptedException e) {	}
-			}
-			result = request.getResponse();
-		}
-
-		return result;
-	}
-
-	@Override
-	public void forwardResponse(Request<?,?> request, Object response) {
-		synchronized (this) {
-			request.setResponse(response);
-			notifyAll();
-		}
-	}
-
-
-	@Override
-	public void reset() {
-		_requestQueueManager.stop();
-		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
-	}
-
-	public void stop() {
-		_requestQueueManager.stop();
-	}
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
