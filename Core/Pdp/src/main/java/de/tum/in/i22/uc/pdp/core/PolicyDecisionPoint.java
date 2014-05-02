@@ -40,6 +40,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static IPdp2Pip _pip;
 
 	private ActionDescriptionStore _actionDescriptionStore = null;
+
 	private final HashMap<String, ArrayList<IPdpMechanism>> _policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 	private final PxpManager _pxpManager;
 
@@ -174,7 +175,9 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			if (mech != null) {
 				mechanisms.remove(mech);
 				if (mech instanceof Mechanism) {
-					_actionDescriptionStore.removeMechanism(((Mechanism) mech).getTriggerEvent().getAction());
+					_actionDescriptionStore
+					.removeMechanism(((Mechanism) mech)
+							.getTriggerEvent().getAction());
 				}
 			}
 		}

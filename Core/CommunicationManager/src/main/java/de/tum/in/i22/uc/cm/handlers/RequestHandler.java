@@ -84,11 +84,11 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	private Set<Integer> _portsUsed;
 	private Settings _settings;
-	private IClientFactory clientFactory;
+	private IClientFactory _clientFactory;
 
-	private PdpProcessor pdp;
-	private PipProcessor pip;
-	private PmpProcessor pmp;
+	private PdpProcessor _pdp;
+	private PipProcessor _pip;
+	private PmpProcessor _pmp;
 
 	private IDistributionManager _distributionManager;
 
@@ -120,30 +120,34 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
-		clientFactory = new ThriftClientFactory();
+		_clientFactory = new ThriftClientFactory();
+		//		_distributionManager = new CassandraDistributionManager();
+		//
+		//		// testing/playing
+		//		_distributionManager.playWithMe();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
-		pdp = createPdpHandler(pdpLocation);
-		pip = createPipHandler(pipLocation);
-		pmp = createPmpHandler(pmpLocation);
+		_pdp = createPdpHandler(pdpLocation);
+		_pip = createPipHandler(pipLocation);
+		_pmp = createPmpHandler(pmpLocation);
 
-		while (pdp == null || pip == null || pmp == null) {
+		while (_pdp == null || _pip == null || _pmp == null) {
 			try {
 				int sleep = _settings.getConnectionAttemptInterval();
 				_logger.info("One of the connections failed. Trying again in " + sleep + " milliseconds.");
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {	}
 
-			if (pdp == null) pdp = createPdpHandler(pdpLocation);
-			if (pip == null) pip = createPipHandler(pipLocation);
-			if (pmp == null) pmp = createPmpHandler(pmpLocation);
+			if (_pdp == null) _pdp = createPdpHandler(pdpLocation);
+			if (_pip == null) _pip = createPipHandler(pipLocation);
+			if (_pmp == null) _pmp = createPmpHandler(pmpLocation);
 		}
 
-		pdp.init(pip, pmp);
-		pip.init(pdp, pmp);
-		pmp.init(pip, pdp);
+		_pdp.init(_pip, _pmp);
+		_pip.init(_pdp, _pmp);
+		_pmp.init(_pip, _pdp);
 
-		_requestQueueManager = new RequestQueueManager(pdp, pip, pmp);
+		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp);
 		new Thread(_requestQueueManager).start();
 	}
 
@@ -152,7 +156,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PdpClient pdp = clientFactory.createAny2PdpClient(loc);
+					Any2PdpClient pdp = _clientFactory.createAny2PdpClient(loc);
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -174,7 +178,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PmpClient pmp = clientFactory.createAny2PmpClient(loc);
+					Any2PmpClient pmp = _clientFactory.createAny2PmpClient(loc);
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -196,7 +200,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PipClient pip = clientFactory.createAny2PipClient(loc);
+					Any2PipClient pip = _clientFactory.createAny2PipClient(loc);
 					try {
 						pip.connect();
 					} catch (Exception e) {
@@ -279,7 +283,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public void reset() {
 		_requestQueueManager.stop();
-		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
+		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
 	}
 
 	public void stop() {
@@ -521,7 +525,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
-
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
