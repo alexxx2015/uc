@@ -34,7 +34,7 @@ public class PmpTest extends GenericTest{
 		// To be safe, encoding should be added to the next command
 		String policyString=new String(encoded);
 
-		pmp.deployPolicy(policyString);
+		pmp.deployPolicyRawXMLPmp(policyString);
 
 		try {
 			Thread.sleep(1000);

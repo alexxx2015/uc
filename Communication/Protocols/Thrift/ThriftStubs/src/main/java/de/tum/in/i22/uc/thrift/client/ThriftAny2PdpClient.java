@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -115,7 +116,7 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _impl.deployPolicyXML(XMLPolicy);
 	}
 

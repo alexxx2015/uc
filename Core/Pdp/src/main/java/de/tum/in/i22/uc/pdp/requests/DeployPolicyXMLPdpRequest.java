@@ -1,17 +1,18 @@
 package de.tum.in.i22.uc.pdp.requests;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 public class DeployPolicyXMLPdpRequest extends PdpRequest<IStatus> {
-	private final String _policyPath;
+	private final XmlPolicy _xmlPolicy;
 
-	public DeployPolicyXMLPdpRequest(String policyPath) {
-		_policyPath= policyPath;
+	public DeployPolicyXMLPdpRequest(XmlPolicy xmlPolicy) {
+		_xmlPolicy= xmlPolicy;
 	}
 
 	@Override
 	public IStatus process(PdpProcessor processor) {
-		return processor.deployPolicyXML(_policyPath);
+		return processor.deployPolicyXML(_xmlPolicy);
 	}
 }

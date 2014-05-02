@@ -22,6 +22,7 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
@@ -56,9 +57,9 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public boolean deployPolicyXML(String XMLPolicy) {
+	public boolean deployPolicyXML(XmlPolicy XMLPolicy) {
 		_logger.debug("deployPolicyXML (before)");
-		InputStream is = new ByteArrayInputStream(XMLPolicy.getBytes());
+		InputStream is = new ByteArrayInputStream(XMLPolicy.getXml().getBytes());
 		_logger.debug("deployPolicyXML (IS created)");
 		boolean b = deployXML(is);
 		_logger.debug("deployPolicyXML (after)");

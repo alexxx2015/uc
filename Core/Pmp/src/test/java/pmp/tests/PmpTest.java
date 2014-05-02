@@ -46,7 +46,7 @@ public class PmpTest {
 		// To be safe, encoding should be added to the next command
 		String policyString = new String(encoded);
 
-		pmp.deployPolicy(policyString);
+		pmp.deployPolicyRawXMLPmp(policyString);
 
 		assert true;
 	}

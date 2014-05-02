@@ -8,6 +8,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -15,7 +16,6 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
-import de.tum.in.i22.uc.thrift.types.TStatus;
 
 class ThriftAny2PmpImpl implements IAny2Pmp {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PmpImpl.class);
@@ -24,17 +24,6 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 	public ThriftAny2PmpImpl(TAny2Pmp.Client handle) {
 		_handle = handle;
-	}
-
-
-	@Override
-	public IStatus deployPolicy(String policy) {
-		try {
-			TStatus status = _handle.deployPolicy(policy);
-			return ThriftConverter.fromThrift(status);
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
 	}
 
 	@Override
@@ -86,9 +75,9 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		try {
-			return ThriftConverter.fromThrift(_handle.deployPolicyXMLPmp(XMLPolicy));
+			return ThriftConverter.fromThrift(_handle.deployPolicyXMLPmp(ThriftConverter.toThrift(XMLPolicy)));
 		} catch (TException e) {
 			e.printStackTrace();
 			return null;
@@ -101,6 +90,17 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return _handle.listMechanismsPmp();
 		} catch (TException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		try {
+			return ThriftConverter.fromThrift(_handle.deployPolicyRawXMLPmp(xml));
+		} catch (TException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

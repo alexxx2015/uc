@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -290,7 +291,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _requestHandler.deployPolicyXML(XMLPolicy);
 	}
 
@@ -388,11 +389,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicy(String policy) {
-		return _requestHandler.deployPolicy(policy);
-	}
-
-	@Override
 	public IMechanism exportMechanismPmp(String par) {
 		return _requestHandler.exportMechanismPmp(par);
 	}
@@ -413,7 +409,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		return _requestHandler.deployPolicyXMLPmp(XMLPolicy);
 	}
 
@@ -442,5 +438,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.flattenStructure(data);
 	}
 
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		return _requestHandler.deployPolicyRawXMLPmp(xml);
+	}
 
 }

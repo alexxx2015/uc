@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -69,10 +70,10 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		_logger.debug("deploy policy (Pdp client)");
 		try {
-			return ThriftConverter.fromThrift(_handle.deployPolicyXML(XMLPolicy));
+			return ThriftConverter.fromThrift(_handle.deployPolicyXML(ThriftConverter.toThrift(XMLPolicy)));
 		} catch (TException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

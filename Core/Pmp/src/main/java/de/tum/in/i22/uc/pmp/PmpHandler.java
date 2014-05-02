@@ -29,6 +29,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -56,7 +57,7 @@ public class PmpHandler extends PmpProcessor {
 	 * Maps data to the XML policies in which it occurs.
 	 * Used for fast lookup of policies for a given data.
 	 */
-	private final Map<IData,Set<String>> _dataToPolicies;
+	private final Map<IData,Set<XmlPolicy>> _dataToPolicies;
 
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
@@ -117,24 +118,12 @@ public class PmpHandler extends PmpProcessor {
 		return result;
 	}
 
-	@Override
-	public IStatus deployPolicy(String xmlPolicy) {
-		String output = convertPolicy(xmlPolicy);
-
-		// HERE GOES THE DEPLOYMENT TO THE PDP
-		getPdp().deployPolicyXML(output);
-
-		return new StatusBasic(EStatus.OKAY);
-	}
-
 
 	// TODO for whoever wrote this. Please add a comment what is happening.
 	// Also because it seems that it is not just 'conversion' (e.g.
 	// a new initial representation is created)
 	// Also, please document of which format which strings are (XML?!)
-	public String convertPolicy(String xmlPolicy) {
-		String convertedXmlPolicy = "";
-
+	private XmlPolicy convertPolicy(XmlPolicy xmlPolicy) {
 		IAny2Pip pip = getPip();
 
 		if (pip == null) {
@@ -143,7 +132,7 @@ public class PmpHandler extends PmpProcessor {
 		}
 
 		log.info("converting policy string into object");
-		PolicyType policy = xmlToPolicy(xmlPolicy);
+		PolicyType policy = xmlToPolicy(xmlPolicy.getXml());
 
 		// gathers all data this policy is about
 		Set<IData> allData = new HashSet<>();
@@ -201,11 +190,11 @@ public class PmpHandler extends PmpProcessor {
 		}
 
 		log.info("converting object into policy string");
-		convertedXmlPolicy = policyToXML(policy);
+		XmlPolicy convertedXmlPolicy = new XmlPolicy(xmlPolicy.getName(), policyToXML(policy));
 
 		// map each gathered data to this converted policy.
 		for (IData data : allData) {
-			Set<String> pol = _dataToPolicies.get(data);
+			Set<XmlPolicy> pol = _dataToPolicies.get(data);
 			if (pol == null) {
 				pol = new HashSet<>();
 				_dataToPolicies.put(data, pol);
@@ -223,7 +212,7 @@ public class PmpHandler extends PmpProcessor {
 	 * @param data
 	 * @return
 	 */
-	public Set<String> getPolicies(IData data) {
+	public Set<XmlPolicy> getPolicies(IData data) {
 		return Collections.unmodifiableSet(_dataToPolicies.get(data));
 	}
 
@@ -273,10 +262,16 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		PolicyType policy = xmlToPolicy(xml);
+		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
+	}
+
+	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
 			try {
-				return deployPolicyXMLPmp(com.google.common.io.Files.toString(new File(policyFilePath),Charset.defaultCharset()));
+				return deployPolicyRawXMLPmp(com.google.common.io.Files.toString(new File(policyFilePath),Charset.defaultCharset()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -285,8 +280,9 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String xmlPolicy) {
-		return deployPolicy(xmlPolicy);
+	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
+		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
+		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 
 	@Override

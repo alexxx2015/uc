@@ -8,6 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -86,11 +87,6 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public IStatus deployPolicy(String policy) {
-		return _impl.deployPolicy(policy);
-	}
-
-	@Override
 	public IMechanism exportMechanismPmp(String par) {
 		return _impl.exportMechanismPmp(par);
 	}
@@ -111,13 +107,18 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		return _impl.deployPolicyXMLPmp(XMLPolicy);
 	}
 
 	@Override
 	public Map<String, List<String>> listMechanismsPmp() {
 		return _impl.listMechanismsPmp();
+	}
+
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		return _impl.deployPolicyRawXMLPmp(xml);
 	}
 
 }

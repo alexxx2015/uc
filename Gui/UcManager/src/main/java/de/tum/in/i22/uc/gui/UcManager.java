@@ -432,7 +432,7 @@ public class UcManager extends Controller{
 
 						if (deployedPolicies.size() == 0) {
 							deployedPolicies.add(policy);
-							deployPolicy(jfc.getSelectedFile()
+							deployPolicyFile(jfc.getSelectedFile()
 									.getAbsolutePath());
 						} else {
 							Iterator<String> policyIt = deployedPolicies
@@ -448,7 +448,7 @@ public class UcManager extends Controller{
 							}
 							if (add == true) {
 								deployedPolicies.add(policy);
-								deployPolicy(jfc.getSelectedFile()
+								deployPolicyFile(jfc.getSelectedFile()
 										.getAbsolutePath());
 							}
 						}
