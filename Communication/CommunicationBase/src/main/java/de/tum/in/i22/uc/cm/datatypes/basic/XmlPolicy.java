@@ -1,8 +1,16 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IPolicy;
-
-public class XmlPolicy implements IPolicy {
+/**
+ * This class represents a XML policy. The intuition behind this class
+ * was to not pass around strings whenever we talk about an XML policy,
+ * in order to get some kind of type safety. With the help of this class,
+ * we actually know that we talk about a xml policy (which we wouldn't know when
+ * passing around strings).
+ * 
+ * @author Florian Kelbert
+ *
+ */
+public class XmlPolicy {
 	private final String _name;
 	private final String _xml;
 
