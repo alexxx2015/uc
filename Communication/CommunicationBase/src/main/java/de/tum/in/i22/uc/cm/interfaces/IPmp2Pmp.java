@@ -2,8 +2,6 @@ package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
@@ -17,16 +15,16 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
 @AThriftService(name="TPmp2Pmp")
 public interface IPmp2Pmp {
 	/**
-	 * Transfers the specified policies to this PMP, which
-	 * will then 'manage' them and deploy them at the PDP.
+	 * Transfers the specified policy to this PMP, which
+	 * will then 'manage' it and deploy them at the PDP.
 	 *
-	 * @param policies the transferred policies
+	 * @param policy the transferred policy
 	 * @return
 	 */
-	@AThriftMethod(signature="Types.TStatus remotePolicyTransfer(1: set<string> policies)")
-	public IStatus receivePolicies(Set<String> policies);
-	
-	
+	@AThriftMethod(signature="Types.TStatus deployPolicy(1: string xmlPolicy)")
+	public IStatus deployPolicy(String xmlPolicy);
+
+
 	/**
 	 * 
 	 * Same methods that can be found in the PDP.
@@ -35,7 +33,7 @@ public interface IPmp2Pmp {
 	 * @param par
 	 * @return
 	 */
-	
+
 	@AThriftMethod(signature="// TODO")
 	public IMechanism exportMechanismPmp(String par);
 
@@ -53,5 +51,5 @@ public interface IPmp2Pmp {
 
 	@AThriftMethod(signature="map<string,list<string>> listMechanismsPmp()")
 	public Map<String, List<String>> listMechanismsPmp();
-	
+
 }

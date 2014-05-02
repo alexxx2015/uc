@@ -28,9 +28,9 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
+	public IStatus deployPolicy(String policy) {
 		try {
-			TStatus status = _handle.remotePolicyTransfer(policies);
+			TStatus status = _handle.deployPolicy(policy);
 			return ThriftConverter.fromThrift(status);
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
@@ -59,7 +59,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 

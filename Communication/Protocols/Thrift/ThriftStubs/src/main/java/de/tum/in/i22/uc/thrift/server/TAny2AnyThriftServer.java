@@ -1,16 +1,13 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -158,8 +155,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(Set<String> policies) throws TException {
-		return _pmpServer.remotePolicyTransfer(policies);
+	public TStatus deployPolicy(String policy) throws TException {
+		return _pmpServer.deployPolicy(policy);
 	}
 
 	@Override

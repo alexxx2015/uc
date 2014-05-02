@@ -3,7 +3,6 @@ package pmp.tests;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -47,9 +46,9 @@ public class PmpTest {
 		// To be safe, encoding should be added to the next command
 		String policyString = new String(encoded);
 
-		pmp.receivePolicies(Collections.singleton(policyString));
+		pmp.deployPolicy(policyString);
 
-		assert (true);
+		assert true;
 	}
 
 	private static class MyDummyPipProcessor extends DummyPipProcessor {

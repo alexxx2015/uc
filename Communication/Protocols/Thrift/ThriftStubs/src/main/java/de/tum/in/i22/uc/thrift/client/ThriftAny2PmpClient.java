@@ -86,8 +86,8 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		return _impl.receivePolicies(policies);
+	public IStatus deployPolicy(String policy) {
+		return _impl.deployPolicy(policy);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	private static Logger _logger = LoggerFactory.getLogger(DummyPmpProcessor.class);
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
+	public IStatus deployPolicy(String policies) {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("receivePolicies method invoked");

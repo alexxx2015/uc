@@ -37,9 +37,9 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(Set<String> policies) throws TException {
+	public TStatus deployPolicy(String policy) throws TException {
 		_logger.debug("TAny2Pmp: remotePolicyTransfer");
-		IStatus result = _requestHandler.receivePolicies(policies);
+		IStatus result = _requestHandler.deployPolicy(policy);
 		return ThriftConverter.toThrift(result);
 	}
 

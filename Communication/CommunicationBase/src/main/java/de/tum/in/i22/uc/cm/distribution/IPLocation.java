@@ -21,7 +21,7 @@ public class IPLocation extends Location {
 
 	/**
 	 * Creates an {@link IPLocation} from
-	 * a string of format <host>:<port>, as
+	 * a string of format <host>#<port>, as
 	 * returned by {@link IPLocation#asString()}.
 	 *
 	 * @see IPLocation#asString()
@@ -37,7 +37,7 @@ public class IPLocation extends Location {
 		String hostValue = "";
 		int portValue = 0;
 
-		if (s != null && (arr = s.split(":")).length >= 1 && validator.isValid(arr[0])) {
+		if (s != null && (arr = s.split("#")).length >= 1 && validator.isValid(arr[0])) {
 			try {
 				hostValue = arr[0];
 				success = true;
@@ -62,7 +62,7 @@ public class IPLocation extends Location {
 		super(ELocation.IP);
 
 		if (host == null || port < 0) {
-			throw new InvalidParameterException("[" + host + ":" + port + "]");
+			throw new InvalidParameterException("[" + host + "#" + port + "]");
 		}
 		_host = host;
 		_port = port;
@@ -104,13 +104,13 @@ public class IPLocation extends Location {
 
 	/**
 	 * As prescribed by {@link Location}.
-	 * Returns <host>:<port>.
+	 * Returns <host>#<port>.
 	 *
 	 * @see IPLocation#IPLocation(String)
 	 */
 	@Override
 	public String asString() {
-		return _host + ":" + _port;
+		return _host + "#" + _port;
 	}
 
 	/**

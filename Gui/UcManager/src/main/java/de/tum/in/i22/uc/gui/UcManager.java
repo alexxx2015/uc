@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,7 +41,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
@@ -55,7 +53,7 @@ public class UcManager extends Controller{
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private final LinkedList<String> deployedPolicies = new LinkedList<String>();	
+	private final LinkedList<String> deployedPolicies = new LinkedList<String>();
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -72,9 +70,9 @@ public class UcManager extends Controller{
 	private JTextArea pipTextArea;
 	private static Logger _logger = LoggerFactory.getLogger(UcManager.class);
 
-	private Thread pdpThread;	
-	
-	private ThriftClientFactory clientFactory;
+	private Thread pdpThread;
+
+	private final ThriftClientFactory clientFactory;
 	private Any2PmpClient pmpClient;
 	private Pep2PdpClient pdpClient;
 
@@ -83,7 +81,7 @@ public class UcManager extends Controller{
 	 *	-Djava.rmi.server.hostname=172.16.195.143
 	 *	static{
 	 *		System.setProperty("java.rmi.server.hostname", "172.16.195.181");
-	 *	}	 
+	 *	}
 	 * -agentlib:jdwp=transport=dt_socket ,suspend=y ,address=localhost:47163
 	 * -Djava.library.path=/home/uc/workspace/pef/bin/linux/components/pdp
 	 * -Dfile.encoding=UTF-8 -classpath
@@ -99,7 +97,7 @@ public class UcManager extends Controller{
 		}
 	}
 
-	
+
 	public static void main(String args[]) {
 		UcManager myUCC = new UcManager();
 		myUCC.showGUI();
@@ -128,7 +126,7 @@ public class UcManager extends Controller{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (ucIsRunning == false) {
-//					stopBtn.setEnabled(true);
+					//					stopBtn.setEnabled(true);
 					pipInfoLabel.setText("");
 					pipRefresh.setEnabled(true);
 					pipPopulateBtn.setEnabled(true);
@@ -163,9 +161,9 @@ public class UcManager extends Controller{
 					dtm.getDataVector().removeAllElements();
 					dtm.fireTableDataChanged();
 					deployedPolicies.clear();
-					
+
 					if(!isStarted()){
-						start();						
+						start();
 					}
 					pdpInfoLabel.setText("PDP running");
 					ucIsRunning = true;
@@ -315,7 +313,7 @@ public class UcManager extends Controller{
 	}
 
 	protected void populate(File f){
-		
+
 		try {
 			this.pdpClient.connect();
 		} catch (IOException e1) {
@@ -365,9 +363,9 @@ public class UcManager extends Controller{
 			e.printStackTrace();
 		}
 
-//		/*
-//		 * generate sinks
-//		 */
+		//		/*
+		//		 * generate sinks
+		//		 */
 		try {
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
@@ -411,11 +409,11 @@ public class UcManager extends Controller{
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.VERTICAL;
-//		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		//		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		_return.add(deployedPolicyLab, gbc);
 		gbc.fill = GridBagConstraints.NONE;
 
-//		gbc.fill = GridBagConstraints.HORIZONTAL;
+		//		gbc.fill = GridBagConstraints.HORIZONTAL;
 		this.policyDeployBtn = new JButton("Deploy Policy");
 		this.policyDeployBtn.setEnabled(false);
 		gbc.gridy = 0;
@@ -461,19 +459,19 @@ public class UcManager extends Controller{
 								.getModel();
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
-						
+
 						Map<String, List<String>> deployedMech = pmpClient.listMechanismsPmp();
 						Iterator<String> arIt = deployedMech.keySet().iterator();
 						while (arIt.hasNext()) {
-							String policyName = (String) arIt.next();
+							String policyName = arIt.next();
 							List<String> mechanism = deployedMech.get(policyName);
 							Iterator<String> mechIt = mechanism.iterator();
 							while(mechIt.hasNext()){
 								String m = mechIt.next();
 								((DefaultTableModel) deployedPolicyTable
 										.getModel()).addRow(new Object[] {
-										policyName,
-										m });
+												policyName,
+												m });
 							}
 						}
 					}
@@ -579,12 +577,12 @@ public class UcManager extends Controller{
 	public void stopPDP() {
 		if (this.ucIsRunning) {
 			pdpThread.stop();
-//			this.pdpCtrl.stop();
+			//			this.pdpCtrl.stop();
 			this.ucIsRunning = false;
 		}
 	}
 
-	public void deployPolicy(String policyFile) {
+	public void deployPolicyFile(String policyFile) {
 		try {
 			this.pmpClient.connect();
 		} catch (IOException e) {
@@ -601,8 +599,8 @@ public class UcManager extends Controller{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-//		this.pmpClient.deployPolicyXMLPmp(policy);
+		}
+		//		this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
 	}
 }

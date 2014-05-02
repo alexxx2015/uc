@@ -95,14 +95,14 @@ public class Controller implements IRequestHandler  {
 	public boolean isStarted() {
 		if (_settings == null)
 			return false;
-		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer
-				.started()))
-				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer
-						.started()))
-				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer
-						.started()))
-				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer
-						.started()));
+		return (!_settings.isPdpListenerEnabled() || _pdpServer != null && _pdpServer
+				.started())
+				&& (!_settings.isPipListenerEnabled() || _pipServer != null && _pipServer
+				.started())
+				&& (!_settings.isPmpListenerEnabled() || _pmpServer != null && _pmpServer
+				.started())
+				&& (!_settings.isAnyListenerEnabled() || _anyServer != null && _anyServer
+				.started());
 	}
 
 	public void stop() {
@@ -210,21 +210,21 @@ public class Controller implements IRequestHandler  {
 
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
 	}
 
@@ -241,15 +241,16 @@ public class Controller implements IRequestHandler  {
 
 	public void resetOnlyRequestHandler() {
 		synchronized (this) {
-			_requestHandler.reset();	
+			_requestHandler.reset();
 		}
 	}
 
+	@Override
 	public void reset() {
 		synchronized (this) {
 			stop();
 			resetOnlyRequestHandler();
-			start();	
+			start();
 		}
 	}
 
@@ -387,8 +388,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		return _requestHandler.receivePolicies(policies);
+	public IStatus deployPolicy(String policy) {
+		return _requestHandler.deployPolicy(policy);
 	}
 
 	@Override

@@ -70,7 +70,7 @@ import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
@@ -499,8 +499,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		ReceivePoliciesPmpRequest request = new ReceivePoliciesPmpRequest(policies);
+	public IStatus deployPolicy(String policy) {
+		DeployPolicyPmpRequest request = new DeployPolicyPmpRequest(policy);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
