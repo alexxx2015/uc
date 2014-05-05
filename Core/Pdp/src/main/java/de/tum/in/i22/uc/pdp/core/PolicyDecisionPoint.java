@@ -58,11 +58,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public boolean deployPolicyXML(XmlPolicy XMLPolicy) {
-		_logger.debug("deployPolicyXML (before)");
+		_logger.debug("deployPolicyXML (before) : " + XMLPolicy.getName());
 		InputStream is = new ByteArrayInputStream(XMLPolicy.getXml().getBytes());
-		_logger.debug("deployPolicyXML (IS created)");
+		_logger.debug("deployPolicyXML (IS created) : " + XMLPolicy.getName());
 		boolean b = deployXML(is);
-		_logger.debug("deployPolicyXML (after)");
+		_logger.debug("deployPolicyXML (after) : " + XMLPolicy.getName());
 		return b;
 	}
 
