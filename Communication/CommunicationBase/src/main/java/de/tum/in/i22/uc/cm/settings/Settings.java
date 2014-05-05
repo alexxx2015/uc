@@ -169,7 +169,6 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
 
 		loadSetting(PROP_NAME_pmpDistributionMaxConnections, 5);
-		loadSetting("connectionAttemptInterval", 1000);
 		
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 		
