@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pip.eventdef.java;
  * This class initializes all sinks and sources according to the joana output
  */
 
+import java.util.Set;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -56,7 +58,11 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		//Version 1: signature is used as naming identifier for a container
 		//Version 2: signature+location is used as naming identifier for a container
 		//Version 3: ignature+location+parampos is used as naming identifier for a container
-		String[] infoConts = new String[]{signature, location+delim+offset+delim+signature, location+delim+offset+delim+signature+delim+parampos};
+		String[] infoConts = new String[]{signature
+										, location+delim+offset+delim+signature
+										, location+delim+offset+delim+signature+delim+parampos
+										, location+delim+signature+parampos
+										};
 		for(String infoCont : infoConts){
 			infoCont = prefix + infoCont;
 			if(data == null){
@@ -72,9 +78,13 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 				basicIfModel.addName(new NameBasic(infoCont), signatureCont);
 
 //				IData d= _messageFactory.createData();
-				basicIfModel.addData(data, signatureCont);
+//				basicIfModel.addData(data, signatureCont);
 				_logger.debug(basicIfModel.toString());
 			} else {
+				Set<IData> dataIds = basicIfModel.getData(infoContId);
+				if((dataIds != null) && (dataIds.size() > 0)){
+					data = (IData) dataIds.toArray()[0];
+				}
 				_logger.error("contID = " + infoContId+" Already exists!!!! IMPOSSIBRU!!!");
 			_logger.debug(basicIfModel.toString());
 			}
@@ -84,14 +94,18 @@ public class JoanaInitInfoFlowEventHandler extends BaseEventHandler {
 		IContainer id1 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[0]));
 		IContainer id2 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[1]));
 		IContainer id3 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[2]));
+		IContainer id4 = basicIfModel.getContainer(new NameBasic(prefix+infoConts[3]));
 
 		if(type.toLowerCase().equals("source")){
 			basicIfModel.addAlias(id1, id2);
 			basicIfModel.addAlias(id2, id3);
+			basicIfModel.addAlias(id1, id4);
+			basicIfModel.addAlias(id4, id3);
 		}
 		else if (type.toLowerCase().equals("sink")){
 			basicIfModel.addAlias(id3, id2);
 			basicIfModel.addAlias(id2, id1);
+			basicIfModel.addAlias(id4, id1);			
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);

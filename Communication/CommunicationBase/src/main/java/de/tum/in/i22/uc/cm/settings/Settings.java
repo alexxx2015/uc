@@ -57,6 +57,9 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_separator1 = "separator1";
 	private static final String PROP_NAME_separator2 = "separator2";
+	private static final String PROP_NAME_pipInitialRepresentationSeparator1 = "pipInitialRepresentationSeparator1";
+	private static final String PROP_NAME_pipInitialRepresentationSeparator2 = "pipInitialRepresentationSeparator2";
+	
 	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
 	private static final String PROP_NAME_pepParameterKey = "pepParameterKey";
@@ -146,6 +149,9 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_separator1, "@");
 		loadSetting(PROP_NAME_separator2, "#");
+		loadSetting(PROP_NAME_pipInitialRepresentationSeparator1, ";");
+		loadSetting(PROP_NAME_pipInitialRepresentationSeparator2, ":");
+		
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
 		loadSetting(PROP_NAME_pepParameterKey, "PEP");
@@ -232,7 +238,7 @@ public class Settings extends SettingsLoader {
 		if (stringRead != null && stringRead.length() > 0) {
 
 			// entries are divided by semicolon (;)
-			String[] entries = stringRead.split(";");
+			String[] entries = stringRead.split(getPipInitialRepresentationSeparator1());
 
 			if (entries != null && entries.length > 0) {
 
@@ -240,7 +246,7 @@ public class Settings extends SettingsLoader {
 
 					// each entry is divided by exactly one colon
 					// first part: container name; second part: data ID
-					String[] entryParts = entry.split(":");
+					String[] entryParts = entry.split(getPipInitialRepresentationSeparator2());
 					if (entryParts != null && entryParts.length == 2) {
 						loadedValue.put(new NameBasic(entryParts[0]),
 								new DataBasic(entryParts[1]));
@@ -382,6 +388,14 @@ public class Settings extends SettingsLoader {
 
 	public String getAllowImpliesActualParameterKey() {
 		return getValue(PROP_NAME_allowImpliesActualParameterKey);
+	}
+	
+	public String getPipInitialRepresentationSeparator1() {
+		return getValue(PROP_NAME_pipInitialRepresentationSeparator1);
+	}
+
+	public String getPipInitialRepresentationSeparator2() {
+		return getValue(PROP_NAME_pipInitialRepresentationSeparator2);
 	}
 
 }
