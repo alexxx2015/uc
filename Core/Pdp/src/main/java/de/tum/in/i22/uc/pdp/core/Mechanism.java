@@ -17,7 +17,6 @@ import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
-import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
@@ -42,7 +41,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	private Thread updateThread = null;
 
 	private PxpManager _pxpManager;
-	
+
 	public Mechanism() {
 	}
 
@@ -59,7 +58,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 		this.lastUpdate = 0;
 		this.timestepSize = mech.getTimestep().getAmount()
 				* TimeAmount
-						.getTimeUnitMultiplier(mech.getTimestep().getUnit());
+				.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		this.timestep = 0;
 		if (mech instanceof PreventiveMechanismType) {
 			PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
@@ -225,13 +224,13 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	}
 
 	private synchronized boolean mechanismUpdate() { // TODO improve accuracy to
-														// microseconds?
+		// microseconds?
 		long now = System.currentTimeMillis();
 		long elapsedLastUpdate = now - this.lastUpdate;
-		long difference = elapsedLastUpdate - (this.timestepSize / 1000);
+		long difference = elapsedLastUpdate - this.timestepSize / 1000;
 
 		if (difference < 0) { // Aborting update because the timestep has not
-								// yet passed
+			// yet passed
 			log.trace(
 					"[{}] Timestep remaining {} -> timestep has not yet passed",
 					this.mechanismName, difference);

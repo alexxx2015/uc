@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -64,7 +65,7 @@ class ThriftPmp2PdpClient extends Pmp2PdpClient {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _impl.deployPolicyXML(XMLPolicy);
 	}
 

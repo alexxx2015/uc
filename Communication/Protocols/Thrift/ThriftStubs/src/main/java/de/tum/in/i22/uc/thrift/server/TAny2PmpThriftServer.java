@@ -1,8 +1,5 @@
 package de.tum.in.i22.uc.thrift.server;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +16,7 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TStatus;
+import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
 
 /**
@@ -37,13 +35,6 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(Set<String> policies) throws TException {
-		_logger.debug("TAny2Pmp: remotePolicyTransfer");
-		IStatus result = _requestHandler.receivePolicies(policies);
-		return ThriftConverter.toThrift(result);
-	}
-
-	@Override
 	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
 		IStatus status = _requestHandler.informRemoteDataFlow(new IPLocation(srcAddress, srcPort), new IPLocation(dstAddress, dstPort), d);
@@ -59,15 +50,13 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 
 	@Override
 	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
-		// TODO Auto-generated method stub
 		IStatus status = _requestHandler.deployPolicyURIPmp(policyFilePath);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
-	public TStatus deployPolicyXMLPmp(String XMLPolicy) throws TException {
-		// TODO Auto-generated method stub
-		IStatus status = _requestHandler.deployPolicyXMLPmp(XMLPolicy);
+	public TStatus deployPolicyXMLPmp(TXmlPolicy XMLPolicy) throws TException {
+		IStatus status = _requestHandler.deployPolicyXMLPmp(ThriftConverter.fromThrift(XMLPolicy));
 		return ThriftConverter.toThrift(status);
 	}
 
@@ -78,8 +67,13 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 
 	@Override
 	public TStatus revokePolicyPmp(String policyName) throws TException {
-		// TODO Auto-generated method stub
 		IStatus status = _requestHandler.revokePolicy(policyName);
+		return ThriftConverter.toThrift(status);
+	}
+
+	@Override
+	public TStatus deployPolicyRawXMLPmp(String xml) throws TException {
+		IStatus status = _requestHandler.deployPolicyRawXMLPmp(xml);
 		return ThriftConverter.toThrift(status);
 	}
 }

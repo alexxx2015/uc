@@ -1,16 +1,13 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -22,6 +19,7 @@ import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
+import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
 
 /**
@@ -75,11 +73,6 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	@Override
 	public TStatus deployPolicyURI(String policyFilePath) throws TException {
 		return _pdpServer.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
-	public TStatus deployPolicyXML(String XMLPolicy) throws TException {
-		return _pdpServer.deployPolicyXML(XMLPolicy);
 	}
 
 	@Override
@@ -158,11 +151,6 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(Set<String> policies) throws TException {
-		return _pmpServer.remotePolicyTransfer(policies);
-	}
-
-	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {
 		// TODO Auto-generated method stub
 
@@ -200,11 +188,6 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus deployPolicyXMLPmp(String XMLPolicy) throws TException {
-		return _pdpServer.deployPolicyXML(XMLPolicy);
-	}
-
-	@Override
 	public Map<String, List<String>> listMechanismsPmp() throws TException {
 		return _pdpServer.listMechanisms();
 	}
@@ -222,6 +205,21 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	@Override
 	public Set<TData> flattenStructure(TData data) throws TException {
 		return _pipServer.flattenStructure(data);
+	}
+
+	@Override
+	public TStatus deployPolicyXML(TXmlPolicy XMLPolicy) throws TException {
+		return _pdpServer.deployPolicyXML(XMLPolicy);
+	}
+
+	@Override
+	public TStatus deployPolicyRawXMLPmp(String xml) throws TException {
+		return _pmpServer.deployPolicyRawXMLPmp(xml);
+	}
+
+	@Override
+	public TStatus deployPolicyXMLPmp(TXmlPolicy XMLPolicy) throws TException {
+		return _pmpServer.deployPolicyXMLPmp(XMLPolicy);
 	}
 
 }

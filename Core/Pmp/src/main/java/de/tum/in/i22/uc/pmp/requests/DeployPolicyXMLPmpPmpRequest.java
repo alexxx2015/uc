@@ -1,18 +1,19 @@
 package de.tum.in.i22.uc.pmp.requests;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 public class DeployPolicyXMLPmpPmpRequest extends PmpRequest<IStatus> {
-	private final String _policyPath;
+	private final XmlPolicy _xmlPolicy;
 
-	public DeployPolicyXMLPmpPmpRequest(String policyPath) {
-		_policyPath= policyPath;
+	public DeployPolicyXMLPmpPmpRequest(XmlPolicy xmlPolicy) {
+		_xmlPolicy= xmlPolicy;
 	}
 
 	@Override
 	public IStatus process(PmpProcessor processor) {
-		return processor.deployPolicyXMLPmp(_policyPath);
+		return processor.deployPolicyXMLPmp(_xmlPolicy);
 	}
 
 }

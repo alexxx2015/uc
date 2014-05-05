@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
+import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
 
 /**
@@ -79,16 +80,16 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	}
 
 	@Override
-	public TStatus deployPolicyXML(String XMLPolicy) throws TException {
-		_logger.debug("TAny2Pdp: deployPolicy");
-		IStatus status = _requestHandler.deployPolicyXMLPmp(XMLPolicy);
-		return ThriftConverter.toThrift(status);
-	}
-
-	@Override
 	public Map<String, List<String>> listMechanisms() throws TException {
 		_logger.debug("TAny2Pdp: listMech");
 		return _requestHandler.listMechanismsPmp();
+	}
+
+	@Override
+	public TStatus deployPolicyXML(TXmlPolicy XMLPolicy) throws TException {
+		_logger.debug("TAny2Pdp: deployPolicy");
+		IStatus status = _requestHandler.deployPolicyXMLPmp(ThriftConverter.fromThrift(XMLPolicy));
+		return ThriftConverter.toThrift(status);
 	}
 
 }

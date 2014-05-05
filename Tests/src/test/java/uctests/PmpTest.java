@@ -3,7 +3,6 @@ package uctests;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +13,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 
 public class PmpTest extends GenericTest{
 	private static Logger log = LoggerFactory.getLogger(PmpTest.class);
@@ -39,7 +34,7 @@ public class PmpTest extends GenericTest{
 		// To be safe, encoding should be added to the next command
 		String policyString=new String(encoded);
 
-		pmp.receivePolicies(Collections.singleton(policyString));
+		pmp.deployPolicyRawXMLPmp(policyString);
 
 		try {
 			Thread.sleep(1000);
@@ -64,7 +59,7 @@ public class PmpTest extends GenericTest{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assert (true);
+		assert true;
 	}
 
 }

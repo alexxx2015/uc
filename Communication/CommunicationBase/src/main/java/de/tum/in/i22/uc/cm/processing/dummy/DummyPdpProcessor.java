@@ -27,12 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 
 public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
@@ -75,7 +75,7 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("deployPolicyXML method invoked");

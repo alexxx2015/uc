@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -39,6 +40,7 @@ import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
+import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
 public final class ThriftConverter {
 
@@ -138,7 +140,7 @@ public final class ThriftConverter {
 				ThriftConverter.fromThrift(r.getModifiedEvents()));
 	}
 
-	
+
 	public static Location fromThrift(String location) {
 		if (location == null || location.equals("")) {
 			return null;
@@ -146,7 +148,7 @@ public final class ThriftConverter {
 		return new IPLocation(location);
 	}
 
-	
+
 	public static IStatus fromThrift(TStatus s) {
 		if (s == null) {
 			_logger.debug("TStatus was null.");
@@ -156,27 +158,27 @@ public final class ThriftConverter {
 		EStatus eStatus;
 
 		switch (s) {
-		case ALLOW:
-			eStatus = EStatus.ALLOW;
-			break;
-		case ERROR:
-			eStatus = EStatus.ERROR;
-			break;
-		case ERROR_EVENT_PARAMETER_MISSING:
-			eStatus = EStatus.ERROR_EVENT_PARAMETER_MISSING;
-			break;
-		case INHIBIT:
-			eStatus = EStatus.INHIBIT;
-			break;
-		case MODIFY:
-			eStatus = EStatus.MODIFY;
-			break;
-		case OKAY:
-			eStatus = EStatus.OKAY;
-			break;
-		default:
-			_logger.warn("Unknown Status [" + s + "]. Returning null.");
-			return null;
+			case ALLOW:
+				eStatus = EStatus.ALLOW;
+				break;
+			case ERROR:
+				eStatus = EStatus.ERROR;
+				break;
+			case ERROR_EVENT_PARAMETER_MISSING:
+				eStatus = EStatus.ERROR_EVENT_PARAMETER_MISSING;
+				break;
+			case INHIBIT:
+				eStatus = EStatus.INHIBIT;
+				break;
+			case MODIFY:
+				eStatus = EStatus.MODIFY;
+				break;
+			case OKAY:
+				eStatus = EStatus.OKAY;
+				break;
+			default:
+				_logger.warn("Unknown Status [" + s + "]. Returning null.");
+				return null;
 		}
 
 		return new StatusBasic(eStatus);
@@ -290,21 +292,21 @@ public final class ThriftConverter {
 		}
 
 		switch (s.getEStatus()) {
-		case ALLOW:
-			return TStatus.ALLOW;
-		case ERROR:
-			return TStatus.ERROR;
-		case ERROR_EVENT_PARAMETER_MISSING:
-			return TStatus.ERROR_EVENT_PARAMETER_MISSING;
-		case INHIBIT:
-			return TStatus.INHIBIT;
-		case MODIFY:
-			return TStatus.MODIFY;
-		case OKAY:
-			return TStatus.OKAY;
-		default:
-			_logger.warn("Unknown Status [" + s.getEStatus() + "]. Returning null.");
-			return null;
+			case ALLOW:
+				return TStatus.ALLOW;
+			case ERROR:
+				return TStatus.ERROR;
+			case ERROR_EVENT_PARAMETER_MISSING:
+				return TStatus.ERROR_EVENT_PARAMETER_MISSING;
+			case INHIBIT:
+				return TStatus.INHIBIT;
+			case MODIFY:
+				return TStatus.MODIFY;
+			case OKAY:
+				return TStatus.OKAY;
+			default:
+				_logger.warn("Unknown Status [" + s.getEStatus() + "]. Returning null.");
+				return null;
 		}
 	}
 
@@ -434,6 +436,14 @@ public final class ThriftConverter {
 				_logger.warn("Unkown AttributeName [" + name + "]. Returning null.");
 				return null;
 		}
+	}
+
+	public static TXmlPolicy toThrift(XmlPolicy xmlPolicy) {
+		return new TXmlPolicy(xmlPolicy.getName(), xmlPolicy.getXml());
+	}
+
+	public static XmlPolicy fromThrift(TXmlPolicy xMLPolicy) {
+		return new XmlPolicy(xMLPolicy.name, xMLPolicy.xml);
 	}
 
 

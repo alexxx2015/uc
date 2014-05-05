@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -51,6 +53,12 @@ public class PmpHandler extends PmpProcessor {
 
 	private final ObjectFactory of = new ObjectFactory();
 
+	/**
+	 * Maps data to the XML policies in which it occurs.
+	 * Used for fast lookup of policies for a given data.
+	 */
+	private final Map<IData,Set<XmlPolicy>> _dataToPolicies;
+
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
@@ -58,9 +66,10 @@ public class PmpHandler extends PmpProcessor {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_distributedPmpManager = new PmpDistributionManager();
+		_dataToPolicies = new HashMap<>();
 	}
 
-	private PolicyType XMLtoPolicy(String XMLPolicy) {
+	private PolicyType xmlToPolicy(String XMLPolicy) {
 		PolicyType curPolicy = null;
 		log.debug("XMLtoPolicy");
 		log.trace("Policyto be converted: " + XMLPolicy);
@@ -85,15 +94,14 @@ public class PmpHandler extends PmpProcessor {
 		return curPolicy;
 	}
 
-	private String PolicyToXML(PolicyType policy) {
+	private String policyToXML(PolicyType policy) {
 		String result = "";
 		log.debug("PolicyToXML conversion...");
 		log.trace("Policy to convert: " + policy);
 		ObjectFactory of = new ObjectFactory();
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {
-			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.uc.pmp.xsd");
+			JAXBContext jc = JAXBContext.newInstance("de.tum.in.i22.uc.pmp.xsd");
 			Marshaller m = jc.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			StringWriter res = new StringWriter();
@@ -103,8 +111,6 @@ public class PmpHandler extends PmpProcessor {
 
 			log.trace("converted policy: " + result);
 
-			// } catch (MarshalException e) {
-			// log.error("Syntax error in policy: " + e.getMessage());
 		} catch (JAXBException | ClassCastException e) {
 			e.printStackTrace();
 		}
@@ -112,89 +118,117 @@ public class PmpHandler extends PmpProcessor {
 		return result;
 	}
 
-	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		String output = convertPolicies(policies);
 
-		// HERE GOES THE DEPLOYMENT TO THE PDP
-		getPdp().deployPolicyXML(output);
-
-		return new StatusBasic(EStatus.OKAY);
-	}
-
-	public String convertPolicies(Set<String> policies) {
-		String output = "";
-
+	// TODO for whoever wrote this. Please add a comment what is happening.
+	// Also because it seems that it is not just 'conversion' (e.g.
+	// a new initial representation is created)
+	// Also, please document of which format which strings are (XML?!)
+	private XmlPolicy convertPolicy(XmlPolicy xmlPolicy) {
 		IAny2Pip pip = getPip();
 
 		if (pip == null) {
 			log.error("PIP NOT AVAILABLE. Better crash now than living like this.");
-			throw new RuntimeException(
-					"PIP NOT AVAILABLE for policy conversion");
+			throw new RuntimeException("PIP NOT AVAILABLE for policy conversion");
 		}
 
-		for (String ps : policies) {
-			log.info("converting policy string into object");
-			PolicyType policy = XMLtoPolicy(ps);
+		log.info("converting policy string into object");
+		PolicyType policy = xmlToPolicy(xmlPolicy.getXml());
 
-			List<MechanismBaseType> mechanisms = policy
-					.getDetectiveMechanismOrPreventiveMechanism();
+		// gathers all data this policy is about
+		Set<IData> allData = new HashSet<>();
 
-			for (MechanismBaseType mech : mechanisms) {
-				List<ParamMatchType> paramList = mech.getTrigger().getParams();
-				List<ParamMatchType> newParamList = new ArrayList<ParamMatchType>();
-				for (ParamMatchType p : paramList) {
-					if (p.getType().equals(_DATAUSAGE)) {
-						String dataId = null;
-						String value = p.getValue();
-						String name = p.getName();
-						String newValue = null;
-						// ComparisonOperatorTypes cmpOp=p.getCmpOp();
+		List<MechanismBaseType> mechanisms = policy.getDetectiveMechanismOrPreventiveMechanism();
 
-						if (p.isSetDataID()) {
-							dataId = p.getDataID();
-							Set<IData> dataSet = createDataSetFromParamValue(dataId);
-							IStatus status = getPip().initialRepresentation(
-									new NameBasic(value), dataSet);
-							newValue = dataId;
-							if (status.isStatus(EStatus.ERROR)) {
-								log.error("impossible to initialize representation for container "
-										+ value + " with data id(s) " + dataSet);
-								log.error(status.getErrorMessage());
-								throw new RuntimeException(
-										status.getErrorMessage());
-							}
-						} else {
-							IData newData = getPip().newInitialRepresentation(new NameBasic(value));
-							newValue = newData.getId();
+		for (MechanismBaseType mech : mechanisms) {
+			List<ParamMatchType> paramList = mech.getTrigger().getParams();
+			List<ParamMatchType> newParamList = new ArrayList<>();
+
+			for (ParamMatchType p : paramList) {
+				if (p.getType().equals(_DATAUSAGE)) {
+					String dataIds = null;
+					String value = p.getValue();
+					String name = p.getName();
+					// ComparisonOperatorTypes cmpOp=p.getCmpOp();
+
+
+					if (p.isSetDataID()) {
+						// in this case there was a data id within the policy. Let's use it.
+
+						dataIds = p.getDataID();
+						Set<IData> dataSet = createDataSetFromParamValue(dataIds);
+						IStatus status = getPip().initialRepresentation(new NameBasic(value), dataSet);
+
+						if (status.isStatus(EStatus.ERROR)) {
+							log.error("impossible to initialize representation for container "
+									+ value + " with data id(s) " + dataSet);
+							log.error(status.getErrorMessage());
+							throw new RuntimeException(status.getErrorMessage());
 						}
 
-						ParamMatchType newP = of.createParamMatchType();
-						newP.setName(name);
-						newP.setValue(newValue);
-						newP.setCmpOp(ComparisonOperatorTypes.DATA_IN_CONTAINER);
-						newP.setType(_DATA);
-
-						newParamList.add(newP);
-					} else {
-						newParamList.add(p);
+						allData.addAll(dataSet);
 					}
-				}
-				mech.getTrigger().getParams().clear();
-				mech.getTrigger().getParams().addAll(newParamList);
-			}
+					else {
+						// there was no data id, so let's create one
+						IData newData = getPip().newInitialRepresentation(new NameBasic(value));
+						dataIds = newData.getId();
+						allData.add(newData);
+					}
 
-			log.info("converting object into policy string");
-			output = PolicyToXML(policy);
+					ParamMatchType newP = of.createParamMatchType();
+					newP.setName(name);
+					newP.setValue(dataIds);
+					newP.setCmpOp(ComparisonOperatorTypes.DATA_IN_CONTAINER);
+					newP.setType(_DATA);
+
+					newParamList.add(newP);
+				} else {
+					newParamList.add(p);
+				}
+			}
+			mech.getTrigger().getParams().clear();
+			mech.getTrigger().getParams().addAll(newParamList);
 		}
-		return output;
+
+		log.info("converting object into policy string");
+		XmlPolicy convertedXmlPolicy = new XmlPolicy(xmlPolicy.getName(), policyToXML(policy));
+
+		// map each gathered data to this converted policy.
+		for (IData data : allData) {
+			Set<XmlPolicy> pol = _dataToPolicies.get(data);
+			if (pol == null) {
+				pol = new HashSet<>();
+				_dataToPolicies.put(data, pol);
+			}
+			pol.add(convertedXmlPolicy);
+		}
+
+		return convertedXmlPolicy;
 	}
 
+	/**
+	 * Returns an unmodifiable view onto the set of policies
+	 * that 'talk' about the specified data.
+	 * 
+	 * @param data
+	 * @return
+	 */
+	public Set<XmlPolicy> getPolicies(IData data) {
+		return Collections.unmodifiableSet(_dataToPolicies.get(data));
+	}
+
+	/**
+	 * Tokenizes the specified string at whitespaces, interprets the tokens
+	 * as data ids, and returns the corresponding set of {@link IData} objects
+	 * created out of those tokenized data ids.
+	 * 
+	 * @param value the string to be transformed
+	 * @return the set of {@link IData} corresponding to the tokenized data ids.
+	 */
 	private Set<IData> createDataSetFromParamValue(String value) {
-		if ((value == null) || (value.equals("")))
+		if (value == null || value.equals(""))
 			return Collections.emptySet();
 
-		Set<IData> res = new HashSet<IData>();
+		Set<IData> res = new HashSet<>();
 		StringTokenizer st = new StringTokenizer(value);
 		while (st.hasMoreTokens()) {
 			res.add(new DataBasic(st.nextToken()));
@@ -228,10 +262,16 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		PolicyType policy = xmlToPolicy(xml);
+		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
+	}
+
+	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
 			try {
-				return deployPolicyXMLPmp(com.google.common.io.Files.toString(new File(policyFilePath),Charset.defaultCharset()));
+				return deployPolicyRawXMLPmp(com.google.common.io.Files.toString(new File(policyFilePath),Charset.defaultCharset()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -240,8 +280,9 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
-		return receivePolicies(Collections.singleton(XMLPolicy));
+	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
+		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
+		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 
 	@Override

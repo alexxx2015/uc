@@ -11,6 +11,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -32,9 +33,9 @@ public class PdpHandler extends PdpProcessor {
 
 	private IPolicyDecisionPoint _lpdp;
 
-	private PxpManager _pxpManager;
-	
-	
+	private final PxpManager _pxpManager;
+
+
 	public PdpHandler() {
 		super(LocalLocation.getInstance());
 		_pxpManager=new PxpManager();
@@ -50,29 +51,29 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public IStatus revokePolicy(String policyName) {
 		boolean b = _lpdp.revokePolicy(policyName);
-		return (b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
-				EStatus.ERROR, "revokePolicy failed"));
+		return b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
+				EStatus.ERROR, "revokePolicy failed");
 	}
 
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		// TODO: sanitize inputs
 		boolean b = _lpdp.revokeMechanism(policyName, mechName);
-		return (b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
-				EStatus.ERROR, "revokeMechanism failed"));
+		return b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
+				EStatus.ERROR, "revokeMechanism failed");
 	}
 
 	@Override
 	public IStatus deployPolicyURI(String policyFilePath) {
-		return (_lpdp.deployPolicyURI(policyFilePath) ? new StatusBasic(
+		return _lpdp.deployPolicyURI(policyFilePath) ? new StatusBasic(
 				EStatus.OKAY) : new StatusBasic(EStatus.ERROR,
-				"deploy policy failed"));
+						"deploy policy failed");
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
-		return (_lpdp.deployPolicyXML(XMLPolicy) ? new StatusBasic(EStatus.OKAY)
-				: new StatusBasic(EStatus.ERROR, "deploy policy failed"));
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
+		return _lpdp.deployPolicyXML(XMLPolicy) ? new StatusBasic(EStatus.OKAY)
+		: new StatusBasic(EStatus.ERROR, "deploy policy failed");
 	}
 
 	@Override

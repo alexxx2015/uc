@@ -80,3 +80,8 @@ struct TData {
 struct TName {
 	1: required string name
 }
+
+struct TXmlPolicy {
+	1: required string name,
+	2: required string xml
+}

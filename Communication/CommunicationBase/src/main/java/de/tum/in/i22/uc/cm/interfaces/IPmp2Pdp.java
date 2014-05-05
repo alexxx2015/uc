@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.interfaces;
 import java.util.List;
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
@@ -27,8 +28,8 @@ public interface IPmp2Pdp {
 	@AThriftMethod(signature="Types.TStatus deployPolicyURI (1: string policyFilePath)")
 	public IStatus deployPolicyURI(String policyFilePath);
 
-	@AThriftMethod(signature="Types.TStatus deployPolicyXML (1: string XMLPolicy)")
-	public IStatus deployPolicyXML(String XMLPolicy);
+	@AThriftMethod(signature="Types.TStatus deployPolicyXML (1: Types.TXmlPolicy XMLPolicy)")
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy);
 
 	@AThriftMethod(signature="map<string,list<string>> listMechanisms()")
 	public Map<String, List<String>> listMechanisms();

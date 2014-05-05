@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -14,6 +13,9 @@ public class DataBasic implements IData {
 	}
 
 	public DataBasic(String id) {
+		if (id == null) {
+			throw new NullPointerException("Id must not be null.");
+		}
 		_id = id;
 	}
 
@@ -26,12 +28,8 @@ public class DataBasic implements IData {
 
 	@Override
 	public boolean equals(Object obj) {
-		boolean isEqual = false;
-		if (obj instanceof DataBasic) {
-			isEqual = Objects.equals(_id, ((DataBasic) obj)._id);
-		}
-
-		return isEqual;
+		// _id is assured not to be null
+		return _id.equals(((DataBasic) obj)._id);
 	}
 
 	@Override

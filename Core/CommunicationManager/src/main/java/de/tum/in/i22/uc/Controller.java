@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -95,14 +96,14 @@ public class Controller implements IRequestHandler  {
 	public boolean isStarted() {
 		if (_settings == null)
 			return false;
-		return (!_settings.isPdpListenerEnabled() || (_pdpServer != null && _pdpServer
-				.started()))
-				&& (!_settings.isPipListenerEnabled() || (_pipServer != null && _pipServer
-						.started()))
-				&& (!_settings.isPmpListenerEnabled() || (_pmpServer != null && _pmpServer
-						.started()))
-				&& (!_settings.isAnyListenerEnabled() || (_anyServer != null && _anyServer
-						.started()));
+		return (!_settings.isPdpListenerEnabled() || _pdpServer != null && _pdpServer
+				.started())
+				&& (!_settings.isPipListenerEnabled() || _pipServer != null && _pipServer
+				.started())
+				&& (!_settings.isPmpListenerEnabled() || _pmpServer != null && _pmpServer
+				.started())
+				&& (!_settings.isAnyListenerEnabled() || _anyServer != null && _anyServer
+				.started());
 	}
 
 	public void stop() {
@@ -210,21 +211,21 @@ public class Controller implements IRequestHandler  {
 
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
 		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
 			_settings
-					.loadSetting(
-							CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
-							Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
 	}
 
@@ -241,15 +242,16 @@ public class Controller implements IRequestHandler  {
 
 	public void resetOnlyRequestHandler() {
 		synchronized (this) {
-			_requestHandler.reset();	
+			_requestHandler.reset();
 		}
 	}
 
+	@Override
 	public void reset() {
 		synchronized (this) {
 			stop();
 			resetOnlyRequestHandler();
-			start();	
+			start();
 		}
 	}
 
@@ -289,7 +291,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _requestHandler.deployPolicyXML(XMLPolicy);
 	}
 
@@ -387,11 +389,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		return _requestHandler.receivePolicies(policies);
-	}
-
-	@Override
 	public IMechanism exportMechanismPmp(String par) {
 		return _requestHandler.exportMechanismPmp(par);
 	}
@@ -412,7 +409,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		return _requestHandler.deployPolicyXMLPmp(XMLPolicy);
 	}
 
@@ -441,5 +438,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.flattenStructure(data);
 	}
 
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		return _requestHandler.deployPolicyRawXMLPmp(xml);
+	}
 
 }

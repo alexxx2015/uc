@@ -28,6 +28,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -40,16 +41,7 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		super(LocalLocation.getInstance());
 	}
 
-
 	private static Logger _logger = LoggerFactory.getLogger(DummyPmpProcessor.class);
-
-	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		// TODO Auto-generated method stub
-		_logger.error("PmpProcessor DUMMY Implementation");
-		_logger.error("receivePolicies method invoked");
-		return null;
-	}
 
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation,
@@ -93,7 +85,7 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("deployPolicyXML method invoked");
@@ -105,6 +97,14 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("listMechanisms method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("deployPolicyRawXML method invoked");
 		return null;
 	}
 

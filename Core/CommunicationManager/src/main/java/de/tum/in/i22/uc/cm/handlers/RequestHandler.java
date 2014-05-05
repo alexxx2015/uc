@@ -11,8 +11,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cassandra.IDistributionManager;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -65,11 +67,11 @@ import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
 import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
+import de.tum.in.i22.uc.pmp.requests.DeployPolicyRawXmlPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.ReceivePoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
@@ -83,11 +85,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 	private Set<Integer> _portsUsed;
 	private Settings _settings;
-	private IClientFactory clientFactory;
-	
-	private PdpProcessor pdp;
-	private PipProcessor pip;
-	private PmpProcessor pmp;
+	private IClientFactory _clientFactory;
+
+	private PdpProcessor _pdp;
+	private PipProcessor _pip;
+	private PmpProcessor _pmp;
+
+	private IDistributionManager _distributionManager;
 
 	/**
 	 * Creates a new {@link RequestHandler} by invoking
@@ -98,11 +102,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 	}
 
-	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
-		init(pdpLocation, pipLocation, pmpLocation);
-	}
-	
-	
+
 	/**
 	 * Creates a new RequestHandler. The parameters specify where the corresponding
 	 * components are run. If a location is an instance of {@link LocalLocation}, a
@@ -113,33 +113,42 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	 * @param pipLocation
 	 * @param pmpLocation
 	 */
+	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+		init(pdpLocation, pipLocation, pmpLocation);
+	}
+
+
 	private void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
-		clientFactory = new ThriftClientFactory();
+		_clientFactory = new ThriftClientFactory();
+		//		_distributionManager = new CassandraDistributionManager();
+		//
+		//		// testing/playing
+		//		_distributionManager.playWithMe();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
-		pdp = createPdpHandler(pdpLocation);
-		pip = createPipHandler(pipLocation);
-		pmp = createPmpHandler(pmpLocation);
+		_pdp = createPdpHandler(pdpLocation);
+		_pip = createPipHandler(pipLocation);
+		_pmp = createPmpHandler(pmpLocation);
 
-		while (pdp == null || pip == null || pmp == null) {
+		while (_pdp == null || _pip == null || _pmp == null) {
 			try {
 				int sleep = _settings.getConnectionAttemptInterval();
 				_logger.info("One of the connections failed. Trying again in " + sleep + " milliseconds.");
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {	}
 
-			if (pdp == null) pdp = createPdpHandler(pdpLocation);
-			if (pip == null) pip = createPipHandler(pipLocation);
-			if (pmp == null) pmp = createPmpHandler(pmpLocation);
+			if (_pdp == null) _pdp = createPdpHandler(pdpLocation);
+			if (_pip == null) _pip = createPipHandler(pipLocation);
+			if (_pmp == null) _pmp = createPmpHandler(pmpLocation);
 		}
 
-		pdp.init(pip, pmp);
-		pip.init(pdp, pmp);
-		pmp.init(pip, pdp);
+		_pdp.init(_pip, _pmp);
+		_pip.init(_pdp, _pmp);
+		_pmp.init(_pip, _pdp);
 
-		_requestQueueManager = new RequestQueueManager(pdp, pip, pmp);
+		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp);
 		new Thread(_requestQueueManager).start();
 	}
 
@@ -148,7 +157,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PdpClient pdp = clientFactory.createAny2PdpClient(loc);
+					Any2PdpClient pdp = _clientFactory.createAny2PdpClient(loc);
 					try {
 						pdp.connect();
 					} catch (Exception e) {
@@ -170,7 +179,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PmpClient pmp = clientFactory.createAny2PmpClient(loc);
+					Any2PmpClient pmp = _clientFactory.createAny2PmpClient(loc);
 					try {
 						pmp.connect();
 					} catch (Exception e) {
@@ -192,7 +201,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			case IP:
 				IPLocation iploc = (IPLocation) loc;
 				if (isConnectionAllowed(iploc)) {
-					Any2PipClient pip = clientFactory.createAny2PipClient(loc);
+					Any2PipClient pip = _clientFactory.createAny2PipClient(loc);
 					try {
 						pip.connect();
 					} catch (Exception e) {
@@ -212,21 +221,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	private Set<Integer> portsInUse() {
 		Set<Integer> result = new HashSet<>();
 
-		if (_settings.isPdpListenerEnabled()) {
-			result.add(_settings.getPdpListenerPort());
-		}
-
-		if (_settings.isPipListenerEnabled()) {
-			result.add(_settings.getPipListenerPort());
-		}
-
-		if (_settings.isPmpListenerEnabled()) {
-			result.add(_settings.getPmpListenerPort());
-		}
-
-		if (_settings.isAnyListenerEnabled()) {
-			result.add(_settings.getAnyListenerPort());
-		}
+		if (_settings.isPdpListenerEnabled()) result.add(_settings.getPdpListenerPort());
+		if (_settings.isPipListenerEnabled()) result.add(_settings.getPipListenerPort());
+		if (_settings.isPmpListenerEnabled()) result.add(_settings.getPmpListenerPort());
+		if (_settings.isAnyListenerEnabled()) result.add(_settings.getAnyListenerPort());
 
 		return result;
 	}
@@ -249,6 +247,50 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 		return true;
 	}
+
+
+	/**
+	 * Waits for the specified request to be processed.
+	 * Once the corresponding response is ready, execution
+	 * continues and the request's response is returned.
+	 *
+	 * @param request the request for whose processing/response is waited for.
+	 * @return the response corresponding to the request.
+	 */
+	private <T> T waitForResponse(Request<T,?> request) {
+		T result = null;
+
+		synchronized (this) {
+			while (!request.responseReady()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {	}
+			}
+			result = request.getResponse();
+		}
+
+		return result;
+	}
+
+	@Override
+	public void forwardResponse(Request<?,?> request, Object response) {
+		synchronized (this) {
+			request.setResponse(response);
+			notifyAll();
+		}
+	}
+
+
+	@Override
+	public void reset() {
+		_requestQueueManager.stop();
+		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
+	}
+
+	public void stop() {
+		_requestQueueManager.stop();
+	}
+
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
@@ -291,7 +333,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus deployPolicyXML(String XMLPolicy) {
+	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		DeployPolicyXMLPdpRequest request = new DeployPolicyXMLPdpRequest(XMLPolicy);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
@@ -332,7 +374,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus deployPolicyXMLPmp(String XMLPolicy) {
+	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
 		DeployPolicyXMLPmpPmpRequest request = new DeployPolicyXMLPmpPmpRequest(XMLPolicy);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
@@ -458,13 +500,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public IStatus receivePolicies(Set<String> policies) {
-		ReceivePoliciesPmpRequest request = new ReceivePoliciesPmpRequest(policies);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
 		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
 		_requestQueueManager.addRequest(request, this);
@@ -483,49 +518,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		GetIfModelPipRequest request = new GetIfModelPipRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
-	}
-
-
-	/**
-	 * Waits for the specified request to be processed.
-	 * Once the corresponding response is ready, execution
-	 * continues and the request's response is returned.
-	 *
-	 * @param request the request for whose processing/response is waited for.
-	 * @return the response corresponding to the request.
-	 */
-	private <T> T waitForResponse(Request<T,?> request) {
-		T result = null;
-
-		synchronized (this) {
-			while (!request.responseReady()) {
-				try {
-					wait();
-				} catch (InterruptedException e) {	}
-			}
-			result = request.getResponse();
-		}
-
-		return result;
-	}
-
-	@Override
-	public void forwardResponse(Request<?,?> request, Object response) {
-		synchronized (this) {
-			request.setResponse(response);
-			notifyAll();
-		}
-	}
-
-
-	@Override
-	public void reset() {
-		_requestQueueManager.stop();
-		init(pdp.getLocation(),pip.getLocation(),pmp.getLocation());
-	}
-	
-	public void stop() {
-		_requestQueueManager.stop();
 	}
 
 	@Override
@@ -548,5 +540,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
-	
+
+
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		DeployPolicyRawXmlPmpRequest request = new DeployPolicyRawXmlPmpRequest(xml);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
 }
