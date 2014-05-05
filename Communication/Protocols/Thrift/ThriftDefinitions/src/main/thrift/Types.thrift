@@ -50,7 +50,7 @@ struct TEvent {
 	1: required string name,
 	2: map<string,string> parameters,
 	3: long timeStamp,
-	4: bool isActual
+	4: optional bool isActual = false
 	5: optional string comment	
 }
 
