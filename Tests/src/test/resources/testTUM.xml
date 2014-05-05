@@ -117,4 +117,21 @@
 		</authorizationAction>
 	</preventiveMechanism>
 
+
+	<preventiveMechanism name="testStarEvent">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="*" tryEvent="true">
+			<paramMatch name="starEvent" value="true"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+
 </policy>

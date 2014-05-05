@@ -9,8 +9,8 @@ import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 
 public interface IPolicyDecisionPoint {
 	// PDP exported methods
-	public Decision notifyEvent(Event event);
 
+	public Decision notifyEvent(Event event);
 	public boolean deployPolicyURI(String filename);
 
 	public boolean deployPolicyXML(String XMLPolicy);

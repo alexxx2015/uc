@@ -90,5 +90,32 @@ public class TestPep2PdpCommunication extends GenericTest{
 			testNotifyTwoEvents();
 		}
 	}
+	
+	@Test
+	public void testNotifyStarEvent() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
+		testDeployPolicyFile();
+		// create event
+		IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
+		String eventName1 = "event1";
+		String eventName2 = "event2";
+		Map<String, String> map = createDummyMap();
+		map.put("starEvent", "true");
+		IEvent event1 = mf.createEvent(eventName1, map);
+		IEvent event2 = mf.createEvent(eventName2, map);
+
+		IResponse response1 = pdp.notifyEventSync(event1);
+		_logger.debug("Received response as reply to event 1: " + response1);
+
+		IResponse response2 = pdp.notifyEventSync(event2);
+		_logger.debug("Received response as reply to event 2: " + response2);
+
+
+		// check if status is not null
+		Assert.assertNotNull(response1);
+		Assert.assertNotNull(response2);
+	}
+
 
 }

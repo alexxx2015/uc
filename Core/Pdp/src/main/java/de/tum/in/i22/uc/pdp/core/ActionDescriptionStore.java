@@ -2,6 +2,9 @@ package de.tum.in.i22.uc.pdp.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class ActionDescriptionStore {
 	private HashMap<String, ArrayList<EventMatch>> eventMatchList = null;
@@ -49,11 +52,18 @@ public class ActionDescriptionStore {
 	}
 
 	public ArrayList<EventMatch> getEventList(String eventAction) {
+		if (eventAction==null) return null;
 		return this.eventMatchList.get(eventAction);
 	}
 
 	public ArrayList<Mechanism> getMechanismList(String eventAction) {
-		return this.mechanismList.get(eventAction);
+		ArrayList<Mechanism> result = new ArrayList<Mechanism>();
+		ArrayList<Mechanism> matchingEvent = this.mechanismList.get(eventAction);
+		ArrayList<Mechanism> matchingStar = this.mechanismList.get(Settings.getInstance().getStarEvent());
+		if (matchingEvent!=null) result.addAll(matchingEvent);
+		if (matchingStar!=null) result.addAll(matchingStar);
+		if (result.size()!=0) return result;
+		return null;
 	}
 
 	public boolean removeMechanism(String eventAction) {

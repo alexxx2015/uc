@@ -75,6 +75,7 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
 
+	private static final String PROP_NAME_starEvent = "starEvent";
 
 
 	private Settings() {
@@ -171,6 +172,9 @@ public class Settings extends SettingsLoader {
 		loadSetting("connectionAttemptInterval", 1000);
 		
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
+		
+		loadSetting(PROP_NAME_starEvent, "*");
+
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -383,6 +387,10 @@ public class Settings extends SettingsLoader {
 
 	public String getAllowImpliesActualParameterKey() {
 		return getValue(PROP_NAME_allowImpliesActualParameterKey);
+	}
+
+	public String getStarEvent() {
+		return getValue(PROP_NAME_starEvent);
 	}
 
 }

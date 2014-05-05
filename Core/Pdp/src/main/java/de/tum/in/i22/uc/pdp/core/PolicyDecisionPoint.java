@@ -47,14 +47,15 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	public PolicyDecisionPoint() {
 		_actionDescriptionStore = new ActionDescriptionStore();
-		_pxpManager=new PxpManager();
+		_pxpManager = new PxpManager();
 	}
 
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
-		_pxpManager=pxpManager;
+		_pxpManager = pxpManager;
 		_actionDescriptionStore = new ActionDescriptionStore();
-		_pip=pip;
+		_pip = pip;
 	}
+
 	@Override
 	public boolean deployPolicyXML(String XMLPolicy) {
 		log.debug("deployPolicyXML (before)");
@@ -77,7 +78,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			}
 			return deployXML(inp);
 		}
-		log.warn("Unsupported message format of policy! "+policyFilename );
+		log.warn("Unsupported message format of policy! " + policyFilename);
 		return false;
 	}
 
@@ -107,7 +108,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			for (MechanismBaseType mech : mechanisms) {
 				try {
 					log.debug("Processing mechanism: {}", mech.getName());
-					IPdpMechanism curMechanism = new Mechanism(mech,this);
+					IPdpMechanism curMechanism = new Mechanism(mech, this);
 					ArrayList<IPdpMechanism> mechanismList = this.policyTable
 							.get(curPolicy.getName());
 					if (mechanismList == null)
@@ -215,7 +216,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 				event.getEventAction(), mechanismList.size());
 
 		Decision d = new Decision(new AuthorizationAction("default",
-				Constants.AUTHORIZATION_ALLOW),_pxpManager);
+				Constants.AUTHORIZATION_ALLOW), _pxpManager);
 		for (Mechanism mech : mechanismList) {
 			log.info("Processing mechanism [{}] for event [{}]",
 					mech.getMechanismName(), event.getEventAction());
@@ -264,8 +265,8 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public PxpManager getPxpManager(){
+	public PxpManager getPxpManager() {
 		return _pxpManager;
 	}
-	
+
 }
