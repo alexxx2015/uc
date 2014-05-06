@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.helpers.DefaultValidationEventHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +72,11 @@ public class PmpHandler extends PmpProcessor {
 			JAXBContext jc = JAXBContext
 					.newInstance("de.tum.in.i22.uc.pmp.xsd");
 			Unmarshaller u = jc.createUnmarshaller();
+			u.setEventHandler(new DefaultValidationEventHandler(){
+				public boolean handleEvent(ValidationEvent ve){
+					return super.handleEvent(ve);
+				}
+			});
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
 

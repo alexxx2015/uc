@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>Pdp</artifactId>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
@@ -27,13 +27,10 @@
 			<artifactId>ThriftStubs</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<!--
-		   *
-		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
-		   * 
-		 -->
+		<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
+			* -->
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -59,9 +56,9 @@
 				<configuration>
 					<schemaDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</schemaDirectory>
 					<bindingDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</bindingDirectory>
-			    <bindingIncludes>
-            <include>pdp.xjb</include>
-          </bindingIncludes>  
+					<bindingIncludes>
+						<include>pdp.xjb</include>
+					</bindingIncludes>
 					<args>
 						<arg>-XtoString</arg>
 						<arg>-Xinheritance</arg>
@@ -78,7 +75,7 @@
 					</plugins>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 
