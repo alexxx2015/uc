@@ -101,6 +101,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	@Override
 	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
+		_logger.debug("TAny2Pdp: processEventSync");
 		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, false);
@@ -140,6 +141,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	@Override
 	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
+		_logger.debug("TAny2Pdp: processEventAsync");
 		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, false);

@@ -124,8 +124,11 @@ public class Decision implements java.io.Serializable {
 				this.getAuthorizationAction().addModifier(curParam);
 		}
 
-		log.debug("Processing asynchronous executeActions");
-		for (IPdpExecuteAction execAction : mech.getExecuteAsyncActions()) {
+		List<IPdpExecuteAction> asyncActions = mech.getExecuteAsyncActions();
+		if (asyncActions==null) return;
+		log.debug("Processing asynchronous executeActions ({})",
+				asyncActions.size());
+		for (IPdpExecuteAction execAction : asyncActions) {
 			if (execAction.getProcessor().equals("pep")) {
 				log.debug("Copying executeAction {} for processing by pep",
 						execAction.getName());
