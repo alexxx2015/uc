@@ -114,4 +114,19 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 		return null;
 	}
 
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		// TODO Auto-generated method stub
+		_logger.error("PdpProcessor DUMMY Implementation");
+		_logger.error("TobiasProcessEventAsync method invoked");
+	}
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		// TODO Auto-generated method stub
+		_logger.error("PdpProcessor DUMMY Implementation");
+		_logger.error("TobiasProcessEventSync method invoked");
+		return null;
+		}
+
 }

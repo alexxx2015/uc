@@ -50,7 +50,7 @@ struct TEvent {
 	1: required string name,
 	2: map<string,string> parameters,
 	3: long timeStamp,
-	4: bool isActual
+	4: optional bool isActual = false
 	5: optional string comment	
 }
 
@@ -85,3 +85,36 @@ struct TXmlPolicy {
 	1: required string name,
 	2: required string xml
 }
+
+/*
+* Tobias old stuff
+* (required for WinPep communication)
+*/
+enum TobiasStatusType {
+	OK = 1,
+	ERROR = 2,
+	ALLOW = 3,
+	INHIBIT = 4,
+	MODIFY = 5
+}
+
+struct TobiasEvent {
+	1: string name,
+	2: map<string,string> parameters,
+	3: long timeStamp,
+	4: optional string comment
+}
+
+struct TobiasResponse {
+	1: TobiasStatusType status,
+	2: optional list<TobiasEvent> executeEvents,
+	3: optional TobiasEvent modifiedEvents,
+	4: optional string comment
+}
+
+
+
+
+
+
+

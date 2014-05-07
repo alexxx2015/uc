@@ -6,12 +6,14 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 
 public class PmpTest extends GenericTest{
@@ -59,7 +61,9 @@ public class PmpTest extends GenericTest{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assert true;
+		
+		Assert.assertEquals(EStatus.INHIBIT, r.getAuthorizationAction().getEStatus());
+		
 	}
 
 }

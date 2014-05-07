@@ -45,7 +45,7 @@ public interface IPmp2Pmp {
 	@AThriftMethod(signature="map<string,list<string>> listMechanismsPmp()")
 	public Map<String, List<String>> listMechanismsPmp();
 
-	@AThriftMethod(signature="Types.TStatus deployPolicyRawXMLPmp(string xml)")
+	@AThriftMethod(signature="Types.TStatus deployPolicyRawXMLPmp(1: string xml)")
 	public IStatus deployPolicyRawXMLPmp(String xml);
 
 	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(Types.TData data)")

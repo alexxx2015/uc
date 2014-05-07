@@ -75,6 +75,7 @@ public class UcManager extends Controller{
 	private final ThriftClientFactory clientFactory;
 	private Any2PmpClient pmpClient;
 	private Pep2PdpClient pdpClient;
+	
 
 
 	/*
@@ -89,7 +90,8 @@ public class UcManager extends Controller{
 	 * de.fraunhofer.iese.pef.pdp.example.MyPDP
 	 */
 
-	public UcManager() {
+	public UcManager(String args[]) {
+		super(args);
 		this.clientFactory = new ThriftClientFactory();
 		if(this.clientFactory != null){
 			this.pmpClient = this.clientFactory.createAny2PmpClient(new IPLocation("localhost", 21001));
@@ -99,7 +101,7 @@ public class UcManager extends Controller{
 
 
 	public static void main(String args[]) {
-		UcManager myUCC = new UcManager();
+		UcManager myUCC = new UcManager(args);
 		myUCC.showGUI();
 	}
 

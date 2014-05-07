@@ -129,6 +129,22 @@ public class ThriftTest extends GenericTest {
 		System.out.println(x++);
 
 		/*
+		 * Signal TobiasSync event
+		 */
+		response = clientPdp.TobiasProcessEventSync(new EventBasic("t", map, false));
+		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction()
+				.getEStatus());
+
+		System.out.println(x++);
+		
+		/*
+		 * Signal TobiasAsync event
+		 */
+		clientPdp.TobiasProcessEventAsync(new EventBasic("t", map, false));
+		System.out.println(x++);
+
+		
+		/*
 		 * list all mechanisms. Expected result is empty.
 		 */
 		mechanisms = clientPdp.listMechanisms();

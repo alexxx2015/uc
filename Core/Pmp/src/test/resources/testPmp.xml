@@ -34,5 +34,11 @@
 			fallback="fallback">
 			<inhibit />
 		</authorizationAction>
+		
+		
+	  <executeAsyncAction name="DELETEMR" processor="PXP" id="JAVAPXP">
+		<parameter name="OLDERTHAN" value="30" type="T" />
+		<parameter name="UNIT" value="sec" type="D" />
+	  </executeAsyncAction>
 	</preventiveMechanism>
 </policy>

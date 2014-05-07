@@ -550,12 +550,21 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return waitForResponse(request);
 	}
 
-
 	@Override
 	public Set<XmlPolicy> getPolicies(IData data) {
 		GetPoliciesPmpRequest request = new GetPoliciesPmpRequest(data);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
+	}
+
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		this.notifyEventAsync(pepEvent);
+	}
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		return this.notifyEventSync(pepEvent);
 	}
 
 }
