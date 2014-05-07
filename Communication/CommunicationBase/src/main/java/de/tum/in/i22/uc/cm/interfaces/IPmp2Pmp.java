@@ -2,8 +2,10 @@ package de.tum.in.i22.uc.cm.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.thrift.generator.AThriftMethod;
@@ -45,5 +47,8 @@ public interface IPmp2Pmp {
 
 	@AThriftMethod(signature="Types.TStatus deployPolicyRawXMLPmp(string xml)")
 	public IStatus deployPolicyRawXMLPmp(String xml);
+
+	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(Types.TData data)")
+	public Set<XmlPolicy> getPolicies(IData data);
 
 }

@@ -443,4 +443,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.deployPolicyRawXMLPmp(xml);
 	}
 
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		return _requestHandler.getPolicies(data);
+	}
+
 }

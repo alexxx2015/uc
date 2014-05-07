@@ -108,4 +108,12 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		return null;
 	}
 
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("getPolicies method invoked");
+		return null;
+	}
+
 }

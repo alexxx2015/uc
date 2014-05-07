@@ -106,4 +106,14 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		}
 	}
 
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		try {
+			return ThriftConverter.fromThriftPolicySet(_handle.getPolicies(ThriftConverter.toThrift(data)));
+		} catch (TException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

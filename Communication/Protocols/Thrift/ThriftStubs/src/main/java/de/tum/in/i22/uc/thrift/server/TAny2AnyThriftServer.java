@@ -222,4 +222,9 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 		return _pmpServer.deployPolicyXMLPmp(XMLPolicy);
 	}
 
+	@Override
+	public Set<TXmlPolicy> getPolicies(TData data) throws TException {
+		return _pmpServer.getPolicies(data);
+	}
+
 }

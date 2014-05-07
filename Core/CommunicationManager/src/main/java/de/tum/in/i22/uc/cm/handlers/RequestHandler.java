@@ -11,7 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cassandra.IDistributionManager;
+import de.tum.in.i22.uc.cassandra.CassandraDistributionManager;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
@@ -23,6 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -122,10 +123,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
 		_clientFactory = new ThriftClientFactory();
-		//		_distributionManager = new CassandraDistributionManager();
-		//
-		//		// testing/playing
-		//		_distributionManager.playWithMe();
 
 		/* Important: Creation of the handlers depends on properly initialized _portsUsed */
 		_pdp = createPdpHandler(pdpLocation);
@@ -144,9 +141,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			if (_pmp == null) _pmp = createPmpHandler(pmpLocation);
 		}
 
-		_pdp.init(_pip, _pmp);
-		_pip.init(_pdp, _pmp);
-		_pmp.init(_pip, _pdp);
+		_distributionManager = new CassandraDistributionManager();
+
+		_pdp.init(_pip, _pmp, _distributionManager);
+		_pip.init(_pdp, _pmp, _distributionManager);
+		_pmp.init(_pip, _pdp, _distributionManager);
+
+		_distributionManager.init(_pdp, _pip, _pmp);
 
 		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp);
 		new Thread(_requestQueueManager).start();
@@ -545,6 +546,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
 		DeployPolicyRawXmlPmpRequest request = new DeployPolicyRawXmlPmpRequest(xml);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		GetPoliciesPmpRequest request = new GetPoliciesPmpRequest(data);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

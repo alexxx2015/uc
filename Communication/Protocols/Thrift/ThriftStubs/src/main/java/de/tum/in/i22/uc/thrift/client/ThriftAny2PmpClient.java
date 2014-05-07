@@ -121,4 +121,9 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 		return _impl.deployPolicyRawXMLPmp(xml);
 	}
 
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		return _impl.getPolicies(data);
+	}
+
 }

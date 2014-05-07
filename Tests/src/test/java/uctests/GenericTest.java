@@ -11,16 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
-import de.tum.in.i22.uc.cm.datatypes.basic.ConditionBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.DataEventMapBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.MechanismBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.OslFormulaBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.SimplifiedTemporalLogicBasic;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
@@ -65,16 +55,16 @@ public abstract class GenericTest {
 			String[] args = {
 					"--"
 							+ CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
-					Integer.toString(PDP_SERVER_PORT),
-					"--"
-							+ CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
-					Integer.toString(PIP_SERVER_PORT),
-					"--"
-							+ CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
-					Integer.toString(PMP_SERVER_PORT),
-					"--"
-							+ CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
-					Integer.toString(ANY_SERVER_PORT), };
+							Integer.toString(PDP_SERVER_PORT),
+							"--"
+									+ CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+									Integer.toString(PIP_SERVER_PORT),
+									"--"
+											+ CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+											Integer.toString(PMP_SERVER_PORT),
+											"--"
+													+ CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+													Integer.toString(ANY_SERVER_PORT), };
 
 			box = new Controller(args);
 			pmp = box;
@@ -130,29 +120,6 @@ public abstract class GenericTest {
 		map.put("key2", "value2");
 		map.put("key3", "value3");
 		return map;
-	}
-
-	protected static IMechanism createMechanism() {
-		MechanismBasic m = new MechanismBasic();
-
-		// * set condition
-		ConditionBasic condition = new ConditionBasic();
-		// ** set condition condition
-		OslFormulaBasic formula = new OslFormulaBasic("Formula xxxx");
-		condition.setCondition(formula);
-		// ** set condition conditionSimp
-		SimplifiedTemporalLogicBasic conditionSimp = new SimplifiedTemporalLogicBasic();
-		conditionSimp.setFormula(new OslFormulaBasic("Formula yyyy"));
-
-		// *** set condition conditionSimp dataEventMap
-		Map<IData, IEvent> map1 = new HashMap<IData, IEvent>();
-		map1.put(new DataBasic("id1"), new EventBasic("event1", null));
-		DataEventMapBasic dataEventMap = new DataEventMapBasic(map1);
-		conditionSimp.setDataEventMap(dataEventMap);
-		condition.setConditionSimp(conditionSimp);
-		m.setCondition(condition);
-
-		return m;
 	}
 
 }

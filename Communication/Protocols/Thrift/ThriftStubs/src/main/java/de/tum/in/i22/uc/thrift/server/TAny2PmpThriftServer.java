@@ -8,6 +8,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -75,5 +76,11 @@ class TAny2PmpThriftServer extends ThriftServerHandler implements TAny2Pmp.Iface
 	public TStatus deployPolicyRawXMLPmp(String xml) throws TException {
 		IStatus status = _requestHandler.deployPolicyRawXMLPmp(xml);
 		return ThriftConverter.toThrift(status);
+	}
+
+	@Override
+	public Set<TXmlPolicy> getPolicies(TData data) throws TException {
+		Set<XmlPolicy> policies = _requestHandler.getPolicies(ThriftConverter.fromThrift(data));
+		return ThriftConverter.toThriftPoliciesSet(policies);
 	}
 }

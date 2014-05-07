@@ -119,7 +119,7 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 
-	// TODO for whoever wrote this. Please add a comment what is happening.
+	// TODO To whoever wrote this: Please add a comment what is happening.
 	// Also because it seems that it is not just 'conversion' (e.g.
 	// a new initial representation is created)
 	// Also, please document of which format which strings are (XML?!)
@@ -156,7 +156,7 @@ public class PmpHandler extends PmpProcessor {
 
 						dataIds = p.getDataID();
 						Set<IData> dataSet = createDataSetFromParamValue(dataIds);
-						IStatus status = getPip().initialRepresentation(new NameBasic(value), dataSet);
+						IStatus status = pip.initialRepresentation(new NameBasic(value), dataSet);
 
 						if (status.isStatus(EStatus.ERROR)) {
 							log.error("impossible to initialize representation for container "
@@ -169,7 +169,7 @@ public class PmpHandler extends PmpProcessor {
 					}
 					else {
 						// there was no data id, so let's create one
-						IData newData = getPip().newInitialRepresentation(new NameBasic(value));
+						IData newData = pip.newInitialRepresentation(new NameBasic(value));
 						dataIds = newData.getId();
 						allData.add(newData);
 					}
@@ -212,8 +212,15 @@ public class PmpHandler extends PmpProcessor {
 	 * @param data
 	 * @return
 	 */
+	@Override
 	public Set<XmlPolicy> getPolicies(IData data) {
-		return Collections.unmodifiableSet(_dataToPolicies.get(data));
+		Set<XmlPolicy> res = _dataToPolicies.get(data);
+
+		if (res == null) {
+			return Collections.emptySet();
+		}
+
+		return Collections.unmodifiableSet(res);
 	}
 
 	/**
