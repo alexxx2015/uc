@@ -1,6 +1,9 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.awt.Event;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +11,11 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -17,6 +24,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
+import de.tum.in.i22.uc.thrift.types.TobiasEvent;
+import de.tum.in.i22.uc.thrift.types.TobiasResponse;
+import de.tum.in.i22.uc.thrift.types.TobiasStatusType;
 
 class ThriftAny2PdpImpl implements IAny2Pdp {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PdpImpl.class);
@@ -128,5 +138,61 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		_logger.debug("TobiasProcessEventAsync (Pdp client)");
+		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
+		map.remove("senderID");
+		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
+		try {
+			_handle.TobiasProcessEventAsync(ev, pepEvent.getParameters().get("senderID"));
+		} catch (TException e) {
+			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
+			e.printStackTrace();
+		}	
+		
+		}
+
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		_logger.debug("TobiasProcessEventSync (Pdp client)");
+		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
+		map.remove("senderID");
+		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
+		TobiasResponse tr = null;
+		try {
+			tr=_handle.TobiasProcessEventSync(ev, pepEvent.getParameters().get("senderID"));
+		} catch (TException e) {
+			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
+			e.printStackTrace();
+		}	
+		if (tr==null) return new ResponseBasic(new StatusBasic(EStatus.ERROR, "Error! Didn't manage to execute TobiasProcessEventSync"), null, null);
+		TobiasStatusType st= tr.getStatus();
+		EStatus resStatus= null;
+		switch (st){
+		case OK:
+			resStatus=EStatus.OKAY;
+			break;
+		case ERROR:
+			resStatus=EStatus.ERROR;
+			break;
+		case INHIBIT:
+			resStatus=EStatus.INHIBIT;
+			break;
+		case ALLOW:
+			resStatus=EStatus.ALLOW;
+			break;
+		case MODIFY:
+			resStatus=EStatus.MODIFY;
+			break;
+		default:
+			resStatus=EStatus.ERROR;
+			break;
+		}
+		return new ResponseBasic(new StatusBasic(resStatus), null, null);
 	}
 }

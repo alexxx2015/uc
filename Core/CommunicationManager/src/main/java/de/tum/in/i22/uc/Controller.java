@@ -443,4 +443,14 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.deployPolicyRawXMLPmp(xml);
 	}
 
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		_requestHandler.TobiasProcessEventAsync(pepEvent);
+	}
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		return _requestHandler.TobiasProcessEventSync(pepEvent);
+	}
+
 }

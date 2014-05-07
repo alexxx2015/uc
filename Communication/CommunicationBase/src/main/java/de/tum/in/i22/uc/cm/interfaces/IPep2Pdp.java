@@ -17,4 +17,23 @@ public interface IPep2Pdp {
 
 	@AThriftMethod(signature="Types.TResponse notifyEventSync(1: Types.TEvent pepEvent)")
 	public IResponse notifyEventSync(IEvent pepEvent);
+	
+	
+	/**
+	 * UC4WIN interface.
+	 * Notice that while the thrift interface has also the senderId parameter, the Java method does not.
+	 * On the implementation side, the senderID is embodied as another parameter in the event.
+	 */
+	
+	@AThriftMethod(signature="oneway void TobiasProcessEventAsync(1: Types.TobiasEvent e, 2: string senderID)")
+	public void TobiasProcessEventAsync(IEvent pepEvent);
+
+	/**
+	 * UC4WIN interface.
+	 * Notice that while the thrift interface has also the senderId parameter, the Java method does not.
+	 * On the implementation side, the senderID is embodied as another parameter in the event.
+	 */
+	@AThriftMethod(signature="Types.TobiasResponse TobiasProcessEventSync(1: Types.TobiasEvent e, 2: string senderID)")
+	public IResponse TobiasProcessEventSync(IEvent pepEvent);
+		
 }

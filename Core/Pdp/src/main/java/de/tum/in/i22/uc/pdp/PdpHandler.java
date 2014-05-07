@@ -133,4 +133,14 @@ public class PdpHandler extends PdpProcessor {
 				+ (pip != null ? "not " : "") + "NULL");
 		_lpdp = new PolicyDecisionPoint(pip,_pxpManager);
 	}
+
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		this.notifyEventAsync(pepEvent);
+	}
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		return this.notifyEventSync(pepEvent);
+	}
 }

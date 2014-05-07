@@ -20,6 +20,8 @@ import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
+import de.tum.in.i22.uc.thrift.types.TobiasEvent;
+import de.tum.in.i22.uc.thrift.types.TobiasResponse;
 
 
 /**
@@ -220,6 +222,18 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	@Override
 	public TStatus deployPolicyXMLPmp(TXmlPolicy XMLPolicy) throws TException {
 		return _pmpServer.deployPolicyXMLPmp(XMLPolicy);
+	}
+
+	@Override
+	public TobiasResponse TobiasProcessEventSync(TobiasEvent e, String senderID)
+			throws TException {
+		return _pdpServer.TobiasProcessEventSync(e, senderID);
+	}
+
+	@Override
+	public void TobiasProcessEventAsync(TobiasEvent e, String senderID)
+			throws TException {
+		_pdpServer.TobiasProcessEventAsync(e, senderID);
 	}
 
 }

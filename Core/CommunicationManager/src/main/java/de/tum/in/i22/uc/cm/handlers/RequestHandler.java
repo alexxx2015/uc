@@ -549,4 +549,16 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return waitForResponse(request);
 	}
 
+
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		this.notifyEventAsync(pepEvent);
+	}
+
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		return this.notifyEventSync(pepEvent);
+	}
+
 }
