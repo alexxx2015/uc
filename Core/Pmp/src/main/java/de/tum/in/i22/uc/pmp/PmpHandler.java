@@ -81,11 +81,11 @@ public class PmpHandler extends PmpProcessor {
 			JAXBContext jc = JAXBContext
 					.newInstance("de.tum.in.i22.uc.pmp.xsd");
 			Unmarshaller u = jc.createUnmarshaller();
-			u.setEventHandler(new DefaultValidationEventHandler(){
-				public boolean handleEvent(ValidationEvent ve){
-					return super.handleEvent(ve);
-				}
-			});
+//			u.setEventHandler(new DefaultValidationEventHandler(){
+//				public boolean handleEvent(ValidationEvent ve){
+//					return super.handleEvent(ve);
+//				}
+//			});
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
 
