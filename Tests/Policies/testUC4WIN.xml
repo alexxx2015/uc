@@ -1,0 +1,24 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
+	xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testPolicy">
+
+	<preventiveMechanism name="testUc4Win">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="*" tryEvent="true">
+			<paramMatch name="InFileName" value="log.txt" cmpOp="endsWith"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+
+</policy>
