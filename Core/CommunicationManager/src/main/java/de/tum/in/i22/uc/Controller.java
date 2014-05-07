@@ -444,13 +444,13 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
-		_requestHandler.TobiasProcessEventAsync(pepEvent);
+	public void processEventAsync(IEvent pepEvent) {
+		_requestHandler.processEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
-		return _requestHandler.TobiasProcessEventSync(pepEvent);
+	public IResponse processEventSync(IEvent pepEvent) {
+		return _requestHandler.processEventSync(pepEvent);
 	}
 
 }

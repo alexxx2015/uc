@@ -225,15 +225,15 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TobiasResponse TobiasProcessEventSync(TobiasEvent e, String senderID)
+	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
-		return _pdpServer.TobiasProcessEventSync(e, senderID);
+		return _pdpServer.processEventSync(e, senderID);
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(TobiasEvent e, String senderID)
+	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
-		_pdpServer.TobiasProcessEventAsync(e, senderID);
+		_pdpServer.processEventAsync(e, senderID);
 	}
 
 }

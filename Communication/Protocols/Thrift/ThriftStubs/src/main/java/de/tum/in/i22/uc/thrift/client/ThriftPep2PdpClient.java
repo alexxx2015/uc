@@ -52,13 +52,13 @@ class ThriftPep2PdpClient extends Pep2PdpClient {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
-		_impl.TobiasProcessEventAsync(pepEvent);
+	public void processEventAsync(IEvent pepEvent) {
+		_impl.processEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
-		return _impl.TobiasProcessEventSync(pepEvent);
+	public IResponse processEventSync(IEvent pepEvent) {
+		return _impl.processEventSync(pepEvent);
 	}
 
 

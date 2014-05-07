@@ -135,12 +135,12 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
+	public void processEventAsync(IEvent pepEvent) {
 		this.notifyEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+	public IResponse processEventSync(IEvent pepEvent) {
 		return this.notifyEventSync(pepEvent);
 	}
 }

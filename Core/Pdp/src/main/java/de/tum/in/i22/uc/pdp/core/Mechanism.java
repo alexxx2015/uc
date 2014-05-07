@@ -18,9 +18,9 @@ import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
+import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
-import de.tum.in.i22.uc.pdp.xsd.action.ExecuteAsyncActionType;
 
 public class Mechanism extends Thread implements IPdpMechanism {
 	private static Logger log = LoggerFactory.getLogger(Mechanism.class);

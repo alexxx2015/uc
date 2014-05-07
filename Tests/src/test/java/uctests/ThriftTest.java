@@ -21,7 +21,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
@@ -131,7 +130,7 @@ public class ThriftTest extends GenericTest {
 		/*
 		 * Signal TobiasSync event
 		 */
-		response = clientPdp.TobiasProcessEventSync(new EventBasic("t", map, false));
+		response = clientPdp.processEventSync(new EventBasic("t", map, false));
 		Assert.assertEquals(EStatus.ALLOW, response.getAuthorizationAction()
 				.getEStatus());
 
@@ -140,7 +139,7 @@ public class ThriftTest extends GenericTest {
 		/*
 		 * Signal TobiasAsync event
 		 */
-		clientPdp.TobiasProcessEventAsync(new EventBasic("t", map, false));
+		clientPdp.processEventAsync(new EventBasic("t", map, false));
 		System.out.println(x++);
 
 		

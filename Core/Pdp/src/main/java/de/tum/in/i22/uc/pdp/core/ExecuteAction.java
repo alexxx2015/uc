@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
-import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
-import de.tum.in.i22.uc.pdp.xsd.action.ExecuteAsyncActionType;
-import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
+import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
+import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
+import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
 public class ExecuteAction implements Serializable, IPdpExecuteAction {
 	private static final long serialVersionUID = 8451999937686098519L;

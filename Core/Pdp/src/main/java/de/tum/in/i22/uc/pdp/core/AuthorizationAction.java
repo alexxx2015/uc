@@ -15,8 +15,8 @@ import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
-import de.tum.in.i22.uc.pdp.xsd.action.ExecuteActionType;
-import de.tum.in.i22.uc.pdp.xsd.action.ParameterType;
+import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
+import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
 public class AuthorizationAction implements Serializable, IPdpAuthorizationAction
 {

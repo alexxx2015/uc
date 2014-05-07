@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.thrift.client;
 
-import java.awt.Event;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +9,6 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -142,13 +139,14 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
+	public void processEventAsync(IEvent pepEvent) {
 		_logger.debug("TobiasProcessEventAsync (Pdp client)");
 		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
 		map.remove("senderID");
 		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
 		try {
-			_handle.TobiasProcessEventAsync(ev, pepEvent.getParameters().get("senderID"));
+			_handle.processEventAsync(ev,
+					pepEvent.getParameters().get("senderID"));
 		} catch (TException e) {
 			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
 			e.printStackTrace();
@@ -158,14 +156,15 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+	public IResponse processEventSync(IEvent pepEvent) {
 		_logger.debug("TobiasProcessEventSync (Pdp client)");
 		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
 		map.remove("senderID");
 		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
 		TobiasResponse tr = null;
 		try {
-			tr=_handle.TobiasProcessEventSync(ev, pepEvent.getParameters().get("senderID"));
+			tr = _handle.processEventSync(ev,
+					pepEvent.getParameters().get("senderID"));
 		} catch (TException e) {
 			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
 			e.printStackTrace();
