@@ -107,6 +107,11 @@ public class ThriftServerFactory {
 		return createThriftServer(port,
 				new TAny2Pxp.Processor<TAny2PxpThriftServer>(new TAny2PxpThriftServer()));
 	}
+	
+	public static <T extends TAny2Pxp.Iface> IThriftServer createPxpThriftServer(int port, T pxpProcessor) {
+		return createThriftServer(port,
+				new TAny2Pxp.Processor<T>(pxpProcessor));
+	}
 
 	private static IThriftServer createThriftServer(int port, TProcessor processor) {
 		ThriftServer server;
