@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.thrift.types.TContainer;
@@ -29,14 +29,14 @@ import de.tum.in.i22.uc.thrift.types.TStatus;
  * 
  */
 class TAny2PipThriftServer extends ThriftServerHandler implements
-		TAny2Pip.Iface {
+TAny2Pip.Iface {
 	private static Logger _logger = LoggerFactory
 			.getLogger(TAny2PipThriftServer.class);
 
-	private final IRequestHandler _requestHandler;
+	private final IAny2Pip _handler;
 
-	TAny2PipThriftServer(IRequestHandler requestHandler) {
-		_requestHandler = requestHandler;
+	TAny2PipThriftServer(IAny2Pip handler) {
+		_handler = handler;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		_logger.debug("TAny2Pip: initialRepresentation");
 		IName name = ThriftConverter.fromThrift(containerName);
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		IStatus status = _requestHandler.initialRepresentation(name, d);
+		IStatus status = _handler.initialRepresentation(name, d);
 		return ThriftConverter.toThrift(status);
 	}
 
@@ -54,7 +54,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 			throws TException {
 		_logger.debug("TAny2Pip: newInitialRepresentation");
 		IName name = ThriftConverter.fromThrift(containerName);
-		IData _data = _requestHandler.newInitialRepresentation(name);
+		IData _data = _handler.newInitialRepresentation(name);
 		return ThriftConverter.toThrift(_data);
 	}
 
@@ -62,35 +62,35 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 	public boolean hasAllData(Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: hasAllData");
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		return _requestHandler.hasAllData(d);
+		return _handler.hasAllData(d);
 	}
 
 	@Override
 	public boolean hasAnyData(Set<TData> data) throws TException {
 		_logger.debug("TAny2Pip: hasAnyData");
 		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		return _requestHandler.hasAnyData(d);
+		return _handler.hasAnyData(d);
 	}
 
 	@Override
 	public boolean hasAllContainers(Set<TName> names) throws TException {
 		_logger.debug("TAny2Pip: hasAllContainers");
 		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
-		return _requestHandler.hasAllContainers(c);
+		return _handler.hasAllContainers(c);
 	}
 
 	@Override
 	public boolean hasAnyContainer(Set<TName> names) throws TException {
 		_logger.debug("TAny2Pip: hasAnyContainer");
 		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
-		return _requestHandler.hasAnyContainer(c);
+		return _handler.hasAnyContainer(c);
 	}
 
 	@Override
 	public TStatus update(TEvent event) throws TException {
 		_logger.debug("TAny2Pip: notifyActualEvent");
 		IEvent ev = ThriftConverter.fromThrift(event);
-		IStatus status = _requestHandler.update(ev);
+		IStatus status = _handler.update(ev);
 		return ThriftConverter.toThrift(status);
 	}
 
@@ -99,7 +99,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 			String predicate) throws TException {
 		_logger.debug("TAny2Pip: evaluatePredicateSimulatingNextState");
 		IEvent ev = ThriftConverter.fromThrift(event);
-		return _requestHandler.evaluatePredicateSimulatingNextState(ev,
+		return _handler.evaluatePredicateSimulatingNextState(ev,
 				predicate);
 	}
 
@@ -107,7 +107,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 	public boolean evaluatePredicatCurrentState(String predicate)
 			throws TException {
 		_logger.debug("TAny2Pip: evaluatePredicateCurrentState");
-		return _requestHandler.evaluatePredicateCurrentState(predicate);
+		return _handler.evaluatePredicateCurrentState(predicate);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		_logger.debug("TAny2Pip: getContainerforData");
 
 		IData d = ThriftConverter.fromThrift(data);
-		Set<IContainer> result = _requestHandler.getContainersForData(d);
+		Set<IContainer> result = _handler.getContainersForData(d);
 
 		return ThriftConverter.toThriftContainerSet(result);
 	}
@@ -125,35 +125,35 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		_logger.debug("TAny2Pip: getDataInContainer");
 
 		IName cn = ThriftConverter.fromThrift(containerName);
-		Set<IData> result = _requestHandler.getDataInContainer(cn);
+		Set<IData> result = _handler.getDataInContainer(cn);
 		return ThriftConverter.toThriftDataSet(result);
 	}
 
 	@Override
 	public TStatus startSimulation() throws TException {
 		_logger.debug("TAny2Pip: startsimulation");
-		IStatus result = _requestHandler.startSimulation();
+		IStatus result = _handler.startSimulation();
 		return ThriftConverter.toThrift(result);
 	}
 
 	@Override
 	public TStatus stopSimulation() throws TException {
 		_logger.debug("TAny2Pip: stopSimulation");
-		IStatus status = _requestHandler.stopSimulation();
+		IStatus status = _handler.stopSimulation();
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public boolean isSimulating() throws TException {
 		_logger.debug("TAny2Pip: isSimulating");
-		return _requestHandler.isSimulating();
+		return _handler.isSimulating();
 	}
 
 	@Override
 	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
 			throws TException {
 		_logger.debug("TAny2Pip: whoHasData");
-		return ThriftConverter.toThriftLocationSet(_requestHandler.whoHasData(
+		return ThriftConverter.toThriftLocationSet(_handler.whoHasData(
 				ThriftConverter.fromThriftDataSet(data), recursionDepth));
 	}
 
@@ -167,7 +167,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		for (String s : structure.keySet()) {
 			map.put(s, ThriftConverter.fromThriftDataSet(structure.get(s)));
 		}
-		return ThriftConverter.toThrift(_requestHandler.newStructuredData(map));
+		return ThriftConverter.toThrift(_handler.newStructuredData(map));
 	}
 
 	@Override
@@ -175,7 +175,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 		_logger.debug("TAny2Pip: getStructureOf");
 		if (data == null)
 			throw new TException("TData==null");
-		Map<String, Set<IData>> map = _requestHandler
+		Map<String, Set<IData>> map = _handler
 				.getStructureOf(ThriftConverter.fromThrift(data));
 		Map<String, Set<TData>> res = new HashMap<String, Set<TData>>();
 		for (String s : map.keySet()) {
@@ -186,7 +186,7 @@ class TAny2PipThriftServer extends ThriftServerHandler implements
 
 	@Override
 	public Set<TData> flattenStructure(TData data) throws TException {
-		return ThriftConverter.toThriftDataSet(_requestHandler
+		return ThriftConverter.toThriftDataSet(_handler
 				.flattenStructure(ThriftConverter.fromThrift(data)));
 	}
 }

@@ -5,6 +5,8 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -39,32 +41,32 @@ public class ThriftServerFactory {
 
 	/**
 	 * Creates a Pip Thrift server listening on the specified port and redirecting
-	 * requests to the specified {@link IRequestHandler}.
+	 * requests to the specified {@link IAny2Pip} handler.
 	 *
 	 * The server's run method will not yet be executed.
 	 *
 	 * @param port the port to listen on
-	 * @param requestHandler the {@link IRequestHandler} to which requests are dispatched
+	 * @param handler the {@link IAny2Pip} handler to which requests are dispatched
 	 * @return the server instance on success, null on failure
 	 */
-	public static IThriftServer createPipThriftServer(int port, IRequestHandler requestHandler) {
+	public static IThriftServer createPipThriftServer(int port, IAny2Pip handler) {
 		return createThriftServer(port,
-				new TAny2Pip.Processor<TAny2PipThriftServer>(new TAny2PipThriftServer(requestHandler)));
+				new TAny2Pip.Processor<TAny2PipThriftServer>(new TAny2PipThriftServer(handler)));
 	}
 
 	/**
 	 * Creates a Pmp Thrift server listening on the specified port and redirecting
-	 * requests to the specified {@link IRequestHandler}.
+	 * requests to the specified {@link IAny2Pmp} handler.
 	 *
 	 * The server's run method will not yet be executed.
 	 *
 	 * @param port the port to listen on
-	 * @param requestHandler the {@link IRequestHandler} to which requests are dispatched
+	 * @param handler the {@link IAny2Pmp} handler to which requests are dispatched
 	 * @return the server instance on success, null on failure
 	 */
-	public static IThriftServer createPmpThriftServer(int port, IRequestHandler requestHandler) {
+	public static IThriftServer createPmpThriftServer(int port, IAny2Pmp handler) {
 		return createThriftServer(port,
-				new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(requestHandler)));
+				new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(handler)));
 	}
 
 	/**
