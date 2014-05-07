@@ -101,6 +101,7 @@ public class PxpManager {
 		boolean b = false;
 		if (!pxpSpec.containsKey(pxp.getId())) {
 			b = pxpSpec.put(pxp.getId(), pxp) == null;
+			_logger.info("PXP "+pxp.getId()+" registered.");
 		}
 		return b;
 	}

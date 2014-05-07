@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.thrift.server;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,9 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -18,6 +22,9 @@ import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
+import de.tum.in.i22.uc.thrift.types.TobiasEvent;
+import de.tum.in.i22.uc.thrift.types.TobiasResponse;
+import de.tum.in.i22.uc.thrift.types.TobiasStatusType;
 
 
 /**
@@ -90,6 +97,54 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		_logger.debug("TAny2Pdp: deployPolicy");
 		IStatus status = _requestHandler.deployPolicyXMLPmp(ThriftConverter.fromThrift(XMLPolicy));
 		return ThriftConverter.toThrift(status);
+	}
+
+	@Override
+	public TobiasResponse TobiasProcessEventSync(TobiasEvent e, String senderID)
+			throws TException {
+		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		map.put("senderID", senderID);
+		IEvent ev = new EventBasic(e.getName(), map, false);
+		IResponse res = _requestHandler.TobiasProcessEventSync(ev);
+		EStatus st=null;
+		TobiasStatusType resStatus = null;
+		if (res!=null){
+			st= res.getAuthorizationAction().getEStatus();
+			switch (st){
+			case OKAY:
+				resStatus=TobiasStatusType.OK;
+				break;
+			case ERROR:
+				resStatus=TobiasStatusType.ERROR;
+				break;
+			case INHIBIT:
+				resStatus=TobiasStatusType.INHIBIT;
+				break;
+			case ALLOW:
+				resStatus=TobiasStatusType.ALLOW;
+				break;
+			case MODIFY:
+				resStatus=TobiasStatusType.MODIFY;
+				break;
+			case ERROR_EVENT_PARAMETER_MISSING:
+			case REMOTE_DATA_FLOW_HAPPENED:
+			default:
+				resStatus=TobiasStatusType.ERROR;
+				break;
+			}
+		} else {
+			resStatus=TobiasStatusType.ERROR;
+		}
+		return new TobiasResponse(resStatus);
+	}
+
+	@Override
+	public void TobiasProcessEventAsync(TobiasEvent e, String senderID)
+			throws TException {
+		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		map.put("senderID", senderID);
+		IEvent ev = new EventBasic(e.getName(), map, false);
+		_requestHandler.TobiasProcessEventAsync(ev);
 	}
 
 }

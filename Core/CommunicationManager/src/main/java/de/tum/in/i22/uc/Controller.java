@@ -209,19 +209,19 @@ public class Controller implements IRequestHandler  {
 		}
 		_settings = Settings.getInstance();
 
-		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
 			_settings
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
-		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
 			_settings
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
-		if (cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
 			_settings
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
@@ -441,6 +441,16 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
 		return _requestHandler.deployPolicyRawXMLPmp(xml);
+	}
+
+	@Override
+	public void TobiasProcessEventAsync(IEvent pepEvent) {
+		_requestHandler.TobiasProcessEventAsync(pepEvent);
+	}
+
+	@Override
+	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+		return _requestHandler.TobiasProcessEventSync(pepEvent);
 	}
 
 }
