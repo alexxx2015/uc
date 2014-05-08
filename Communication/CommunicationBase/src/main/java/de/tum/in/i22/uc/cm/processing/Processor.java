@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.cm.processing;
 
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.IDummyProcessor;
 
 /**
@@ -26,7 +27,7 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 	}
 
 	public void init(I1 iface1, I2 iface2) {
-		init(iface1, iface2, null);
+		init(iface1, iface2, new DummyDistributionManager());
 	}
 
 	public void init(I1 iface1, I2 iface2, IDistributionManager distributionManager) {
@@ -38,7 +39,7 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 			_iface2 = iface2;
 		}
 
-		if (_distributionManager == null) {
+		if (_distributionManager == null || _distributionManager instanceof DummyDistributionManager) {
 			_distributionManager = distributionManager;
 		}
 	}

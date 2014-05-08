@@ -85,6 +85,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		return _currentSession;
 	}
 
+	@Override
 	public void newPolicy(XmlPolicy xmlPolicy) {
 		createPolicyKeyspace(xmlPolicy.getName(), IPLocation.localIpLocation);
 
@@ -151,7 +152,13 @@ public class CassandraDistributionManager implements IDistributionManager {
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
 
-		_currentSession.execute(query.toString());
+		try {
+			_currentSession.execute(query.toString());
+		}
+		catch (AlreadyExistsException e) {
+			// don't worry.. about a thing.
+		}
+
 	}
 
 	private void extendPolicyKeyspace(String policyName, IPLocation... locations) {

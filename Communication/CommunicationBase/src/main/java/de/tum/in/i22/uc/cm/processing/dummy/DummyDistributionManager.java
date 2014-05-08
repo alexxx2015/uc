@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.processing.dummy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -22,6 +23,14 @@ public class DummyDistributionManager implements IDistributionManager {
 		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("dataTransfer method invoked");
+	}
+
+	@Override
+	public void newPolicy(XmlPolicy xmlPolicy) {
+		// TODO Auto-generated method stub
+
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("newPolicy method invoked");
 	}
 
 

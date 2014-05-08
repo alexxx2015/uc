@@ -229,7 +229,7 @@ public class Controller implements IRequestHandler  {
 		}
 	}
 
-	private static void lock() {
+	protected static void lock() {
 		Object lock = new Object();
 		synchronized (lock) {
 			try {
