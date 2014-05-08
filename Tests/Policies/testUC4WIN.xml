@@ -19,6 +19,31 @@
 			<inhibit />
 		</authorizationAction>
 	</preventiveMechanism>
+	
+	<preventiveMechanism name="denyEveryR">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="ReadFile" tryEvent="true"/>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
 
+		<preventiveMechanism name="denyEveryW">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="WriteFile" tryEvent="true"/>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
 
 </policy>

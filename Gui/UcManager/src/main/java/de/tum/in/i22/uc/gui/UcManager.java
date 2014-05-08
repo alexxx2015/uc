@@ -547,8 +547,8 @@ public class UcManager extends Controller {
 					if (!source.isRowSelected(row)) {
 						source.changeSelection(row, col, false, false);
 					}
-					JMenuItem jmi = new JMenuItem("Remove "
-							+ source.getModel().getValueAt(row, 0));
+					JMenuItem jmi = new JMenuItem("Revoke "
+							+ source.getModel().getValueAt(row, 1));
 					jmi.setActionCommand(String.valueOf(row));
 					jmi.addActionListener(new DeployedPolicyMenuItemListener());
 					deployedPolicyPopup.add(jmi);
@@ -590,7 +590,6 @@ public class UcManager extends Controller {
 			String policy = (String) table.getModel().getValueAt(
 					table.getSelectedRow(), 0);
 			pmpClient.revokeMechanismPmp(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
-
 			((DefaultTableModel) table.getModel()).removeRow(Integer.parseInt(e
 					.getActionCommand()));
 			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
