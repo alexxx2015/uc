@@ -36,6 +36,11 @@ public class EventBasic implements IEvent {
 		_isActual = isActual;
 	}
 
+	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
+		this(name, map, isActual);
+		_timestamp=timeStamp;
+	}
+
 	@Override
 	public long getTimestamp() {
 		return _timestamp;

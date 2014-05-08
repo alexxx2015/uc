@@ -353,7 +353,6 @@ public class UcManager extends Controller {
 				for (int offset : ot.getSet().keySet()) {
 					OffsetParameter on = ot.get(offset);
 
-					String genericSig = on.getSignature();
 					param.put("offset", String.valueOf(offset));
 					param.put("location", source);
 					param.put("signature", on.getSignature());

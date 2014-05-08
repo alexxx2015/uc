@@ -108,8 +108,7 @@ public final class ThriftConverter {
 			_logger.debug("TEvent was null.");
 			return null;
 		}
-
-		return new EventBasic(e.name, e.parameters, e.isActual);
+		return new EventBasic(e.name, e.parameters, e.isActual, e.getTimeStamp());
 	}
 
 	public static PxpSpec fromThrift(TPxpSpec p) {
@@ -244,7 +243,9 @@ public final class ThriftConverter {
 			_logger.debug("IEvent was null.");
 			return null;
 		}
-		return new TEvent(e.getName(), e.getParameters(), e.getTimestamp());
+		TEvent res=new TEvent(e.getName(), e.getParameters(), e.getTimestamp());
+		res.setIsActual(e.isActual());
+		return res;
 	}
 
 	public static TName toThrift(IName n) {

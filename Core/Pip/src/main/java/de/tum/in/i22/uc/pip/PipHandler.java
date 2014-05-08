@@ -34,10 +34,10 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
-import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory

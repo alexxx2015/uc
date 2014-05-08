@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
@@ -40,8 +41,10 @@ public final class StructuredInformationFlowModel extends
 	 * Basic constructor. Here we initialize the reference to the basic
 	 * information flow model and the tables to store the structured data
 	 * information.
+	 * @param informationFlowModelManager 
 	 */
-	public StructuredInformationFlowModel() {
+	public StructuredInformationFlowModel(InformationFlowModelManager informationFlowModelManager) {
+		super (informationFlowModelManager);
 		this.reset();
 	}
 

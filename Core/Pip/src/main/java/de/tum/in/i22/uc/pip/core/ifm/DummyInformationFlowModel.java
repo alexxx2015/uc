@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -10,15 +11,24 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 
+public class DummyInformationFlowModel extends InformationFlowModelExtension
+		implements IInformationFlowModel {
+	protected DummyInformationFlowModel(
+			InformationFlowModelManager informationFlowModelManager) {
+		super(informationFlowModelManager);
+	}
 
-public class DummyInformationFlowModel extends InformationFlowModelExtension implements IInformationFlowModel {
-	private static final Logger _logger = LoggerFactory.getLogger(DummyInformationFlowModel.class);
+	private static final Logger _logger = LoggerFactory
+			.getLogger(DummyInformationFlowModel.class);
 
 	@Override
 	public void remove(IData data) {
@@ -65,7 +75,8 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	}
 
 	@Override
-	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
+	public Set<IContainer> getAliasTransitiveReflexiveClosure(
+			IContainer container) {
 		_logger.error("Method getAliasTransitiveReflexiveClosure() not implemented.");
 		return null;
 	}
@@ -131,13 +142,15 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	}
 
 	@Override
-	public void addDataTransitively(Collection<IData> data, IName dstContainerName) {
+	public void addDataTransitively(Collection<IData> data,
+			IName dstContainerName) {
 		_logger.error("Method addDataTransitively() not implemented.");
 
 	}
 
 	@Override
-	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
+	public void addDataTransitively(Collection<IData> data,
+			IContainer dstContainer) {
 		_logger.error("Method addDataTransitively() not implemented.");
 
 	}
@@ -209,7 +222,8 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	}
 
 	@Override
-	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
+	public <T extends IName> List<T> getAllNames(IName containerName,
+			Class<T> type) {
 		_logger.error("Method getAllNames() not implemented.");
 		return null;
 	}
@@ -239,20 +253,8 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	}
 
 	@Override
-	public boolean addScope(IScope scope) {
-		_logger.error("Method addScope() not implemented.");
-		return false;
-	}
-
-	@Override
 	public boolean openScope(IScope scope) {
 		_logger.error("Method openScope() not implemented.");
-		return false;
-	}
-
-	@Override
-	public boolean removeScope(IScope scope) {
-		_logger.error("Method removeScope() not implemented.");
 		return false;
 	}
 
@@ -328,6 +330,22 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 		return null;
 	}
 
+	@Override
+	public Entry<EBehavior, IScope> XBehav(IEvent event) {
+		_logger.error("Method XBehav() not implemented.");
+		return null;
+	}
 
+	@Override
+	public Set<Entry<IScope, EScopeState>> XDelim(IEvent event) {
+		_logger.error("Method XDelim() not implemented.");
+		return null;
+	}
+
+	@Override
+	public Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+		_logger.error("Method XAlias() not implemented.");
+		return null;
+	}
 
 }

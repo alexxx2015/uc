@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Objects;
 
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+
 
 /**
  *
@@ -14,6 +16,13 @@ public abstract class InformationFlowModelExtension {
 	protected abstract void push();
 	protected abstract void pop();
 	protected abstract String niceString();
+
+	protected IInformationFlowModel _ifModel;
+	
+	protected InformationFlowModelExtension(
+			InformationFlowModelManager informationFlowModelManager) {
+		_ifModel=informationFlowModelManager;
+	}
 
 	@Override
 	public final int hashCode() {
