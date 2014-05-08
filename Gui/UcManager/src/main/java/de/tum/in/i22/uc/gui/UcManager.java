@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
@@ -48,8 +48,7 @@ import de.tum.in.i22.uc.gui.analysis.OffsetTable;
 import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
-
-public class UcManager extends Controller{
+public class UcManager extends Controller {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
@@ -73,16 +72,12 @@ public class UcManager extends Controller{
 	private Thread pdpThread;
 
 	private final ThriftClientFactory clientFactory;
-	private Any2PmpClient pmpClient;
+	private Pmp2PmpClient pmpClient;
 	private Pep2PdpClient pdpClient;
-	
-
 
 	/*
-	 *	-Djava.rmi.server.hostname=172.16.195.143
-	 *	static{
-	 *		System.setProperty("java.rmi.server.hostname", "172.16.195.181");
-	 *	}
+	 * -Djava.rmi.server.hostname=172.16.195.143 static{
+	 * System.setProperty("java.rmi.server.hostname", "172.16.195.181"); }
 	 * -agentlib:jdwp=transport=dt_socket ,suspend=y ,address=localhost:47163
 	 * -Djava.library.path=/home/uc/workspace/pef/bin/linux/components/pdp
 	 * -Dfile.encoding=UTF-8 -classpath
@@ -93,12 +88,13 @@ public class UcManager extends Controller{
 	public UcManager(String args[]) {
 		super(args);
 		this.clientFactory = new ThriftClientFactory();
-		if(this.clientFactory != null){
-			this.pmpClient = this.clientFactory.createAny2PmpClient(new IPLocation("localhost", 21001));
-			this.pdpClient = this.clientFactory.createPep2PdpClient(new IPLocation("localhost", 21003));
+		if (this.clientFactory != null) {
+			this.pmpClient = this.clientFactory
+					.createPmp2PmpClient(new IPLocation("localhost", 21001));
+			this.pdpClient = this.clientFactory
+					.createPep2PdpClient(new IPLocation("localhost", 21003));
 		}
 	}
-
 
 	public static void main(String args[]) {
 		UcManager myUCC = new UcManager(args);
@@ -120,51 +116,59 @@ public class UcManager extends Controller{
 		this.startBtn = new JButton("Start UC");
 		this.startBtn.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (ucIsRunning == false) {
-					//					stopBtn.setEnabled(true);
+					// stopBtn.setEnabled(true);
 					pipInfoLabel.setText("");
 					pipRefresh.setEnabled(true);
 					pipPopulateBtn.setEnabled(true);
 					pipRefresh.addMouseListener(new MouseListener() {
 
 						@Override
-						public void mouseClicked(MouseEvent e) {}
+						public void mouseClicked(MouseEvent e) {
+						}
 
 						@Override
-						public void mousePressed(MouseEvent e) {}
+						public void mousePressed(MouseEvent e) {
+						}
 
 						@Override
 						public void mouseReleased(MouseEvent e) {
 							String pipModelText = "Start UC";
 							if (ucIsRunning == true) {
-								pipTextArea.setText(_requestHandler.getIfModel());
+								pipTextArea.setText(_requestHandler
+										.getIfModel());
 							}
 							pipInfoLabel.setText("REFRESHED!");
 						}
 
 						@Override
-						public void mouseEntered(MouseEvent e) {}
+						public void mouseEntered(MouseEvent e) {
+						}
 
 						@Override
-						public void mouseExited(MouseEvent e) {}
+						public void mouseExited(MouseEvent e) {
+						}
 					});
 
 					deployedPolicyTable.setEnabled(true);
 					policyDeployBtn.setEnabled(true);
 
-					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable.getModel();
+					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
+							.getModel();
 					dtm.getDataVector().removeAllElements();
 					dtm.fireTableDataChanged();
 					deployedPolicies.clear();
 
-					if(!isStarted()){
+					if (!isStarted()) {
 						start();
 					}
 					pdpInfoLabel.setText("PDP running");
@@ -174,10 +178,12 @@ public class UcManager extends Controller{
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 		framePane.add(this.startBtn, gbc);
 
@@ -268,16 +274,20 @@ public class UcManager extends Controller{
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 		_return.add(this.pipPopulateBtn, gbc);
 
@@ -286,8 +296,6 @@ public class UcManager extends Controller{
 		this.pipRefresh = new JButton("Refresh");
 		this.pipRefresh.setEnabled(false);
 		_return.add(this.pipRefresh, gbc);
-
-
 
 		if (this.ucIsRunning == true) {
 			// pipModel = this.pipHandler.printModel();
@@ -303,7 +311,6 @@ public class UcManager extends Controller{
 		_return.add(new JScrollPane(this.pipTextArea), gbc);
 		// _return.add(jta,gbc);
 
-
 		this.pipInfoLabel = new JLabel("Start UC");
 		gbc.gridy = 2;
 		gbc.gridx = 0;
@@ -314,7 +321,7 @@ public class UcManager extends Controller{
 		return _return;
 	}
 
-	protected void populate(File f){
+	protected void populate(File f) {
 
 		try {
 			this.pdpClient.connect();
@@ -329,11 +336,11 @@ public class UcManager extends Controller{
 				.createMessageFactory();
 
 		// Initialize if model with TEST_C --> TEST_D
-		_logger.debug("Initialize PIP with sources and sinkes from "+f.getAbsolutePath());
+		_logger.debug("Initialize PIP with sources and sinkes from "
+				+ f.getAbsolutePath());
 
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("PEP", "Java");
-
 
 		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
@@ -354,7 +361,8 @@ public class UcManager extends Controller{
 						String id = on.getIdOfPar(parameter);
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
-						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
+						IEvent initEvent = _messageFactory.createActualEvent(
+								"JoanaInitInfoFlow", param);
 						pdpClient.notifyEventAsync(initEvent);
 					}
 				}
@@ -365,9 +373,9 @@ public class UcManager extends Controller{
 			e.printStackTrace();
 		}
 
-		//		/*
-		//		 * generate sinks
-		//		 */
+		// /*
+		// * generate sinks
+		// */
 		try {
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
@@ -383,7 +391,8 @@ public class UcManager extends Controller{
 						String id = on.getIdOfPar(parameter);
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
-						IEvent initEvent = _messageFactory.createActualEvent("JoanaInitInfoFlow", param);
+						IEvent initEvent = _messageFactory.createActualEvent(
+								"JoanaInitInfoFlow", param);
 						pdpClient.notifyEventAsync(initEvent);
 					}
 				}
@@ -411,11 +420,11 @@ public class UcManager extends Controller{
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.VERTICAL;
-		//		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		// gbc.gridwidth = GridBagConstraints.REMAINDER;
 		_return.add(deployedPolicyLab, gbc);
 		gbc.fill = GridBagConstraints.NONE;
 
-		//		gbc.fill = GridBagConstraints.HORIZONTAL;
+		// gbc.fill = GridBagConstraints.HORIZONTAL;
 		this.policyDeployBtn = new JButton("Deploy Policy");
 		this.policyDeployBtn.setEnabled(false);
 		gbc.gridy = 0;
@@ -426,7 +435,8 @@ public class UcManager extends Controller{
 				if (ucIsRunning == false) {
 					pdpInfoLabel.setText("Start PDP!");
 				} else {
-					JFileChooser jfc = new JFileChooser();
+					JFileChooser jfc = new JFileChooser("../../Tests/Policies");
+
 					int sod = jfc.showOpenDialog(myFrame);
 					if (sod == JFileChooser.APPROVE_OPTION) {
 						String policy = jfc.getSelectedFile().getName();
@@ -455,25 +465,28 @@ public class UcManager extends Controller{
 							}
 						}
 
-						_logger.info("Deployed File " + jfc.getSelectedFile().getAbsoluteFile());
+						_logger.info("Deployed File "
+								+ jfc.getSelectedFile().getAbsoluteFile());
 
 						DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
 								.getModel();
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
 
-						Map<String, List<String>> deployedMech = pmpClient.listMechanismsPmp();
-						Iterator<String> arIt = deployedMech.keySet().iterator();
+						Map<String, List<String>> deployedMech = pmpClient
+								.listMechanismsPmp();
+						Iterator<String> arIt = deployedMech.keySet()
+								.iterator();
 						while (arIt.hasNext()) {
 							String policyName = arIt.next();
-							List<String> mechanism = deployedMech.get(policyName);
+							List<String> mechanism = deployedMech
+									.get(policyName);
 							Iterator<String> mechIt = mechanism.iterator();
-							while(mechIt.hasNext()){
+							while (mechIt.hasNext()) {
 								String m = mechIt.next();
 								((DefaultTableModel) deployedPolicyTable
 										.getModel()).addRow(new Object[] {
-												policyName,
-												m });
+										policyName, m });
 							}
 						}
 					}
@@ -481,21 +494,26 @@ public class UcManager extends Controller{
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 		_return.add(this.policyDeployBtn, gbc);
 
 		Object[] colNames = { "Policy Name", "Mechanism" };
-		DefaultTableModel dtm = new DefaultTableModel(new Object[][] {}, colNames) {
+		DefaultTableModel dtm = new DefaultTableModel(new Object[][] {},
+				colNames) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -512,10 +530,12 @@ public class UcManager extends Controller{
 		_return.add(jsp, gbc);
 		this.deployedPolicyTable.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -539,10 +559,12 @@ public class UcManager extends Controller{
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 
 		this.pdpInfoLabel = new JLabel(" ");
@@ -579,7 +601,7 @@ public class UcManager extends Controller{
 	public void stopPDP() {
 		if (this.ucIsRunning) {
 			pdpThread.stop();
-			//			this.pdpCtrl.stop();
+			// this.pdpCtrl.stop();
 			this.ucIsRunning = false;
 		}
 	}
@@ -596,13 +618,13 @@ public class UcManager extends Controller{
 			FileReader fr = new FileReader(policyFile);
 			BufferedReader br = new BufferedReader(fr);
 			String line;
-			while((line = br.readLine()) != null)
+			while ((line = br.readLine()) != null)
 				policy += line;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//		this.pmpClient.deployPolicyXMLPmp(policy);
+		// this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
 	}
 }

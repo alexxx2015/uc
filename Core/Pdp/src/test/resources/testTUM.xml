@@ -63,7 +63,7 @@
 		<executeAsyncAction name="log2" processor="pxp">
 			<parameter name="file" value="abc.xml" />
 		</executeAsyncAction>
-		<!-- </preventiveMechanism> -->
+	</preventiveMechanism>
 
 
 		<preventiveMechanism name="testConditionParamMatch">
@@ -330,7 +330,4 @@
 				<inhibit />
 			</authorizationAction>
 		</preventiveMechanism>
-
-
-
 </policy>

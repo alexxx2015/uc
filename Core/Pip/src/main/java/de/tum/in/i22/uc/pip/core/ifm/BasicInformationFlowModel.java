@@ -566,29 +566,6 @@ public final class BasicInformationFlowModel implements IBasicInformationFlowMod
 
 
 	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainerRelaxed(de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
-	 */
-@Override
-	// 	FK:  Why would it be useful???
-//		If there is someone who agrees: Please delete this code.
-	@Deprecated
-	public IContainer getContainerRelaxed(IName name) {
-		IContainer container = null;
-		if (name != null && name.getName() != null) {
-			String representationName = name.getName();
-			for (IName nm : _namingMap.keySet()) {
-				if (nm.getName() != null
-						&& nm.getName().contains(representationName)) {
-
-					container = _namingMap.get(nm);
-					break;
-				}
-			}
-		}
-		return container;
-	}
-
-	/* (non-Javadoc)
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllContainers()
 	 */
 	@Override

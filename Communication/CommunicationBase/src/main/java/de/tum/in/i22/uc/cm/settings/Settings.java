@@ -140,7 +140,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pipLocation, LocalLocation.getInstance());
 		loadSetting(PROP_NAME_pmpLocation, LocalLocation.getInstance());
 
-		loadSetting(PROP_NAME_pipEnabledInformationFlowModels, "scope");
+		loadSetting(PROP_NAME_pipEnabledInformationFlowModels, "scope@structure");
 		loadSetting(PROP_NAME_pipEventHandlerSuffix, "EventHandler");
 		loadSetting(PROP_NAME_pipEventHandlerPackage, "de.tum.in.i22.uc.pip.eventdef.");
 		loadSetting(PROP_NAME_pipInitializerEvent, "SchemaInitializer");

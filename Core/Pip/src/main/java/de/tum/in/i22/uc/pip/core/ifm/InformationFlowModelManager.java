@@ -38,19 +38,7 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		DummyInformationFlowModel dummy = new DummyInformationFlowModel();
 
 		for (EInformationFlowModel eifm : EInformationFlowModel.values()) {
-			switch (eifm) {
-				case QUANTITIES:
-					_ifModelExtensions.put(eifm, dummy);
-					break;
-				case SCOPE:
-					_ifModelExtensions.put(eifm, dummy);
-					break;
-				case STRUCTURE:
-					_ifModelExtensions.put(eifm, new StructuredInformationFlowModel());
-					break;
-				default:
-					break;
-			}
+			_ifModelExtensions.put(eifm, dummy);
 		}
 
 		for (EInformationFlowModel eifm : Settings.getInstance().getEnabledInformationFlowModels()) {
@@ -59,6 +47,9 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 					break;
 				case SCOPE:
 					_ifModelExtensions.put(eifm, new ScopeInformationFlowModel());
+					break;
+				case STRUCTURE:
+					_ifModelExtensions.put(eifm, new StructuredInformationFlowModel());
 					break;
 				default:
 					break;
@@ -293,11 +284,6 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	@Override
 	public IContainer getContainer(IName name) {
 		return _basicIfModel.getContainer(name);
-	}
-
-	@Override
-	public IContainer getContainerRelaxed(IName name) {
-		return _basicIfModel.getContainerRelaxed(name);
 	}
 
 	@Override
