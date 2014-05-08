@@ -189,9 +189,17 @@ public class CassandraDistributionManager implements IDistributionManager {
 			}
 		}
 
+		boolean addingUnknownLocation = false;
+
 		// (3) We add the new destination locations to the keyspace
 		for (IPLocation loc : locations) {
-			oldLocations.add(loc.getHost());
+			addingUnknownLocation |= oldLocations.add(loc.getHost());
+		}
+
+		// check whether any formerly unknwoen location was added.
+		// If not, we can safely exit
+		if (!addingUnknownLocation) {
+			return;
 		}
 
 		// (4) We make a string out of all locations and create the query
