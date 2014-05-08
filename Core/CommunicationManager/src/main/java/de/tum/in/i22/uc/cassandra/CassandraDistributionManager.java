@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cassandra;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,10 +24,13 @@ import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
+import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
@@ -39,6 +43,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
 	 * 
 	 */
+
+	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
 
 	private final Cluster _cluster;
 	private Session _currentSession;
@@ -53,6 +59,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 	public CassandraDistributionManager() {
 		_cluster = Cluster.builder().addContactPoint("localhost").build();
 		_currentSession = _cluster.connect();
+		_pmpConnectionManager = new ConnectionManager<>(5);
 	}
 
 
@@ -133,6 +140,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 				changeKeyspace(p.getName());
 				_currentSession.execute("INSERT INTO hasdata (data, location) " + "VALUES ('" + d.getId() + "','"
 						+ dstLocation.getHost() + "')");
+				// TODO: if a new tuple is in fact inserted, then we need to perform regular
+				// PIP2PIP data transfer, similar to what we do with the policy.
 			}
 		}
 
@@ -191,9 +200,24 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		boolean addingUnknownLocation = false;
 
-		// (3) We add the new destination locations to the keyspace
+		// (3) Loop over all receiving locations
+		// We add the new destination locations to the keyspace.e;
+		// If the location was not in the keyspace before, then we
+		// need to perform regular PMP policy deployment.
 		for (IPLocation loc : locations) {
-			addingUnknownLocation |= oldLocations.add(loc.getHost());
+			if (oldLocations.add(loc.getHost())) {
+				addingUnknownLocation = true;
+
+				// FIXME: Organization of this code is not neat,
+				// and this should definitely go somewhere else
+				try {
+					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(loc));
+					// TODO: need the actual XML policy here :-/
+					//remotePmp.deployPolicyRawXMLPmp(xml);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		// check whether any formerly unknwoen location was added.
