@@ -31,6 +31,15 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 public class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
+	/*
+	 * IMPORTANT:
+	 * Cassandra 2.1.0-beta causes some trouble with upper/lowercase
+	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
+	 *  which was afterwards not found by a lookup with name 'testPolicy')
+	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
+	 * 
+	 */
+
 	private final Cluster _cluster;
 	private Session _currentSession;
 	private String _currentKeyspace;
@@ -92,7 +101,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		changeKeyspace(xmlPolicy.getName());
 
 		try {
-			_currentSession.execute("CREATE TABLE hasData (data text,location text,PRIMARY KEY (data))");
+			_currentSession.execute("CREATE TABLE hasdata (data text,location text,PRIMARY KEY (data))");
 		} catch (AlreadyExistsException e) {
 			// If the table already exists: just be happy.
 		}
@@ -122,7 +131,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		for (IData d : data) {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				changeKeyspace(p.getName());
-				_currentSession.execute("INSERT INTO hasData (data, location) " + "VALUES ('" + d.getId() + "','"
+				_currentSession.execute("INSERT INTO hasdata (data, location) " + "VALUES ('" + d.getId() + "','"
 						+ dstLocation.getHost() + "')");
 			}
 		}
@@ -134,6 +143,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 			_logger.info("Unable to create keyspace. No locations provided.");
 			return;
 		}
+
+		policyName = policyName.toLowerCase();
 
 		// check whether the keyspace exists already
 		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
@@ -162,6 +173,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	private void extendPolicyKeyspace(String policyName, IPLocation... locations) {
+		policyName = policyName.toLowerCase();
+
 		// (1) We retrieve the current information about the keyspace
 		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
 				+ "WHERE keyspace_name = '" + policyName + "'");
