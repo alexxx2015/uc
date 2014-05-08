@@ -244,7 +244,9 @@ public final class ThriftConverter {
 			_logger.debug("IEvent was null.");
 			return null;
 		}
-		return new TEvent(e.getName(), e.getParameters(), e.getTimestamp());
+		TEvent _return = new TEvent(e.getName(), e.getParameters(), e.getTimestamp());
+		_return.setIsActual(e.isActual());
+		return _return;
 	}
 
 	public static TName toThrift(IName n) {
