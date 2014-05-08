@@ -185,12 +185,6 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	}
 
 	@Override
-	public IContainer getContainerRelaxed(IName name) {
-		_logger.error("Method getContainerRelaxed() not implemented.");
-		return null;
-	}
-
-	@Override
 	public Set<IContainer> getAllContainers() {
 		_logger.error("Method getAllContainers() not implemented.");
 		return null;

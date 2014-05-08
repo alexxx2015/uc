@@ -8,7 +8,7 @@
 	<preventiveMechanism name="testUc4Win">
 		<description>...</description>
 		<timestep amount="10" unit="SECONDS" />
-		<trigger action="*" tryEvent="true">
+		<trigger action="ReadFile" tryEvent="true">
 			<paramMatch name="InFileName" value="log.txt" cmpOp="endsWith"/>
 		</trigger>
 		<condition>

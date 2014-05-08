@@ -5,12 +5,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	InformationFlowModelTest.class,
-	PipCoreTest.class,
-	PipCoreClassReloadingTest.class,
-	LinuxEventTest.class})
-
+@SuiteClasses({ InformationFlowModelTest.class, PipCoreTest.class,
+		PipCoreClassReloadingTest.class, LinuxEventTest.class,
+		StructuredInformationFlowModelTest.class })
 public class AllTestsPipCore {
 
 }
