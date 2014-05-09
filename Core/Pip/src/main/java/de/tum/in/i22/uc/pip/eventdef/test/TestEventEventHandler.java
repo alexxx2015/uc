@@ -33,7 +33,7 @@ public class TestEventEventHandler extends BaseEventHandler {
 //		_logger.debug("TestEventEventHandler. Trying to empty initial container");
 //		_logger.debug("As of now, initial container contains the following ["+basicIfModel.getData(new NameBasic("initialContainer")));
 //
-		_informationFlowModel.emptyContainer(new NameBasic("initialContainer"));
+//		_informationFlowModel.emptyContainer(new NameBasic("initialContainer"));
 //
 //		_logger.debug("After emptying it, initial container contains the following ["+basicIfModel.getData(new NameBasic("initialContainer")));
 

@@ -31,4 +31,9 @@ public interface IScope {
 	 */
 	String getHumanReadableName();
 
+	/**
+	 * @return the unique id
+	 */
+	String getId();
+
 }

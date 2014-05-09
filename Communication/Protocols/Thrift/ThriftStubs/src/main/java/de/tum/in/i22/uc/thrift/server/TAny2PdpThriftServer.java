@@ -144,7 +144,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		_logger.debug("TAny2Pdp: processEventAsync");
 		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
 		map.put("senderID", senderID);
-		IEvent ev = new EventBasic(e.getName(), map, false);
+		IEvent ev = new EventBasic(e.getName(), map, true);
 		_requestHandler.processEventAsync(ev);
 	}
 
