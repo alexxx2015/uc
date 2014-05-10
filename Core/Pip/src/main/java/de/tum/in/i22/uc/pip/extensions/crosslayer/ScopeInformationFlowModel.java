@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IScopeInformationFlowModel;
@@ -50,6 +51,9 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 
 	public ScopeInformationFlowModel(InformationFlowModelManager informationFlowModelManager) {
 		super(informationFlowModelManager);
+		_scopeSet=new HashSet<IScope>();
+		_scopeSetBackup=null;
+		
 	}
 
 	/* (non-Javadoc)
@@ -155,10 +159,27 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		StringBuilder sb = new StringBuilder();
 
 		String nl = System.getProperty("line.separator");
+		String arrow = " ---> ";
 
-		sb.append("  Scope:" + nl);
-		sb.append("    not implemented." + nl);
-
+		sb.append("  Scopes:" + nl);
+		if ((_scopeSet==null)||(_scopeSet.size()==0)){
+			sb.append("Empty" + nl+nl);
+			return sb.toString();
+		}
+		boolean first = true;
+		for (IScope scope : _scopeSet) {
+			sb.append("    " + scope.getId() + arrow);
+			if (first) {
+				first = false;
+			} else {
+				sb.append("    ");
+				for (int i = 0; i < scope.getId().length() + arrow.length(); i++) {
+					sb.append(" ");
+				}
+			}
+			sb.append(scope.getHumanReadableName());
+			sb.append(nl);
+		}
 		sb.append(nl);
 		return sb.toString();
 	}

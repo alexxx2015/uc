@@ -14,7 +14,7 @@
 		<condition>
 			<true />
 		</condition>
-		<authorizationAction name="default" start="true"
+		<authorizationAction name="default" start="true" 
 			fallback="fallback">
 			<inhibit />
 		</authorizationAction>

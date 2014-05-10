@@ -60,7 +60,7 @@ public class ScopeBasic implements IScope {
 			return Objects.equals(_scopeType, o._scopeType)
 					&& Objects.equals(_attributes, o._attributes);
 		}
-		return false;
+		return false;  
 	}
 
 	@Override
@@ -85,5 +85,10 @@ public class ScopeBasic implements IScope {
 	 */
 	public String getHumanReadableName() {
 		return _humanReadableName;
+	}
+
+	@Override
+	public String getId() {
+		return _id;
 	}
 }

@@ -32,9 +32,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected Set<ScopeBasic> _scopesToBeClosed = null;
 
 	protected AbstractScopeEventHandler() {
-		if (_informationFlowModel == null) {
-			throw new RuntimeException("Scopes are not supported. Check the configuration.");
-		}
+//		if (_informationFlowModel == null) {
+//			throw new RuntimeException("Scopes are not supported. Check the configuration.");
+//		}
 	}
 
 	/*

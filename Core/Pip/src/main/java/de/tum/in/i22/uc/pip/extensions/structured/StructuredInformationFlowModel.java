@@ -209,7 +209,11 @@ public final class StructuredInformationFlowModel extends
 		String nl = System.getProperty("line.separator");
 		String arrow = " ---> ";
 
-		sb.append("  Structure:" + nl);
+		sb.append("  Structures:" + nl);
+		if ((_structureMap==null)||(_structureMap.size()==0)){
+			sb.append("Empty" + nl+nl);
+			return sb.toString();
+		}
 		for (IData d : _structureMap.keySet()) {
 			sb.append("    " + d.getId() + arrow);
 			boolean first = true;
