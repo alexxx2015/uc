@@ -49,7 +49,7 @@ class ThriftServer implements IThriftServer {
 	}
 
 	@Override
-	public void run() {
+	public void run() {  
 		_started = true;
 		_server.serve();
 	}

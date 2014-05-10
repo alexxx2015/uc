@@ -52,7 +52,7 @@ public class UcManager extends Controller {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private final LinkedList<String> deployedPolicies = new LinkedList<String>();
+	private final LinkedList<String> deployedPolicie = new LinkedList<String>();
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -383,28 +383,29 @@ public class UcManager extends Controller {
 						String policy = jfc.getSelectedFile().getName();
 						pdpInfoLabel.setText(policy + " deployed");
 
-						if (deployedPolicies.size() == 0) {
-							deployedPolicies.add(policy);
-							deployPolicyFile(jfc.getSelectedFile()
-									.getAbsolutePath());
-						} else {
-							Iterator<String> policyIt = deployedPolicies
-									.iterator();
-							boolean add = true;
-							while (policyIt.hasNext()) {
-								if (policyIt.next().equals(policy)) {
-									add = false;
-									pdpInfoLabel.setText(policy
-											+ " already deployed");
-									break;
-								}
-							}
-							if (add == true) {
-								deployedPolicies.add(policy);
-								deployPolicyFile(jfc.getSelectedFile()
-										.getAbsolutePath());
-							}
-						}
+//						if (deployedPolicies.size() == 0) {
+//							deployedPolicies.add(policy);
+//							deployPolicyFile(jfc.getSelectedFile()
+//									.getAbsolutePath());
+//						} else {
+//							Iterator<String> policyIt = deployedPolicies
+//									.iterator();
+//							boolean add = true;
+//							while (policyIt.hasNext()) {
+//								if (policyIt.next().equals(policy)) {
+//									add = false;
+//									pdpInfoLabel.setText(policy
+//											+ " already deployed");
+//									break;
+//								}
+//							}
+//							if (add == true) {
+//								deployedPolicies.add(policy);
+//								deployPolicyFile(jfc.getSelectedFile()
+//										.getAbsolutePath());
+//							}
+//						}
+						deployPolicyFile(jfc.getSelectedFile().getAbsolutePath());
 
 						_logger.info("Deployed File "
 								+ jfc.getSelectedFile().getAbsoluteFile());
@@ -534,7 +535,7 @@ public class UcManager extends Controller {
 			pmpClient.revokeMechanismPmp(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
 			((DefaultTableModel) table.getModel()).removeRow(Integer.parseInt(e
 					.getActionCommand()));
-			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
+//			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
 		}
 	}
 
@@ -573,7 +574,7 @@ public class UcManager extends Controller {
 				.getDataVector().removeAllElements();
 		((DefaultTableModel) deployedPolicyTable.getModel())
 				.fireTableDataChanged();
-		deployedPolicies.clear();
+//		deployedPolicies.clear();
 		stopBtn.setEnabled(false);
 		startBtn.setEnabled(true);
 		policyDeployBtn.setEnabled(false);
@@ -626,7 +627,7 @@ public class UcManager extends Controller {
 					.getModel();
 			dtm.getDataVector().removeAllElements();
 			dtm.fireTableDataChanged();
-			deployedPolicies.clear();
+//			deployedPolicies.clear();
 
 			if (!isStarted()) {
 				start();
