@@ -297,4 +297,10 @@ public class PmpHandler extends PmpProcessor {
 	public Map<String, List<String>> listMechanismsPmp() {
 		return getPdp().listMechanisms();
 	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
 }

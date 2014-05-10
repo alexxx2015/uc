@@ -323,4 +323,10 @@ public class PipHandler extends PipProcessor {
 	public Set<IData> flattenStructure(IData data) {
 		return _ifModelManager.flattenStructure(data);
 	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
 }

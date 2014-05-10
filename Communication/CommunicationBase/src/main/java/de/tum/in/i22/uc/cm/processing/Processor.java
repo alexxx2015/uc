@@ -32,4 +32,6 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 			_iface2 = iface2;
 		}
 	}
+	
+	public abstract void stop();
 }

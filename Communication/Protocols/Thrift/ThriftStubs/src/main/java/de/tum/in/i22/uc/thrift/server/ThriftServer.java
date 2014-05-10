@@ -40,10 +40,11 @@ class ThriftServer implements IThriftServer {
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
 		_logger.info("ThriftServer listening on port: " + port);
-	}
+	}	
 
 	@Override
 	public void stop() {
+		_started=false;
 		_server.stop();
 	}
 

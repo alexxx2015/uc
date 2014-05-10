@@ -137,4 +137,10 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 		return _impl.processEventSync(pepEvent);
 	}
 
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

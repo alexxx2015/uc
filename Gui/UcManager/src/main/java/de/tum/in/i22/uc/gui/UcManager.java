@@ -125,56 +125,7 @@ public class UcManager extends Controller {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (ucIsRunning == false) {
-					// stopBtn.setEnabled(true);
-					pipInfoLabel.setText("");
-					pipRefresh.setEnabled(true);
-					pipPopulateBtn.setEnabled(true);
-					pipRefresh.addMouseListener(new MouseListener() {
-
-						@Override
-						public void mouseClicked(MouseEvent e) {
-						}
-
-						@Override
-						public void mousePressed(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseReleased(MouseEvent e) {
-							String pipModelText = "Start UC";
-							if (ucIsRunning == true) {
-								pipTextArea.setText(_requestHandler
-										.getIfModel());
-							}
-							pipInfoLabel.setText("REFRESHED!");
-						}
-
-						@Override
-						public void mouseEntered(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseExited(MouseEvent e) {
-						}
-					});
-
-					deployedPolicyTable.setEnabled(true);
-					policyDeployBtn.setEnabled(true);
-
-					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
-							.getModel();
-					dtm.getDataVector().removeAllElements();
-					dtm.fireTableDataChanged();
-					deployedPolicies.clear();
-
-					if (!isStarted()) {
-						start();
-					}
-					pdpInfoLabel.setText("PDP running");
-					ucIsRunning = true;
-					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
-				}
+				startUcInf();
 			}
 
 			@Override
@@ -201,14 +152,7 @@ public class UcManager extends Controller {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				stopBtn.setEnabled(false);
-				deployedPolicyTable.setEnabled(false);
-				policyDeployBtn.setEnabled(false);
-				if (ucIsRunning == true) {
-					stopPDP();
-					pdpInfoLabel.setText("PDP stopped");
-					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
-				}
+				stopUcInf();
 			}
 
 			@Override
@@ -346,6 +290,7 @@ public class UcManager extends Controller {
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
 		Map<String, String[]> flowsMap = StaticAnalysis.getFlowsMap();
 
+		// Generate Sources
 		try {
 			param.put("type", "source");
 			for (String source : sourcesMap.keySet()) {
@@ -372,9 +317,7 @@ public class UcManager extends Controller {
 			e.printStackTrace();
 		}
 
-		// /*
-		// * generate sinks
-		// */
+		// Generate Sinks
 		try {
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
@@ -382,7 +325,6 @@ public class UcManager extends Controller {
 				for (int offset : ot.getSet().keySet()) {
 					OffsetParameter on = ot.get(offset);
 
-					String genericSig = on.getSignature();
 					param.put("offset", String.valueOf(offset));
 					param.put("location", sink);
 					param.put("signature", on.getSignature());
@@ -596,14 +538,6 @@ public class UcManager extends Controller {
 		}
 	}
 
-	public void stopPDP() {
-		if (this.ucIsRunning) {
-			pdpThread.stop();
-			// this.pdpCtrl.stop();
-			this.ucIsRunning = false;
-		}
-	}
-
 	public void deployPolicyFile(String policyFile) {
 		try {
 			this.pmpClient.connect();
@@ -624,5 +558,82 @@ public class UcManager extends Controller {
 		}
 		// this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
+	}
+	
+	protected void stopUcInf(){
+		if (ucIsRunning == true) {
+			stop();
+			ucIsRunning = false;
+
+			pdpInfoLabel.setText("PDP stopped");
+			// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
+		}
+		deployedPolicyTable.setEnabled(false);
+		((DefaultTableModel) deployedPolicyTable.getModel())
+				.getDataVector().removeAllElements();
+		((DefaultTableModel) deployedPolicyTable.getModel())
+				.fireTableDataChanged();
+		deployedPolicies.clear();
+		stopBtn.setEnabled(false);
+		startBtn.setEnabled(true);
+		policyDeployBtn.setEnabled(false);
+		pipTextArea.setText("");
+		pipRefresh.setEnabled(false);
+		pipPopulateBtn.setEnabled(false);
+	}
+	
+	protected void startUcInf(){
+
+		if (ucIsRunning == false) {
+			stopBtn.setEnabled(true);
+			startBtn.setEnabled(false);
+			pipInfoLabel.setText("");
+			pipRefresh.setEnabled(true);
+			pipPopulateBtn.setEnabled(true);
+			pipRefresh.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					String pipModelText = "Start UC";
+					if (ucIsRunning == true) {
+						pipTextArea.setText(_requestHandler
+								.getIfModel());
+					}
+					pipInfoLabel.setText("REFRESHED!");
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+			});
+
+			deployedPolicyTable.setEnabled(true);
+			policyDeployBtn.setEnabled(true);
+
+			DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
+					.getModel();
+			dtm.getDataVector().removeAllElements();
+			dtm.fireTableDataChanged();
+			deployedPolicies.clear();
+
+			if (!isStarted()) {
+				start();
+			}
+			pdpInfoLabel.setText("PDP running");
+			ucIsRunning = true;
+			// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
+		}
 	}
 }

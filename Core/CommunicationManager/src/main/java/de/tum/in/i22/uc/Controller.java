@@ -115,6 +115,8 @@ public class Controller implements IRequestHandler  {
 			_pmpServer.stop();
 		if (_anyServer != null)
 			_anyServer.stop();
+		if(_requestHandler != null)
+			_requestHandler.stop();
 		//System.exit(0);
 	}
 

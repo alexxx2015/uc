@@ -199,4 +199,10 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		return null;
 		}
 
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

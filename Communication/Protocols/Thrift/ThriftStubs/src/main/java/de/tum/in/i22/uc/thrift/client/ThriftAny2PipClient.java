@@ -178,4 +178,10 @@ class ThriftAny2PipClient extends Any2PipClient {
 	public Set<IData> flattenStructure(IData data) {
 		return _impl.flattenStructure(data);
 	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
 }
