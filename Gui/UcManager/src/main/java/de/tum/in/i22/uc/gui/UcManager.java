@@ -46,6 +46,7 @@ import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
 import de.tum.in.i22.uc.gui.analysis.OffsetTable;
 import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
+import de.tum.in.i22.uc.pip.eventdef.java.JoanaInitInfoFlowEventHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class UcManager extends Controller {
@@ -268,6 +269,7 @@ public class UcManager extends Controller {
 	protected void populate(File f) {
 
 		try {
+
 			this.pdpClient.connect();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -285,6 +287,9 @@ public class UcManager extends Controller {
 
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("PEP", "Java");
+		
+		Map<String, String> id2SinkMap = new HashMap<String,String>();
+		Map<String, String> id2SourceMap = new HashMap<String,String>();
 
 		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
@@ -303,6 +308,7 @@ public class UcManager extends Controller {
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
+						id2SourceMap.put(id, source+":"+offset+":"+on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
@@ -320,6 +326,7 @@ public class UcManager extends Controller {
 		// Generate Sinks
 		try {			
 			param.clear();
+			param.put("PEP", "Java");
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
 				OffsetTable ot = sinksMap.get(sink);
@@ -331,6 +338,7 @@ public class UcManager extends Controller {
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
+						id2SinkMap.put(id, sink+":"+offset+":"+on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
@@ -348,10 +356,21 @@ public class UcManager extends Controller {
 		//Generate Flow
 		param.clear();
 		param.put("type", "iflow");
+		param.put("PEP", "Java");
 		for(String flow : flowsMap.keySet()){
-			System.out.println(flow);
-		}
-		
+			if(!flow.toLowerCase().equals("")){
+				String[] s = flowsMap.get(flow);
+				
+				String sink = id2SinkMap.get(flow);				
+				param.put("sink", sink);
+				if(s.length > 0){
+					param.put("source", id2SourceMap.get(s[0]));
+				}
+				IEvent initEvent = _messageFactory.createActualEvent(
+						"JoanaInitInfoFlow", param);
+				pdpClient.notifyEventSync(initEvent);
+			}
+		}	
 		
 
 		pipTextArea.setText(_requestHandler

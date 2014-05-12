@@ -45,23 +45,38 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		String offset;
 
 		try {
-			id = getParameterValue(_paramId);
-			signature = getParameterValue(_paramSignature);
-			location = getParameterValue(_paramLocation);
-			parampos = getParameterValue(_paramParamPos);
 			type = getParameterValue(_paramType);
-			offset = getParameterValue(_paramOffset);
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
-		//If this is an information flow mapping event then fill internal static mapping 
-		if (type.toLowerCase().equals("iflow")) {
-			
-			
+
+		// If this is an information flow mapping event then fill internal
+		// static mapping
+		if (type.equals("iflow")) {
+			try {
+				String sink = getParameterValue("sink");
+				String source = getParameterValue("source");
+				iFlow.put(sink, source);
+			} catch (ParameterNotFoundException e) {
+				_logger.error(e.getMessage());
+				return _messageFactory.createStatus(
+						EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+			}
 		} else {
+
+			try {
+				id = getParameterValue(_paramId);
+				signature = getParameterValue(_paramSignature);
+				location = getParameterValue(_paramLocation);
+				parampos = getParameterValue(_paramParamPos);
+				offset = getParameterValue(_paramOffset);
+			} catch (ParameterNotFoundException e) {
+				_logger.error(e.getMessage());
+				return _messageFactory.createStatus(
+						EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+			}
 
 			String prefix = "";
 			if (type.toLowerCase().equals("source")) {
