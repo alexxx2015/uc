@@ -45,8 +45,10 @@ public class PmpTest extends GenericTest{
 //			e.printStackTrace();
 //		}
 
+		log.info(box.getIfModel());
 		pip.initialRepresentation(new NameBasic ("secondContainer"),pip.getDataInContainer(new NameBasic("initialContainer")));
-
+		log.info(box.getIfModel());
+		
 		log.error("policy deployed. let's test it");
 
 		Map<String,String> map = new HashMap<String,String>();
