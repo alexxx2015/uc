@@ -187,7 +187,7 @@ public class UcManager extends Controller {
 		this.myFrame.pack();
 		this.myFrame.setMinimumSize(new Dimension(500, 400));
 		this.myFrame.setVisible(true);
-		this.myFrame.setResizable(false);
+		this.myFrame.setResizable(true);
 	}
 
 	private JPanel createPIPPanel() {
@@ -267,9 +267,7 @@ public class UcManager extends Controller {
 	}
 
 	protected void populate(File f) {
-
 		try {
-
 			this.pdpClient.connect();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -370,15 +368,14 @@ public class UcManager extends Controller {
 						"JoanaInitInfoFlow", param);
 				pdpClient.notifyEventSync(initEvent);
 			}
-		}	
-		
+		}
 
 		pipTextArea.setText(_requestHandler
 				.getIfModel());
 	}
 
 	private JPanel createPDPPanel() {
-		JPanel _return = new JPanel();
+				JPanel _return = new JPanel();
 		_return.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -495,6 +492,7 @@ public class UcManager extends Controller {
 		};
 		this.deployedPolicyTable = new JTable(dtm);
 		this.deployedPolicyTable.setEnabled(false);
+		this.deployedPolicyTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		gbc.gridy = 1;
 		gbc.gridx = 0;
 		gbc.weighty = 0.5;

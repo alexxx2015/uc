@@ -14,17 +14,6 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 
-	private final String _paramId = "id";
-	private final String _paramSignature = "signature";
-	private final String _paramLocation = "location";
-	private final String _paramParamPos = "parampos";
-	private final String _paramType = "type";
-	private final String _paramOffset = "offset";
-
-	private final String _javaIFDelim = ":";
-	private final String _srcPrefix = "src_";
-	private final String _snkPrefix = "snk_";
-
 	public JoanaInitInfoFlowEventHandler() {
 		super();
 	}
@@ -58,7 +47,7 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			try {
 				String sink = getParameterValue("sink");
 				String source = getParameterValue("source");
-				iFlow.put(sink, source);
+				iFlow.put(sink, source);				
 			} catch (ParameterNotFoundException e) {
 				_logger.error(e.getMessage());
 				return _messageFactory.createStatus(
