@@ -52,7 +52,7 @@ public class UcManager extends Controller {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private final LinkedList<String> deployedPolicie = new LinkedList<String>();
+//	private final LinkedList<String> deployedPolicie = new LinkedList<String>();
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -307,7 +307,7 @@ public class UcManager extends Controller {
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
 								"JoanaInitInfoFlow", param);
-						pdpClient.notifyEventAsync(initEvent);
+						pdpClient.notifyEventSync(initEvent);
 					}
 				}
 			}
@@ -318,7 +318,8 @@ public class UcManager extends Controller {
 		}
 
 		// Generate Sinks
-		try {
+		try {			
+			param.clear();
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
 				OffsetTable ot = sinksMap.get(sink);
@@ -334,7 +335,7 @@ public class UcManager extends Controller {
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
 								"JoanaInitInfoFlow", param);
-						pdpClient.notifyEventAsync(initEvent);
+						pdpClient.notifyEventSync(initEvent);
 					}
 				}
 			}
@@ -343,6 +344,18 @@ public class UcManager extends Controller {
 			System.err.println("Error while pasrsing sinks. ");
 			e.printStackTrace();
 		}
+
+		//Generate Flow
+		param.clear();
+		param.put("type", "iflow");
+		for(String flow : flowsMap.keySet()){
+			System.out.println(flow);
+		}
+		
+		
+
+		pipTextArea.setText(_requestHandler
+				.getIfModel());
 	}
 
 	private JPanel createPDPPanel() {
