@@ -187,7 +187,7 @@ public class UcManager extends Controller {
 		this.myFrame.pack();
 		this.myFrame.setMinimumSize(new Dimension(500, 400));
 		this.myFrame.setVisible(true);
-		this.myFrame.setResizable(false);
+		this.myFrame.setResizable(true);
 	}
 
 	private JPanel createPIPPanel() {

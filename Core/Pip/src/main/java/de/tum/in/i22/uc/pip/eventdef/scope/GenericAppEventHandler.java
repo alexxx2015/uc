@@ -50,9 +50,8 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 		else
 			// default value.
 			// no scope with this value should be opened
-			type = EScopeType.EMPTY;
-		return new ScopeBasic(HRscope + filename, type,
-				attributes);
+			type = EScopeType.UNKNOWN;
+		return new ScopeBasic(HRscope, type, attributes);
 	}
 
 	

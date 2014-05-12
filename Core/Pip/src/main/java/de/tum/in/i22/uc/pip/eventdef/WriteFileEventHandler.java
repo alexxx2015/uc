@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.eventdef.windows;
+package de.tum.in.i22.uc.pip.eventdef;
 
 /***
  * FIXME
@@ -14,7 +14,9 @@ package de.tum.in.i22.uc.pip.eventdef.windows;
  * 
  */
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
@@ -26,8 +28,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
-import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.pip.eventdef.windows.WindowsEvents;
 
 public class WriteFileEventHandler extends WindowsEvents {
 

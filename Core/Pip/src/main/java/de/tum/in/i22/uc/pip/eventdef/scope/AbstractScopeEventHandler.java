@@ -53,20 +53,11 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 	/*
 	 * This function describes how the event updates the information flow model
-	 * when the event behaves as IN.
+	 * when the event behaves according to cross layer behavior dir.
 	 */
-	protected IStatus updateIn() {
-		return new StatusBasic(EStatus.ERROR,
-				"IN semantics for event "+_event.getName()+" not present");
-	}
-
-	/*
-	 * This function describes how the event updates the information flow model
-	 * when the event behaves as IN.
-	 */
-	protected IStatus updateOut() {
-		return new StatusBasic(EStatus.ERROR,
-				"OUT semantics for event "+_event.getName()+" not present");
+	protected IStatus update(EBehavior direction, IScope scope) {
+		return new StatusBasic(EStatus.ERROR, direction
+				+ " semantics for event " + _event.getName() + " not present");
 	}
 
 	/*
@@ -77,18 +68,20 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * scopes opened/closed.
 	 */
 	private final int createScope() {
-		Set<Pair<EScopeState,IScope>> scopeChanges = XDelim(_event);
-		if (scopeChanges == null)
+		Set<Pair<EScopeState, IScope>> scopeChanges = XDelim(_event);
+		if ((scopeChanges == null) || (scopeChanges.size() == 0))
 			return 0;
 		int res = 0;
-		for (Pair<EScopeState,IScope> p : scopeChanges) {
-			if (p.getSecond().equals(EScopeState.OPEN)) {
-				if (_scopesToBeOpened==null)_scopesToBeOpened=new HashSet<IScope>();
+		for (Pair<EScopeState, IScope> p : scopeChanges) {
+			if (p.getFirst().equals(EScopeState.OPEN)) {
+				if (_scopesToBeOpened == null)
+					_scopesToBeOpened = new HashSet<IScope>();
 				_scopesToBeOpened.add(p.getSecond());
 				res++;
 			}
-			if (p.getSecond().equals(EScopeState.CLOSED)) {
-				if (_scopesToBeClosed==null)_scopesToBeClosed=new HashSet<IScope>();
+			if (p.getFirst().equals(EScopeState.CLOSED)) {
+				if (_scopesToBeClosed == null)
+					_scopesToBeClosed = new HashSet<IScope>();
 				_scopesToBeClosed.add(p.getSecond());
 				res++;
 			}
@@ -147,6 +140,8 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	@Override
 	public final IStatus performUpdate() {
 
+		boolean isThereAnError = false;
+
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
 
@@ -159,7 +154,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		 * event and store the number in scopeNum (XDelim)
 		 */
 		int scopeNum = createScope();
-		_logger.debug("createScope resulte din changes to " + scopeNum
+		_logger.debug("createScope resulted in changes to " + scopeNum
 				+ " scopes");
 
 		/*
@@ -170,6 +165,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 				_logger.info("Opening scope " + scope.getHumanReadableName());
 				IStatus is = openScope(scope);
 				if (!is.isStatus(EStatus.OKAY)) {
+					isThereAnError = true;
 					errorString = errorString + "\n" + is.getErrorMessage();
 				}
 			}
@@ -183,33 +179,36 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		_logger.info(this.getClass().getSimpleName() + " event handler execute");
 
 		Pair<EBehavior, IScope> xlBehavior = XBehav(_event);
+		IStatus resStatus = null;
+
 		if (xlBehavior != null) {
 			switch ((EBehavior) (xlBehavior.getFirst())) {
 			case INTRA:
-				update();
+				resStatus = update();
 				break;
 			case IN:
-				updateIn();
-				break;
 			case OUT:
-				updateOut();
-				break;
 			case INTRAIN:
-				// TODO: implement
-				_logger.error("INTRAIN behavior not defined yet. Fallback to INTRA behavior.");
-				update();
-				break;
 			case INTRAOUT:
-				// TODO: implement
-				_logger.error("INTRAOUT behavior not defined yet. Fallback to INTRA behavior.");
-				update();
+				_logger.debug("performUpdate - step 3. cross layer behavior="
+						+ xlBehavior.getFirst());
+				resStatus = update(xlBehavior.getFirst(),
+						xlBehavior.getSecond());
 				break;
 			case UNKNOWN:
 				// TODO: implement fallback
 				// for the time being perform like a normal INTRA event
 				_logger.error("UNKNOWN behavior. Fallback to INTRA behavior.");
-				update();
+				resStatus = update();
 			}
+		}
+		if (resStatus == null) {
+			isThereAnError = true;
+			errorString += "\n"
+					+ "XBehav function returned null. this should never happen";
+		} else if (!resStatus.equals(STATUS_OKAY)){
+			isThereAnError=true;
+			errorString += "\n" + resStatus.getErrorMessage();
 		}
 
 		/*
@@ -220,6 +219,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 				_logger.info("Closing scope " + scope.getHumanReadableName());
 				IStatus is = closeScope(scope);
 				if (!is.isStatus(EStatus.OKAY)) {
+					isThereAnError=true;
 					errorString = errorString + "\n" + is.getErrorMessage();
 				}
 			}
@@ -240,8 +240,8 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 	}
 
-	protected Set<Pair<EScopeState,IScope>> XDelim(IEvent event) {
-		return new HashSet<Pair<EScopeState,IScope>>();
+	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+		return new HashSet<Pair<EScopeState, IScope>>();
 	}
 
 	// TODO: XAlias not defined yet

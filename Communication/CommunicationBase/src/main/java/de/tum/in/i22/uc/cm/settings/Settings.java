@@ -165,7 +165,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_pepParameterKey, "PEP");
 		loadSetting(PROP_NAME_allowImpliesActualParameterKey,
-				"allowImpliesActual");
+				"false");
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
 				new HashMap<IName, IData>() {
@@ -285,6 +285,13 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
+
+	public String getAllowImpliesActualParameterKey() {
+		return PROP_NAME_allowImpliesActualParameterKey;
+	}
+
+	
+	
 	public String getPropertiesFileName() {
 		return _propertiesFile;
 	}
@@ -407,11 +414,11 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_prefixSeparator);
 	}
 
-	public String getPepParameterKey() {
+	public String getPep() {
 		return getValue(PROP_NAME_pepParameterKey);
 	}
 
-	public String getAllowImpliesActualParameterKey() {
+	public String getAllowImpliesActual() {
 		return getValue(PROP_NAME_allowImpliesActualParameterKey);
 	}
 

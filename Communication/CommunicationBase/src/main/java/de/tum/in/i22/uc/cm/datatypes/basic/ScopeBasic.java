@@ -25,7 +25,7 @@ public class ScopeBasic implements IScope {
 
 
 	public ScopeBasic() {
-		this("<empty scope>", EScopeType.EMPTY, Collections.<String, Object> emptyMap());
+		this("<empty scope>", EScopeType.UNKNOWN, Collections.<String, Object> emptyMap());
 	}
 
 	public ScopeBasic(String humanReadableName, EScopeType st, Map<String, Object> attributes) {

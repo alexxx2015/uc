@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.eventdef.windows;
+package de.tum.in.i22.uc.pip.eventdef;
 
 /***
  * FIXME
@@ -13,8 +13,10 @@ package de.tum.in.i22.uc.pip.eventdef.windows;
  * 
  * 
  */
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
@@ -27,19 +29,23 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
-import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.pip.eventdef.windows.WindowsEvents;
 
-public class WriteFileEventHandler extends WindowsEvents {
+public class ReadFileEventHandler extends WindowsEvents {
 
-	public WriteFileEventHandler() {
+	public ReadFileEventHandler() {
 		super();
+	}
+
+	@Override
+	protected IStatus update() {
+		return update(EBehavior.INTRA, null);
 	}
 
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
 		String fileName = null;
 		String pid = null;
-		// currently not used
 		String processName = null;
 
 		try {
@@ -54,27 +60,25 @@ public class WriteFileEventHandler extends WindowsEvents {
 
 		IContainer processContainer = null;
 		IContainer fileContainer = null;
+		Set<IContainer> transitiveReflexiveClosure = null;
+
+		if (direction.equals(EBehavior.INTRA) || direction.equals(EBehavior.IN)
+				|| direction.equals(EBehavior.INTRAIN)) {
+			processContainer = instantiateProcess(pid, processName);
+			transitiveReflexiveClosure = _informationFlowModel
+					.getAliasTransitiveReflexiveClosure(processContainer);
+
+		}
 
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.OUT)
 				|| direction.equals(EBehavior.INTRAOUT)) {
-			processContainer = instantiateProcess(pid, processName);
-		}
-
-		if (direction.equals(EBehavior.INTRA) || direction.equals(EBehavior.IN)
-				|| direction.equals(EBehavior.INTRAIN)) {
 			fileContainer = _informationFlowModel.getContainer(new NameBasic(
 					fileName));
 
 			// check if container for filename exists and create new container
-			// if
-			// not
 			if (fileContainer == null) {
 				fileContainer = _messageFactory.createContainer();
-				IData data = _messageFactory.createData();
-
-				_informationFlowModel.addData(data, fileContainer);
-
 				_informationFlowModel.addName(new NameBasic(fileName),
 						fileContainer);
 			}
@@ -83,49 +87,50 @@ public class WriteFileEventHandler extends WindowsEvents {
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.INTRAIN)
 				|| direction.equals(EBehavior.INTRAOUT)) {
-			_informationFlowModel.addData(
-					_informationFlowModel.getData(processContainer),
-					fileContainer);
+			// add data to transitive reflexive closure of process container
+			Set<IData> dataSet = _informationFlowModel.getData(fileContainer);
+			for (IContainer tempContainer : transitiveReflexiveClosure) {
+				_informationFlowModel.addData(dataSet, tempContainer);
+			}
 		}
 
+
 		if (direction.equals(EBehavior.INTRAIN)
-				|| direction.equals(EBehavior.IN)) {
-			_informationFlowModel
-					.addData(_informationFlowModel.getData(new NameBasic(scope
-							.getId())), fileContainer);
+				|| direction.equals(EBehavior.IN)){
+			Set<IData> dataSet = _informationFlowModel.getData(new NameBasic(
+					scope.getId()));
+			for (IContainer tempContainer : transitiveReflexiveClosure) {
+				_informationFlowModel.addData(dataSet, tempContainer);
+			}
 		}
 
 		if (direction.equals(EBehavior.INTRAOUT)
-				|| direction.equals(EBehavior.OUT)) {
-			IContainer dest = _informationFlowModel.getContainer(new NameBasic(
-					scope.getId()));
-			_informationFlowModel.addData(
-					_informationFlowModel.getData(processContainer), dest);
+				|| direction.equals(EBehavior.OUT)){
+			Set<IData> dataSet = _informationFlowModel.getData(fileContainer);
+			for (IContainer tempContainer : transitiveReflexiveClosure) {
+				_informationFlowModel.addData(dataSet, tempContainer);
+			}
 		}
-
+		
 		return _messageFactory.createStatus(EStatus.OKAY);
-
 	}
 
-	@Override
-	protected IStatus update() {
-		return update(EBehavior.INTRA, null);
-	}
-
+	
+	
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String filename;
 		String pid;
 		String processName;
 
-		_logger.debug("XBehav function of WriteFile");
+		_logger.debug("XBehav function of ReadFile");
 
 		try {
 			filename = getParameterValue("InFileName");
 			pid = getParameterValue("PID");
 			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
-			_logger.error("Error parsing parameters of WriteFile event. falling back to default INTRA layer behavior"
+			_logger.error("Error parsing parameters of ReadFile event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
 			return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 		}
@@ -134,44 +139,48 @@ public class WriteFileEventHandler extends WindowsEvents {
 		IScope scopeToCheck, existingScope;
 		EScopeType type = EScopeType.LOAD_FILE;
 
-		// TEST 1 : TB SAVING THIS FILE?
-		// If so behave as IN
+		// TEST 1 : TB LOADING THIS FILE?
+		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
 		attributes.put("app", "Thunderbird");
 		attributes.put("filename", filename);
-		scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
+		scopeToCheck = new ScopeBasic("TB loading file " + filename, type,
 				attributes);
 
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test1 succeeded. TB is saving to file " + filename);
+			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
 		} else {
-			_logger.debug("Test1 failed. TB is NOT saving to file " + filename);
+			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
 		}
 
-		// TEST 2 : GENERIC JBC APP WRITING TO THIS FILE?
-		// If so behave as IN
+		// TEST 2 : GENERIC JBC APP READING THIS FILE?
+		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_OUT;
+		type = EScopeType.JBC_GENERIC_IN;
 		attributes.put("filename", filename);
-		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,
+		scopeToCheck = new ScopeBasic("Generic JBC app IN scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. Generic JBC App is writing to file "
+			_logger.debug("Test2 succeeded. Generic JBC App is reading file "
 					+ filename);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
 		} else {
-			_logger.debug("Test2 failed. Generic JBC App is NOT writing to file "
+			_logger.debug("Test2 failed. Generic JBC App is NOT reading file "
 					+ filename);
 		}
 
 		// OTHERWISE
 		// behave as INTRA
-		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");
+		_logger.debug("Any other test failed. Falling back to default INTRA semantics");
 
 		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 	}
 
+	
+	
+	
+	
 }
