@@ -23,6 +23,7 @@ public class ScopeBasic implements IScope {
 	private final Map<String, Object> _attributes;
 	private final EScopeType _scopeType;
 
+
 	public ScopeBasic() {
 		this("<empty scope>", EScopeType.EMPTY, Collections.<String, Object> emptyMap());
 	}
@@ -91,4 +92,11 @@ public class ScopeBasic implements IScope {
 	public String getId() {
 		return _id;
 	}
+	
+	@Override
+	public EScopeType getScopeType() {
+		return _scopeType;
+	}
+
 }
+
