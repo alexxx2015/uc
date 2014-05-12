@@ -59,11 +59,11 @@
 		</authorizationAction>
 	</preventiveMechanism>
 -->
-		<preventiveMechanism name="testInitRep">
+		<preventiveMechanism name="denyAlternativeDataStream">
 		<description>...</description>
 		<timestep amount="10" unit="SECONDS" />
-		<trigger action="eventRep" tryEvent="true">
-			<paramMatch name="parname" value="dataid2" cmpOp="dataInContainer"/>
+		<trigger action="ReadFile" tryEvent="true">
+			<paramMatch name="InFileName" value=":Metadata" cmpOp="endsWith"/>
 		</trigger>
 		<condition>
 			<true />
@@ -74,4 +74,18 @@
 		</authorizationAction>
 	</preventiveMechanism>
 
+		<preventiveMechanism name="denyAlternativeDataStreamW">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="WriteFile" tryEvent="true">
+			<paramMatch name="InFileName" value=":Metadata" cmpOp="endsWith"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
 </policy>
