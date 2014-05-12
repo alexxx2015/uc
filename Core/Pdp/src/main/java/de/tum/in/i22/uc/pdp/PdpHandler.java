@@ -143,4 +143,10 @@ public class PdpHandler extends PdpProcessor {
 	public IResponse processEventSync(IEvent pepEvent) {
 		return this.notifyEventSync(pepEvent);
 	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		this._lpdp.stop();
+	}
 }

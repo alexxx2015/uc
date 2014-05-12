@@ -38,7 +38,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	private PolicyDecisionPoint pdp = null;
 
 	public boolean isStarted = false;
-	private Thread updateThread = null;
+//	private Thread updateThread = null;
 
 	private PxpManager _pxpManager;
 
@@ -138,12 +138,11 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	public boolean init() {
 		log.debug("Initializing mechanism update thread");
 		this.lastUpdate = System.currentTimeMillis();
-		this.updateThread = new Thread(this);
-		this.updateThread.start();
+//		this.updateThread = new Thread(this);
+//		this.updateThread.start();
 		// Populate pip depending on the current condition
 		this.condition.operator.initOperatorForMechanism(this);
-		isStarted = true;
-		return isStarted;
+		return (isStarted = true);
 	}
 
 	@Override
@@ -204,7 +203,8 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 	@Override
 	public boolean revoke() {
-		this.updateThread.interrupt();
+//		this.updateThread.interrupt();
+		this.interrupt();
 		return true;
 	}
 

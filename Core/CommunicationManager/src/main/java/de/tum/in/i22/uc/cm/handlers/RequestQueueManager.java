@@ -111,6 +111,12 @@ class RequestQueueManager implements Runnable {
 			super(null);
 		}
 
+		@Override
+		public void stop() {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 	private class PoisonPillRequest extends Request<Object, PoisonPillProcessor>{
 

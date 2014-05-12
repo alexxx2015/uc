@@ -46,13 +46,14 @@ import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
 import de.tum.in.i22.uc.gui.analysis.OffsetTable;
 import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
+import de.tum.in.i22.uc.pip.eventdef.java.JoanaInitInfoFlowEventHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class UcManager extends Controller {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-	private final LinkedList<String> deployedPolicies = new LinkedList<String>();
+//	private final LinkedList<String> deployedPolicie = new LinkedList<String>();
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -125,56 +126,7 @@ public class UcManager extends Controller {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (ucIsRunning == false) {
-					// stopBtn.setEnabled(true);
-					pipInfoLabel.setText("");
-					pipRefresh.setEnabled(true);
-					pipPopulateBtn.setEnabled(true);
-					pipRefresh.addMouseListener(new MouseListener() {
-
-						@Override
-						public void mouseClicked(MouseEvent e) {
-						}
-
-						@Override
-						public void mousePressed(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseReleased(MouseEvent e) {
-							String pipModelText = "Start UC";
-							if (ucIsRunning == true) {
-								pipTextArea.setText(_requestHandler
-										.getIfModel());
-							}
-							pipInfoLabel.setText("REFRESHED!");
-						}
-
-						@Override
-						public void mouseEntered(MouseEvent e) {
-						}
-
-						@Override
-						public void mouseExited(MouseEvent e) {
-						}
-					});
-
-					deployedPolicyTable.setEnabled(true);
-					policyDeployBtn.setEnabled(true);
-
-					DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
-							.getModel();
-					dtm.getDataVector().removeAllElements();
-					dtm.fireTableDataChanged();
-					deployedPolicies.clear();
-
-					if (!isStarted()) {
-						start();
-					}
-					pdpInfoLabel.setText("PDP running");
-					ucIsRunning = true;
-					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
-				}
+				startUcInf();
 			}
 
 			@Override
@@ -201,14 +153,7 @@ public class UcManager extends Controller {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				stopBtn.setEnabled(false);
-				deployedPolicyTable.setEnabled(false);
-				policyDeployBtn.setEnabled(false);
-				if (ucIsRunning == true) {
-					stopPDP();
-					pdpInfoLabel.setText("PDP stopped");
-					// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
-				}
+				stopUcInf();
 			}
 
 			@Override
@@ -324,6 +269,7 @@ public class UcManager extends Controller {
 	protected void populate(File f) {
 
 		try {
+
 			this.pdpClient.connect();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -341,11 +287,15 @@ public class UcManager extends Controller {
 
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("PEP", "Java");
+		
+		Map<String, String> id2SinkMap = new HashMap<String,String>();
+		Map<String, String> id2SourceMap = new HashMap<String,String>();
 
 		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
 		Map<String, String[]> flowsMap = StaticAnalysis.getFlowsMap();
 
+		// Generate Sources
 		try {
 			param.put("type", "source");
 			for (String source : sourcesMap.keySet()) {
@@ -358,11 +308,12 @@ public class UcManager extends Controller {
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
+						id2SourceMap.put(id, source+":"+offset+":"+on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
 								"JoanaInitInfoFlow", param);
-						pdpClient.notifyEventAsync(initEvent);
+						pdpClient.notifyEventSync(initEvent);
 					}
 				}
 			}
@@ -372,27 +323,27 @@ public class UcManager extends Controller {
 			e.printStackTrace();
 		}
 
-		// /*
-		// * generate sinks
-		// */
-		try {
+		// Generate Sinks
+		try {			
+			param.clear();
+			param.put("PEP", "Java");
 			param.put("type", "sink");
 			for (String sink : sinksMap.keySet()) {
 				OffsetTable ot = sinksMap.get(sink);
 				for (int offset : ot.getSet().keySet()) {
 					OffsetParameter on = ot.get(offset);
 
-					String genericSig = on.getSignature();
 					param.put("offset", String.valueOf(offset));
 					param.put("location", sink);
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
+						id2SinkMap.put(id, sink+":"+offset+":"+on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
 								"JoanaInitInfoFlow", param);
-						pdpClient.notifyEventAsync(initEvent);
+						pdpClient.notifyEventSync(initEvent);
 					}
 				}
 			}
@@ -401,6 +352,29 @@ public class UcManager extends Controller {
 			System.err.println("Error while pasrsing sinks. ");
 			e.printStackTrace();
 		}
+
+		//Generate Flow
+		param.clear();
+		param.put("type", "iflow");
+		param.put("PEP", "Java");
+		for(String flow : flowsMap.keySet()){
+			if(!flow.toLowerCase().equals("")){
+				String[] s = flowsMap.get(flow);
+				
+				String sink = id2SinkMap.get(flow);				
+				param.put("sink", sink);
+				if(s.length > 0){
+					param.put("source", id2SourceMap.get(s[0]));
+				}
+				IEvent initEvent = _messageFactory.createActualEvent(
+						"JoanaInitInfoFlow", param);
+				pdpClient.notifyEventSync(initEvent);
+			}
+		}	
+		
+
+		pipTextArea.setText(_requestHandler
+				.getIfModel());
 	}
 
 	private JPanel createPDPPanel() {
@@ -441,28 +415,29 @@ public class UcManager extends Controller {
 						String policy = jfc.getSelectedFile().getName();
 						pdpInfoLabel.setText(policy + " deployed");
 
-						if (deployedPolicies.size() == 0) {
-							deployedPolicies.add(policy);
-							deployPolicyFile(jfc.getSelectedFile()
-									.getAbsolutePath());
-						} else {
-							Iterator<String> policyIt = deployedPolicies
-									.iterator();
-							boolean add = true;
-							while (policyIt.hasNext()) {
-								if (policyIt.next().equals(policy)) {
-									add = false;
-									pdpInfoLabel.setText(policy
-											+ " already deployed");
-									break;
-								}
-							}
-							if (add == true) {
-								deployedPolicies.add(policy);
-								deployPolicyFile(jfc.getSelectedFile()
-										.getAbsolutePath());
-							}
-						}
+//						if (deployedPolicies.size() == 0) {
+//							deployedPolicies.add(policy);
+//							deployPolicyFile(jfc.getSelectedFile()
+//									.getAbsolutePath());
+//						} else {
+//							Iterator<String> policyIt = deployedPolicies
+//									.iterator();
+//							boolean add = true;
+//							while (policyIt.hasNext()) {
+//								if (policyIt.next().equals(policy)) {
+//									add = false;
+//									pdpInfoLabel.setText(policy
+//											+ " already deployed");
+//									break;
+//								}
+//							}
+//							if (add == true) {
+//								deployedPolicies.add(policy);
+//								deployPolicyFile(jfc.getSelectedFile()
+//										.getAbsolutePath());
+//							}
+//						}
+						deployPolicyFile(jfc.getSelectedFile().getAbsolutePath());
 
 						_logger.info("Deployed File "
 								+ jfc.getSelectedFile().getAbsoluteFile());
@@ -592,15 +567,7 @@ public class UcManager extends Controller {
 			pmpClient.revokeMechanismPmp(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
 			((DefaultTableModel) table.getModel()).removeRow(Integer.parseInt(e
 					.getActionCommand()));
-			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
-		}
-	}
-
-	public void stopPDP() {
-		if (this.ucIsRunning) {
-			pdpThread.stop();
-			// this.pdpCtrl.stop();
-			this.ucIsRunning = false;
+//			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
 		}
 	}
 
@@ -624,5 +591,82 @@ public class UcManager extends Controller {
 		}
 		// this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
+	}
+	
+	protected void stopUcInf(){
+		if (ucIsRunning == true) {
+			stop();
+			ucIsRunning = false;
+
+			pdpInfoLabel.setText("PDP stopped");
+			// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
+		}
+		deployedPolicyTable.setEnabled(false);
+		((DefaultTableModel) deployedPolicyTable.getModel())
+				.getDataVector().removeAllElements();
+		((DefaultTableModel) deployedPolicyTable.getModel())
+				.fireTableDataChanged();
+//		deployedPolicies.clear();
+		stopBtn.setEnabled(false);
+		startBtn.setEnabled(true);
+		policyDeployBtn.setEnabled(false);
+		pipTextArea.setText("");
+		pipRefresh.setEnabled(false);
+		pipPopulateBtn.setEnabled(false);
+	}
+	
+	protected void startUcInf(){
+
+		if (ucIsRunning == false) {
+			stopBtn.setEnabled(true);
+			startBtn.setEnabled(false);
+			pipInfoLabel.setText("");
+			pipRefresh.setEnabled(true);
+			pipPopulateBtn.setEnabled(true);
+			pipRefresh.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					String pipModelText = "Start UC";
+					if (ucIsRunning == true) {
+						pipTextArea.setText(_requestHandler
+								.getIfModel());
+					}
+					pipInfoLabel.setText("REFRESHED!");
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+			});
+
+			deployedPolicyTable.setEnabled(true);
+			policyDeployBtn.setEnabled(true);
+
+			DefaultTableModel dtm = (DefaultTableModel) deployedPolicyTable
+					.getModel();
+			dtm.getDataVector().removeAllElements();
+			dtm.fireTableDataChanged();
+//			deployedPolicies.clear();
+
+			if (!isStarted()) {
+				start();
+			}
+			pdpInfoLabel.setText("PDP running");
+			ucIsRunning = true;
+			// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
+		}
 	}
 }

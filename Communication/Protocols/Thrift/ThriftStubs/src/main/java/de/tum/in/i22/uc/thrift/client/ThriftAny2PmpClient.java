@@ -121,4 +121,10 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 		return _impl.deployPolicyRawXMLPmp(xml);
 	}
 
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

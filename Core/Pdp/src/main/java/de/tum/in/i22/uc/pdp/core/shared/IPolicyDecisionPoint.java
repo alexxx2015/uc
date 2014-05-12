@@ -27,5 +27,7 @@ public interface IPolicyDecisionPoint {
 	public ActionDescriptionStore getActionDescriptionStore();
 
 	public PxpManager getPxpManager();
+	
+	public void stop();
 
 }

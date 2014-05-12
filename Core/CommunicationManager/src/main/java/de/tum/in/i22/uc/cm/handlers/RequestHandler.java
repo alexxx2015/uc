@@ -286,9 +286,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.stop();
 		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
 	}
-
+	
+	@Override
 	public void stop() {
 		_requestQueueManager.stop();
+		this._pdp.stop();
+		this._pip.stop();
+		this._pmp.stop();		
 	}
 
 

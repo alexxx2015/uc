@@ -108,4 +108,10 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		return null;
 	}
 
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
