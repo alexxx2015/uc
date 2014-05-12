@@ -1,13 +1,22 @@
 package de.tum.in.i22.uc.pip.eventdef.scope;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 
 
@@ -20,21 +29,18 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	/*
 	 * scopes affected by the current event execution
 	 */
-	protected static final String _delimiterName = "delimiter";
-	protected static final String _openDelimiter = "start";
-	protected static final String _closeDelimiter = "end";
+	protected static final String _delimiterName = Settings.getInstance().getScopeDelimiterName();
+	protected static final String _openDelimiter = Settings.getInstance().getScopeOpenDelimiter();
+	protected static final String _closeDelimiter = Settings.getInstance().getScopeCloseDelimiter();
 
-	protected static final String _directionName = "direction";
-	protected static final String _genericInDirection = "IN";
-	protected static final String _genericOutDirection = "OUT";
+	protected static final String _directionName = Settings.getInstance().getScopeDirectionName();
+	protected static final String _genericInDirection = Settings.getInstance().getScopeGenericInDirection();
+	protected static final String _genericOutDirection = Settings.getInstance().getScopeGenericOutDirection();
 
-	protected Set<ScopeBasic> _scopesToBeOpened = null;
-	protected Set<ScopeBasic> _scopesToBeClosed = null;
+	protected Set<IScope> _scopesToBeOpened = null;
+	protected Set<IScope> _scopesToBeClosed = null;
 
 	protected AbstractScopeEventHandler() {
-//		if (_informationFlowModel == null) {
-//			throw new RuntimeException("Scopes are not supported. Check the configuration.");
-//		}
 	}
 
 	/*
@@ -45,7 +51,20 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * scopes opened/closed.
 	 */
 	protected int createScope() {
-		return 0;
+		Set<Pair<IScope, EScopeState>> scopeChanges=XDelim(_event);
+		if (scopeChanges==null) return 0;
+		int res=0;
+		for (Pair<IScope, EScopeState> p: scopeChanges){
+			if (p.getSecond().equals(EScopeState.OPEN)){
+				_scopesToBeOpened.add(p.getFirst());
+				res++;
+			}
+			if (p.getSecond().equals(EScopeState.CLOSED)){
+				_scopesToBeClosed.add(p.getFirst());
+				res++;
+			}
+		}
+		return res;
 	}
 
 	/*
@@ -111,7 +130,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 		/*
 		 * 1) create the list of scopes affected by the execution of the current
-		 * event and store the number in scopeNum
+		 * event and store the number in scopeNum (XDelim)
 		 */
 		int scopeNum = createScope();
 
@@ -164,4 +183,19 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		return finalStatus;
 
 	}
+	
+	
+	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+		return new Pair<EBehavior, IScope>(EBehavior.INTRA,null);
+	}
+
+	protected Set<Pair<IScope, EScopeState>> XDelim(IEvent event) {
+		return new HashSet<Pair<IScope, EScopeState>>();
+	}
+
+	protected Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+		return new HashMap<IContainer, Set<IContainer>>();
+	}
+	
+	
 }

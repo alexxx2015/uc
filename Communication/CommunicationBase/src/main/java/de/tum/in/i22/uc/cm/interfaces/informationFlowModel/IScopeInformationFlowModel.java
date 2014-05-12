@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
+import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
 public interface IScopeInformationFlowModel {
 
@@ -90,7 +91,7 @@ public interface IScopeInformationFlowModel {
 	 *         respective scope
 	 * 
 	 */
-	public abstract Entry<EBehavior, IScope> XBehav(IEvent event);
+	public abstract Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler);
 
 	/**
 	 * XDelim function described in the Cross-layer paper.Given an event returns
@@ -101,7 +102,7 @@ public interface IScopeInformationFlowModel {
 	 * @return the set of scopes modified by it, together with the modifier
 	 *         (open or close)
 	 */
-	public abstract Set<Entry<IScope, EScopeState>> XDelim(IEvent event);
+	public abstract Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler);
 
 	/**
 	 * XAlias function described in the Cross-layer paper. Given an event
@@ -112,7 +113,7 @@ public interface IScopeInformationFlowModel {
 	 * 
 	 * @return the new cross-layer alias function
 	 */
-	public abstract Map<IContainer, Set<IContainer>> XAlias(IEvent event);
+	public abstract Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler);
 
 	public abstract String niceString();
 

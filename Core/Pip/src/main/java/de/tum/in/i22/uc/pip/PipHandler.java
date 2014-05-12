@@ -113,8 +113,8 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus update(IEvent event) {
-		String action = event.getName();
-		IEventHandler actionHandler = null;
+		String eventName = event.getName();
+		IEventHandler eventHandler = null;
 		IStatus status;
 
 		/*
@@ -123,23 +123,23 @@ public class PipHandler extends PipProcessor {
 		 */
 
 		try {
-			actionHandler = EventHandlerManager.createEventHandler(event);
+			eventHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
 			return new StatusBasic(EStatus.ERROR,
-					"Could not instantiate event handler for " + action + ", "
+					"Could not instantiate event handler for " + eventName + ", "
 							+ e.getMessage());
 		}
 
-		if (actionHandler == null) {
+		if (eventHandler == null) {
 			return new StatusBasic(EStatus.ERROR);
 		}
 
-		actionHandler.setEvent(event);
-		actionHandler.setInformationFlowModel(_ifModelManager);
+		eventHandler.setEvent(event);
+		eventHandler.setInformationFlowModel(_ifModelManager);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for "
 				+ event);
-		status = actionHandler.performUpdate();
+		status = eventHandler.performUpdate();
 
 		/*
 		 * The returned status will tell us whether we have to do some more

@@ -22,10 +22,10 @@ import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
- *
+ * 
  * @author Florian Kelbert Settings are read from the specified properties file.
  *         If no file is specified, file "uc.properties" is used.
- *
+ * 
  */
 public class Settings extends SettingsLoader {
 
@@ -59,7 +59,7 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_separator2 = "separator2";
 	private static final String PROP_NAME_pipInitialRepresentationSeparator1 = "pipInitialRepresentationSeparator1";
 	private static final String PROP_NAME_pipInitialRepresentationSeparator2 = "pipInitialRepresentationSeparator2";
-	
+
 	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
 	private static final String PROP_NAME_pepParameterKey = "pepParameterKey";
@@ -80,6 +80,12 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_starEvent = "starEvent";
 
+	private static final String PROP_NAME_scopeDelimiterName = "scopeDelimiterName";
+	private static final String PROP_NAME_scopeOpenDelimiter = "scopeOpenDelimiter";
+	private static final String PROP_NAME_scopeCloseDelimiter = "scopeCloseDelimiter";
+	private static final String PROP_NAME_scopeDirectionName = "scopeDirectionName";
+	private static final String PROP_NAME_scopeGenericInDirection = "scopeGenericInDirection";
+	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -140,9 +146,11 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pipLocation, LocalLocation.getInstance());
 		loadSetting(PROP_NAME_pmpLocation, LocalLocation.getInstance());
 
-		loadSetting(PROP_NAME_pipEnabledInformationFlowModels, "scope@structure");
+		loadSetting(PROP_NAME_pipEnabledInformationFlowModels,
+				"scope@structure");
 		loadSetting(PROP_NAME_pipEventHandlerSuffix, "EventHandler");
-		loadSetting(PROP_NAME_pipEventHandlerPackage, "de.tum.in.i22.uc.pip.eventdef.");
+		loadSetting(PROP_NAME_pipEventHandlerPackage,
+				"de.tum.in.i22.uc.pip.eventdef.");
 		loadSetting(PROP_NAME_pipInitializerEvent, "SchemaInitializer");
 		loadSetting(PROP_NAME_pipPersistenceDirectory, "pipdb");
 
@@ -152,21 +160,23 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_separator2, "#");
 		loadSetting(PROP_NAME_pipInitialRepresentationSeparator1, ";");
 		loadSetting(PROP_NAME_pipInitialRepresentationSeparator2, ":");
-		
+
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
 		loadSetting(PROP_NAME_pepParameterKey, "PEP");
-		loadSetting(PROP_NAME_allowImpliesActualParameterKey, "allowImpliesActual");
+		loadSetting(PROP_NAME_allowImpliesActualParameterKey,
+				"allowImpliesActual");
 
-		loadSetting(PROP_NAME_pipInitialRepresentations, new HashMap<IName, IData>() {
-			private static final long serialVersionUID = -2810488356921449504L;
-			{
-				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
-			}
-		});
+		loadSetting(PROP_NAME_pipInitialRepresentations,
+				new HashMap<IName, IData>() {
+					private static final long serialVersionUID = -2810488356921449504L;
+					{
+						put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
+					}
+				});
 
-		loadSetting(PROP_NAME_communicationProtocol, ECommunicationProtocol.THRIFT,
-				ECommunicationProtocol.class);
+		loadSetting(PROP_NAME_communicationProtocol,
+				ECommunicationProtocol.THRIFT, ECommunicationProtocol.class);
 
 		loadSetting(PROP_NAME_distributionStrategy, EDistributionStrategy.PUSH,
 				EDistributionStrategy.class);
@@ -175,10 +185,17 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
 
 		loadSetting(PROP_NAME_pmpDistributionMaxConnections, 5);
-		
+
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
-		
+
 		loadSetting(PROP_NAME_starEvent, "*");
+
+		loadSetting(PROP_NAME_scopeDelimiterName, "delimiter");
+		loadSetting(PROP_NAME_scopeOpenDelimiter, "start");
+		loadSetting(PROP_NAME_scopeCloseDelimiter, "end");
+		loadSetting(PROP_NAME_scopeDirectionName, "direction");
+		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
+		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
 	}
 
@@ -219,7 +236,7 @@ public class Settings extends SettingsLoader {
 	/**
 	 * Loads the initial representations for the Pip. They are expected to be in
 	 * the format <ContainerName1>:<DataId1>;<ContainerName2>:<DataId2>; ...
-	 *
+	 * 
 	 * @param propName
 	 *            the property name
 	 * @param defaultValue
@@ -242,7 +259,8 @@ public class Settings extends SettingsLoader {
 		if (stringRead != null && stringRead.length() > 0) {
 
 			// entries are divided by semicolon (;)
-			String[] entries = stringRead.split(getPipInitialRepresentationSeparator1());
+			String[] entries = stringRead
+					.split(getPipInitialRepresentationSeparator1());
 
 			if (entries != null && entries.length > 0) {
 
@@ -250,7 +268,8 @@ public class Settings extends SettingsLoader {
 
 					// each entry is divided by exactly one colon
 					// first part: container name; second part: data ID
-					String[] entryParts = entry.split(getPipInitialRepresentationSeparator2());
+					String[] entryParts = entry
+							.split(getPipInitialRepresentationSeparator2());
 					if (entryParts != null && entryParts.length == 2) {
 						loadedValue.put(new NameBasic(entryParts[0]),
 								new DataBasic(entryParts[1]));
@@ -322,7 +341,8 @@ public class Settings extends SettingsLoader {
 	}
 
 	public Set<EInformationFlowModel> getEnabledInformationFlowModels() {
-		return EInformationFlowModel.from((String)getValue(PROP_NAME_pipEnabledInformationFlowModels));
+		return EInformationFlowModel
+				.from((String) getValue(PROP_NAME_pipEnabledInformationFlowModels));
 	}
 
 	public Location getPdpLocation() {
@@ -355,7 +375,8 @@ public class Settings extends SettingsLoader {
 
 	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
-		return Collections.unmodifiableMap((Map<IName, IData>)getValue(PROP_NAME_pipInitialRepresentations));
+		return Collections
+				.unmodifiableMap((Map<IName, IData>) getValue(PROP_NAME_pipInitialRepresentations));
 	}
 
 	public int getPipDistributionMaxConnections() {
@@ -393,7 +414,7 @@ public class Settings extends SettingsLoader {
 	public String getAllowImpliesActualParameterKey() {
 		return getValue(PROP_NAME_allowImpliesActualParameterKey);
 	}
-	
+
 	public String getPipInitialRepresentationSeparator1() {
 		return getValue(PROP_NAME_pipInitialRepresentationSeparator1);
 	}
@@ -404,6 +425,30 @@ public class Settings extends SettingsLoader {
 
 	public String getStarEvent() {
 		return getValue(PROP_NAME_starEvent);
+	}
+
+	public String getScopeDelimiterName() {
+		return getValue(PROP_NAME_scopeDelimiterName);
+	}
+
+	public String getScopeOpenDelimiter() {
+		return getValue(PROP_NAME_scopeOpenDelimiter);
+	}
+
+	public String getScopeCloseDelimiter() {
+		return getValue(PROP_NAME_scopeCloseDelimiter);
+	}
+
+	public String getScopeDirectionName() {
+		return getValue(PROP_NAME_scopeDirectionName);
+	}
+
+	public String getScopeGenericInDirection() {
+		return getValue(PROP_NAME_scopeGenericInDirection);
+	}
+
+	public String getScopeGenericOutDirection() {
+		return getValue(PROP_NAME_scopeGenericOutDirection);
 	}
 
 }

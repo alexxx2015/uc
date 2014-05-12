@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.pip.eventdef.scope;
 
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,7 +19,7 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 	/*
 	 * For this generic action the scope is only one and the "direction"
 	 * (open/close) is given as a parameter
-	 *
+	 * 
 	 * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
 	 */
 	@Override
@@ -31,13 +30,12 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 
 		try {
 			delimiter = getParameterValue(_delimiterName);
-			direction= getParameterValue(_directionName);
+			direction = getParameterValue(_directionName);
 			filename = getParameterValue("filename");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return 0;
 		}
-
 
 		String HRscope = scopeName(delimiter);
 
@@ -47,33 +45,33 @@ abstract class GenericAppEventHandler extends AbstractScopeEventHandler {
 
 
 		EScopeType type = null;
-
-		switch (direction) {
-		case _genericInDirection:
+		
+		if (direction.equals(_genericInDirection))
 			type = EScopeType.GENERIC_IN;
-			break;
-		case _genericOutDirection:
+		else if (direction.equals(_genericOutDirection))
 			type = EScopeType.GENERIC_OUT;
-			break;
-		default:
+		else
 			// default value.
 			// no scope with this value should be opened
 			type = EScopeType.EMPTY;
-		}
 
 		if (delimiter.equals(_openDelimiter)) {
-			ScopeBasic scope = new ScopeBasic(HRscope + filename,
-					type, attributes);
-			// opening already handled at step 2 of executeEvent in BaseEventHandler
-			//			openScope(scope);
-			if (_scopesToBeOpened==null) _scopesToBeOpened=new HashSet<ScopeBasic>();
+			ScopeBasic scope = new ScopeBasic(HRscope + filename, type,
+					attributes);
+			// opening already handled at step 2 of executeEvent in
+			// BaseEventHandler
+			// openScope(scope);
+			if (_scopesToBeOpened == null)
+				_scopesToBeOpened = new HashSet<ScopeBasic>();
 			_scopesToBeOpened.add(scope);
 		} else if (delimiter.equals(_closeDelimiter)) {
-			ScopeBasic scope = new ScopeBasic(HRscope + filename,
-					type, attributes);
-			// closing already handled at step 4 of executeEvent in BaseEventHandler
-			//			closeScope(scope);
-			if (_scopesToBeClosed==null) _scopesToBeClosed=new HashSet<ScopeBasic>();
+			ScopeBasic scope = new ScopeBasic(HRscope + filename, type,
+					attributes);
+			// closing already handled at step 4 of executeEvent in
+			// BaseEventHandler
+			// closeScope(scope);
+			if (_scopesToBeClosed == null)
+				_scopesToBeClosed = new HashSet<ScopeBasic>();
 			_scopesToBeClosed.add(scope);
 		}
 

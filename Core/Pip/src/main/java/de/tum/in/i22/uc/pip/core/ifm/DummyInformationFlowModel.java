@@ -19,6 +19,7 @@ import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
+import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
 public class DummyInformationFlowModel extends InformationFlowModelExtension
 		implements IInformationFlowModel {
@@ -331,19 +332,19 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	}
 
 	@Override
-	public Entry<EBehavior, IScope> XBehav(IEvent event) {
+	public Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler) {
 		_logger.error("Method XBehav() not implemented.");
 		return null;
 	}
 
 	@Override
-	public Set<Entry<IScope, EScopeState>> XDelim(IEvent event) {
+	public Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler) {
 		_logger.error("Method XDelim() not implemented.");
 		return null;
 	}
 
 	@Override
-	public Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
 		_logger.error("Method XAlias() not implemented.");
 		return null;
 	}

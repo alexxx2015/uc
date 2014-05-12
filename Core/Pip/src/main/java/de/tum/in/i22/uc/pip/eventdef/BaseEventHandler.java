@@ -30,6 +30,18 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	protected abstract IStatus update();
 
+	
+	/*
+	 * This function describes how the event updates the information flow model when the event behaves as IN.
+	 */
+	protected abstract IStatus updateIn();
+
+	/*
+	 * This function describes how the event updates the information flow model when the event behaves as IN.
+	 */
+	protected abstract IStatus updateOut();
+
+	
 	/*
 	 * In this function, we describe what happens when a certain event is
 	 * executed.

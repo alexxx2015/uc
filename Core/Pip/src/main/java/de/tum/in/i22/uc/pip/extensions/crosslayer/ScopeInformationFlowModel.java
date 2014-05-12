@@ -8,17 +8,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
@@ -185,46 +183,41 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	}
 
 	@Override
-	public Entry<EBehavior, IScope> XBehav(IEvent event) {
+	public Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler) {
+		return null;
+	}
+
+	@Override
+	public Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<Entry<IScope, EScopeState>> XDelim(IEvent event) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	private IEventHandler getEventHandler(IEvent event){
-		return null;
-//		IEventHandler eventHandler;
-//		try {
-//			eventHandler = EventHandlerManager.createEventHandler(event);
-//		} catch (Exception e) {
-//			_logger.error("Could not instantiate event handler for " + event + ", "
-//							+ e.getMessage());
-//			return null;
-//		}
-//
-//		if (eventHandler == null) {
-//			_logger.error("Event handler for " + event + " is null. So null is returned");
-//			return null;
-//		}
-//
-//		eventHandler.setEvent(event);
-//		eventHandler.setInformationFlowModel(_ifModel);
-//
-//		_logger.info(System.lineSeparator() + "Executing PipHandler for "
-//				+ event);
-//		status = eventHandler.performUpdate();
-//
+		IEventHandler eventHandler;
+		try {
+			eventHandler = EventHandlerManager.createEventHandler(event);
+		} catch (Exception e) {
+			_logger.error("Could not instantiate event handler for " + event + ", "
+							+ e.getMessage());
+			return null;
+		}
+
+		if (eventHandler == null) {
+			_logger.error("Event handler for " + event + " is null. So null is returned");
+			return null;
+		}
+
+		eventHandler.setEvent(event);
+		eventHandler.setInformationFlowModel(_ifModel);
+		
+		return eventHandler;
 	}
 	
 }

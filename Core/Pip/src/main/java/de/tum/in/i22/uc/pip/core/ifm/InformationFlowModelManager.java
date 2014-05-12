@@ -20,6 +20,7 @@ import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
+import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
@@ -402,21 +403,21 @@ public final class InformationFlowModelManager implements
 	}
 
 	@Override
-	public Entry<EBehavior, IScope> XBehav(IEvent event) {
+	public Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler) {
 		return ((ScopeInformationFlowModel) (_ifModelExtensions
-				.get(EInformationFlowModel.SCOPE))).XBehav(event);
+				.get(EInformationFlowModel.SCOPE))).XBehav(eventHandler);
 	}
 
 	@Override
-	public Set<Entry<IScope, EScopeState>> XDelim(IEvent event) {
+	public Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler) {
 		return ((ScopeInformationFlowModel) (_ifModelExtensions
-				.get(EInformationFlowModel.SCOPE))).XDelim(event);
+				.get(EInformationFlowModel.SCOPE))).XDelim(eventHandler);
 	}
 
 	@Override
-	public Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
 		return ((ScopeInformationFlowModel) (_ifModelExtensions
-				.get(EInformationFlowModel.SCOPE))).XAlias(event);
+				.get(EInformationFlowModel.SCOPE))).XAlias(eventHandler);
 	}
 
 }
