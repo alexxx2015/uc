@@ -34,8 +34,7 @@
 				</implies>
 			</or>
 		</condition>
-		<authorizationAction name="default" start="true"
-			fallback="fallback">
+		<authorizationAction name="default" start="true" fallback="fallback">
 			<allow>
 				<delay amount="5" unit="MINUTES" />
 				<modify>

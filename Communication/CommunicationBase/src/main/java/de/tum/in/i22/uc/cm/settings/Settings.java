@@ -62,8 +62,8 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
-	private static final String PROP_NAME_pepParameterKey = "pepParameterKey";
-	private static final String PROP_NAME_allowImpliesActualParameterKey = "allowImpliesActualParameterKey";
+	private static final String PROP_NAME_pepParameterKey = "pep";
+	private static final String PROP_NAME_allowImpliesActualParameterKey = "allowImpliesActual";
 
 	private static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 

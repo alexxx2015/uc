@@ -841,6 +841,7 @@ public final class BasicInformationFlowModel implements
 		String arrowL = " <--- ";
 
 		sb.append("  Storage:" + nl);
+		if (_containerToDataMap.size()==0) sb.append("  Empty" + nl);
 		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap
 				.entrySet()) {
 			if (((entry.getValue() != null) && (entry.getValue().size() != 0))
@@ -864,6 +865,7 @@ public final class BasicInformationFlowModel implements
 		sb.append(nl);
 
 		sb.append("  Aliases:" + nl);
+		if (_aliasesMap.size()==0) sb.append("  Empty" + nl);
 		for (Entry<IContainer, Set<IContainer>> entry : _aliasesMap.entrySet()) {
 			if (((entry.getValue() != null) && (entry.getValue().size() != 0))
 					|| showFullIFM) {
@@ -886,6 +888,7 @@ public final class BasicInformationFlowModel implements
 		sb.append(nl);
 
 		sb.append("  Naming:" + nl);
+		if (_namingMap.size()==0) sb.append("  Empty" + nl);
 		Set<IContainer> wasPrinted = new HashSet<IContainer>();
 		for (IContainer cont : _namingMap.values()) {
 			Set<IData> isItAContainerWorthPrinting = _containerToDataMap
@@ -915,8 +918,7 @@ public final class BasicInformationFlowModel implements
 				}
 			}
 		}
-		sb.append(nl);
-
+		
 		return sb.toString();
 	}
 

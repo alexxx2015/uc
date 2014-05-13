@@ -11,8 +11,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
 import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
@@ -273,8 +273,18 @@ public final class ThriftConverter {
 			return null;
 		}
 
-		return new TResponse(ThriftConverter.toThrift(r
+		TResponse res= new TResponse(ThriftConverter.toThrift(r
 				.getAuthorizationAction()));
+		List<TEvent> execTList = new LinkedList<TEvent>();
+		for (IEvent ev : r.getExecuteActions()){
+			execTList.add(ThriftConverter.toThrift(ev));
+		}
+		res.setExecuteEvents(execTList);
+		res.setExecuteEventsIsSet(true);
+		res.setModifiedEvents(ThriftConverter.toThrift(r.getModifiedEvent()));
+		res.setModifiedEventsIsSet(true);
+		
+		return res;
 	}
 
 	public static String toThrift(Location location) {

@@ -163,7 +163,7 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 
 		sb.append("  Scopes:" + nl);
 		if ((_scopeSet==null)||(_scopeSet.size()==0)){
-			sb.append("Empty" + nl+nl);
+			sb.append("  Empty" + nl);
 			return sb.toString();
 		}
 		boolean first = true;
@@ -180,7 +180,6 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 			sb.append(scope.getHumanReadableName());
 			sb.append(nl);
 		}
-		sb.append(nl);
 		return sb.toString();
 	}
 
