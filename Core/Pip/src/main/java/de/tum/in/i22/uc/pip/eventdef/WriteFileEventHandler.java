@@ -74,10 +74,6 @@ public class WriteFileEventHandler extends WindowsEvents {
 			// not
 			if (fileContainer == null) {
 				fileContainer = _messageFactory.createContainer();
-				IData data = _messageFactory.createData();
-
-				_informationFlowModel.addData(data, fileContainer);
-
 				_informationFlowModel.addName(new NameBasic(fileName),
 						fileContainer);
 			}
