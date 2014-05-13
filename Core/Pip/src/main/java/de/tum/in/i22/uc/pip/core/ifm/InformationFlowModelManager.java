@@ -53,7 +53,8 @@ public final class InformationFlowModelManager implements
 			case QUANTITIES:
 				break;
 			case SCOPE:
-				_ifModelExtensions.put(eifm, new ScopeInformationFlowModel(this));
+				_ifModelExtensions.put(eifm,
+						new ScopeInformationFlowModel(this));
 				break;
 			case STRUCTURE:
 				_ifModelExtensions.put(eifm,
@@ -158,13 +159,17 @@ public final class InformationFlowModelManager implements
 	 */
 	@Override
 	public String niceString() {
-		StringBuilder sb = new StringBuilder(_basicIfModel.niceString());
+		StringBuilder sb = new StringBuilder();
+		String nl = System.getProperty("line.separator");
+		sb.append("-----------------------------------------------"+nl);
+		sb.append(_basicIfModel.niceString());
 
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			sb.append(ifme.niceString());
+			String model = ifme.niceString(); 
+			if (model != null) sb.append(model);
 		}
 
-		sb.append("-----------------------------------------------");
+		sb.append(nl+"-----------------------------------------------"+nl);
 
 		return sb.toString();
 	}

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.gui;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,7 +17,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,14 +46,14 @@ import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
 import de.tum.in.i22.uc.gui.analysis.OffsetTable;
 import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
-import de.tum.in.i22.uc.pip.eventdef.java.JoanaInitInfoFlowEventHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class UcManager extends Controller {
 
 	// private PDPMain myPDP;
 	private boolean ucIsRunning = false;
-//	private final LinkedList<String> deployedPolicie = new LinkedList<String>();
+	// private final LinkedList<String> deployedPolicie = new
+	// LinkedList<String>();
 	private JFrame myFrame;
 	private JTabbedPane jTabPane;
 	private JPanel pdpPanel;
@@ -248,6 +248,7 @@ public class UcManager extends Controller {
 		this.pipTextArea = new JTextArea();
 		this.pipTextArea.setText("");
 		this.pipTextArea.setEditable(false);
+		this.pipTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		gbc.gridy = 1;
 		gbc.gridx = 0;
 		gbc.gridwidth = 2;
@@ -285,9 +286,9 @@ public class UcManager extends Controller {
 
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("PEP", "Java");
-		
-		Map<String, String> id2SinkMap = new HashMap<String,String>();
-		Map<String, String> id2SourceMap = new HashMap<String,String>();
+
+		Map<String, String> id2SinkMap = new HashMap<String, String>();
+		Map<String, String> id2SourceMap = new HashMap<String, String>();
 
 		Map<String, OffsetTable> sourcesMap = StaticAnalysis.getSourcesMap();
 		Map<String, OffsetTable> sinksMap = StaticAnalysis.getSinksMap();
@@ -306,7 +307,10 @@ public class UcManager extends Controller {
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
-						id2SourceMap.put(id, source+":"+offset+":"+on.getSignature());
+						id2SourceMap
+								.put(id,
+										source + ":" + offset + ":"
+												+ on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
@@ -322,7 +326,7 @@ public class UcManager extends Controller {
 		}
 
 		// Generate Sinks
-		try {			
+		try {
 			param.clear();
 			param.put("PEP", "Java");
 			param.put("type", "sink");
@@ -336,7 +340,8 @@ public class UcManager extends Controller {
 					param.put("signature", on.getSignature());
 					for (int parameter : on.getType().keySet()) {
 						String id = on.getIdOfPar(parameter);
-						id2SinkMap.put(id, sink+":"+offset+":"+on.getSignature());
+						id2SinkMap.put(id,
+								sink + ":" + offset + ":" + on.getSignature());
 						param.put("id", id);
 						param.put("parampos", String.valueOf(parameter));
 						IEvent initEvent = _messageFactory.createActualEvent(
@@ -351,17 +356,17 @@ public class UcManager extends Controller {
 			e.printStackTrace();
 		}
 
-		//Generate Flow
+		// Generate Flow
 		param.clear();
 		param.put("type", "iflow");
 		param.put("PEP", "Java");
-		for(String flow : flowsMap.keySet()){
-			if(!flow.toLowerCase().equals("")){
+		for (String flow : flowsMap.keySet()) {
+			if (!flow.toLowerCase().equals("")) {
 				String[] s = flowsMap.get(flow);
-				
-				String sink = id2SinkMap.get(flow);				
+
+				String sink = id2SinkMap.get(flow);
 				param.put("sink", sink);
-				if(s.length > 0){
+				if (s.length > 0) {
 					param.put("source", id2SourceMap.get(s[0]));
 				}
 				IEvent initEvent = _messageFactory.createActualEvent(
@@ -370,12 +375,11 @@ public class UcManager extends Controller {
 			}
 		}
 
-		pipTextArea.setText(_requestHandler
-				.getIfModel());
+		pipTextArea.setText(_requestHandler.getIfModel());
 	}
 
 	private JPanel createPDPPanel() {
-				JPanel _return = new JPanel();
+		JPanel _return = new JPanel();
 		_return.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -412,29 +416,30 @@ public class UcManager extends Controller {
 						String policy = jfc.getSelectedFile().getName();
 						pdpInfoLabel.setText(policy + " deployed");
 
-//						if (deployedPolicies.size() == 0) {
-//							deployedPolicies.add(policy);
-//							deployPolicyFile(jfc.getSelectedFile()
-//									.getAbsolutePath());
-//						} else {
-//							Iterator<String> policyIt = deployedPolicies
-//									.iterator();
-//							boolean add = true;
-//							while (policyIt.hasNext()) {
-//								if (policyIt.next().equals(policy)) {
-//									add = false;
-//									pdpInfoLabel.setText(policy
-//											+ " already deployed");
-//									break;
-//								}
-//							}
-//							if (add == true) {
-//								deployedPolicies.add(policy);
-//								deployPolicyFile(jfc.getSelectedFile()
-//										.getAbsolutePath());
-//							}
-//						}
-						deployPolicyFile(jfc.getSelectedFile().getAbsolutePath());
+						// if (deployedPolicies.size() == 0) {
+						// deployedPolicies.add(policy);
+						// deployPolicyFile(jfc.getSelectedFile()
+						// .getAbsolutePath());
+						// } else {
+						// Iterator<String> policyIt = deployedPolicies
+						// .iterator();
+						// boolean add = true;
+						// while (policyIt.hasNext()) {
+						// if (policyIt.next().equals(policy)) {
+						// add = false;
+						// pdpInfoLabel.setText(policy
+						// + " already deployed");
+						// break;
+						// }
+						// }
+						// if (add == true) {
+						// deployedPolicies.add(policy);
+						// deployPolicyFile(jfc.getSelectedFile()
+						// .getAbsolutePath());
+						// }
+						// }
+						deployPolicyFile(jfc.getSelectedFile()
+								.getAbsolutePath());
 
 						_logger.info("Deployed File "
 								+ jfc.getSelectedFile().getAbsoluteFile());
@@ -492,7 +497,8 @@ public class UcManager extends Controller {
 		};
 		this.deployedPolicyTable = new JTable(dtm);
 		this.deployedPolicyTable.setEnabled(false);
-		this.deployedPolicyTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		this.deployedPolicyTable
+				.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		gbc.gridy = 1;
 		gbc.gridx = 0;
 		gbc.weighty = 0.5;
@@ -565,7 +571,7 @@ public class UcManager extends Controller {
 			pmpClient.revokeMechanismPmp(policy.trim(), mechanism.trim());// /home/uc/Desktop/DontSendSmartMeterData.xml");
 			((DefaultTableModel) table.getModel()).removeRow(Integer.parseInt(e
 					.getActionCommand()));
-//			deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
+			// deployedPolicies.remove(Integer.parseInt(e.getActionCommand()));
 		}
 	}
 
@@ -590,8 +596,8 @@ public class UcManager extends Controller {
 		// this.pmpClient.deployPolicyXMLPmp(policy);
 		this.pmpClient.deployPolicyURIPmp(policyFile);
 	}
-	
-	protected void stopUcInf(){
+
+	protected void stopUcInf() {
 		if (ucIsRunning == true) {
 			stop();
 			ucIsRunning = false;
@@ -600,11 +606,11 @@ public class UcManager extends Controller {
 			// myJta.setText(myJta.getText()+"PDP is running"+System.getProperty("line.separator"));
 		}
 		deployedPolicyTable.setEnabled(false);
-		((DefaultTableModel) deployedPolicyTable.getModel())
-				.getDataVector().removeAllElements();
+		((DefaultTableModel) deployedPolicyTable.getModel()).getDataVector()
+				.removeAllElements();
 		((DefaultTableModel) deployedPolicyTable.getModel())
 				.fireTableDataChanged();
-//		deployedPolicies.clear();
+		// deployedPolicies.clear();
 		stopBtn.setEnabled(false);
 		startBtn.setEnabled(true);
 		policyDeployBtn.setEnabled(false);
@@ -612,8 +618,8 @@ public class UcManager extends Controller {
 		pipRefresh.setEnabled(false);
 		pipPopulateBtn.setEnabled(false);
 	}
-	
-	protected void startUcInf(){
+
+	protected void startUcInf() {
 
 		if (ucIsRunning == false) {
 			stopBtn.setEnabled(true);
@@ -633,12 +639,26 @@ public class UcManager extends Controller {
 
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					String pipModelText = "Start UC";
-					if (ucIsRunning == true) {
-						pipTextArea.setText(_requestHandler
-								.getIfModel());
-					}
-					pipInfoLabel.setText("REFRESHED!");
+					Thread t = new Thread() {
+						@Override
+						public void run() {
+							while (true) {
+								if (ucIsRunning == true) {
+									pipTextArea.setText(_requestHandler
+											.getIfModel());
+								}
+								pipInfoLabel.setText("REFRESHED!");
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+
+							}
+						}
+					};
+					t.start();
 				}
 
 				@Override
@@ -657,7 +677,7 @@ public class UcManager extends Controller {
 					.getModel();
 			dtm.getDataVector().removeAllElements();
 			dtm.fireTableDataChanged();
-//			deployedPolicies.clear();
+			// deployedPolicies.clear();
 
 			if (!isStarted()) {
 				start();

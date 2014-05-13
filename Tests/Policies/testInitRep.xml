@@ -6,10 +6,8 @@
 	name="testPolicy">
 
 		<initialRepresentations>
-			<container name="myCont">
+			<container name="C:\Users\user\Desktop\initialTaintedFile.txt">
 				<dataId>dataid1</dataId>
-				<dataId>dataid2</dataId>
-				<dataId>dataid3</dataId>
 			</container>
 			<container name="myCont2">
 				<dataId>dataid2</dataId>

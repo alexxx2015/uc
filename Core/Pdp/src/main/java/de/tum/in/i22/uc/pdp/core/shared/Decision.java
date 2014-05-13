@@ -75,14 +75,15 @@ public class Decision implements java.io.Serializable {
 					log.debug("Executing specified executeActions: {}",
 							curAuthAction.getExecuteActions().size());
 					boolean executionReturn = false;
+					if (curAuthAction.getExecuteActions().size() == 0)
+						executionReturn = true;
 					for (IPdpExecuteAction execAction : curAuthAction
 							.getExecuteActions()) {
 						log.debug("Executing [{}]", execAction.getName());
 
 						// TODO: Execution should be forwarded to appropriate
 						// execution instance!
-						executionReturn = _pxpManager.execute(
-								execAction, true);
+						executionReturn = _pxpManager.execute(execAction, true);
 					}
 
 					if (!executionReturn) {
@@ -125,7 +126,8 @@ public class Decision implements java.io.Serializable {
 		}
 
 		List<IPdpExecuteAction> asyncActions = mech.getExecuteAsyncActions();
-		if (asyncActions==null) return;
+		if (asyncActions == null)
+			return;
 		log.debug("Processing asynchronous executeActions ({})",
 				asyncActions.size());
 		for (IPdpExecuteAction execAction : asyncActions) {

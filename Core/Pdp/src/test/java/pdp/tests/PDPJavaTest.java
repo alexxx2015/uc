@@ -1,5 +1,7 @@
 package pdp.tests;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ public class PDPJavaTest {
 		log.debug("Deployed Mechanisms: [{}]", lpdp.listDeployedMechanisms());
 
 
-		
+				
 		System.out.println("\nTest Condtion Parameter Match Operator:");
 
 		log.debug("Notifying event");

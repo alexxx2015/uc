@@ -87,6 +87,9 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_scopeGenericInDirection = "scopeGenericInDirection";
 	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
+	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
+
+	
 	private Settings() {
 		_settings = new HashMap<>();
 
@@ -197,6 +200,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
+		loadSetting(PROP_NAME_showFullIFModel, false);
+	
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -458,4 +463,7 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_scopeGenericOutDirection);
 	}
 
+	public boolean getShowFullIFModel(){
+		return getValue(PROP_NAME_showFullIFModel);
+	}
 }

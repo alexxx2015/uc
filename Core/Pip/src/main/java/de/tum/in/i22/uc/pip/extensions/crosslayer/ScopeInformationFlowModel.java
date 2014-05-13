@@ -8,11 +8,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
@@ -92,6 +92,7 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	@Override
 	public boolean openScope(IScope scope) {
 		assert (scope != null);
+		_ifModel.addName(new NameBasic(scope.getId()), new ContainerBasic());
 		return _scopeSet.add(scope);
 	}
 
@@ -101,6 +102,7 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	@Override
 	public boolean closeScope(IScope scope) {
 		assert (scope != null);
+		_ifModel.remove(_ifModel.getContainer(new NameBasic(scope.getId())));
 		return _scopeSet.remove(scope);
 	}
 
