@@ -455,4 +455,10 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.processEventSync(pepEvent);
 	}
 
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		return _requestHandler.specifyPolicyFor(representations, dataClass);
+	}
+
 }

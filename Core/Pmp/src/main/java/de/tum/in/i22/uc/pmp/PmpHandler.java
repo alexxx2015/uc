@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -37,6 +38,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
@@ -336,5 +338,13 @@ public class PmpHandler extends PmpProcessor {
 	public void stop() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		// TODO Here goes Prachi & Cipri's code
+		log.debug("Here goes Prachi's and Cipri's code");
+		return new StatusBasic(EStatus.OKAY);
 	}
 }
