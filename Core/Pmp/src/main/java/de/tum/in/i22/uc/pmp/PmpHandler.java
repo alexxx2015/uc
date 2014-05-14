@@ -42,6 +42,7 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
 import de.tum.in.i22.uc.pmp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pmp.xsd.ContainerType;
@@ -345,6 +346,10 @@ public class PmpHandler extends PmpProcessor {
 			String dataClass) {
 		// TODO Here goes Prachi & Cipri's code
 		log.debug("Here goes Prachi's and Cipri's code");
+		log.debug("the String value for the dataClass that matches any dataclass is " + Settings.getInstance().getPolicySpecificationStarDataClass());
+		
+		log.debug("specifyPolicyFor method invoked for containers " + representations + " and dataclass " + dataClass);
+		if ((representations==null)||("".equals(dataClass))) return new StatusBasic(EStatus.ERROR);
 		return new StatusBasic(EStatus.OKAY);
 	}
 }

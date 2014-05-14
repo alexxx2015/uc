@@ -89,7 +89,8 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
 
-	
+	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
+
 	private Settings() {
 		_settings = new HashMap<>();
 
@@ -167,8 +168,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
 		loadSetting(PROP_NAME_pepParameterKey, "PEP");
-		loadSetting(PROP_NAME_allowImpliesActualParameterKey,
-				"false");
+		loadSetting(PROP_NAME_allowImpliesActualParameterKey, "false");
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
 				new HashMap<IName, IData>() {
@@ -201,7 +201,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
 		loadSetting(PROP_NAME_showFullIFModel, false);
-	
+
+		loadSetting(PROP_NAME_policySpecificationStarDataClass, "*");
+
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -290,13 +292,10 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-
 	public String getAllowImpliesActualParameterKey() {
 		return PROP_NAME_allowImpliesActualParameterKey;
 	}
 
-	
-	
 	public String getPropertiesFileName() {
 		return _propertiesFile;
 	}
@@ -463,7 +462,12 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_scopeGenericOutDirection);
 	}
 
-	public boolean getShowFullIFModel(){
+	public boolean getShowFullIFModel() {
 		return getValue(PROP_NAME_showFullIFModel);
 	}
+
+	public String getPolicySpecificationStarDataClass() {
+		return getValue(PROP_NAME_policySpecificationStarDataClass);
+	}
+
 }
