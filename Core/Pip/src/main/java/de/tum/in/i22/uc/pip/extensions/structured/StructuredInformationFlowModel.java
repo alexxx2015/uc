@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
@@ -40,8 +41,10 @@ public final class StructuredInformationFlowModel extends
 	 * Basic constructor. Here we initialize the reference to the basic
 	 * information flow model and the tables to store the structured data
 	 * information.
+	 * @param informationFlowModelManager 
 	 */
-	public StructuredInformationFlowModel() {
+	public StructuredInformationFlowModel(InformationFlowModelManager informationFlowModelManager) {
+		super (informationFlowModelManager);
 		this.reset();
 	}
 
@@ -206,7 +209,11 @@ public final class StructuredInformationFlowModel extends
 		String nl = System.getProperty("line.separator");
 		String arrow = " ---> ";
 
-		sb.append("  Structure:" + nl);
+		sb.append("  Structures:" + nl);
+		if ((_structureMap==null)||(_structureMap.size()==0)){
+			sb.append("  Empty" + nl);
+			return sb.toString();
+		}
 		for (IData d : _structureMap.keySet()) {
 			sb.append("    " + d.getId() + arrow);
 			boolean first = true;
@@ -224,7 +231,6 @@ public final class StructuredInformationFlowModel extends
 				sb.append(nl);
 			}
 		}
-		sb.append(nl);
 		return sb.toString();
 	}
 

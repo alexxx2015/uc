@@ -25,15 +25,15 @@ public interface IPep2Pdp {
 	 * On the implementation side, the senderID is embodied as another parameter in the event.
 	 */
 	
-	@AThriftMethod(signature="oneway void TobiasProcessEventAsync(1: Types.TobiasEvent e, 2: string senderID)")
-	public void TobiasProcessEventAsync(IEvent pepEvent);
+	@AThriftMethod(signature = "oneway void processEventAsync(1: Types.TobiasEvent e, 2: string senderID)")
+	public void processEventAsync(IEvent pepEvent);
 
 	/**
 	 * UC4WIN interface.
 	 * Notice that while the thrift interface has also the senderId parameter, the Java method does not.
 	 * On the implementation side, the senderID is embodied as another parameter in the event.
 	 */
-	@AThriftMethod(signature="Types.TobiasResponse TobiasProcessEventSync(1: Types.TobiasEvent e, 2: string senderID)")
-	public IResponse TobiasProcessEventSync(IEvent pepEvent);
+	@AThriftMethod(signature = "Types.TobiasResponse processEventSync(1: Types.TobiasEvent e, 2: string senderID)")
+	public IResponse processEventSync(IEvent pepEvent);
 		
 }

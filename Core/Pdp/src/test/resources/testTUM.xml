@@ -34,8 +34,7 @@
 				</implies>
 			</or>
 		</condition>
-		<authorizationAction name="default" start="true"
-			fallback="fallback">
+		<authorizationAction name="default" start="true" fallback="fallback">
 			<allow>
 				<delay amount="5" unit="MINUTES" />
 				<modify>
@@ -63,7 +62,7 @@
 		<executeAsyncAction name="log2" processor="pxp">
 			<parameter name="file" value="abc.xml" />
 		</executeAsyncAction>
-		<!-- </preventiveMechanism> -->
+	</preventiveMechanism>
 
 
 		<preventiveMechanism name="testConditionParamMatch">
@@ -330,7 +329,4 @@
 				<inhibit />
 			</authorizationAction>
 		</preventiveMechanism>
-
-
-
 </policy>

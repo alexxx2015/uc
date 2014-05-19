@@ -4,24 +4,30 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
+import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 
-public final class InformationFlowModelManager implements IInformationFlowModel, IBasicInformationFlowModel {
-	private final Map<EInformationFlowModel,InformationFlowModelExtension> _ifModelExtensions;
+public final class InformationFlowModelManager implements
+		IInformationFlowModel, IBasicInformationFlowModel {
+	private final Map<EInformationFlowModel, InformationFlowModelExtension> _ifModelExtensions;
 
 	private final BasicInformationFlowModel _basicIfModel;
 
@@ -35,33 +41,27 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		_simulating = false;
 		_basicIfModel = new BasicInformationFlowModel();
 
-		DummyInformationFlowModel dummy = new DummyInformationFlowModel();
+		DummyInformationFlowModel dummy = new DummyInformationFlowModel(null);
 
 		for (EInformationFlowModel eifm : EInformationFlowModel.values()) {
-			switch (eifm) {
-				case QUANTITIES:
-					_ifModelExtensions.put(eifm, dummy);
-					break;
-				case SCOPE:
-					_ifModelExtensions.put(eifm, dummy);
-					break;
-				case STRUCTURE:
-					_ifModelExtensions.put(eifm, new StructuredInformationFlowModel());
-					break;
-				default:
-					break;
-			}
+			_ifModelExtensions.put(eifm, dummy);
 		}
 
-		for (EInformationFlowModel eifm : Settings.getInstance().getEnabledInformationFlowModels()) {
+		for (EInformationFlowModel eifm : Settings.getInstance()
+				.getEnabledInformationFlowModels()) {
 			switch (eifm) {
-				case QUANTITIES:
-					break;
-				case SCOPE:
-					_ifModelExtensions.put(eifm, new ScopeInformationFlowModel());
-					break;
-				default:
-					break;
+			case QUANTITIES:
+				break;
+			case SCOPE:
+				_ifModelExtensions.put(eifm,
+						new ScopeInformationFlowModel(this));
+				break;
+			case STRUCTURE:
+				_ifModelExtensions.put(eifm,
+						new StructuredInformationFlowModel(this));
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -70,8 +70,12 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		return _basicIfModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.in.i22.uc.cm.pip.EInformationFlowModel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.
+	 * in.i22.uc.cm.pip.EInformationFlowModel)
 	 */
 	@Override
 	public boolean isEnabled(EInformationFlowModel ifm) {
@@ -79,11 +83,14 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends InformationFlowModelExtension> T getExtension(EInformationFlowModel ifm) {
+	public <T extends InformationFlowModelExtension> T getExtension(
+			EInformationFlowModel ifm) {
 		return (T) _ifModelExtensions.get(ifm);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isSimulating()
 	 */
 	@Override
@@ -91,8 +98,11 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		return _simulating;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#startSimulation()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#startSimulation()
 	 */
 	@Override
 	public IStatus startSimulation() {
@@ -109,7 +119,9 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		return new StatusBasic(EStatus.OKAY);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#stopSimulation()
 	 */
 	@Override
@@ -127,7 +139,9 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		return new StatusBasic(EStatus.OKAY);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#reset()
 	 */
 	@Override
@@ -138,18 +152,24 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#niceString()
 	 */
 	@Override
 	public String niceString() {
-		StringBuilder sb = new StringBuilder(_basicIfModel.niceString());
+		StringBuilder sb = new StringBuilder();
+		String nl = System.getProperty("line.separator");
+		sb.append(nl+"-----------------------------------------------"+nl+nl);
+ 		sb.append(_basicIfModel.niceString()+nl);
 
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			sb.append(ifme.niceString());
+			String model = ifme.niceString(); 
+			if (model != null) sb.append(model+nl);
 		}
 
-		sb.append("-----------------------------------------------");
+		sb.append("-----------------------------------------------"+nl);
 
 		return sb.toString();
 	}
@@ -196,7 +216,8 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@Override
-	public Set<IContainer> getAliasTransitiveReflexiveClosure(IContainer container) {
+	public Set<IContainer> getAliasTransitiveReflexiveClosure(
+			IContainer container) {
 		return _basicIfModel.getAliasTransitiveReflexiveClosure(container);
 	}
 
@@ -251,12 +272,14 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@Override
-	public void addDataTransitively(Collection<IData> data, IName dstContainerName) {
+	public void addDataTransitively(Collection<IData> data,
+			IName dstContainerName) {
 		_basicIfModel.addDataTransitively(data, dstContainerName);
 	}
 
 	@Override
-	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
+	public void addDataTransitively(Collection<IData> data,
+			IContainer dstContainer) {
 		_basicIfModel.addDataTransitively(data, dstContainer);
 	}
 
@@ -296,11 +319,6 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@Override
-	public IContainer getContainerRelaxed(IName name) {
-		return _basicIfModel.getContainerRelaxed(name);
-	}
-
-	@Override
 	public Set<IContainer> getAllContainers() {
 		return _basicIfModel.getAllContainers();
 	}
@@ -321,7 +339,8 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@Override
-	public <T extends IName> List<T> getAllNames(IName containerName, Class<T> type) {
+	public <T extends IName> List<T> getAllNames(IName containerName,
+			Class<T> type) {
 		return _basicIfModel.getAllNames(containerName, type);
 	}
 
@@ -346,48 +365,64 @@ public final class InformationFlowModelManager implements IInformationFlowModel,
 	}
 
 	@Override
-	public boolean addScope(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).addScope(scope);
-	}
-
-	@Override
 	public boolean openScope(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).openScope(scope);
-	}
-
-	@Override
-	public boolean removeScope(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).removeScope(scope);
+		return ((ScopeInformationFlowModel) _ifModelExtensions
+				.get(EInformationFlowModel.SCOPE)).openScope(scope);
 	}
 
 	@Override
 	public boolean closeScope(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).closeScope(scope);
+		return ((ScopeInformationFlowModel) _ifModelExtensions
+				.get(EInformationFlowModel.SCOPE)).closeScope(scope);
 	}
 
 	@Override
 	public boolean isScopeOpened(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).isScopeOpened(scope);
+		return ((ScopeInformationFlowModel) _ifModelExtensions
+				.get(EInformationFlowModel.SCOPE)).isScopeOpened(scope);
 	}
 
 	@Override
 	public IScope getOpenedScope(IScope scope) {
-		return ((ScopeInformationFlowModel)_ifModelExtensions.get(EInformationFlowModel.SCOPE)).getOpenedScope(scope);
+		return ((ScopeInformationFlowModel) _ifModelExtensions
+				.get(EInformationFlowModel.SCOPE)).getOpenedScope(scope);
 	}
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
-		return ((StructuredInformationFlowModel)(_ifModelExtensions.get(EInformationFlowModel.STRUCTURE))).newStructuredData(structure);
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE)))
+				.newStructuredData(structure);
 	}
 
 	@Override
 	public Map<String, Set<IData>> getStructureOf(IData data) {
-		return ((StructuredInformationFlowModel)(_ifModelExtensions.get(EInformationFlowModel.STRUCTURE))).getStructureOf(data);
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE))).getStructureOf(data);
 	}
 
 	@Override
 	public Set<IData> flattenStructure(IData data) {
-		return ((StructuredInformationFlowModel)(_ifModelExtensions.get(EInformationFlowModel.STRUCTURE))).flattenStructure(data);
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE))).flattenStructure(data);
+	}
+
+	@Override
+	public Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler) {
+		return ((ScopeInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.SCOPE))).XBehav(eventHandler);
+	}
+
+	@Override
+	public Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler) {
+		return ((ScopeInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.SCOPE))).XDelim(eventHandler);
+	}
+
+	@Override
+	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
+		return ((ScopeInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.SCOPE))).XAlias(eventHandler);
 	}
 
 }

@@ -30,6 +30,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	 */
 	protected abstract IStatus update();
 
+
 	/*
 	 * In this function, we describe what happens when a certain event is
 	 * executed.

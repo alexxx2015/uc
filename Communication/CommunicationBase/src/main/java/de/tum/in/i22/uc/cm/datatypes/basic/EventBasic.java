@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class EventBasic implements IEvent {
 
-	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPepParameterKey();
+	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
 	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = Settings.getInstance().getAllowImpliesActualParameterKey();
 
 	private static final String PREFIX_SEPARATOR = Settings.getInstance().getPrefixSeparator();
@@ -25,15 +25,25 @@ public class EventBasic implements IEvent {
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
 		if (map != null) {
-			_parameters.putAll(map);
+			_parameters.putAll(map);			
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
-			_allowImpliesActual = Boolean.valueOf(_parameters.get(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY));
+			
+			// If the event has a AIA parameter, use it
+			String AIA=_parameters.get(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY);
+			if (AIA!=null) _allowImpliesActual = Boolean.valueOf(AIA);
+			//otherwise, fallback to Setting default value
+			else  _allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
 		}
 	}
 
 	public EventBasic(String name, Map<String, String> map, boolean isActual) {
 		this(name, map);
 		_isActual = isActual;
+	}
+
+	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
+		this(name, map, isActual);
+		_timestamp=timeStamp;
 	}
 
 	@Override

@@ -34,9 +34,9 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
+import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
-import de.tum.in.i22.uc.pip.extensions.statebased.StateBasedPredicate;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -112,8 +112,8 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus update(IEvent event) {
-		String action = event.getName();
-		IEventHandler actionHandler = null;
+		String eventName = event.getName();
+		IEventHandler eventHandler = null;
 		IStatus status;
 
 		/*
@@ -122,23 +122,23 @@ public class PipHandler extends PipProcessor {
 		 */
 
 		try {
-			actionHandler = EventHandlerManager.createEventHandler(event);
+			eventHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
 			return new StatusBasic(EStatus.ERROR,
-					"Could not instantiate event handler for " + action + ", "
+					"Could not instantiate event handler for " + eventName + ", "
 							+ e.getMessage());
 		}
 
-		if (actionHandler == null) {
+		if (eventHandler == null) {
 			return new StatusBasic(EStatus.ERROR);
 		}
 
-		actionHandler.setEvent(event);
-		actionHandler.setInformationFlowModel(_ifModelManager);
+		eventHandler.setEvent(event);
+		eventHandler.setInformationFlowModel(_ifModelManager);
 
 		_logger.info(System.lineSeparator() + "Executing PipHandler for "
 				+ event);
-		status = actionHandler.performUpdate();
+		status = eventHandler.performUpdate();
 
 		/*
 		 * The returned status will tell us whether we have to do some more
@@ -323,5 +323,11 @@ public class PipHandler extends PipProcessor {
 	@Override
 	public Set<IData> flattenStructure(IData data) {
 		return _ifModelManager.flattenStructure(data);
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -48,7 +48,7 @@ public abstract class GenericTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if (hasBeenSetUpByAllTests == false) {
-			_logger.debug("\n NEW TEST CLASS START \n");
+			_logger.debug("\n\n NEW TEST CLASS START \n");
 			mf = MessageFactoryCreator.createMessageFactory();
 			thriftClientFactory = new ThriftClientFactory();
 			thriftServerFactory = new ThriftServerFactory();
@@ -77,10 +77,10 @@ public abstract class GenericTest {
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		if (hasBeenSetUpByAllTests == false) {
-			_logger.debug("\n TEST CLASS END \n");
+			_logger.debug("\n\n TEST CLASS END \n");
 			box.stop();
 			// give it a second to free the sockets
-			Thread.sleep(1000);
+			//Thread.sleep(1000);
 		}
 	}
 

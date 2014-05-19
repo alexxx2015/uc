@@ -10,8 +10,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -121,6 +123,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 					_logger.debug("Starting mechanism update thread...");
 					if (curMechanism instanceof Mechanism) {
 						((Mechanism) curMechanism).init();
+						((Mechanism) curMechanism).start();
 					}
 					_logger.info("Mechanism {} started...", curMechanism.getMechanismName());
 				} catch (InvalidMechanismException e) {
@@ -253,6 +256,25 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	@Override
 	public PxpManager getPxpManager() {
 		return _pxpManager;
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		Set<String> _policyTableKeys = this._policyTable.keySet();
+		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
+		while(_policyTableKeysIt.hasNext()){
+			String _policyTableKey = _policyTableKeysIt.next();
+			ArrayList<IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
+			Iterator<IPdpMechanism> mechanismsIt = mechanisms.iterator();
+			while(mechanismsIt.hasNext()){				
+				IPdpMechanism mechanism = mechanismsIt.next();
+				if(mechanism instanceof Runnable){
+					((Thread)mechanism).interrupt();					
+				}
+			}
+		}
+		this._policyTable.clear();
 	}
 
 }

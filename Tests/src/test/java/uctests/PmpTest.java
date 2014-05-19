@@ -38,15 +38,17 @@ public class PmpTest extends GenericTest{
 
 		pmp.deployPolicyRawXMLPmp(policyString);
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
+		log.info(box.getIfModel());
 		pip.initialRepresentation(new NameBasic ("secondContainer"),pip.getDataInContainer(new NameBasic("initialContainer")));
-
+		log.info(box.getIfModel());
+		
 		log.error("policy deployed. let's test it");
 
 		Map<String,String> map = new HashMap<String,String>();
@@ -55,12 +57,12 @@ public class PmpTest extends GenericTest{
 
 		log.debug ("Response for secondcontainer : " + r);
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		Assert.assertEquals(EStatus.INHIBIT, r.getAuthorizationAction().getEStatus());
 		

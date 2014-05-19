@@ -18,11 +18,15 @@ public enum EInformationFlowModel {
 			switch (s.trim().toLowerCase()) {
 				case "scope":
 					result.add(SCOPE);
+					break;
 				case "quantities":
 					result.add(QUANTITIES);
+					break;
 				case "structure":
 					result.add(STRUCTURE);
+					break;
 			}
+			
 		}
 
 		return result;

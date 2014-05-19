@@ -23,8 +23,9 @@ public class ScopeBasic implements IScope {
 	private final Map<String, Object> _attributes;
 	private final EScopeType _scopeType;
 
+
 	public ScopeBasic() {
-		this("<empty scope>", EScopeType.EMPTY, Collections.<String, Object> emptyMap());
+		this("<empty scope>", EScopeType.UNKNOWN, Collections.<String, Object> emptyMap());
 	}
 
 	public ScopeBasic(String humanReadableName, EScopeType st, Map<String, Object> attributes) {
@@ -60,7 +61,7 @@ public class ScopeBasic implements IScope {
 			return Objects.equals(_scopeType, o._scopeType)
 					&& Objects.equals(_attributes, o._attributes);
 		}
-		return false;
+		return false;  
 	}
 
 	@Override
@@ -86,4 +87,16 @@ public class ScopeBasic implements IScope {
 	public String getHumanReadableName() {
 		return _humanReadableName;
 	}
+
+	@Override
+	public String getId() {
+		return _id;
+	}
+	
+	@Override
+	public EScopeType getScopeType() {
+		return _scopeType;
+	}
+
 }
+

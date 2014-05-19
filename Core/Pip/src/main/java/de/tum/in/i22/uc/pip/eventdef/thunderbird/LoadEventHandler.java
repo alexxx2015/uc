@@ -3,65 +3,102 @@ package de.tum.in.i22.uc.pip.eventdef.thunderbird;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
 public class LoadEventHandler extends AbstractScopeEventHandler {
-	private String _delimiter = null;
 
 	public LoadEventHandler() {
 		super();
 	}
 
-	@Override
-	protected int createScope() {
+	private IScope buildScope() {
 		String filename;
-
 		try {
-			_delimiter = getParameterValue(_delimiterName);
 			filename = getParameterValue("filename");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
-			return -1;
+			return null;
 		}
 
-		// check whether a scope with this loading have been already started
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("app", "Thunderbird");
 		attributes.put("filename", filename);
 
+		return new ScopeBasic("TB loading file " + filename,
+				EScopeType.LOAD_FILE, attributes);
+	}
 
-		ScopeBasic scope = new ScopeBasic("TB loading file " + filename + " OPEN",
-				EScopeType.GENERIC_IN, attributes);
+	@Override
+	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+		String delimiter;
+		try {
+			delimiter = getParameterValue(_delimiterName);
 
-		if (_delimiter.equals(_openDelimiter)) {
-			if (_scopesToBeOpened==null) _scopesToBeOpened = new HashSet<ScopeBasic>();
-			_scopesToBeOpened.add(scope);
-			return 1;
-
-		} else if (_delimiter.equals(_closeDelimiter)) {
-			if (_scopesToBeClosed==null) _scopesToBeClosed = new HashSet<ScopeBasic>();
-			_scopesToBeClosed.add(scope);
-			return 1;
+		} catch (ParameterNotFoundException e) {
+			_logger.error(e.getMessage());
+			return new HashSet<Pair<EScopeState, IScope>>();
 		}
-		return -1;
+		IScope scope = buildScope();
+		if (scope == null) {
+			return new HashSet<Pair<EScopeState, IScope>>();
+		}
+		Set<Pair<EScopeState, IScope>> res = new HashSet<Pair<EScopeState, IScope>>();
+		if (delimiter.equals(_openDelimiter)) {
+			res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
+			return res;
+		} else if (delimiter.equals(_closeDelimiter)) {
+			res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSED, scope));
+			return res;
+		}
+		return res;
+	}
+
+	@Override
+	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+		IScope scope = buildScope();
+		String _delimiter;
+		try {
+			_delimiter = getParameterValue(_delimiterName);
+
+		} catch (ParameterNotFoundException e) {
+			_logger.error(e.getMessage());
+			return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
+		}
+		if ((scope == null) || !( _closeDelimiter.equals(_delimiter)))
+			return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+		return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
 	}
 
 	@Override
 	protected IStatus update() {
-		return null;
+		return new StatusBasic(EStatus.OKAY);
 	}
 
-	// @Override
-	// public IStatus execute() {
-	// // TODO: implement the TB internal behavior of the LOAD function
-	//
-	// return _messageFactory.createStatus(EStatus.OKAY);
-	// }
+	@Override
+	protected IStatus update(EBehavior direction, IScope scope) {
+		if ((direction.equals(EBehavior.IN))&&(scope!=null)){
+			IContainer src = _informationFlowModel.getContainer(new NameBasic(
+					scope.getId()));
+			_informationFlowModel.addData(
+					_informationFlowModel.getData(src), _informationFlowModel.getContainer(new NameBasic("myAppInternalContainer")));
+			return new StatusBasic(EStatus.OKAY);
+		} else return super.update(direction, scope);
+	}
 
 }

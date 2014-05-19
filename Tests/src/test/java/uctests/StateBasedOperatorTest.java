@@ -152,7 +152,7 @@ public class StateBasedOperatorTest extends GenericTest{
 		// send "testevent". set appropriate pep in order to match event
 		// definition package.
 		Map<String, String> dm = createDummyMap();
-		dm.put(Settings.getInstance().getPepParameterKey(), "test");
+		dm.put(Settings.getInstance().getPep(), "test");
 		IResponse response = pdp.notifyEventSync(mf.createActualEvent(
 				"TestEvent", dm));
 		_logger.debug("Received response as reply to testEvent event:"

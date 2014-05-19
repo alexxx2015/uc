@@ -3,8 +3,9 @@ package de.tum.in.i22.uc.pip.eventdef.windows;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
+import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
-public abstract class WindowsEvents extends BaseEventHandler {
+public abstract class WindowsEvents extends AbstractScopeEventHandler {
 
 	/**
 	 * Checks if the process with given PID already exists, if not create a

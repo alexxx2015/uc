@@ -43,4 +43,6 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 			_distributionManager = distributionManager;
 		}
 	}
+	
+	public abstract void stop();
 }

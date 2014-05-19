@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.extensions.statebased;
+package de.tum.in.i22.uc.pip.core.statebased;
 
 import java.util.Arrays;
 import java.util.HashSet;

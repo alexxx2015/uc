@@ -128,13 +128,19 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
-		_impl.TobiasProcessEventAsync(pepEvent);
+	public void processEventAsync(IEvent pepEvent) {
+		_impl.processEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
-		return _impl.TobiasProcessEventSync(pepEvent);
+	public IResponse processEventSync(IEvent pepEvent) {
+		return _impl.processEventSync(pepEvent);
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

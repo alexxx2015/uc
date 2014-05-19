@@ -106,6 +106,7 @@ public class Controller implements IRequestHandler  {
 				.started());
 	}
 
+	@Override
 	public void stop() {
 		if (_pdpServer != null)
 			_pdpServer.stop();
@@ -115,6 +116,8 @@ public class Controller implements IRequestHandler  {
 			_pmpServer.stop();
 		if (_anyServer != null)
 			_anyServer.stop();
+		if(_requestHandler != null)
+			_requestHandler.stop();
 		//System.exit(0);
 	}
 
@@ -449,13 +452,19 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
-		_requestHandler.TobiasProcessEventAsync(pepEvent);
+	public void processEventAsync(IEvent pepEvent) {
+		_requestHandler.processEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
-		return _requestHandler.TobiasProcessEventSync(pepEvent);
+	public IResponse processEventSync(IEvent pepEvent) {
+		return _requestHandler.processEventSync(pepEvent);
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		return _requestHandler.specifyPolicyFor(representations, dataClass);
 	}
 
 }

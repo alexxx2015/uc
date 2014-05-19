@@ -1,5 +1,7 @@
 package pdp.tests;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ public class PDPJavaTest {
 		Decision d;
 		log.debug("PDPJavaTest");
 		lpdp = new PolicyDecisionPoint();
+		
 
 		log.debug("lpdp: " + lpdp);
 		boolean ret = lpdp.deployPolicyURI("src/test/resources/testTUM.xml");
@@ -33,6 +36,26 @@ public class PDPJavaTest {
 		log.debug("Deployed Mechanisms: [{}]", lpdp.listDeployedMechanisms());
 
 
+				
+		
+		
+//		System.out.println("\nTest Condtion Parameter Match Operator:");
+//
+//		log.debug("Notifying event");
+//		e = new Event("testEvent", true, System.currentTimeMillis());
+//		e.addStringParameter("name1", "value1");
+//		e.addStringParameter("name2", "value2");
+//		d = lpdp.notifyEvent(e);
+//		log.debug("d: [{}]", d);
+//		System.out.println(e + "\n" + d + "\n");
+//
+//		fail();
+//		
+//		
+		
+		
+		
+		
 		
 		System.out.println("\nTest Condtion Parameter Match Operator:");
 

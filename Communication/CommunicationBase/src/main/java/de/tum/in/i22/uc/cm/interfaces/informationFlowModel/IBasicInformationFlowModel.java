@@ -243,16 +243,6 @@ public interface IBasicInformationFlowModel {
 	public abstract IContainer getContainer(IName name);
 
 	/**
-	 * Returns the container that is referenced by the naming name. The search
-	 * is done in a less strict way; it is enough that the name only partially
-	 * fits an entry in the naming mapping.
-	 * @deprecated Why would it be useful?. Should imo be deleted. -FK-
-	 * @param name
-	 * @return
-	 */
-	public abstract IContainer getContainerRelaxed(IName name);
-
-	/**
 	 * Returns an unmodifiable view onto all containers.
 	 *
 	 * ~ Double checked, 2014/03/30. FK.

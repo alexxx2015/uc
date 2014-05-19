@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
+
 public interface IScope {
 
 	/**
@@ -31,4 +33,14 @@ public interface IScope {
 	 */
 	String getHumanReadableName();
 
+	/**
+	 * @return the unique id
+	 */
+	String getId();
+
+	/**
+	 * @return the scope type
+	 */
+	EScopeType getScopeType();
+	
 }

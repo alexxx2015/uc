@@ -75,6 +75,7 @@ import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.SpecifyPolicyForPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -287,9 +288,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.stop();
 		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
 	}
-
+	
+	@Override
 	public void stop() {
 		_requestQueueManager.stop();
+		this._pdp.stop();
+		this._pip.stop();
+		this._pmp.stop();		
 	}
 
 
@@ -558,13 +563,22 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(IEvent pepEvent) {
+	public void processEventAsync(IEvent pepEvent) {
 		this.notifyEventAsync(pepEvent);
 	}
 
 	@Override
-	public IResponse TobiasProcessEventSync(IEvent pepEvent) {
+	public IResponse processEventSync(IEvent pepEvent) {
 		return this.notifyEventSync(pepEvent);
+	}
+
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		SpecifyPolicyForPmpRequest request = new SpecifyPolicyForPmpRequest(representations,dataClass);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
 	}
 
 }

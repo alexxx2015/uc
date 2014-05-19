@@ -1,0 +1,77 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
+	xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testPolicy">
+
+		<initialRepresentations>
+			<container name="myCont">
+				<dataId>dataid1</dataId>
+				<dataId>dataid2</dataId>
+				<dataId>dataid3</dataId>
+			</container>
+			<container name="myCont2">
+				<dataId>dataid2</dataId>
+				<dataId>dataid3</dataId>
+				<dataId>dataid4</dataId>
+			</container>
+		</initialRepresentations>
+
+<!--	<preventiveMechanism name="testUc4Win">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="ReadFile" tryEvent="true">
+			<paramMatch name="InFileName" value="log.txt" cmpOp="endsWith"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+	
+<preventiveMechanism name="denyEveryR">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="ReadFile" tryEvent="true"/>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+		<preventiveMechanism name="denyEveryW">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="WriteFile" tryEvent="true"/>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+-->
+		<preventiveMechanism name="testInitRep">
+		<description>...</description>
+		<timestep amount="10" unit="SECONDS" />
+		<trigger action="eventRep" tryEvent="true">
+			<paramMatch name="parname" value="dataid2" cmpOp="dataInContainer"/>
+		</trigger>
+		<condition>
+			<true />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+
+</policy>

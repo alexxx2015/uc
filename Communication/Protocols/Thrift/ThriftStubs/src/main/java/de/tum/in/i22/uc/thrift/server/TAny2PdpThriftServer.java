@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -100,12 +99,13 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	}
 
 	@Override
-	public TobiasResponse TobiasProcessEventSync(TobiasEvent e, String senderID)
+	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
+		_logger.debug("TAny2Pdp: processEventSync");
 		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, false);
-		IResponse res = _requestHandler.TobiasProcessEventSync(ev);
+		IResponse res = _requestHandler.processEventSync(ev);
 		EStatus st=null;
 		TobiasStatusType resStatus = null;
 		if (res!=null){
@@ -139,12 +139,13 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	}
 
 	@Override
-	public void TobiasProcessEventAsync(TobiasEvent e, String senderID)
+	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
+		_logger.debug("TAny2Pdp: processEventAsync");
 		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
 		map.put("senderID", senderID);
-		IEvent ev = new EventBasic(e.getName(), map, false);
-		_requestHandler.TobiasProcessEventAsync(ev);
+		IEvent ev = new EventBasic(e.getName(), map, true);
+		_requestHandler.processEventAsync(ev);
 	}
 
 }

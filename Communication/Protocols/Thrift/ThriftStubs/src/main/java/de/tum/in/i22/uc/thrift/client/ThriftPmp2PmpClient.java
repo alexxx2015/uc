@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -84,6 +85,11 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 	@Override
 	public Set<XmlPolicy> getPolicies(IData data) {
 		return _impl.getPolicies(data);
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,String dataClass) {
+		return _impl.specifyPolicyFor(representations, dataClass);
 	}
 
 }

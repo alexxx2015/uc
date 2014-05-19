@@ -65,7 +65,7 @@ public class AllTests extends GenericTest {
 		_logger.debug("\n TEST CLASS END \n");
 		box.stop();
 		// give it a second to free the sockets
-		Thread.sleep(1000);
+		//Thread.sleep(1000);
 	}
 
 	@Override
