@@ -220,7 +220,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 			}
 		}
 
-		// check whether any formerly unknwoen location was added.
+		// check whether any formerly unknown location was added.
 		// If not, we can safely exit
 		if (!addingUnknownLocation) {
 			return;
