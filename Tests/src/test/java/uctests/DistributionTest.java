@@ -30,7 +30,7 @@ public class DistributionTest extends GenericTest {
 		pdp.notifyEventSync(createLinuxOpenEvent("A", 123, "/tmp/foo", 3, true));
 		pdp.notifyEventSync(createLinuxReadEvent("A", 123, 3, true));
 		pdp.notifyEventSync(createLinuxSocketEvent("A", 123, "AF_INET", "SOCK_STREAM", 4, true));
-		pdp.notifyEventSync(createLinuxConnectEvent("A", 123, "192.168.201.1", 4567, "127.0.0.1", 9999, 4, true));
+		pdp.notifyEventSync(createLinuxConnectEvent("A", 123, "127.0.0.2", 4567, "127.0.0.1", 9999, 4, true));
 		pdp.notifyEventSync(createLinuxWriteEvent("A", 123, 4, true));
 	}
 

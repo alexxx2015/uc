@@ -16,7 +16,6 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -73,19 +72,9 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_pip = pip;
 		_pmp = pmp;
 		_initialized = true;
-		//		play();
 	}
 
-	private void play() {
-		// policyTransfer(new IPLocation("127.0.0.2"), new
-		// IPLocation("127.0.0.3"), "policy1");
-		// policyTransfer(new IPLocation("127.0.0.3"), new
-		// IPLocation("127.0.0.5"), new XmlPolicy("policy1", "<xml>"));
-		_pmp.deployPolicyURIPmp("/home/florian/GIT/pdp/Tests/src/test/resources/testTUM.xml");
-		dataTransfer(Collections.singleton((IData) new DataBasic()), new IPLocation("127.0.0.5"));
-	}
-
-	private Session changeKeyspace(String keyspace) {
+	private Session switchKeyspace(String keyspace) {
 		if (keyspace != null && keyspace.equals(_currentKeyspace)) {
 			return _currentSession;
 		}
@@ -94,52 +83,48 @@ public class CassandraDistributionManager implements IDistributionManager {
 			_currentSession = _cluster.connect(keyspace);
 			_currentKeyspace = _currentSession.getLoggedKeyspace();
 		} catch (InvalidQueryException e) {
-			// This exception is thrown if the provided keyspace does not exist.
-			// Do nothing.
+			// this happens if the keyspace did not exist
+			_currentKeyspace = null;
+		}
+
+		if (_currentKeyspace == null) {
+			createPolicyKeyspace(keyspace, IPLocation.localIpLocation);
+			return switchKeyspace(keyspace);
 		}
 
 		return _currentSession;
 	}
 
 	@Override
-	public void newPolicy(XmlPolicy xmlPolicy) {
-		createPolicyKeyspace(xmlPolicy.getName(), IPLocation.localIpLocation);
+	public void newPolicy(XmlPolicy policy) {
+		switchKeyspace(policy.getName());
 
-		changeKeyspace(xmlPolicy.getName());
+		//TODO initialization of distributed policy information
+	}
 
-		try {
-			_currentSession.execute("CREATE TABLE hasdata (data text,location text,PRIMARY KEY (data))");
-		} catch (AlreadyExistsException e) {
-			// If the table already exists: just be happy.
+	private void doPolicyTransfer(Set<XmlPolicy> policies, IPLocation dstLocation) {
+		for (XmlPolicy policy : policies) {
+			switchKeyspace(policy.getName());
+
+			if (extendPolicyKeyspace(policy.getName(), dstLocation)) {
+				try {
+					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(dstLocation));
+					remotePmp.deployPolicyRawXMLPmp(policy.getXml());
+				} catch (IOException e) {
+					_logger.error("Unable to deploy XML policy remotely at [" + dstLocation + "]");
+				}
+			}
+
 		}
 	}
 
-	private void policyTransfer(String policyName, IPLocation dstLocation) {
-		changeKeyspace(policyName);
-
-		if (_currentKeyspace == null) {
-			// If we end up here, then there was no keyspace for our policy.
-			// We create it and are done.
-			createPolicyKeyspace(policyName, dstLocation);
-		} else {
-			// The keyspace did already exist. Therefore, we update it
-			// to also replicate the policy to the new destination
-			extendPolicyKeyspace(policyName, dstLocation);
-		}
-	}
-
-	private void policyTransfer(Set<XmlPolicy> policies, IPLocation dstLocation) {
-		for (XmlPolicy p : policies) {
-			policyTransfer(p.getName(), dstLocation);
-		}
-	}
-
-	private void dataTransfer(Set<IData> data, IPLocation dstLocation) {
+	private void doDataTransfer(Set<IData> data, IPLocation dstLocation) {
 		for (IData d : data) {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
-				changeKeyspace(p.getName());
+				switchKeyspace(p.getName());
 				_currentSession.execute("INSERT INTO hasdata (data, location) " + "VALUES ('" + d.getId() + "','"
 						+ dstLocation.getHost() + "')");
+
 				// TODO: if a new tuple is in fact inserted, then we need to perform regular
 				// PIP2PIP data transfer, similar to what we do with the policy.
 			}
@@ -163,17 +148,19 @@ public class CassandraDistributionManager implements IDistributionManager {
 			return;
 		}
 
-		StringBuilder query = new StringBuilder();
-		query.append("CREATE KEYSPACE " + policyName + " WITH replication ");
-		query.append("= {'class':'NetworkTopologyStrategy',");
+		StringBuilder queryCreateKeyspace = new StringBuilder();
+		queryCreateKeyspace.append("CREATE KEYSPACE " + policyName + " WITH replication ");
+		queryCreateKeyspace.append("= {'class':'NetworkTopologyStrategy',");
 		for (IPLocation loc : locations) {
-			query.append("'" + loc.getHost() + "':1,");
+			queryCreateKeyspace.append("'" + loc.getHost() + "':1,");
 		}
-		query.deleteCharAt(query.length() - 1);
-		query.append("}");
+		queryCreateKeyspace.deleteCharAt(queryCreateKeyspace.length() - 1);
+		queryCreateKeyspace.append("}");
 
 		try {
-			_currentSession.execute(query.toString());
+			_currentSession.execute(queryCreateKeyspace.toString());
+			switchKeyspace(policyName);
+			_currentSession.execute("CREATE TABLE hasdata (data text,location text,PRIMARY KEY (data))");
 		}
 		catch (AlreadyExistsException e) {
 			// don't worry.. about a thing.
@@ -181,7 +168,17 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	}
 
-	private void extendPolicyKeyspace(String policyName, IPLocation... locations) {
+	// FIXME Execution of this method should actually be atomic, as otherwise
+	// we might experience lost updates, etc. Can this be realized? Would it even
+	// be bad if we lose an update or can we compensate for it later?
+	/**
+	 * 
+	 * @param policyName
+	 * @param locations
+	 * @return returns true if the keyspace was in fact extended,
+	 * i.e. if the provided location was not yet part of the keyspace; false otherwise.
+	 */
+	private boolean extendPolicyKeyspace(String policyName, IPLocation location) {
 		policyName = policyName.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
@@ -190,54 +187,34 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		// (2) We build the set of locations that are already known within the
 		// keyspace
-		Set<String> oldLocations = new HashSet<>();
+		Set<String> allLocations = new HashSet<>();
 		for (Row row : rows) {
 			String[] entries = row.getString("strategy_options").replaceAll("[{}\"]", "").split(",");
 			for (String loc : entries) {
-				oldLocations.add(loc.split(":")[0]);
+				allLocations.add(loc.split(":")[0]);
 			}
 		}
 
-		boolean addingUnknownLocation = false;
-
-		// (3) Loop over all receiving locations
-		// We add the new destination locations to the keyspace.e;
-		// If the location was not in the keyspace before, then we
-		// need to perform regular PMP policy deployment.
-		for (IPLocation loc : locations) {
-			if (oldLocations.add(loc.getHost())) {
-				addingUnknownLocation = true;
-
-				// FIXME: Organization of this code is not neat,
-				// and this should definitely go somewhere else
-				try {
-					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(loc));
-					// TODO: need the actual XML policy here :-/
-					//remotePmp.deployPolicyRawXMLPmp(xml);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		if (!allLocations.add(location.getHost())) {
+			// provided location was already present. We are done.
+			return false;
 		}
 
-		// check whether any formerly unknown location was added.
-		// If not, we can safely exit
-		if (!addingUnknownLocation) {
-			return;
-		}
 
-		// (4) We make a string out of all locations and create the query
+		// (3) We make a string out of all locations and create the query
 		StringBuilder query = new StringBuilder();
 		query.append("ALTER KEYSPACE " + policyName + " WITH replication ");
 		query.append("= {'class':'NetworkTopologyStrategy',");
-		for (String loc : oldLocations) {
+		for (String loc : allLocations) {
 			query.append("'" + loc + "':1,");
 		}
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
 
-		// (5) We execute the query
+		// (4) We execute the query
 		_currentSession.execute(query.toString());
+
+		return true;
 	}
 
 	@Override
@@ -261,8 +238,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 					data.addAll(d);
 				}
 
-				policyTransfer(getAllPolicies(data), (IPLocation) dstLocation);
-				dataTransfer(data, (IPLocation) dstLocation);
+				doPolicyTransfer(getAllPolicies(data), (IPLocation) dstLocation);
+				doDataTransfer(data, (IPLocation) dstLocation);
 			}
 		}
 	}
