@@ -2,6 +2,7 @@ package uctests;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -89,6 +91,25 @@ public class PdpTest extends GenericTest{
 		Assert.assertNotNull(response);
 	}
 
+	@Test
+	public void testExcel() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
+		Map<String,String> map = new HashMap<String,String>();
+		
+		map.put("PEP", "excel");
+		map.put("Target","wb1|ws1|3|4");
+		map.put("allowImpliesActual", "true");
+		
+		pip.newInitialRepresentation(new NameBasic("wb1|ws1|3|4"));
+		
+		IEvent event = new EventBasic("Print", map);
+
+		IResponse response = pdp.notifyEventSync(event);
+
+		Assert.assertNotNull(response);
+	}
+
 	/**
 	 * IfFlow stands for Information Flow
 	 */
@@ -106,7 +127,6 @@ public class PdpTest extends GenericTest{
 
 		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
 	}
-
 
 	private static Thread startPepClient() {
 		_threadPep = new Thread(new Runnable() {

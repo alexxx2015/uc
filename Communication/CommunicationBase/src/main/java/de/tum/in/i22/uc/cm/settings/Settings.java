@@ -62,8 +62,8 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
-	private static final String PROP_NAME_pepParameterKey = "pepParameterKey";
-	private static final String PROP_NAME_allowImpliesActualParameterKey = "allowImpliesActualParameterKey";
+	private static final String PROP_NAME_pep = "pep";
+	private static final String PROP_NAME_allowImpliesActual = "allowImpliesActual";
 
 	private static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
@@ -88,6 +88,8 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
+
+	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 
 	
 	private Settings() {
@@ -166,8 +168,8 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
-		loadSetting(PROP_NAME_pepParameterKey, "PEP");
-		loadSetting(PROP_NAME_allowImpliesActualParameterKey,
+		loadSetting(PROP_NAME_pep, "PEP");
+		loadSetting(PROP_NAME_allowImpliesActual,
 				"false");
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
@@ -202,6 +204,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_showFullIFModel, false);
 	
+		loadSetting(PROP_NAME_excelCoordinatesSeparator, "\\|");
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -292,7 +295,7 @@ public class Settings extends SettingsLoader {
 
 
 	public String getAllowImpliesActualParameterKey() {
-		return PROP_NAME_allowImpliesActualParameterKey;
+		return PROP_NAME_allowImpliesActual;
 	}
 
 	
@@ -420,11 +423,11 @@ public class Settings extends SettingsLoader {
 	}
 
 	public String getPep() {
-		return getValue(PROP_NAME_pepParameterKey);
+		return getValue(PROP_NAME_pep);
 	}
 
 	public String getAllowImpliesActual() {
-		return getValue(PROP_NAME_allowImpliesActualParameterKey);
+		return getValue(PROP_NAME_allowImpliesActual);
 	}
 
 	public String getPipInitialRepresentationSeparator1() {
@@ -465,5 +468,9 @@ public class Settings extends SettingsLoader {
 
 	public boolean getShowFullIFModel(){
 		return getValue(PROP_NAME_showFullIFModel);
+	}
+
+	public String getExcelCoordinatesSeparator(){
+		return getValue(PROP_NAME_excelCoordinatesSeparator);
 	}
 }
