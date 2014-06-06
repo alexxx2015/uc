@@ -12,19 +12,19 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class DeleteColumnEventHandler extends ExcelEvents {
+public class DeleteRowEventHandler extends ExcelEvents {
 
-	public DeleteColumnEventHandler() {
+	public DeleteRowEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		int colNumber = -1;
+		int rowNumber = -1;
 		String workbookName = "";
 		String sheetName = "";
 		try {
-			colNumber = Integer.valueOf(getParameterValue("ColNumber"));
+			rowNumber = Integer.valueOf(getParameterValue("RowNumber"));
 			workbookName= getParameterValue("workbookName");
 			sheetName= getParameterValue("sheetName");
 
@@ -35,38 +35,38 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 		}
 		if ((workbookName == null) || (workbookName.equals(""))|| (sheetName == null) || (sheetName.equals("")))
 			throw new RuntimeException(
-					"impossible to delete Column with empty target");
+					"impossible to delete Rowumn with empty target");
 
 		Collection<CellName> allCells = _informationFlowModel
 				.getAllNames(CellName.class);
 
-		Set<CellName> higherColNum = new HashSet<CellName>();
-		int maxCol = 0;
+		Set<CellName> higherRowNum = new HashSet<CellName>();
+		int maxRow = 0;
 
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(sheetName)){
-				if (cell.getCol() == colNumber) {
+				if (cell.getRow() == rowNumber) {
 					_informationFlowModel.removeName(cell);
-				} else if (cell.getCol()>colNumber){
-					// if the cell has a higher colnumber than the one we delete
-					higherColNum.add(cell);
-					maxCol = Math.max(maxCol, cell.getCol());
+				} else if (cell.getRow()>rowNumber){
+					// if the cell has a higher rownumber than the one we delete
+					higherRowNum.add(cell);
+					maxRow = Math.max(maxRow, cell.getRow());
 				}
 				// otherwise nothing needs to be done
 			}
 		}
 
 		
-		// for every column after the one we deleted, we need to shift back the names of one column. i.e. f[col-1 <-
-		// f(col); col<-0]
+		// for every row  after the one we deleted, we need to shift back the names of one row. i.e. f[row-1 <-
+		// f(row); row<-0]
 		
-		for (int col = colNumber+1; col <= maxCol; col++) {
-			for (CellName cell : higherColNum) {
-				if (cell.getCol()==col) {
+		for (int row = rowNumber+1; row <= maxRow; row++) {
+			for (CellName cell : higherRowNum) {
+				if (cell.getRow()==row) {
 					IContainer cont = _informationFlowModel.getContainer(cell);
 					_informationFlowModel.addName(
-							new CellName(cell.getWorkbook(), cell.getWorksheet(),cell.getRow(),cell.getCol() - 1),
+							new CellName(cell.getWorkbook(), cell.getWorksheet(),cell.getRow(),cell.getRow() - 1),
 							cont);
 					_informationFlowModel.removeName(cell);
 				}

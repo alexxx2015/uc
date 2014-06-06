@@ -4,84 +4,128 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
+import de.tum.in.i22.uc.cm.datatypes.excel.OfficeClipboardName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
 public abstract class ExcelEvents extends AbstractScopeEventHandler {
 
 	protected String cs = Settings.getInstance().getExcelCoordinatesSeparator();
-	
-	/*
-	 * Here goes code common to every excel event
-	 */
+	protected String ls = Settings.getInstance().getExcelListSeparator();
 
-	/**
-	 * This method returns a boolean that states whether the provided
-	 * containerName matches the row number provided as second parameter.
-	 * 
-	 * @param contName
-	 * @param row
-	 * @return
-	 */
-	protected boolean matchRow(IName contName, int row) {
-		if (contName==null) throw new RuntimeException("impossible to matchRow of a null IName containername");
-		String name= contName.getName();
-		if (name==null) throw new RuntimeException("impossible to split of a null string. The container name shouldn't be null");
-		String[] coordinates = name.split(cs);
-		_logger.debug("matchRow: "+contName+" - row "+row+" -> coordinates are " + coordinates);
-		Assert.assertEquals(4, coordinates.length);			
-		return (Integer.getInteger(coordinates[2])==row);	
-	}
+	protected static final String ocbName = "OfficeClipboard";
+	protected static final String scbName = "SystemClipboard(Excel)";
 
-	/**
-	 * This method returns a boolean that states whether the provided
-	 * containerName matches the column number provided as second parameter.
-	 * 
-	 * @param contName
-	 * @param column
-	 * @return
-	 */
-	protected boolean matchColumn(IName contName, int column) {
-		if (contName==null) throw new RuntimeException("impossible to matchColumn of a null IName containername");
-		String name= contName.getName();
-		if (name==null) throw new RuntimeException("impossible to split of a null string. The container name shouldn't be null");
-		String[] coordinates = name.split(cs);
-		_logger.debug("matchColumn: "+contName+" - column "+column+" -> coordinates are " + coordinates);
-		Assert.assertEquals(4, coordinates.length);			
-		return (Integer.getInteger(coordinates[2])==column);	
-	}
-
-	
-	/**
-	 * This method returns a list of Names of containers on a certain sheet
-	 * 
-	 * @param contName
-	 * @param column
-	 * @return
-	 */
-	protected Set<IName> cellsOnThisSheet(String workBookName, String workSheetName) {
-		if ((workBookName==null)||(workSheetName==null)) throw new RuntimeException("workbookname and worksheetname shouldn't be null");
-		
-		Collection<IName> allNames = _informationFlowModel.getAllNames();
-		
-		Set<IName> res = new HashSet<IName>();
-		
-		String[] coordinates;
-		for (IName name : allNames){
-			coordinates = name.getName().split(cs);
-			Assert.assertEquals(4, coordinates.length);
-			if (workBookName.equalsIgnoreCase(coordinates[0]) && workSheetName.equalsIgnoreCase(coordinates[1])){
-				res.add(name);
-			}
+	protected Set<CellName> getSetOfCells(String target) {
+		if (target == null)
+			throw new RuntimeException(
+					"impossible to getSetOfCells from null set");
+		String[] cells = target.split(ls);
+		Set<CellName> res = new HashSet<CellName>();
+		for (String s : cells) {
+			res.add(new CellName(s));
 		}
-		
-		_logger.debug("cellsOnThisSheet("+workBookName+","+workSheetName+") size="+res.size());
-		return res;	
+		return res;
+	}
+
+	/**
+	 * This method pushes the content of the Excel_SystemClipboard container to
+	 * the officeclipboard. This means that the name of every container is
+	 * shifted of one position, and the head will take the new content.
+	 */
+	protected void pushOCB() {
+		Collection<OfficeClipboardName> ocbs = _informationFlowModel
+				.getAllNames(OfficeClipboardName.class);
+
+		// copy the content of the system clipboard into a new container
+		IContainer cont = new ContainerBasic();
+		IContainer scb = _informationFlowModel.getContainer(new NameBasic(
+				scbName));
+		_informationFlowModel.copyData(scb, cont);
+
+		if (ocbs == null) {
+			// if ocb is empty, create new posizion 0
+			_informationFlowModel.addName(
+					OfficeClipboardName.create(ocbName, 0), cont);
+			return;
+		}
+
+		// otherwise shift all the positions (but order them first)
+		OfficeClipboardName[] arr = new OfficeClipboardName[ocbs.size()];
+		for (OfficeClipboardName ocb : ocbs) {
+			arr[ocb.getPos()] = ocb;
+		}
+
+		for (int i = 0; i < arr.length; i++) {
+			IContainer tmpCont = _informationFlowModel.getContainer(arr[i]);
+			// this line is needed because otherwise tmpCont gets emptied by
+			// next line because tmpCont has no more names pointing to it. thus
+			// we add this temporary name.
+			_informationFlowModel.addName(new NameBasic("tmpNameForSwitching"),
+					tmpCont);
+			_informationFlowModel.addName(arr[i], cont);
+			cont = tmpCont;
+		}
+		OfficeClipboardName newPos = OfficeClipboardName.create(ocbName,
+				arr.length);
+		_informationFlowModel.addName(newPos, cont);
+
+		// remove tmp name
+		_informationFlowModel.removeName(new NameBasic("tmpNameForSwitching"));
+	}
+
+	/**
+	 * This method gets a pointer to the head of the office clipboard. It
+	 * doesn't remove the element
+	 */
+	protected IContainer headOCB() {
+		return getOCB(0);
+	}
+
+	/**
+	 * This method deletes the n-th element from the office clipboard This means
+	 * that every container after it needs to be shifted of one position. If the
+	 * clipboard currently contains less than n elements, this method does
+	 * nothing. Notice that index starts from 0.
+	 */
+	protected void deleteOCB(int pos) {
+		Collection<OfficeClipboardName> ocbs = _informationFlowModel
+				.getAllNames(OfficeClipboardName.class);
+
+		if (pos >= ocbs.size())
+			return;
+
+		// shift all the positions > pos (but order them first)
+		OfficeClipboardName[] arr = new OfficeClipboardName[ocbs.size()];
+		for (OfficeClipboardName ocb : ocbs) {
+			arr[ocb.getPos()] = ocb;
+		}
+
+		for (int i = pos; i < arr.length-1; i++) {
+			// in this case we don't need the temporary name. pointing ocb[n] to
+			// ocb[n+1] empties container poitned by ocb[n] and makes 2
+			// references to ocb[n+1]. next iteration pointing ocb[n+1] to
+			// ocb[n+2] deletes nothing because ocb[n+1] had 2 names, so now it
+			// still has one.
+			_informationFlowModel.addName(arr[i],
+					_informationFlowModel.getContainer(arr[i+1]));
+		}
+
+		// remove the last element of the list
+		_informationFlowModel.removeName(arr[arr.length-1]);
 	}
 
 	
-	
+	/**
+	 * This method gets the n-th element from the office clipboard 
+	 */
+	protected IContainer getOCB(int pos) {
+		if (pos<0) return null;
+		OfficeClipboardName headName = OfficeClipboardName.create(ocbName, pos);
+		return _informationFlowModel.getContainer(headName);
+	}
 }

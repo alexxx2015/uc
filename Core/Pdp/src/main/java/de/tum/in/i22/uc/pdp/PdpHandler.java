@@ -117,8 +117,8 @@ public class PdpHandler extends PdpProcessor {
 				&& event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(),
 					true);
-			// TODO: Check whether this order is correct. Enrico?
-			getPip().update(ev2);
+//			// TODO: Check whether this order is correct. Enrico?
+//			getPip().update(ev2);
 			notifyEventAsync(ev2);
 		}
 

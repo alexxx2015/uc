@@ -1,16 +1,20 @@
 package de.tum.in.i22.uc.pip.eventdef.excel;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class PrintEventHandler extends ExcelEvents {
+public class CopyInternalEventHandler extends ExcelEvents {
 
-	public PrintEventHandler() {
+	public CopyInternalEventHandler() {
 		super();
 	}
 
@@ -19,25 +23,29 @@ public class PrintEventHandler extends ExcelEvents {
 		String target = "";
 		try {
 			target = getParameterValue("Target");
+
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		if ((target == null) || (target.equals("")))
-			throw new RuntimeException("impossible to print empty target");
-
-		IContainer src = _informationFlowModel
-				.getContainer(new CellName(target));
-		IContainer dst = _informationFlowModel.getContainer(new NameBasic(
-				"printer"));
-
-		if (dst == null) {
-			dst = new ContainerBasic();
-			_informationFlowModel.addName(new NameBasic("printer"), dst);
+		if ((target == null) || (target.equals(""))) {
+			_logger.debug("nothign to copy. leaving system clipboard intact.");
+			return _messageFactory.createStatus(EStatus.OKAY);
 		}
-		_informationFlowModel.copyData(src, dst);
 
+		Set<CellName> targetSet = getSetOfCells(target);
+		
+		IContainer sysClip = _informationFlowModel.getContainer(new NameBasic(scbName));
+		_informationFlowModel.emptyContainer(sysClip);
+		
+		for (CellName c: targetSet) {
+			IContainer src= _informationFlowModel.getContainer(c);
+			_informationFlowModel.copyData(src,sysClip);
+		}
+		
+		pushOCB();
+		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

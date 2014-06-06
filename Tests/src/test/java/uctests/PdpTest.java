@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -98,15 +99,65 @@ public class PdpTest extends GenericTest{
 		Map<String,String> map = new HashMap<String,String>();
 		
 		map.put("PEP", "excel");
-		map.put("Target","wb1|ws1|3|4");
+		map.put("Target","wb1!ws1!3!4");
 		map.put("allowImpliesActual", "true");
 		
-		pip.newInitialRepresentation(new NameBasic("wb1|ws1|3|4"));
+		pip.newInitialRepresentation(new CellName("wb1!ws1!3!3"));
+		pip.newInitialRepresentation(new CellName("wb1!ws1!3!4"));
+		pip.newInitialRepresentation(new CellName("wb1!ws1!3!5"));
 		
+		pip.newInitialRepresentation(new NameBasic("SystemClipboard(Excel)"));
+		
+			
 		IEvent event = new EventBasic("Print", map);
-
 		IResponse response = pdp.notifyEventSync(event);
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("workbookName","wb1");
+		map.put("sheetName","ws1");
+		map.put("ColNumber","4");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("DeleteColumn", map);
 
+		response = pdp.notifyEventSync(event);
+		
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("Target","wb1!ws1!3!4*wb1!ws1!3!3");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("CopyInternal", map);
+
+		response = pdp.notifyEventSync(event);
+
+		response = pdp.notifyEventSync(event);
+		
+
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("Target","wb1!ws1!5!5*wb1!ws1!4!6");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("Paste", map);
+
+		response = pdp.notifyEventSync(event);
+
+		
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("workbookName","wb1");
+		map.put("sheetName","ws1");
+		map.put("RowNumber","4");
+		
+		event = new EventBasic("DeleteRow", map);
+
+		response = pdp.notifyEventSync(event);
+		
 		Assert.assertNotNull(response);
 	}
 

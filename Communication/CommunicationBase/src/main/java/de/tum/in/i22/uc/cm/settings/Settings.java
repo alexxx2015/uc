@@ -90,6 +90,7 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
 
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
+	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 
 	
 	private Settings() {
@@ -204,7 +205,9 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_showFullIFModel, false);
 	
-		loadSetting(PROP_NAME_excelCoordinatesSeparator, "\\|");
+		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
+		loadSetting(PROP_NAME_excelListSeparator, "\\*");
+
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -473,4 +476,9 @@ public class Settings extends SettingsLoader {
 	public String getExcelCoordinatesSeparator(){
 		return getValue(PROP_NAME_excelCoordinatesSeparator);
 	}
+	
+	public String getExcelListSeparator(){
+		return getValue(PROP_NAME_excelListSeparator);
+	}
+
 }
