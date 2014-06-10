@@ -314,6 +314,11 @@ public final class InformationFlowModelManager implements
 	}
 
 	@Override
+	public void removeName(IName name, boolean deleteUnreferencedContainer) {
+		_basicIfModel.removeName(name, deleteUnreferencedContainer);
+	}
+
+	@Override
 	public IContainer getContainer(IName name) {
 		return _basicIfModel.getContainer(name);
 	}

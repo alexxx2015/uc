@@ -193,6 +193,12 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	}
 
 	@Override
+	public void removeName(IName name, boolean deleteUnreferencedContainer) {
+		_logger.error("Method removeName() not implemented.");
+
+	}
+
+	@Override
 	public IContainer getContainer(IName name) {
 		_logger.error("Method getContainer() not implemented.");
 		return null;

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.datastax.driver.core.querybuilder.Delete;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -288,12 +290,24 @@ public interface IBasicInformationFlowModel {
 	public abstract void addName(IName oldName, IName newName);
 
 	/**
-	 * Removes the name.
+	 * Removes the name. If the name is the last one for the container, the
+	 * container is also removed from the model.
 	 * 
 	 * @param name
 	 * @return
 	 */
 	public abstract void removeName(IName name);
+
+	/**
+	 * Removes the name. If the name is the last and deleteUnreferencedContainer
+	 * is true, then the container is also removed.
+	 * 
+	 * @param name
+	 * @param deleteUnreferencedContainer
+	 * @return
+	 */
+	public abstract void removeName(IName name,
+			boolean deleteUnreferencedContainer);
 
 	/**
 	 * Returns the container that is referenced by the naming name.

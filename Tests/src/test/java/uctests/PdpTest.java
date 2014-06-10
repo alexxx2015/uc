@@ -13,11 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PipDeployerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -102,6 +104,28 @@ public class PdpTest extends GenericTest{
 		map.put("Target","wb1!ws1!3!4");
 		map.put("allowImpliesActual", "true");
 		
+		
+
+		pip.initialRepresentation(new CellName("wb2!ws2!4!4"), Collections.singleton((IData)(new DataBasic("D44"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!4!5"), Collections.singleton((IData)(new DataBasic("D45"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!4!6"), Collections.singleton((IData)(new DataBasic("D46"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!4!7"), Collections.singleton((IData)(new DataBasic("D47"))));
+
+		pip.initialRepresentation(new CellName("wb2!ws2!5!4"), Collections.singleton((IData)(new DataBasic("D54"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!5!5"), Collections.singleton((IData)(new DataBasic("D55"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!5!6"), Collections.singleton((IData)(new DataBasic("D56"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!5!7"), Collections.singleton((IData)(new DataBasic("D57"))));
+
+		pip.initialRepresentation(new CellName("wb2!ws2!6!4"), Collections.singleton((IData)(new DataBasic("D64"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!6!5"), Collections.singleton((IData)(new DataBasic("D65"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!6!6"), Collections.singleton((IData)(new DataBasic("D66"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!6!7"), Collections.singleton((IData)(new DataBasic("D67"))));
+
+		pip.initialRepresentation(new CellName("wb2!ws2!7!4"), Collections.singleton((IData)(new DataBasic("D74"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!7!5"), Collections.singleton((IData)(new DataBasic("D75"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!7!6"), Collections.singleton((IData)(new DataBasic("D76"))));
+		pip.initialRepresentation(new CellName("wb2!ws2!7!7"), Collections.singleton((IData)(new DataBasic("D77"))));
+
 		pip.newInitialRepresentation(new CellName("wb1!ws1!3!3"));
 		pip.newInitialRepresentation(new CellName("wb1!ws1!3!4"));
 		pip.newInitialRepresentation(new CellName("wb1!ws1!3!5"));
@@ -111,19 +135,7 @@ public class PdpTest extends GenericTest{
 			
 		IEvent event = new EventBasic("Print", map);
 		IResponse response = pdp.notifyEventSync(event);
-		
-		map = new HashMap<String,String>();
-		map.put("PEP", "excel");
-		map.put("workbookName","wb1");
-		map.put("sheetName","ws1");
-		map.put("ColNumber","4");
-		map.put("allowImpliesActual", "true");
-		
-		event = new EventBasic("DeleteColumn", map);
-
-		response = pdp.notifyEventSync(event);
-		
-		
+				
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("Target","wb1!ws1!3!4*wb1!ws1!3!3");
@@ -174,7 +186,7 @@ public class PdpTest extends GenericTest{
 
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
-		map.put("position","1");
+		map.put("position","5");
 		map.put("allowImpliesActual", "true");
 		
 		event = new EventBasic("DeleteNOcb", map);
@@ -191,6 +203,32 @@ public class PdpTest extends GenericTest{
 		event = new EventBasic("DeleteRow", map);
 
 		response = pdp.notifyEventSync(event);
+		
+		
+		
+		
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("workbookName","wb2");
+		map.put("sheetName","ws2");
+		map.put("ColNumber","6");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("DeleteColumn", map);
+
+		response = pdp.notifyEventSync(event);
+		
+		response = pdp.notifyEventSync(event);
+		
+		response = pdp.notifyEventSync(event);
+		
+		
+		
+		
+		
+		
+		
 		
 		Assert.assertNotNull(response);
 	}

@@ -89,6 +89,7 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
 	private static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
+	private static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
 	
 	
@@ -208,7 +209,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_showFullIFModel, true);
 		loadSetting(PROP_NAME_showIFNamesInsteadOfContainer, true);
-	
+		loadSetting(PROP_NAME_sortStorageNames, true);
 		
 		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
 		loadSetting(PROP_NAME_excelListSeparator, "\\*");
@@ -479,7 +480,11 @@ public class Settings extends SettingsLoader {
 	}
 
 	public boolean getShowIFNamesInsteadOfContainer(){
-		return getValue(PROP_NAME_showFullIFModel);
+		return getValue(PROP_NAME_showIFNamesInsteadOfContainer);
+	}
+
+	public boolean getSortStorageNames(){
+		return getValue(PROP_NAME_sortStorageNames);
 	}
 
 	public String getExcelCoordinatesSeparator(){

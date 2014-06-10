@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -680,22 +682,35 @@ public final class BasicInformationFlowModel implements
 	 * 
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
-	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName)
+	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName, boolean)
 	 */
 	@Override
-	public void removeName(IName name) {
+	public void removeName(IName name, boolean deleteUnreferencedContainer) {
 		if (name != null) {
 			_logger.info("removeName() " + name);
 			IContainer cont = _namingMap.remove(name);
-
+			
 			// if this was the last name, we can remove the container
 			Collection<IName> remainingNames = getAllNames(cont);
-			if (remainingNames == null || remainingNames.size() == 0) {
+			if ((remainingNames == null || remainingNames.size() == 0)&&(deleteUnreferencedContainer)) {
 				remove(cont);
 			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
+	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName)
+	 */
+	@Override
+	@Deprecated
+	public void removeName(IName name) {
+		removeName(name, true);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -858,6 +873,8 @@ public final class BasicInformationFlowModel implements
 		boolean showNamesInsteadOfContainers = Settings.getInstance()
 				.getShowIFNamesInsteadOfContainer();
 
+		boolean sort = Settings.getInstance().getSortStorageNames();
+		
 		sb.append("  Storage:" + nl);
 		if (showNamesInsteadOfContainers) {
 			int nameLength=0;
@@ -865,7 +882,15 @@ public final class BasicInformationFlowModel implements
 				int currLength= entry.getKey().getName().toString().length();
 				if (currLength>nameLength) nameLength=currLength;
 			}
-			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
+			Set<Entry<IName, IContainer>> entryset;
+			if (sort) {
+				entryset=new TreeSet<Entry<IName,IContainer>>(new SortByNames());
+				entryset.addAll(_namingMap.entrySet());
+			} else {
+				entryset=_namingMap.entrySet();
+			}
+			
+			for (Entry<IName, IContainer> entry : entryset) {
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
 				if (((ds != null) && (ds.size() != 0)) || showFullIFM) {
 					sb.append("    " + String.format("%1$"+nameLength+ "s", entry.getKey().getName()) + arrow);
@@ -988,4 +1013,11 @@ public final class BasicInformationFlowModel implements
 				.add("_aliasesMap", _aliasesMap).add("_namingMap", _namingMap)
 				.toString();
 	}
+	
+	public class SortByNames implements Comparator<Entry<IName, IContainer>>{
+	    public int compare(Entry<IName, IContainer> e1, Entry<IName, IContainer> e2) {
+	    	return e1.getKey().getName().compareTo(e2.getKey().getName());
+	    }
+	}
+
 }
