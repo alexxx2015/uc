@@ -12,18 +12,16 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class PasteNOcbEventHandler extends ExcelEvents {
+public class DeleteNOcbEventHandler extends ExcelEvents {
 
-	public PasteNOcbEventHandler() {
+	public DeleteNOcbEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		String target = "";
 		int pos = -1;
 		try {
-			target = getParameterValue("Target");
 			pos = Integer.valueOf(getParameterValue("position"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -33,24 +31,13 @@ public class PasteNOcbEventHandler extends ExcelEvents {
 
 		IContainer posNOfOcb = getOCB(pos);
 
-		if ((target == null) || (target.equals("")) || (pos < 0)
-				|| (posNOfOcb == null)) {
-			_logger.debug("no place to paste or wrong position from office clipboard");
+		if ((pos < 0) || (posNOfOcb == null)) {
+			_logger.debug("impossible to delete position " +pos+ " from office clipboard");
 			return _messageFactory
 					.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
 		}
 
-		Set<CellName> targetSet = getSetOfCells(target);
-
-		for (CellName c : targetSet) {
-			IContainer dst = _informationFlowModel.getContainer(c);
-			if (dst == null) {
-				dst = new ContainerBasic();
-				_informationFlowModel.addName(c, dst, true);
-			}
-			_informationFlowModel.copyData(posNOfOcb, dst);
-		}
-
+		deleteOCB(pos);
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

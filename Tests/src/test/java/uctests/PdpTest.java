@@ -136,6 +136,18 @@ public class PdpTest extends GenericTest{
 		response = pdp.notifyEventSync(event);
 		
 
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("Target","wb1!ws1!2!1*wb1!ws1!1!1");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("CopyInternal", map);
+
+		response = pdp.notifyEventSync(event);
+
+		response = pdp.notifyEventSync(event);
+
+		
 		
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
@@ -146,7 +158,29 @@ public class PdpTest extends GenericTest{
 
 		response = pdp.notifyEventSync(event);
 
+
 		
+		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("Target","wb1!ws1!8!1*wb1!ws1!8!8");
+		map.put("position","2");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("PasteNOcb", map);
+
+		response = pdp.notifyEventSync(event);
+		
+
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("position","1");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("DeleteNOcb", map);
+
+		response = pdp.notifyEventSync(event);
+
 		
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");

@@ -23,22 +23,24 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 		int colNumber = -1;
 		String workbookName = "";
 		String sheetName = "";
+		Collection<CellName> allCells;
 		try {
 			colNumber = Integer.valueOf(getParameterValue("ColNumber"));
 			workbookName= getParameterValue("workbookName");
 			sheetName= getParameterValue("sheetName");
 
+			allCells = _informationFlowModel
+					.getAllNames(CellName.class);
+
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
-		}
-		if ((workbookName == null) || (workbookName.equals(""))|| (sheetName == null) || (sheetName.equals("")))
+		} 
+		if ((allCells==null)||(workbookName == null) || (workbookName.equals(""))|| (sheetName == null) || (sheetName.equals("")))
 			throw new RuntimeException(
 					"impossible to delete Column with empty target");
 
-		Collection<CellName> allCells = _informationFlowModel
-				.getAllNames(CellName.class);
 
 		Set<CellName> higherColNum = new HashSet<CellName>();
 		int maxCol = 0;
@@ -47,9 +49,9 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(sheetName)){
 				if (cell.getCol() == colNumber) {
-					_informationFlowModel.removeName(cell);
+					_informationFlowModel.remove(_informationFlowModel.getContainer(cell));
 				} else if (cell.getCol()>colNumber){
-					// if the cell has a higher colnumber than the one we delete
+					// if the cell has a higher colnumber than the one we delete, we store it
 					higherColNum.add(cell);
 					maxCol = Math.max(maxCol, cell.getCol());
 				}

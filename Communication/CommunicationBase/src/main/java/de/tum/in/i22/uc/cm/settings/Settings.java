@@ -88,7 +88,10 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
+	private static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 
+	
+	
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 
@@ -203,8 +206,10 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
-		loadSetting(PROP_NAME_showFullIFModel, false);
+		loadSetting(PROP_NAME_showFullIFModel, true);
+		loadSetting(PROP_NAME_showIFNamesInsteadOfContainer, true);
 	
+		
 		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
 		loadSetting(PROP_NAME_excelListSeparator, "\\*");
 
@@ -470,6 +475,10 @@ public class Settings extends SettingsLoader {
 	}
 
 	public boolean getShowFullIFModel(){
+		return getValue(PROP_NAME_showFullIFModel);
+	}
+
+	public boolean getShowIFNamesInsteadOfContainer(){
 		return getValue(PROP_NAME_showFullIFModel);
 	}
 

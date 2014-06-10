@@ -425,4 +425,10 @@ public final class InformationFlowModelManager implements
 				.get(EInformationFlowModel.SCOPE))).XAlias(eventHandler);
 	}
 
+	@Override
+	public void addName(IName name, IContainer container,
+			boolean deleteUnreferencedContainer) {
+		_basicIfModel.addName(name, container, deleteUnreferencedContainer);
+	}
+
 }

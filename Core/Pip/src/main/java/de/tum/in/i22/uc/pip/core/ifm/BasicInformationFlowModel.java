@@ -618,10 +618,11 @@ public final class BasicInformationFlowModel implements
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
+	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, boolean)
 	 */
 	@Override
-	public void addName(IName name, IContainer container) {
+	public void addName(IName name, IContainer container,
+			boolean deleteUnreferencedContainer) {
 		if (name == null || container == null) {
 			return;
 		}
@@ -634,10 +635,24 @@ public final class BasicInformationFlowModel implements
 					+ ") was already assigned to name " + name + ". "
 					+ "This mapping has been removed.");
 
-			if (getAllNames(oldAssigned).size() == 0) {
+			if ((getAllNames(oldAssigned).size() == 0)
+					&& deleteUnreferencedContainer) {
 				remove(oldAssigned);
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
+	 * .in.i22.uc.cm.datatypes.interfaces.IName,
+	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
+	 */
+	@Override
+	public void addName(IName name, IContainer container) {
+		addName(name, container, true);
 	}
 
 	/*
@@ -840,24 +855,62 @@ public final class BasicInformationFlowModel implements
 		String arrow = " ---> ";
 		String arrowL = " <--- ";
 
+		boolean showNamesInsteadOfContainers = Settings.getInstance()
+				.getShowIFNamesInsteadOfContainer();
+
 		sb.append("  Storage:" + nl);
-		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap
-				.entrySet()) {
-			if (((entry.getValue() != null) && (entry.getValue().size() != 0))
-					|| showFullIFM) {
-				sb.append("    " + entry.getKey().getId() + arrow);
-				boolean first = true;
-				for (IData d : entry.getValue()) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append("    ");
-						for (int i = 0; i < entry.getKey().getId().length()
-								+ arrow.length(); i++) {
-							sb.append(" ");
+		if (showNamesInsteadOfContainers) {
+			int nameLength=0;
+			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
+				int currLength= entry.getKey().getName().toString().length();
+				if (currLength>nameLength) nameLength=currLength;
+			}
+			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
+				Set<IData> ds = _containerToDataMap.get(entry.getValue());
+				if (((ds != null) && (ds.size() != 0)) || showFullIFM) {
+					sb.append("    " + String.format("%1$"+nameLength+ "s", entry.getKey().getName()) + arrow);
+					boolean first = true;
+					if (ds != null) {
+						for (IData d : ds) {
+							if (first) {
+								first = false;
+							} else {
+								sb.append("    ");
+								for (int i = 0; i < nameLength+ arrow.length(); i++) {
+									sb.append(" ");
+								}
+							}
+							sb.append(d.getId() + nl);
 						}
+					} else {
+						sb.append(nl);
 					}
-					sb.append(d.getId() + nl);
+				}
+			}
+		} else {
+			for (Entry<IContainer, Set<IData>> entry : _containerToDataMap
+					.entrySet()) {
+				if (((entry.getValue() != null) && (entry.getValue().size() != 0))
+						|| showFullIFM) {
+					sb.append("    " + entry.getKey().getId() + arrow);
+					boolean first = true;
+					if (entry.getValue() != null) {
+						for (IData d : entry.getValue()) {
+							if (first) {
+								first = false;
+							} else {
+								sb.append("    ");
+								for (int i = 0; i < entry.getKey().getId()
+										.length()
+										+ arrow.length(); i++) {
+									sb.append(" ");
+								}
+							}
+							sb.append(d.getId() + nl);
+						}
+					} else {
+						sb.append(nl);
+					}
 				}
 			}
 		}
@@ -869,17 +922,21 @@ public final class BasicInformationFlowModel implements
 					|| showFullIFM) {
 				sb.append("    " + entry.getKey().getId() + arrow);
 				boolean first = true;
-				for (IContainer c : entry.getValue()) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append("    ");
-						for (int i = 0; i < entry.getKey().getId().length()
-								+ arrow.length(); i++) {
-							sb.append(" ");
+				if (entry.getValue() != null) {
+					for (IContainer c : entry.getValue()) {
+						if (first) {
+							first = false;
+						} else {
+							sb.append("    ");
+							for (int i = 0; i < entry.getKey().getId().length()
+									+ arrow.length(); i++) {
+								sb.append(" ");
+							}
 						}
+						sb.append(c.getId() + nl);
 					}
-					sb.append(c.getId() + nl);
+				} else {
+					sb.append(nl);
 				}
 			}
 		}
@@ -895,7 +952,6 @@ public final class BasicInformationFlowModel implements
 				if (wasPrinted.contains(cont)) {
 					continue;
 				}
-
 				wasPrinted.add(cont);
 				sb.append("    " + cont.getId() + arrowL);
 				boolean first = true;

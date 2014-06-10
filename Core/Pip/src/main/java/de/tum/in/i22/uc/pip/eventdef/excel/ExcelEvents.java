@@ -50,7 +50,7 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 		if (ocbs == null) {
 			// if ocb is empty, create new posizion 0
 			_informationFlowModel.addName(
-					OfficeClipboardName.create(ocbName, 0), cont);
+					OfficeClipboardName.create(ocbName, 0), cont, false);
 			return;
 		}
 
@@ -62,20 +62,13 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 
 		for (int i = 0; i < arr.length; i++) {
 			IContainer tmpCont = _informationFlowModel.getContainer(arr[i]);
-			// this line is needed because otherwise tmpCont gets emptied by
-			// next line because tmpCont has no more names pointing to it. thus
-			// we add this temporary name.
-			_informationFlowModel.addName(new NameBasic("tmpNameForSwitching"),
-					tmpCont);
-			_informationFlowModel.addName(arr[i], cont);
+			_informationFlowModel.addName(arr[i], cont, false);
 			cont = tmpCont;
 		}
 		OfficeClipboardName newPos = OfficeClipboardName.create(ocbName,
 				arr.length);
-		_informationFlowModel.addName(newPos, cont);
+		_informationFlowModel.addName(newPos, cont, false);
 
-		// remove tmp name
-		_informationFlowModel.removeName(new NameBasic("tmpNameForSwitching"));
 	}
 
 	/**
@@ -105,27 +98,27 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 			arr[ocb.getPos()] = ocb;
 		}
 
-		for (int i = pos; i < arr.length-1; i++) {
-			// in this case we don't need the temporary name. pointing ocb[n] to
-			// ocb[n+1] empties container poitned by ocb[n] and makes 2
+		for (int i = pos; i < arr.length - 1; i++) {
+			// Pointing ocb[n] to
+			// ocb[n+1] empties container formerly pointed by ocb[n] and makes 2
 			// references to ocb[n+1]. next iteration pointing ocb[n+1] to
 			// ocb[n+2] deletes nothing because ocb[n+1] had 2 names, so now it
 			// still has one.
 			_informationFlowModel.addName(arr[i],
-					_informationFlowModel.getContainer(arr[i+1]));
+					_informationFlowModel.getContainer(arr[i + 1]),true);
 		}
 
 		// remove the last element of the list
-		_informationFlowModel.removeName(arr[arr.length-1]);
+		_informationFlowModel.removeName(arr[arr.length - 1]);
 	}
 
-	
 	/**
-	 * This method gets the n-th element from the office clipboard 
+	 * This method gets the n-th element from the office clipboard
 	 */
 	protected IContainer getOCB(int pos) {
-		if (pos<0) return null;
-		OfficeClipboardName headName = OfficeClipboardName.create(ocbName, pos);
-		return _informationFlowModel.getContainer(headName);
+		if (pos < 0)
+			return null;
+		OfficeClipboardName posName = OfficeClipboardName.create(ocbName, pos);
+		return _informationFlowModel.getContainer(posName);
 	}
 }

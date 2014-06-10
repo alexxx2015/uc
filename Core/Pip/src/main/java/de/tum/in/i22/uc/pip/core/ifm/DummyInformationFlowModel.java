@@ -349,4 +349,10 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 		return null;
 	}
 
+	@Override
+	public void addName(IName name, IContainer container,
+			boolean deleteUnreferencedContainer) {
+		_logger.error("Method addName() not implemented.");
+	}
+
 }

@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.eventdef.excel;
 
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
@@ -37,6 +38,10 @@ public class PasteEventHandler extends ExcelEvents {
 		
 		for (CellName c: targetSet) {
 			IContainer dst= _informationFlowModel.getContainer(c);
+			if (dst==null) {
+				dst=new ContainerBasic();
+				_informationFlowModel.addName(c, dst);
+			}
 			_informationFlowModel.copyData(headOfOCB,dst);
 		}
 	
