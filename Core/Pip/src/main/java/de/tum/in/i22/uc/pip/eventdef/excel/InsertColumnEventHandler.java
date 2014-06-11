@@ -10,9 +10,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class DeleteColumnEventHandler extends ExcelEvents {
+public class InsertColumnEventHandler extends ExcelEvents {
 
-	public DeleteColumnEventHandler() {
+	public InsertColumnEventHandler() {
 		super();
 	}
 
@@ -37,7 +37,7 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 				|| (workbookName.equals("")) || (sheetName == null)
 				|| (sheetName.equals("")))
 			throw new RuntimeException(
-					"impossible to delete Column with empty target");
+					"impossible to insert Column with empty target");
 
 		// I know this allocates a lot of space for no reason but I couldn't
 		// come up with something better quickly
@@ -48,10 +48,7 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(sheetName)) {
-				if (cell.getCol() == colNumber) {
-					_informationFlowModel.remove(_informationFlowModel
-							.getContainer(cell));
-				} else if (cell.getCol() > colNumber) {
+				if (cell.getCol() >= colNumber) {
 					// if the cell has a higher colnumber than the one we
 					// delete, we store it
 					if (higherColNum[cell.getCol()] == null)
@@ -63,16 +60,16 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 			}
 		}
 
-		// for every column after the one we deleted, we need to shift back the
-		// names of one column. i.e. f[col-1 <-- f(col)]
-		for (int col = colNumber + 1; col <= maxCol; col++) {
+		// for every column after the one we inserted, we need to shift  the
+		// names of one column. i.e. f[col+1 <-- f(col)]
+		for (int col = maxCol; col >= colNumber; col--) {
 			if (higherColNum[col] != null) {
 				for (CellName cell : higherColNum[col]) {
 					IContainer cont = _informationFlowModel.getContainer(cell);
 					_informationFlowModel.addName(
 							new CellName(cell.getWorkbook(), cell
 									.getWorksheet(), cell.getRow(), cell
-									.getCol() - 1), cont, true);
+									.getCol() + 1), cont, true);
 					// here the container should never be removed anyway because
 					// it has another name (we just created it), but just in
 					// case we set the boolean to false

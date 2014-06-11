@@ -10,44 +10,67 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class DeleteRowEventHandler extends ExcelEvents {
+public class DragAndDropEventHandler extends ExcelEvents {
 
-	public DeleteRowEventHandler() {
+	public DragAndDropEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		int rowNumber = -1;
-		String workbookName = "";
-		String sheetName = "";
+		String srcWorkbookName = "";
+		String srcSheetName = "";
+		String destWorkbookName = "";
+		String destSheetName = "";
+		String srcCoordinate = "";
+		int rowCount = -1;
+		int colCount = -1;
+		int rowDiff = -1;
+		int colDiff = -1;
+		
+
 		Collection<CellName> allCells = _informationFlowModel.getAllNames(CellName.class);
 
 		try {
-			rowNumber = Integer.valueOf(getParameterValue("RowNumber"));
-			workbookName = getParameterValue("workbookName");
-			sheetName = getParameterValue("sheetName");
+			rowCount = Integer.valueOf(getParameterValue("RowCount"));
+			colCount = Integer.valueOf(getParameterValue("ColCount"));
+			srcWorkbookName = getParameterValue("srcWorkbookName");
+			srcSheetName = getParameterValue("srcSheetName");
+			srcCoordinate = getParameterValue("srcCoordinate");
+			rowDiff = Integer.valueOf(getParameterValue("RowDiff"));
+			colDiff = Integer.valueOf(getParameterValue("ColDiff"));
+			destWorkbookName = getParameterValue("destWorkbookName");
+			destSheetName = getParameterValue("destSheetName");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		if ((allCells == null) || (workbookName == null)
-				|| (workbookName.equals("")) || (sheetName == null)
-				|| (sheetName.equals("")))
+		if ((allCells == null) 
+				|| (srcCoordinate == null) 
+				|| (srcCoordinate.equals("")) 
+				|| (srcWorkbookName == null) 
+				|| (srcWorkbookName.equals("")) 
+				|| (destWorkbookName == null) 
+				|| (destWorkbookName.equals("")) 
+				|| (srcSheetName == null)
+				|| (srcSheetName.equals(""))
+				|| (rowCount==-1)
+				|| (colCount==-1)
+				|| (rowDiff==-1)
+				|| (colDiff==-1)
+				)
 			throw new RuntimeException(
 					"impossible to delete row with empty target");
 
-		// I know this allocates a lot of space for no reason but I couldn't
-		// come up with something better quickly
-		// PLEASE FIXME
-		Set<CellName>[] higherRowNum = new HashSet[65536];
+/*		// PLEASE FIXME
+		TreeSet<CellName>[] higherRowNum = new HashSet[65536];
 		int maxRow = 0;
 
 		for (CellName cell : allCells) {
-			if (cell.getWorkbook().equals(workbookName)
-					&& cell.getWorksheet().equals(sheetName)) {
+			if (cell.getWorkbook().equals(srcWorkbookName)
+					&& cell.getWorksheet().equals(srcSheetName)) {
 				if (cell.getRow() == rowNumber) {
 					_informationFlowModel.remove(_informationFlowModel
 							.getContainer(cell));
@@ -80,7 +103,7 @@ public class DeleteRowEventHandler extends ExcelEvents {
 				}
 			}
 		}
-		return _messageFactory.createStatus(EStatus.OKAY);
+*/		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
 }

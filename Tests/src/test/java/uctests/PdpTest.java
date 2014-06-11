@@ -208,25 +208,32 @@ public class PdpTest extends GenericTest{
 		
 		
 		
+//		map = new HashMap<String,String>();
+//		map.put("PEP", "excel");
+//		map.put("workbookName","wb2");
+//		map.put("sheetName","ws2");
+//		map.put("RowNumber","6");
+//		map.put("allowImpliesActual", "true");
+//		
+//		event = new EventBasic("DeleteRow", map);
+//
+//		response = pdp.notifyEventSync(event);
+//		
+//		response = pdp.notifyEventSync(event);
+//		
+//		response = pdp.notifyEventSync(event);
+//		
+		
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("workbookName","wb2");
 		map.put("sheetName","ws2");
-		map.put("ColNumber","6");
+		map.put("ColNumber","5");
 		map.put("allowImpliesActual", "true");
 		
-		event = new EventBasic("DeleteColumn", map);
+		event = new EventBasic("InsertColumn", map);
 
 		response = pdp.notifyEventSync(event);
-		
-		response = pdp.notifyEventSync(event);
-		
-		response = pdp.notifyEventSync(event);
-		
-		
-		
-		
-		
 		
 		
 		

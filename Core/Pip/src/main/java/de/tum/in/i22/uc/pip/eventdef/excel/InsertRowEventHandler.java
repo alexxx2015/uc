@@ -10,21 +10,21 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class DeleteColumnEventHandler extends ExcelEvents {
+public class InsertRowEventHandler extends ExcelEvents {
 
-	public DeleteColumnEventHandler() {
+	public InsertRowEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		int colNumber = -1;
+		int rowNumber = -1;
 		String workbookName = "";
 		String sheetName = "";
 		Collection<CellName> allCells = _informationFlowModel.getAllNames(CellName.class);
 
 		try {
-			colNumber = Integer.valueOf(getParameterValue("ColNumber"));
+			rowNumber = Integer.valueOf(getParameterValue("RowNumber"));
 			workbookName = getParameterValue("workbookName");
 			sheetName = getParameterValue("sheetName");
 
@@ -37,42 +37,39 @@ public class DeleteColumnEventHandler extends ExcelEvents {
 				|| (workbookName.equals("")) || (sheetName == null)
 				|| (sheetName.equals("")))
 			throw new RuntimeException(
-					"impossible to delete Column with empty target");
+					"impossible to insert row with empty target");
 
 		// I know this allocates a lot of space for no reason but I couldn't
 		// come up with something better quickly
 		// PLEASE FIXME
-		Set<CellName>[] higherColNum = new HashSet[65536];
-		int maxCol = 0;
+		Set<CellName>[] higherRowNum = new HashSet[65536];
+		int maxRow = 0;
 
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(sheetName)) {
-				if (cell.getCol() == colNumber) {
-					_informationFlowModel.remove(_informationFlowModel
-							.getContainer(cell));
-				} else if (cell.getCol() > colNumber) {
-					// if the cell has a higher colnumber than the one we
-					// delete, we store it
-					if (higherColNum[cell.getCol()] == null)
-						higherColNum[cell.getCol()] = new HashSet<CellName>();
-					higherColNum[cell.getCol()].add(cell);
-					maxCol = Math.max(maxCol, cell.getCol());
+				if (cell.getRow() >= rowNumber) {
+					// if the cell has a colnumber equal to or higher than the one we
+					// insert, we store it
+					if (higherRowNum[cell.getRow()] == null)
+						higherRowNum[cell.getRow()] = new HashSet<CellName>();
+					higherRowNum[cell.getRow()].add(cell);
+					maxRow = Math.max(maxRow, cell.getRow());
 				}
 				// otherwise nothing needs to be done
 			}
 		}
 
-		// for every column after the one we deleted, we need to shift back the
-		// names of one column. i.e. f[col-1 <-- f(col)]
-		for (int col = colNumber + 1; col <= maxCol; col++) {
-			if (higherColNum[col] != null) {
-				for (CellName cell : higherColNum[col]) {
+		// for every column after the one we inserted, we need to shift back the
+		// names of one column. i.e. f[col+1 <-- f(col)]
+		for (int row = maxRow; row >=rowNumber; row++) {
+			if (higherRowNum[row] != null) {
+				for (CellName cell : higherRowNum[row]) {
 					IContainer cont = _informationFlowModel.getContainer(cell);
 					_informationFlowModel.addName(
 							new CellName(cell.getWorkbook(), cell
-									.getWorksheet(), cell.getRow(), cell
-									.getCol() - 1), cont, true);
+									.getWorksheet(), cell.getRow() + 1, cell
+									.getCol()), cont, true);
 					// here the container should never be removed anyway because
 					// it has another name (we just created it), but just in
 					// case we set the boolean to false
