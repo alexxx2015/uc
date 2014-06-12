@@ -60,7 +60,7 @@
 						<include>pdp.xjb</include>
 					</bindingIncludes>
 					<args>
-						<arg>-XtoString</arg>
+						<!-- <arg>-XtoString</arg> -->
 						<arg>-Xinheritance</arg>
 						<arg>-extension</arg>
 					</args>

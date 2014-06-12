@@ -1,9 +1,10 @@
 <?xml version='1.0' standalone='yes' ?>
-<policy xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" 
-        xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
-        xmlns:a="http://www.iese.fhg.de/pef/1.0/action" 
-        xmlns:e="http://www.iese.fhg.de/pef/1.0/event" 
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<policy     
+    xmlns="http://www22.in.tum.de/enforcementLanguage"
+    xmlns:tns="http://www22.in.tum.de/enforcementLanguage" 
+    xmlns:a="http://www22.in.tum.de/action"
+    xmlns:e="http://www22.in.tum.de/event" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         
         name="testDuring">
 
