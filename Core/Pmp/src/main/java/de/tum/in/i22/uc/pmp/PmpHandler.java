@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -148,7 +149,14 @@ public class PmpHandler extends PmpProcessor {
 			if (ir.isSetContainer()) {
 				List<ContainerType> conts = ir.getContainer();
 				for (ContainerType c : conts) {
-					IName contName = new NameBasic(c.getName());
+					String name=c.getName();
+					IName contName;
+					
+					//TODO: make it generic
+					if (name.startsWith("EXCEL-"))
+						contName = new CellName(c.getName().substring(c.getName().indexOf('-')));
+					else 
+						contName = new NameBasic(c.getName());
 					if (c.isSetDataId()) {
 						Set<IData> dataSet = new HashSet<IData>();
 						for (String dataId : c.getDataId()) {
@@ -180,9 +188,17 @@ public class PmpHandler extends PmpProcessor {
 			List<ParamMatchType> newParamList = new ArrayList<>();
 
 			for (ParamMatchType p : paramList) {
+				//TODO: make it generic
+				boolean isExcelContainer=false;
 				if (p.getType().equals(_DATAUSAGE)) {
 					String dataIds = null;
 					String value = p.getValue();
+					//TODO: make it generic
+					if (value.startsWith("EXCEL-")){
+						isExcelContainer=true;
+						value=value.substring(value.indexOf('-'));
+					}
+					
 					String name = p.getName();
 					// ComparisonOperatorTypes cmpOp=p.getCmpOp();
 
@@ -192,7 +208,11 @@ public class PmpHandler extends PmpProcessor {
 
 						dataIds = p.getDataID();
 						Set<IData> dataSet = createDataSetFromParamValue(dataIds);
-						IStatus status = getPip().initialRepresentation(
+						IStatus status;
+						
+						if (isExcelContainer) status= getPip().initialRepresentation(
+								new CellName(value), dataSet);
+						else status= getPip().initialRepresentation(
 								new NameBasic(value), dataSet);
 
 						if (status.isStatus(EStatus.ERROR)) {
@@ -205,7 +225,10 @@ public class PmpHandler extends PmpProcessor {
 						allData.addAll(dataSet);
 					} else {
 						// there was no data id, so let's create one
-						IData newData = getPip().newInitialRepresentation(
+						IData newData;
+						if (isExcelContainer) newData = getPip().newInitialRepresentation(
+								new CellName(value));
+						else newData = getPip().newInitialRepresentation(
 								new NameBasic(value));
 						dataIds = newData.getId();
 						allData.add(newData);

@@ -193,18 +193,40 @@ public class PdpTest extends GenericTest{
 
 		response = pdp.notifyEventSync(event);
 
+
 		
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
-		map.put("workbookName","wb1");
-		map.put("sheetName","ws1");
-		map.put("RowNumber","4");
+		map.put("srcCoordinate","wb2!ws2!4!4");
+		map.put("RowCount", "4");
+		map.put("ColCount","4");
+		map.put("srcWorkbookName", "wb2");
+		map.put("srcSheetName", "ws2");
+		map.put("RowDiff", "5");		
+		map.put("ColDiff", "5");
+		map.put("destWorkbookName", "wb3");
+		map.put("destSheetName", "ws3");		
+		map.put("allowImpliesActual", "true");
 		
-		event = new EventBasic("DeleteRow", map);
+		
+		event = new EventBasic("DragAndDrop", map);
 
 		response = pdp.notifyEventSync(event);
+
 		
 		
+//		
+//		map = new HashMap<String,String>();
+//		map.put("PEP", "excel");
+//		map.put("workbookName","wb1");
+//		map.put("sheetName","ws1");
+//		map.put("RowNumber","4");
+//		
+//		event = new EventBasic("DeleteRow", map);
+//
+//		response = pdp.notifyEventSync(event);
+//		
+//		
 		
 		
 		
@@ -224,20 +246,24 @@ public class PdpTest extends GenericTest{
 //		response = pdp.notifyEventSync(event);
 //		
 		
-		map = new HashMap<String,String>();
-		map.put("PEP", "excel");
-		map.put("workbookName","wb2");
-		map.put("sheetName","ws2");
-		map.put("ColNumber","5");
-		map.put("allowImpliesActual", "true");
+//		map = new HashMap<String,String>();
+//		map.put("PEP", "excel");
+//		map.put("workbookName","wb2");
+//		map.put("sheetName","ws2");
+//		map.put("ColNumber","5");
+//		map.put("allowImpliesActual", "true");
+//		
+//		event = new EventBasic("InsertColumn", map);
+//
+//		response = pdp.notifyEventSync(event);
+//		
+//		
+//		
+//		Assert.assertNotNull(response);
 		
-		event = new EventBasic("InsertColumn", map);
-
-		response = pdp.notifyEventSync(event);
 		
 		
 		
-		Assert.assertNotNull(response);
 	}
 
 	/**
