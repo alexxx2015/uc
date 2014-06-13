@@ -62,7 +62,7 @@ public class InsertRowEventHandler extends ExcelEvents {
 
 		// for every column after the one we inserted, we need to shift back the
 		// names of one column. i.e. f[col+1 <-- f(col)]
-		for (int row = maxRow; row >=rowNumber; row++) {
+		for (int row = maxRow; row >=rowNumber; row--) {
 			if (higherRowNum[row] != null) {
 				for (CellName cell : higherRowNum[row]) {
 					IContainer cont = _informationFlowModel.getContainer(cell);

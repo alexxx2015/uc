@@ -1,14 +1,12 @@
 package de.tum.in.i22.uc.pip.eventdef.excel;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -37,6 +35,10 @@ public class CopyInternalEventHandler extends ExcelEvents {
 		Set<CellName> targetSet = getSetOfCells(target);
 		
 		IContainer sysClip = _informationFlowModel.getContainer(new NameBasic(scbName));
+		if (sysClip==null) {
+			sysClip=new ContainerBasic();
+			_informationFlowModel.addName(new NameBasic(scbName), sysClip, true);
+		}
 		_informationFlowModel.emptyContainer(sysClip);
 		
 		for (CellName c: targetSet) {

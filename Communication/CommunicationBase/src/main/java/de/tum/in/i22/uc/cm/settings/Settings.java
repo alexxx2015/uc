@@ -95,6 +95,8 @@ public class Settings extends SettingsLoader {
 	
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
+	private static final String PROP_NAME_excelOcbName = "excelOcbName";
+	private static final String PROP_NAME_excelScbName = "excelScbName";
 
 	
 	private Settings() {
@@ -214,6 +216,10 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
 		loadSetting(PROP_NAME_excelListSeparator, "\\*");
 
+		loadSetting(PROP_NAME_excelOcbName, "OfficeClipboard");
+		loadSetting(PROP_NAME_excelScbName, "SystemClipboard(Excel)");
+
+		
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -494,5 +500,12 @@ public class Settings extends SettingsLoader {
 	public String getExcelListSeparator(){
 		return getValue(PROP_NAME_excelListSeparator);
 	}
-
+	
+	public String getExcelOcbName(){
+		return getValue(PROP_NAME_excelOcbName);
+	}
+	
+	public String getExcelScbName(){
+		return getValue(PROP_NAME_excelScbName);
+	}
 }

@@ -1,14 +1,17 @@
 package de.tum.in.i22.uc.pip.eventdef.excel;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.excel.OfficeClipboardName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
@@ -17,8 +20,8 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 	protected String cs = Settings.getInstance().getExcelCoordinatesSeparator();
 	protected String ls = Settings.getInstance().getExcelListSeparator();
 
-	protected static final String ocbName = "OfficeClipboard";
-	protected static final String scbName = "SystemClipboard(Excel)";
+	protected static final String ocbName = Settings.getInstance().getExcelOcbName();
+	protected static final String scbName = Settings.getInstance().getExcelScbName();
 
 	protected Set<CellName> getSetOfCells(String target) {
 		if (target == null)
@@ -121,4 +124,29 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 		OfficeClipboardName posName = OfficeClipboardName.create(ocbName, pos);
 		return _informationFlowModel.getContainer(posName);
 	}
+	
+	protected class SortByCol implements Comparator<CellName>{
+	    public int compare(CellName c1, CellName c2) {
+	    	return (c1.getCol()==c2.getCol()?0:c1.getCol()>c2.getCol()?-1:1);
+	    }
+	}
+	
+	protected class SortByColReverse implements Comparator<CellName>{
+	    public int compare(CellName c1, CellName c2) {
+	    	return (c1.getCol()==c2.getCol()?0:c1.getCol()>c2.getCol()?1:-1);
+	    }
+	}
+
+	protected class SortByRow implements Comparator<CellName>{
+	    public int compare(CellName c1, CellName c2) {
+	    	return (c1.getRow()==c2.getRow()?0:c1.getRow()>c2.getRow()?-1:1);
+	    }
+	}
+
+	protected class SortByRowReverse implements Comparator<CellName>{
+	    public int compare(CellName c1, CellName c2) {
+	    	return (c1.getRow()==c2.getRow()?0:c1.getRow()>c2.getRow()?1:-1);
+	    }
+	}
+
 }
