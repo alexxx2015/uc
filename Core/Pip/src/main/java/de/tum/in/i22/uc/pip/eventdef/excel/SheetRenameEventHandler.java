@@ -1,25 +1,30 @@
 package de.tum.in.i22.uc.pip.eventdef.excel;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Map.Entry;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel.SortByNames;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class SheetCopyEventHandler extends ExcelEvents {
+public class SheetRenameEventHandler extends ExcelEvents {
 
-	public SheetCopyEventHandler() {
+	public SheetRenameEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		String srcWorkbookName = "";
+		String workbookName = "";
 		String oldSheetName = "";
-		String destWorkbookName = "";
 		String newSheetName = "";
 
 		Collection<CellName> allCells = _informationFlowModel
@@ -27,9 +32,9 @@ public class SheetCopyEventHandler extends ExcelEvents {
 
 		try {
 
-			srcWorkbookName = getParameterValue("srcWorkbookName");
+			workbookName = getParameterValue("workbookName");
 			oldSheetName = getParameterValue("oldSheetName");
-			destWorkbookName = getParameterValue("destWorkbookName");
+
 			newSheetName = getParameterValue("newSheetName");
 
 		} catch (ParameterNotFoundException e) {
@@ -37,36 +42,35 @@ public class SheetCopyEventHandler extends ExcelEvents {
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		if ((allCells == null) || (srcWorkbookName == null)
-				|| (srcWorkbookName.equals("")) || (oldSheetName == null)
+		if ((allCells == null) || (workbookName == null)
+				|| (workbookName.equals("")) || (oldSheetName == null)
 				|| (oldSheetName.equals("")) || (newSheetName == null)
-				|| (newSheetName.equals(""))|| (destWorkbookName.equals("")))
-			throw new RuntimeException("impossible to Create a copy of the  the sheet");
+				|| (newSheetName.equals("")))
+			throw new RuntimeException("impossible to Rename the sheet");
 
 		if (newSheetName.equals(oldSheetName))
 			return _messageFactory.createStatus(EStatus.OKAY);
 
-		/*for (CellName cell : allCells) {
-			if (cell.getWorkbook().equals(srcWorkbookName)
+		for (CellName cell : allCells) {
+			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(newSheetName )) {
-				throw new RuntimeException("impossible to copy the sheet: destination already contains exists");
+				throw new RuntimeException("impossible to Rename the sheet: destination already exists");
 
 			}
 
-		}*/
+		}
 		for (CellName cell : allCells) {
-			if (cell.getWorkbook().equals(srcWorkbookName)
+			if (cell.getWorkbook().equals(workbookName)
 					&& cell.getWorksheet().equals(oldSheetName)) {
-					_informationFlowModel.addName(cell, new CellName(destWorkbookName, newSheetName, cell.getRow(), cell.getCol()));
+					_informationFlowModel.addName(cell, new CellName(workbookName, newSheetName, cell.getRow(), cell.getCol()));
 					
-				//	_informationFlowModel.removeName(cell,false);
+					_informationFlowModel.removeName(cell,false);
 			}
 
 		}
 
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
-
 	}
 
 }

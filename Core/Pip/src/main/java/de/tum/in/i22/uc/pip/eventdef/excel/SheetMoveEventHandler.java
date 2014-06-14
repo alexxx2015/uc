@@ -9,18 +9,18 @@ import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class SheetCopyEventHandler extends ExcelEvents {
+public class SheetMoveEventHandler extends ExcelEvents {
 
-	public SheetCopyEventHandler() {
+	public SheetMoveEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
 		String srcWorkbookName = "";
-		String oldSheetName = "";
+		String sheetName = "";
 		String destWorkbookName = "";
-		String newSheetName = "";
+		
 
 		Collection<CellName> allCells = _informationFlowModel
 				.getAllNames(CellName.class);
@@ -28,9 +28,9 @@ public class SheetCopyEventHandler extends ExcelEvents {
 		try {
 
 			srcWorkbookName = getParameterValue("srcWorkbookName");
-			oldSheetName = getParameterValue("oldSheetName");
+			sheetName = getParameterValue("oldSheetName");
 			destWorkbookName = getParameterValue("destWorkbookName");
-			newSheetName = getParameterValue("newSheetName");
+		
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -38,28 +38,26 @@ public class SheetCopyEventHandler extends ExcelEvents {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		if ((allCells == null) || (srcWorkbookName == null)
-				|| (srcWorkbookName.equals("")) || (oldSheetName == null)
-				|| (oldSheetName.equals("")) || (newSheetName == null)
-				|| (newSheetName.equals(""))|| (destWorkbookName.equals("")))
-			throw new RuntimeException("impossible to Create a copy of the  the sheet");
+				|| (srcWorkbookName.equals("")) || (sheetName == null)
+				|| (sheetName.equals("")) || (destWorkbookName.equals("")))
+			throw new RuntimeException("impossible to Move  the sheet");
 
-		if (newSheetName.equals(oldSheetName))
-			return _messageFactory.createStatus(EStatus.OKAY);
+		
 
-		/*for (CellName cell : allCells) {
+		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(srcWorkbookName)
-					&& cell.getWorksheet().equals(newSheetName )) {
-				throw new RuntimeException("impossible to copy the sheet: destination already contains exists");
+					&& cell.getWorksheet().equals(sheetName )) {
+				throw new RuntimeException("impossible to move the sheet: destination already contains exists");
 
 			}
 
-		}*/
+		}
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(srcWorkbookName)
-					&& cell.getWorksheet().equals(oldSheetName)) {
-					_informationFlowModel.addName(cell, new CellName(destWorkbookName, newSheetName, cell.getRow(), cell.getCol()));
+					&& cell.getWorksheet().equals(sheetName)) {
+					_informationFlowModel.addName(cell, new CellName(destWorkbookName, sheetName, cell.getRow(), cell.getCol()));
 					
-				//	_informationFlowModel.removeName(cell,false);
+					_informationFlowModel.removeName(cell,false);
 			}
 
 		}
