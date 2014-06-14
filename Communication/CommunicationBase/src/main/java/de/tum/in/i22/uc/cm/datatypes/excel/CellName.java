@@ -35,7 +35,7 @@ public class CellName extends NameBasic {
 
 	public CellName(String workbook, String worksheet, int row, int col) {
 		super(workbook + cs + worksheet + cs + row + cs + col);
-		
+
 		this.workbook = workbook;
 		this.worksheet = worksheet;
 		this.row = row;
