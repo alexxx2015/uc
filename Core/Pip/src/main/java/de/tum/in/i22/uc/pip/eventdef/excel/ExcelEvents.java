@@ -52,6 +52,10 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 		IContainer cont = new ContainerBasic();
 		IContainer scb = _informationFlowModel.getContainer(new NameBasic(
 				scbName));
+		if (scb==null) {
+			scb=new ContainerBasic();
+			_informationFlowModel.addName(new NameBasic(scbName), scb, true);
+		}
 		_informationFlowModel.copyData(scb, cont);
 
 		if (ocbs == null) {
