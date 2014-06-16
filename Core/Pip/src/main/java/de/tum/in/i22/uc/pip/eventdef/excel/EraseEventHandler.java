@@ -34,7 +34,7 @@ public class EraseEventHandler extends ExcelEvents {
 		Set<CellName> targetSet = getSetOfCells(target);
 		
 		for (CellName c: targetSet) {
-			_informationFlowModel.emptyContainer(c);
+			_informationFlowModel.remove(_informationFlowModel.getContainer(c));
 		}
 	
 		return _messageFactory.createStatus(EStatus.OKAY);
