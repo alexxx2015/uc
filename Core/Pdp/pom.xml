@@ -54,6 +54,7 @@
 					</execution>
 				</executions>
 				<configuration>
+                    <forceRegenerate>true</forceRegenerate>
 					<schemaDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</schemaDirectory>
 					<bindingDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</bindingDirectory>
 					<bindingIncludes>

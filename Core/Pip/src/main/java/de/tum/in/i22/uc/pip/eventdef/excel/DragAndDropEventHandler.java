@@ -76,9 +76,9 @@ public class DragAndDropEventHandler extends ExcelEvents {
 			if (cell.getWorkbook().equals(srcWorkbookName)
 					&& cell.getWorksheet().equals(srcSheetName)) {
 				if ((cell.getRow() >= src.getRow())
-						&& (cell.getRow() <= src.getRow() + rowCount)
+						&& (cell.getRow() < src.getRow() + rowCount)
 						&& (cell.getCol() >= src.getCol())
-						&& (cell.getCol() <= src.getCol() + colCount)) {
+						&& (cell.getCol() < src.getCol() + colCount)) {
 					srcSetSorted.add(cell);
 				}
 
