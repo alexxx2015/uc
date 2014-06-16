@@ -10,43 +10,30 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class PasteEventHandler extends ExcelEvents {
+public class SaveEventHandler extends ExcelEvents {
 
-	public PasteEventHandler() {
+	public SaveEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		String target = "";
-		
+		String externalFile = "";
+		String structuredData = "";
 		try {
-			target = getParameterValue("Target");
-			
+			externalFile = getParameterValue("externalFile");
+			structuredData = getParameterValue("structuredData");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		if ((target == null) || (target.equals(""))) {
-			_logger.debug("no place to paste");
-			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING);
+		if ((externalFile == null) || (externalFile.equals(""))|| (structuredData.equals(""))|| (structuredData.equals(""))) {
+			_logger.debug("Either externalFile path is missing OR structuredData is null");
+			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
-		Set<CellName> targetSet = getSetOfCells(target);
-		
-		IContainer headOfOCB = headOCB();
-		
-		for (CellName c: targetSet) {
-			IContainer dst= _informationFlowModel.getContainer(c);
-			if (dst==null) {
-				dst=new ContainerBasic();
-				_informationFlowModel.addName(c, dst);
-			}
-			_informationFlowModel.copyData(headOfOCB,dst);
-		}
-	
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

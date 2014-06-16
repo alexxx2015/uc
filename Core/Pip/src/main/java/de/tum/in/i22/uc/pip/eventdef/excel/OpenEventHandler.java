@@ -10,46 +10,31 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class UpdateCellContentEventHandler extends ExcelEvents {
+public class OpenEventHandler extends ExcelEvents {
 
-	public UpdateCellContentEventHandler() {
+	public OpenEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update() {
-		String target = "";
-		String effectedRange="";
+		String externalFile = "";
+
 		try {
-			target = getParameterValue("Target");
-			effectedRange=getParameterValue("effectedRange");
+			externalFile = getParameterValue("externalFile");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		if ((target == null) || (target.equals(""))) {
-			_logger.debug("nothign to copy. leaving system clipboard intact.");
+		if ((externalFile == null) || (externalFile.equals(""))) {
+			_logger.debug("nothign to Open. Close the workbook.");
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
-		Set<CellName> targetSet = getSetOfCells(target);
 		
-		IContainer sysClip = _informationFlowModel.getContainer(new NameBasic(scbName));
-		if (sysClip==null) {
-			sysClip=new ContainerBasic();
-			_informationFlowModel.addName(new NameBasic(scbName), sysClip, true);
-		}
-		_informationFlowModel.emptyContainer(sysClip);
-		
-		for (CellName c: targetSet) {
-			IContainer src= _informationFlowModel.getContainer(c);
-			_informationFlowModel.copyData(src,sysClip);
-		}
-		
-		pushOCB();
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 

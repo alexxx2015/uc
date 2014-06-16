@@ -28,7 +28,7 @@ public class SheetMoveEventHandler extends ExcelEvents {
 		try {
 
 			srcWorkbookName = getParameterValue("srcWorkbookName");
-			sheetName = getParameterValue("oldSheetName");
+			sheetName = getParameterValue("sheetName");
 			destWorkbookName = getParameterValue("destWorkbookName");
 		
 
@@ -44,20 +44,20 @@ public class SheetMoveEventHandler extends ExcelEvents {
 
 		
 
-		for (CellName cell : allCells) {
+		/*for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(srcWorkbookName)
 					&& cell.getWorksheet().equals(sheetName )) {
 				throw new RuntimeException("impossible to move the sheet: destination already contains exists");
 
 			}
 
-		}
+		}*/
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(srcWorkbookName)
 					&& cell.getWorksheet().equals(sheetName)) {
 					_informationFlowModel.addName(cell, new CellName(destWorkbookName, sheetName, cell.getRow(), cell.getCol()));
 					
-					_informationFlowModel.removeName(cell,false);
+					//_informationFlowModel.removeName(cell,false);
 			}
 
 		}
