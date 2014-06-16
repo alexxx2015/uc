@@ -56,7 +56,8 @@
 						<arg>-extension</arg>
 					</args>
 					<generateDirectory>src/main/java</generateDirectory>
-
+                    <forceRegenerate>true</forceRegenerate>
+                    
 					<plugins>
 						<plugin>
 							<groupId>org.jvnet.jaxb2_commons</groupId>
