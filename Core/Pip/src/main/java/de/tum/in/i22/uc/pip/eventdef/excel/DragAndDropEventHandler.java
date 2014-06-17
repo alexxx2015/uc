@@ -30,13 +30,13 @@ public class DragAndDropEventHandler extends ExcelEvents {
 				.getAllNames(CellName.class);
 
 		try {
-			rowCount = Integer.valueOf(getParameterValue("RowCount"));
-			colCount = Integer.valueOf(getParameterValue("ColCount"));
+			rowCount = Integer.valueOf(getParameterValue("rowCount"));
+			colCount = Integer.valueOf(getParameterValue("colCount"));
 			srcWorkbookName = getParameterValue("srcWorkbookName");
 			srcSheetName = getParameterValue("srcSheetName");
 			srcCoordinate = getParameterValue("srcCoordinate");
-			rowDiff = Integer.valueOf(getParameterValue("RowDiff"));
-			colDiff = Integer.valueOf(getParameterValue("ColDiff"));
+			rowDiff = Integer.valueOf(getParameterValue("rowDiff"));
+			colDiff = Integer.valueOf(getParameterValue("colDiff"));
 			destWorkbookName = getParameterValue("destWorkbookName");
 			destSheetName = getParameterValue("destSheetName");
 

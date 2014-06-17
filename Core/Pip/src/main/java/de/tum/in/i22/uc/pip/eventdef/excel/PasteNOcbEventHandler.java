@@ -23,7 +23,7 @@ public class PasteNOcbEventHandler extends ExcelEvents {
 		String target = "";
 		int pos = -1;
 		try {
-			target = getParameterValue("Target");
+			target = getParameterValue("target");
 			pos = Integer.valueOf(getParameterValue("position"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

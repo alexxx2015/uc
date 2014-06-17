@@ -24,7 +24,7 @@ public class InsertRowEventHandler extends ExcelEvents {
 		Collection<CellName> allCells = _informationFlowModel.getAllNames(CellName.class);
 
 		try {
-			rowNumber = Integer.valueOf(getParameterValue("RowNumber"));
+			rowNumber = Integer.valueOf(getParameterValue("rowNumber"));
 			workbookName = getParameterValue("workbookName");
 			sheetName = getParameterValue("sheetName");
 

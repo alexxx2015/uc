@@ -20,7 +20,7 @@ public class CopyInternalEventHandler extends ExcelEvents {
 	protected IStatus update() {
 		String target = "";
 		try {
-			target = getParameterValue("Target");
+			target = getParameterValue("target");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());

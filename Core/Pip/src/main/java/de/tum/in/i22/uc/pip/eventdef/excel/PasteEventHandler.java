@@ -21,7 +21,7 @@ public class PasteEventHandler extends ExcelEvents {
 		String target = "";
 		
 		try {
-			target = getParameterValue("Target");
+			target = getParameterValue("target");
 			
 
 		} catch (ParameterNotFoundException e) {

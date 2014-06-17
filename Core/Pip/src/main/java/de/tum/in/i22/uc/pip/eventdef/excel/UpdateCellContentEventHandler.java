@@ -21,7 +21,7 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 		String target = "";
 		String affectedRange="";
 		try {
-			target = getParameterValue("Target");
+			target = getParameterValue("target");
 			affectedRange=getParameterValue("affectedRange");
 
 		} catch (ParameterNotFoundException e) {

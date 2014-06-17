@@ -24,7 +24,7 @@ public class InsertColumnEventHandler extends ExcelEvents {
 		Collection<CellName> allCells = _informationFlowModel.getAllNames(CellName.class);
 
 		try {
-			colNumber = Integer.valueOf(getParameterValue("ColNumber"));
+			colNumber = Integer.valueOf(getParameterValue("colNumber"));
 			workbookName = getParameterValue("workbookName");
 			sheetName = getParameterValue("sheetName");
 
