@@ -19,10 +19,10 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 	@Override
 	protected IStatus update() {
 		String target = "";
-		String effectedRange="";
+		String affectedRange="";
 		try {
 			target = getParameterValue("Target");
-			effectedRange=getParameterValue("effectedRange");
+			affectedRange=getParameterValue("affectedRange");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -34,7 +34,10 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 
-		Set<CellName> targetSet = getSetOfCells(target);
+		Set<CellName> affectedSet = getSetOfCells(affectedRange);
+		CellName targetCellName = new CellName(target);
+		
+		
 		
 		IContainer sysClip = _informationFlowModel.getContainer(new NameBasic(scbName));
 		if (sysClip==null) {
@@ -43,7 +46,7 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 		}
 		_informationFlowModel.emptyContainer(sysClip);
 		
-		for (CellName c: targetSet) {
+		for (CellName c: affectedSet) {
 			IContainer src= _informationFlowModel.getContainer(c);
 			_informationFlowModel.copyData(src,sysClip);
 		}

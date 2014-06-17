@@ -94,6 +94,30 @@ public class PdpTest extends GenericTest{
 		Assert.assertNotNull(response);
 	}
 
+
+	@Test
+	public void testPrachisPolicy() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+
+		pmp.deployPolicyURIPmp("src/test/resources/ExamplePolicies/prachis-policy.xml");
+		
+		Map<String,String> map = new HashMap<String,String>();
+	
+		map.put("object","city");
+		map.put("name", "");
+		map.put("scope", "539e9b555235f");
+		map.put("class", "customPolicy");
+		map.put("id", "city");
+			
+		IEvent event = mf.createDesiredEvent("cmd_copy", map);
+		
+		IResponse response = pdp.notifyEventSync(event);
+
+		Assert.assertNotNull(response);
+	}
+
+	
+	
 	@Test
 	public void testExcel() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());

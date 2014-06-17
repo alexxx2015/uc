@@ -1,0 +1,49 @@
+<policy xmlns="http://www22.in.tum.de/enforcementLanguage" xmlns:a="http://www22.in.tum.de/action" xmlns:e="http://www22.in.tum.de/event" xmlns:tns="http://www22.in.tum.de/enforcementLanguage" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="scutaPolicy">
+	
+	<preventiveMechanism name="Mechanism_103_1_preventive_city">
+		<trigger action="*" tryEvent="true">
+			<paramMatch name="scope" value="539e9b555235f"/>
+			<paramMatch name="object" type="dataUsage" value="city"/>
+		</trigger>
+		<condition>
+			<not>
+				<implies>
+					<or>
+						<or>
+							<eventMatch action="cmd_copy" tryEvent="true">
+								<paramMatch name="object" type="dataUsage" value="city"/>
+							</eventMatch>
+							<eventMatch action="TakeScreenshot" tryEvent="true">
+								<paramMatch name="object" type="dataUsage" value="city"/>
+							</eventMatch>
+						</or>
+						<not>
+							<stateBasedFormula operatorType="isNotIn" param1="city" param2="KlipperMem"/>
+						</not>
+					</or>
+					<or>
+						<eventMatch action="notify" tryEvent="true">
+							<paramMatch name="object" type="dataUsage" value="city"/>
+						</eventMatch>
+						<false/>
+					</or>
+				</implies>
+			</not>
+		</condition>
+		<authorizationAction name="Authorization_1">
+			<allow>
+				<executeSyncAction id="pxp" name="notify">
+					<parameter name="pxpID" value="pxp"/>
+					<parameter name="object" value="city"/>
+					<parameter name="method" value="email"/>
+					<parameter name="destination" value="lucaciin.tum.de"/>
+					<parameter name="subject" value="policy violation"/>
+					<parameter name="message" value="you have an intrusion!"/>
+				</executeSyncAction>
+			</allow>
+		</authorizationAction>
+		<description>Notify me when this data is _copy_ by friend</description>
+		<timestep amount="60" unit="SECONDS"/>
+	</preventiveMechanism>
+	
+</policy>
