@@ -154,7 +154,7 @@ public class PmpHandler extends PmpProcessor {
 					
 					//TODO: make it generic
 					if (name.startsWith("EXCEL-"))
-						contName = new CellName(c.getName().substring(c.getName().indexOf('-')));
+						contName = new CellName(c.getName().substring(c.getName().indexOf('-')+1));
 					else 
 						contName = new NameBasic(c.getName());
 					if (c.isSetDataId()) {
@@ -196,7 +196,7 @@ public class PmpHandler extends PmpProcessor {
 					//TODO: make it generic
 					if (value.startsWith("EXCEL-")){
 						isExcelContainer=true;
-						value=value.substring(value.indexOf('-'));
+						value=value.substring(value.indexOf('-')+1);
 					}
 					
 					String name = p.getName();
