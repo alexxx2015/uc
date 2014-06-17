@@ -36,22 +36,21 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 
 		Set<CellName> affectedSet = getSetOfCells(affectedRange);
 		CellName targetCellName = new CellName(target);
+		IContainer targetContainer = _informationFlowModel.getContainer(targetCellName);
 		
-		
-		
-		IContainer sysClip = _informationFlowModel.getContainer(new NameBasic(scbName));
-		if (sysClip==null) {
-			sysClip=new ContainerBasic();
-			_informationFlowModel.addName(new NameBasic(scbName), sysClip, true);
+		if (targetContainer==null){
+			targetContainer = new ContainerBasic();
+			_informationFlowModel.addName(targetCellName, targetContainer, true);
 		}
-		_informationFlowModel.emptyContainer(sysClip);
-		
+			
 		for (CellName c: affectedSet) {
 			IContainer src= _informationFlowModel.getContainer(c);
-			_informationFlowModel.copyData(src,sysClip);
+			if (src ==null){
+				src = new ContainerBasic();
+				_informationFlowModel.addName(c, src, true);
+			}
+			_informationFlowModel.addAlias(src, targetContainer);
 		}
-		
-		pushOCB();
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
