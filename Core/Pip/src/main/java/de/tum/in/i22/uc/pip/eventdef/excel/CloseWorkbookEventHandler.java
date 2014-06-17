@@ -24,7 +24,7 @@ public class CloseWorkbookEventHandler extends ExcelEvents {
 
 		try {
 
-			workbookName = getParameterValue("srcWorkbookName");
+			workbookName = getParameterValue("workbookName");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
