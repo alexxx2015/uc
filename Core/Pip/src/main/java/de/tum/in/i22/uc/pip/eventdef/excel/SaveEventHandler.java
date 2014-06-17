@@ -39,7 +39,10 @@ public class SaveEventHandler extends ExcelEvents {
 		}
 		
 		IContainer externalFileContainer = _informationFlowModel.getContainer(new NameBasic(externalFile));
-		if (externalFileContainer==null) externalFileContainer=new ContainerBasic();
+		if (externalFileContainer==null) {
+			externalFileContainer=new ContainerBasic();
+			_informationFlowModel.addName(new NameBasic(externalFile), externalFileContainer, true);
+		}
 
 		Collection<CellName> allCells = _informationFlowModel.getAllNames(CellName.class);
 		Map<String,Set<IData>> map = new HashMap<String,Set<IData>>();

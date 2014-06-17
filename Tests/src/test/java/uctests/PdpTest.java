@@ -285,6 +285,19 @@ public class PdpTest extends GenericTest{
 //		
 //		Assert.assertNotNull(response);
 		
+		map = new HashMap<String,String>();
+		map.put("PEP", "excel");
+		map.put("targetWb","wb3");
+		map.put("externalFile","extF1");
+		map.put("allowImpliesActual", "true");
+		
+		event = new EventBasic("Save", map);
+
+		response = pdp.notifyEventSync(event);
+		
+
+		
+		Assert.assertNotNull(response);
 		
 		
 		
