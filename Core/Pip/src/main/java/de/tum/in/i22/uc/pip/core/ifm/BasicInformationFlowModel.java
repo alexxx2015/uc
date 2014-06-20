@@ -689,10 +689,11 @@ public final class BasicInformationFlowModel implements
 		if (name != null) {
 			_logger.info("removeName() " + name);
 			IContainer cont = _namingMap.remove(name);
-			
+
 			// if this was the last name, we can remove the container
 			Collection<IName> remainingNames = getAllNames(cont);
-			if ((remainingNames == null || remainingNames.size() == 0)&&(deleteUnreferencedContainer)) {
+			if ((remainingNames == null || remainingNames.size() == 0)
+					&& (deleteUnreferencedContainer)) {
 				remove(cont);
 			}
 		}
@@ -710,7 +711,7 @@ public final class BasicInformationFlowModel implements
 	public void removeName(IName name) {
 		removeName(name, true);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -874,38 +875,47 @@ public final class BasicInformationFlowModel implements
 				.getShowIFNamesInsteadOfContainer();
 
 		boolean sort = Settings.getInstance().getSortStorageNames();
-		
+
 		sb.append("  Storage:" + nl);
 		if (showNamesInsteadOfContainers) {
-			int nameLength=0;
+			int nameLength = 0;
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-				int currLength= entry.getKey().getName().toString().length();
-				if (currLength>nameLength) nameLength=currLength;
+				int currLength = entry.getKey().getName().toString().length();
+				if (currLength > nameLength)
+					nameLength = currLength;
 			}
 			Set<Entry<IName, IContainer>> entryset;
 			if (sort) {
-				entryset=new TreeSet<Entry<IName,IContainer>>(new SortByNames());
+				entryset = new TreeSet<Entry<IName, IContainer>>(
+						new SortByNames());
 				entryset.addAll(_namingMap.entrySet());
 			} else {
-				entryset=_namingMap.entrySet();
+				entryset = _namingMap.entrySet();
 			}
-			
+
 			for (Entry<IName, IContainer> entry : entryset) {
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
 				if (((ds != null) && (ds.size() != 0)) || showFullIFM) {
-					sb.append("    " + String.format("%1$"+nameLength+ "s", entry.getKey().getName()) + arrow);
+					sb.append("    "
+							+ String.format("%1$" + nameLength + "s", entry
+									.getKey().getName()) + arrow);
 					boolean first = true;
 					if (ds != null) {
-						for (IData d : ds) {
-							if (first) {
-								first = false;
-							} else {
-								sb.append("    ");
-								for (int i = 0; i < nameLength+ arrow.length(); i++) {
-									sb.append(" ");
+						if (ds.size() == 0) {
+							sb.append(nl);
+						} else {
+							for (IData d : ds) {
+								if (first) {
+									first = false;
+								} else {
+									sb.append("    ");
+									for (int i = 0; i < nameLength
+											+ arrow.length(); i++) {
+										sb.append(" ");
+									}
 								}
+								sb.append(d.getId() + nl);
 							}
-							sb.append(d.getId() + nl);
 						}
 					} else {
 						sb.append(nl);
@@ -920,18 +930,22 @@ public final class BasicInformationFlowModel implements
 					sb.append("    " + entry.getKey().getId() + arrow);
 					boolean first = true;
 					if (entry.getValue() != null) {
-						for (IData d : entry.getValue()) {
-							if (first) {
-								first = false;
-							} else {
-								sb.append("    ");
-								for (int i = 0; i < entry.getKey().getId()
-										.length()
-										+ arrow.length(); i++) {
-									sb.append(" ");
+						if (entry.getValue().size() == 0) {
+							sb.append(nl);
+						} else {
+							for (IData d : entry.getValue()) {
+								if (first) {
+									first = false;
+								} else {
+									sb.append("    ");
+									for (int i = 0; i < entry.getKey().getId()
+											.length()
+											+ arrow.length(); i++) {
+										sb.append(" ");
+									}
 								}
+								sb.append(d.getId() + nl);
 							}
-							sb.append(d.getId() + nl);
 						}
 					} else {
 						sb.append(nl);
@@ -1013,11 +1027,12 @@ public final class BasicInformationFlowModel implements
 				.add("_aliasesMap", _aliasesMap).add("_namingMap", _namingMap)
 				.toString();
 	}
-	
-	public class SortByNames implements Comparator<Entry<IName, IContainer>>{
-	    public int compare(Entry<IName, IContainer> e1, Entry<IName, IContainer> e2) {
-	    	return e1.getKey().getName().compareTo(e2.getKey().getName());
-	    }
+
+	public class SortByNames implements Comparator<Entry<IName, IContainer>> {
+		public int compare(Entry<IName, IContainer> e1,
+				Entry<IName, IContainer> e2) {
+			return e1.getKey().getName().compareTo(e2.getKey().getName());
+		}
 	}
 
 }
