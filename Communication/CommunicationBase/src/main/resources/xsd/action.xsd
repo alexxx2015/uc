@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
   xmlns              = "http://www.w3.org/2001/XMLSchema"  
-  targetNamespace    = "http://www.iese.fhg.de/pef/1.0/action"
-  xmlns:tns          = "http://www.iese.fhg.de/pef/1.0/action"
+  targetNamespace    = "http://www22.in.tum.de/action"
+  xmlns:tns          = "http://www22.in.tum.de/action"
   
   xmlns:jaxb         = "http://java.sun.com/xml/ns/jaxb"
   xmlns:xjc          = "http://java.sun.com/xml/ns/jaxb/xjc"

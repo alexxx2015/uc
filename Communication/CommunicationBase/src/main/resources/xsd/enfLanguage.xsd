@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
-	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
-	xmlns:time="http://www.iese.fhg.de/pef/1.0/time" xmlns:event="http://www.iese.fhg.de/pef/1.0/event"
-	xmlns:cnd="http://www.iese.fhg.de/pef/1.0/condition" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	targetNamespace="http://www22.in.tum.de/enforcementLanguage"
+	xmlns:tns="http://www22.in.tum.de/enforcementLanguage"
+	xmlns:time="http://www22.in.tum.de/time" 
+	xmlns:event="http://www22.in.tum.de/event"
+	xmlns:cnd="http://www.iese.fhg.de/pef/1.0/condition" 
+	
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0"
 	jaxb:extensionBindingPrefixes="xjc" elementFormDefault="qualified">
 
-	<import namespace="http://www.iese.fhg.de/pef/1.0/time"
-		schemaLocation="time.xsd" />
-	<import namespace="http://www.iese.fhg.de/pef/1.0/event"
-		schemaLocation="event.xsd" />
+	<import namespace="http://www22.in.tum.de/time"  schemaLocation="time.xsd" />
+	<import namespace="http://www22.in.tum.de/event" schemaLocation="event.xsd" />
 
 	<element name="condition" type="tns:ConditionType" />
 

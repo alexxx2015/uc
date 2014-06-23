@@ -54,13 +54,14 @@
 					</execution>
 				</executions>
 				<configuration>
+                    <forceRegenerate>true</forceRegenerate>
 					<schemaDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</schemaDirectory>
 					<bindingDirectory>../../Communication/CommunicationBase/src/main/resources/xsd</bindingDirectory>
 					<bindingIncludes>
 						<include>pdp.xjb</include>
 					</bindingIncludes>
 					<args>
-						<arg>-XtoString</arg>
+						<!-- <arg>-XtoString</arg> -->
 						<arg>-Xinheritance</arg>
 						<arg>-extension</arg>
 					</args>
