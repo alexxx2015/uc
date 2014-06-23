@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.pip.eventdef.java;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
+import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
-public abstract class JavaEventHandler extends BaseEventHandler{
+public abstract class JavaEventHandler extends AbstractScopeEventHandler{
 	
 	protected static Map<String,String> iFlow = new HashMap<String,String>();
 
