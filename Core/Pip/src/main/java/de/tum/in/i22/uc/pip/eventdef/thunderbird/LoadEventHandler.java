@@ -63,7 +63,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 			res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
 			return res;
 		} else if (delimiter.equals(_closeDelimiter)) {
-			res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSED, scope));
+			res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSE, scope));
 			return res;
 		}
 		return res;

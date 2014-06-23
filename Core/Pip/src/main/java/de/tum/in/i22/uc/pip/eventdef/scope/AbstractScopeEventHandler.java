@@ -79,7 +79,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 				_scopesToBeOpened.add(p.getSecond());
 				res++;
 			}
-			if (p.getFirst().equals(EScopeState.CLOSED)) {
+			if (p.getFirst().equals(EScopeState.CLOSE)) {
 				if (_scopesToBeClosed == null)
 					_scopesToBeClosed = new HashSet<IScope>();
 				_scopesToBeClosed.add(p.getSecond());

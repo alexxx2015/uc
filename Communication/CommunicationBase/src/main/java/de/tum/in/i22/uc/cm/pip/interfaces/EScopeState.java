@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.cm.pip.interfaces;
 
 public enum EScopeState {
-	OPEN, CLOSED, UNKNOWN;
+	OPEN, CLOSE, UNKNOWN;
 
 	public static EScopeState from(String str) {
 		if (str == null)
@@ -10,7 +10,7 @@ public enum EScopeState {
 		case "open":
 			return OPEN;
 		case "closed":
-			return CLOSED;
+			return CLOSE;
 		default:
 			return UNKNOWN;
 		}
