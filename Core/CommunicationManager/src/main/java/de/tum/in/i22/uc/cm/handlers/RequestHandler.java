@@ -11,7 +11,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cassandra.CassandraDistributionManager;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
@@ -38,6 +37,7 @@ import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.distribution.DistributionManagerFactory;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
@@ -71,6 +71,7 @@ import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyRawXmlPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
@@ -142,7 +143,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 			if (_pmp == null) _pmp = createPmpHandler(pmpLocation);
 		}
 
-		_distributionManager = new CassandraDistributionManager();
+		_distributionManager = DistributionManagerFactory.createDistributionManager();
 
 		_pdp.init(_pip, _pmp, _distributionManager);
 		_pip.init(_pdp, _pmp, _distributionManager);
@@ -288,13 +289,13 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_requestQueueManager.stop();
 		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
 	}
-	
+
 	@Override
 	public void stop() {
 		_requestQueueManager.stop();
 		this._pdp.stop();
 		this._pip.stop();
-		this._pmp.stop();		
+		this._pmp.stop();
 	}
 
 

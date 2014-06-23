@@ -36,7 +36,6 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
-import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -48,10 +47,10 @@ public class PipHandler extends PipProcessor {
 
 	private final PipManager _pipManager;
 
-	/**
-	 * Manages everything related to distributed data flow tracking
-	 */
-	private final PipDistributionManager _distributedPipManager;
+	//	/**
+	//	 * Manages everything related to distributed data flow tracking
+	//	 */
+	//	private final PipDistributionManager _distributedPipManager;
 
 	// this is to include classes within the jar file. DO NOT REMOVE.
 	@SuppressWarnings("unused")
@@ -66,7 +65,7 @@ public class PipHandler extends PipProcessor {
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
-		_distributedPipManager = new PipDistributionManager();
+		//		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
@@ -279,10 +278,14 @@ public class PipHandler extends PipProcessor {
 		if ((container = _ifModel.getContainer(containerName)) == null) {
 			_ifModel.addName(containerName, container = new ContainerBasic());
 		}
-		if (data == null || data == Collections.EMPTY_SET) {
+
+		if (data == null || data.size() == 0) {
 			newInitialRepresentation(containerName);
-		} else
+		}
+		else {
 			_ifModel.addDataTransitively(data, container);
+		}
+
 		return new StatusBasic(EStatus.OKAY);
 	}
 
@@ -302,7 +305,8 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _distributedPipManager.whoHasData(data, recursionDepth);
+		//		return _distributedPipManager.whoHasData(data, recursionDepth);
+		return Collections.emptySet();
 	}
 
 	@Override

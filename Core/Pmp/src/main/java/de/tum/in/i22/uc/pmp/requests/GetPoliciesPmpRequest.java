@@ -1,11 +1,10 @@
-package de.tum.in.i22.uc.cm.handlers;
+package de.tum.in.i22.uc.pmp.requests;
 
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
-import de.tum.in.i22.uc.pmp.requests.PmpRequest;
 
 public class GetPoliciesPmpRequest extends PmpRequest<Set<XmlPolicy>> {
 	private final IData _data;
