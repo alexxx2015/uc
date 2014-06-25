@@ -193,6 +193,12 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	}
 
 	@Override
+	public void removeName(IName name, boolean deleteUnreferencedContainer) {
+		_logger.error("Method removeName() not implemented.");
+
+	}
+
+	@Override
 	public IContainer getContainer(IName name) {
 		_logger.error("Method getContainer() not implemented.");
 		return null;
@@ -347,6 +353,12 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
 		_logger.error("Method XAlias() not implemented.");
 		return null;
+	}
+
+	@Override
+	public void addName(IName name, IContainer container,
+			boolean deleteUnreferencedContainer) {
+		_logger.error("Method addName() not implemented.");
 	}
 
 }

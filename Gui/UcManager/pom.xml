@@ -58,7 +58,7 @@
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>de.tum.in.i22.uc.gui.MyUCCockpit</mainClass>
+									<mainClass>de.tum.in.i22.uc.gui.UcManager</mainClass>
 								</manifest>
 							</archive>
 						</configuration>

@@ -62,8 +62,9 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
-	private static final String PROP_NAME_pepParameterKey = "pep";
-	private static final String PROP_NAME_allowImpliesActualParameterKey = "allowImpliesActual";
+
+	private static final String PROP_NAME_pep = "pep";
+	private static final String PROP_NAME_allowImpliesActual = "allowImpliesActual";
 
 	private static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
@@ -88,6 +89,15 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
 	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
+	private static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
+	private static final String PROP_NAME_sortStorageNames = "sortStorageNames";
+
+
+
+	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
+	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
+	private static final String PROP_NAME_excelOcbName = "excelOcbName";
+	private static final String PROP_NAME_excelScbName = "excelScbName";
 
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
@@ -167,16 +177,17 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
-		loadSetting(PROP_NAME_pepParameterKey, "PEP");
-		loadSetting(PROP_NAME_allowImpliesActualParameterKey, "false");
+		loadSetting(PROP_NAME_pep, "PEP");
+		loadSetting(PROP_NAME_allowImpliesActual,
+				"false");
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
 				new HashMap<IName, IData>() {
-					private static final long serialVersionUID = -2810488356921449504L;
-					{
-						put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
-					}
-				});
+			private static final long serialVersionUID = -2810488356921449504L;
+			{
+				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
+			}
+		});
 
 		loadSetting(PROP_NAME_communicationProtocol,
 				ECommunicationProtocol.THRIFT, ECommunicationProtocol.class);
@@ -194,16 +205,23 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_starEvent, "*");
 
 		loadSetting(PROP_NAME_scopeDelimiterName, "delimiter");
-		loadSetting(PROP_NAME_scopeOpenDelimiter, "start");
-		loadSetting(PROP_NAME_scopeCloseDelimiter, "end");
+		loadSetting(PROP_NAME_scopeOpenDelimiter, "START");
+		loadSetting(PROP_NAME_scopeCloseDelimiter, "END");
 		loadSetting(PROP_NAME_scopeDirectionName, "direction");
 		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
-		loadSetting(PROP_NAME_showFullIFModel, false);
-
 		loadSetting(PROP_NAME_policySpecificationStarDataClass, "*");
 
+		loadSetting(PROP_NAME_showFullIFModel, true);
+		loadSetting(PROP_NAME_showIFNamesInsteadOfContainer, true);
+		loadSetting(PROP_NAME_sortStorageNames, true);
+
+		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
+		loadSetting(PROP_NAME_excelListSeparator, "\\*");
+
+		loadSetting(PROP_NAME_excelOcbName, "OfficeClipboard");
+		loadSetting(PROP_NAME_excelScbName, "SystemClipboard(Excel)");
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -293,7 +311,7 @@ public class Settings extends SettingsLoader {
 	}
 
 	public String getAllowImpliesActualParameterKey() {
-		return PROP_NAME_allowImpliesActualParameterKey;
+		return PROP_NAME_allowImpliesActual;
 	}
 
 	public String getPropertiesFileName() {
@@ -322,17 +340,17 @@ public class Settings extends SettingsLoader {
 
 	public boolean isPmpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pmpLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPipListenerEnabled() {
 		Location l = getValue(PROP_NAME_pipLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPdpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pdpLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isAnyListenerEnabled() {
@@ -419,11 +437,11 @@ public class Settings extends SettingsLoader {
 	}
 
 	public String getPep() {
-		return getValue(PROP_NAME_pepParameterKey);
+		return getValue(PROP_NAME_pep);
 	}
 
 	public String getAllowImpliesActual() {
-		return getValue(PROP_NAME_allowImpliesActualParameterKey);
+		return getValue(PROP_NAME_allowImpliesActual);
 	}
 
 	public String getPipInitialRepresentationSeparator1() {
@@ -470,4 +488,27 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_policySpecificationStarDataClass);
 	}
 
+	public boolean getShowIFNamesInsteadOfContainer(){
+		return getValue(PROP_NAME_showIFNamesInsteadOfContainer);
+	}
+
+	public boolean getSortStorageNames(){
+		return getValue(PROP_NAME_sortStorageNames);
+	}
+
+	public String getExcelCoordinatesSeparator(){
+		return getValue(PROP_NAME_excelCoordinatesSeparator);
+	}
+
+	public String getExcelListSeparator(){
+		return getValue(PROP_NAME_excelListSeparator);
+	}
+
+	public String getExcelOcbName(){
+		return getValue(PROP_NAME_excelOcbName);
+	}
+
+	public String getExcelScbName(){
+		return getValue(PROP_NAME_excelScbName);
+	}
 }

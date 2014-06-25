@@ -5,48 +5,104 @@ import java.util.Iterator;
 import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
+import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class SinkEventHandler extends JavaEventHandler {
 
+
+	@Override
+	protected IScope buildScope(String delimiter) {
+		return buildScope(delimiter, EScopeType.JBC_GENERIC_OUT);
+	}
+
+	
 	@Override
 	protected IStatus update() {
-		IStatus _return = _messageFactory.createStatus(EStatus.OKAY);
+		return update(EBehavior.INTRA, null);
+	}
+	
+	@Override
+	protected IStatus update(EBehavior direction, IScope scope) {
 		try {
-			String signature = getParameterValue("signature");			
-			String delimiter = getParameterValue("delimiter");
+			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
-			
-			String sinkId = location+_javaIFDelim+signature;
+
+			String sinkId = location + _javaIFDelim + signature;
 			String sourceId = iFlow.get(sinkId);
-			
-			if((sourceId != null) && (!sourceId.equals(""))){
-				IContainer srcCnt = _informationFlowModel.getContainer(new NameBasic("src_"+sourceId));
-				IContainer sinkCnt = _informationFlowModel.getContainer(new NameBasic("snk_"+sinkId));				
+
+			if ((sourceId != null) && (!sourceId.equals(""))) {
+				IContainer srcCnt = _informationFlowModel
+						.getContainer(new NameBasic("src_" + sourceId));
+				IContainer sinkCnt = _informationFlowModel
+						.getContainer(new NameBasic("snk_" + sinkId));
 
 				Set<IData> srcData = _informationFlowModel.getData(srcCnt);
-				_informationFlowModel.addData(srcData, sinkCnt);
-				
-				Collection<IContainer> aliasSinkCnt = _informationFlowModel.getAliasesFrom(sinkCnt);
-				Iterator<IContainer> sinkCntIt = aliasSinkCnt.iterator();
-				while(sinkCntIt.hasNext()){
-//					srcData = _informationFlowModel.getData(sinkCntIt.next());
-					_informationFlowModel.addData(srcData, sinkCntIt.next());
+
+				if ((direction.equals(EBehavior.INTRA))
+						|| (direction.equals(EBehavior.INTRAOUT))) {
+					_informationFlowModel.addData(srcData, sinkCnt);
+					Collection<IContainer> aliasSinkCnt = _informationFlowModel
+							.getAliasesFrom(sinkCnt);
+					Iterator<IContainer> sinkCntIt = aliasSinkCnt.iterator();
+					while (sinkCntIt.hasNext()) {
+						_informationFlowModel
+								.addData(srcData, sinkCntIt.next());
+					}
 				}
-				
-				
+
+				if ((direction.equals(EBehavior.IN))
+						|| (direction.equals(EBehavior.INTRAIN))) {
+					// ERROR: a sink event is never IN
+					return new StatusBasic(EStatus.ERROR,
+							"Error: A sink event is never IN");
+				}
+
+				if ((direction.equals(EBehavior.OUT))
+						|| (direction.equals(EBehavior.INTRAOUT))) {
+					_informationFlowModel.addDataTransitively(srcData,
+							new NameBasic(scope.getId()));
+				}
+
 			}
-			
+
 		} catch (ParameterNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
+	}
+
+	
+	
+	
+	@Override
+	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+		String delimiter = null;
+		try {
+			delimiter = getParameterValue(_delimiterName);
+		} catch (ParameterNotFoundException e) {
+			_logger.error(e.getMessage());
+			return null;
+		}
+		
+		delimiter=delimiter.toLowerCase();
+		IScope scope = buildScope(delimiter);
+		if (scope==null)return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+		if (delimiter.equals(_openDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);
+		if (delimiter.equals(_closeDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.INTRA, scope);
+		//this line should never be reached
+		return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
 	}
 
 }

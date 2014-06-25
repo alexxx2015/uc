@@ -314,6 +314,11 @@ public final class InformationFlowModelManager implements
 	}
 
 	@Override
+	public void removeName(IName name, boolean deleteUnreferencedContainer) {
+		_basicIfModel.removeName(name, deleteUnreferencedContainer);
+	}
+
+	@Override
 	public IContainer getContainer(IName name) {
 		return _basicIfModel.getContainer(name);
 	}
@@ -423,6 +428,12 @@ public final class InformationFlowModelManager implements
 	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
 		return ((ScopeInformationFlowModel) (_ifModelExtensions
 				.get(EInformationFlowModel.SCOPE))).XAlias(eventHandler);
+	}
+
+	@Override
+	public void addName(IName name, IContainer container,
+			boolean deleteUnreferencedContainer) {
+		_basicIfModel.addName(name, container, deleteUnreferencedContainer);
 	}
 
 }

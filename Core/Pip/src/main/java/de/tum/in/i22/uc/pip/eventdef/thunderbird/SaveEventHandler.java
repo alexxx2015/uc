@@ -54,6 +54,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 				_logger.error(e.getMessage());
 				return new HashSet<Pair<EScopeState, IScope>>();
 			}
+			_delimiter=_delimiter.toLowerCase();
 			IScope scope = buildScope();
 			if (scope==null){
 				return new HashSet<Pair<EScopeState, IScope>>();
@@ -63,7 +64,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 				res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
 				return res;
 			} else if (_delimiter.equals(_closeDelimiter)) {
-				res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSED, scope));
+				res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSE, scope));
 				return res;
 			}
 			return res;
