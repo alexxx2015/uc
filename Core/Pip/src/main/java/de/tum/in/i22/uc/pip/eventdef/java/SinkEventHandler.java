@@ -95,6 +95,8 @@ public class SinkEventHandler extends JavaEventHandler {
 			_logger.error(e.getMessage());
 			return null;
 		}
+		
+		delimiter=delimiter.toLowerCase();
 		IScope scope = buildScope(delimiter);
 		if (scope==null)return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
 		if (delimiter.equals(_openDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);

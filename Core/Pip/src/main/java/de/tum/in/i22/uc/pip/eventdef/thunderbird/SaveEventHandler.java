@@ -54,6 +54,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 				_logger.error(e.getMessage());
 				return new HashSet<Pair<EScopeState, IScope>>();
 			}
+			_delimiter=_delimiter.toLowerCase();
 			IScope scope = buildScope();
 			if (scope==null){
 				return new HashSet<Pair<EScopeState, IScope>>();

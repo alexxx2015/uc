@@ -34,16 +34,16 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected static final String _delimiterName = Settings.getInstance()
 			.getScopeDelimiterName();
 	protected static final String _openDelimiter = Settings.getInstance()
-			.getScopeOpenDelimiter();
+			.getScopeOpenDelimiter().toLowerCase();
 	protected static final String _closeDelimiter = Settings.getInstance()
-			.getScopeCloseDelimiter();
+			.getScopeCloseDelimiter().toLowerCase();
 
 	protected static final String _directionName = Settings.getInstance()
 			.getScopeDirectionName();
 	protected static final String _genericInDirection = Settings.getInstance()
-			.getScopeGenericInDirection();
+			.getScopeGenericInDirection().toLowerCase();
 	protected static final String _genericOutDirection = Settings.getInstance()
-			.getScopeGenericOutDirection();
+			.getScopeGenericOutDirection().toLowerCase();
 
 	protected Set<IScope> _scopesToBeOpened = null;
 	protected Set<IScope> _scopesToBeClosed = null;

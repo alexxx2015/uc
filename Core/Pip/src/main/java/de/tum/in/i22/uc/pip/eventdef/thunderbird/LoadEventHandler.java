@@ -54,6 +54,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 			_logger.error(e.getMessage());
 			return new HashSet<Pair<EScopeState, IScope>>();
 		}
+		delimiter=delimiter.toLowerCase();
 		IScope scope = buildScope();
 		if (scope == null) {
 			return new HashSet<Pair<EScopeState, IScope>>();
@@ -80,6 +81,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 			_logger.error(e.getMessage());
 			return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
 		}
+		_delimiter=_delimiter.toLowerCase();
 		if ((scope == null) || !( _closeDelimiter.equals(_delimiter)))
 			return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
 		return new Pair<EBehavior, IScope>(EBehavior.IN, scope);

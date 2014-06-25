@@ -203,8 +203,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_starEvent, "*");
 
 		loadSetting(PROP_NAME_scopeDelimiterName, "delimiter");
-		loadSetting(PROP_NAME_scopeOpenDelimiter, "start");
-		loadSetting(PROP_NAME_scopeCloseDelimiter, "end");
+		loadSetting(PROP_NAME_scopeOpenDelimiter, "START");
+		loadSetting(PROP_NAME_scopeCloseDelimiter, "END");
 		loadSetting(PROP_NAME_scopeDirectionName, "direction");
 		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
