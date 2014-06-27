@@ -16,6 +16,9 @@ public class DummyDistributionManager implements IDistributionManager {
 
 	@Override
 	public void init(PdpProcessor _pdp, PipProcessor _pip, PmpProcessor _pmp) {
+		// TODO Auto-generated method stub
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("init method invoked");
 	}
 
 	@Override
@@ -28,7 +31,6 @@ public class DummyDistributionManager implements IDistributionManager {
 	@Override
 	public void newPolicy(XmlPolicy xmlPolicy) {
 		// TODO Auto-generated method stub
-
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("newPolicy method invoked");
 	}

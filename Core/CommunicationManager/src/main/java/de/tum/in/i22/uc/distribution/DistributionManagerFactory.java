@@ -1,9 +1,16 @@
 package de.tum.in.i22.uc.distribution;
 
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class DistributionManagerFactory {
+
 	public static IDistributionManager createDistributionManager() {
-		return new CassandraDistributionManager();
+		if (Settings.getInstance().getDistributionEnabled()) {
+			return new CassandraDistributionManager();
+		}
+
+		return new DummyDistributionManager();
 	}
 }

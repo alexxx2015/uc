@@ -71,6 +71,8 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_communicationProtocol = "communicationProtocol";
 
 	private static final String PROP_NAME_distributionStrategy = "distributionStrategy";
+	private static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+
 	private static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
 
 	private static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
@@ -194,6 +196,8 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_distributionStrategy, EDistributionStrategy.PUSH,
 				EDistributionStrategy.class);
+		loadSetting(PROP_NAME_distributionEnabled, false);
+
 		loadSetting(PROP_NAME_pipDistributionMaxConnections, 5);
 
 		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
@@ -359,6 +363,10 @@ public class Settings extends SettingsLoader {
 
 	public EDistributionStrategy getDistributionStrategy() {
 		return getValue(PROP_NAME_distributionStrategy);
+	}
+
+	public boolean getDistributionEnabled() {
+		return getValue(PROP_NAME_distributionEnabled);
 	}
 
 	public String getPipEventHandlerPackage() {
