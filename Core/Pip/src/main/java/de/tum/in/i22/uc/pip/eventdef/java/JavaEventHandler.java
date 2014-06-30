@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
 public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
-	protected static Map<String, String> iFlow = new HashMap<String, String>();
+	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
 	protected final String _paramId = "id";
 	protected final String _paramSignature = "signature";
 	protected final String _paramLocation = "location";

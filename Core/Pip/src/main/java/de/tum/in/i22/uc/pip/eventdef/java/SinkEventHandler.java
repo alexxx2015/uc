@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -38,16 +39,24 @@ public class SinkEventHandler extends JavaEventHandler {
 			String location = getParameterValue("location");
 
 			String sinkId = location + _javaIFDelim + signature;
-			String sourceId = iFlow.get(sinkId);
+			String[] sourceIds = iFlow.get(sinkId);
 
-			if ((sourceId != null) && (!sourceId.equals(""))) {
-				IContainer srcCnt = _informationFlowModel
-						.getContainer(new NameBasic("src_" + sourceId));
-				IContainer sinkCnt = _informationFlowModel
-						.getContainer(new NameBasic("snk_" + sinkId));
+			Set<IData> srcData = new HashSet<IData>();
+			
+			if (sourceIds!=null){
+			for (String sourceId : sourceIds){
+					if ((sourceId != null) && (!sourceId.equals(""))) {
+						IContainer srcCnt = _informationFlowModel
+								.getContainer(new NameBasic("src_" + sourceId));
+						Set<IData> s = _informationFlowModel.getData(srcCnt);
+						if (s!=null) srcData.addAll(s);
+					}
+				}
+			
+			IContainer sinkCnt = _informationFlowModel
+					.getContainer(new NameBasic("snk_" + sinkId));
 
-				Set<IData> srcData = _informationFlowModel.getData(srcCnt);
-
+			
 				if ((direction.equals(EBehavior.INTRA))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
 					_informationFlowModel.addData(srcData, sinkCnt);

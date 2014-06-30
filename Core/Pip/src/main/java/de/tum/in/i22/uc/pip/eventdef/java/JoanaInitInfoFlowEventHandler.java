@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -46,8 +47,10 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		if (type.equals("iflow")) {
 			try {
 				String sink = getParameterValue("sink");
-				String source = getParameterValue("source");
-				iFlow.put(sink, source);				
+				String sources = getParameterValue("source");
+				if (sources==null) throw new RuntimeException("sources cannot be empty");
+				String[]sourceArr = sources.split(Settings.getInstance().getJoanaInitDelimiter());
+				iFlow.put(sink, sourceArr);				
 			} catch (ParameterNotFoundException e) {
 				_logger.error(e.getMessage());
 				return _messageFactory.createStatus(
