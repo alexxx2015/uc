@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 public class EventBasic implements IEvent {
 
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
-	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = Settings.getInstance().getAllowImpliesActualParameterKey();
+	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = Settings.getInstance().PROP_NAME_allowImpliesActual;
 
 	private static final String PREFIX_SEPARATOR = Settings.getInstance().getPrefixSeparator();
 
