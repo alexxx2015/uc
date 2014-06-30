@@ -28,8 +28,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _srcPrefix = "src_";
 	protected final String _snkPrefix = "snk_";
 
-	public String scopeName(String delimiter, String fileDescriptor, String pid, String threadId) {
-		return delimiter.toUpperCase() + " generic scope for fileDescriptor " + fileDescriptor + " (pid="+pid+",tid="+threadId+")";
+	public String scopeName(String delimiter, String fileDescriptor, String pid) {
+		return delimiter.toUpperCase() + " generic scope for fileDescriptor " + fileDescriptor + " (pid "+pid+")";
 	}
 
 	/*
@@ -82,23 +82,23 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	 */
 	protected IScope buildScope(String delimiter, EScopeType type) {
 		String fileDescriptor;
-		String tid;
+//		String tid;
 		String pid;
 		try {
 			fileDescriptor = getParameterValue("fileDescriptor");
-			tid = getParameterValue("ThreadId");
+//			tid = getParameterValue("ThreadId");
 			pid = getParameterValue("Pid");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			 return null;
 		}
 
-		String HRscope = scopeName(delimiter, fileDescriptor, pid, tid);
+		String HRscope = scopeName(delimiter, fileDescriptor, pid);
 
 		// create the new scope
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("fileDescriptor", fileDescriptor);
-		attributes.put("tid", tid);
+//		attributes.put("tid", tid);
 		attributes.put("pid", pid);
 		return new ScopeBasic(HRscope, type, attributes);
 	}

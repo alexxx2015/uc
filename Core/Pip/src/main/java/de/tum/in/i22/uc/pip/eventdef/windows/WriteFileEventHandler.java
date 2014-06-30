@@ -113,7 +113,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 		String filename;
 		String fileDescriptor;
 		String pid;
-		String tid;
+//		String tid;
 		String processName;
 
 		_logger.debug("XBehav function of ReadFile");
@@ -122,7 +122,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 			filename = getParameterValue("InFileName");
 			fileDescriptor = getParameterValue("FileHandle");
 			pid = getParameterValue("PID");
-			tid = getParameterValue("TID");
+	//		tid = getParameterValue("TID");
 			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of WriteFile event. falling back to default INTRA layer behavior"
@@ -160,7 +160,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 		type = EScopeType.JBC_GENERIC_OUT;
 		attributes.put("fileDescriptor", fileDescriptor);
 		attributes.put("pid", pid);
-		attributes.put("tid", tid);
+//		attributes.put("tid", tid);
 		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
