@@ -1,19 +1,5 @@
 package de.tum.in.i22.uc.pip.eventdef.windows;
 
-/***
- * FIXME
- * TODO
- * 
- * THIS FILE IS IN THE WRONG PACKAGE.
- * 
- * 
- * TO BE FIXED AS SOON AS TOBIAS ADDS THE "PEP" PARAMETER TO HIS UC4WIN STUFF
- * 
- * 
- * 
- * 
- */
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +66,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 			if (fileContainer == null) {
 				fileContainer = _messageFactory.createContainer();
 				_informationFlowModel.addName(new NameBasic(fileName),
-						fileContainer);
+						fileContainer, true);
 			}
 		}
 
@@ -119,14 +105,18 @@ public class ReadFileEventHandler extends WindowsEvents {
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String filename;
+		String fileDescriptor;
 		String pid;
+		String tid;
 		String processName;
 
 		_logger.debug("XBehav function of ReadFile");
 
 		try {
 			filename = getParameterValue("InFileName");
+			fileDescriptor = getParameterValue("FileHandle");
 			pid = getParameterValue("PID");
+			tid = getParameterValue("TID");
 			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of ReadFile event. falling back to default INTRA layer behavior"
@@ -135,18 +125,23 @@ public class ReadFileEventHandler extends WindowsEvents {
 		}
 
 		Map<String, Object> attributes;
-		IScope scopeToCheck, existingScope;
+		IScope scopeToCheck=null;
+		IScope existingScope=null;
 		EScopeType type = EScopeType.LOAD_FILE;
 
 		// TEST 1 : TB LOADING THIS FILE?
 		// If so behave as OUT
-		attributes = new HashMap<String, Object>();
-		attributes.put("app", "Thunderbird");
-		attributes.put("filename", filename);
-		scopeToCheck = new ScopeBasic("TB loading file " + filename, type,
-				attributes);
+		
+		if (processName.equalsIgnoreCase("Thunderbird")) {
+			attributes = new HashMap<String, Object>();
+			attributes.put("app", "Thunderbird");
+			attributes.put("filename", filename);
+			scopeToCheck = new ScopeBasic("TB loading file " + filename, type,
+					attributes);
 
-		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		}
+		
 		if (existingScope != null) {
 			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
@@ -158,7 +153,10 @@ public class ReadFileEventHandler extends WindowsEvents {
 		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.JBC_GENERIC_IN;
-		attributes.put("filename", filename);
+		attributes.put("fileDescriptor", fileDescriptor);
+		attributes.put("pid", pid);
+		attributes.put("tid", tid);
+		
 		scopeToCheck = new ScopeBasic("Generic JBC app IN scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
