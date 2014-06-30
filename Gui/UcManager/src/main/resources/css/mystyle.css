@@ -1,0 +1,4 @@
+@CHARSET "UTF-8";
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #BDBDBD;
+}

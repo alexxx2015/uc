@@ -43,6 +43,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.gui.analysis.OffsetParameter;
 import de.tum.in.i22.uc.gui.analysis.OffsetTable;
 import de.tum.in.i22.uc.gui.analysis.StaticAnalysis;
@@ -365,10 +366,16 @@ public class UcManager extends Controller {
 				String[] s = flowsMap.get(flow);
 
 				String sink = id2SinkMap.get(flow);
+
 				param.put("sink", sink);
-				if (s.length > 0) {
-					param.put("source", id2SourceMap.get(s[0]));
+				String sources = "";
+				for (String source : s) {
+					sources += id2SourceMap.get(source)
+							+ Settings.getInstance().getJoanaInitDelimiter();
 				}
+				if (sources.length() > 0)
+					sources = sources.substring(0, sources.length() - 1);
+				param.put("source", sources);
 				IEvent initEvent = _messageFactory.createActualEvent(
 						"JoanaInitInfoFlow", param);
 				pdpClient.notifyEventSync(initEvent);
