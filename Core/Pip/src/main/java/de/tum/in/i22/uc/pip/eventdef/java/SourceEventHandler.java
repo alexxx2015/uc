@@ -21,13 +21,12 @@ public class SourceEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
-		// TODO Auto-generated method stub
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return update(EBehavior.INTRA, null);
 	}
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(delimiter, EScopeType.JBC_GENERIC_IN);
+		return buildScope(EScopeType.JBC_GENERIC_IN);
 	}
 	
 	
@@ -52,6 +51,8 @@ public class SourceEventHandler extends JavaEventHandler {
 				if ((direction.equals(EBehavior.IN))
 						|| (direction.equals(EBehavior.INTRAIN))) {
 
+					IScope os= _informationFlowModel.getOpenedScope(scope);
+					if (os!=null) scope=os;
 					IName scopeName = new NameBasic(scope.getId());
 					Set<IData> scopeData = _informationFlowModel.getData(scopeName);
 					

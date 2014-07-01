@@ -23,7 +23,7 @@ public class SinkEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(delimiter, EScopeType.JBC_GENERIC_OUT);
+		return buildScope(EScopeType.JBC_GENERIC_OUT);
 	}
 
 	
@@ -78,6 +78,8 @@ public class SinkEventHandler extends JavaEventHandler {
 
 				if ((direction.equals(EBehavior.OUT))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
+					IScope os= _informationFlowModel.getOpenedScope(scope);
+					if (os!=null) scope=os;
 					_informationFlowModel.addDataTransitively(srcData,
 							new NameBasic(scope.getId()));
 				}

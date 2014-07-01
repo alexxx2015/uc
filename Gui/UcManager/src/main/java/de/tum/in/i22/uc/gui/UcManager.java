@@ -91,10 +91,12 @@ public class UcManager extends Controller {
 		super(args);
 		this.clientFactory = new ThriftClientFactory();
 		if (this.clientFactory != null) {
+			int pmpPort=Settings.getInstance().getPmpListenerPort();
+			int pdpPort=Settings.getInstance().getPdpListenerPort();
 			this.pmpClient = this.clientFactory
-					.createPmp2PmpClient(new IPLocation("localhost", 21001));
+					.createPmp2PmpClient(new IPLocation("localhost", pmpPort));
 			this.pdpClient = this.clientFactory
-					.createPep2PdpClient(new IPLocation("localhost", 21003));
+					.createPep2PdpClient(new IPLocation("localhost", pdpPort));
 		}
 	}
 

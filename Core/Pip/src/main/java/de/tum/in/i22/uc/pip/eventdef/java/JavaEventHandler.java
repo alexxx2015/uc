@@ -28,8 +28,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _srcPrefix = "src_";
 	protected final String _snkPrefix = "snk_";
 
-	public String scopeName(String delimiter, String fileDescriptor, String pid) {
-		return delimiter.toUpperCase() + " generic scope for fileDescriptor " + fileDescriptor + " (pid "+pid+")";
+	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
+		return "Scope for generic "+ (type.equals(EScopeType.JBC_GENERIC_IN)? "source" : "sink") + " event with fileDescriptor + " + fileDescriptor + " (pid "+pid+")";
 	}
 
 	/*
@@ -80,7 +80,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	 * Auxiliary function to support the creation of a scope for sources and
 	 * sinks
 	 */
-	protected IScope buildScope(String delimiter, EScopeType type) {
+	protected IScope buildScope(EScopeType type) {
 		String fileDescriptor;
 //		String tid;
 		String pid;
@@ -93,7 +93,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			 return null;
 		}
 
-		String HRscope = scopeName(delimiter, fileDescriptor, pid);
+		String HRscope = scopeName(type, fileDescriptor, pid);
 
 		// create the new scope
 		Map<String, Object> attributes = new HashMap<String, Object>();

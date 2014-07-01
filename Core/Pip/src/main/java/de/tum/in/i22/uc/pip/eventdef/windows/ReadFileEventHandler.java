@@ -144,7 +144,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 		
 		if (existingScope != null) {
 			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
-			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
+			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
 		} else {
 			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
 		}
@@ -157,13 +157,13 @@ public class ReadFileEventHandler extends WindowsEvents {
 		attributes.put("pid", pid);
 //		attributes.put("tid", tid);
 		
-		scopeToCheck = new ScopeBasic("Generic JBC app IN scope", type,
+		scopeToCheck = new ScopeBasic("Generic JBC app inputing scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
 			_logger.debug("Test2 succeeded. Generic JBC App is reading file "
 					+ filename);
-			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
+			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
 		} else {
 			_logger.debug("Test2 failed. Generic JBC App is NOT reading file "
 					+ filename);

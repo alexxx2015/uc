@@ -221,7 +221,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_excelOcbName, "OfficeClipboard");
 		loadSetting(PROP_NAME_excelScbName, "SystemClipboard(Excel)");
 
-		loadSetting(PROP_NAME_joanaInitDelimiter, "|");
+		loadSetting(PROP_NAME_joanaInitDelimiter, "#");
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
