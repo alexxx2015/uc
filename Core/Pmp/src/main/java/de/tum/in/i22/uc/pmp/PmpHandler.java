@@ -327,8 +327,8 @@ public class PmpHandler extends PmpProcessor {
 	public IStatus deployPolicyRawXMLPmp(String xml) {
 		PolicyType policy = xmlToPolicy(xml);
 		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
-	}
-
+	} 
+ 
 	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {

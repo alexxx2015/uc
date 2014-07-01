@@ -55,7 +55,7 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 					throw new RuntimeException("sources cannot be empty");
 				String[] sourceArr = sources.split(Settings.getInstance()
 						.getJoanaInitDelimiter());
-				for (int i = 0; i > sourceArr.length; i++) {
+				for (int i = 0; i < sourceArr.length; i++) {
 					sourceArr[i] = pid + _otherDelim + _srcPrefix
 							+ _otherDelim + sourceArr[i];
 				}

@@ -44,6 +44,18 @@ public final class BasicInformationFlowModel implements
 		reset();
 	}
 
+	private void cleanUp() {
+		// FIXME: properly synchronize
+		if (_containerToDataMap != null) {
+			for (IContainer cont : _containerToDataMap.keySet()) {
+				Set<IData> dataSet = _containerToDataMap.get(cont);
+				if ((dataSet == null) || (dataSet.size() == 0)) {
+					remove(cont);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Resets the information flow model to its initial (empty) state.
 	 */

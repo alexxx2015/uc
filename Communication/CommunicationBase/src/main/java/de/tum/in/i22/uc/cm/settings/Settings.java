@@ -100,6 +100,8 @@ public class Settings extends SettingsLoader {
 	
 	private static final String PROP_NAME_joanaInitDelimiter = "joanaInitDelimiter";
 	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
+	
+	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
 
 	
 	private Settings() {
@@ -224,6 +226,8 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_joanaInitDelimiter, "#");
 		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
+		
+		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 		
 	}
 
@@ -514,6 +518,10 @@ public class Settings extends SettingsLoader {
 	
 	public String getJoanaPidPoiSeparator(){
 		return getValue(PROP_NAME_joanaPidPoiSeparator);
+	}
+
+	public int getCleanUpInterval(){
+		return getValue(PROP_NAME_cleanUpInterval);
 	}
 	
 }
