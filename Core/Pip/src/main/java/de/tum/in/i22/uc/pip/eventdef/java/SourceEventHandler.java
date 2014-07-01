@@ -13,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.SourceSinkName;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -35,11 +36,12 @@ public class SourceEventHandler extends JavaEventHandler {
 		try {
 			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
-
-			String sourceId = location + _javaIFDelim + signature;
+			int pid = Integer.valueOf(getParameterValue("PID"));
+			
+			String sourceId = pid+ _otherDelim + _srcPrefix+ _otherDelim + location + _javaIFDelim + signature;
 
 			if ((sourceId != null) && (!sourceId.equals(""))) {
-				IName srcName=new NameBasic("src_" + sourceId);
+				IName srcName=new SourceSinkName(sourceId);
 				IContainer srcCnt = _informationFlowModel
 						.getContainer(srcName);
 

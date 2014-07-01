@@ -11,6 +11,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
@@ -25,6 +26,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _paramOffset = "offset";
 
 	protected final String _javaIFDelim = ":";
+	protected final String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
 	protected final String _srcPrefix = "src_";
 	protected final String _snkPrefix = "snk_";
 

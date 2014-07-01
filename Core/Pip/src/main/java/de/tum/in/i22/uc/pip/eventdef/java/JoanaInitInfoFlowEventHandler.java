@@ -9,8 +9,8 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.SourceSinkName;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
@@ -34,8 +34,11 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		String type;
 		String offset;
 
+		int pid;
+
 		try {
 			type = getParameterValue(_paramType);
+			pid = Integer.valueOf(getParameterValue("PID"));
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -48,16 +51,23 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			try {
 				String sink = getParameterValue("sink");
 				String sources = getParameterValue("source");
-				if (sources==null) throw new RuntimeException("sources cannot be empty");
-				String[]sourceArr = sources.split(Settings.getInstance().getJoanaInitDelimiter());
-				iFlow.put(sink, sourceArr);				
+				if (sources == null)
+					throw new RuntimeException("sources cannot be empty");
+				String[] sourceArr = sources.split(Settings.getInstance()
+						.getJoanaInitDelimiter());
+				for (int i = 0; i > sourceArr.length; i++) {
+					sourceArr[i] = pid + _otherDelim + _srcPrefix
+							+ _otherDelim + sourceArr[i];
+				}
+
+				sink = pid + _otherDelim + _snkPrefix + _otherDelim + sink;
+				iFlow.put(sink, sourceArr);
 			} catch (ParameterNotFoundException e) {
 				_logger.error(e.getMessage());
 				return _messageFactory.createStatus(
 						EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 			}
 		} else {
-
 			try {
 				id = getParameterValue(_paramId);
 				signature = getParameterValue(_paramSignature);
@@ -69,7 +79,6 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 				return _messageFactory.createStatus(
 						EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 			}
-
 			String prefix = "";
 			if (type.toLowerCase().equals("source")) {
 				prefix = _srcPrefix;
@@ -92,9 +101,9 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 					signature + _javaIFDelim + parampos };
 
 			for (String infoCont : infoConts) {
-				infoCont = prefix + infoCont;
+				// infoCont = prefix + infoCont;
 				IContainer infoContId = _informationFlowModel
-						.getContainer(new NameBasic(infoCont));
+						.getContainer(new SourceSinkName(pid, prefix, infoCont));
 
 				_logger.debug("contID = " + infoContId);
 
@@ -102,21 +111,21 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 					IContainer signatureCont = _messageFactory
 							.createContainer();
 
-					_informationFlowModel.addName(new NameBasic(infoCont),
-							signatureCont);
+					_informationFlowModel.addName(new SourceSinkName(pid,
+							prefix, infoCont), signatureCont, true);
 				}
 				_logger.debug(_informationFlowModel.toString());
 			}
 
 			// Process alias relationship
-			IContainer sig = _informationFlowModel.getContainer(new NameBasic(
-					prefix + infoConts[0]));
+			IContainer sig = _informationFlowModel
+					.getContainer(new SourceSinkName(pid, prefix, infoConts[0]));
 			IContainer locSig = _informationFlowModel
-					.getContainer(new NameBasic(prefix + infoConts[1]));
+					.getContainer(new SourceSinkName(pid, prefix, infoConts[1]));
 			IContainer locSigPar = _informationFlowModel
-					.getContainer(new NameBasic(prefix + infoConts[2]));
+					.getContainer(new SourceSinkName(pid, prefix, infoConts[2]));
 			IContainer sigPar = _informationFlowModel
-					.getContainer(new NameBasic(prefix + infoConts[3]));
+					.getContainer(new SourceSinkName(pid, prefix, infoConts[3]));
 
 			if (type.toLowerCase().equals("source")) {
 				_informationFlowModel.addAlias(sig, locSig);
