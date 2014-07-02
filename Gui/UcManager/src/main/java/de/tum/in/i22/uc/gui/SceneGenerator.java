@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.gui;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -25,13 +27,18 @@ public class SceneGenerator {
 	protected Button btn_start;
 	protected Button btn_stop;
 	
+	protected Button btn_deployPolicy;
+	protected Button btn_refreshPip;
+	
+	protected TabPane tabpane_center;
+	
 
 	public Node generateTop() {
 		HBox hb = new HBox();
 		hb.setSpacing(5.0);
 		hb.setPadding(new Insets(10, 10, 10, 10));
-		btn_start = new Button("Start Usage Control");
-		btn_start.setOnMouseClicked(new EventHandler<Event>() {
+		this.btn_start = new Button("Start Usage Control");
+		this.btn_start.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event arg0) {
@@ -41,14 +48,22 @@ public class SceneGenerator {
 		});
 		hb.getChildren().add(btn_start);
 
-		btn_stop = new Button("Stop Usage Control");
-		btn_stop.setDisable(true);
+		this.btn_stop = new Button("Stop Usage Control");
+		this.btn_stop.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				controller.stopUc();
+			}
+			
+		});
 		hb.getChildren().add(btn_stop);
 		return hb;
 	}
 
 	public Node generateCenter() {
-		TabPane tabPane = new TabPane();
+		this.tabpane_center = new TabPane();
 
 		Tab pdpTab = new Tab();
 		pdpTab.setClosable(false);
@@ -60,16 +75,16 @@ public class SceneGenerator {
 		pipTab.setText("PIP");
 		pipTab.setContent(generatePipTab());
 
-		tabPane.getTabs().addAll(pdpTab, pipTab);
-		return tabPane;
+		this.tabpane_center.getTabs().addAll(pdpTab, pipTab);
+		return this.tabpane_center;
 	}
 
 	private Node generatePipTab() {
 		AnchorPane anchorpane = new AnchorPane();
 
-		Button btn = new Button("Refresh");
-		AnchorPane.setTopAnchor(btn, 10.0);
-		AnchorPane.setLeftAnchor(btn, 10.0);
+		this.btn_refreshPip = new Button("Refresh");
+		AnchorPane.setTopAnchor(this.btn_refreshPip, 10.0);
+		AnchorPane.setLeftAnchor(this.btn_refreshPip, 10.0);
 
 		TextArea ta = new TextArea();
 		AnchorPane.setTopAnchor(ta, 35.0);
@@ -77,18 +92,18 @@ public class SceneGenerator {
 		AnchorPane.setBottomAnchor(ta, 10.0);
 		AnchorPane.setRightAnchor(ta, 10.0);
 
-		anchorpane.getChildren().addAll(btn, ta);
+		anchorpane.getChildren().addAll(this.btn_refreshPip, ta);
 
 		return anchorpane;
 	}
 
-	private static Node generatePdpTab() {
+	private Node generatePdpTab() {
 		AnchorPane anchorPane = new AnchorPane();
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 10, 10, 10));
 		vbox.setSpacing(5);
-		Button btn = new Button("Deploy Policy");
-		btn.setOnMouseClicked(new EventHandler<Event>() {
+		this.btn_deployPolicy = new Button("Deploy Policy");
+		this.btn_deployPolicy.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event arg0) {
@@ -96,19 +111,32 @@ public class SceneGenerator {
 
 				FileChooser fc = new FileChooser();
 				fc.setTitle("Choose Policy");
+				fc.setInitialDirectory(new File("/home/alex/Policies"));
 				File f = fc.showOpenDialog(SceneGenerator.stage);
+				controller.deployMechanisms(f);
 			}
 		});
-		vbox.getChildren().add(btn);
-
-		TableView tv = new TableView();
-		tv.setPrefHeight(100);
-		TableColumn policyName = new TableColumn("Policy Name");
-		TableColumn mechanismName = new TableColumn("Mechanism Name");
+		vbox.getChildren().add(this.btn_deployPolicy);
+		
+		Map<String, List<String>> deployedMech = controller.getDeployedMechanisms();
+		
+		TableView<Map<String,List<String>>> tv = new TableView<Map<String,List<String>>>();
+		TableColumn<Map<String,List<String>>,String> policyName = new TableColumn<Map<String,List<String>>,String>("Policy Name");
+		
+		TableColumn<Map<String,List<String>>,String> mechanismName = new TableColumn<Map<String,List<String>>,String>("Mechanism Name");
 		tv.getColumns().add(policyName);
 		tv.getColumns().add(mechanismName);
 		vbox.getChildren().add(tv);
 
 		return vbox;
+	}
+
+	
+	protected void switchGuiCmp(boolean p){
+		this.btn_deployPolicy.setDisable(!p);
+		this.btn_refreshPip.setDisable(!p);		
+		this.btn_stop.setDisable(!p);
+		this.tabpane_center.setDisable(!p);
+		this.btn_start.setDisable(p);
 	}
 }
