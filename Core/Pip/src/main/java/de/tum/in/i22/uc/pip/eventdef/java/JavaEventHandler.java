@@ -89,7 +89,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		try {
 			fileDescriptor = getParameterValue("fileDescriptor");
 //			tid = getParameterValue("ThreadId");
-			pid = getParameterValue("Pid");
+			pid = getParameterValue("PID");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			 return null;
