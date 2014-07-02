@@ -1,20 +1,8 @@
 package de.tum.in.i22.uc.pip.eventdef.windows;
 
-/***
- * FIXME
- * TODO
- * 
- * THIS FILE IS IN THE WRONG PACKAGE.
- * 
- * 
- * TO BE FIXED AS SOON AS TOBIAS ADDS THE "PEP" PARAMETER TO HIS UC4WIN STUFF
- * 
- * 
- * 
- * 
- */
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
@@ -29,10 +17,15 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class SendEventHandler extends WindowsEvents {
+public class RecvEventHandler extends WindowsEvents {
 
-	public SendEventHandler() {
+	public RecvEventHandler() {
 		super();
+	}
+
+	@Override
+	protected IStatus update() {
+		return update(EBehavior.INTRA, null);
 	}
 
 	@Override
@@ -53,21 +46,23 @@ public class SendEventHandler extends WindowsEvents {
 
 		IContainer processContainer = null;
 		IContainer socketContainer = null;
+		Set<IContainer> transitiveReflexiveClosure = null;
+
+		if (direction.equals(EBehavior.INTRA) || direction.equals(EBehavior.IN)
+				|| direction.equals(EBehavior.INTRAIN)) {
+			processContainer = instantiateProcess(pidStr, processName);
+			transitiveReflexiveClosure = _informationFlowModel
+					.getAliasTransitiveReflexiveClosure(processContainer);
+
+		}
 
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.OUT)
 				|| direction.equals(EBehavior.INTRAOUT)) {
-			processContainer = instantiateProcess(pidStr, processName);
-		}
-
-		if (direction.equals(EBehavior.INTRA) || direction.equals(EBehavior.IN)
-				|| direction.equals(EBehavior.INTRAIN)) {
 			socketContainer = _informationFlowModel.getContainer(new NameBasic(
 					socketHandle));
 
 			// check if container for filename exists and create new container
-			// if
-			// not
 			if (socketContainer == null) {
 				socketContainer = _messageFactory.createContainer();
 				_informationFlowModel.addName(new NameBasic(socketHandle),
@@ -78,38 +73,38 @@ public class SendEventHandler extends WindowsEvents {
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.INTRAIN)
 				|| direction.equals(EBehavior.INTRAOUT)) {
-			_informationFlowModel.addData(
-					_informationFlowModel.getData(processContainer),
-					socketContainer);
+			// add data to transitive reflexive closure of process container
+			Set<IData> dataSet = _informationFlowModel.getData(socketContainer);
+			for (IContainer tempContainer : transitiveReflexiveClosure) {
+				_informationFlowModel.addData(dataSet, tempContainer);
+			}
 		}
 
+
 		if (direction.equals(EBehavior.INTRAIN)
-				|| direction.equals(EBehavior.IN)) {
-			_informationFlowModel
-					.addData(_informationFlowModel.getData(new NameBasic(scope
-							.getId())), socketContainer);
+				|| direction.equals(EBehavior.IN)){
+			Set<IData> dataSet = _informationFlowModel.getData(new NameBasic(
+					scope.getId()));
+			for (IContainer tempContainer : transitiveReflexiveClosure) {
+				_informationFlowModel.addData(dataSet, tempContainer);
+			}
 		}
 
 		if (direction.equals(EBehavior.INTRAOUT)
-				|| direction.equals(EBehavior.OUT)) {
-			IContainer dest = _informationFlowModel.getContainer(new NameBasic(
-					scope.getId()));
-			_informationFlowModel.addData(
-					_informationFlowModel.getData(processContainer), dest);
+				|| direction.equals(EBehavior.OUT)){
+			Set<IData> dataSet = _informationFlowModel.getData(socketContainer);
+			IContainer intermediateCont = _informationFlowModel.getContainer(new NameBasic(scope.getId()));
+			_informationFlowModel.addData(dataSet, intermediateCont);
 		}
-
+		
 		return _messageFactory.createStatus(EStatus.OKAY);
-
 	}
 
-	@Override
-	protected IStatus update() {
-		return update(EBehavior.INTRA, null);
-	}
-
+	
+	
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
-		_logger.debug("XBehav function of ReadFile");
+		_logger.debug("XBehav function of Recv");
 		String socketHandle = null;
 		String pid = null;
 		
@@ -117,7 +112,7 @@ public class SendEventHandler extends WindowsEvents {
 			socketHandle = getParameterValue("SocketHandle");
 			pid = getParameterValue("PID");
 		} catch (ParameterNotFoundException e) {
-			_logger.error("Error parsing parameters of WriteFile event. falling back to default INTRA layer behavior"
+			_logger.error("Error parsing parameters of Recv event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
 			return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 		}
@@ -128,21 +123,21 @@ public class SendEventHandler extends WindowsEvents {
 		EScopeType type;
 		
 
-		// TEST : GENERIC JBC APP WRITING TO THIS SOCKET?
-		// If so behave as IN
+		// TEST : GENERIC JBC APP READING FROM THIS SOCKET?
+		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_OUT;
+		type = EScopeType.JBC_GENERIC_IN;
 		attributes.put("fileDescriptor", socketHandle);
 		attributes.put("pid", pid);
-		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,
+		scopeToCheck = new ScopeBasic("Generic JBC app IN scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. Generic JBC App is writing to socket "
+			_logger.debug("Test2 succeeded. Generic JBC App is reading from socket "
 					+ socketHandle);
-			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
+			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
 		} else {
-			_logger.debug("Test2 failed. Generic JBC App is NOT writing to socket "
+			_logger.debug("Test2 failed. Generic JBC App is NOT reading from socket "
 					+ socketHandle);
 		}
 
@@ -152,5 +147,8 @@ public class SendEventHandler extends WindowsEvents {
 
 		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 	}
-
+	
+	
+	
+	
 }

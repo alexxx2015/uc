@@ -116,7 +116,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 //		String tid;
 		String processName;
 
-		_logger.debug("XBehav function of ReadFile");
+		_logger.debug("XBehav function of WriteFile");
 
 		try {
 			filename = getParameterValue("InFileName");
