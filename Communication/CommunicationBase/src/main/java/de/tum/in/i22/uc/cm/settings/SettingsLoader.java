@@ -11,21 +11,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SettingsLoader {
-	private static final Logger _logger = LoggerFactory.getLogger(SettingsLoader.class);
+	private static final Logger _logger = LoggerFactory
+			.getLogger(SettingsLoader.class);
 
 	protected Map<String, Entry<?>> _settings;
 
 	protected Properties _props;
 
 	/**
-	 * Tries to load <code>propertiesFileName</code> from the directory where the jar file is executed.
-	 * If the file is not present there, it will be loaded from the jar file itself.
-	 * This enables to easily override default properties which are specified in the file which
-	 * is placed in the resource folder in the jar.
-	 *
-	 * @param propertiesFileName Name of the properties file to be loaded.
+	 * Tries to load <code>propertiesFileName</code> from the directory where
+	 * the jar file is executed. If the file is not present there, it will be
+	 * loaded from the jar file itself. This enables to easily override default
+	 * properties which are specified in the file which is placed in the
+	 * resource folder in the jar.
+	 * 
+	 * @param propertiesFileName
+	 *            Name of the properties file to be loaded.
 	 * @return Properties object with loaded properties.
-	 * @throws IOException In case the file cannot be loaded.
+	 * @throws IOException
+	 *             In case the file cannot be loaded.
 	 */
 	void initProperties(String propertiesFileName) throws IOException {
 		_logger.debug("Loading properties file: " + propertiesFileName);
@@ -36,19 +40,30 @@ public class SettingsLoader {
 		try {
 			file = new File(propertiesFileName);
 			fileFound = file.exists();
-			_logger.debug("Searching properties file " + propertiesFileName + " ... " + (fileFound ? "Found" : "Not found") + ".");
+			_logger.debug("Searching properties file " + propertiesFileName
+					+ " ... " + (fileFound ? "Found" : "Not found") + ".");
 
 			if (!fileFound) {
 				file = new File(new File("."), propertiesFileName);
 				fileFound = file.exists();
-				_logger.debug("Searching properties file " + propertiesFileName	+ " in jar parent directory ... "  + (fileFound ? "Found" : "Not found") + ".");
+				_logger.debug("Searching properties file " + propertiesFileName
+						+ " in jar parent directory ... "
+						+ (fileFound ? "Found" : "Not found") + ".");
 			}
 
 			if (!fileFound) {
-				_logger.debug("Searching properties file " + propertiesFileName	+ " in resources ... ");
-				is = SettingsLoader.class.getClassLoader().getResourceAsStream(propertiesFileName);
+				_logger.debug("Searching properties file " + propertiesFileName
+						+ " in resources ... ");
+				ClassLoader cl = SettingsLoader.class.getClassLoader();
+				if (cl == null) {
+					System.out.println("Classload is null");
+					_logger.error("CLassloader is null");
+				} else{
+					System.out.println("Classload is not null");
+					is = SettingsLoader.class.getClassLoader()
+							.getResourceAsStream(propertiesFileName);
+				}
 			}
-
 
 			if (fileFound && is == null) {
 				is = new FileInputStream(file);
@@ -62,7 +77,8 @@ public class SettingsLoader {
 			_props = new Properties();
 			// load all the properties from this file
 			_props.load(is);
-			_logger.debug("Properties file '" + propertiesFileName + "' loaded.");
+			_logger.debug("Properties file '" + propertiesFileName
+					+ "' loaded.");
 
 		} finally {
 			if (is != null) {
@@ -70,21 +86,26 @@ public class SettingsLoader {
 				try {
 					is.close();
 				} catch (IOException e) {
-					_logger.error("Failed to close input stream for properties file.", e);
+					_logger.error(
+							"Failed to close input stream for properties file.",
+							e);
 				}
 			}
 		}
 	}
 
-	protected <T extends Object> T loadSettingFinalize(boolean success, String propName, T loadedValue, T defaultValue) {
-		T returnValue=null;
+	protected <T extends Object> T loadSettingFinalize(boolean success,
+			String propName, T loadedValue, T defaultValue) {
+		T returnValue = null;
 		if (success) {
-			_logger.info("Property [" + propName + "] loaded. Value: [" + loadedValue + "].");
-			returnValue=loadedValue;
-		}
-		else {
-			_logger.warn("Property [" + propName + "] not found. Using default value [" + defaultValue + "].");
-			returnValue=defaultValue;
+			_logger.info("Property [" + propName + "] loaded. Value: ["
+					+ loadedValue + "].");
+			returnValue = loadedValue;
+		} else {
+			_logger.warn("Property [" + propName
+					+ "] not found. Using default value [" + defaultValue
+					+ "].");
+			returnValue = defaultValue;
 		}
 		_settings.put(propName, putValue(returnValue));
 		return returnValue;
@@ -97,8 +118,7 @@ public class SettingsLoader {
 
 		try {
 			loadedValue = Integer.valueOf((String) _props.get(propName));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			success = false;
 		}
 
@@ -115,8 +135,8 @@ public class SettingsLoader {
 			if (loadedValue != null) {
 				success = true;
 			}
+		} catch (Exception e) {
 		}
-		catch (Exception e) { }
 
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
@@ -132,8 +152,8 @@ public class SettingsLoader {
 				loadedValue = Boolean.valueOf(s);
 				success = true;
 			}
+		} catch (Exception e) {
 		}
-		catch (Exception e) {	}
 
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
@@ -148,12 +168,12 @@ public class SettingsLoader {
 
 	protected <T> T getValue(String propName) {
 		@SuppressWarnings("unchecked")
-		Entry<T> e = (Entry<T>)  _settings.get(propName);
-		if (e==null) return null;
+		Entry<T> e = (Entry<T>) _settings.get(propName);
+		if (e == null)
+			return null;
 		return e.getValue();
 	}
 
-	
 	protected class Entry<T> {
 		private Class<T> _type;
 		private T _value;
@@ -173,7 +193,5 @@ public class SettingsLoader {
 		}
 
 	}
-
-
 
 }

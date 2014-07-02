@@ -169,33 +169,60 @@ public class StaticAnalysis {
 				// difference between the first condition (>2)
 				// and the second condition (!=2)
 
-				String[] st = Pattern.compile(Pattern.quote("-->")).split(
-						location);
-				if (st.length > 2)
-					throw new SAXException("Invalid location specified for "
-							+ setName + " " + (s + 1));
+//				String[] st = Pattern.compile(Pattern.quote("-->")).split(
+//						location);
+//				if (st.length > 2)
+//					throw new SAXException("Invalid location specified for "
+//							+ setName + " " + (s + 1));
+//
+//				String[] st2 = st[0].split(":");
+//				if (st2.length != 2)
+//					throw new SAXException("Invalid location specified for "
+//							+ setName + " " + (s + 1));
+//
+//				String fullyQualifiedName = st2[0];
+//				int offset = Integer.parseInt(st2[1]);
+//				int parameter;
+//				if (st.length > 1)
+//					if (st[1].toLowerCase().equals("exit"))
+//						parameter = -1;
+//					else
+//						parameter = Integer.parseInt(st[1].substring(1)); // /string
+//																			// here
+//																			// is
+//																			// supposed
+//																			// to
+//																			// be
+//																			// pN
+//				else
+//					parameter = 0;
+				
+				NodeList paramList = firstSetElement
+						.getElementsByTagName("param");
+				Element paramElem = (Element) paramList.item(0);
+				String paramIdx = "";
+				if (paramElem != null) {
+					paramIdx = paramElem.getAttribute("index");
+				}
 
-				String[] st2 = st[0].split(":");
+				// String[] st =
+				// Pattern.compile(Pattern.quote("-->")).split(location);
+				// if (st.length > 2)
+				// throw new SAXException("Invalid location specified for "+
+				// setName + " " + (s + 1));
+
+				// String[] st2 = st[0].split(":");
+				String[] st2 = location.split(":");
 				if (st2.length != 2)
 					throw new SAXException("Invalid location specified for "
 							+ setName + " " + (s + 1));
 
 				String fullyQualifiedName = st2[0];
 				int offset = Integer.parseInt(st2[1]);
-				int parameter;
-				if (st.length > 1)
-					if (st[1].toLowerCase().equals("exit"))
-						parameter = -1;
-					else
-						parameter = Integer.parseInt(st[1].substring(1)); // /string
-																			// here
-																			// is
-																			// supposed
-																			// to
-																			// be
-																			// pN
-				else
-					parameter = 0;
+				int parameter = 0;
+				if (!"".equals(paramIdx)) {
+					parameter = Integer.parseInt(paramIdx);
+				}
 
 				// check if an offest table for the current fqn exists,
 				// otherwise create it
@@ -263,8 +290,8 @@ public class StaticAnalysis {
 				for (int i = 0; i < nl.getLength(); i++) {
 					Node e = nl.item(i);
 					// if (e.getNodeType()==Node.TEXT_NODE){
-					sources.add(e.getTextContent());
-					System.out.print(e.getTextContent() + ", ");
+					sources.add(e.getAttributes().getNamedItem("id").getNodeValue());
+					System.out.print(e.getAttributes().getNamedItem("id").getNodeValue() + ", ");
 					totalSets++;
 					// }
 				}

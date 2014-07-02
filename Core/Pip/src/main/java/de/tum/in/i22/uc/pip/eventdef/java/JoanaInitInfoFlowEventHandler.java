@@ -4,7 +4,6 @@ package de.tum.in.i22.uc.pip.eventdef.java;
  * This class initializes all sinks and sources according to the joana output
  */
 
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
