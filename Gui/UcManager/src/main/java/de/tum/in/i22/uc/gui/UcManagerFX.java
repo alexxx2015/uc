@@ -31,6 +31,8 @@ public class UcManagerFX extends Application {
 		bp.setTop(this.controller.getSceneGenerator().generateTop());
 
 		bp.setCenter(this.controller.getSceneGenerator().generateCenter());
+		
+		bp.setBottom(this.controller.getSceneGenerator().generateBottom());
 		Scene s = new Scene(bp, 500, 500);
 		s.getStylesheets().add("css/mystyle.css");
 		stage.setScene(s);

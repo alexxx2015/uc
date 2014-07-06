@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -56,6 +57,8 @@ public class SceneGenerator {
 	protected Thread autoRefreshThread;
 	protected boolean autoRefresh = false;
 	protected String interval = "1";
+	
+	protected Label lab_info;
 
 	protected TableView<DeployedMechanism> tv;
 
@@ -114,6 +117,8 @@ public class SceneGenerator {
 				if (pipTab.isSelected()) {
 					System.out.println("ddd");
 					controller.refreshPipState();
+
+					lab_info.setText("PIP refreshed");
 				}
 			}
 		});
@@ -136,6 +141,7 @@ public class SceneGenerator {
 			public void handle(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				controller.sendCleanupEvent();
+				lab_info.setText("PIP cleared");
 			}
 		});
 		hbox.getChildren().add(btn_clearPip);
@@ -362,5 +368,15 @@ public class SceneGenerator {
 		this.btn_stop.setDisable(!p);
 		this.tabpane_center.setDisable(!p);
 		this.btn_start.setDisable(p);
+	}
+	
+	public Node generateBottom(){
+		HBox hbox = new HBox();
+		hbox.setSpacing(5);
+		hbox.setPadding(new Insets(10,10,10,10));
+		this.lab_info = new Label();
+		hbox.getChildren().add(this.lab_info);
+		
+		return hbox;
 	}
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -68,6 +70,11 @@ public class GuiController extends Controller {
 					this.setRunning(true);
 					this.sceneGenerator.switchGuiCmp(true);
 					this.refreshPipState();
+					Platform.runLater(new Runnable() {
+						public void run() {
+							sceneGenerator.lab_info.setText("PDP running");
+						}
+					});
 				}
 			}
 		}
@@ -80,6 +87,11 @@ public class GuiController extends Controller {
 				this.sceneGenerator.switchGuiCmp(false);
 				sceneGenerator.autoRefresh = false;
 				stop();
+				Platform.runLater(new Runnable() {
+					public void run() {
+						sceneGenerator.lab_info.setText("PDP stoppded");
+					}
+				});
 			}
 		}
 	}
