@@ -69,7 +69,11 @@ public class SceneGenerator {
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				controller.startUc();
+				new Thread() {
+					public void run() {
+						controller.startUc();
+					}
+				}.start();
 			}
 		});
 		hb.getChildren().add(btn_start);
@@ -80,7 +84,7 @@ public class SceneGenerator {
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				controller.stopUc();
+				new Thread(){public void run(){controller.stopUc();}}.start();
 			}
 
 		});
@@ -107,7 +111,7 @@ public class SceneGenerator {
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				if(pipTab.isSelected()){
+				if (pipTab.isSelected()) {
 					System.out.println("ddd");
 					controller.refreshPipState();
 				}
@@ -123,7 +127,7 @@ public class SceneGenerator {
 
 		HBox hbox = new HBox();
 		hbox.setSpacing(5);
-		
+
 		Button btn_clearPip = new Button("Clear PIP");
 		btn_clearPip.setMaxHeight(30);
 		btn_clearPip.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -135,7 +139,7 @@ public class SceneGenerator {
 			}
 		});
 		hbox.getChildren().add(btn_clearPip);
-		
+
 		this.btn_refreshPip = new Button("Manual refresh");
 		this.btn_refreshPip.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -265,6 +269,7 @@ public class SceneGenerator {
 		vbox.setPadding(new Insets(10, 10, 10, 10));
 		vbox.setSpacing(5);
 		this.btn_deployPolicy = new Button("Deploy Policy");
+		this.btn_deployPolicy.setMinHeight(30);
 		this.btn_deployPolicy.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
@@ -281,7 +286,6 @@ public class SceneGenerator {
 				}
 			}
 		});
-		vbox.getChildren().add(this.btn_deployPolicy);
 
 		// Map<String, List<String>> deployedMech =
 		// controller.getDeployedMechanisms();
@@ -304,7 +308,7 @@ public class SceneGenerator {
 
 		this.tv.setContextMenu(this.createPolicyManagementContextMenu());
 
-		vbox.getChildren().add(this.tv);
+		vbox.getChildren().addAll(this.btn_deployPolicy,this.tv);
 
 		return vbox;
 	}

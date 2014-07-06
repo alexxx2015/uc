@@ -62,22 +62,25 @@ public class GuiController extends Controller {
 	}
 
 	protected void startUc() {
-
-		if (!this.isRunning() && !isStarted()) {
-			this.setRunning(true);
-			this.sceneGenerator.switchGuiCmp(true);
-			if(start()){
-				this.refreshPipState();
+		synchronized (this) {
+			if (!this.isRunning() && !isStarted()) {
+				if (start()) {
+					this.setRunning(true);
+					this.sceneGenerator.switchGuiCmp(true);
+					this.refreshPipState();
+				}
 			}
 		}
 	}
 
 	protected void stopUc() {
-		if (this.isRunning() && isStarted()) {
-			this.setRunning(false);
-			this.sceneGenerator.switchGuiCmp(false);
-			sceneGenerator.autoRefresh = false;
-			stop();
+		synchronized (this) {
+			if (this.isRunning() && isStarted()) {
+				this.setRunning(false);
+				this.sceneGenerator.switchGuiCmp(false);
+				sceneGenerator.autoRefresh = false;
+				stop();
+			}
 		}
 	}
 
@@ -120,10 +123,11 @@ public class GuiController extends Controller {
 			IEvent initEvent = _messageFactory.createActualEvent(
 					"SchemaCleanup", null);
 			IResponse resp = pdpClient.notifyEventSync(initEvent);
-			if(resp.getAuthorizationAction().getEStatus().equals(EStatus.ALLOW)){
+			if (resp.getAuthorizationAction().getEStatus()
+					.equals(EStatus.ALLOW)) {
 				this.refreshPipState();
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
