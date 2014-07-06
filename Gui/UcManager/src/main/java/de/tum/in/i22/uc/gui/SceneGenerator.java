@@ -1,37 +1,63 @@
 package de.tum.in.i22.uc.gui;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class SceneGenerator {
 	protected static Stage stage;
 	protected static GuiController controller;
-	
+
 	protected Button btn_start;
 	protected Button btn_stop;
-	
 	protected Button btn_deployPolicy;
+
 	protected Button btn_refreshPip;
-	
+	protected Button btn_refreshSettings;
+	protected TextArea txta_pipState;
+
 	protected TabPane tabpane_center;
-	
+
+	protected Thread autoRefreshThread;
+	protected boolean autoRefresh = false;
+	protected String interval = "1";
+
+	protected TableView<DeployedMechanism> tv;
 
 	public Node generateTop() {
 		HBox hb = new HBox();
@@ -56,7 +82,7 @@ public class SceneGenerator {
 				// TODO Auto-generated method stub
 				controller.stopUc();
 			}
-			
+
 		});
 		hb.getChildren().add(btn_stop);
 		return hb;
@@ -68,12 +94,25 @@ public class SceneGenerator {
 		Tab pdpTab = new Tab();
 		pdpTab.setClosable(false);
 		pdpTab.setText("PDP");
+		pdpTab.setId("PDPTAB");
 		pdpTab.setContent(generatePdpTab());
 
-		Tab pipTab = new Tab();
+		final Tab pipTab = new Tab();
 		pipTab.setClosable(false);
 		pipTab.setText("PIP");
+		pipTab.setId("PIPTAB");
 		pipTab.setContent(generatePipTab());
+		pipTab.setOnSelectionChanged(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				if(pipTab.isSelected()){
+					System.out.println("ddd");
+					controller.refreshPipState();
+				}
+			}
+		});
 
 		this.tabpane_center.getTabs().addAll(pdpTab, pipTab);
 		return this.tabpane_center;
@@ -82,19 +121,142 @@ public class SceneGenerator {
 	private Node generatePipTab() {
 		AnchorPane anchorpane = new AnchorPane();
 
-		this.btn_refreshPip = new Button("Refresh");
-		AnchorPane.setTopAnchor(this.btn_refreshPip, 10.0);
-		AnchorPane.setLeftAnchor(this.btn_refreshPip, 10.0);
+		HBox hbox = new HBox();
+		hbox.setSpacing(5);
+		
+		Button btn_clearPip = new Button("Clear PIP");
+		btn_clearPip.setMaxHeight(30);
+		btn_clearPip.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-		TextArea ta = new TextArea();
-		AnchorPane.setTopAnchor(ta, 35.0);
-		AnchorPane.setLeftAnchor(ta, 10.0);
-		AnchorPane.setBottomAnchor(ta, 10.0);
-		AnchorPane.setRightAnchor(ta, 10.0);
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				controller.sendCleanupEvent();
+			}
+		});
+		hbox.getChildren().add(btn_clearPip);
+		
+		this.btn_refreshPip = new Button("Manual refresh");
+		this.btn_refreshPip.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-		anchorpane.getChildren().addAll(this.btn_refreshPip, ta);
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				controller.refreshPipState();
+			}
+		});
+		this.btn_refreshPip.setMinHeight(30);
+		hbox.getChildren().add(this.btn_refreshPip);
+
+		Image btnImg = new Image(getClass().getResourceAsStream(
+				"/img/settings.png"));
+		ImageView iv = new ImageView(btnImg);
+		iv.setFitWidth(25);
+		iv.setFitHeight(25);
+		iv.setId("iv1");
+		this.btn_refreshSettings = new Button("", iv);
+		this.btn_refreshSettings.setMaxHeight(25);
+		this.btn_refreshSettings
+				.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+					@Override
+					public void handle(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						showRefreshConfigPanel(stage);
+					}
+				});
+		this.btn_refreshSettings
+				.setTooltip(new Tooltip("Refresh configuration"));
+		hbox.getChildren().add(this.btn_refreshSettings);
+		AnchorPane.setTopAnchor(hbox, 10.0);
+		AnchorPane.setLeftAnchor(hbox, 10.0);
+
+		this.txta_pipState = new TextArea();
+		AnchorPane.setTopAnchor(this.txta_pipState, 45.0);
+		AnchorPane.setLeftAnchor(this.txta_pipState, 10.0);
+		AnchorPane.setBottomAnchor(this.txta_pipState, 10.0);
+		AnchorPane.setRightAnchor(this.txta_pipState, 10.0);
+
+		anchorpane.getChildren().addAll(hbox, this.txta_pipState);
 
 		return anchorpane;
+	}
+
+	private void showRefreshConfigPanel(Window owner) {
+		final Stage dialog = new Stage();
+		dialog.initOwner(owner);
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.setTitle("Refresh configuration");
+		dialog.setResizable(false);
+
+		VBox vbox = new VBox();
+		vbox.setSpacing(5);
+		vbox.setPadding(new Insets(10, 10, 10, 10));
+
+		final Label lab = new Label("Interval in seconds");
+		final TextField tf = new TextField(interval);
+
+		final CheckBox cb = new CheckBox("Auto Refresh");
+		cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean arg1, Boolean arg2) {
+				// TODO Auto-generated method stub
+				if (arg2 == true) {
+					lab.setDisable(false);
+					tf.setDisable(false);
+				} else {
+					lab.setDisable(true);
+					tf.setDisable(true);
+				}
+			}
+		});
+
+		Button b = new Button("OK");
+		b.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				autoRefresh = cb.isSelected();
+				interval = tf.getText();
+				if (autoRefresh) {
+					autoRefreshThread = new Thread() {
+						public void run() {
+							while (autoRefresh) {
+								controller.refreshPipState();
+								try {
+									Thread.sleep(Integer.parseInt(interval) * 1000);
+								} catch (NumberFormatException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}
+					};
+					autoRefreshThread.start();
+				}
+				dialog.close();
+			}
+		});
+		vbox.getChildren().addAll(cb, lab, tf, b);
+
+		if (!autoRefresh) {
+			lab.setDisable(true);
+			tf.setDisable(true);
+			cb.setSelected(false);
+		} else {
+			cb.setSelected(true);
+		}
+
+		Scene dialogScene = new Scene(vbox, 150, 120);
+		dialog.setScene(dialogScene);
+		dialog.sizeToScene();
+		dialog.show();
 	}
 
 	private Node generatePdpTab() {
@@ -113,28 +275,86 @@ public class SceneGenerator {
 				fc.setTitle("Choose Policy");
 				fc.setInitialDirectory(new File("/home/alex/Policies"));
 				File f = fc.showOpenDialog(SceneGenerator.stage);
-				controller.deployMechanisms(f);
+				if (f != null) {
+					controller.deployPolicyURI(f.getAbsolutePath());
+					updateDeployedPolicies(controller.listMechanisms());
+				}
 			}
 		});
 		vbox.getChildren().add(this.btn_deployPolicy);
-		
-		Map<String, List<String>> deployedMech = controller.getDeployedMechanisms();
-		
-		TableView<Map<String,List<String>>> tv = new TableView<Map<String,List<String>>>();
-		TableColumn<Map<String,List<String>>,String> policyName = new TableColumn<Map<String,List<String>>,String>("Policy Name");
-		
-		TableColumn<Map<String,List<String>>,String> mechanismName = new TableColumn<Map<String,List<String>>,String>("Mechanism Name");
-		tv.getColumns().add(policyName);
-		tv.getColumns().add(mechanismName);
-		vbox.getChildren().add(tv);
+
+		// Map<String, List<String>> deployedMech =
+		// controller.getDeployedMechanisms();
+		this.tv = new TableView<DeployedMechanism>();
+		TableColumn<DeployedMechanism, String> policyName = new TableColumn<DeployedMechanism, String>(
+				"Policy Name");
+		policyName
+				.setCellValueFactory(new PropertyValueFactory<DeployedMechanism, String>(
+						"policy"));
+
+		TableColumn<DeployedMechanism, String> mechanismName = new TableColumn<DeployedMechanism, String>(
+				"Mechanism Name");
+		mechanismName
+				.setCellValueFactory(new PropertyValueFactory<DeployedMechanism, String>(
+						"mechanism"));
+
+		this.tv.getColumns().add(policyName);
+		this.tv.getColumns().add(mechanismName);
+		this.tv.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+		this.tv.setContextMenu(this.createPolicyManagementContextMenu());
+
+		vbox.getChildren().add(this.tv);
 
 		return vbox;
 	}
 
-	
-	protected void switchGuiCmp(boolean p){
+	private ContextMenu createPolicyManagementContextMenu() {
+		ContextMenu cm = new ContextMenu();
+
+		MenuItem mi1 = new MenuItem("Revoke policy");
+		mi1.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				DeployedMechanism dm = tv.getSelectionModel().getSelectedItem();
+				if (dm != null) {
+					String policy = tv.getSelectionModel().getSelectedItem()
+							.getPolicy();
+					String mechanism = tv.getSelectionModel().getSelectedItem()
+							.getMechanism();
+					controller.revokeMechanism(policy, mechanism);
+					updateDeployedPolicies(controller.listMechanisms());
+				}
+			}
+		});
+		cm.getItems().add(mi1);
+		return cm;
+	}
+
+	protected void updateDeployedPolicies(
+			Map<String, List<String>> deployedPolicies) {
+		Iterator<String> it = deployedPolicies.keySet().iterator();
+		ObservableList<DeployedMechanism> data = FXCollections
+				.observableArrayList();
+
+		while (it.hasNext()) {
+			String policy = it.next();
+			List<String> mechanisms = deployedPolicies.get(policy);
+			Iterator<String> itMech = mechanisms.iterator();
+			while (itMech.hasNext()) {
+				String mechanism = itMech.next();
+				DeployedMechanism dm = new DeployedMechanism(policy, mechanism);
+				data.add(dm);
+			}
+		}
+		this.tv.setItems(data);
+	}
+
+	protected void switchGuiCmp(boolean p) {
 		this.btn_deployPolicy.setDisable(!p);
-		this.btn_refreshPip.setDisable(!p);		
+		this.btn_refreshPip.setDisable(!p);
 		this.btn_stop.setDisable(!p);
 		this.tabpane_center.setDisable(!p);
 		this.btn_start.setDisable(p);

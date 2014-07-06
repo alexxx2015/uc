@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class UcMangerFX extends Application {
+public class UcManagerFX extends Application {
 	private GuiController controller;
 
 	public static void main(String[] args) {
@@ -46,6 +46,7 @@ public class UcMangerFX extends Application {
 	@Override
 	public void stop() {
 		this.controller.stopUc();
+		System.exit(0);
 	}
 
 }

@@ -1,17 +1,19 @@
 package de.tum.in.i22.uc.gui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javafx.application.Application;
 import de.tum.in.i22.uc.Controller;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.factories.IMessageFactory;
+import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -64,7 +66,9 @@ public class GuiController extends Controller {
 		if (!this.isRunning() && !isStarted()) {
 			this.setRunning(true);
 			this.sceneGenerator.switchGuiCmp(true);
-			start();
+			if(start()){
+				this.refreshPipState();
+			}
 		}
 	}
 
@@ -72,6 +76,7 @@ public class GuiController extends Controller {
 		if (this.isRunning() && isStarted()) {
 			this.setRunning(false);
 			this.sceneGenerator.switchGuiCmp(false);
+			sceneGenerator.autoRefresh = false;
 			stop();
 		}
 	}
@@ -82,22 +87,43 @@ public class GuiController extends Controller {
 		return null;
 	}
 
-	public void deployMechanisms(String file) {
-		this.deployMechanisms(new File(file));
+	public void refreshPipState() {
+
+		// Thread t = new Thread() {
+		// @Override
+		// public void run() {
+		// while (true) {
+		if (isRunning()) {
+			this.sceneGenerator.txta_pipState.setText(_requestHandler
+					.getIfModel());
+		}
+		// pipInfoLabel.setText("REFRESHED!");
+		// try {
+		// Thread.sleep(3000);
+		// } catch (InterruptedException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		//
+		// }
+		// }
+		// };
+		// t.start();
 	}
 
-	public void deployMechanisms(File file) {
+	protected void sendCleanupEvent() {
 		try {
-			this.pmpClient.connect();
-			StringBuilder policy = new StringBuilder();
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			String line;
-			while ((line = br.readLine()) != null){
-				policy.append(line);
+			pdpClient.connect();
+
+			IMessageFactory _messageFactory = MessageFactoryCreator
+					.createMessageFactory();
+			IEvent initEvent = _messageFactory.createActualEvent(
+					"SchemaCleanup", null);
+			IResponse resp = pdpClient.notifyEventSync(initEvent);
+			if(resp.getAuthorizationAction().getEStatus().equals(EStatus.ALLOW)){
+				this.refreshPipState();
 			}
-			this.pmpClient.deployPolicyRawXMLPmp(policy.toString());
-			// this.pmpClient.deployPolicyURIPmp(file.getAbsolutePath());
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
