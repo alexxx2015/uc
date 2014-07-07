@@ -232,9 +232,11 @@ public class SceneGenerator {
 				autoRefresh = cb.isSelected();
 				interval = tf.getText();
 				if (autoRefresh) {
+					if(autoRefreshThread != null)
+						autoRefreshThread.interrupt();
 					autoRefreshThread = new Thread() {
 						public void run() {
-							while (autoRefresh) {
+							while (autoRefresh || !isInterrupted()) {
 								controller.refreshPipState();
 								try {
 									Thread.sleep(Integer.parseInt(interval) * 1000);
