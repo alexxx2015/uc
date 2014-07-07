@@ -1,26 +1,23 @@
 package de.tum.in.i22.uc.gui;
 
-import java.util.Iterator;
-
 import javafx.application.Application;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class UcMangerFX extends Application {
+public class UcManagerFX extends Application {
 	private GuiController controller;
 
 	public static void main(String[] args) {
-		GuiController controller = new GuiController();
 		launch(args);
 	}
 
 	@Override
 	public void init() {
 		this.controller = new GuiController();
-		this.controller.setApplication(this);		
+		this.controller.setApplication(this);
 		SceneGenerator.controller = this.controller;
 	}
 
@@ -34,11 +31,24 @@ public class UcMangerFX extends Application {
 		bp.setTop(this.controller.getSceneGenerator().generateTop());
 
 		bp.setCenter(this.controller.getSceneGenerator().generateCenter());
+		
+		bp.setBottom(this.controller.getSceneGenerator().generateBottom());
 		Scene s = new Scene(bp, 500, 500);
 		s.getStylesheets().add("css/mystyle.css");
 		stage.setScene(s);
-		
+
+		// Pane root =
+		// FXMLLoader.load(getClass().getResource("/layout/main.fxml"));
+		// s = new Scene(root, 500, 500);
+		stage.setScene(s);
+		this.controller.getSceneGenerator().switchGuiCmp(false);
 		stage.show();
+	}
+
+	@Override
+	public void stop() {
+		this.controller.stopUc();
+		System.exit(0);
 	}
 
 }

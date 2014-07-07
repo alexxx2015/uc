@@ -2,3 +2,7 @@
 .tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: #BDBDBD;
 }
+
+.iv1{
+	-fx-border: 1px solid red;
+}
