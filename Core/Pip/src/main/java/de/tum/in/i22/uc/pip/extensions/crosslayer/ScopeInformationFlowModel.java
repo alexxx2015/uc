@@ -22,23 +22,28 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 
 /**
- * Visibility of this class and its methods has been developed carefully.
- * Access via {@link InformationFlowModelManager}.
- *
+ * Visibility of this class and its methods has been developed carefully. Access
+ * via {@link InformationFlowModelManager}.
+ * 
  * @author Florian Kelbert
- *
+ * 
  */
-public final class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
-	private static final Logger _logger = LoggerFactory.getLogger(ScopeInformationFlowModel.class);
-	
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#toString()
+public final class ScopeInformationFlowModel extends
+		InformationFlowModelExtension implements IScopeInformationFlowModel {
+	private static final Logger _logger = LoggerFactory
+			.getLogger(ScopeInformationFlowModel.class);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #toString()
 	 */
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_scopeSet", _scopeSet)
-				.toString();
+				.add("_scopeSet", _scopeSet).toString();
 	}
 
 	// list of currently opened scopes
@@ -47,15 +52,20 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 	// BACKUP TABLES FOR SIMULATION
 	private Set<IScope> _scopeSetBackup;
 
-	public ScopeInformationFlowModel(InformationFlowModelManager informationFlowModelManager) {
+	public ScopeInformationFlowModel(
+			InformationFlowModelManager informationFlowModelManager) {
 		super(informationFlowModelManager);
-		_scopeSet=new HashSet<IScope>();
-		_scopeSetBackup=null;
-		
+		_scopeSet = new HashSet<IScope>();
+		_scopeSetBackup = null;
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#reset()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #reset()
 	 */
 	@Override
 	public void reset() {
@@ -63,8 +73,12 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		_scopeSetBackup = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#push()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #push()
 	 */
 	@Override
 	public void push() {
@@ -75,8 +89,12 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#pop()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #pop()
 	 */
 	@Override
 	public void pop() {
@@ -85,74 +103,81 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		_scopeSetBackup = null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#openScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #openScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
 	@Override
 	public boolean openScope(IScope scope) {
 		assert (scope != null);
-		_ifModel.addName(new NameBasic(scope.getId()), new ContainerBasic());
-		return _scopeSet.add(scope);
+		IScope os = getOpenedScope(scope);
+		if (os == null) {
+			_ifModel.addName(new NameBasic(scope.getId()),
+					new ContainerBasic(), false);
+			return _scopeSet.add(scope);
+		} else
+			return _scopeSet.add(os);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#closeScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #closeScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
 	@Override
 	public boolean closeScope(IScope scope) {
 		assert (scope != null);
-		_ifModel.remove(_ifModel.getContainer(new NameBasic(scope.getId())));
-		return _scopeSet.remove(scope);
+		IScope os = getOpenedScope(scope);
+		if (os == null)
+			return false;
+		else {
+			_ifModel.remove(_ifModel.getContainer(new NameBasic(os.getId())));
+			return _scopeSet.remove(os);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#isScopeOpened(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #isScopeOpened(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
 	@Override
 	public boolean isScopeOpened(IScope scope) {
 		return _scopeSet.contains(scope);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#getOpenedScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #getOpenedScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
 	 */
 	@Override
 	public IScope getOpenedScope(IScope scope) {
-		// if at least one matching exists...
+		if (scope==null) return null;
 		if (isScopeOpened(scope)) {
-
-			// ...then clone the set...
-			Set<IScope> tmpSet = new HashSet<>(_scopeSet);
-
-			// ...remove it...
-			tmpSet.remove(scope);
-
-			// ..and check whether another one exists. If that is the case
-			// return null...
-			if (tmpSet.contains(scope))
-				return null;
-
-			// ..otherwise return the only matching from the original set.
 			for (IScope s : _scopeSet)
-				if (scope.equals(s))
-					return s;
-			// Note that we have to iterate until the matching is found again
-			// and return that element.
-			// This is due to our definition of equality.
-
-			// This line should never be reached. It is added so Eclipse does
-			// not complain about the lack of a return value
-			assert (false);
-			return null;
-
-		} else
-			return null;
+				//if a mathc is found return the existing one
+				if (scope.equals(s)) return s;
+		}
+		
+		return null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel#niceString()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
+	 * #niceString()
 	 */
 	@Override
 	public String niceString() {
@@ -162,8 +187,8 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		String arrow = " ---> ";
 
 		sb.append("  Scopes:" + nl);
-		if ((_scopeSet==null)||(_scopeSet.size()==0)){
-			sb.append("  Empty" + nl);
+		if ((_scopeSet == null) || (_scopeSet.size() == 0)) {
+			sb.append("Empty" + nl + nl);
 			return sb.toString();
 		}
 		boolean first = true;
@@ -199,26 +224,27 @@ public final class ScopeInformationFlowModel extends InformationFlowModelExtensi
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	private IEventHandler getEventHandler(IEvent event){
+
+	private IEventHandler getEventHandler(IEvent event) {
 		IEventHandler eventHandler;
 		try {
 			eventHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
-			_logger.error("Could not instantiate event handler for " + event + ", "
-							+ e.getMessage());
+			_logger.error("Could not instantiate event handler for " + event
+					+ ", " + e.getMessage());
 			return null;
 		}
 
 		if (eventHandler == null) {
-			_logger.error("Event handler for " + event + " is null. So null is returned");
+			_logger.error("Event handler for " + event
+					+ " is null. So null is returned");
 			return null;
 		}
 
 		eventHandler.setEvent(event);
 		eventHandler.setInformationFlowModel(_ifModel);
-		
+
 		return eventHandler;
 	}
-	
+
 }

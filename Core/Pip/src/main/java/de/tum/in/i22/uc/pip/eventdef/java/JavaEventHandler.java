@@ -11,12 +11,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
 public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
-	protected static Map<String, String> iFlow = new HashMap<String, String>();
+	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
 	protected final String _paramId = "id";
 	protected final String _paramSignature = "signature";
 	protected final String _paramLocation = "location";
@@ -25,11 +26,12 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _paramOffset = "offset";
 
 	protected final String _javaIFDelim = ":";
+	protected final String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
 	protected final String _srcPrefix = "src_";
 	protected final String _snkPrefix = "snk_";
 
-	public String scopeName(String delimiter, String filename) {
-		return delimiter.toUpperCase() + " generic scope for file " + filename;
+	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
+		return "Scope for generic "+ (type.equals(EScopeType.JBC_GENERIC_IN)? "source" : "sink") + " event with fileDescriptor + " + fileDescriptor + " (pid "+pid+")";
 	}
 
 	/*
@@ -80,23 +82,26 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	 * Auxiliary function to support the creation of a scope for sources and
 	 * sinks
 	 */
-	protected IScope buildScope(String delimiter, EScopeType type) {
-		String filename;
+	protected IScope buildScope(EScopeType type) {
+		String fileDescriptor;
+//		String tid;
+		String pid;
 		try {
-			filename = getParameterValue("filename");
+			fileDescriptor = getParameterValue("fileDescriptor");
+//			tid = getParameterValue("ThreadId");
+			pid = getParameterValue("Pid");
 		} catch (ParameterNotFoundException e) {
-		
-			// FIXME: get filename/file descriptor
-			// _logger.error(e.getMessage());
-			// return null;
-			filename = "C:\\Users\\user\\Dektop\\f1.txt";
+			_logger.error(e.getMessage());
+			 return null;
 		}
 
-		String HRscope = scopeName(delimiter, filename);
+		String HRscope = scopeName(type, fileDescriptor, pid);
 
 		// create the new scope
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("filename", filename);
+		attributes.put("fileDescriptor", fileDescriptor);
+//		attributes.put("tid", tid);
+		attributes.put("pid", pid);
 		return new ScopeBasic(HRscope, type, attributes);
 	}
 

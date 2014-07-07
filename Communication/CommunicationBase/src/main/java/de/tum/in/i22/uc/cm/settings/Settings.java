@@ -35,71 +35,71 @@ public class Settings extends SettingsLoader {
 
 	private static String _propertiesFile = "uc.properties";
 
-	private static final String PROP_NAME_pdpListenerPort = "pdpListenerPort";
-	private static final String PROP_NAME_pmpListenerPort = "pmpListenerPort";
-	private static final String PROP_NAME_pipListenerPort = "pipListenerPort";
-	private static final String PROP_NAME_anyListenerPort = "anyListenerPort";
+	public static final String PROP_NAME_pdpListenerPort = "pdpListenerPort";
+	public static final String PROP_NAME_pmpListenerPort = "pmpListenerPort";
+	public static final String PROP_NAME_pipListenerPort = "pipListenerPort";
+	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 
-	private static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
-	private static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
+	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
+	public static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
 
-	private static final String PROP_NAME_pdpLocation = "pdpLocation";
-	private static final String PROP_NAME_pipLocation = "pipLocation";
-	private static final String PROP_NAME_pmpLocation = "pmpLocation";
+	public static final String PROP_NAME_pdpLocation = "pdpLocation";
+	public static final String PROP_NAME_pipLocation = "pipLocation";
+	public static final String PROP_NAME_pmpLocation = "pmpLocation";
 
-	private static final String PROP_NAME_pipEnabledInformationFlowModels = "pipEnabledInformationFlowModels";
-	private static final String PROP_NAME_pipEventHandlerSuffix = "pipEventHandlerSuffix";
-	private static final String PROP_NAME_pipEventHandlerPackage = "pipEventHandlerPackage";
-	private static final String PROP_NAME_pipInitializerEvent = "pipInitializerEvent";
-	private static final String PROP_NAME_pipPersistenceDirectory = "pipPersistenceDirectory";
+	public static final String PROP_NAME_pipEnabledInformationFlowModels = "pipEnabledInformationFlowModels";
+	public static final String PROP_NAME_pipEventHandlerSuffix = "pipEventHandlerSuffix";
+	public static final String PROP_NAME_pipEventHandlerPackage = "pipEventHandlerPackage";
+	public static final String PROP_NAME_pipInitializerEvent = "pipInitializerEvent";
+	public static final String PROP_NAME_pipPersistenceDirectory = "pipPersistenceDirectory";
 
-	private static final String PROP_NAME_pipPrintAfterUpdate = "pipPrintAfterUpdate";
+	public static final String PROP_NAME_pipPrintAfterUpdate = "pipPrintAfterUpdate";
 
-	private static final String PROP_NAME_separator1 = "separator1";
-	private static final String PROP_NAME_separator2 = "separator2";
-	private static final String PROP_NAME_pipInitialRepresentationSeparator1 = "pipInitialRepresentationSeparator1";
-	private static final String PROP_NAME_pipInitialRepresentationSeparator2 = "pipInitialRepresentationSeparator2";
+	public static final String PROP_NAME_separator1 = "separator1";
+	public static final String PROP_NAME_separator2 = "separator2";
+	public static final String PROP_NAME_pipInitialRepresentationSeparator1 = "pipInitialRepresentationSeparator1";
+	public static final String PROP_NAME_pipInitialRepresentationSeparator2 = "pipInitialRepresentationSeparator2";
 
-	private static final String PROP_NAME_prefixSeparator = "prefixSeparator";
+	public static final String PROP_NAME_prefixSeparator = "prefixSeparator";
 
+	public static final String PROP_NAME_pep = "pep";
+	public static final String PROP_NAME_allowImpliesActual = "allowImpliesActual";
 
-	private static final String PROP_NAME_pep = "pep";
-	private static final String PROP_NAME_allowImpliesActual = "allowImpliesActual";
+	public static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
-	private static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
+	public static final String PROP_NAME_communicationProtocol = "communicationProtocol";
+	
+	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
 
-	private static final String PROP_NAME_communicationProtocol = "communicationProtocol";
+	public static final String PROP_NAME_distributionStrategy = "distributionStrategy";
+	public static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
 
-	private static final String PROP_NAME_distributionStrategy = "distributionStrategy";
-	private static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+	public static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
 
-	private static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
+	public static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
 
-	private static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
+	public static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
 
-	private static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
+	public static final String PROP_NAME_starEvent = "starEvent";
 
-	private static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
+	public static final String PROP_NAME_scopeDelimiterName = "scopeDelimiterName";
+	public static final String PROP_NAME_scopeOpenDelimiter = "scopeOpenDelimiter";
+	public static final String PROP_NAME_scopeCloseDelimiter = "scopeCloseDelimiter";
+	public static final String PROP_NAME_scopeDirectionName = "scopeDirectionName";
+	public static final String PROP_NAME_scopeGenericInDirection = "scopeGenericInDirection";
+	public static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
 
-	private static final String PROP_NAME_starEvent = "starEvent";
-
-	private static final String PROP_NAME_scopeDelimiterName = "scopeDelimiterName";
-	private static final String PROP_NAME_scopeOpenDelimiter = "scopeOpenDelimiter";
-	private static final String PROP_NAME_scopeCloseDelimiter = "scopeCloseDelimiter";
-	private static final String PROP_NAME_scopeDirectionName = "scopeDirectionName";
-	private static final String PROP_NAME_scopeGenericInDirection = "scopeGenericInDirection";
-	private static final String PROP_NAME_scopeGenericOutDirection = "scopeGenericOutDirection";
-
-	private static final String PROP_NAME_showFullIFModel = "showFullIFModel";
-	private static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
-	private static final String PROP_NAME_sortStorageNames = "sortStorageNames";
-
-
+	public static final String PROP_NAME_showFullIFModel = "showFullIFModel";
+	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
+	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 	private static final String PROP_NAME_excelOcbName = "excelOcbName";
 	private static final String PROP_NAME_excelScbName = "excelScbName";
+	
+	private static final String PROP_NAME_joanaInitDelimiter = "joanaInitDelimiter";
+	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
 
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
@@ -226,6 +226,9 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_excelOcbName, "OfficeClipboard");
 		loadSetting(PROP_NAME_excelScbName, "SystemClipboard(Excel)");
+
+		loadSetting(PROP_NAME_joanaInitDelimiter, "#");
+		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
 	}
 
 	public Location loadSetting(String propName, Location defaultValue) {
@@ -312,10 +315,6 @@ public class Settings extends SettingsLoader {
 		success = loadedValue.size() > 0;
 
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
-	}
-
-	public String getAllowImpliesActualParameterKey() {
-		return PROP_NAME_allowImpliesActual;
 	}
 
 	public String getPropertiesFileName() {
@@ -519,4 +518,13 @@ public class Settings extends SettingsLoader {
 	public String getExcelScbName(){
 		return getValue(PROP_NAME_excelScbName);
 	}
+	
+	public String getJoanaInitDelimiter(){
+		return getValue(PROP_NAME_joanaInitDelimiter);
+	}
+	
+	public String getJoanaPidPoiSeparator(){
+		return getValue(PROP_NAME_joanaPidPoiSeparator);
+	}
+	
 }

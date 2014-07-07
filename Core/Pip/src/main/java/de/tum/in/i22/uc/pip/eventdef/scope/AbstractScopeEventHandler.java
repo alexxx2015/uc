@@ -96,9 +96,10 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * final.
 	 */
 	private final IStatus openScope(IScope scope) {
-		boolean isOpen = _informationFlowModel.isScopeOpened(scope);
+		IScope os = _informationFlowModel.getOpenedScope(scope);
+		boolean isOpen = (os!=null);
 
-		if (isOpen | !(_informationFlowModel.openScope(scope))) {
+		if (isOpen || !(_informationFlowModel.openScope(scope))) {
 			_logger.info("Scope " + scope + " is already opened");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already opened");
@@ -116,9 +117,10 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * It should be final.
 	 */
 	private final IStatus closeScope(IScope scope) {
-		boolean isOpen = _informationFlowModel.isScopeOpened(scope);
+		IScope os = _informationFlowModel.getOpenedScope(scope);
+		boolean isOpen = (os!=null);
 
-		if (!(isOpen) | !(_informationFlowModel.closeScope(scope))) {
+		if (!(isOpen) || !(_informationFlowModel.closeScope(os))) {
 			_logger.info("Scope " + scope + " is already closed");
 			return _messageFactory.createStatus(EStatus.ERROR, "Scope" + scope
 					+ " is already closed");

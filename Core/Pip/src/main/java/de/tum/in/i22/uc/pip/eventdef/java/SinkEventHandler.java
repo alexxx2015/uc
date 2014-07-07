@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.SourceSinkName;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -22,7 +24,7 @@ public class SinkEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(delimiter, EScopeType.JBC_GENERIC_OUT);
+		return buildScope(EScopeType.JBC_GENERIC_OUT);
 	}
 
 	
@@ -36,18 +38,27 @@ public class SinkEventHandler extends JavaEventHandler {
 		try {
 			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
+			int pid = Integer.valueOf(getParameterValue("PID"));
+			
+			String sinkId = pid+_otherDelim + _snkPrefix+ _otherDelim + location + _javaIFDelim + signature;
+			String[] sourceIds = iFlow.get(sinkId);
 
-			String sinkId = location + _javaIFDelim + signature;
-			String sourceId = iFlow.get(sinkId);
+			Set<IData> srcData = new HashSet<IData>();
+			
+			if (sourceIds!=null){
+			for (String sourceId : sourceIds){
+					if ((sourceId != null) && (!sourceId.equals(""))) {
+						IContainer srcCnt = _informationFlowModel
+								.getContainer(new SourceSinkName(sourceId)); 
+						Set<IData> s = _informationFlowModel.getData(srcCnt);
+						if (s!=null) srcData.addAll(s);
+					}
+				}
+			
+			IContainer sinkCnt = _informationFlowModel
+					.getContainer(new SourceSinkName(sinkId));
 
-			if ((sourceId != null) && (!sourceId.equals(""))) {
-				IContainer srcCnt = _informationFlowModel
-						.getContainer(new NameBasic("src_" + sourceId));
-				IContainer sinkCnt = _informationFlowModel
-						.getContainer(new NameBasic("snk_" + sinkId));
-
-				Set<IData> srcData = _informationFlowModel.getData(srcCnt);
-
+			
 				if ((direction.equals(EBehavior.INTRA))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
 					_informationFlowModel.addData(srcData, sinkCnt);
@@ -69,6 +80,8 @@ public class SinkEventHandler extends JavaEventHandler {
 
 				if ((direction.equals(EBehavior.OUT))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
+					IScope os= _informationFlowModel.getOpenedScope(scope);
+					if (os!=null) scope=os;
 					_informationFlowModel.addDataTransitively(srcData,
 							new NameBasic(scope.getId()));
 				}

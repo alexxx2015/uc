@@ -13,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.SourceSinkName;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -21,13 +22,12 @@ public class SourceEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
-		// TODO Auto-generated method stub
-		return _messageFactory.createStatus(EStatus.OKAY);
+		return update(EBehavior.INTRA, null);
 	}
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(delimiter, EScopeType.JBC_GENERIC_IN);
+		return buildScope(EScopeType.JBC_GENERIC_IN);
 	}
 	
 	
@@ -36,11 +36,12 @@ public class SourceEventHandler extends JavaEventHandler {
 		try {
 			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
-
-			String sourceId = location + _javaIFDelim + signature;
+			int pid = Integer.valueOf(getParameterValue("PID"));
+			
+			String sourceId = pid+ _otherDelim + _srcPrefix+ _otherDelim + location + _javaIFDelim + signature;
 
 			if ((sourceId != null) && (!sourceId.equals(""))) {
-				IName srcName=new NameBasic("src_" + sourceId);
+				IName srcName=new SourceSinkName(sourceId);
 				IContainer srcCnt = _informationFlowModel
 						.getContainer(srcName);
 
@@ -52,6 +53,8 @@ public class SourceEventHandler extends JavaEventHandler {
 				if ((direction.equals(EBehavior.IN))
 						|| (direction.equals(EBehavior.INTRAIN))) {
 
+					IScope os= _informationFlowModel.getOpenedScope(scope);
+					if (os!=null) scope=os;
 					IName scopeName = new NameBasic(scope.getId());
 					Set<IData> scopeData = _informationFlowModel.getData(scopeName);
 					

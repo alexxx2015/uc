@@ -19,6 +19,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.java.javafx</groupId>
+			<artifactId>jfxrt</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationManager</artifactId>
 			<version>1.0</version>

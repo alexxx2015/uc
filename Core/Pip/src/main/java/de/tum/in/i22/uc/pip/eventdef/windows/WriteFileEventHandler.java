@@ -72,7 +72,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 			if (fileContainer == null) {
 				fileContainer = _messageFactory.createContainer();
 				_informationFlowModel.addName(new NameBasic(fileName),
-						fileContainer);
+						fileContainer, true);
 			}
 		}
 
@@ -111,14 +111,18 @@ public class WriteFileEventHandler extends WindowsEvents {
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String filename;
+		String fileDescriptor;
 		String pid;
+//		String tid;
 		String processName;
 
-		_logger.debug("XBehav function of WriteFile");
+		_logger.debug("XBehav function of ReadFile");
 
 		try {
 			filename = getParameterValue("InFileName");
+			fileDescriptor = getParameterValue("FileHandle");
 			pid = getParameterValue("PID");
+	//		tid = getParameterValue("TID");
 			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of WriteFile event. falling back to default INTRA layer behavior"
@@ -127,18 +131,22 @@ public class WriteFileEventHandler extends WindowsEvents {
 		}
 
 		Map<String, Object> attributes;
-		IScope scopeToCheck, existingScope;
-		EScopeType type = EScopeType.LOAD_FILE;
+		IScope scopeToCheck=null;
+		IScope existingScope=null;
+		EScopeType type;
+		
 
 		// TEST 1 : TB SAVING THIS FILE?
 		// If so behave as IN
-		attributes = new HashMap<String, Object>();
-		attributes.put("app", "Thunderbird");
-		attributes.put("filename", filename);
-		scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
-				attributes);
-
-		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		if (processName.equalsIgnoreCase("Thunderbird")) {
+			type = EScopeType.LOAD_FILE;
+			attributes = new HashMap<String, Object>();
+			attributes.put("app", "Thunderbird");
+			attributes.put("filename", filename);
+			scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
+					attributes);
+			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		}
 		if (existingScope != null) {
 			_logger.debug("Test1 succeeded. TB is saving to file " + filename);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
@@ -150,7 +158,9 @@ public class WriteFileEventHandler extends WindowsEvents {
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.JBC_GENERIC_OUT;
-		attributes.put("filename", filename);
+		attributes.put("fileDescriptor", fileDescriptor);
+		attributes.put("pid", pid);
+//		attributes.put("tid", tid);
 		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
