@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.distribution;
+package de.tum.in.i22.uc.cm.distribution;
 
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;

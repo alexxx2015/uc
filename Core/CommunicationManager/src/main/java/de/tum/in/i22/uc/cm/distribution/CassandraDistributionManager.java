@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.distribution;
+package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
 import java.util.Collections;
