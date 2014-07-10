@@ -30,6 +30,25 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<!-- Clean the XSD folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src/main/java/de/tum/in/i22/uc/pmp/xsd/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -56,8 +75,8 @@
 						<arg>-extension</arg>
 					</args>
 					<generateDirectory>src/main/java</generateDirectory>
-                    <forceRegenerate>true</forceRegenerate>
-                    
+					<forceRegenerate>true</forceRegenerate>
+		
 					<plugins>
 						<plugin>
 							<groupId>org.jvnet.jaxb2_commons</groupId>
@@ -67,7 +86,7 @@
 					</plugins>
 				</configuration>
 			</plugin>
-
+		
 		</plugins>
 	</build>
 

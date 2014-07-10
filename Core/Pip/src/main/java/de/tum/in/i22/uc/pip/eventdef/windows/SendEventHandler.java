@@ -29,23 +29,22 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class WriteFileEventHandler extends WindowsEvents {
+public class SendEventHandler extends WindowsEvents {
 
-	public WriteFileEventHandler() {
+	public SendEventHandler() {
 		super();
 	}
 
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
-		String fileName = null;
-		String pid = null;
-		// currently not used
+		String socketHandle = null;
 		String processName = null;
-
+		String pidStr = null;
+		
 		try {
-			fileName = getParameterValue("InFileName");
-			pid = getParameterValue("PID");
+			socketHandle = getParameterValue("SocketHandle");
 			processName = getParameterValue("ProcessName");
+			pidStr = getParameterValue("PID");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -53,26 +52,26 @@ public class WriteFileEventHandler extends WindowsEvents {
 		}
 
 		IContainer processContainer = null;
-		IContainer fileContainer = null;
+		IContainer socketContainer = null;
 
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.OUT)
 				|| direction.equals(EBehavior.INTRAOUT)) {
-			processContainer = instantiateProcess(pid, processName);
+			processContainer = instantiateProcess(pidStr, processName);
 		}
 
 		if (direction.equals(EBehavior.INTRA) || direction.equals(EBehavior.IN)
 				|| direction.equals(EBehavior.INTRAIN)) {
-			fileContainer = _informationFlowModel.getContainer(new NameBasic(
-					fileName));
+			socketContainer = _informationFlowModel.getContainer(new NameBasic(
+					socketHandle));
 
 			// check if container for filename exists and create new container
 			// if
 			// not
-			if (fileContainer == null) {
-				fileContainer = _messageFactory.createContainer();
-				_informationFlowModel.addName(new NameBasic(fileName),
-						fileContainer, true);
+			if (socketContainer == null) {
+				socketContainer = _messageFactory.createContainer();
+				_informationFlowModel.addName(new NameBasic(socketHandle),
+						socketContainer, true);
 			}
 		}
 
@@ -81,14 +80,14 @@ public class WriteFileEventHandler extends WindowsEvents {
 				|| direction.equals(EBehavior.INTRAOUT)) {
 			_informationFlowModel.addData(
 					_informationFlowModel.getData(processContainer),
-					fileContainer);
+					socketContainer);
 		}
 
 		if (direction.equals(EBehavior.INTRAIN)
 				|| direction.equals(EBehavior.IN)) {
 			_informationFlowModel
 					.addData(_informationFlowModel.getData(new NameBasic(scope
-							.getId())), fileContainer);
+							.getId())), socketContainer);
 		}
 
 		if (direction.equals(EBehavior.INTRAOUT)
@@ -110,20 +109,13 @@ public class WriteFileEventHandler extends WindowsEvents {
 
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
-		String filename;
-		String fileDescriptor;
-		String pid;
-//		String tid;
-		String processName;
-
-		_logger.debug("XBehav function of WriteFile");
-
+		_logger.debug("XBehav function of Send");
+		String socketHandle = null;
+		String pid = null;
+		
 		try {
-			filename = getParameterValue("InFileName");
-			fileDescriptor = getParameterValue("FileHandle");
+			socketHandle = getParameterValue("SocketHandle");
 			pid = getParameterValue("PID");
-	//		tid = getParameterValue("TID");
-			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of WriteFile event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
@@ -136,41 +128,22 @@ public class WriteFileEventHandler extends WindowsEvents {
 		EScopeType type;
 		
 
-		// TEST 1 : TB SAVING THIS FILE?
-		// If so behave as IN
-		if (processName.equalsIgnoreCase("Thunderbird")) {
-			type = EScopeType.LOAD_FILE;
-			attributes = new HashMap<String, Object>();
-			attributes.put("app", "Thunderbird");
-			attributes.put("filename", filename);
-			scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
-					attributes);
-			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
-		}
-		if (existingScope != null) {
-			_logger.debug("Test1 succeeded. TB is saving to file " + filename);
-			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
-		} else {
-			_logger.debug("Test1 failed. TB is NOT saving to file " + filename);
-		}
-
-		// TEST 2 : GENERIC JBC APP WRITING TO THIS FILE?
+		// TEST : GENERIC JBC APP WRITING TO THIS SOCKET?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.JBC_GENERIC_OUT;
-		attributes.put("fileDescriptor", fileDescriptor);
+		attributes.put("fileDescriptor", socketHandle);
 		attributes.put("pid", pid);
-//		attributes.put("tid", tid);
 		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. Generic JBC App is writing to file "
-					+ filename);
+			_logger.debug("Test2 succeeded. Generic JBC App is writing to socket "
+					+ socketHandle);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
 		} else {
-			_logger.debug("Test2 failed. Generic JBC App is NOT writing to file "
-					+ filename);
+			_logger.debug("Test2 failed. Generic JBC App is NOT writing to socket "
+					+ socketHandle);
 		}
 
 		// OTHERWISE
