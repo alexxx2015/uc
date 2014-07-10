@@ -23,8 +23,10 @@ import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
  * 
- * @author Florian Kelbert Settings are read from the specified properties file.
- *         If no file is specified, file "uc.properties" is used.
+ * @author Florian Kelbert 
+ * 
+ * Settings are read from the specified properties file.
+ * If no file is specified, file "uc.properties" is used.
  * 
  */
 public class Settings extends SettingsLoader {
@@ -272,6 +274,10 @@ public class Settings extends SettingsLoader {
 	/**
 	 * Loads the initial representations for the Pip. They are expected to be in
 	 * the format <ContainerName1>:<DataId1>;<ContainerName2>:<DataId2>; ...
+	 * 
+	 * Separators : and ; may be adjusted/changed by options
+	 * PROP_NAME_pipInitialRepresentationSeparator1 and
+	 * PROP_NAME_pipInitialRepresentationSeparator2
 	 * 
 	 * @param propName
 	 *            the property name
