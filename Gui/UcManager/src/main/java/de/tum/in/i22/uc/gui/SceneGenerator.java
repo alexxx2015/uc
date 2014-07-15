@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,6 +33,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -122,9 +122,22 @@ public class SceneGenerator {
 				}
 			}
 		});
+		
+		final Tab pmpTab = new Tab();
+		pmpTab.setClosable(false);
+		pmpTab.setText("PMP");
+		pmpTab.setId("PMPTAB");
+		pmpTab.setContent(generatePmpTab());
 
-		this.tabpane_center.getTabs().addAll(pdpTab, pipTab);
+		this.tabpane_center.getTabs().addAll(pdpTab, pipTab, pmpTab);
 		return this.tabpane_center;
+	}
+	
+	private Node generatePmpTab(){
+		StackPane pane = new StackPane();
+		Label lab = new Label("PMP policy template generation goes here");
+		pane.getChildren().add(lab);
+		return pane;
 	}
 
 	private Node generatePipTab() {
