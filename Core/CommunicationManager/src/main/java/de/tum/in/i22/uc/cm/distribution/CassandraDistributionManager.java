@@ -123,6 +123,8 @@ class CassandraDistributionManager implements IDistributionManager {
 			switchKeyspace(policy.getName());
 
 			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
+				boolean success = true;
+
 				// if the location was not yet part of the keyspace, then we need to
 				// deploy the policy at the remote location
 				try {
@@ -131,13 +133,17 @@ class CassandraDistributionManager implements IDistributionManager {
 					// If remote deployment of the policy fails,
 					// then we remove the location from the keyspace
 					if (remotePmp.deployPolicyRawXMLPmp(policy.getXml()).getEStatus() != EStatus.OKAY) {
-						adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+						success = false;
 					}
 
 					_pmpConnectionManager.release(remotePmp);
 				} catch (IOException e) {
-					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+					success = false;
 					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
+				}
+
+				if (!success) {
+					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);;
 				}
 			}
 
@@ -307,8 +313,8 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
-//				doCrossSystemDataTrackingCoarse(data, (IPLocation) dstLocation);
-//				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(dstLocation));
+				doCrossSystemDataTrackingCoarse(data, pipLocation);
+//				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(pipLocation));
 			}
 			else {
 				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");

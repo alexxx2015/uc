@@ -267,7 +267,7 @@ public class PmpHandler extends PmpProcessor {
 	/**
 	 * Returns an unmodifiable view onto the set of policies that 'talk' about
 	 * the specified data.
-	 * 
+	 *
 	 * @param data
 	 * @return
 	 */
@@ -286,7 +286,7 @@ public class PmpHandler extends PmpProcessor {
 	 * Tokenizes the specified string at whitespaces, interprets the tokens as
 	 * data ids, and returns the corresponding set of {@link IData} objects
 	 * created out of those tokenized data ids.
-	 * 
+	 *
 	 * @param value
 	 *            the string to be transformed
 	 * @return the set of {@link IData} corresponding to the tokenized data ids.
@@ -333,8 +333,8 @@ public class PmpHandler extends PmpProcessor {
 		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
 		PolicyType policy = xmlToPolicy(xml);
 		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
-	} 
- 
+	}
+
 	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
@@ -353,7 +353,7 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
-		_distributionManager.newPolicy(xmlPolicy);
+//		_distributionManager.newPolicy(xmlPolicy);
 		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 
