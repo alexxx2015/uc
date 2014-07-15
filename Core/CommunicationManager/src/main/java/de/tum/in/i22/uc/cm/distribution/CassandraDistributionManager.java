@@ -17,6 +17,7 @@ import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
@@ -106,8 +107,8 @@ class CassandraDistributionManager implements IDistributionManager {
 		//TODO initialization of distributed policy information
 	}
 
-	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation dstLocation) {
-		_logger.debug("doStickyPolicyTransfer invoked: " + dstLocation + ": " + policies);
+	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
+		_logger.debug("doStickyPolicyTransfer invoked: " + pmpLocation + ": " + policies);
 
 		for (XmlPolicy policy : policies) {
 			/*
@@ -121,18 +122,22 @@ class CassandraDistributionManager implements IDistributionManager {
 
 			switchKeyspace(policy.getName());
 
-			if (extendPolicyKeyspace(policy.getName(), dstLocation)) {
+			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
+				// if the location was not yet part of the keyspace, then we need to
+				// deploy the policy at the remote location
 				try {
-					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(dstLocation));
-					remotePmp.deployPolicyRawXMLPmp(policy.getXml());
+					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
 
-					/*
-					 * TODO: If this goes wrong, then remove dstLocation from the keyspace
-					 */
+					// If remote deployment of the policy fails,
+					// then we remove the location from the keyspace
+					if (remotePmp.deployPolicyRawXMLPmp(policy.getXml()).getEStatus() != EStatus.OKAY) {
+						adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+					}
 
 					_pmpConnectionManager.release(remotePmp);
 				} catch (IOException e) {
-					_logger.error("Unable to deploy XML policy remotely at [" + dstLocation + "]: " + e.getMessage());
+					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
 				}
 			}
 
@@ -225,20 +230,22 @@ class CassandraDistributionManager implements IDistributionManager {
 	// be bad if we lose an update or can we compensate for it later?
 	/**
 	 *
-	 * @param name the keyspace to which to switch to
-	 * @param locations the locations to add to the keyspace
-	 * @return returns true if the keyspace was in fact extended,
-	 * i.e. if the provided location was not yet part of the keyspace; false otherwise.
+	 * @param name the keyspace on which to work on
+	 * @param location the location to add or remove to the keyspace
+	 * @param add whether the location ought to be added or removed.
+	 * 		If the value is true, the location will be added; otherwise,
+	 * 		it will be removed
+	 * @return returns true if the keyspace was in fact adjusted,
+	 * 		i.e. if the provided location was added or removed.
 	 */
-	private boolean extendPolicyKeyspace(String name, IPLocation location) {
+	private boolean adjustPolicyKeyspace(String name, IPLocation location, boolean add) {
 		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
 		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
 				+ "WHERE keyspace_name = '" + name + "'");
 
-		// (2) We build the set of locations that are already known within the
-		// keyspace
+		// (2) We build the set of locations that are currently known within the keyspace
 		Set<String> allLocations = new HashSet<>();
 		for (Row row : rows) {
 			String[] entries = row.getString("strategy_options").replaceAll("[{}\"]", "").split(",");
@@ -247,8 +254,10 @@ class CassandraDistributionManager implements IDistributionManager {
 			}
 		}
 
-		if (!allLocations.add(location.getHost())) {
-			// provided location was already present. We are done.
+		// (3) According to parameter 'add', we add or remove the provided location from the set of locations
+		if ((add && !allLocations.add(location.getHost())) || (!add && !allLocations.remove(location.getHost()))) {
+			// (a) If we are supposed to add, but adding fails, then the location was already present and we are done
+			// (b) If we are supposed to remove, but removing fails, then the location was not present and we are done
 			return false;
 		}
 
@@ -268,6 +277,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		return true;
 	}
+
+
 
 	@Override
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
