@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 class CassandraDistributionManager implements IDistributionManager {
@@ -106,7 +107,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation dstLocation) {
-		_logger.debug("doStickyPolicyTransfer invoked " + policies);
+		_logger.debug("doStickyPolicyTransfer invoked: " + dstLocation + ": " + policies);
 
 		for (XmlPolicy policy : policies) {
 			/*
@@ -124,9 +125,14 @@ class CassandraDistributionManager implements IDistributionManager {
 				try {
 					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(dstLocation));
 					remotePmp.deployPolicyRawXMLPmp(policy.getXml());
+
+					/*
+					 * TODO: If this goes wrong, then remove dstLocation from the keyspace
+					 */
+
 					_pmpConnectionManager.release(remotePmp);
 				} catch (IOException e) {
-					_logger.error("Unable to deploy XML policy remotely at [" + dstLocation + "]");
+					_logger.error("Unable to deploy XML policy remotely at [" + dstLocation + "]: " + e.getMessage());
 				}
 			}
 
@@ -141,6 +147,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * @param dstLocation the location to which the specified data has flown
 	 */
 	private void doCrossSystemDataTrackingCoarse(Set<IData> data, IPLocation dstLocation) {
+		_logger.debug("doCrossSystemDataTrackingCoarse invoked: " + dstLocation + " -> " + data);
 		for (IData d : data) {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				switchKeyspace(p.getName());
@@ -264,6 +271,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
+		_logger.info("dataTransfer: " + dataflow);
+
 		Map<Location, Map<IName, Set<IData>>> flows = dataflow.getFlows();
 
 		Location srcLocation = dataflow.getSrcLocation();
@@ -283,7 +292,10 @@ class CassandraDistributionManager implements IDistributionManager {
 					data.addAll(d);
 				}
 
-				doStickyPolicyTransfer(getAllPolicies(data), (IPLocation) dstLocation);
+				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
+				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
+
+				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 //				doCrossSystemDataTrackingCoarse(data, (IPLocation) dstLocation);
 //				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(dstLocation));
 			}
