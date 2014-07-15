@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -101,7 +100,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 					// server is remote.
 
 					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-							new IPLocation(remoteIP, Settings.getInstance().getPipListenerPort()));
+							new IPLocation(remoteIP, remotePort));
 				}
 
 				// assign the remote name
