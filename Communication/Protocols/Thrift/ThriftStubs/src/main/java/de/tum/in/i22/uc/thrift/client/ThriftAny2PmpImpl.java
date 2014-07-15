@@ -31,15 +31,13 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> data) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("informRemoteDataFlow not implemented");
 	}
 
 
 	@Override
 	public IMechanism exportMechanismPmp(String par) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("exportMechanismPmp not implemented");
 	}
 
 
@@ -48,8 +46,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.revokePolicyPmp(policyName));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 
 	}
@@ -60,8 +57,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.revokeMechanismPmp(policyName, mechName));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -71,8 +67,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.deployPolicyURIPmp(policyFilePath));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -82,8 +77,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.deployPolicyXMLPmp(ThriftConverter.toThrift(XMLPolicy)));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -93,8 +87,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return _handle.listMechanismsPmp();
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -103,9 +96,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.deployPolicyRawXMLPmp(xml));
 		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -114,8 +105,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThriftPolicySet(_handle.getPolicies(ThriftConverter.toThrift(data)));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
@@ -127,8 +117,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		try {
 			return ThriftConverter.fromThrift(_handle.specifyPolicyFor(representationsT, dataClass));
 		} catch (TException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 

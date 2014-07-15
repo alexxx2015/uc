@@ -24,9 +24,9 @@ import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
 /**
  * Use {@link ThriftServerFactory} to create an instance.
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
 class TAny2PmpThriftServer extends ThriftServerHandler implements
 TAny2Pmp.Iface {

@@ -50,7 +50,7 @@ public final class ThriftConverter {
 	public static IContainer fromThrift(TContainer c) {
 		if (c == null) {
 			_logger.debug("TContainer was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new ContainerBasic(c.getId(), ThriftConverter.fromThriftAttributeList(c.getAttributes()));
@@ -90,14 +90,14 @@ public final class ThriftConverter {
 				return EAttributeName.WILDCARD;
 			default:
 				_logger.warn("Unknown AttributeName [" + name + "]. Returning null.");
-				return null;
+				throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 	}
 
 	public static IData fromThrift(TData d) {
 		if (d == null) {
 			_logger.debug("TData was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new DataBasic(d.getId());
@@ -106,7 +106,7 @@ public final class ThriftConverter {
 	public static IEvent fromThrift(TEvent e) {
 		if (e == null) {
 			_logger.debug("TEvent was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 		return new EventBasic(e.name, e.parameters, e.isActual, e.getTimeStamp());
 	}
@@ -114,7 +114,7 @@ public final class ThriftConverter {
 	public static PxpSpec fromThrift(TPxpSpec p) {
 		if (p == null) {
 			_logger.debug("TPxpSpec was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 		return new PxpSpec(p.getIp(), p.getPort(), p.getId(),p.getDescription());
 	}
@@ -122,7 +122,7 @@ public final class ThriftConverter {
 	public static IName fromThrift(TName n) {
 		if (n == null) {
 			_logger.debug("TName was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new NameBasic(n.getName());
@@ -131,7 +131,7 @@ public final class ThriftConverter {
 	public static IResponse fromThrift(TResponse r) {
 		if (r == null) {
 			_logger.debug("TResponse was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new ResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
@@ -142,7 +142,7 @@ public final class ThriftConverter {
 
 	public static Location fromThrift(String location) {
 		if (location == null || location.equals("")) {
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 		return new IPLocation(location);
 	}
@@ -151,7 +151,7 @@ public final class ThriftConverter {
 	public static IStatus fromThrift(TStatus s) {
 		if (s == null) {
 			_logger.debug("TStatus was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		EStatus eStatus;
@@ -177,7 +177,7 @@ public final class ThriftConverter {
 				break;
 			default:
 				_logger.warn("Unknown Status [" + s + "]. Returning null.");
-				return null;
+				throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new StatusBasic(eStatus);
@@ -223,7 +223,7 @@ public final class ThriftConverter {
 	public static TContainer toThrift(IContainer c) {
 		if (c == null) {
 			_logger.debug("IContainer was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new TContainer(c.getId(), ThriftConverter.toThriftAttributeList(c.getAttributes()));
@@ -232,7 +232,7 @@ public final class ThriftConverter {
 	public static TData toThrift(IData d) {
 		if (d == null) {
 			_logger.debug("IData was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new TData(d.getId());
@@ -241,7 +241,7 @@ public final class ThriftConverter {
 	public static TEvent toThrift(IEvent e) {
 		if (e == null) {
 			_logger.debug("IEvent was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 		TEvent res=new TEvent(e.getName(), e.getParameters(), e.getTimestamp());
 		res.setIsActual(e.isActual());
@@ -251,7 +251,7 @@ public final class ThriftConverter {
 	public static TName toThrift(IName n) {
 		if (n == null) {
 			_logger.debug("IName was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new TName(n.getName());
@@ -260,7 +260,7 @@ public final class ThriftConverter {
 	public static TPxpSpec toThrift(PxpSpec p) {
 		if (p == null) {
 			_logger.debug("IPxpSpec was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		return new TPxpSpec(p.getIp(), p.getPort(), p.getDescription(),
@@ -270,7 +270,7 @@ public final class ThriftConverter {
 	public static TResponse toThrift(IResponse r) {
 		if (r == null) {
 			_logger.debug("IResponse was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		TResponse res= new TResponse(ThriftConverter.toThrift(r
@@ -283,7 +283,7 @@ public final class ThriftConverter {
 		res.setExecuteEventsIsSet(true);
 		res.setModifiedEvents(ThriftConverter.toThrift(r.getModifiedEvent()));
 		res.setModifiedEventsIsSet(true);
-		
+
 		return res;
 	}
 
@@ -297,7 +297,7 @@ public final class ThriftConverter {
 	public static TStatus toThrift(IStatus s) {
 		if (s == null) {
 			_logger.debug("IStatus was null.");
-			return null;
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
 		switch (s.getEStatus()) {
@@ -315,7 +315,7 @@ public final class ThriftConverter {
 				return TStatus.OKAY;
 			default:
 				_logger.warn("Unknown Status [" + s.getEStatus() + "]. Returning null.");
-				return null;
+				throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 	}
 
@@ -443,7 +443,7 @@ public final class ThriftConverter {
 				return TAttributeName.WILDCARD;
 			default:
 				_logger.warn("Unkown AttributeName [" + name + "]. Returning null.");
-				return null;
+				throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 	}
 
