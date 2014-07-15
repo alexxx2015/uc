@@ -22,4 +22,11 @@ public abstract class GenericX2YClient implements IConnectable {
 	public final int hashCode() {
 		return Objects.hash(_connector);
 	}
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_connector", _connector)
+				.toString();
+	}
 }
