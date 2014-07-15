@@ -74,7 +74,7 @@ public class PmpHandler extends PmpProcessor {
 	private PolicyType xmlToPolicy(String XMLPolicy) {
 		PolicyType curPolicy = null;
 		_logger.debug("XMLtoPolicy");
-		_logger.trace("Policyto be converted: " + XMLPolicy);
+		_logger.trace("Policy to be converted: " + XMLPolicy);
 		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
 		try {
 			JAXBContext jc = JAXBContext
