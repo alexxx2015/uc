@@ -41,7 +41,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
 	 *  which was afterwards not found by a lookup with name 'testPolicy')
 	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
-	 * 
+	 *
 	 */
 
 	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
@@ -106,7 +106,18 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation dstLocation) {
+		_logger.debug("doStickyPolicyTransfer invoked " + policies);
+
 		for (XmlPolicy policy : policies) {
+			/*
+			 * For each policy, the protocol is as follows:
+			 * (1) switch to the policy's keyspace
+			 * (2) extend the keyspace with the given location
+			 * (3) if the keyspace was in fact extended
+			 *     (meaning that the provided location was not yet aware of the policy),
+			 *     then the policy is sent to the remote PMP.
+			 */
+
 			switchKeyspace(policy.getName());
 
 			if (extendPolicyKeyspace(policy.getName(), dstLocation)) {
@@ -125,7 +136,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	/**
 	 * Perform cross-system data flow tracking on a per-location granularity, i.e.
 	 * remember which locations are aware of which data.
-	 * 
+	 *
 	 * @param data the set of data that has flown
 	 * @param dstLocation the location to which the specified data has flown
 	 */
@@ -145,7 +156,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * Perform cross-system data flow tracking on a per-container basis.
 	 * The mapping between containers (more precisely: their names) and the
 	 * set of data being transferred to them is specified by parameter flows.
-	 * 
+	 *
 	 * @param dstLocation the location to which the data flow occurred.
 	 * @param flows maps the destination container name to set of data it is receiving
 	 */
@@ -206,18 +217,18 @@ class CassandraDistributionManager implements IDistributionManager {
 	// we might experience lost updates, etc. Can this be realized? Would it even
 	// be bad if we lose an update or can we compensate for it later?
 	/**
-	 * 
-	 * @param policyName
-	 * @param locations
+	 *
+	 * @param name the keyspace to which to switch to
+	 * @param locations the locations to add to the keyspace
 	 * @return returns true if the keyspace was in fact extended,
 	 * i.e. if the provided location was not yet part of the keyspace; false otherwise.
 	 */
-	private boolean extendPolicyKeyspace(String policyName, IPLocation location) {
-		policyName = policyName.toLowerCase();
+	private boolean extendPolicyKeyspace(String name, IPLocation location) {
+		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
 		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
-				+ "WHERE keyspace_name = '" + policyName + "'");
+				+ "WHERE keyspace_name = '" + name + "'");
 
 		// (2) We build the set of locations that are already known within the
 		// keyspace
@@ -237,7 +248,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		// (3) We make a string out of all locations and create the query
 		StringBuilder query = new StringBuilder();
-		query.append("ALTER KEYSPACE " + policyName + " WITH replication ");
+		query.append("ALTER KEYSPACE " + name + " WITH replication ");
 		query.append("= {'class':'NetworkTopologyStrategy',");
 		for (String loc : allLocations) {
 			query.append("'" + loc + "':1,");
@@ -261,7 +272,7 @@ class CassandraDistributionManager implements IDistributionManager {
 			srcLocation = IPLocation.localIpLocation;
 		}
 		else if (!(srcLocation instanceof IPLocation)) {
-			_logger.warn("Unsupported kind of Location. Not performing remote data flow.");
+			_logger.warn("Source location [" + srcLocation + "] is not an IPLocation. Not performing remote data flow.");
 			return;
 		}
 
@@ -273,8 +284,11 @@ class CassandraDistributionManager implements IDistributionManager {
 				}
 
 				doStickyPolicyTransfer(getAllPolicies(data), (IPLocation) dstLocation);
-				doCrossSystemDataTrackingCoarse(data, (IPLocation) dstLocation);
-				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(dstLocation));
+//				doCrossSystemDataTrackingCoarse(data, (IPLocation) dstLocation);
+//				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(dstLocation));
+			}
+			else {
+				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");
 			}
 		}
 	}

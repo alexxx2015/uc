@@ -81,6 +81,10 @@ public class Controller implements IRequestHandler  {
 		_requestHandler = new RequestHandler(_settings.getPdpLocation(),
 				_settings.getPipLocation(), _settings.getPmpLocation());
 
+		_logger.info("Deploying initial policies ...");
+		deployInitialPolicies();
+		_logger.info("done.");
+
 		_logger.info("Starting up thrift servers");
 		startListeners(_requestHandler);
 		do {
@@ -91,6 +95,7 @@ public class Controller implements IRequestHandler  {
 			}
 		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
+
 	}
 
 	public boolean isStarted() {
@@ -104,6 +109,16 @@ public class Controller implements IRequestHandler  {
 				.started())
 				&& (!_settings.isAnyListenerEnabled() || _anyServer != null && _anyServer
 				.started());
+	}
+
+	/**
+	 * Deploys the initial policies specified in the settings.
+	 */
+	private void deployInitialPolicies() {
+		for (String uri : Settings.getInstance().getPmpInitialPolicies()) {
+			deployPolicyURIPmp(uri);
+			_logger.info(" ... deployed " + uri);
+		}
 	}
 
 	@Override

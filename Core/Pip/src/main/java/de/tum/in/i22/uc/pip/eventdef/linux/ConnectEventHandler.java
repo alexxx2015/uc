@@ -31,6 +31,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		SocketName remoteSocketName = null;
 		SocketContainer localConnectingSocket = null;
 		IContainer remoteAcceptedSocket = null;
+		String socketname;
 
 		try {
 			host = getParameterValue("host");
@@ -40,6 +41,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 			localPort = Integer.valueOf(getParameterValue("localPort"));
 			remoteIP = getParameterValue("remoteIP");
 			remotePort = Integer.valueOf(getParameterValue("remotePort"));
+			socketname = getParameterValue("socketname");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

@@ -63,7 +63,7 @@ public class LinuxEventTest {
 	}
 
 	public static IEvent createLinuxSocketEvent(final String host, final int pid,
-			final String domain, final String type, final int fd, boolean isActual) {
+			final String domain, final String type, final int fd, final String socketname, boolean isActual) {
 		return new EventBasic("Socket",
 				new HashMap<String, String>(){
 			private static final long serialVersionUID = 1L;
@@ -74,13 +74,14 @@ public class LinuxEventTest {
 				put("domain", domain);
 				put("type", type);
 				put("fd", fd+"");
+				put("socketname", socketname);
 			}},
 			isActual);
 	}
 
 	public static IEvent createLinuxAcceptEvent(final String host, final int pid, final String localIP,
 			final int localPort, final String remoteIP, final int remotePort,
-			final int oldfd, final int newfd, boolean isActual) {
+			final int oldfd, final int newfd, final String socketname, boolean isActual) {
 		return new EventBasic("Accept",
 				new HashMap<String, String>(){
 			private static final long serialVersionUID = 1L;
@@ -94,13 +95,14 @@ public class LinuxEventTest {
 				put("remotePort", remotePort+"");
 				put("oldfd", oldfd+"");
 				put("newfd", newfd+"");
+				put("socketname", socketname);
 			}},
 			isActual);
 	}
 
 	public static IEvent createLinuxConnectEvent(final String host, final int pid, final String localIP,
 			final int localPort, final String remoteIP, final int remotePort,
-			final int fd, boolean isActual) {
+			final int fd, final String socketname, boolean isActual) {
 		return new EventBasic("Connect",
 				new HashMap<String, String>(){
 			private static final long serialVersionUID = 1L;
@@ -113,11 +115,12 @@ public class LinuxEventTest {
 				put("remoteIP", remoteIP);
 				put("remotePort", remotePort+"");
 				put("fd", fd+"");
+				put("socketname", socketname);
 			}},
 			isActual);
 	}
 
-	public static IEvent createLinuxWriteEvent(final String host, final int pid, final int fd, boolean isActual) {
+	public static IEvent createLinuxWriteEvent(final String host, final int pid, final int fd, final String filename, boolean isActual) {
 		return new EventBasic("Write",
 				new HashMap<String, String>(){
 			private static final long serialVersionUID = 1L;
@@ -126,11 +129,12 @@ public class LinuxEventTest {
 				put("host", host);
 				put("pid", pid+"");
 				put("fd", fd+"");
+				put("filename", filename);
 			}},
 			isActual);
 	}
 
-	public static IEvent createLinuxReadEvent(final String host, final int pid, final int fd, boolean isActual) {
+	public static IEvent createLinuxReadEvent(final String host, final int pid, final int fd, final String filename, boolean isActual) {
 		return new EventBasic("Read",
 				new HashMap<String, String>(){
 			private static final long serialVersionUID = 1L;
@@ -139,6 +143,7 @@ public class LinuxEventTest {
 				put("host", host);
 				put("pid", pid+"");
 				put("fd", fd+"");
+				put("filename", filename);
 			}},
 			isActual);
 	}
@@ -179,12 +184,12 @@ public class LinuxEventTest {
 		IContainer clientCont;
 		IContainer serverCont;
 
-		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
-		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, serverIP, clientPort, 4, 5, true);
+		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, "socket:[234567]", true);
+		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, serverIP, clientPort, 4, 5, "socket:[123456]", true);
 
 		// Note: As we want to simulate local behavior, we also use serverHost/serverIP for the client
-		IEvent eventClientSocket = createLinuxSocketEvent(serverHost, clientPid, INET, STREAM, 3, true);
-		IEvent eventClientConnect = createLinuxConnectEvent(serverHost, clientPid, serverIP, clientPort, serverIP, serverPort, 3, true);
+		IEvent eventClientSocket = createLinuxSocketEvent(serverHost, clientPid, INET, STREAM, 3, "socket:[654321]", true);
+		IEvent eventClientConnect = createLinuxConnectEvent(serverHost, clientPid, serverIP, clientPort, serverIP, serverPort, 3, "socket:[654321]", true);
 
 		/*
 		 * 1st test:
@@ -270,16 +275,16 @@ public class LinuxEventTest {
 		// We simulate local behavior. Thus only serverHost/serverPid are used.
 
 		IEvent eventServerExecve = createLinuxExecveEvent(serverHost, serverPid, "/bin/server.exe", true);
-		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
-		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, serverIP, clientPort, 4, 5, true);
-		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, false);
-		IEvent eventServerRead = createLinuxReadEvent(serverHost, serverPid, 5, true);
+		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, "socket:[234567]", true);
+		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, serverIP, clientPort, 4, 5, "socket:[123456]", true);
+		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, "socket:[123456]", false);
+		IEvent eventServerRead = createLinuxReadEvent(serverHost, serverPid, 5, "socket:[123456]", true);
 
 		IEvent eventClientExecve = createLinuxExecveEvent(serverHost, clientPid, "/bin/client.exe", true);
-		IEvent eventClientSocket = createLinuxSocketEvent(serverHost, clientPid, INET, STREAM, 3, true);
-		IEvent eventClientConnect = createLinuxConnectEvent(serverHost, clientPid, serverIP, clientPort, serverIP, serverPort, 3, true);
-		IEvent eventClientWrite = createLinuxWriteEvent(serverHost, clientPid, 3, false);
-		IEvent eventClientRead = createLinuxReadEvent(serverHost, clientPid, 3, true);
+		IEvent eventClientSocket = createLinuxSocketEvent(serverHost, clientPid, INET, STREAM, 3, "socket:[654321]", true);
+		IEvent eventClientConnect = createLinuxConnectEvent(serverHost, clientPid, serverIP, clientPort, serverIP, serverPort, 3, "socket:[654321]", true);
+		IEvent eventClientWrite = createLinuxWriteEvent(serverHost, clientPid, 3, "socket:[654321]", false);
+		IEvent eventClientRead = createLinuxReadEvent(serverHost, clientPid, 3, "socket:[654321]", true);
 
 		/*
 		 * 1st test:
@@ -326,13 +331,13 @@ public class LinuxEventTest {
 		IData data = new DataBasic("data");
 
 		IEvent eventServerExecve = createLinuxExecveEvent(serverHost, serverPid, "/bin/server.exe", true);
-		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, true);
-		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, clientIP, clientPort, 4, 5, true);
-		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, false);
+		IEvent eventServerSocket = createLinuxSocketEvent(serverHost, serverPid, INET, STREAM, 4, "socket:[234567]", true);
+		IEvent eventServerAccept = createLinuxAcceptEvent(serverHost, serverPid, serverIP, serverPort, clientIP, clientPort, 4, 5, "socket:[123456]", true);
+		IEvent eventServerWrite = createLinuxWriteEvent(serverHost, serverPid, 5, "socket:[123456]", false);
 
 		IEvent eventClientExecve = createLinuxExecveEvent(clientHost, clientPid, "/bin/client.exe", true);
-		IEvent eventClientSocket = createLinuxSocketEvent(clientHost, clientPid, INET, STREAM, 3, true);
-		IEvent eventClientConnect = createLinuxConnectEvent(clientHost, clientPid, clientIP, clientPort, serverIP, serverPort, 3, true);
+		IEvent eventClientSocket = createLinuxSocketEvent(clientHost, clientPid, INET, STREAM, 3, "socket:[654321]", true);
+		IEvent eventClientConnect = createLinuxConnectEvent(clientHost, clientPid, clientIP, clientPort, serverIP, serverPort, 3, "socket:[654321]", true);
 
 		//		_ifModelManager.reset();
 		//		_pipHandler.notifyActualEvent(eventServerExecve);

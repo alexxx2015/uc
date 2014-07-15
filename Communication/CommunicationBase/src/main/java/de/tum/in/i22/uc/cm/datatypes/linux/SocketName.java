@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.distribution.Network;
 
 /**
  * Class for naming sockets.
@@ -29,10 +28,10 @@ public class SocketName extends NameBasic {
 	}
 
 	public static SocketName create(String localIP, int localPort, String remoteIP, int remotePort) {
-		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
-			return new SocketName(localIP, localPort, remoteIP, remotePort,
-					PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
-		}
+//		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
+//			return new SocketName(localIP, localPort, remoteIP, remotePort,
+//					PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
+//		}
 
 		return new SocketName(localIP, localPort, remoteIP, remotePort,
 				PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
