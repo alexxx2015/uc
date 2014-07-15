@@ -79,4 +79,13 @@ public class RemoteDataFlowInfo {
 	public boolean isEmpty() {
 		return _dataflow == null || _dataflow.size() == 0;
 	}
+
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_srcLocation", _srcLocation)
+				.add("_dataflow", _dataflow)
+				.toString();
+	}
 }
