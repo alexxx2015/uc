@@ -33,8 +33,6 @@ import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 public class Controller implements IRequestHandler  {
 	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
-	private static Settings _settings;
-
 	private IThriftServer _pdpServer;
 	private IThriftServer _pipServer;
 	private IThriftServer _pmpServer;
@@ -78,8 +76,8 @@ public class Controller implements IRequestHandler  {
 
 	private void startUC() {
 
-		_requestHandler = new RequestHandler(_settings.getPdpLocation(),
-				_settings.getPipLocation(), _settings.getPmpLocation());
+		_requestHandler = new RequestHandler(Settings.getInstance().getPdpLocation(),
+				Settings.getInstance().getPipLocation(), Settings.getInstance().getPmpLocation());
 
 		_logger.info("Deploying initial policies ...");
 		deployInitialPolicies();
@@ -99,15 +97,15 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		if (_settings == null)
+		if (Settings.getInstance() == null)
 			return false;
-		return (!_settings.isPdpListenerEnabled() || _pdpServer != null && _pdpServer
+		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer
 				.started())
-				&& (!_settings.isPipListenerEnabled() || _pipServer != null && _pipServer
+				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer
 				.started())
-				&& (!_settings.isPmpListenerEnabled() || _pmpServer != null && _pmpServer
+				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer
 				.started())
-				&& (!_settings.isAnyListenerEnabled() || _anyServer != null && _anyServer
+				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer
 				.started());
 	}
 
@@ -137,39 +135,39 @@ public class Controller implements IRequestHandler  {
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
-		if (_settings.isPdpListenerEnabled()) {
+		if (Settings.getInstance().isPdpListenerEnabled()) {
 			_pdpServer = ThriftServerFactory.createPdpThriftServer(
-					_settings.getPdpListenerPort(), requestHandler);
+					Settings.getInstance().getPdpListenerPort(), requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
 			}
 		}
 
-		if (_settings.isPipListenerEnabled()) {
+		if (Settings.getInstance().isPipListenerEnabled()) {
 			_pipServer = ThriftServerFactory.createPipThriftServer(
-					_settings.getPipListenerPort(), requestHandler);
+					Settings.getInstance().getPipListenerPort(), requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
 			}
 		}
 
-		if (_settings.isPmpListenerEnabled()) {
+		if (Settings.getInstance().isPmpListenerEnabled()) {
 			_pmpServer = ThriftServerFactory.createPmpThriftServer(
-					_settings.getPmpListenerPort(), requestHandler);
+					Settings.getInstance().getPmpListenerPort(), requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
 			}
 		}
 
-		if (_settings.isAnyListenerEnabled()) {
+		if (Settings.getInstance().isAnyListenerEnabled()) {
 			_anyServer = ThriftServerFactory.createAnyThriftServer(
-					_settings.getAnyListenerPort(),
-					_settings.getPdpListenerPort(),
-					_settings.getPipListenerPort(),
-					_settings.getPmpListenerPort());
+					Settings.getInstance().getAnyListenerPort(),
+					Settings.getInstance().getPdpListenerPort(),
+					Settings.getInstance().getPipListenerPort(),
+					Settings.getInstance().getPmpListenerPort());
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();
@@ -178,14 +176,14 @@ public class Controller implements IRequestHandler  {
 	}
 
 	private boolean arePortsAvailable() {
-		boolean isPdpPortAvailable = !_settings.isPdpListenerEnabled()
-				|| isPortAvailable(_settings.getPdpListenerPort());
-		boolean isPipPortAvailable = !_settings.isPipListenerEnabled()
-				|| isPortAvailable(_settings.getPipListenerPort());
-		boolean isPmpPortAvailable = !_settings.isPmpListenerEnabled()
-				|| isPortAvailable(_settings.getPmpListenerPort());
-		boolean isAnyPortAvailable = !_settings.isAnyListenerEnabled()
-				|| isPortAvailable(_settings.getAnyListenerPort());
+		boolean isPdpPortAvailable = !Settings.getInstance().isPdpListenerEnabled()
+				|| isPortAvailable(Settings.getInstance().getPdpListenerPort());
+		boolean isPipPortAvailable = !Settings.getInstance().isPipListenerEnabled()
+				|| isPortAvailable(Settings.getInstance().getPipListenerPort());
+		boolean isPmpPortAvailable = !Settings.getInstance().isPmpListenerEnabled()
+				|| isPortAvailable(Settings.getInstance().getPmpListenerPort());
+		boolean isAnyPortAvailable = !Settings.getInstance().isAnyListenerEnabled()
+				|| isPortAvailable(Settings.getInstance().getAnyListenerPort());
 
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable
 				|| !isAnyPortAvailable) {
@@ -225,22 +223,21 @@ public class Controller implements IRequestHandler  {
 			Settings.setPropertiesFile(cl
 					.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
 		}
-		_settings = Settings.getInstance();
 
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
-			_settings
+			Settings.getInstance()
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
-			_settings
+			Settings.getInstance()
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
-			_settings
+			Settings.getInstance()
 			.loadSetting(
 					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
