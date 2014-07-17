@@ -51,6 +51,14 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	protected AbstractScopeEventHandler() {
 	}
 
+	@Override
+	public void reset(){
+		super.reset();
+		_scopesToBeOpened = null;
+		_scopesToBeClosed = null;
+		//other parameters don't need to be reset cause they are settings values
+	}
+	
 	/*
 	 * This function describes how the event updates the information flow model
 	 * when the event behaves according to cross layer behavior dir.
