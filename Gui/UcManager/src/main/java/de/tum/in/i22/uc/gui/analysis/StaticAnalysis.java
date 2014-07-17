@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -20,6 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class StaticAnalysis {
 	private final static String sourceGroupKey = "sources";
@@ -30,6 +35,9 @@ public class StaticAnalysis {
 
 	private static boolean isInitialized = false;
 
+	private static Logger _logger = LoggerFactory.getLogger(StaticAnalysis.class);
+
+	
 	public enum nodeType {
 		NONE, SOURCE, SINK, BOTH, ERROR, CHOP_NODE;
 	}
@@ -109,7 +117,7 @@ public class StaticAnalysis {
 	private static void importSet(Node sets, Map<String, OffsetTable> setsMap,
 			String setName) throws SAXException {
 		int totalSets = sets.getChildNodes().getLength();
-		System.out.println("Total no of " + setName + "s : " + totalSets);
+		_logger.info("Total no of " + setName + "s : " + totalSets);
 
 		Node firstSetNode = sets.getFirstChild();
 		for (int s = 0; s < totalSets; s++) {
@@ -270,7 +278,7 @@ public class StaticAnalysis {
 
 		Node firstSetNode = sets.getFirstChild();
 		if (firstSetNode == null) {
-			System.out.println("No flows detected!");
+			_logger.info("No flows detected!");
 			return;
 		}
 
@@ -281,7 +289,7 @@ public class StaticAnalysis {
 			if (firstSetNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element firstSetElement = (Element) firstSetNode;
 				String currSink = firstSetElement.getAttribute("id");
-				System.out.print("parsing mapping between sink " + currSink
+				_logger.info("parsing mapping between sink " + currSink
 						+ " and ");
 				Set<String> sources = new HashSet<String>();
 
@@ -291,12 +299,12 @@ public class StaticAnalysis {
 					Node e = nl.item(i);
 					// if (e.getNodeType()==Node.TEXT_NODE){
 					sources.add(e.getAttributes().getNamedItem("id").getNodeValue());
-					System.out.print(e.getAttributes().getNamedItem("id").getNodeValue() + ", ");
+					_logger.info(e.getAttributes().getNamedItem("id").getNodeValue() + ", ");
 					totalSets++;
 					// }
 				}
 				setsMap.put(currSink, sources.toArray(new String[0]));
-				System.out.println("... that's it! " + nl.getLength());
+				_logger.info("... that's it! " + nl.getLength());
 			}// end of if clause
 
 			firstSetNode = firstSetNode.getNextSibling();
@@ -333,7 +341,7 @@ public class StaticAnalysis {
 			}
 		}
 
-		System.out.println("Total no of flows : " + totalSets);
+		_logger.info("Total no of flows : " + totalSets);
 
 	}
 
@@ -348,7 +356,7 @@ public class StaticAnalysis {
 
 			// normalize text representation
 			doc.getDocumentElement().normalize();
-			System.out.println("Root element of the doc is "
+			_logger.info("Root element of the doc is "
 					+ doc.getDocumentElement().getNodeName());
 
 			// Extract all sources
@@ -380,9 +388,9 @@ public class StaticAnalysis {
 			importFlows(flows, flowsMap);
 
 		} catch (SAXParseException err) {
-			System.out.println("** Parsing error" + ", line "
+			_logger.info("** Parsing error" + ", line "
 					+ err.getLineNumber() + ", uri " + err.getSystemId());
-			System.out.println(" " + err.getMessage());
+			_logger.info(" " + err.getMessage());
 			isInitialized = false;
 
 		} catch (SAXException e) {
@@ -436,7 +444,7 @@ public class StaticAnalysis {
 			int parameter) {
 		if (fullyQualifiedName == null || fullyQualifiedName == ""
 				|| offset < 0 || parameter < -1) {
-			System.out.println("Invalid Parameters: fullyQualifiedName="
+			_logger.info("Invalid Parameters: fullyQualifiedName="
 					+ fullyQualifiedName + " offset=" + offset
 					+ "  and parameter = " + parameter);
 			return null;
@@ -493,7 +501,7 @@ public class StaticAnalysis {
 			int offset) {
 		if (fullyQualifiedName == null || fullyQualifiedName == ""
 				|| offset < 0) {
-			System.out.println("Invalid Parameters: fullyQualifiedName="
+			_logger.info("Invalid Parameters: fullyQualifiedName="
 					+ fullyQualifiedName + " and offset=" + offset);
 			return null;
 		}
@@ -543,7 +551,7 @@ public class StaticAnalysis {
 			String fullyQualifiedName, int offset) {
 		if (fullyQualifiedName == null || fullyQualifiedName == ""
 				|| offset < 0) {
-			System.out.println("Invalid Parameters: fullyQualifiedName="
+			_logger.info("Invalid Parameters: fullyQualifiedName="
 					+ fullyQualifiedName + " and offset=" + offset);
 			return null;
 		}
@@ -565,7 +573,7 @@ public class StaticAnalysis {
 			String fullyQualifiedName, int offset) {
 		if (fullyQualifiedName == null || fullyQualifiedName == ""
 				|| offset < 0) {
-			System.out.println("Invalid Parameters: fullyQualifiedName="
+			_logger.info("Invalid Parameters: fullyQualifiedName="
 					+ fullyQualifiedName + " and offset=" + offset);
 			return null;
 		}
@@ -644,19 +652,19 @@ public class StaticAnalysis {
 
 			nodeType n = map.get(p);
 
-			System.out.print("Parameter " + p + " : ");
+			_logger.info("Parameter " + p + " : ");
 			if (n == nodeType.ERROR)
-				System.out.println("Error");
+				_logger.info("Error");
 			if (n == nodeType.NONE)
-				System.out.println("None");
+				_logger.info("None");
 			if (n == nodeType.SOURCE) {
-				System.out.println("Source");
+				_logger.info("Source");
 			}
 			if (n == nodeType.SINK) {
-				System.out.println("Sink");
+				_logger.info("Sink");
 			}
 			if (n == nodeType.BOTH) {
-				System.out.println("Both");
+				_logger.info("Both");
 			}
 		}
 	}
@@ -669,18 +677,18 @@ public class StaticAnalysis {
 		String notValid = "test";
 
 		print(valid, 102);
-		System.out.println("");
+		_logger.info("");
 
 		print(valid, 111);
-		System.out.println("");
+		_logger.info("");
 
 		print(notValid, 103);
-		System.out.println("");
+		_logger.info("");
 
 		for (int x = -1; x < 3; x++) {
 			int offset = 116;
 			nodeType n = getTypeOfPar(valid, offset, x);
-			System.out.println("result [+" + x + "]= " + n + " ("
+			_logger.info("result [+" + x + "]= " + n + " ("
 					+ getIdOfPar(valid, offset, x) + ")");
 		}
 

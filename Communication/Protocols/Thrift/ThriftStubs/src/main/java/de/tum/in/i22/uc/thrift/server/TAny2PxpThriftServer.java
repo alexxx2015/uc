@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -16,6 +18,7 @@ import de.tum.in.i22.uc.thrift.types.TStatus;
  *
  */
 class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface {
+	private static Logger _logger = LoggerFactory.getLogger(TAny2PxpThriftServer.class);
 
 	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {
@@ -26,7 +29,7 @@ class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface
 
 	@Override
 	public TStatus executeSync(List<TEvent> eventList) throws TException {
-		System.out.println("PXP execute method invoked");
+		_logger.info("PXP execute method invoked");
 
 		//TODO: find a way to handle the return status for the execution of more than one event.
 		// with this code, only the return TStatus of the last event executed is returned
@@ -55,7 +58,7 @@ class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface
 		/**
 		 * exmaple implementation
 		 */
-		System.out.println("Method delmr invoked - please add an implementation");
+		_logger.info("Method delmr invoked - please add an implementation");
 		return TStatus.OKAY;
 	}
 
@@ -63,7 +66,7 @@ class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface
 		/**
 		 * ADD FUNCTIONALITY 1 HERE
 		 */
-		System.out.println("Method myfunc1 invoked - please add an implementation");
+		_logger.info("Method myfunc1 invoked - please add an implementation");
 		return TStatus.OKAY;
 	}
 
@@ -72,7 +75,7 @@ class TAny2PxpThriftServer extends ThriftServerHandler implements TAny2Pxp.Iface
 		/**
 		 * ADD FUNCTIONALITY 2 HERE
 		 */
-		System.out.println("Method myfunc2 invoked - please add an implementation");
+		_logger.info("Method myfunc2 invoked - please add an implementation");
 		return TStatus.OKAY;
 	}
 

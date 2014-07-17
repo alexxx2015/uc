@@ -892,9 +892,12 @@ IBasicInformationFlowModel {
 		if (showNamesInsteadOfContainers) {
 			int nameLength = 0;
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-				int currLength = entry.getKey().getName().toString().length();
-				if (currLength > nameLength)
-					nameLength = currLength;
+				Set<IData> ds = _containerToDataMap.get(entry.getValue());
+				if (((ds!=null)&&(ds.size()>0))||showFullIFM){
+					int currLength = entry.getKey().getName().toString().length();
+					if (currLength > nameLength)
+						nameLength = currLength;
+				}
 			}
 			Set<Entry<IName, IContainer>> entryset;
 			if (sort) {
@@ -926,7 +929,7 @@ IBasicInformationFlowModel {
 										sb.append(" ");
 									}
 								}
-								sb.append(d.getId() + nl);
+								sb.append(d.getId() +"  "+ nl);
 							}
 						}
 					} else {
