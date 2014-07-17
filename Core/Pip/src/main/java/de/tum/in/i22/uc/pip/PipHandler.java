@@ -52,10 +52,6 @@ public class PipHandler extends PipProcessor {
 	//	 */
 	//	private final PipDistributionManager _distributedPipManager;
 
-	// this is to include classes within the jar file. DO NOT REMOVE.
-	@SuppressWarnings("unused")
-	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
-
 	public PipHandler() {
 		this(new InformationFlowModelManager());
 	}
@@ -210,7 +206,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Evaluate the predicate in the state obtained simulating the execution of
 	 * event.
-	 * 
+	 *
 	 * @return the result of the formula
 	 */
 	@Override
