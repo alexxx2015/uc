@@ -893,7 +893,7 @@ public final class BasicInformationFlowModel implements
 			int nameLength = 0;
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
-				if ((ds!=null)&&(ds.size()>0)){
+				if (((ds!=null)&&(ds.size()>0))||showFullIFM){
 					int currLength = entry.getKey().getName().toString().length();
 					if (currLength > nameLength)
 						nameLength = currLength;

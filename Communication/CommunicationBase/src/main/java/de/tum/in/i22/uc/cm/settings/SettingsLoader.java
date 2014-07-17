@@ -56,10 +56,9 @@ public class SettingsLoader {
 						+ " in resources ... ");
 				ClassLoader cl = SettingsLoader.class.getClassLoader();
 				if (cl == null) {
-					System.out.println("Classload is null");
 					_logger.error("CLassloader is null");
 				} else{
-					System.out.println("Classload is not null");
+					_logger.error("CLassloader is not null");
 					is = SettingsLoader.class.getClassLoader()
 							.getResourceAsStream(propertiesFileName);
 				}
