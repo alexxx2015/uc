@@ -34,6 +34,13 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		return "Scope for generic "+ (type.equals(EScopeType.JBC_GENERIC_IN)? "source" : "sink") + " event with fileDescriptor + " + fileDescriptor + " (pid "+pid+")";
 	}
 
+	@Override
+	public void reset(){
+		super.reset();
+		iFlow = new HashMap<String, String[]>();
+		//other parameters don't need to be reset cause they are settings values
+	}
+	
 	/*
 	 * For this generic action the scope is only one and the "delimiter"
 	 * (start/end) is given as a parameter

@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class UcMangerFX extends Application {
+public class UcManagerFX extends Application {
 	private GuiController controller;
 
 	public static void main(String[] args) {
@@ -31,6 +31,8 @@ public class UcMangerFX extends Application {
 		bp.setTop(this.controller.getSceneGenerator().generateTop());
 
 		bp.setCenter(this.controller.getSceneGenerator().generateCenter());
+		
+		bp.setBottom(this.controller.getSceneGenerator().generateBottom());
 		Scene s = new Scene(bp, 500, 500);
 		s.getStylesheets().add("css/mystyle.css");
 		stage.setScene(s);
@@ -46,6 +48,7 @@ public class UcMangerFX extends Application {
 	@Override
 	public void stop() {
 		this.controller.stopUc();
+		System.exit(0);
 	}
 
 }

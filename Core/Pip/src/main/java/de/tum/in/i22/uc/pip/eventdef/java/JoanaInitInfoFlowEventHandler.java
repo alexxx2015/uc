@@ -92,6 +92,12 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			// identifier for a container
 			// Version 4: signature+parampos is used as naming identifier for a
 			// container
+			
+			String[] sigComp = signature.split(Settings.getInstance().getJoanaInitDelimiter());
+			if(sigComp.length > 1){
+				signature = sigComp[0];
+			}
+			
 			String[] infoConts = new String[] {
 					signature,
 					location + _javaIFDelim + offset + _javaIFDelim + signature,

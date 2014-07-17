@@ -57,6 +57,9 @@ public class PipManager {
 		// class name to EventHandlerDefinition
 		Map<String, EventHandlerDefinition> map = new HashMap<String, EventHandlerDefinition>();
 
+		//reset cached definitions
+		EventHandlerManager.clearDefinitions();
+		
 		try {
 			Path destination = Files.createTempDirectory("PipTemp");
 		   _logger.trace("Temporary dir: " + destination.toAbsolutePath().toString());

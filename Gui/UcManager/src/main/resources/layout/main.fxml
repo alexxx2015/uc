@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane fx:controller="de.tum.in.i22.uc.gui.FXMLController" 
+    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <Label text="Nachname:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="vornameTF" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+</GridPane>

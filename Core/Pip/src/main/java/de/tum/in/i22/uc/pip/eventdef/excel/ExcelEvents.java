@@ -38,6 +38,12 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 		}
 		return res;
 	}
+	
+	@Override
+	public void reset(){
+		super.reset();
+		//other parameters don't need to be reset cause they are settings values
+	}
 
 	/**
 	 * This method pushes the content of the Excel_SystemClipboard container to

@@ -15,13 +15,19 @@ import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 
 public class TestEventEventHandler extends BaseEventHandler {
 	private static final Logger _logger = LoggerFactory.getLogger(TestEventEventHandler.class);
+	static IData data = null;
 
 	public TestEventEventHandler() {
 		super();
 	}
 
-	static IData data = null;
 
+	@Override
+	public void reset(){
+		super.reset();
+		data=null;
+	}
+	
 	@Override
 	protected IStatus update() {
 
