@@ -37,7 +37,6 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	@Override
 	public void reset(){
 		super.reset();
-		iFlow = new HashMap<String, String[]>();
 		//other parameters don't need to be reset cause they are settings values
 	}
 	

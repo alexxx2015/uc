@@ -114,13 +114,13 @@ public abstract class GenericTest {
 	 */
 
 	protected static void sayMyName(String Heisenberg) {
-		System.out.println("");
-		System.out.println("******************");
-		System.out.println("******************");
-		System.out.println(Heisenberg);
-		System.out.println("******************");
-		System.out.println("******************");
-		System.out.println("");
+		_logger.info("");
+		_logger.info("******************");
+		_logger.info("******************");
+		_logger.info(Heisenberg);
+		_logger.info("******************");
+		_logger.info("******************");
+		_logger.info("");
 	}
 
 	protected static Map<String, String> createDummyMap() {
