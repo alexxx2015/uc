@@ -892,9 +892,12 @@ public final class BasicInformationFlowModel implements
 		if (showNamesInsteadOfContainers) {
 			int nameLength = 0;
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-				int currLength = entry.getKey().getName().toString().length();
-				if (currLength > nameLength)
-					nameLength = currLength;
+				Set<IData> ds = _containerToDataMap.get(entry.getValue());
+				if ((ds!=null)&&(ds.size()>0)){
+					int currLength = entry.getKey().getName().toString().length();
+					if (currLength > nameLength)
+						nameLength = currLength;
+				}
 			}
 			Set<Entry<IName, IContainer>> entryset;
 			if (sort) {
@@ -926,7 +929,7 @@ public final class BasicInformationFlowModel implements
 										sb.append(" ");
 									}
 								}
-								sb.append(d.getId() + nl);
+								sb.append(d.getId() +"  "+ nl);
 							}
 						}
 					} else {
