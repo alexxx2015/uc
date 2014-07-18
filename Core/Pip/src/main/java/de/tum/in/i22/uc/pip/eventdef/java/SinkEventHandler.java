@@ -47,7 +47,8 @@ public class SinkEventHandler extends JavaEventHandler {
 			
 			if (sourceIds!=null){
 			for (String sourceId : sourceIds){
-					if ((sourceId != null) && (!sourceId.equals(""))) {
+				String[] arrStr=sourceId.split(_otherDelim);
+					if ((sourceId != null) && (!sourceId.equals("")) && (arrStr!=null) && (arrStr.length==3)) {
 						IContainer srcCnt = _informationFlowModel
 								.getContainer(new SourceSinkName(sourceId)); 
 						Set<IData> s = _informationFlowModel.getData(srcCnt);

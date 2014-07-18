@@ -58,7 +58,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public void setInformationFlowModel(IInformationFlowModel ifm) {
+	public final void setInformationFlowModel(IInformationFlowModel ifm) {
 		if (_informationFlowModel != null) {
 			throw new RuntimeException("Information Flow Model already set. Can only be set once.");
 		}
@@ -73,5 +73,10 @@ public abstract class BaseEventHandler implements IEventHandler {
 			throw new ParameterNotFoundException(key);
 		}
 		return value;
+	}
+	
+	public void reset(){
+		_event=null;
+		_informationFlowModel=null;
 	}
 }

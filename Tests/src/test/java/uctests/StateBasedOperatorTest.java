@@ -1,13 +1,11 @@
 package uctests;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class StateBasedOperatorTest extends GenericTest{
@@ -28,9 +27,10 @@ public class StateBasedOperatorTest extends GenericTest{
 	public void deployPolicy() throws Exception {
 		String path = StateBasedOperatorTest.class.getResource(
 				"/testStateBasedOperators.xml").getPath();
+		IStatus status = pmp.deployPolicyURIPmp(path);
 		_logger.debug("deploying policy " + path + "...");
 		_logger.debug("deploying policy " + path + " result : "
-				+ pmp.deployPolicyURIPmp(path));
+				+ status);
 		
 		_logger.debug(pip.toString());
 	}
@@ -145,9 +145,10 @@ public class StateBasedOperatorTest extends GenericTest{
 		// deploy semantics for a new event "testEvent" that empties
 		// initialcontainer
 		File file = FileUtils.getFile("src/test/resources/updateIF.jar");
+		IStatus status = pip.updateInformationFlowSemantics(null, file,
+				EConflictResolution.OVERWRITE);
 		_logger.debug("deployment of new semantics....: "
-				+ pip.updateInformationFlowSemantics(null, file,
-						EConflictResolution.OVERWRITE));
+				+ status.toString());
 
 		// send "testevent". set appropriate pep in order to match event
 		// definition package.
