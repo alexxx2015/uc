@@ -25,7 +25,6 @@ public class TestEventEventHandler extends BaseEventHandler {
 	@Override
 	public void reset(){
 		super.reset();
-		data=null;
 	}
 	
 	@Override
