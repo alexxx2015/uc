@@ -17,10 +17,21 @@
 	</modules>
 
 	<properties>
+		<nologging.code>if \(\/\*nologging\*\/false\/\*nologging\*\/\)</nologging.code>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
      	<root.path>${basedir}</root.path>
+		<nologging.enable></nologging.enable>
 	</properties>
 
+
+	<profiles>
+		<profile>
+			<id>nolog</id>
+			<properties>
+				<nologging.enable>${nologging.code}</nologging.enable>
+			</properties>
+		</profile>
+	</profiles>
 
 	<pluginRepositories>
 		<pluginRepository>
