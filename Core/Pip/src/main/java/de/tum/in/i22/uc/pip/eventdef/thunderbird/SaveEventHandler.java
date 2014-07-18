@@ -23,6 +23,13 @@ import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 public class SaveEventHandler extends AbstractScopeEventHandler {
 		private String _delimiter = null;
 
+		@Override
+		public void reset(){
+			super.reset();
+			_delimiter=null;
+			//other parameters don't need to be reset cause they are settings values
+		}
+		
 		public SaveEventHandler() {
 			super();
 		}

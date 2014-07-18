@@ -15,4 +15,6 @@ public interface IEventHandler {
 	public IEventHandler setEvent(IEvent event);
 
 	public void setInformationFlowModel(IInformationFlowModel ifm);
+	
+	public void reset();
 }
