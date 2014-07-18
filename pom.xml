@@ -17,12 +17,12 @@
 	</modules>
 
 	<properties>
-		<nologging.code>if \(\/\*nologging\*\/false\/\*nologging\*\/\)</nologging.code>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
      	<root.path>${basedir}</root.path>
+		<nologging.code>if \(\/\*nologging\*\/false\/\*nologging\*\/\)</nologging.code>
 		<nologging.enable></nologging.enable>
+		<nologging.files>${basedir}/**/**.java</nologging.files>
 	</properties>
-
 
 	<profiles>
 		<profile>
@@ -126,6 +126,84 @@
 						<source>1.7</source>
 						<target>1.7</target>
 					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>com.google.code.maven-replacer-plugin</groupId>
+					<artifactId>replacer</artifactId>
+					<version>1.5.3</version>
+					<configuration>
+						<quiet>false</quiet>
+					</configuration>
+
+					<executions>
+						<execution>
+							<!-- Clean up nologging -->
+							<id>clean-nologging</id>
+							<goals>
+								<goal>replace</goal>
+							</goals>
+							<configuration>
+							    <includes>
+							        <include>${nologging.files}</include>
+							    </includes>
+							    <regex>true</regex>
+							    <replacements>
+									<replacement>
+							            <token>(${nologging.code})+</token>
+							            <value></value>
+							        </replacement>
+							    </replacements>
+							</configuration>
+						</execution>
+
+						<execution>
+							<!-- Change the source code such that all logging methods will not be executed.
+								This is done _before_ compilation phase. -->
+							<id>do-nologging</id>
+							<goals>
+								<goal>replace</goal>
+							</goals>
+							<configuration>
+							    <includes>
+							        <include>${nologging.files}</include>
+							    </includes>
+							    <regex>true</regex>
+							    <replacements>
+									<replacement>
+							            <token>(${nologging.code})+</token>
+							            <value></value>
+							        </replacement>
+							        <replacement>
+							            <token>(_?log(ger)?\.(warn|debug|error|fatal|info|trace))</token>
+							            <value>${nologging.enable}$1</value>
+							        </replacement>
+							    </replacements>
+							</configuration>
+						</execution>
+
+						<!-- Undo changes to the source code for disabling logging.
+							This is done _after_ compilation phase and _before_ test-compilation phase.
+							THUS: Logging is _NOT_ disabled for test classes. -->
+						<execution>
+							<id>undo-nologging</id>
+							<goals>
+								<goal>replace</goal>
+							</goals>
+							<configuration>
+							    <includes>
+							        <include>${nologging.files}</include>
+							    </includes>
+							    <regex>true</regex>
+							    <replacements>
+							        <replacement>
+							            <token>(${nologging.code})+</token>
+							            <value></value>
+							        </replacement>
+							    </replacements>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

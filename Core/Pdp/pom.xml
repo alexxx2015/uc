@@ -34,16 +34,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
 				<!-- Clean the XSD folder -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -97,86 +87,32 @@
 			</plugin>
 
 			<plugin>
-					<groupId>com.google.code.maven-replacer-plugin</groupId>
-					<artifactId>replacer</artifactId>
-					<version>1.5.3</version>
-					<configuration>
-						<quiet>false</quiet>
-					</configuration>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
 
-					<executions>
-						<execution>
-							<!-- Clean up nologging -->
-							<id>clean-nologging</id>
-							<phase>clean</phase>
-							<goals>
-								<goal>replace</goal>
-							</goals>
-							<configuration>
-							    <includes>
-							        <include>${basedir}/src/**/**.java</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
-									<replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							    </replacements>
-							</configuration>
-						</execution>
+				<executions>
+					<execution>
+						<!-- Clean up nologging -->
+						<id>clean-nologging</id>
+						<phase>clean</phase>
+					</execution>
 
-						<execution>
-							<!-- Change the source code such that all logging methods will not be executed.
-								This is done _before_ compilation phase. -->
-							<id>do-nologging</id>
-							<phase>process-sources</phase>
-							<goals>
-								<goal>replace</goal>
-							</goals>
-							<configuration>
-							    <includes>
-							        <include>${basedir}/src/**/**.java</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
-									<replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							        <replacement>
-							            <token>(_?log(ger)?\.(warn|debug|error|fatal|info|trace))</token>
-							            <value>${nologging.enable}$1</value>
-							        </replacement>
-							    </replacements>
-							</configuration>
-						</execution>
+					<execution>
+						<!-- Change the source code such that all logging methods will not be executed.
+							This is done _before_ compilation phase. -->
+						<id>do-nologging</id>
+						<phase>process-sources</phase>
+					</execution>
 
-						<!-- Undo changes to the source code for disabling logging.
-							This is done _after_ compilation phase and _before_ test-compilation phase.
-							THUS: Logging is _NOT_ disabled for test classes. -->
-						<execution>
-							<id>undo-nologging</id>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>replace</goal>
-							</goals>
-							<configuration>
-							    <includes>
-							        <include>${basedir}/src/**/**.java</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
-							        <replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							    </replacements>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-
+					<!-- Undo changes to the source code for disabling logging.
+						This is done _after_ compilation phase and _before_ test-compilation phase.
+						THUS: Logging is _NOT_ disabled for test classes. -->
+					<execution>
+						<id>undo-nologging</id>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
