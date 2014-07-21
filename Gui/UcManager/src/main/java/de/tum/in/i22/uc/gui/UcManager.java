@@ -374,7 +374,7 @@ public class UcManager extends Controller {
 				String sources = "";
 				for (String source : s) {
 					sources += id2SourceMap.get(source)
-							+ Settings.getInstance().getJoanaInitDelimiter();
+							+ Settings.getInstance().getJoanaDelimiter1();
 				}
 				if (sources.length() > 0)
 					sources = sources.substring(0, sources.length() - 1);
