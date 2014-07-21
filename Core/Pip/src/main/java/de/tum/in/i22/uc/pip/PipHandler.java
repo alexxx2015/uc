@@ -98,6 +98,7 @@ public class PipHandler extends PipProcessor {
 		} catch (InvalidStateBasedFormulaException e) {
 			e.printStackTrace();
 			return false;
+			
 		}
 	}
 

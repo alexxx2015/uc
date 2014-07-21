@@ -19,7 +19,7 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 	}
 
 	static IData data = null;
-
+	
 	@Override
 	protected IStatus update() {
 
