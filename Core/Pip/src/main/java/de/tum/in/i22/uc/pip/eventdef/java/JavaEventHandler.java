@@ -5,10 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -26,20 +28,25 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _paramOffset = "offset";
 
 	protected final String _javaIFDelim = ":";
-	protected final String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
+	protected final String _otherDelim = Settings.getInstance()
+			.getJoanaPidPoiSeparator();
 	protected final String _srcPrefix = "src_";
 	protected final String _snkPrefix = "snk_";
 
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
-		return "Scope for generic "+ (type.equals(EScopeType.JBC_GENERIC_IN)? "source" : "sink") + " event with fileDescriptor + " + fileDescriptor + " (pid "+pid+")";
+		return "Scope for generic "
+				+ (type.equals(EScopeType.JBC_GENERIC_IN) ? "source" : "sink")
+				+ " event with fileDescriptor + " + fileDescriptor + " (pid "
+				+ pid + ")";
 	}
 
 	@Override
-	public void reset(){
+	public void reset() {
 		super.reset();
-		//other parameters don't need to be reset cause they are settings values
+		// other parameters don't need to be reset cause they are settings
+		// values
 	}
-	
+
 	/*
 	 * For this generic action the scope is only one and the "delimiter"
 	 * (start/end) is given as a parameter
@@ -56,7 +63,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			return null;
 		}
 
-		delimiter=delimiter.toLowerCase();
+		delimiter = delimiter.toLowerCase();
 		IScope scope = buildScope(delimiter);
 
 		if (scope == null) {
@@ -90,15 +97,15 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	 */
 	protected IScope buildScope(EScopeType type) {
 		String fileDescriptor;
-//		String tid;
+		// String tid;
 		String pid;
 		try {
 			fileDescriptor = getParameterValue("fileDescriptor");
-//			tid = getParameterValue("ThreadId");
+			// tid = getParameterValue("ThreadId");
 			pid = getParameterValue("PID");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
-			 return null;
+			return null;
 		}
 
 		String HRscope = scopeName(type, fileDescriptor, pid);
@@ -106,9 +113,30 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		// create the new scope
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("fileDescriptor", fileDescriptor);
-//		attributes.put("tid", tid);
+		// attributes.put("tid", tid);
 		attributes.put("pid", pid);
 		return new ScopeBasic(HRscope, type, attributes);
 	}
 
+	/**
+	 * This method is invoked by the KillProcess Event Handler from Windows. The
+	 * purpose of this method is to clean up the PIP removing all the
+	 * Java-specific containers when the process dies.
+	 */
+
+	public static void killProcess(String pid,
+			IInformationFlowModel _informationFlowModel) {
+		if ((pid == null) || (pid.equals(""))) {
+			_logger.error("Impossible to kill process with null PID");
+			return;
+		}
+
+		String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
+		for (String entry : iFlow.keySet()) {
+			String[] fields = entry.split(_otherDelim);
+			if (fields[0].equals(pid)) {
+				_informationFlowModel.removeName(new NameBasic(entry), true);
+			}
+		}
+	}
 }
