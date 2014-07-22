@@ -249,7 +249,7 @@ public class SceneGenerator {
 						autoRefreshThread.interrupt();
 					autoRefreshThread = new Thread() {
 						public void run() {
-							while (autoRefresh || !isInterrupted()) {
+							while (autoRefresh && !isInterrupted()) {
 								controller.refreshPipState();
 								try {
 									Thread.sleep(Integer.parseInt(interval) * 1000);

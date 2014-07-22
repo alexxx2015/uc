@@ -15,7 +15,7 @@ public class ContextEventHandler extends JavaEventHandler{
 			String contextOffset = getParameterValue(_paramContextOffset);
 			String processId = getParameterValue(_paramPID);
 			String threadId = getParameterValue(_paramThreadId);
-			contextToObject.put(processId+"-"+contextId, objectId);
+			contextToObject.put(contextId, objectId);
 		} catch (ParameterNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

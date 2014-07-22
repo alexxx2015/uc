@@ -36,6 +36,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		try {
 			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
+			String context = getParameterValue(_paramContextId);
 			int pid = Integer.valueOf(getParameterValue("PID"));
 			
 			String sourceId = pid+ _otherDelim + _srcPrefix+ _otherDelim + location + _javaIFDelim + signature;

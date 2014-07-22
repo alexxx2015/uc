@@ -21,26 +21,26 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class SinkEventHandler extends JavaEventHandler {
 
-
 	@Override
 	protected IScope buildScope(String delimiter) {
 		return buildScope(EScopeType.JBC_GENERIC_OUT);
 	}
 
-	
 	@Override
 	protected IStatus update() {
 		return update(EBehavior.INTRA, null);
 	}
-	
+
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
 		try {
 			String signature = getParameterValue("signature");
 			String location = getParameterValue("location");
+			String context = getParameterValue(_paramContextId);
 			int pid = Integer.valueOf(getParameterValue("PID"));
-			
-			String sinkId = pid+_otherDelim + _snkPrefix+ _otherDelim + location + _javaIFDelim + signature;
+
+			String sinkId = pid + _otherDelim + _snkPrefix + _otherDelim
+					+ location + _javaIFDelim + signature;
 			String[] sourceIds = iFlow.get(sinkId);
 
 			Set<IData> srcData = new HashSet<IData>();
@@ -50,16 +50,16 @@ public class SinkEventHandler extends JavaEventHandler {
 				String[] arrStr=sourceId.split(_otherDelim);
 					if ((sourceId != null) && (!sourceId.equals("")) && (arrStr!=null) && (arrStr.length==3)) {
 						IContainer srcCnt = _informationFlowModel
-								.getContainer(new SourceSinkName(sourceId)); 
+								.getContainer(new SourceSinkName(sourceId));
 						Set<IData> s = _informationFlowModel.getData(srcCnt);
-						if (s!=null) srcData.addAll(s);
+						if (s != null)
+							srcData.addAll(s);
 					}
 				}
-			
-			IContainer sinkCnt = _informationFlowModel
-					.getContainer(new SourceSinkName(sinkId));
 
-			
+				IContainer sinkCnt = _informationFlowModel
+						.getContainer(new SourceSinkName(sinkId));
+
 				if ((direction.equals(EBehavior.INTRA))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
 					_informationFlowModel.addData(srcData, sinkCnt);
@@ -81,8 +81,9 @@ public class SinkEventHandler extends JavaEventHandler {
 
 				if ((direction.equals(EBehavior.OUT))
 						|| (direction.equals(EBehavior.INTRAOUT))) {
-					IScope os= _informationFlowModel.getOpenedScope(scope);
-					if (os!=null) scope=os;
+					IScope os = _informationFlowModel.getOpenedScope(scope);
+					if (os != null)
+						scope = os;
 					_informationFlowModel.addDataTransitively(srcData,
 							new NameBasic(scope.getId()));
 				}
@@ -97,9 +98,6 @@ public class SinkEventHandler extends JavaEventHandler {
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
-	
-	
-	
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String delimiter = null;
@@ -109,13 +107,16 @@ public class SinkEventHandler extends JavaEventHandler {
 			_logger.error(e.getMessage());
 			return null;
 		}
-		
-		delimiter=delimiter.toLowerCase();
+
+		delimiter = delimiter.toLowerCase();
 		IScope scope = buildScope(delimiter);
-		if (scope==null)return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
-		if (delimiter.equals(_openDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);
-		if (delimiter.equals(_closeDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.INTRA, scope);
-		//this line should never be reached
+		if (scope == null)
+			return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+		if (delimiter.equals(_openDelimiter))
+			return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);
+		if (delimiter.equals(_closeDelimiter))
+			return new Pair<EBehavior, IScope>(EBehavior.INTRA, scope);
+		// this line should never be reached
 		return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
 	}
 
