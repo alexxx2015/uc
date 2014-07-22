@@ -78,11 +78,9 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			JSONObject o = listOfFlowIt.next();
 			String sink = (String) o.get("sink");
 			JSONArray sources = (JSONArray)o.get("sources");
-			String[] toBeAdded = new String[sources.size()]; //first element is sink
-			for (int i=0; i<sources.size(); i++){
-				toBeAdded[i]=pid+_javaIFDelim+((String)(sources.get(i))).toLowerCase();
-			}
-			iFlow.put(pid+_javaIFDelim+sink.toLowerCase(), toBeAdded);
+			String[] s = new String[sources.size()]; 
+			sources.toArray(s);
+			iFlow.put(pid+_javaIFDelim+sink.toLowerCase(), s);
 		}
 		
 //		parseList(listOfSources, pid, "source", sep1, sep2);
