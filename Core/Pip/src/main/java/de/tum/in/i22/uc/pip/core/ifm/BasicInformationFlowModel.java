@@ -611,7 +611,7 @@ IBasicInformationFlowModel {
 	 */
 	@Override
 	public void addData(Collection<IData> data, IContainer container) {
-		if (data == null || container == null) {
+		if (data == null || container == null || data.size()==0) {
 			return;
 		}
 
@@ -622,8 +622,8 @@ IBasicInformationFlowModel {
 		}
 
 		_logger.info("Adding data " + data + " to container " + container);
-		;
 		dstData.addAll(data);
+		
 	}
 
 	/*
