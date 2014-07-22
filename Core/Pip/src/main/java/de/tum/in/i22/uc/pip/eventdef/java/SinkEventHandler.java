@@ -43,8 +43,7 @@ public class SinkEventHandler extends JavaEventHandler {
 					+ location + _javaIFDelim + signature;
 			String[] sourceIds = iFlow.get(sinkId);
 
-			Set<IData> srcData = new HashSet<IData>();
-			
+			Set<IData> srcData = new HashSet<IData>();			
 			if (sourceIds!=null){
 			for (String sourceId : sourceIds){
 				String[] arrStr=sourceId.split(_otherDelim);
