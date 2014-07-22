@@ -7,8 +7,13 @@ package de.tum.in.i22.uc.pip.eventdef.java;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -33,19 +38,21 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		// This event is used only during tests to initialize the information
 		// flow schema to a specific state
 
-		String listOfSources;
-		String listOfSinks;
-		String listOfFlows;
+//		String listOfSources="";
+//		String listOfSinks="";
+//		String listOfFlows="";
+		JSONObject report;
 
 		String pid;
 
 		try {
 			// type = getParameterValue(_paramType);
 			pid = getParameterValue("PID");
-			listOfSources = getParameterValue("listOfSources");
-			listOfSinks = getParameterValue("listOfSinks");
-			listOfFlows = getParameterValue("listOfFlows");
-
+			String r = getParameterValue("REPORT");
+			report = (JSONObject) JSONValue.parse(r);
+//			listOfSources = getParameterValue("listOfSources");
+//			listOfSinks = getParameterValue("listOfSinks");
+//			listOfFlows = getParameterValue("listOfFlows");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -55,59 +62,89 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		// If this is an information flow mapping event then fill internal
 		// static mapping
 		// if (type.equals("iflow")) {
-
-		String sep1 = Settings.getInstance().getJoanaDelimiter1();
-		String sep2 = Settings.getInstance().getJoanaDelimiter2();
-
-		parseList(listOfSources, pid, "source", sep1, sep2);
-
-		parseList(listOfSinks, pid, "sink", sep1, sep2);
-
 		
-		String[] flowsArr = listOfFlows.split(sep2);
-		for (String flow: flowsArr){
-			if ((flow==null)||(flow.equals(""))) break;
-			String[] map = flow.split(sep1);
-			if (map.length>2){
-				//String[] toBeAdded = Arrays.copyOfRange(map, 1, map.length-1);
-				String[] toBeAdded = new String[map.length-1]; //first element is sink
-				for (int i=1; i<map.length; i++){
-					toBeAdded[i-1]=pid+_javaIFDelim+map[i].toLowerCase();
-				}
-				iFlow.put(pid+_javaIFDelim+map[0].toLowerCase(), toBeAdded);
-			}
+//		String sep1 = Settings.getInstance().getJoanaDelimiter1();
+//		String sep2 = Settings.getInstance().getJoanaDelimiter2();
+
+		JSONArray listOfSources = (JSONArray)report.get("listOfSources");
+		this.parseJSONList(listOfSources, pid, "source");
+		
+		JSONArray listOfSinks = (JSONArray)report.get("listOfSinks");
+		this.parseJSONList(listOfSinks, pid, "sink");
+		
+		JSONArray listOfFlows = (JSONArray)report.get("listOfFlows");
+		Iterator<JSONObject> listOfFlowIt = listOfFlows.iterator();
+		while(listOfFlowIt.hasNext()){
+			JSONObject o = listOfFlowIt.next();
+			String sink = (String) o.get("sink");
+			JSONArray sources = (JSONArray)o.get("sources");
+			String[] s = new String[sources.size()]; 
+			sources.toArray(s);
+			iFlow.put(pid+_javaIFDelim+sink.toLowerCase(), s);
 		}
+		
+//		parseList(listOfSources, pid, "source", sep1, sep2);
+//		parseList(listOfSinks, pid, "sink", sep1, sep2);	
+//		String[] flowsArr = listOfFlows.split(sep2);
+//		for (String flow: flowsArr){
+//			if ((flow==null)||(flow.equals(""))) break;
+//			String[] map = flow.split(sep1);
+//			if (map.length>2){
+//				//String[] toBeAdded = Arrays.copyOfRange(map, 1, map.length-1);
+//				String[] toBeAdded = new String[map.length-1]; //first element is sink
+//				for (int i=1; i<map.length; i++){
+//					toBeAdded[i-1]=pid+_javaIFDelim+map[i].toLowerCase();
+//				}
+//				iFlow.put(pid+_javaIFDelim+map[0].toLowerCase(), toBeAdded);
+//			}
+//		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
-
-	private void parseList(String listOfPoi, String pid, String type,
-			String sep1, String sep2) {
-		String id, location, offset, parampos, signature;
-
-		String[] listOfPoiArr = listOfPoi.split(sep2);
-		for (int i = 0; i < listOfPoiArr.length - 1; i++) {
-			String currPoi = listOfPoiArr[i];
-			if (currPoi == null)
-				break;
-			String[] poiPars = currPoi.split(sep1);
-			
-			assert(poiPars.length>=10);
-
-			Map<String, String> pars = new HashMap<String, String>();
-			for (int o = 0; o < 4; o++)
-				pars.put(poiPars[2 * o], poiPars[2 * o + 1]);
-			id = pars.get(_paramId);
-			location = pars.get(_paramLocation);
-			offset = pars.get(_paramOffset);
-			parampos = pars.get(_paramParamPos);
-
-			for (int o = 9; o < poiPars.length; o++) {
-				signature = poiPars[o];
+	
+	private void parseJSONList(JSONArray listOfTypes, String pid, String type){
+		Iterator<JSONObject> listOfSourcesIt = listOfTypes.iterator();
+		while(listOfSourcesIt.hasNext()){
+			JSONObject o = listOfSourcesIt.next();
+			String id = (String) o.get(_paramId);
+			String location = (String) o.get(_paramLocation);
+			String offset = String.valueOf(o.get(_paramOffset));
+			String parampos = String.valueOf(o.get(_paramParamPos));
+			JSONArray listOfSignatures = (JSONArray) o.get("signature");			
+			Iterator<String>listOfSignaturesIt = listOfSignatures.iterator();
+			while(listOfSignaturesIt.hasNext()){
+				String signature = listOfSignaturesIt.next();
 				addPoi(pid, type, id, location, offset, signature, parampos);
-			}
-		}
+			} 
+		}			
 	}
+
+//	private void parseList(String listOfPoi, String pid, String type,String sep1, String sep2) {
+//		String id, location, offset, parampos, signature;
+//
+//		String[] listOfPoiArr = listOfPoi.split(sep2);
+//		for (int i = 0; i < listOfPoiArr.length - 1; i++) {
+//			String currPoi = listOfPoiArr[i];
+//			if (currPoi == null)
+//				break;
+//			String[] poiPars = currPoi.split(sep1);
+//			
+//			assert(poiPars.length>=10);
+//
+//			Map<String, String> pars = new HashMap<String, String>();
+//			for (int o = 0; o < 4; o++)
+//				pars.put(poiPars[2 * o], poiPars[2 * o + 1]);
+//			id = pars.get(_paramId);
+//			location = pars.get(_paramLocation);
+//			offset = pars.get(_paramOffset);
+//			parampos = pars.get(_paramParamPos);
+//
+//			for (int o = 9; o < poiPars.length; o++) {
+//				signature = poiPars[o];
+//				addPoi(pid, type, id, location, offset, signature, parampos);
+//			}
+//		}
+//	}
 
 	private void addPoi(String pid, String type, String id, String location,
 			String offset, String signature, String parampos) {
