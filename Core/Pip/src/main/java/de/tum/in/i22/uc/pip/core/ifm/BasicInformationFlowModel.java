@@ -534,7 +534,7 @@ public final class BasicInformationFlowModel implements
 		}
 
 		addData(data, dstContainer);
-		for (IContainer c : getAliasesFrom(dstContainer)) {
+		for (IContainer c : getAliasTransitiveClosure(dstContainer)) {
 			addData(data, c);
 		}
 	}
