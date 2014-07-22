@@ -102,7 +102,9 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_excelOcbName = "excelOcbName";
 	private static final String PROP_NAME_excelScbName = "excelScbName";
 
-	private static final String PROP_NAME_joanaInitDelimiter = "joanaInitDelimiter";
+	private static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
+	private static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
+
 	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
 
 	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
@@ -235,7 +237,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_excelOcbName, "OfficeClipboard");
 		loadSetting(PROP_NAME_excelScbName, "SystemClipboard(Excel)");
 
-		loadSetting(PROP_NAME_joanaInitDelimiter, "#");
+		loadSetting(PROP_NAME_joanaDelimiter1, ":");
+		loadSetting(PROP_NAME_joanaDelimiter2, "#");
 		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
 
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
@@ -556,8 +559,12 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_excelScbName);
 	}
 
-	public String getJoanaInitDelimiter(){
-		return getValue(PROP_NAME_joanaInitDelimiter);
+	public String getJoanaDelimiter1(){
+		return getValue(PROP_NAME_joanaDelimiter1);
+	}
+
+	public String getJoanaDelimiter2(){
+		return getValue(PROP_NAME_joanaDelimiter2);
 	}
 
 	public String getJoanaPidPoiSeparator(){

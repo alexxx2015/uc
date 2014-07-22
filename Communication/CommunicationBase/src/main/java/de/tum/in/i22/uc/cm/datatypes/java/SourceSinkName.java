@@ -36,6 +36,10 @@ public class SourceSinkName extends NameBasic {
 		this(pid + sep + type+ sep + poiName);
 	}
 
+	public SourceSinkName(String pid, String type, String poiName) {
+		this(pid + sep + type+ sep + poiName);
+	}
+
 	public int getPid() {
 		return pid;
 	}
