@@ -333,11 +333,11 @@ public class PdpTest extends GenericTest{
 
 					pdp.notifyEventSync(event1);
 
-					try {
-						Thread.sleep(20);
-					} catch (InterruptedException e) {
-						_logger.error(e.toString());
-					}
+//					try {
+//						Thread.sleep(20);
+//					} catch (InterruptedException e) {
+//						_logger.error(e.toString());
+//					}
 				}
 			}
 		});

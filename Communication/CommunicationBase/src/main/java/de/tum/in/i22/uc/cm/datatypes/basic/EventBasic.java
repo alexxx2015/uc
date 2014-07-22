@@ -11,9 +11,6 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 public class EventBasic implements IEvent {
 
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
-	public static final String ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY = Settings.getInstance().PROP_NAME_allowImpliesActual;
-
-	private static final String PREFIX_SEPARATOR = Settings.getInstance().getPrefixSeparator();
 
 	private String _name = null;
 	private String _pep = null;
@@ -29,7 +26,7 @@ public class EventBasic implements IEvent {
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
 			
 			// If the event has a AIA parameter, use it
-			String AIA=_parameters.get(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY);
+			String AIA=_parameters.get(Settings.PROP_NAME_allowImpliesActual);
 			if (AIA!=null) _allowImpliesActual = Boolean.valueOf(AIA);
 			//otherwise, fallback to Setting default value
 			else  _allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
@@ -79,7 +76,7 @@ public class EventBasic implements IEvent {
 				.add("_isActual", _isActual)
 				.add("_parameters", _parameters)
 				.add("_timestamp", _timestamp)
-				.add(ALLOW_IMPLIES_ACTUAL_PARAMETER_KEY, _allowImpliesActual)
+				.add(Settings.PROP_NAME_allowImpliesActual, _allowImpliesActual)
 				.toString();
 	}
 

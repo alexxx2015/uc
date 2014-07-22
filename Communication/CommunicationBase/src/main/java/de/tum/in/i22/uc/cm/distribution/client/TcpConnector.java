@@ -27,7 +27,7 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 	public TcpConnector(String address, int port) {
 		this(new IPLocation(address, port));
 	}
-	
+
 	private TcpConnector(IPLocation location) {
 		_location = location;
 		_address = location.getHost();
@@ -57,5 +57,13 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 	@Override
 	public Location getLocation() {
 		return _location;
+	}
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_address", _address)
+				.add("_port", _port)
+				.toString();
 	}
 }

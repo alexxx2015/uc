@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.extensions.distribution;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 
 public class DistributedPipStatus extends StatusBasic {
 	private final RemoteDataFlowInfo _dataflow;

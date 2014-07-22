@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * Information flow model Singleton.
  */
 public final class BasicInformationFlowModel implements
-		IBasicInformationFlowModel {
+IBasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(BasicInformationFlowModel.class);
 
@@ -649,7 +649,7 @@ public final class BasicInformationFlowModel implements
 					+ ") was already assigned to name " + name + ". "
 					+ "This mapping has been removed.");
 
-			if ((getAllNames(oldAssigned).size() == 0)
+			if (getAllNames(oldAssigned).size() == 0
 					&& deleteUnreferencedContainer) {
 				remove(oldAssigned);
 			}
@@ -705,7 +705,7 @@ public final class BasicInformationFlowModel implements
 			// if this was the last name, we can remove the container
 			Collection<IName> remainingNames = getAllNames(cont);
 			if ((remainingNames == null || remainingNames.size() == 0)
-					&& (deleteUnreferencedContainer)) {
+					&& deleteUnreferencedContainer) {
 				remove(cont);
 			}
 		}
@@ -910,7 +910,7 @@ public final class BasicInformationFlowModel implements
 
 			for (Entry<IName, IContainer> entry : entryset) {
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
-				if (((ds != null) && (ds.size() != 0)) || showFullIFM) {
+				if (ds != null && ds.size() != 0 || showFullIFM) {
 					sb.append("    "
 							+ String.format("%1$" + nameLength + "s", entry
 									.getKey().getName()) + arrow);
@@ -940,7 +940,7 @@ public final class BasicInformationFlowModel implements
 		} else {
 			for (Entry<IContainer, Set<IData>> entry : _containerToDataMap
 					.entrySet()) {
-				if (((entry.getValue() != null) && (entry.getValue().size() != 0))
+				if (entry.getValue() != null && entry.getValue().size() != 0
 						|| showFullIFM) {
 					sb.append("    " + entry.getKey().getId() + arrow);
 					boolean first = true;
@@ -971,8 +971,9 @@ public final class BasicInformationFlowModel implements
 		sb.append(nl);
 
 		sb.append("  Aliases:" + nl);
+		if (_aliasesMap.size()==0) sb.append("  Empty" + nl);
 		for (Entry<IContainer, Set<IContainer>> entry : _aliasesMap.entrySet()) {
-			if (((entry.getValue() != null) && (entry.getValue().size() != 0))
+			if (entry.getValue() != null && entry.getValue().size() != 0
 					|| showFullIFM) {
 				sb.append("    " + entry.getKey().getId() + arrow);
 				boolean first = true;
@@ -997,12 +998,13 @@ public final class BasicInformationFlowModel implements
 		sb.append(nl);
 
 		sb.append("  Naming:" + nl);
+		if (_namingMap.size()==0) sb.append("  Empty" + nl);
 		Set<IContainer> wasPrinted = new HashSet<IContainer>();
 		for (IContainer cont : _namingMap.values()) {
 			Set<IData> isItAContainerWorthPrinting = _containerToDataMap
 					.get(cont);
-			if (((isItAContainerWorthPrinting != null) && (isItAContainerWorthPrinting
-					.size() != 0)) || showFullIFM) {
+			if (isItAContainerWorthPrinting != null && isItAContainerWorthPrinting
+					.size() != 0 || showFullIFM) {
 				if (wasPrinted.contains(cont)) {
 					continue;
 				}
@@ -1025,7 +1027,6 @@ public final class BasicInformationFlowModel implements
 				}
 			}
 		}
-		sb.append(nl);
 
 		return sb.toString();
 	}
@@ -1044,6 +1045,7 @@ public final class BasicInformationFlowModel implements
 	}
 
 	public class SortByNames implements Comparator<Entry<IName, IContainer>> {
+		@Override
 		public int compare(Entry<IName, IContainer> e1,
 				Entry<IName, IContainer> e2) {
 			return e1.getKey().getName().compareTo(e2.getKey().getName());

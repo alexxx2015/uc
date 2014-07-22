@@ -6,3 +6,7 @@
 .iv1{
 	-fx-border: 1px solid red;
 }
+
+.text-area *.text {
+    -fx-text-alignment: left;
+}

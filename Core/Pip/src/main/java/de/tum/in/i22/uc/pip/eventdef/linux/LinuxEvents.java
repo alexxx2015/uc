@@ -28,10 +28,10 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
-import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -183,7 +183,7 @@ public abstract class LinuxEvents extends BaseEventHandler {
 					if (c instanceof RemoteSocketContainer) {
 
 						/*
-						 * There is incoming remote data flow.
+						 * There is _incoming_ remote data flow.
 						 * We now know that both the local location
 						 * and the remote location are aware of the data.
 						 *
@@ -218,7 +218,7 @@ public abstract class LinuxEvents extends BaseEventHandler {
 
 				/*
 				 * In case we are copying to a RemoteSocketContainer, we
-				 * know that a remote data transfer is happening. Thus,
+				 * know that _outgoing_ remote data transfer is happening. Thus,
 				 * we assemble the information about which data has flown remotely.
 				 */
 				if (remoteDataFlow == null) {

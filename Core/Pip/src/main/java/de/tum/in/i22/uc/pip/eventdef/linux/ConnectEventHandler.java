@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -31,6 +30,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		SocketName remoteSocketName = null;
 		SocketContainer localConnectingSocket = null;
 		IContainer remoteAcceptedSocket = null;
+		String socketname;
 
 		try {
 			host = getParameterValue("host");
@@ -40,6 +40,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 			localPort = Integer.valueOf(getParameterValue("localPort"));
 			remoteIP = getParameterValue("remoteIP");
 			remotePort = Integer.valueOf(getParameterValue("remotePort"));
+			socketname = getParameterValue("socketname");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
@@ -99,7 +100,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 					// server is remote.
 
 					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-							new IPLocation(remoteIP, Settings.getInstance().getPipListenerPort()));
+							new IPLocation(remoteIP, remotePort));
 				}
 
 				// assign the remote name

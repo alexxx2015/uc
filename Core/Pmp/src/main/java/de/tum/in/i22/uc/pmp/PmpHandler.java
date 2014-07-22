@@ -31,6 +31,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -41,7 +42,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
-import de.tum.in.i22.uc.pmp.extensions.distribution.PmpDistributionManager;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pmp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pmp.xsd.ContainerType;
 import de.tum.in.i22.uc.pmp.xsd.InitialRepresentationType;
@@ -51,9 +52,7 @@ import de.tum.in.i22.uc.pmp.xsd.ParamMatchType;
 import de.tum.in.i22.uc.pmp.xsd.PolicyType;
 
 public class PmpHandler extends PmpProcessor {
-	private static Logger log = LoggerFactory.getLogger(PmpHandler.class);
-
-	private final PmpDistributionManager _distributedPmpManager;
+	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
 
 	private final ObjectFactory of = new ObjectFactory();
 
@@ -69,14 +68,13 @@ public class PmpHandler extends PmpProcessor {
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
-		_distributedPmpManager = new PmpDistributionManager();
 		_dataToPolicies = new HashMap<>();
 	}
 
 	private PolicyType xmlToPolicy(String XMLPolicy) {
 		PolicyType curPolicy = null;
-		log.debug("XMLtoPolicy");
-		log.trace("Policyto be converted: " + XMLPolicy);
+		_logger.debug("XMLtoPolicy");
+		_logger.trace("Policy to be converted: " + XMLPolicy);
 		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
 		try {
 			JAXBContext jc = JAXBContext
@@ -92,11 +90,11 @@ public class PmpHandler extends PmpProcessor {
 
 			curPolicy = (PolicyType) poElement.getValue();
 
-			log.debug("curPolicy [name=" + curPolicy.getName() + ", "
+			_logger.debug("curPolicy [name=" + curPolicy.getName() + ", "
 					+ curPolicy.toString());
 
 		} catch (UnmarshalException e) {
-			log.error("Syntax error in policy: " + e.getMessage());
+			_logger.error("Syntax error in policy: " + e.getMessage());
 		} catch (JAXBException | ClassCastException e) {
 			e.printStackTrace();
 		}
@@ -105,8 +103,8 @@ public class PmpHandler extends PmpProcessor {
 
 	private String policyToXML(PolicyType policy) {
 		String result = "";
-		log.debug("PolicyToXML conversion...");
-		log.trace("Policy to convert: " + policy);
+		_logger.debug("PolicyToXML conversion...");
+		_logger.trace("Policy to convert: " + policy);
 		ObjectFactory of = new ObjectFactory();
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {
@@ -119,7 +117,7 @@ public class PmpHandler extends PmpProcessor {
 
 			result = res.toString();
 
-			log.trace("converted policy: " + result);
+			_logger.trace("converted policy: " + result);
 
 		} catch (JAXBException | ClassCastException e) {
 			e.printStackTrace();
@@ -128,7 +126,7 @@ public class PmpHandler extends PmpProcessor {
 		return result;
 	}
 
-	// TODO for whoever wrote this. Please add a comment what is happening.
+	// TODO To whoever wrote this: Please add a comment what is happening.
 	// Also because it seems that it is not just 'conversion' (e.g.
 	// a new initial representation is created)
 	// Also, please document of which format which strings are (XML?!)
@@ -136,12 +134,12 @@ public class PmpHandler extends PmpProcessor {
 		IAny2Pip pip = getPip();
 
 		if (pip == null) {
-			log.error("PIP NOT AVAILABLE. Better crash now than living like this.");
+			_logger.error("PIP NOT AVAILABLE. Better crash now than living like this.");
 			throw new RuntimeException(
 					"PIP NOT AVAILABLE for policy conversion");
 		}
 
-		log.info("converting policy string into object");
+		_logger.info("converting policy string into object");
 		PolicyType policy = xmlToPolicy(xmlPolicy.getXml());
 
 		if (policy.isSetInitialRepresentations()) {
@@ -151,24 +149,24 @@ public class PmpHandler extends PmpProcessor {
 				for (ContainerType c : conts) {
 					String name=c.getName();
 					IName contName;
-					
+
 					//TODO: make it generic
 					if (name.startsWith("EXCEL-"))
 						contName = new CellName(c.getName().substring(c.getName().indexOf('-')+1));
-					else 
+					else
 						contName = new NameBasic(c.getName());
 					if (c.isSetDataId()) {
 						Set<IData> dataSet = new HashSet<IData>();
 						for (String dataId : c.getDataId()) {
-							if ((dataId != null) && (!dataId.equals("")))
+							if (dataId != null && !dataId.equals(""))
 								dataSet.add(new DataBasic(dataId.trim()));
 						}
 						IStatus status = getPip().initialRepresentation(
 								contName, dataSet);
 						if (status.isStatus(EStatus.ERROR)) {
-							log.error("impossible to initialize representation for container "
+							_logger.error("impossible to initialize representation for container "
 									+ contName + " with data id(s) " + dataSet);
-							log.error(status.getErrorMessage());
+							_logger.error(status.getErrorMessage());
 							throw new RuntimeException(status.getErrorMessage());
 						}
 					}
@@ -198,7 +196,7 @@ public class PmpHandler extends PmpProcessor {
 						isExcelContainer=true;
 						value=value.substring(value.indexOf('-')+1);
 					}
-					
+
 					String name = p.getName();
 					// ComparisonOperatorTypes cmpOp=p.getCmpOp();
 
@@ -209,16 +207,16 @@ public class PmpHandler extends PmpProcessor {
 						dataIds = p.getDataID();
 						Set<IData> dataSet = createDataSetFromParamValue(dataIds);
 						IStatus status;
-						
+
 						if (isExcelContainer) status= getPip().initialRepresentation(
 								new CellName(value), dataSet);
 						else status= getPip().initialRepresentation(
 								new NameBasic(value), dataSet);
 
 						if (status.isStatus(EStatus.ERROR)) {
-							log.error("impossible to initialize representation for container "
+							_logger.error("impossible to initialize representation for container "
 									+ value + " with data id(s) " + dataSet);
-							log.error(status.getErrorMessage());
+							_logger.error(status.getErrorMessage());
 							throw new RuntimeException(status.getErrorMessage());
 						}
 
@@ -249,7 +247,7 @@ public class PmpHandler extends PmpProcessor {
 			mech.getTrigger().getParams().addAll(newParamList);
 		}
 
-		log.info("converting object into policy string");
+		_logger.info("converting object into policy string");
 		XmlPolicy convertedXmlPolicy = new XmlPolicy(xmlPolicy.getName(),
 				policyToXML(policy));
 
@@ -269,19 +267,26 @@ public class PmpHandler extends PmpProcessor {
 	/**
 	 * Returns an unmodifiable view onto the set of policies that 'talk' about
 	 * the specified data.
-	 * 
+	 *
 	 * @param data
 	 * @return
 	 */
+	@Override
 	public Set<XmlPolicy> getPolicies(IData data) {
-		return Collections.unmodifiableSet(_dataToPolicies.get(data));
+		Set<XmlPolicy> res = _dataToPolicies.get(data);
+
+		if (res == null) {
+			return Collections.emptySet();
+		}
+
+		return Collections.unmodifiableSet(res);
 	}
 
 	/**
 	 * Tokenizes the specified string at whitespaces, interprets the tokens as
 	 * data ids, and returns the corresponding set of {@link IData} objects
 	 * created out of those tokenized data ids.
-	 * 
+	 *
 	 * @param value
 	 *            the string to be transformed
 	 * @return the set of {@link IData} corresponding to the tokenized data ids.
@@ -325,10 +330,11 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
+		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
 		PolicyType policy = xmlToPolicy(xml);
 		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
-	} 
- 
+	}
+
 	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
@@ -347,6 +353,7 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
+//		_distributionManager.newPolicy(xmlPolicy);
 		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 
@@ -359,5 +366,17 @@ public class PmpHandler extends PmpProcessor {
 	public void stop() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		// TODO Here goes Prachi & Cipri's code
+		_logger.debug("Here goes Prachi's and Cipri's code");
+		_logger.debug("the String value for the dataClass that matches any dataclass is " + Settings.getInstance().getPolicySpecificationStarDataClass());
+
+		_logger.debug("specifyPolicyFor method invoked for containers " + representations + " and dataclass " + dataClass);
+		if (representations==null||"".equals(dataClass)) return new StatusBasic(EStatus.ERROR);
+		return new StatusBasic(EStatus.OKAY);
 	}
 }

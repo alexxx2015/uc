@@ -16,11 +16,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -126,8 +128,9 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public void init(PipProcessor iface1, PmpProcessor iface2) {
-		super.init(iface1, iface2);
+	public void init(PipProcessor iface1, PmpProcessor iface2, IDistributionManager distributionManager) {
+		super.init(iface1, iface2, distributionManager);
+
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is "
 				+ (pip != null ? "not " : "") + "NULL");

@@ -1,11 +1,14 @@
 package de.tum.in.i22.uc.pdp.core.shared;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -169,7 +172,11 @@ public class Decision implements java.io.Serializable {
 
 		try {
 			if (getAuthorizationAction().getAuthorizationAction()) {
-				status = new StatusBasic(EStatus.ALLOW);
+				if (getAuthorizationAction().getModifiers() != null
+						&& getAuthorizationAction().getModifiers().size() != 0)
+					status = new StatusBasic(EStatus.MODIFY);
+				else
+					status = new StatusBasic(EStatus.ALLOW);
 			} else {
 				status = new StatusBasic(EStatus.INHIBIT);
 			}
@@ -188,11 +195,16 @@ public class Decision implements java.io.Serializable {
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
-		// TODO: add modified event, didn't found it so far. probably
-		// implemented as inhibit+execute.
-		IResponse res = new ResponseBasic(status, list, null);
+		List<Param<?>> modifiedParameters = getAuthorizationAction().getModifiers();
+		Map<String,String> modifiedParamI = new HashMap<String,String>();
+		
+		for (Param<?> p : modifiedParameters){
+			modifiedParamI.put(p.getName(), p.getValue().toString());
+		}
+		
+		IEvent modifiedEvent = new EventBasic("triggerEvent", modifiedParamI);
+		IResponse res = new ResponseBasic(status, list, modifiedEvent);
 
 		return res;
 	}
-
 }

@@ -211,7 +211,7 @@ public final class StructuredInformationFlowModel extends
 
 		sb.append("  Structures:" + nl);
 		if ((_structureMap==null)||(_structureMap.size()==0)){
-			sb.append("Empty" + nl+nl);
+			sb.append("  Empty" + nl);
 			return sb.toString();
 		}
 		for (IData d : _structureMap.keySet()) {
@@ -231,7 +231,6 @@ public final class StructuredInformationFlowModel extends
 				sb.append(nl);
 			}
 		}
-		sb.append(nl);
 		return sb.toString();
 	}
 

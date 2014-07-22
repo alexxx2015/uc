@@ -3,8 +3,11 @@ package de.tum.in.i22.uc.thrift.client;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -77,6 +80,16 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
 		return _impl.deployPolicyRawXMLPmp(xml);
+	}
+
+	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		return _impl.getPolicies(data);
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,String dataClass) {
+		return _impl.specifyPolicyFor(representations, dataClass);
 	}
 
 }

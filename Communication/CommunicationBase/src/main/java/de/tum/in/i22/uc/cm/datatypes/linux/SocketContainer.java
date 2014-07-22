@@ -29,7 +29,6 @@ public class SocketContainer extends ContainerBasic {
 	public enum Domain {
 		AF_INET,
 		AF_INET6,
-		AF_UNIX,
 		AF_LOCAL;
 
 		public static Domain from(String s) {
@@ -42,7 +41,6 @@ public class SocketContainer extends ContainerBasic {
 					return AF_INET6;
 				case "AF_UNIX":
 				case "PF_UNIX":
-					return AF_UNIX;
 				case "AF_LOCAL":
 				case "PF_LOCAL":
 					return AF_LOCAL;

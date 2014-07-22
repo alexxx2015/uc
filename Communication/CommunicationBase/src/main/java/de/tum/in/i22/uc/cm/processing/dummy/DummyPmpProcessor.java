@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -109,9 +110,26 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
+	public Set<XmlPolicy> getPolicies(IData data) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("getPolicies method invoked");
+		return null;
+	}
+
+	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public IStatus specifyPolicyFor(Set<IContainer> representations,
+			String dataClass) {
+		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("specifyPolicyFor method invoked");
+		return null;
 	}
 
 }
