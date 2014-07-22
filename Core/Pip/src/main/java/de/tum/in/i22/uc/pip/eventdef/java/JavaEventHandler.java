@@ -8,6 +8,7 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
@@ -20,6 +21,8 @@ import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
 	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
+	protected static Map<String, Set<IContainer>> containersByPid = new HashMap<String, Set<IContainer>>();
+
 	protected final String _paramId = "id";
 	protected final String _paramSignature = "signature";
 	protected final String _paramLocation = "location";
@@ -30,9 +33,10 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _javaIFDelim = ":";
 	protected final String _otherDelim = Settings.getInstance()
 			.getJoanaPidPoiSeparator();
-	protected final String _srcPrefix = "src_";
-	protected final String _snkPrefix = "snk_";
+	protected final String _srcPrefix = "source";
+	protected final String _snkPrefix = "sink";
 
+	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
 				+ (type.equals(EScopeType.JBC_GENERIC_IN) ? "source" : "sink")
@@ -131,12 +135,15 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			return;
 		}
 
-		String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
-		for (String entry : iFlow.keySet()) {
-			String[] fields = entry.split(_otherDelim);
-			if (fields[0].equals(pid)) {
-				_informationFlowModel.removeName(new NameBasic(entry), true);
-			}
-		}
+		Set<IContainer> set = containersByPid.get(pid);
+		if (set!=null) for (IContainer c : set) _informationFlowModel.remove(c);
+		
+//		String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
+//		for (String entry : iFlow.keySet()) {
+//			String[] fields = entry.split(_otherDelim);
+//			if (fields[0].equals(pid)) {
+//				_informationFlowModel.removeName(new NameBasic(entry), true);
+//			}
+//		}
 	}
 }

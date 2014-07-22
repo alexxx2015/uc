@@ -6,7 +6,9 @@ package de.tum.in.i22.uc.pip.eventdef.java;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -30,13 +32,6 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 
 		// This event is used only during tests to initialize the information
 		// flow schema to a specific state
-
-		String id;
-		String signature;
-		String location;
-		String parampos;
-		// String type;
-		String offset;
 
 		String listOfSources;
 		String listOfSinks;
@@ -73,7 +68,14 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 		for (String flow: flowsArr){
 			if ((flow==null)||(flow.equals(""))) break;
 			String[] map = flow.split(sep1);
-			if (map.length>2) iFlow.put(map[0], Arrays.copyOfRange(map, 1, map.length-2)); //first element in map is sink and last element is always null
+			if (map.length>2){
+				//String[] toBeAdded = Arrays.copyOfRange(map, 1, map.length-1);
+				String[] toBeAdded = new String[map.length-1]; //first element is sink
+				for (int i=1; i<map.length; i++){
+					toBeAdded[i-1]=pid+_javaIFDelim+map[i].toLowerCase();
+				}
+				iFlow.put(pid+_javaIFDelim+map[0].toLowerCase(), toBeAdded);
+			}
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
@@ -100,7 +102,7 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			offset = pars.get(_paramOffset);
 			parampos = pars.get(_paramParamPos);
 
-			for (int o = 10; o < poiPars.length; o++) {
+			for (int o = 9; o < poiPars.length; o++) {
 				signature = poiPars[o];
 				addPoi(pid, type, id, location, offset, signature, parampos);
 			}
@@ -118,6 +120,8 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 						+ _javaIFDelim + parampos,
 				signature + _javaIFDelim + parampos };
 
+		Set<IContainer> set=containersByPid.get(pid);
+		if (set==null) set = new HashSet<IContainer>();
 		for (String infoCont : infoConts) {
 			// infoCont = prefix + infoCont;
 			IContainer infoContId = _informationFlowModel
@@ -126,24 +130,30 @@ public class JoanaInitInfoFlowEventHandler extends JavaEventHandler {
 			_logger.debug("contID = " + infoContId);
 
 			if (infoContId == null) {
-				IContainer signatureCont = _messageFactory.createContainer();
+				infoContId = _messageFactory.createContainer();
 
 				_informationFlowModel.addName(new SourceSinkName(pid, prefix,
-						infoCont), signatureCont, true);
+						infoCont), infoContId, true);
 			}
+			
+			set.add(infoContId);
 			_logger.debug(_informationFlowModel.toString());
 		}
 
 		
+		//create Poi container
 		String poiName = pid+_javaIFDelim+id;
 		IContainer poiId = _informationFlowModel
 				.getContainer(new NameBasic(poiName));
 		if (poiId == null) {
 			poiId = _messageFactory.createContainer();
-			_informationFlowModel.addName(new SourceSinkName(pid, prefix,
-					poiName), poiId, true);
+			_informationFlowModel.addName(new NameBasic(poiName), poiId, true);
 		}
 
+		set.add(poiId);
+		containersByPid.put(pid, set);
+
+		
 		// Process alias relationship
 		IContainer sig = _informationFlowModel.getContainer(new SourceSinkName(
 				pid, prefix, infoConts[0]));
