@@ -38,7 +38,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	private PolicyDecisionPoint pdp = null;
 
 	public boolean isStarted = false;
-//	private Thread updateThread = null;
+	// private Thread updateThread = null;
 
 	private PxpManager _pxpManager;
 
@@ -48,17 +48,16 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	public Mechanism(MechanismBaseType mech, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		log.debug("Preparing mechanism from MechanismBaseType");
 		this.pdp = pdp;
-		if (pdp==null){
+		if (pdp == null) {
 			log.error("Impossible to take proper decision with a null pdp. failing miserably");
 			throw new RuntimeException();
 		}
-		this._pxpManager=pdp.getPxpManager();
+		this._pxpManager = pdp.getPxpManager();
 		this.mechanismName = mech.getName();
 		this.description = mech.getDescription();
 		this.lastUpdate = 0;
 		this.timestepSize = mech.getTimestep().getAmount()
-				* TimeAmount
-				.getTimeUnitMultiplier(mech.getTimestep().getUnit());
+				* TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		this.timestep = 0;
 		if (mech instanceof PreventiveMechanismType) {
 			PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
@@ -71,53 +70,40 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 			// TODO: subscription to PEP?!
 
-			log.debug(
-					"Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries",
-					curMech.getAuthorizationAction().size());
+			log.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech
+					.getAuthorizationAction().size());
 			HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
 
-			for (AuthorizationActionType auth : curMech
-					.getAuthorizationAction()) {
+			for (AuthorizationActionType auth : curMech.getAuthorizationAction()) {
 				log.debug("Found authAction {}", auth.getName());
-				if (auth.isSetStart()
-						|| curMech.getAuthorizationAction().size() == 1)
+				if (auth.isSetStart() || curMech.getAuthorizationAction().size() == 1)
 					authActions.put("start", new AuthorizationAction(auth));
 				else
-					authActions.put(auth.getName(), new AuthorizationAction(
-							auth));
+					authActions.put(auth.getName(), new AuthorizationAction(auth));
 			}
 
-			log.debug("Preparing hierarchy of authorizationActions (list: {})",
-					authActions.size());
+			log.debug("Preparing hierarchy of authorizationActions (list: {})", authActions.size());
 			this.authorizationAction = authActions.get("start");
 
 			if (curMech.getAuthorizationAction().size() > 1) {
 				IPdpAuthorizationAction curAuth = this.authorizationAction;
 				log.debug("starting with curAuth: {}", curAuth.getName());
 				do {
-					log.debug("searching for fallback={}",
-							curAuth.getFallbackName());
+					log.debug("searching for fallback={}", curAuth.getFallbackName());
 					if (!curAuth.getFallbackName().equalsIgnoreCase("allow")
-							&& !curAuth.getFallbackName().equalsIgnoreCase(
-									"inhibit")) {
-						IPdpAuthorizationAction fallbackAuth = authActions
-								.get(curAuth.getFallbackName());
+							&& !curAuth.getFallbackName().equalsIgnoreCase("inhibit")) {
+						IPdpAuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
 						if (fallbackAuth == null) {
-							log.error(
-									"Requested fallback authorizationAction {} not found!",
-									curAuth.getFallbackName());
-							throw new InvalidMechanismException(
-									"Requested fallback authorizationAction not specified");
+							log.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
+							throw new InvalidMechanismException("Requested fallback authorizationAction not specified");
 						}
 						curAuth.setFallback(fallbackAuth);
-						log.debug("  set fallback to {}", curAuth.getFallback()
-								.getName());
+						log.debug("  set fallback to {}", curAuth.getFallback().getName());
 					} else {
 						if (curAuth.getFallbackName().equalsIgnoreCase("allow")) {
 							curAuth.setFallback(AuthorizationAction.AUTHORIZATION_ALLOW);
 						}
-						log.debug("  set fallback to static {}", curAuth
-								.getFallback().getName());
+						log.debug("  set fallback to static {}", curAuth.getFallback().getName());
 						break;
 					}
 					curAuth = curAuth.getFallback();
@@ -138,8 +124,8 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	public boolean init() {
 		log.debug("Initializing mechanism update thread");
 		this.lastUpdate = System.currentTimeMillis();
-//		this.updateThread = new Thread(this);
-//		this.updateThread.start();
+		// this.updateThread = new Thread(this);
+		// this.updateThread.start();
 		// Populate pip depending on the current condition
 		this.condition.operator.initOperatorForMechanism(this);
 		return (isStarted = true);
@@ -168,8 +154,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 	}
 
 	@Override
-	public void setAuthorizationAction(
-			IPdpAuthorizationAction authorizationAction) {
+	public void setAuthorizationAction(IPdpAuthorizationAction authorizationAction) {
 		this.authorizationAction = authorizationAction;
 	}
 
@@ -178,8 +163,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 		return executeAsyncActions;
 	}
 
-	public void setExecuteAsyncActions(
-			List<IPdpExecuteAction> executeAsyncActions) {
+	public void setExecuteAsyncActions(List<IPdpExecuteAction> executeAsyncActions) {
 		this.executeAsyncActions = executeAsyncActions;
 	}
 
@@ -203,7 +187,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 	@Override
 	public boolean revoke() {
-//		this.updateThread.interrupt();
+		// this.updateThread.interrupt();
 		this.interrupt();
 		return true;
 	}
@@ -231,9 +215,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 		if (difference < 0) { // Aborting update because the timestep has not
 			// yet passed
-			log.trace(
-					"[{}] Timestep remaining {} -> timestep has not yet passed",
-					this.mechanismName, difference);
+			log.trace("[{}] Timestep remaining {} -> timestep has not yet passed", this.mechanismName, difference);
 			log.trace("##############################################################################################################");
 			return false;
 		}
@@ -251,8 +233,8 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 		timestep++;
 		log.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
-		log.debug("[{}] Null-Event updating {}. timestep at interval of {} us",
-				this.mechanismName, this.timestep, this.timestepSize);
+		log.debug("[{}] Null-Event updating {}. timestep at interval of {} us", this.mechanismName, this.timestep,
+				this.timestepSize);
 
 		boolean conditionValue = this.condition.evaluate(null);
 		log.debug("conditionValue: {}", conditionValue);
@@ -271,15 +253,12 @@ public class Mechanism extends Thread implements IPdpMechanism {
 				boolean mechanismValue = this.mechanismUpdate();
 				if (mechanismValue) {
 					log.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (IPdpExecuteAction execAction : this
-							.getExecuteAsyncActions()) {
+					for (IPdpExecuteAction execAction : this.getExecuteAsyncActions()) {
 						if (execAction.getProcessor().equals("pep"))
-							log.warn(
-									"Timetriggered execution of executeAction [{}] not possible with processor PEP",
+							log.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
 									execAction.getName());
 						else {
-							log.debug("Execute asynchronous action [{}]",
-									execAction.getName());
+							log.debug("Execute asynchronous action [{}]", execAction.getName());
 							_pxpManager.execute(execAction, false);
 						}
 					}
@@ -292,8 +271,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 				sleep(sleepValue);
 			} catch (InterruptedException e) {
-				log.info(
-						"[InterruptedException] Mechanism [{}] was interrupted. terminating...",
+				log.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...",
 						this.getMechanismName());
 				return;
 			}
@@ -302,8 +280,7 @@ public class Mechanism extends Thread implements IPdpMechanism {
 
 	@Override
 	public String toString() {
-		String str = "\nMechanism: name=[" + this.mechanismName
-				+ "]\n   description=[" + this.description + "]";
+		String str = "\nMechanism: name=[" + this.mechanismName + "]\n   description=[" + this.description + "]";
 		str += "\n   timestepSize=[" + timestepSize + "]";
 		str += "\n   lastUpdate=[" + lastUpdate + "]";
 		str += "\n   timestep=[" + timestep + "]";

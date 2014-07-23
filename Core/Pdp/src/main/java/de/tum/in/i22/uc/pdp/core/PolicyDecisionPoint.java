@@ -40,7 +40,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	private static Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 	private static final long serialVersionUID = -6823961095919408237L;
 
-	private static IPdp2Pip _pip;
+	private IPdp2Pip _pip;
 
 	private ActionDescriptionStore _actionDescriptionStore = null;
 
@@ -179,9 +179,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			if (mech != null) {
 				mechanisms.remove(mech);
 				if (mech instanceof Mechanism) {
-					_actionDescriptionStore
-					.removeMechanism(((Mechanism) mech)
-							.getTriggerEvent().getAction());
+					_actionDescriptionStore.removeMechanism(((Mechanism) mech).getTriggerEvent().getAction());
 				}
 			}
 		}
@@ -260,17 +258,16 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		Set<String> _policyTableKeys = this._policyTable.keySet();
 		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
-		while(_policyTableKeysIt.hasNext()){
+		while (_policyTableKeysIt.hasNext()) {
 			String _policyTableKey = _policyTableKeysIt.next();
 			ArrayList<IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
 			Iterator<IPdpMechanism> mechanismsIt = mechanisms.iterator();
-			while(mechanismsIt.hasNext()){				
+			while (mechanismsIt.hasNext()) {
 				IPdpMechanism mechanism = mechanismsIt.next();
-				if(mechanism instanceof Runnable){
-					((Thread)mechanism).interrupt();					
+				if (mechanism instanceof Runnable) {
+					((Thread) mechanism).interrupt();
 				}
 			}
 		}

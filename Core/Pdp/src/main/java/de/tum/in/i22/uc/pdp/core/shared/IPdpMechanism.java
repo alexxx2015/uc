@@ -29,7 +29,7 @@ public interface IPdpMechanism {
 	public String getMechanismName();
 
 	public boolean revoke();
-	
+
 	public PolicyDecisionPoint getPolicyDecisionPoint();
 
 }

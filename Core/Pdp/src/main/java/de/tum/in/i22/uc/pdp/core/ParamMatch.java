@@ -25,14 +25,14 @@ public class ParamMatch extends ParamMatchType {
 	private static Logger log = LoggerFactory.getLogger(ParamMatch.class);
 	private PolicyDecisionPoint _pdp;
 
-	public void setPdp(PolicyDecisionPoint pdp){
-		if (_pdp==null) _pdp=pdp;
+	public void setPdp(PolicyDecisionPoint pdp) {
+		if (_pdp == null)
+			_pdp = pdp;
 	}
-	
+
+	@Override
 	public String toString() {
-		String str = "" + this.getName() + " -> " + this.getValue() + " ("
-				+ this.getType() + ")";
-		return str;
+		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
 	}
 
 	public boolean paramMatches(Param<?> param) {
@@ -111,12 +111,10 @@ public class ParamMatch extends ParamMatchType {
 																// equality
 					break;
 				}
-				matches = compOp.compare((String) param.getValue(),
-						this.getValue());
+				matches = compOp.compare((String) param.getValue(), this.getValue());
 			}
-			log.trace("param value [" + (String) param.getValue() + "] does "
-					+ (matches ? "" : "NOT ") + "match [" + this.getValue()
-					+ "]");
+			log.trace("param value [" + (String) param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
+					+ this.getValue() + "]");
 			return matches;
 		}
 		log.trace("param name [" + this.getName() + "] does NOT match");

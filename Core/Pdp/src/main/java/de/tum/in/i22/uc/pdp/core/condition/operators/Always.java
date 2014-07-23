@@ -24,6 +24,7 @@ public class Always extends AlwaysType {
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return "ALWAYS (" + this.getOperators() + ")";
 	}
@@ -31,8 +32,7 @@ public class Always extends AlwaysType {
 	@Override
 	public boolean evaluate(Event curEvent) {
 		if (!this.state.immutable) {
-			this.state.value = ((Operator) this.getOperators())
-					.evaluate(curEvent);
+			this.state.value = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (!this.state.value && curEvent == null) {
 				log.debug("evaluating ALWAYS: activating IMMUTABILITY");
 				this.state.immutable = true;

@@ -22,7 +22,6 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
-import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -119,8 +118,6 @@ public class PdpHandler extends PdpProcessor {
 				&& event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(),
 					true);
-//			// TODO: Check whether this order is correct. Enrico?
-//			getPip().update(ev2);
 			notifyEventAsync(ev2);
 		}
 
@@ -134,7 +131,7 @@ public class PdpHandler extends PdpProcessor {
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is "
 				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip,_pxpManager);
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
 	}
 
 	@Override
@@ -149,7 +146,6 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		this._lpdp.stop();
+		_lpdp.stop();
 	}
 }
