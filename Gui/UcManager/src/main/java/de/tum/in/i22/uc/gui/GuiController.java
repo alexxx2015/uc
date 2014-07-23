@@ -33,14 +33,6 @@ public class GuiController extends Controller {
 		// TODO Auto-generated constructor stub
 		this.sceneGenerator = new SceneGenerator();
 		this.clientFactory = new ThriftClientFactory();
-		if (this.clientFactory != null) {
-			int pmpPort = Settings.getInstance().getPmpListenerPort();
-			int pdpPort = Settings.getInstance().getPdpListenerPort();
-			this.pmpClient = this.clientFactory
-					.createPmp2PmpClient(new IPLocation("localhost", pmpPort));
-			this.pdpClient = this.clientFactory
-					.createPep2PdpClient(new IPLocation("localhost", pdpPort));
-		}
 	}
 
 	public SceneGenerator getSceneGenerator() {
@@ -75,6 +67,15 @@ public class GuiController extends Controller {
 							sceneGenerator.lab_info.setText("PDP running");
 						}
 					});
+
+					if (this.clientFactory != null) {
+						int pmpPort = Settings.getInstance().getPmpListenerPort();
+						int pdpPort = Settings.getInstance().getPdpListenerPort();
+						this.pmpClient = this.clientFactory
+								.createPmp2PmpClient(new IPLocation("localhost", pmpPort));
+						this.pdpClient = this.clientFactory
+								.createPep2PdpClient(new IPLocation("localhost", pdpPort));
+					}
 				}
 			}
 		}

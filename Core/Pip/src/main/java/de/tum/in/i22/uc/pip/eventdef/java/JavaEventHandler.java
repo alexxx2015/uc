@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -21,7 +20,11 @@ import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
 	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
+
 	protected static Map<String, Set<IContainer>> containersByPid = new HashMap<String, Set<IContainer>>();
+	
+
+	protected static Map<String, String> contextToObject = new HashMap<String, String>();
 
 	protected final String _paramId = "id";
 	protected final String _paramSignature = "signature";
@@ -29,6 +32,12 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _paramParamPos = "parampos";
 	protected final String _paramType = "type";
 	protected final String _paramOffset = "offset";
+	protected final String _paramObjectId = "objectId";
+	protected final String _paramContextId = "context";
+	protected final String _paramContextLocation = "contextLocation";
+	protected final String _paramContextOffset = "contextOffset";
+	protected final String _paramPID = "PID";
+	protected final String _paramThreadId = "ThreadId";
 
 	protected final String _javaIFDelim = ":";
 	protected final String _otherDelim = Settings.getInstance()

@@ -30,6 +30,25 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<!-- Clean the XSD folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src/main/java/de/tum/in/i22/uc/pmp/xsd/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -56,8 +75,8 @@
 						<arg>-extension</arg>
 					</args>
 					<generateDirectory>src/main/java</generateDirectory>
-                    <forceRegenerate>true</forceRegenerate>
-                    
+					<forceRegenerate>true</forceRegenerate>
+		
 					<plugins>
 						<plugin>
 							<groupId>org.jvnet.jaxb2_commons</groupId>
@@ -68,6 +87,33 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+
+				<executions>
+					<execution>
+						<!-- Clean up nologging -->
+						<id>clean-nologging</id>
+						<phase>clean</phase>
+					</execution>
+
+					<execution>
+						<!-- Change the source code such that all logging methods will not be executed.
+							This is done _before_ compilation phase. -->
+						<id>do-nologging</id>
+						<phase>process-sources</phase>
+					</execution>
+
+					<!-- Undo changes to the source code for disabling logging.
+						This is done _after_ compilation phase and _before_ test-compilation phase.
+						THUS: Logging is _NOT_ disabled for test classes. -->
+					<execution>
+						<id>undo-nologging</id>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

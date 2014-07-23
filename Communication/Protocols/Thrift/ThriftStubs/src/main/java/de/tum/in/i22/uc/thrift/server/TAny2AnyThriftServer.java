@@ -23,14 +23,14 @@ import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 import de.tum.in.i22.uc.thrift.types.TobiasEvent;
 import de.tum.in.i22.uc.thrift.types.TobiasResponse;
 
-
 /**
  * Use {@link ThriftServerFactory} to create an instance.
- *
+ * 
  * @author Enrico Lovat & Florian Kelbert
- *
+ * 
  */
-class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface {
+class TAny2AnyThriftServer extends ThriftServerHandler implements
+TAny2Any.Iface {
 
 	private TAny2Pdp.Iface _pdpServer;
 	private TAny2Pip.Iface _pipServer;
@@ -38,11 +38,15 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 
 	TAny2AnyThriftServer(int pdpPort, int pipPort, int pmpPort) {
 		try {
-			_pdpServer = new ThriftConnector<>("localhost", pdpPort, TAny2Pdp.Client.class).connect();
-			_pipServer = new ThriftConnector<>("localhost", pipPort, TAny2Pip.Client.class).connect();
-			_pmpServer = new ThriftConnector<>("localhost", pmpPort, TAny2Pmp.Client.class).connect();
+			_pdpServer = new ThriftConnector<>("localhost", pdpPort,
+					TAny2Pdp.Client.class).connect();
+			_pipServer = new ThriftConnector<>("localhost", pipPort,
+					TAny2Pip.Client.class).connect();
+			_pmpServer = new ThriftConnector<>("localhost", pmpPort,
+					TAny2Pmp.Client.class).connect();
 		} catch (IOException e) {
-			throw new RuntimeException("Unable to initialize " + TAny2AnyThriftServer.class.getSimpleName() + ".");
+			throw new RuntimeException("Unable to initialize "
+					+ TAny2AnyThriftServer.class.getSimpleName() + ".");
 		}
 	}
 
@@ -56,7 +60,6 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 		_pdpServer.notifyEventAsync(e);
 	}
 
-
 	@Override
 	public boolean registerPxp(TPxpSpec pxp) throws TException {
 		return _pdpServer.registerPxp(pxp);
@@ -68,7 +71,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus revokeMechanism(String policyName, String mechName) throws TException {
+	public TStatus revokeMechanism(String policyName, String mechName)
+			throws TException {
 		return _pdpServer.revokeMechanism(policyName, mechName);
 	}
 
@@ -83,7 +87,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus initialRepresentation(TName container, Set<TData> data) throws TException {
+	public TStatus initialRepresentation(TName container, Set<TData> data)
+			throws TException {
 		return _pipServer.initialRepresentation(container, data);
 	}
 
@@ -118,12 +123,15 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(TEvent event, String predicate) throws TException {
-		return _pipServer.evaluatePredicateSimulatingNextState(event, predicate);
+	public boolean evaluatePredicateSimulatingNextState(TEvent event,
+			String predicate) throws TException {
+		return _pipServer
+				.evaluatePredicateSimulatingNextState(event, predicate);
 	}
 
 	@Override
-	public boolean evaluatePredicatCurrentState(String predicate) throws TException {
+	public boolean evaluatePredicatCurrentState(String predicate)
+			throws TException {
 		return _pipServer.evaluatePredicatCurrentState(predicate);
 	}
 
@@ -165,12 +173,15 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort, String dstAddress, int dstPort, Set<TData> data) throws TException {
-		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress, dstPort, data);
+	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
+			String dstAddress, int dstPort, Set<TData> data) throws TException {
+		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress,
+				dstPort, data);
 	}
 
 	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth) throws TException {
+	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
+			throws TException {
 		return _pipServer.whoHasData(data, recursionDepth);
 	}
 
@@ -180,7 +191,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TStatus revokeMechanismPmp(String policyName, String mechName) throws TException {
+	public TStatus revokeMechanismPmp(String policyName, String mechName)
+			throws TException {
 		return _pdpServer.revokeMechanism(policyName, mechName);
 	}
 
@@ -195,7 +207,8 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
-	public TData newStructuredData(Map<String, Set<TData>> structure) throws TException{
+	public TData newStructuredData(Map<String, Set<TData>> structure)
+			throws TException {
 		return _pipServer.newStructuredData(structure);
 	}
 
@@ -225,6 +238,11 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	}
 
 	@Override
+	public Set<TXmlPolicy> getPolicies(TData data) throws TException {
+		return _pmpServer.getPolicies(data);
+	}
+
+	@Override
 	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
 		return _pdpServer.processEventSync(e, senderID);
@@ -234,6 +252,12 @@ class TAny2AnyThriftServer extends ThriftServerHandler implements TAny2Any.Iface
 	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
 		_pdpServer.processEventAsync(e, senderID);
+	}
+
+	@Override
+	public TStatus specifyPolicyFor(Set<TContainer> representations,
+			String dataClass) throws TException {
+		return _pmpServer.specifyPolicyFor(representations, dataClass);
 	}
 
 }

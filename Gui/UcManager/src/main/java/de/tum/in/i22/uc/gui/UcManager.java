@@ -682,7 +682,15 @@ public class UcManager extends Controller {
 			// deployedPolicies.clear();
 
 			if (!isStarted()) {
-				start();
+				start();	
+				if (this.clientFactory != null) {
+					int pmpPort=Settings.getInstance().getPmpListenerPort();
+					int pdpPort=Settings.getInstance().getPdpListenerPort();
+					this.pmpClient = this.clientFactory
+							.createPmp2PmpClient(new IPLocation("localhost", pmpPort));
+					this.pdpClient = this.clientFactory
+							.createPep2PdpClient(new IPLocation("localhost", pdpPort));
+				}
 				if (this.clientFactory != null) {
 					int pmpPort=Settings.getInstance().getPmpListenerPort();
 					int pdpPort=Settings.getInstance().getPdpListenerPort();
