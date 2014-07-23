@@ -11,17 +11,17 @@ import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType {
-	private static Logger log = LoggerFactory.getLogger(StateBasedOperator.class);
+	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperator.class);
 
 	public StateBasedOperator() {
 	}
 
 	public StateBasedOperator(StateBasedOperatorType op, Mechanism curMechanism) {
-		log.debug("Processing StateBasedFormula from StateBasedOperatorType");
-		this.operator = op.getOperator();
-		this.param1 = op.getParam1();
-		this.param2 = op.getParam2();
-		this.param3 = op.getParam3();
+		_logger.debug("Processing StateBasedFormula from StateBasedOperatorType");
+		operator = op.getOperator();
+		param1 = op.getParam1();
+		param2 = op.getParam2();
+		param3 = op.getParam3();
 	}
 
 	@Override
@@ -31,24 +31,17 @@ public class StateBasedOperator extends StateBasedOperatorType {
 
 	@Override
 	public String toString() {
-		return "StateBasedFormula [operator='" + this.getOperator() + "', param1='" + this.getParam1() + "', param2='"
-				+ this.getParam2() + "', param3='" + this.getParam3() + "']";
+		return "StateBasedFormula [operator='" + getOperator() + "', param1='" + getParam1() + "', param2='"
+				+ getParam2() + "', param3='" + getParam3() + "']";
 	}
 
 	@Override
 	public boolean evaluate(Event curEvent) {
 
-		IPdp2Pip pip = this._pdp.getPip();
+		IPdp2Pip pip = _pdp.getPip();
 		String separator = Settings.getInstance().getSeparator1();
 
-		if (pip == null) {
-			log.error("Impossible to evaluate state based operator [" + getOperator() + " [" + getParam1() + "]["
-					+ getParam2() + "][" + getParam3() + "]] without a pip reference");
-			throw new RuntimeException("Impossible to evaluate state based operator [" + getOperator() + " ["
-					+ getParam1() + "][" + getParam2() + "][" + getParam3() + "]] without a pip reference");
-		}
-
-		String p = this.operator + separator + this.param1 + separator + this.param2 + separator + this.param3;
+		String p = operator + separator + param1 + separator + param2 + separator + param3;
 
 		return curEvent == null ? pip.evaluatePredicateCurrentState(p) : pip.evaluatePredicateSimulatingNextState(
 				curEvent.toIEvent(), p);

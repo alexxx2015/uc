@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
@@ -36,13 +36,14 @@ import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
+public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 	private static Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
-	private static final long serialVersionUID = -6823961095919408237L;
 
-	private IPdp2Pip _pip;
+	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
 
-	private ActionDescriptionStore _actionDescriptionStore = null;
+	private final IPdp2Pip _pip;
+
+	private final ActionDescriptionStore _actionDescriptionStore;
 
 	private final HashMap<String, ArrayList<IPdpMechanism>> _policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
 	private final PxpManager _pxpManager;
@@ -50,6 +51,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	public PolicyDecisionPoint() {
 		_actionDescriptionStore = new ActionDescriptionStore();
 		_pxpManager = new PxpManager();
+		_pip = new DummyPipProcessor();
 	}
 
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
@@ -59,36 +61,37 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 	}
 
 	@Override
-	public boolean deployPolicyXML(XmlPolicy XMLPolicy) {
-		_logger.debug("deployPolicyXML (before) : " + XMLPolicy.getName());
-		InputStream is = new ByteArrayInputStream(XMLPolicy.getXml().getBytes());
-		_logger.debug("deployPolicyXML (IS created) : " + XMLPolicy.getName());
-		boolean b = deployXML(is);
-		_logger.debug("deployPolicyXML (after) : " + XMLPolicy.getName());
-		return b;
+	public boolean deployPolicyXML(XmlPolicy xmlPolicy) {
+		_logger.debug("deployPolicyXML: " + xmlPolicy.getName());
+		return deployXML(new ByteArrayInputStream(xmlPolicy.getXml().getBytes()));
 	}
 
 	@Override
 	public boolean deployPolicyURI(String policyFilename) {
-		if (policyFilename.endsWith(".xml")) {
-			InputStream inp = null;
-			try {
-				inp = new FileInputStream(policyFilename);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return deployXML(inp);
+		_logger.warn("Unsupported message format of policy! " + policyFilename + ". Not deploying policy.");
+		if (!policyFilename.endsWith(".xml")) {
+			return false;
 		}
-		_logger.warn("Unsupported message format of policy! " + policyFilename);
-		return false;
+
+		InputStream inp = null;
+		try {
+			inp = new FileInputStream(policyFilename);
+		} catch (FileNotFoundException e) {
+			_logger.warn("Policy file " + policyFilename + " not found.");
+			e.printStackTrace();
+			return false;
+		}
+
+		return deployXML(inp);
 	}
 
-	public boolean deployXML(InputStream inp) {
-		if (inp == null)
+	private boolean deployXML(InputStream inp) {
+		if (inp == null) {
 			return false;
+		}
+
 		try {
-			JAXBContext jc = JAXBContext.newInstance("de.tum.in.i22.uc.pdp.xsd");
+			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
 			Unmarshaller u = jc.createUnmarshaller();
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
@@ -135,7 +138,7 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 		} catch (UnmarshalException e) {
 			_logger.error("Syntax error in policy: " + e.getMessage());
 		} catch (JAXBException | ClassCastException e) {
-			e.printStackTrace();
+			_logger.error("Error while deploying policy: " + e.getMessage());
 		}
 		return false;
 	}

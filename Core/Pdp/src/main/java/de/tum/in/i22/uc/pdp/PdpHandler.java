@@ -73,8 +73,9 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
-		return _lpdp.deployPolicyXML(XMLPolicy) ? new StatusBasic(EStatus.OKAY)
-		: new StatusBasic(EStatus.ERROR, "deploy policy failed");
+		return _lpdp.deployPolicyXML(XMLPolicy)
+				? new StatusBasic(EStatus.OKAY)
+				: new StatusBasic(EStatus.ERROR, "deploy policy failed");
 	}
 
 	@Override
@@ -136,12 +137,12 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void processEventAsync(IEvent pepEvent) {
-		this.notifyEventAsync(pepEvent);
+		notifyEventAsync(pepEvent);
 	}
 
 	@Override
 	public IResponse processEventSync(IEvent pepEvent) {
-		return this.notifyEventSync(pepEvent);
+		return notifyEventSync(pepEvent);
 	}
 
 	@Override
