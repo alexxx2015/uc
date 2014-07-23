@@ -1,14 +1,10 @@
 package de.tum.in.i22.uc.gui;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.apache.thrift.TException;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TThreadPoolServer;
-import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,25 +32,33 @@ public class RecordingServerImpl implements TPep2Pdp.Iface {
 	
 	@Override
 	public void notifyEventAsync(TEvent pepEvent) throws TException {
+		log.debug("Async notified event "+ pepEvent);
 		ll.add(ThriftConverter.fromThrift(pepEvent));
 	}
 
 	@Override
 	public TResponse notifyEventSync(TEvent pepEvent) throws TException {
+		log.debug("Sync notified event "+ pepEvent);
 		ll.add(ThriftConverter.fromThrift(pepEvent));
-		return new TResponse(TStatus.ALLOW);
+		TResponse tr =new TResponse(TStatus.ALLOW); 
+		tr.setModifiedEvents(new TEvent("fakeModifiedEvent",new HashMap<String,String>(),0));
+		return tr; 
 	}
 
 	@Override
 	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
-		ll.add(mf.createActualEvent(e.getName(), e.getParameters()));
+		Map<String,String> map = new HashMap<String,String>(e.getParameters());
+		log.debug("AsyncT notified event "+ e);
+		ll.add(mf.createActualEvent(e.getName(), map));
 	}
 
 	@Override
 	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
-		ll.add(mf.createDesiredEvent(e.getName(), e.getParameters()));
+		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		log.debug("SyncT notified event "+ e);
+		ll.add(mf.createDesiredEvent(e.getName(), map));
 		return new TobiasResponse(TobiasStatusType.ALLOW);
 	}
 

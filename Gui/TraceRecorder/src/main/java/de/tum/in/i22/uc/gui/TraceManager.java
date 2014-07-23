@@ -6,12 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
-
-import javafx.stage.FileChooser;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,6 +19,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.LineBorder;
@@ -26,7 +28,11 @@ import javax.swing.border.LineBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class TraceManager {
 
@@ -54,9 +60,9 @@ public class TraceManager {
 
 	private JFrame frame;
 	private JTextField ipTextBox;
-
+	private JTextPane infoPane;
 	private JTextField portTextBox;
-	private JTextField traceLabel;
+	private JTextArea traceLabel;
 
 	/**
 	 * Create the application.
@@ -109,14 +115,17 @@ public class TraceManager {
 		portTextBox.setColumns(10);
 		panel_5.add(portTextBox);
 
-		JTextPane infoPane = new JTextPane();
+		infoPane = new JTextPane();
 		infoPane.setBackground(Color.LIGHT_GRAY);
 		panel_3.add(infoPane);
 
-		traceLabel = new JTextField("Trace");
-		traceLabel.setEnabled(false);
+		traceLabel = new JTextArea("Trace");
 		traceLabel.setEditable(false);
-		frame.getContentPane().add(traceLabel);
+		JScrollPane scroll = new JScrollPane(traceLabel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		frame.getContentPane().add(scroll);
 
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel);
@@ -124,7 +133,7 @@ public class TraceManager {
 
 		JPanel panel_2 = new JPanel();
 		panel.add(panel_2);
-		panel_2.setLayout(new GridLayout(0, 3, 0, 0));
+		panel_2.setLayout(new GridLayout(0, 4, 0, 0));
 
 		JButton stopButton = new JButton("Stop");
 		stopButton.addMouseListener(new MouseAdapter() {
@@ -153,6 +162,15 @@ public class TraceManager {
 		});
 		panel_2.add(playButton);
 
+		JButton playRemoteButton = new JButton("Play Remote");
+		playRemoteButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				playRemote();
+			}
+		});
+		panel_2.add(playRemoteButton);
+
 		JButton loadButton = new JButton("Load trace");
 		loadButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -172,22 +190,70 @@ public class TraceManager {
 		panel.add(saveButton);
 	}
 
+	protected void playRemote() {
+		String ip = ipTextBox.getText();
+		String port = portTextBox.getText();
+		if ((ip == null) || (ip.equals(""))) {
+			log.error("No IP provided");
+			infoPane.setText("Please provide a valid IP");
+			return;
+		}
+		if ((port == null)
+				|| (port.equals(""))) {
+			log.error("No port provided");
+			infoPane.setText("Please provide a valid port");
+			return;
+		}
+		String remoteAddr = ip + ":" + port;
+		if (ll != null) {
+			infoPane.setText("Starting playing trace to remote PDP ("
+					+ remoteAddr + ")....");
+			ThriftClientFactory tcf = new ThriftClientFactory();
+			Pep2PdpClient pdp = tcf
+					.createPep2PdpClient(new IPLocation(ip,
+							Integer.valueOf(port)));
+			try {
+				pdp.connect();
+				pl = new PlayingClient(pdp);
+				pl.setTrace(ll);
+				long startTime = System.nanoTime();
+				pl.playTrace();
+				long endTime = System.nanoTime();
+				infoPane.setText("Simulation ended. Total time : "
+						+ (endTime - startTime) / 1000 / 1000 + "msec");
+				pdp.disconnect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			log.error("Load or generate a trace first. Impossible to play empty trace");
+			infoPane.setText("Load or generate a trace first. Impossible to play empty trace");
+		}
+	}
+
 	protected void save() {
 		JFileChooser fc = new JFileChooser();
 		int f = fc.showSaveDialog(frame);
 		if (f == JFileChooser.APPROVE_OPTION) {
+			stop();
 			String path = fc.getSelectedFile().getPath();
 			try {
 				log.debug("Dumping trace to file " + path + " ...");
 				traceLabel.setText(traceLabel.getText()
 						+ "\nDumping trace to file " + path + " ...");
+				infoPane.setText("Saving trace (~" + ll.size()
+						+ " events) on file " + path + " ...");
 				FileOutputStream fout = new FileOutputStream(path);
 				ObjectOutputStream oos = new ObjectOutputStream(fout);
 				oos.writeObject(ll);
 				oos.close();
+				infoPane.setText("Saving trace (~" + ll.size()
+						+ " events) on file " + path + " ... completed!");
 				log.debug("Dumping trace to file " + path + " completed !");
 				traceLabel.setText(traceLabel.getText()
 						+ "\nDumping trace to file " + path + " completed !");
+
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -199,54 +265,106 @@ public class TraceManager {
 		JFileChooser fc = new JFileChooser();
 		int f = fc.showOpenDialog(frame);
 		if (f == JFileChooser.APPROVE_OPTION) {
-			tr.saveTrace(fc.getSelectedFile().getPath());
+			try {
+				stop();
+				String path = fc.getSelectedFile().getPath();
+				log.debug("Loading trace from file " + path + " ...");
+				infoPane.setText("Loading trace from file  " + path + " ...");
+				FileInputStream fin = new FileInputStream(path);
+				ObjectInputStream ois = new ObjectInputStream(fin);
+				ll = (LinkedList<IEvent>) ois.readObject();
+				ois.close();
+				infoPane.setText("Loading trace (~" + ll.size()
+						+ " events) from file " + path + " ... completed!");
+				log.debug("Loading trace from file " + path + " completed !");
+				printLl();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
 		}
+
 	}
 
 	protected void play() {
-		// TODO Auto-generated method stub
-
+		if (ll != null) {
+			infoPane.setText("Starting simulation....");
+			Controller pdp = new Controller();
+			pdp.start();
+			while (!pdp.isStarted())
+				;
+			pl = new PlayingClient(pdp);
+			pl.setTrace(ll);
+			long startTime = System.nanoTime();
+			pl.playTrace();
+			long endTime = System.nanoTime();
+			infoPane.setText("Simulation ended. Total time : "
+					+ (endTime - startTime) / 1000 / 1000 + "msec");
+			pdp.stop();
+		}
 	}
 
 	protected void stop() {
 		if ((tr != null) && (tr.isRunning())) {
-			tr.stop();
 			refreshThread.interrupt();
+			tr.stop();
+			infoPane.setText("Server stopped!");
+		} else {
+			infoPane.setText("Server is not running, it can't be stopped!");
 		}
 	}
 
 	protected void start() {
 		String port = portTextBox.getText();
 		if ((port != null) && (!port.equals(""))) {
-			int portInt = Integer.valueOf(port);
+			final int portInt = Integer.valueOf(port);
 			tr = new TraceRecorder();
-			tr.start(portInt);
-			ll = tr.getLl();
+			new Thread() {
+				public void run() {
+					tr.start(portInt);
+				}
+			}.start();
+			// tr.start(portInt);
+
+			infoPane.setText("Server started recording on port " + port);
 
 			if (refreshThread != null)
 				refreshThread.interrupt();
 			refreshThread = new Thread() {
 				public void run() {
 					while (!isInterrupted()) {
-						String res = "";
-						for (IEvent e : ll) {
-							res += e + "\n";
-						}
-						traceLabel.setText("REFRESHED!\n" + res);
+						ll = tr.getLl();
+						printLl();
 						try {
-							Thread.sleep(3000);
+							Thread.sleep(2000);
 						} catch (NumberFormatException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							// e.printStackTrace();
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							// e.printStackTrace();
 						}
 					}
+					tr = null;
 				}
 			};
 			refreshThread.start();
 		}
+	}
+
+	protected void printLl() {
+		String res = "";
+		if (ll != null) {
+			int n = 1;
+			for (IEvent e : ll) {
+				res += (n++) + " - " + e.getName() + "[" + e.getParameters()
+						+ "]\n";
+			}
+		}
+		if (ll != null)
+			traceLabel.setText(res + "\n" + ll.size() + " EVENTS");
+		traceLabel.setCaretPosition(traceLabel.getText().length());
+
 	}
 
 }

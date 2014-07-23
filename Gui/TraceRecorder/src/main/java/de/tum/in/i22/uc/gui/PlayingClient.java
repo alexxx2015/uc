@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.gui;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.LinkedList;
 
 import org.slf4j.Logger;
@@ -11,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
+import de.tum.in.i22.uc.thrift.types.TobiasEvent;
 
 public class PlayingClient {
 
@@ -28,30 +27,8 @@ public class PlayingClient {
 		this.pdp = pdp;
 	}
 
-	public LinkedList<IEvent> getTrace() {
-		return ll;
-	}
-
-	public String getTraceString() {
-		String res = "";
-		for (IEvent e : ll) {
-			res += e + "\n";
-		}
-		return res;
-	}
-
-	public void loadTrace(String path) {
-		try {
-			log.debug("Loading trace from file " + path + " ...");
-			FileInputStream fin = new FileInputStream(path);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			ll = (LinkedList<IEvent>) ois.readObject();
-			ois.close();
-			log.debug("Loading trace from file " + path + " completed !");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
+	public void setTrace(LinkedList<IEvent> ll) {
+		this.ll=ll;
 	}
 
 	public void playTrace() {
@@ -65,10 +42,19 @@ public class PlayingClient {
 		}
 
 		try {
-			log.debug("Playing trace to pdp " + pdp + "...");
+			log.debug("Playing trace ("+ll.size()+") to pdp " + pdp + "...");
 			for (IEvent e:ll){
+				log.trace("Playing "+e+" to " + pdp);
+				
+//				if (e instanceof TobiasEvent){
+//					log.trace("TobiasEvent");
+//					if (e.isActual()) pdp.processEventAsync(e);
+//					else pdp.processEventSync(e);	
+//				} else {
+//					log.trace("IEvent");
 				if (e.isActual()) pdp.notifyEventAsync(e);
 				else pdp.notifyEventSync(e);
+//				}
 			}
 			log.debug("Playing trace to pdp " + pdp + " completed !");
 		} catch (Exception ex) {
