@@ -177,6 +177,46 @@ public class LinuxEventTest {
 			isActual);
 	}
 
+	public static IEvent createLinuxCloneEvent(final String host, final int cpid,
+			final int ppid, final String flags, boolean isActual) {
+		return new EventBasic("Clone",
+				new HashMap<String, String>(){
+			private static final long serialVersionUID = 1L;
+			{
+				put(EventBasic.PEP_PARAMETER_KEY, "Linux");
+				put("host", host);
+				put("cpid", cpid+"");
+				put("ppid", ppid+"");
+				put("flags", flags);
+			}},
+			isActual);
+	}
+
+	public static IEvent createLinuxCloseEvent(final String host, final int pid,
+			final int fd, boolean isActual) {
+		return new EventBasic("Close",
+				new HashMap<String, String>(){
+			private static final long serialVersionUID = 1L;
+			{
+				put(EventBasic.PEP_PARAMETER_KEY, "Linux");
+				put("host", host);
+				put("pid", pid+"");
+				put("fd", fd+"");
+			}},
+			isActual);
+	}
+
+	public static IEvent createLinuxExitEvent(final String host, final int pid, boolean isActual) {
+		return new EventBasic("Exit",
+				new HashMap<String, String>(){
+			private static final long serialVersionUID = 1L;
+			{
+				put(EventBasic.PEP_PARAMETER_KEY, "Linux");
+				put("host", host);
+				put("pid", pid+"");
+			}},
+			isActual);
+	}
 
 
 	@Test
@@ -324,6 +364,46 @@ public class LinuxEventTest {
 
 		procCont = _ifModel.getContainer(ProcessName.create(serverHost, serverPid));
 		Assert.assertEquals(true, _ifModel.getData(procCont).contains(data));
+	}
+
+
+	@Test
+	public void testCloneFiles() {
+		IData data = new DataBasic("data");
+
+		/*
+		 * - Process 1234 is tainted with some data
+		 * - calls clone() with flag CLONE_FILES
+		 * - new process 1235 then writes to shared FD 3
+		 * - data must propagate to the corresponding file
+		 *
+		 * - after closing the file descriptor 1235x3, there must not be a file descriptor 1234x3
+		 *
+		 * - after process 1235 opens FD 4, there must exist a FD named 1234x4
+		 */
+
+		IEvent eventExecve = createLinuxExecveEvent("A", 1234, "/bin/editor", true);
+		IEvent eventOpen1 = createLinuxOpenEvent("A", 1234, "/home/tester/testfile", 3, true);
+		IEvent eventClone = createLinuxCloneEvent("A", 1235, 1234, "CLONE_FILES", true);
+		IEvent eventWrite = createLinuxWriteEvent("A", 1235, 3, "/home/tester/testfile", true);
+		IEvent eventClose = createLinuxCloseEvent("A", 1235, 3, true);
+		IEvent eventOpen2 = createLinuxOpenEvent("A", 1235, "/home/tester/testfile", 4, true);
+
+		_ifModelManager.reset();
+		_pipHandler.update(eventExecve);
+		_ifModel.addData(data, _ifModel.getContainer(ProcessName.create("A", 1234)));
+		_pipHandler.update(eventOpen1);
+		_pipHandler.update(eventClone);
+		_pipHandler.update(eventWrite);
+
+		Assert.assertEquals(true, _ifModel.getData(FiledescrName.create("A", 1235, 3)).contains(data));
+
+		_pipHandler.update(eventClose);
+		Assert.assertEquals(null, _ifModel.getContainer(FiledescrName.create("A", 1234, 3)));
+		Assert.assertEquals(null, _ifModel.getContainer(FiledescrName.create("A", 1235, 3)));
+
+		_pipHandler.update(eventOpen2);
+		Assert.assertNotEquals(null, _ifModel.getContainer(FiledescrName.create("A", 1234, 4)));
 	}
 
 	@Test

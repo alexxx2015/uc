@@ -8,9 +8,11 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IClonableForProcess;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
+import de.tum.in.i22.uc.cm.datatypes.linux.SharedFiledescr;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class CloneEventHandler extends LinuxEvents {
@@ -21,6 +23,7 @@ public class CloneEventHandler extends LinuxEvents {
 		int childPid;
 		int parentPid;
 		String flags = null;
+		boolean cloneFiles = false;
 
 		try {
 			host = getParameterValue("host");
@@ -33,11 +36,12 @@ public class CloneEventHandler extends LinuxEvents {
 		}
 
 		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|")));
+		cloneFiles = flagSet.contains("CLONE_FILES");
 
 		IName newProcName = ProcessName.create(host, childPid);
 		IName oldProcName = ProcessName.create(host, parentPid);
 
-		IContainer newProcCont = new ProcessContainer(host, childPid);
+		ProcessContainer newProcCont = new ProcessContainer(host, childPid);
 		ProcessContainer oldProcCont = (ProcessContainer) _informationFlowModel.getContainer(oldProcName);
 
 		// Add a container for the old process, if it did not yet exist (should not happen).
@@ -46,9 +50,9 @@ public class CloneEventHandler extends LinuxEvents {
 			_informationFlowModel.addName(oldProcName, oldProcCont);
 		}
 
-		if (flagSet.contains("CLONE_FILES")) {
-			_logger.error("CLONE_FILES was set, but is not implemented.");
-			return STATUS_ERROR;
+		if (cloneFiles) {
+			_logger.info("CLONE_FILES was set on clone(): " + childPid + "," + parentPid);
+			SharedFiledescr.newShare(childPid, parentPid);
 		}
 
 		// Add the container for the newly created child
@@ -56,7 +60,7 @@ public class CloneEventHandler extends LinuxEvents {
 
 		// Copy all process relative names from the old parent process to the new child process
 		for (IName name : getAllProcessRelativeNames(oldProcCont.getPid())) {
-			if (name instanceof IClonableForProcess) {
+			if ((name instanceof IClonableForProcess) && !(cloneFiles && (name instanceof FiledescrName))) {
 				IClonableForProcess n = (IClonableForProcess) name;
 				_informationFlowModel.addName(n.cloneFor(childPid), _informationFlowModel.getContainer(n));
 			}

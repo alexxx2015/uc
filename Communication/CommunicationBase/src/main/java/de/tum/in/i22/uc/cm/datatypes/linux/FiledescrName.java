@@ -3,8 +3,13 @@ package de.tum.in.i22.uc.cm.datatypes.linux;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 
 /**
- * Class representing file descriptors.
+ * Class representing a file descriptor.
  * Corresponds to set F_{dsc} in NSS'09 paper.
+ *
+ * According to clone(2), file descriptors may be shared
+ * across processes if flag CLONE_FILES is set upon clone() syscall.
+ * For this reason, method {@link FiledescrName#shareWith} allows to add arbitrary
+ * many PIDs.
  *
  * @author Florian Kelbert
  *
@@ -26,6 +31,7 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 	}
 
 	public static FiledescrName create(String host, int pid, int fd) {
+		pid = SharedFiledescr.getSharedPid(pid);
 		return new FiledescrName(host, pid, fd, PREFIX_FILE + host + "." + pid + "." + fd);
 	}
 
@@ -34,8 +40,8 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 	}
 
 	@Override
-	public int getPid() {
-		return _pid;
+	public boolean hasPid(int pid) {
+		return _pid == pid;
 	}
 
 	public int getFd() {
