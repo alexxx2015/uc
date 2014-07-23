@@ -682,6 +682,8 @@ public class UcManager extends Controller {
 			// deployedPolicies.clear();
 
 			if (!isStarted()) {
+
+				start();
 				if (this.clientFactory != null) {
 					int pmpPort=Settings.getInstance().getPmpListenerPort();
 					int pdpPort=Settings.getInstance().getPdpListenerPort();
@@ -690,8 +692,6 @@ public class UcManager extends Controller {
 					this.pdpClient = this.clientFactory
 							.createPep2PdpClient(new IPLocation("localhost", pdpPort));
 				}
-
-				start();
 			}
 			pdpInfoLabel.setText("PDP running");
 			ucIsRunning = true;
