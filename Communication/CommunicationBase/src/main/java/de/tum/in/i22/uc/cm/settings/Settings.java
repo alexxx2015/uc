@@ -97,6 +97,8 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
+
+
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 	private static final String PROP_NAME_excelOcbName = "excelOcbName";
@@ -451,6 +453,7 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_communicationProtocol);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}

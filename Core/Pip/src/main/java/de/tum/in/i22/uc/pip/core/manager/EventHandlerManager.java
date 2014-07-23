@@ -42,8 +42,7 @@ public class EventHandlerManager {
 				Class<?> actionHandlerClass = pipClassLoader
 						.loadClass(className);
 				_logger.trace("Create class " + className + " instance");
-				result = (IEventHandler) actionHandlerClass
-						.newInstance();
+				result = (IEventHandler) actionHandlerClass.newInstance();
 				_evNameToHandler.put(className, result);
 				return result;
 			} else {
@@ -56,8 +55,7 @@ public class EventHandlerManager {
 					Class<?> actionHandlerClass = classLoader
 							.loadClass(className);
 					_logger.trace("Create class " + className + " instance");
-					result = (IEventHandler) actionHandlerClass
-							.newInstance();
+					result = (IEventHandler) actionHandlerClass.newInstance();
 					_evNameToHandler.put(className, result);
 					return result;
 				} catch (Exception e) {
@@ -67,7 +65,8 @@ public class EventHandlerManager {
 				}
 			}
 		} else {
-			_logger.trace("Loaded class " + className + " instance from hashtable");
+			_logger.trace("Loaded class " + className
+					+ " instance from hashtable");
 			result.reset();
 			return result;
 		}
@@ -86,8 +85,8 @@ public class EventHandlerManager {
 		_classLoaderMap.put(className, pipClassLoader);
 
 	}
-	
-	public static void clearDefinitions(){
+
+	public static void clearDefinitions() {
 		_evNameToHandler.clear();
 	}
 }

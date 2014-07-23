@@ -36,28 +36,34 @@ public class SinkEventHandler extends JavaEventHandler {
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
 		try {
-			String signature = getParameterValue("signature");
-			String location = getParameterValue("location");
+//			String signature = getParameterValue("signature");
+//			String location = getParameterValue("location");
 			int pid = Integer.valueOf(getParameterValue("PID"));
 			
-			String sinkId = pid+_otherDelim + _snkPrefix+ _otherDelim + location + _javaIFDelim + signature;
+			String sinkId = ""+pid+_javaIFDelim+getParameterValue("id");
+			
+//			String sinkId = pid+_otherDelim + _snkPrefix+ _otherDelim + location + _javaIFDelim + signature;
 			String[] sourceIds = iFlow.get(sinkId);
 
 			Set<IData> srcData = new HashSet<IData>();
 			
 			if (sourceIds!=null){
 			for (String sourceId : sourceIds){
-				String[] arrStr=sourceId.split(_otherDelim);
-					if ((sourceId != null) && (!sourceId.equals("")) && (arrStr!=null) && (arrStr.length==3)) {
-						IContainer srcCnt = _informationFlowModel
-								.getContainer(new SourceSinkName(sourceId)); 
-						Set<IData> s = _informationFlowModel.getData(srcCnt);
-						if (s!=null) srcData.addAll(s);
-					}
-				}
+//				String[] arrStr=sourceId.split(_otherDelim);
+//					if ((sourceId != null) && (!sourceId.equals("")) && (arrStr!=null) && (arrStr.length==3)) {
+//						IContainer srcCnt = _informationFlowModel
+//								.getContainer(new SourceSinkName(sourceId)); 
+//						Set<IData> s = _informationFlowModel.getData(srcCnt);
+//						if (s!=null) srcData.addAll(s);
+//					}
+				IContainer srcCnt = _informationFlowModel
+							.getContainer(new NameBasic(sourceId)); 
+					Set<IData> s = _informationFlowModel.getData(srcCnt);
+					if (s!=null) srcData.addAll(s);
+			}
 			
 			IContainer sinkCnt = _informationFlowModel
-					.getContainer(new SourceSinkName(sinkId));
+					.getContainer(new NameBasic(sinkId));
 
 			
 				if ((direction.equals(EBehavior.INTRA))
@@ -68,7 +74,7 @@ public class SinkEventHandler extends JavaEventHandler {
 					Iterator<IContainer> sinkCntIt = aliasSinkCnt.iterator();
 					while (sinkCntIt.hasNext()) {
 						_informationFlowModel
-								.addData(srcData, sinkCntIt.next());
+								.addDataTransitively(srcData, sinkCntIt.next());
 					}
 				}
 
