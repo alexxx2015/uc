@@ -1,8 +1,10 @@
 package de.tum.in.i22.uc.cm.settings;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +24,12 @@ import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 /**
- * 
- * @author Florian Kelbert Settings are read from the specified properties file.
- *         If no file is specified, file "uc.properties" is used.
- * 
+ *
+ * @author Florian Kelbert
+ *
+ * Settings are read from the specified properties file.
+ * If no file is specified, file "uc.properties" is used.
+ *
  */
 public class Settings extends SettingsLoader {
 
@@ -69,6 +73,8 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_communicationProtocol = "communicationProtocol";
 
+	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+
 	public static final String PROP_NAME_distributionStrategy = "distributionStrategy";
 	public static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
 
@@ -101,10 +107,13 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
 	private static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
 	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
-	
+
 	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
 
-	
+	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
+
+	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+
 	private Settings() {
 		_settings = new HashMap<>();
 
@@ -187,17 +196,19 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
 				new HashMap<IName, IData>() {
-					private static final long serialVersionUID = -2810488356921449504L;
-					{
-						put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
-					}
-				});
+			private static final long serialVersionUID = -2810488356921449504L;
+			{
+				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
+			}
+		});
 
 		loadSetting(PROP_NAME_communicationProtocol,
 				ECommunicationProtocol.THRIFT, ECommunicationProtocol.class);
 
 		loadSetting(PROP_NAME_distributionStrategy, EDistributionStrategy.PUSH,
 				EDistributionStrategy.class);
+		loadSetting(PROP_NAME_distributionEnabled, false);
+
 		loadSetting(PROP_NAME_pipDistributionMaxConnections, 5);
 
 		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
@@ -215,10 +226,12 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_scopeGenericInDirection, "IN");
 		loadSetting(PROP_NAME_scopeGenericOutDirection, "OUT");
 
+		loadSetting(PROP_NAME_policySpecificationStarDataClass, "*");
+
 		loadSetting(PROP_NAME_showFullIFModel, true);
 		loadSetting(PROP_NAME_showIFNamesInsteadOfContainer, true);
 		loadSetting(PROP_NAME_sortStorageNames, true);
-		
+
 		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
 		loadSetting(PROP_NAME_excelListSeparator, "\\*");
 
@@ -228,12 +241,13 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_joanaDelimiter1, ":");
 		loadSetting(PROP_NAME_joanaDelimiter2, "#");
 		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
-		
+
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
-		
+
+		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
 	}
 
-	public Location loadSetting(String propName, Location defaultValue) {
+	private Location loadSetting(String propName, Location defaultValue) {
 		Location loadedValue = defaultValue;
 
 		boolean success = false;
@@ -249,7 +263,7 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	public <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
+	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
 			Class<E> cls) {
 		E loadedValue = defaultValue;
 
@@ -268,15 +282,46 @@ public class Settings extends SettingsLoader {
 	}
 
 	/**
+	 * Gets the property with the specified name (a string), splits its value using the specified
+	 * delimiter and returns the result of the splitting as a set.
+	 *
+	 * @param propName
+	 * @param delimiter
+	 * @param defaultValue
+	 * @return
+	 */
+	private Set<String> loadSetting(String propName, String delimiter, Set<String> defaultValue) {
+		Set<String> loadedValue = defaultValue;
+
+		boolean success = false;
+
+		try {
+			loadedValue = new HashSet<String>(Arrays.asList(((String) _props.get(propName)).split(delimiter)));
+
+			if (loadedValue != null && loadedValue.size() > 0) {
+				success = true;
+			}
+		} catch (Exception e) {
+			success = false;
+		}
+
+		return loadSettingFinalize(success, propName, Collections.unmodifiableSet(loadedValue), Collections.unmodifiableSet(defaultValue));
+	}
+
+	/**
 	 * Loads the initial representations for the Pip. They are expected to be in
 	 * the format <ContainerName1>:<DataId1>;<ContainerName2>:<DataId2>; ...
-	 * 
+	 *
+	 * Separators : and ; may be adjusted/changed by options
+	 * PROP_NAME_pipInitialRepresentationSeparator1 and
+	 * PROP_NAME_pipInitialRepresentationSeparator2
+	 *
 	 * @param propName
 	 *            the property name
 	 * @param defaultValue
 	 * @return
 	 */
-	public Map<IName, IData> loadSetting(String propName,
+	private Map<IName, IData> loadSetting(String propName,
 			Map<IName, IData> defaultValue) {
 		Map<IName, IData> loadedValue = new HashMap<>();
 
@@ -316,12 +361,7 @@ public class Settings extends SettingsLoader {
 
 		success = loadedValue.size() > 0;
 
-		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
-	}
-
-	
-	public String getPropertiesFileName() {
-		return _propertiesFile;
+		return loadSettingFinalize(success, propName, Collections.unmodifiableMap(loadedValue), Collections.unmodifiableMap(defaultValue));
 	}
 
 	public int getPmpListenerPort() {
@@ -346,17 +386,17 @@ public class Settings extends SettingsLoader {
 
 	public boolean isPmpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pmpLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPipListenerEnabled() {
 		Location l = getValue(PROP_NAME_pipLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isPdpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pdpLocation);
-		return ((l == null) ? false : (l.getLocation() == ELocation.LOCAL));
+		return l == null ? false : l.getLocation() == ELocation.LOCAL;
 	}
 
 	public boolean isAnyListenerEnabled() {
@@ -365,6 +405,10 @@ public class Settings extends SettingsLoader {
 
 	public EDistributionStrategy getDistributionStrategy() {
 		return getValue(PROP_NAME_distributionStrategy);
+	}
+
+	public boolean getDistributionEnabled() {
+		return getValue(PROP_NAME_distributionEnabled);
 	}
 
 	public String getPipEventHandlerPackage() {
@@ -410,8 +454,7 @@ public class Settings extends SettingsLoader {
 
 	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
-		return Collections
-				.unmodifiableMap((Map<IName, IData>) getValue(PROP_NAME_pipInitialRepresentations));
+		return getValue(PROP_NAME_pipInitialRepresentations);
 	}
 
 	public int getPipDistributionMaxConnections() {
@@ -486,8 +529,12 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_scopeGenericOutDirection);
 	}
 
-	public boolean getShowFullIFModel(){
+	public boolean getShowFullIFModel() {
 		return getValue(PROP_NAME_showFullIFModel);
+	}
+
+	public String getPolicySpecificationStarDataClass() {
+		return getValue(PROP_NAME_policySpecificationStarDataClass);
 	}
 
 	public boolean getShowIFNamesInsteadOfContainer(){
@@ -501,15 +548,15 @@ public class Settings extends SettingsLoader {
 	public String getExcelCoordinatesSeparator(){
 		return getValue(PROP_NAME_excelCoordinatesSeparator);
 	}
-	
+
 	public String getExcelListSeparator(){
 		return getValue(PROP_NAME_excelListSeparator);
 	}
-	
+
 	public String getExcelOcbName(){
 		return getValue(PROP_NAME_excelOcbName);
 	}
-	
+
 	public String getExcelScbName(){
 		return getValue(PROP_NAME_excelScbName);
 	}
@@ -529,5 +576,8 @@ public class Settings extends SettingsLoader {
 	public int getCleanUpInterval(){
 		return getValue(PROP_NAME_cleanUpInterval);
 	}
-	
+
+	public Set<String> getPmpInitialPolicies() {
+		return getValue(PROP_NAME_pmpInitialPolicies);
+	}
 }

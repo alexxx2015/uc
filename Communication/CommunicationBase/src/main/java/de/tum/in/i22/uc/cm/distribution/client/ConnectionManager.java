@@ -9,6 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Manages and synchronizes connections.
  *
@@ -27,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class ConnectionManager<C extends IConnectable> {
+	private static final Logger _logger = LoggerFactory.getLogger(ConnectionManager.class);
 
 	private final PoolMap connectionPool;;
 
@@ -99,6 +103,7 @@ public class ConnectionManager<C extends IConnectable> {
 					} catch (Exception e) {
 						throw new IOException("Unable to connect.", e);
 					}
+					_logger.info("Connected to " + connectable);
 					entry = new PoolMapEntry(connectable, false);
 					connectionPool.put(connectable, entry);
 				}

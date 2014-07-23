@@ -36,8 +36,6 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
-import de.tum.in.i22.uc.pip.extensions.distribution.PipDistributionManager;
-import de.tum.in.i22.uc.pip.extensions.distribution.RemoteDataFlowInfo;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -49,14 +47,10 @@ public class PipHandler extends PipProcessor {
 
 	private final PipManager _pipManager;
 
-	/**
-	 * Manages everything related to distributed data flow tracking
-	 */
-	private final PipDistributionManager _distributedPipManager;
-
-	// this is to include classes within the jar file. DO NOT REMOVE.
-	@SuppressWarnings("unused")
-	private final boolean dummyIncludes = DummyIncludes.dummyInclude();
+	//	/**
+	//	 * Manages everything related to distributed data flow tracking
+	//	 */
+	//	private final PipDistributionManager _distributedPipManager;
 
 	public PipHandler() {
 		this(new InformationFlowModelManager());
@@ -67,7 +61,7 @@ public class PipHandler extends PipProcessor {
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
-		_distributedPipManager = new PipDistributionManager();
+		//		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
@@ -147,35 +141,37 @@ public class PipHandler extends PipProcessor {
 		 * work, namely remote data flow tracking and policy shipment
 		 */
 		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
-				&& (status instanceof DistributedPipStatus)) {
+				&& status instanceof DistributedPipStatus) {
 
-			// TODO: PIP communication and PMP communication
-			// can be improved by either doing only one call
-			// or by doing them in parallel
+			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 
-			/*
-			 * Get the information about the remote data flow from the returned
-			 * status and inform both the distributed Pip manager and the Pmp.
-			 */
-
-			RemoteDataFlowInfo df = ((DistributedPipStatus) status)
-					.getDataflow();
-			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
-
-			Location srcLocation = df.getSrcLocation();
-
-			for (Location dstlocation : dataflow.keySet()) {
-				// .... remote data flow tracking ....
-				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation,
-						dataflow.get(dstlocation));
-
-				// .... and remote policy transfer
-				Set<IData> data = new HashSet<>();
-				for (Set<IData> d : dataflow.get(dstlocation).values()) {
-					data.addAll(d);
-				}
-				getPmp().informRemoteDataFlow(srcLocation, dstlocation, data);
-			}
+			//			// TODO: PIP communication and PMP communication
+			//			// can be improved by either doing only one call
+			//			// or by doing them in parallel
+			//
+			//			/*
+			//			 * Get the information about the remote data flow from the returned
+			//			 * status and inform both the distributed Pip manager and the Pmp.
+			//			 */
+			//
+			//			RemoteDataFlowInfo df = ((DistributedPipStatus) status)
+			//					.getDataflow();
+			//			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
+			//
+			//			Location srcLocation = df.getSrcLocation();
+			//
+			//			for (Location dstlocation : dataflow.keySet()) {
+			//				// .... remote data flow tracking ....
+			//				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation,
+			//						dataflow.get(dstlocation));
+			//
+			//				// .... and remote policy transfer
+			//				Set<IData> data = new HashSet<>();
+			//				for (Set<IData> d : dataflow.get(dstlocation).values()) {
+			//					data.addAll(d);
+			//				}
+			//				getPmp().informRemoteDataFlow(srcLocation, dstlocation, data);
+			//			}
 
 		}
 
@@ -211,7 +207,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Evaluate the predicate in the state obtained simulating the execution of
 	 * event.
-	 * 
+	 *
 	 * @return the result of the formula
 	 */
 	@Override
@@ -279,10 +275,14 @@ public class PipHandler extends PipProcessor {
 		if ((container = _ifModel.getContainer(containerName)) == null) {
 			_ifModel.addName(containerName, container = new ContainerBasic());
 		}
-		if ((data == null) || (data == Collections.EMPTY_SET)) {
+
+		if (data == null || data.size() == 0) {
 			newInitialRepresentation(containerName);
-		} else
+		}
+		else {
 			_ifModel.addDataTransitively(data, container);
+		}
+
 		return new StatusBasic(EStatus.OKAY);
 	}
 
@@ -302,7 +302,8 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _distributedPipManager.whoHasData(data, recursionDepth);
+		//		return _distributedPipManager.whoHasData(data, recursionDepth);
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -328,6 +329,6 @@ public class PipHandler extends PipProcessor {
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

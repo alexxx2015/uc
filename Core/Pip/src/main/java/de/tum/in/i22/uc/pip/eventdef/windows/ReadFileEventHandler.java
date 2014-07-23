@@ -63,11 +63,11 @@ public class ReadFileEventHandler extends WindowsEvents {
 					fileName));
 
 			// check if container for filename exists and create new container
-			if (fileContainer == null) {
-				fileContainer = _messageFactory.createContainer();
-				_informationFlowModel.addName(new NameBasic(fileName),
-						fileContainer, true);
-			}
+			// if (fileContainer == null) {
+			// fileContainer = _messageFactory.createContainer();
+			// _informationFlowModel.addName(new NameBasic(fileName),
+			// fileContainer, true);
+			// }
 		}
 
 		if (direction.equals(EBehavior.INTRA)
@@ -75,14 +75,15 @@ public class ReadFileEventHandler extends WindowsEvents {
 				|| direction.equals(EBehavior.INTRAOUT)) {
 			// add data to transitive reflexive closure of process container
 			Set<IData> dataSet = _informationFlowModel.getData(fileContainer);
-			for (IContainer tempContainer : transitiveReflexiveClosure) {
-				_informationFlowModel.addData(dataSet, tempContainer);
+			if (dataSet.size() > 0) {
+				for (IContainer tempContainer : transitiveReflexiveClosure) {
+					_informationFlowModel.addData(dataSet, tempContainer);
+				}
 			}
 		}
 
-
 		if (direction.equals(EBehavior.INTRAIN)
-				|| direction.equals(EBehavior.IN)){
+				|| direction.equals(EBehavior.IN)) {
 			Set<IData> dataSet = _informationFlowModel.getData(new NameBasic(
 					scope.getId()));
 			for (IContainer tempContainer : transitiveReflexiveClosure) {
@@ -91,23 +92,22 @@ public class ReadFileEventHandler extends WindowsEvents {
 		}
 
 		if (direction.equals(EBehavior.INTRAOUT)
-				|| direction.equals(EBehavior.OUT)){
+				|| direction.equals(EBehavior.OUT)) {
 			Set<IData> dataSet = _informationFlowModel.getData(fileContainer);
-			IContainer intermediateCont = _informationFlowModel.getContainer(new NameBasic(scope.getId()));
+				IContainer intermediateCont = _informationFlowModel
+					.getContainer(new NameBasic(scope.getId()));
 			_informationFlowModel.addData(dataSet, intermediateCont);
 		}
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
-	
-	
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String filename;
 		String fileDescriptor;
 		String pid;
-//		String tid;
+		// String tid;
 		String processName;
 
 		_logger.debug("XBehav function of ReadFile");
@@ -116,7 +116,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 			filename = getParameterValue("InFileName");
 			fileDescriptor = getParameterValue("FileHandle");
 			pid = getParameterValue("PID");
-//			tid = getParameterValue("TID");
+			// tid = getParameterValue("TID");
 			processName = getParameterValue("ProcessName");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of ReadFile event. falling back to default INTRA layer behavior"
@@ -125,13 +125,13 @@ public class ReadFileEventHandler extends WindowsEvents {
 		}
 
 		Map<String, Object> attributes;
-		IScope scopeToCheck=null;
-		IScope existingScope=null;
+		IScope scopeToCheck = null;
+		IScope existingScope = null;
 		EScopeType type = EScopeType.LOAD_FILE;
 
 		// TEST 1 : TB LOADING THIS FILE?
 		// If so behave as OUT
-		
+
 		if (processName.equalsIgnoreCase("Thunderbird")) {
 			attributes = new HashMap<String, Object>();
 			attributes.put("app", "Thunderbird");
@@ -141,7 +141,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 
 			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		}
-		
+
 		if (existingScope != null) {
 			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
 			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
@@ -155,8 +155,8 @@ public class ReadFileEventHandler extends WindowsEvents {
 		type = EScopeType.JBC_GENERIC_IN;
 		attributes.put("fileDescriptor", fileDescriptor);
 		attributes.put("pid", pid);
-//		attributes.put("tid", tid);
-		
+		// attributes.put("tid", tid);
+
 		scopeToCheck = new ScopeBasic("Generic JBC app inputing scope", type,
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
@@ -176,8 +176,4 @@ public class ReadFileEventHandler extends WindowsEvents {
 		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
 	}
 
-	
-	
-	
-	
 }

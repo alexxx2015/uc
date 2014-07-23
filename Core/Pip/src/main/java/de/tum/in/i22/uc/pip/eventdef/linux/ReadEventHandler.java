@@ -20,11 +20,13 @@ public class ReadEventHandler extends LinuxEvents {
 		String host = null;
 		int pid;
 		int fd;
+		String filename;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
 			fd = Integer.valueOf(getParameterValue("fd"));
+			filename = getParameterValue("filename");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

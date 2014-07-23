@@ -205,7 +205,6 @@ public final class ScopeInformationFlowModel extends
 			sb.append(scope.getHumanReadableName());
 			sb.append(nl);
 		}
-		sb.append(nl);
 		return sb.toString();
 	}
 

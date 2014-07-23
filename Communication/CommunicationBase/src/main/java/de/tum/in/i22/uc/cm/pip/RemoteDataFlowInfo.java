@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.extensions.distribution;
+package de.tum.in.i22.uc.cm.pip;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,5 +78,14 @@ public class RemoteDataFlowInfo {
 	 */
 	public boolean isEmpty() {
 		return _dataflow == null || _dataflow.size() == 0;
+	}
+
+
+	@Override
+	public String toString() {
+		return com.google.common.base.Objects.toStringHelper(this)
+				.add("_srcLocation", _srcLocation)
+				.add("_dataflow", _dataflow)
+				.toString();
 	}
 }

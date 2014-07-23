@@ -161,15 +161,15 @@ public final class InformationFlowModelManager implements
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
 		String nl = System.getProperty("line.separator");
-		sb.append("-----------------------------------------------"+nl);
-		sb.append(_basicIfModel.niceString());
+		sb.append(nl+"-----------------------------------------------"+nl+nl);
+ 		sb.append(_basicIfModel.niceString()+nl);
 
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
 			String model = ifme.niceString(); 
-			if (model != null) sb.append(model);
+			if (model != null) sb.append(model+nl);
 		}
 
-		sb.append(nl+"-----------------------------------------------"+nl);
+		sb.append("-----------------------------------------------"+nl);
 
 		return sb.toString();
 	}

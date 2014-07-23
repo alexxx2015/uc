@@ -1,4 +1,6 @@
-.settings
+.setting
 .project
 .log
 logging
+pipdb/
+derby.log

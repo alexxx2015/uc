@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.OSInternalName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
@@ -18,6 +19,7 @@ public class SocketEventHandler extends BaseEventHandler {
 		int fd;
 		String domain = null;
 		String type = null;
+		String socketname = null;
 
 		try {
 			host = getParameterValue("host");
@@ -25,14 +27,19 @@ public class SocketEventHandler extends BaseEventHandler {
 			fd = Integer.valueOf(getParameterValue("fd"));
 			domain = getParameterValue("domain");
 			type = getParameterValue("type");
+			socketname = getParameterValue("socketname");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		_informationFlowModel.addName(
-				FiledescrName.create(host, pid, fd),
-				new SocketContainer(Domain.from(domain), Type.from(type)));
+		SocketContainer sc = new SocketContainer(Domain.from(domain), Type.from(type));
+
+		// file descriptor name
+		_informationFlowModel.addName(FiledescrName.create(host, pid, fd), sc);
+
+		// OS internal socket identifier
+		_informationFlowModel.addName(OSInternalName.create(host, socketname), sc);
 
 		return STATUS_OKAY;
 	}
