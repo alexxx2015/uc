@@ -682,8 +682,7 @@ public class UcManager extends Controller {
 			// deployedPolicies.clear();
 
 			if (!isStarted()) {
-
-				start();
+				start();	
 				if (this.clientFactory != null) {
 					int pmpPort=Settings.getInstance().getPmpListenerPort();
 					int pdpPort=Settings.getInstance().getPdpListenerPort();
