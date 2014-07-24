@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 
 public class PDPJavaTest {
 	private static Logger log = LoggerFactory.getLogger(PDPJavaTest.class);
 
-	private static IPolicyDecisionPoint lpdp = null;
+	private static PolicyDecisionPoint lpdp = null;
 
 	@Test
 	public void test() {

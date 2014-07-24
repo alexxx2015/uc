@@ -26,13 +26,12 @@ import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 
 public class PdpHandler extends PdpProcessor {
 
 	private static Logger _logger = LoggerFactory.getLogger(PdpHandler.class);
 
-	private IPolicyDecisionPoint _lpdp;
+	private PolicyDecisionPoint _lpdp;
 
 	private final PxpManager _pxpManager;
 

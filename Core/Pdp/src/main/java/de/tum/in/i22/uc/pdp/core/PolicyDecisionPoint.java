@@ -28,11 +28,10 @@ import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PolicyDecisionPoint implements IPolicyDecisionPoint {
+public class PolicyDecisionPoint {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
 	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
@@ -60,13 +59,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
 
-	@Override
 	public boolean deployPolicyXML(XmlPolicy xmlPolicy) {
 		_logger.debug("deployPolicyXML: " + xmlPolicy.getName());
 		return deployXML(new ByteArrayInputStream(xmlPolicy.getXml().getBytes()));
 	}
 
-	@Override
 	public boolean deployPolicyURI(String policyFilename) {
 		if (!policyFilename.endsWith(".xml")) {
 			_logger.warn("Unsupported message format of policy [" + policyFilename + "]. Not deploying policy.");
@@ -138,7 +135,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		return true;
 	}
 
-	@Override
 	public void revokePolicy(String policyName) {
 		_logger.debug("revokePolicy({}) invoked.", policyName);
 
@@ -154,7 +150,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		}
 	}
 
-	@Override
 	public boolean revokeMechanism(String policyName, String mechName) {
 		_logger.info("revokeMechanism({}, {}) invoked.", policyName, mechName);
 
@@ -173,7 +168,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		return true;
 	}
 
-	@Override
 	public Decision notifyEvent(Event event) {
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getEventAction());
 		if (eventMatchList == null)
@@ -199,7 +193,6 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		return d;
 	}
 
-	@Override
 	public Map<String, Set<String>> listDeployedMechanisms() {
 		Map<String, Set<String>> map = new TreeMap<String, Set<String>>();
 
@@ -214,22 +207,18 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 		return map;
 	}
 
-	@Override
 	public IPdp2Pip getPip() {
 		return _pip;
 	}
 
-	@Override
 	public ActionDescriptionStore getActionDescriptionStore() {
 		return _actionDescriptionStore;
 	}
 
-	@Override
 	public PxpManager getPxpManager() {
 		return _pxpManager;
 	}
 
-	@Override
 	public void stop() {
 		for (Map<String,Mechanism> map : _policyTable.values()) {
 			for (Mechanism mech : map.values()) {
