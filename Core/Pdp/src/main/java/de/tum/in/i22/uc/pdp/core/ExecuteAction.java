@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.shared.Param;
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.ParameterType;
@@ -19,11 +19,11 @@ public class ExecuteAction implements Serializable {
 	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
 
 	private String name = null;
-	private final Set<Param> parameters = new HashSet<Param>();
+	private final Set<ParamBasic> parameters = new HashSet<ParamBasic>();
 	private String processor = null;
 	private String id = null;
 
-	public ExecuteAction(String name, List<Param> params) {
+	public ExecuteAction(String name, List<ParamBasic> params) {
 		this.name = name;
 		this.parameters.addAll(params);
 	}
@@ -36,7 +36,7 @@ public class ExecuteAction implements Serializable {
 		this.name = execAction.getName();
 		this.id = execAction.getId();
 		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param(param.getName(), param.getValue()));
+			this.parameters.add(new ParamBasic(param.getName(), param.getValue()));
 		}
 	}
 
@@ -46,7 +46,7 @@ public class ExecuteAction implements Serializable {
 		this.id = execAction.getId();
 		this.processor = execAction.getProcessor().value();
 		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param(param.getName(), param.getValue()));
+			this.parameters.add(new ParamBasic(param.getName(), param.getValue()));
 		}
 	}
 
@@ -54,12 +54,12 @@ public class ExecuteAction implements Serializable {
 		return name;
 	}
 
-	public Collection<Param> getParams() {
+	public Collection<ParamBasic> getParams() {
 		return parameters;
 	}
 
-	public Param getParameterForName(String name) {
-		for (Param p : parameters) {
+	public ParamBasic getParameterForName(String name) {
+		for (ParamBasic p : parameters) {
 			if (p.getName().equalsIgnoreCase(name)) {
 				return p;
 			}

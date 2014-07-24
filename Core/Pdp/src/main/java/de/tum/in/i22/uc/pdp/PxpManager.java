@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -16,7 +17,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
-import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 /**
@@ -55,7 +55,7 @@ public class PxpManager {
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
 					Map<String, String> par = new HashMap<String, String>();
 
-					for (Param p : execAction.getParams()){
+					for (ParamBasic p : execAction.getParams()){
 						par.put(p.getName(),p.getValue().toString());
 					}
 

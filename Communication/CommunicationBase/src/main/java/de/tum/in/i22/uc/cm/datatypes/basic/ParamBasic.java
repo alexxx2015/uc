@@ -1,15 +1,15 @@
-package de.tum.in.i22.uc.pdp.core.shared;
+package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Param implements Serializable {
+public class ParamBasic implements Serializable {
 	private static final long serialVersionUID = -7061921148298856812L;
 
 	private final String _name;
 	private final String _value;
 
-	public Param(String name, String value) {
+	public ParamBasic(String name, String value) {
 		if (name == null || value == null)
 			throw new NullPointerException("Name and/or value may not be null");
 		_name = name;
@@ -34,8 +34,8 @@ public class Param implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Param) {
-			Param o = (Param) obj;
+		if (obj instanceof ParamBasic) {
+			ParamBasic o = (ParamBasic) obj;
 			return Objects.equals(_name, o._name)
 					&& Objects.equals(_value, o._value);
 		}

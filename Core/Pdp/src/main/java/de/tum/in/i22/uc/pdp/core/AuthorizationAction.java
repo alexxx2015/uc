@@ -7,9 +7,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
-import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
@@ -30,14 +30,14 @@ public class AuthorizationAction implements Serializable {
 	private AuthorizationAction fallback = AUTHORIZATION_INHIBIT;
 	private String fallbackName = "";
 	private List<ExecuteAction> executeSyncActions = new ArrayList<ExecuteAction>();
-	private List<Param> modifiers = new ArrayList<>();
+	private List<ParamBasic> modifiers = new ArrayList<>();
 	private long delay = 0;
 
 	public AuthorizationAction() {
 	}
 
 	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
-			long delay, List<Param> modifiers, AuthorizationAction fallback) {
+			long delay, List<ParamBasic> modifiers, AuthorizationAction fallback) {
 		this.type = type;
 		if (name != null)
 			this.name = name;
@@ -88,7 +88,7 @@ public class AuthorizationAction implements Serializable {
 					for (ParameterType param : allow.getModify().getParameter()) {
 						log.debug("modify: {} -> {}", param.getName(), param.getValue());
 						// TODO: use different parameter types?!
-						this.modifiers.add(new Param(param.getName(), param.getValue()));
+						this.modifiers.add(new ParamBasic(param.getName(), param.getValue()));
 					}
 				}
 				for (ExecuteActionType execAction : allow.getExecuteSyncAction()) {
@@ -110,7 +110,7 @@ public class AuthorizationAction implements Serializable {
 		return executeSyncActions;
 	}
 
-	public List<Param> getModifiers() {
+	public List<ParamBasic> getModifiers() {
 		return modifiers;
 	}
 
@@ -118,12 +118,12 @@ public class AuthorizationAction implements Serializable {
 		this.executeSyncActions = executeActions;
 	}
 
-	public void setModifiers(List<Param> modifiers) {
+	public void setModifiers(List<ParamBasic> modifiers) {
 		if (type == Constants.AUTHORIZATION_ALLOW)
 			this.modifiers = modifiers;
 	}
 
-	public void addModifier(Param parameter) {
+	public void addModifier(ParamBasic parameter) {
 		modifiers.add(parameter);
 	}
 
@@ -179,7 +179,7 @@ public class AuthorizationAction implements Serializable {
 			str += " Delay: " + this.getDelay();
 
 		str += "; Modifiers: {";
-		for (Param p : this.getModifiers())
+		for (ParamBasic p : this.getModifiers())
 			str += p.toString() + ",";
 		str += "}; mandatory execs: {";
 

@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 
 public class Event implements Serializable {
@@ -15,7 +16,7 @@ public class Event implements Serializable {
 	protected String eventAction;
 	protected boolean isActual;
 	protected long timestamp;
-	protected Hashtable<String, Param> params = new Hashtable<String, Param>();
+	protected Hashtable<String, ParamBasic> params = new Hashtable<String, ParamBasic>();
 
 	public Event() {
 		this.eventAction = "noName";
@@ -45,10 +46,10 @@ public class Event implements Serializable {
 		}
 	}
 
-	public Event(String action, Collection<Param> params, boolean isActual) {
+	public Event(String action, Collection<ParamBasic> params, boolean isActual) {
 		this.eventAction = action;
 		if (params != null) {
-			for (Param p : params) {
+			for (ParamBasic p : params) {
 				this.params.put(p.getName(), p);
 			}
 		}
@@ -56,7 +57,7 @@ public class Event implements Serializable {
 		this.timestamp = System.currentTimeMillis();
 	}
 
-	public Event(String action, Collection<Param> params, boolean isActual, long time) {
+	public Event(String action, Collection<ParamBasic> params, boolean isActual, long time) {
 		this.eventAction = action;
 		this.isActual = isActual;
 		this.timestamp = time;
@@ -74,20 +75,20 @@ public class Event implements Serializable {
 		return timestamp;
 	}
 
-	public Param getParameterForName(String name) {
+	public ParamBasic getParameterForName(String name) {
 		return params.get(name);
 	}
 
 	public void addStringParameter(String name, String value) {
 		if (value != null)
-			params.put(name, new Param(name, value));
+			params.put(name, new ParamBasic(name, value));
 	}
 
 	@Override
 	public String toString() {
 		String str = "Event      action='" + eventAction + "' isTry='" + !isActual + "' timestamp='" + timestamp
 				+ "': [";
-		for (Param param : params.values())
+		for (ParamBasic param : params.values())
 			str += param.toString() + ", ";
 		str += "]";
 		return str;
@@ -95,7 +96,7 @@ public class Event implements Serializable {
 
 	public IEvent toIEvent() {
 		Map<String, String> m = new HashMap<String, String>();
-		for (Param p : params.values()) {
+		for (ParamBasic p : params.values()) {
 			m.put(p.getName(), p.getValue().toString());
 		}
 		return new EventBasic(this.eventAction, m, isActual);

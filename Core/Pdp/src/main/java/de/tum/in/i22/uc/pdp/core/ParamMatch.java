@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
@@ -17,7 +18,6 @@ import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.LtComparisonOpera
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.NotEqualsComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.StartsWithComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.SubstringComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class ParamMatch extends ParamMatchType {
@@ -34,7 +34,7 @@ public class ParamMatch extends ParamMatchType {
 		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
 	}
 
-	public boolean paramMatches(Param param) {
+	public boolean paramMatches(ParamBasic param) {
 		boolean matches = false;
 		if (param == null) {
 			log.trace("Parameter [{}] not present", this.getName());

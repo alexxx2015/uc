@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -117,7 +118,7 @@ public class Decision implements java.io.Serializable {
 		} else {
 			log.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
-			for (Param curParam : curAuthAction.getModifiers())
+			for (ParamBasic curParam : curAuthAction.getModifiers())
 				this.getAuthorizationAction().addModifier(curParam);
 		}
 
@@ -182,10 +183,10 @@ public class Decision implements java.io.Serializable {
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
-		List<Param> modifiedParameters = getAuthorizationAction().getModifiers();
+		List<ParamBasic> modifiedParameters = getAuthorizationAction().getModifiers();
 		Map<String, String> modifiedParamI = new HashMap<String, String>();
 
-		for (Param p : modifiedParameters) {
+		for (ParamBasic p : modifiedParameters) {
 			modifiedParamI.put(p.getName(), p.getValue().toString());
 		}
 
