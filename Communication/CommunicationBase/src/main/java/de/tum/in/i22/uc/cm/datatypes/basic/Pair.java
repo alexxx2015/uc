@@ -1,48 +1,42 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Objects;
+
 public class Pair<A, B> {
-    private final A first;
-    private final B second;
+	private final A _first;
+	private final B _second;
 
-    public Pair(A first, B second) {
-    	super();
-    	this.first = first;
-    	this.second = second;
-    }
+	public Pair(A first, B second) {
+		_first = first;
+		_second = second;
+	}
 
-    public int hashCode() {
-    	int hashFirst = first != null ? first.hashCode() : 0;
-    	int hashSecond = second != null ? second.hashCode() : 0;
+	@Override
+	public int hashCode() {
+		return Objects.hash(_first, _second);
+	}
 
-    	return (hashFirst + hashSecond) * hashSecond + hashFirst;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Pair) {
+			Pair<?, ?> other = (Pair<?, ?>) obj;
+			return Objects.equals(_first, other._first) && Objects.equals(_second, other._second);
+		}
 
-    public boolean equals(Object other) {
-    	if (other instanceof Pair) {
-    		Pair<?,?> otherPair = (Pair<?,?>) other;
-    		return 
-    		((  this.first == otherPair.first ||
-    			( this.first != null && otherPair.first != null &&
-    			  this.first.equals(otherPair.first))) &&
-    		 (	this.second == otherPair.second ||
-    			( this.second != null && otherPair.second != null &&
-    			  this.second.equals(otherPair.second))) );
-    	}
+		return false;
+	}
 
-    	return false;
-    }
+	@Override
+	public String toString() {
+		return "(" + _first + ", " + _second + ")";
+	}
 
-    public String toString()
-    { 
-           return "(" + first + ", " + second + ")"; 
-    }
+	public A getFirst() {
+		return _first;
+	}
 
-    public A getFirst() {
-    	return first;
-    }
-
-    public B getSecond() {
-    	return second;
-    }
+	public B getSecond() {
+		return _second;
+	}
 
 }
