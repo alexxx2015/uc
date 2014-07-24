@@ -302,4 +302,10 @@ public class PipHandler extends PipProcessor {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public IData getDataFromId(String id) {
+		IData d=_ifModelManager.getDataFromId(id);
+		return (d==null)?new DataBasic("null"):d;
+	}
 }

@@ -393,4 +393,6 @@ public interface IBasicInformationFlowModel {
 
 	public abstract String toString();
 
+	public IData getDataFromId(String id);
+
 }

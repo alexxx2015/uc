@@ -436,4 +436,9 @@ public final class InformationFlowModelManager implements
 		_basicIfModel.addName(name, container, deleteUnreferencedContainer);
 	}
 
+	@Override
+	public IData getDataFromId(String id) {
+		return _basicIfModel.getDataFromId(id);
+	}
+
 }

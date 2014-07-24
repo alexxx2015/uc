@@ -189,4 +189,10 @@ TAny2Pip.Iface {
 		return ThriftConverter.toThriftDataSet(_handler
 				.flattenStructure(ThriftConverter.fromThrift(data)));
 	}
+
+	@Override
+	public TData getDataFromId(String id) throws TException {
+		_logger.debug("TAny2Pip: getDataFromID");
+		return ThriftConverter.toThrift(_handler.getDataFromId(id));
+	}
 }
