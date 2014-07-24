@@ -131,7 +131,7 @@ public class SendEventHandler extends WindowsEvents {
 		// TEST : GENERIC JBC APP WRITING TO THIS SOCKET?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_OUT;
+		type = EScopeType.JBC_GENERIC_SAVE;
 		attributes.put("fileDescriptor", socketHandle);
 		attributes.put("pid", pid);
 		scopeToCheck = new ScopeBasic("Generic JBC app OUT scope", type,

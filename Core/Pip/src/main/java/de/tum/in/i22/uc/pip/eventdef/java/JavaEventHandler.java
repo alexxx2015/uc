@@ -48,7 +48,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
-				+ (type.equals(EScopeType.JBC_GENERIC_IN) ? "source" : "sink")
+				+ (type.equals(EScopeType.JBC_GENERIC_LOAD) ? "source" : "sink")
 				+ " event with fileDescriptor + " + fileDescriptor + " (pid "
 				+ pid + ")";
 	}

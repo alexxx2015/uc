@@ -24,7 +24,7 @@ public class SinkEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(EScopeType.JBC_GENERIC_OUT);
+		return buildScope(EScopeType.JBC_GENERIC_SAVE);
 	}
 
 	

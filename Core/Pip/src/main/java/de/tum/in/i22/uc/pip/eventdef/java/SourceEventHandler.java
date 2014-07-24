@@ -28,7 +28,7 @@ public class SourceEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IScope buildScope(String delimiter) {
-		return buildScope(EScopeType.JBC_GENERIC_IN);
+		return buildScope(EScopeType.JBC_GENERIC_LOAD);
 	}
 	
 	
