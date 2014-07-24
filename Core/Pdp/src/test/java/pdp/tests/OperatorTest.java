@@ -45,7 +45,7 @@ public class OperatorTest
     assert(ret==true);
 
     log.debug("Starting before-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     for(int a=0; a<3; a++)
@@ -68,7 +68,7 @@ public class OperatorTest
     assert(ret==true);
 
     log.info("Starting within-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     for(int a=0; a<3; a++)
@@ -91,7 +91,7 @@ public class OperatorTest
     assert(ret);
 
     log.info("Starting during-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     sleep(3000);
@@ -115,7 +115,7 @@ public class OperatorTest
     assert(ret);
 
     log.info("Starting always-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     for(int a=0; a<5; a++)
@@ -138,7 +138,7 @@ public class OperatorTest
     assert(ret);
 
     log.info("Starting repmax-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     sleep(3000);
@@ -162,7 +162,7 @@ public class OperatorTest
     assert(ret);
 
     log.info("Starting replim-test");
-    Event levent = new Event("action1", null, true);
+    Event levent = new Event("action1", null, false);
     levent.addStringParameter("val1", "value1");
 
     sleep(1000);
@@ -202,9 +202,9 @@ public class OperatorTest
       assertTrue("Deploying test-policy failed", ret);
 
       log.info("Starting since-test");
-      Event levent = new Event("action1", null, true);
+      Event levent = new Event("action1", null, false);
       levent.addStringParameter("val1", "value1");
-      Event levent2 = new Event("action2", null, true);
+      Event levent2 = new Event("action2", null, false);
       levent2.addStringParameter("val2", "value2");
 
       sleep(1000);
@@ -291,9 +291,9 @@ public class OperatorTest
       assertTrue("Deploying test-policy failed", ret);
 
       log.info("Starting repSince-test");
-      Event levent = new Event("action1", null, true);
+      Event levent = new Event("action1", null, false);
       levent.addStringParameter("val1", "value1");
-      Event levent2 = new Event("action2", null, true);
+      Event levent2 = new Event("action2", null, false);
       levent2.addStringParameter("val2", "value2");
 
       sleep(1000);

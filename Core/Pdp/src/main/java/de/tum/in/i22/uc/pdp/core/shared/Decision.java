@@ -177,7 +177,7 @@ public class Decision implements java.io.Serializable {
 		List<IEvent> list = new ArrayList<IEvent>();
 
 		for (ExecuteAction ea : getExecuteActions()) {
-			Event e = new Event(ea.getName(), ea.getParams(), true);
+			Event e = new Event(ea.getName(), ea.getParams(), false);
 			list.add(e.toIEvent());
 			// TODO: take care of processor. for the time being ignored by TUM
 		}

@@ -9,15 +9,11 @@ public class Param implements Serializable {
 	private final String _name;
 	private final String _value;
 
-	public Param(String name, String value, int type) {
+	public Param(String name, String value) {
 		if (name == null || value == null)
 			throw new NullPointerException("Name and/or value may not be null");
 		_name = name;
 		_value = value;
-	}
-
-	public Param(String name, String value) {
-		this(name, value, Constants.PARAMETER_TYPE_STRING);
 	}
 
 	public String getName() {

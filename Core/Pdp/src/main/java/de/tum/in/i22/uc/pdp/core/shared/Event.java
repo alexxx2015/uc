@@ -13,13 +13,13 @@ public class Event implements Serializable {
 	private static final long serialVersionUID = 6399332064987815074L;
 
 	protected String eventAction;
-	protected boolean tryEvent;
+	protected boolean isActual;
 	protected long timestamp;
 	protected Hashtable<String, Param> params = new Hashtable<String, Param>();
 
 	public Event() {
 		this.eventAction = "noName";
-		this.tryEvent = true;
+		this.isActual = false;
 		this.timestamp = System.currentTimeMillis();
 	}
 
@@ -34,7 +34,7 @@ public class Event implements Serializable {
 
 			// NOTE that TUM events have isActual() while IESE events have
 			// isTry()
-			this.tryEvent = !ev.isActual();
+			this.isActual = ev.isActual();
 
 			// TUM events only have strings parameters
 			if (ev.getParameters() != null) {
@@ -45,20 +45,20 @@ public class Event implements Serializable {
 		}
 	}
 
-	public Event(String action, Collection<Param> params, boolean isTry) {
+	public Event(String action, Collection<Param> params, boolean isActual) {
 		this.eventAction = action;
 		if (params != null) {
 			for (Param p : params) {
 				this.params.put(p.getName(), p);
 			}
 		}
-		this.tryEvent = isTry;
+		this.isActual = isActual;
 		this.timestamp = System.currentTimeMillis();
 	}
 
-	public Event(String action, Collection<Param> params, boolean isTry, long time) {
+	public Event(String action, Collection<Param> params, boolean isActual, long time) {
 		this.eventAction = action;
-		this.tryEvent = isTry;
+		this.isActual = isActual;
 		this.timestamp = time;
 	}
 
@@ -67,7 +67,7 @@ public class Event implements Serializable {
 	}
 
 	public boolean isActual() {
-		return !tryEvent;
+		return isActual;
 	}
 
 	public long getTimestamp() {
@@ -80,12 +80,12 @@ public class Event implements Serializable {
 
 	public void addStringParameter(String name, String value) {
 		if (value != null)
-			params.put(name, new Param(name, value, Constants.PARAMETER_TYPE_STRING));
+			params.put(name, new Param(name, value));
 	}
 
 	@Override
 	public String toString() {
-		String str = "Event      action='" + eventAction + "' isTry='" + tryEvent + "' timestamp='" + timestamp
+		String str = "Event      action='" + eventAction + "' isTry='" + !isActual + "' timestamp='" + timestamp
 				+ "': [";
 		for (Param param : params.values())
 			str += param.toString() + ", ";
@@ -98,7 +98,7 @@ public class Event implements Serializable {
 		for (Param p : params.values()) {
 			m.put(p.getName(), p.getValue().toString());
 		}
-		return new EventBasic(this.eventAction, m, !tryEvent);
+		return new EventBasic(this.eventAction, m, isActual);
 	}
 
 }
