@@ -534,7 +534,7 @@ IBasicInformationFlowModel {
 		}
 
 		addData(data, dstContainer);
-		for (IContainer c : getAliasesFrom(dstContainer)) {
+		for (IContainer c : getAliasTransitiveClosure(dstContainer)) {
 			addData(data, c);
 		}
 	}

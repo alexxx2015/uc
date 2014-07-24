@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +9,11 @@ import java.util.Objects;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
-public class EventBasic implements IEvent {
-
+public class EventBasic implements IEvent, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4317254908091570374L;
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
 
 	private String _name = null;

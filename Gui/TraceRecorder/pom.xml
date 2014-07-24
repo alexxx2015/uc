@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<repositories>
+		<repository>
+			<id>libRepo</id>
+			<url>file://${basedir}/lib</url>
+		</repository>
+	</repositories>
+
+	<parent>
+		<groupId>UsageControlSystem</groupId>
+		<artifactId>Gui</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>TraceRecorder</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.java.javafx</groupId>
+			<artifactId>jfxrt</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationManager</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>ThriftStubs</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>ThriftDefinitions</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<!--
+		   *
+		   * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT.	   
+		   * 
+	 	-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>de.tum.in.i22.uc.gui.TraceRecorder</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>pipdb</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

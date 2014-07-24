@@ -14,5 +14,7 @@
 	<modules>
 		<module>UcManager</module>
 		<module>Jni</module>
+		<module>TraceRecorder</module>
+		
 	</modules>
 </project>

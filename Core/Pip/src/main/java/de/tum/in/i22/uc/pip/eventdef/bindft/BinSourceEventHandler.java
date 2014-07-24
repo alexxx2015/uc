@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.eventdef.java;
+package de.tum.in.i22.uc.pip.eventdef.bindft;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class SourceEventHandler extends JavaEventHandler {
+public class BinSourceEventHandler extends BinDftEventHandler {
 
 	@Override
 	protected IStatus update() {
