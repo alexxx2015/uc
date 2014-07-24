@@ -74,9 +74,10 @@ public abstract class BaseEventHandler implements IEventHandler {
 		}
 		return value;
 	}
-	
+
+	@Override
 	public void reset(){
-		_event=null;
-		_informationFlowModel=null;
+		_event = null;
+		_informationFlowModel = null;
 	}
 }

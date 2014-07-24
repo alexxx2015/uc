@@ -22,7 +22,6 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
-import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -74,8 +73,9 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
-		return _lpdp.deployPolicyXML(XMLPolicy) ? new StatusBasic(EStatus.OKAY)
-		: new StatusBasic(EStatus.ERROR, "deploy policy failed");
+		return _lpdp.deployPolicyXML(XMLPolicy)
+				? new StatusBasic(EStatus.OKAY)
+				: new StatusBasic(EStatus.ERROR, "deploy policy failed");
 	}
 
 	@Override
@@ -119,8 +119,6 @@ public class PdpHandler extends PdpProcessor {
 				&& event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(),
 					true);
-//			// TODO: Check whether this order is correct. Enrico?
-//			getPip().update(ev2);
 			notifyEventAsync(ev2);
 		}
 
@@ -134,22 +132,21 @@ public class PdpHandler extends PdpProcessor {
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is "
 				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip,_pxpManager);
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
 	}
 
 	@Override
 	public void processEventAsync(IEvent pepEvent) {
-		this.notifyEventAsync(pepEvent);
+		notifyEventAsync(pepEvent);
 	}
 
 	@Override
 	public IResponse processEventSync(IEvent pepEvent) {
-		return this.notifyEventSync(pepEvent);
+		return notifyEventSync(pepEvent);
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		this._lpdp.stop();
+		_lpdp.stop();
 	}
 }

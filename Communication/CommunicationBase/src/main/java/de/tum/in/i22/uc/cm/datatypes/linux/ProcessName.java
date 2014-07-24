@@ -30,8 +30,8 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	}
 
 	@Override
-	public int getPid() {
-		return _pid;
+	public boolean hasPid(int pid) {
+		return _pid == pid;
 	}
 	@Override
 	public String toString() {

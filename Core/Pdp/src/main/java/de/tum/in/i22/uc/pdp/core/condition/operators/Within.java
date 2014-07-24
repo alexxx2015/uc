@@ -19,11 +19,11 @@ public class Within extends WithinType {
 	@Override
 	public void initOperatorForMechanism(IPdpMechanism mech) {
 		super.initOperatorForMechanism(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(),
-				mech.getTimestepSize());
+		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return "WITHIN (" + this.timeAmount + ", " + this.getOperators() + " )";
 	}
@@ -37,18 +37,15 @@ public class Within extends WithinType {
 			this.state.value = false;
 
 		if (curEvent == null) {
-			boolean operandValue = ((Operator) this.getOperators())
-					.evaluate(curEvent);
+			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (operandValue) {
 				this.state.counter = this.timeAmount.timestepInterval + 1;
-				log.debug(
-						"[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
+				log.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
 						this.state.counter, operandValue);
 			} else {
 				if (this.state.counter > 0)
 					this.state.counter--;
-				log.debug("[WITHIN} New state counter: [{}]",
-						this.state.counter);
+				log.debug("[WITHIN} New state counter: [{}]", this.state.counter);
 			}
 
 			// update state->value for logging output

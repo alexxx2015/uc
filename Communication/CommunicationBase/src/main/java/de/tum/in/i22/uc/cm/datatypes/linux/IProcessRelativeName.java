@@ -12,5 +12,5 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
  *
  */
 public interface IProcessRelativeName extends IName {
-	public int getPid();
+	public boolean hasPid(int pid);
 }

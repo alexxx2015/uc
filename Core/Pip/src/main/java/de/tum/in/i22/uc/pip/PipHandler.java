@@ -92,7 +92,7 @@ public class PipHandler extends PipProcessor {
 		} catch (InvalidStateBasedFormulaException e) {
 			e.printStackTrace();
 			return false;
-			
+
 		}
 	}
 
@@ -144,35 +144,6 @@ public class PipHandler extends PipProcessor {
 				&& status instanceof DistributedPipStatus) {
 
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
-
-			//			// TODO: PIP communication and PMP communication
-			//			// can be improved by either doing only one call
-			//			// or by doing them in parallel
-			//
-			//			/*
-			//			 * Get the information about the remote data flow from the returned
-			//			 * status and inform both the distributed Pip manager and the Pmp.
-			//			 */
-			//
-			//			RemoteDataFlowInfo df = ((DistributedPipStatus) status)
-			//					.getDataflow();
-			//			Map<Location, Map<IName, Set<IData>>> dataflow = df.getFlows();
-			//
-			//			Location srcLocation = df.getSrcLocation();
-			//
-			//			for (Location dstlocation : dataflow.keySet()) {
-			//				// .... remote data flow tracking ....
-			//				_distributedPipManager.remoteDataFlow(srcLocation, dstlocation,
-			//						dataflow.get(dstlocation));
-			//
-			//				// .... and remote policy transfer
-			//				Set<IData> data = new HashSet<>();
-			//				for (Set<IData> d : dataflow.get(dstlocation).values()) {
-			//					data.addAll(d);
-			//				}
-			//				getPmp().informRemoteDataFlow(srcLocation, dstlocation, data);
-			//			}
-
 		}
 
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {

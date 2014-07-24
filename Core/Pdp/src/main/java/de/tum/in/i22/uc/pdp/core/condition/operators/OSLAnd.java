@@ -26,16 +26,15 @@ public class OSLAnd extends AndType {
 		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return this.getOperators().get(0) + " && " + this.getOperators().get(1);
 	}
 
 	@Override
 	public boolean evaluate(Event curEvent) {
-		Boolean op1state = ((Operator) this.getOperators().get(0))
-				.evaluate(curEvent);
-		Boolean op2state = ((Operator) this.getOperators().get(1))
-				.evaluate(curEvent);
+		Boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
+		Boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 		this.state.value = op1state && op2state;
 		log.debug("eval AND [{}]", this.state.value);
 		return this.state.value;

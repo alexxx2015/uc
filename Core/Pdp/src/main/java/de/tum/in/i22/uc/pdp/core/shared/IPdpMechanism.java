@@ -1,35 +1,23 @@
 package de.tum.in.i22.uc.pdp.core.shared;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-public interface IPdpMechanism {
+public interface IPdpMechanism extends Runnable {
 
-	IPdpAuthorizationAction getAuthorizationAction();
+	public IPdpAuthorizationAction getAuthorizationAction();
 
 	public long getTimestepSize();
 
-	public void setTimestepSize(long timestepSize);
-
-	void setAuthorizationAction(IPdpAuthorizationAction mAuthorizationAction);
-
-	List<IPdpExecuteAction> getExecuteActions();
+	public List<IPdpExecuteAction> getExecuteActions();
 
 	public List<IPdpExecuteAction> getExecuteAsyncActions();
 
-	void setExecuteActions(ArrayList<IPdpExecuteAction> mExecuteActions);
+	public String getName();
 
-	void addExecuteAction(IPdpExecuteAction mExecuteActionTmp);
+	public void revoke();
 
-	IResponse getResponse();
-
-	public String getMechanismName();
-
-	public boolean revoke();
-	
 	public PolicyDecisionPoint getPolicyDecisionPoint();
 
 }

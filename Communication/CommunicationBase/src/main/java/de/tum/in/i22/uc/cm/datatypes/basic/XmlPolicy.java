@@ -8,7 +8,7 @@ import java.util.Objects;
  * in order to get some kind of type safety. With the help of this class,
  * we actually know that we talk about a xml policy (which we wouldn't know when
  * passing around strings).
- * 
+ *
  * @author Florian Kelbert
  *
  */
@@ -17,6 +17,10 @@ public class XmlPolicy {
 	private final String _xml;
 
 	public XmlPolicy(String name, String xml) {
+		if (name == null || xml == null) {
+			throw new RuntimeException("Parameters might not be null.");
+		}
+
 		_name = name;
 		_xml = xml;
 	}
@@ -43,7 +47,7 @@ public class XmlPolicy {
 	public int hashCode() {
 		return _name.hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
 		return _name;

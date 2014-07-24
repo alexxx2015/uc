@@ -20,15 +20,14 @@ public class RepLim extends RepLimType {
 	@Override
 	public void initOperatorForMechanism(IPdpMechanism mech) {
 		super.initOperatorForMechanism(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(),
-				mech.getTimestepSize());
-		this.state.circArray = new CircularArray<Boolean>(
-				this.timeAmount.timestepInterval);
+		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
+		this.state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
 		for (int a = 0; a < this.timeAmount.timestepInterval; a++)
 			this.state.circArray.set(false, a);
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return "REPLIM (" + this.timeAmount + ", " + this.getOperators() + " )";
 	}
@@ -36,8 +35,7 @@ public class RepLim extends RepLimType {
 	@Override
 	public boolean evaluate(Event curEvent) {
 		log.debug("circularArray: {}", this.state.circArray);
-		if (this.state.counter >= this.getLowerLimit()
-				&& this.state.counter <= this.getUpperLimit())
+		if (this.state.counter >= this.getLowerLimit() && this.state.counter <= this.getUpperLimit())
 			this.state.value = true;
 		else
 			this.state.value = false;
@@ -46,17 +44,13 @@ public class RepLim extends RepLimType {
 			Boolean curValue = this.state.circArray.pop();
 			if (curValue) {
 				this.state.counter--;
-				log.debug("[REPLIM] Decrementing counter to [{}]",
-						this.state.counter);
+				log.debug("[REPLIM] Decrementing counter to [{}]", this.state.counter);
 			}
 
-			Boolean operandState = ((Operator) this.getOperators())
-					.evaluate(curEvent);
+			Boolean operandState = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (operandState) {
 				this.state.counter++;
-				log.debug(
-						"[REPLIM] Incrementing counter to [{}] due to intercepted event",
-						this.state.counter);
+				log.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this.state.counter);
 			}
 
 			this.state.circArray.push(operandState);
