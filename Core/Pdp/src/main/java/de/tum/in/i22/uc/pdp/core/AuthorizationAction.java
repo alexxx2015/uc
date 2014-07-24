@@ -30,14 +30,14 @@ public class AuthorizationAction implements Serializable {
 	private AuthorizationAction fallback = AUTHORIZATION_INHIBIT;
 	private String fallbackName = "";
 	private List<ExecuteAction> executeSyncActions = new ArrayList<ExecuteAction>();
-	private List<Param<?>> modifiers = new ArrayList<Param<?>>();
+	private List<Param> modifiers = new ArrayList<>();
 	private long delay = 0;
 
 	public AuthorizationAction() {
 	}
 
 	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
-			long delay, List<Param<?>> modifiers, AuthorizationAction fallback) {
+			long delay, List<Param> modifiers, AuthorizationAction fallback) {
 		this.type = type;
 		if (name != null)
 			this.name = name;
@@ -88,7 +88,7 @@ public class AuthorizationAction implements Serializable {
 					for (ParameterType param : allow.getModify().getParameter()) {
 						log.debug("modify: {} -> {}", param.getName(), param.getValue());
 						// TODO: use different parameter types?!
-						this.modifiers.add(new Param<String>(param.getName(), param.getValue()));
+						this.modifiers.add(new Param(param.getName(), param.getValue()));
 					}
 				}
 				for (ExecuteActionType execAction : allow.getExecuteSyncAction()) {
@@ -110,7 +110,7 @@ public class AuthorizationAction implements Serializable {
 		return executeSyncActions;
 	}
 
-	public List<Param<?>> getModifiers() {
+	public List<Param> getModifiers() {
 		return modifiers;
 	}
 
@@ -118,12 +118,12 @@ public class AuthorizationAction implements Serializable {
 		this.executeSyncActions = executeActions;
 	}
 
-	public void setModifiers(List<Param<?>> modifiers) {
+	public void setModifiers(List<Param> modifiers) {
 		if (type == Constants.AUTHORIZATION_ALLOW)
 			this.modifiers = modifiers;
 	}
 
-	public void addModifier(Param<?> parameter) {
+	public void addModifier(Param parameter) {
 		modifiers.add(parameter);
 	}
 
@@ -179,7 +179,7 @@ public class AuthorizationAction implements Serializable {
 			str += " Delay: " + this.getDelay();
 
 		str += "; Modifiers: {";
-		for (Param<?> p : this.getModifiers())
+		for (Param p : this.getModifiers())
 			str += p.toString() + ",";
 		str += "}; mandatory execs: {";
 

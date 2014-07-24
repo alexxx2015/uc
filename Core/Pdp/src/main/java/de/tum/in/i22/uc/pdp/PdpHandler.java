@@ -38,7 +38,7 @@ public class PdpHandler extends PdpProcessor {
 
 	public PdpHandler() {
 		super(LocalLocation.getInstance());
-		_pxpManager=new PxpManager();
+		_pxpManager = new PxpManager();
 		init(new DummyPipProcessor(), new DummyPmpProcessor());
 	}
 

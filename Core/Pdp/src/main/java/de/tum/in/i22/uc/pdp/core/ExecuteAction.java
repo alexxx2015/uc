@@ -19,11 +19,11 @@ public class ExecuteAction implements Serializable {
 	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
 
 	private String name = null;
-	private final Set<Param<?>> parameters = new HashSet<Param<?>>();
+	private final Set<Param> parameters = new HashSet<Param>();
 	private String processor = null;
 	private String id = null;
 
-	public ExecuteAction(String name, List<Param<?>> params) {
+	public ExecuteAction(String name, List<Param> params) {
 		this.name = name;
 		this.parameters.addAll(params);
 	}
@@ -36,7 +36,7 @@ public class ExecuteAction implements Serializable {
 		this.name = execAction.getName();
 		this.id = execAction.getId();
 		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param<String>(param.getName(), param.getValue()));
+			this.parameters.add(new Param(param.getName(), param.getValue()));
 		}
 	}
 
@@ -46,7 +46,7 @@ public class ExecuteAction implements Serializable {
 		this.id = execAction.getId();
 		this.processor = execAction.getProcessor().value();
 		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param<String>(param.getName(), param.getValue()));
+			this.parameters.add(new Param(param.getName(), param.getValue()));
 		}
 	}
 
@@ -54,12 +54,12 @@ public class ExecuteAction implements Serializable {
 		return name;
 	}
 
-	public Collection<Param<?>> getParams() {
+	public Collection<Param> getParams() {
 		return parameters;
 	}
 
-	public Param<?> getParameterForName(String name) {
-		for (Param<?> p : parameters) {
+	public Param getParameterForName(String name) {
+		for (Param p : parameters) {
 			if (p.getName().equalsIgnoreCase(name)) {
 				return p;
 			}

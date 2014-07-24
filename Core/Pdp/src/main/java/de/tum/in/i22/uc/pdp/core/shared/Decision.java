@@ -117,7 +117,7 @@ public class Decision implements java.io.Serializable {
 		} else {
 			log.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
-			for (Param<?> curParam : curAuthAction.getModifiers())
+			for (Param curParam : curAuthAction.getModifiers())
 				this.getAuthorizationAction().addModifier(curParam);
 		}
 
@@ -177,17 +177,15 @@ public class Decision implements java.io.Serializable {
 		List<IEvent> list = new ArrayList<IEvent>();
 
 		for (ExecuteAction ea : getExecuteActions()) {
-			Event e = new Event(ea.getName(), true);
-			for (Param<?> p : ea.getParams())
-				e.addParam(p);
+			Event e = new Event(ea.getName(), ea.getParams(), true);
 			list.add(e.toIEvent());
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
-		List<Param<?>> modifiedParameters = getAuthorizationAction().getModifiers();
+		List<Param> modifiedParameters = getAuthorizationAction().getModifiers();
 		Map<String, String> modifiedParamI = new HashMap<String, String>();
 
-		for (Param<?> p : modifiedParameters) {
+		for (Param p : modifiedParameters) {
 			modifiedParamI.put(p.getName(), p.getValue().toString());
 		}
 

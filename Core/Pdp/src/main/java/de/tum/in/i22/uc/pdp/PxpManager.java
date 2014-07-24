@@ -55,7 +55,7 @@ public class PxpManager {
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
 					Map<String, String> par = new HashMap<String, String>();
 
-					for (Param<?> p : execAction.getParams()){
+					for (Param p : execAction.getParams()){
 						par.put(p.getName(),p.getValue().toString());
 					}
 

@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.shared;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class Event implements Serializable {
 	protected String eventAction;
 	protected boolean tryEvent;
 	protected long timestamp;
-	protected Hashtable<String, Param<?>> params = new Hashtable<String, Param<?>>();
+	protected Hashtable<String, Param> params = new Hashtable<String, Param>();
 
 	public Event() {
 		this.eventAction = "noName";
@@ -45,176 +45,49 @@ public class Event implements Serializable {
 		}
 	}
 
-	public Event(String action, boolean isTry) {
+	public Event(String action, Collection<Param> params, boolean isTry) {
 		this.eventAction = action;
+		if (params != null) {
+			for (Param p : params) {
+				this.params.put(p.getName(), p);
+			}
+		}
 		this.tryEvent = isTry;
 		this.timestamp = System.currentTimeMillis();
 	}
 
-	public Event(String action, boolean isTry, long time) {
+	public Event(String action, Collection<Param> params, boolean isTry, long time) {
 		this.eventAction = action;
 		this.tryEvent = isTry;
 		this.timestamp = time;
 	}
 
-	public void addParam(Param<?> param) {
-		params.put(param.getName(), param);
-	}
-
-	public void removeParam(Param<?> param) {
-		params.remove(param);
-	}
-
-	public String getEventAction() {
+	public String getName() {
 		return eventAction;
 	}
 
-	public void setEventAction(String eventAction) {
-		this.eventAction = eventAction;
-	}
-
-	public boolean isTryEvent() {
-		return tryEvent;
-	}
-
-	public void setTryEvent(boolean isTry) {
-		this.tryEvent = isTry;
+	public boolean isActual() {
+		return !tryEvent;
 	}
 
 	public long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public ArrayList<Param<?>> getParams() {
-		return new ArrayList<Param<?>>(params.values());
-	}
-
-	public void setParams(Hashtable<String, Param<?>> params) {
-		this.params = params;
-	}
-
-	public Param<?> getParameterForName(String name) {
+	public Param getParameterForName(String name) {
 		return params.get(name);
-	}
-
-	public Object getParameterValue(String name) {
-		Param<?> param = params.get(name);
-		if (param != null)
-			return params.get(name).getValue();
-		return null;
-	}
-
-	public void clear() {
-		params.clear();
 	}
 
 	public void addStringParameter(String name, String value) {
 		if (value != null)
-			addParam(new Param<String>(name, value, Constants.PARAMETER_TYPE_STRING));
-	}
-
-	// public void addIntParameter(String name, int value) {
-	// addParam(new Param<Integer>(name, value, Constants.PARAMETER_TYPE_INT));
-	// }
-	//
-	// public void addBooleanParameter(String name, boolean value) {
-	// addParam(new Param<Boolean>(name, value, Constants.PARAMETER_TYPE_BOOL));
-	// }
-
-	// public void addLongParameter(String name, long value) {
-	// addParam(new Param<Long>(name, value, Constants.PARAMETER_TYPE_LONG));
-	// }
-	//
-	// public void addStringArrayParameter(String name, String[] value) {
-	// if (value != null)
-	// addParam(new Param<String[]>(name, value,
-	// Constants.PARAMETER_TYPE_STRING_ARRAY));
-	// }
-
-	// public void addByteArrayParameter(String name, byte[] value) {
-	// if (value != null) {
-	// Param<byte[]> param = new Param<byte[]>(name, value,
-	// Constants.PARAMETER_TYPE_BINARY);
-	// addParam(param);
-	// }
-	// }
-
-	public String getStringParameter(String name) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof String)
-				return (String) o;
-		} catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
-
-	public int getIntParameter(String name, int defaultValue) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof Integer)
-				return (Integer) o;
-		} catch (Exception e) {
-			return defaultValue;
-		}
-		return defaultValue;
-	}
-
-	public boolean getBooleanParameter(String name, boolean defaultValue) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof Boolean) {
-				return (Boolean) o;
-			}
-		} catch (Exception e) {
-			return defaultValue;
-		}
-		return defaultValue;
-	}
-
-	public long getLongParameter(String name, long defaultValue) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof Long)
-				return (Long) o;
-		} catch (Exception e) {
-			return defaultValue;
-		}
-		return defaultValue;
-	}
-
-	public byte[] getByteArrayParameter(String name) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof byte[])
-				return (byte[]) o;
-		} catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
-
-	public String[] getStringArrayParameter(String name) {
-		try {
-			Object o = getParameterForName(name).getValue();
-			if (o instanceof String[])
-				return (String[]) o;
-		} catch (Exception e) {
-			return null;
-		}
-		return null;
+			params.put(name, new Param(name, value, Constants.PARAMETER_TYPE_STRING));
 	}
 
 	@Override
 	public String toString() {
 		String str = "Event      action='" + eventAction + "' isTry='" + tryEvent + "' timestamp='" + timestamp
 				+ "': [";
-		for (Param<?> param : params.values())
+		for (Param param : params.values())
 			str += param.toString() + ", ";
 		str += "]";
 		return str;
@@ -222,10 +95,10 @@ public class Event implements Serializable {
 
 	public IEvent toIEvent() {
 		Map<String, String> m = new HashMap<String, String>();
-		for (Param<?> p : getParams()) {
+		for (Param p : params.values()) {
 			m.put(p.getName(), p.getValue().toString());
 		}
-		return new EventBasic(this.eventAction, m, !isTryEvent());
+		return new EventBasic(this.eventAction, m, !tryEvent);
 	}
 
 }

@@ -34,7 +34,7 @@ public class ParamMatch extends ParamMatchType {
 		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
 	}
 
-	public boolean paramMatches(Param<?> param) {
+	public boolean paramMatches(Param param) {
 		boolean matches = false;
 		if (param == null) {
 			log.trace("Parameter [{}] not present", this.getName());
@@ -104,9 +104,9 @@ public class ParamMatch extends ParamMatchType {
 																// equality
 					break;
 				}
-				matches = compOp.compare((String) param.getValue(), this.getValue());
+				matches = compOp.compare(param.getValue(), this.getValue());
 			}
-			log.trace("param value [" + (String) param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
+			log.trace("param value [" + param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
 					+ this.getValue() + "]");
 			return matches;
 		}
