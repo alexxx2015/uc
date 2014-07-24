@@ -58,7 +58,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		_scopesToBeClosed = null;
 		//other parameters don't need to be reset cause they are settings values
 	}
-	
+
 	/*
 	 * This function describes how the event updates the information flow model
 	 * when the event behaves according to cross layer behavior dir.
@@ -121,7 +121,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * This function takes the scope object to be closed as parameter, check if
 	 * it is still in the list of active scopes and if that is the case, closes
 	 * it. It returns OKAY if everything went fine, ERROR otherwise.
-	 * 
+	 *
 	 * It should be final.
 	 */
 	private final IStatus closeScope(IScope scope) {
@@ -144,18 +144,13 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * Secondly, we open all the scopes that needs to be opened. Thirdly, we
 	 * update the rest of the IF semantics. Finally, we close all the scopes
 	 * that needs to be closed.
-	 * 
+	 *
 	 * @see de.tum.in.i22.pip.core.IActionHandler#executeEvent()
 	 */
 	@Override
 	public final IStatus performUpdate() {
-
-		boolean isThereAnError = false;
-
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
-
-		IStatus finalStatus;
 
 		String errorString = "";
 
@@ -173,11 +168,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		if (_scopesToBeOpened != null) {
 			for (IScope scope : _scopesToBeOpened) {
 				_logger.info("Opening scope " + scope.getHumanReadableName());
-				IStatus is = openScope(scope);
-				if (!is.isStatus(EStatus.OKAY)) {
-					isThereAnError = true;
-					errorString = errorString + "\n" + is.getErrorMessage();
-				}
+				openScope(scope);
 			}
 		}
 
@@ -192,7 +183,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		IStatus resStatus = null;
 
 		if (xlBehavior != null) {
-			switch ((EBehavior) (xlBehavior.getFirst())) {
+			switch ((xlBehavior.getFirst())) {
 			case INTRA:
 				resStatus = update();
 				break;
@@ -212,14 +203,6 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 				resStatus = update();
 			}
 		}
-		if (resStatus == null) {
-			isThereAnError = true;
-			errorString += "\n"
-					+ "XBehav function returned null. this should never happen";
-		} else if (!resStatus.equals(STATUS_OKAY)){
-			isThereAnError=true;
-			errorString += "\n" + resStatus.getErrorMessage();
-		}
 
 		/*
 		 * 4) Closes all the scopes to be closed
@@ -227,22 +210,11 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		if (_scopesToBeClosed != null) {
 			for (IScope scope : _scopesToBeClosed) {
 				_logger.info("Closing scope " + scope.getHumanReadableName());
-				IStatus is = closeScope(scope);
-				if (!is.isStatus(EStatus.OKAY)) {
-					isThereAnError=true;
-					errorString = errorString + "\n" + is.getErrorMessage();
-				}
+				closeScope(scope);
 			}
 		}
 
-		if (errorString.length() > 0) {
-			finalStatus = _messageFactory.createStatus(EStatus.ERROR,
-					errorString);
-		} else {
-			finalStatus = _messageFactory.createStatus(EStatus.OKAY);
-		}
-
-		return finalStatus;
+		return resStatus;
 
 	}
 

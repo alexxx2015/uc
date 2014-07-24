@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -235,16 +234,24 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 
 	@Override
 	public void stop() {
-		Set<String> _policyTableKeys = _policyTable.keySet();
-		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
-		while (_policyTableKeysIt.hasNext()) {
-			String _policyTableKey = _policyTableKeysIt.next();
-			Map<String,IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
-			Iterator<IPdpMechanism> mechanismsIt = mechanisms.values().iterator();
-			while (mechanismsIt.hasNext()) {
-				mechanismsIt.next().revoke();
+		for (Map<String,IPdpMechanism> map : _policyTable.values()) {
+			for (IPdpMechanism mech : map.values()) {
+				mech.revoke();
 			}
 		}
+
+//		// Old implementation
+//		Set<String> _policyTableKeys = _policyTable.keySet();
+//		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
+//		while (_policyTableKeysIt.hasNext()) {
+//			String _policyTableKey = _policyTableKeysIt.next();
+//			Map<String,IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
+//			Iterator<IPdpMechanism> mechanismsIt = mechanisms.values().iterator();
+//			while (mechanismsIt.hasNext()) {
+//				mechanismsIt.next().revoke();
+//			}
+//		}
+
 		_policyTable.clear();
 	}
 
