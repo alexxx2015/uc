@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -30,27 +30,10 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PxpManager {
 	private static Logger _logger = LoggerFactory.getLogger(PxpManager.class);
-	private static PxpManager _instance;
+
 	public static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
 
-//	public static PxpManager getInstance() {
-//		/*
-//		 * This implementation may seem odd, overengineered, redundant, or all
-//		 * of it. Yet, it is the best way to implement a thread-safe singleton,
-//		 * cf.
-//		 * http://www.journaldev.com/171/thread-safety-in-java-singleton-classes
-//		 * -with-example-code -FK-
-//		 */
-//		if (_instance == null) {
-//			synchronized (PxpManager.class) {
-//				if (_instance == null)
-//					_instance = new PxpManager();
-//			}
-//		}
-//		return _instance;
-//	}
-
-	public boolean execute(IPdpExecuteAction execAction, boolean synchronous) {
+	public boolean execute(ExecuteAction execAction, boolean synchronous) {
 		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
 				(synchronous==true?"":"a"),execAction.getName(), execAction.getParams());
 
@@ -72,7 +55,7 @@ public class PxpManager {
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
 					Map<String, String> par = new HashMap<String, String>();
 
-					for (Param p : execAction.getParams()){
+					for (Param<?> p : execAction.getParams()){
 						par.put(p.getName(),p.getValue().toString());
 					}
 

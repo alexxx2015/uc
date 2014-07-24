@@ -15,7 +15,6 @@ import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -32,7 +31,7 @@ public class Mechanism implements Runnable {
 	private EventMatch _triggerEvent = null;
 	private Condition _condition = null;
 	private IPdpAuthorizationAction _authorizationAction = null;
-	private List<IPdpExecuteAction> _executeAsyncActions = new ArrayList<IPdpExecuteAction>();
+	private List<ExecuteAction> _executeAsyncActions = new ArrayList<ExecuteAction>();
 	private PolicyDecisionPoint _pdp = null;
 	private boolean _interrupted = false;
 	private PxpManager _pxpManager;
@@ -128,7 +127,7 @@ public class Mechanism implements Runnable {
 		return _authorizationAction;
 	}
 
-	public List<IPdpExecuteAction> getExecuteAsyncActions() {
+	public List<ExecuteAction> getExecuteAsyncActions() {
 		return _executeAsyncActions;
 	}
 
@@ -208,7 +207,7 @@ public class Mechanism implements Runnable {
 				boolean mechanismValue = mechanismUpdate();
 				if (mechanismValue) {
 					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (IPdpExecuteAction execAction : getExecuteAsyncActions()) {
+					for (ExecuteAction execAction : getExecuteAsyncActions()) {
 						if (execAction.getProcessor().equals("pep"))
 							_logger.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
 									execAction.getName());
@@ -246,7 +245,7 @@ public class Mechanism implements Runnable {
 				.toString();
 	}
 
-	public List<IPdpExecuteAction> getExecuteActions() {
+	public List<ExecuteAction> getExecuteActions() {
 		return _executeAsyncActions;
 	}
 

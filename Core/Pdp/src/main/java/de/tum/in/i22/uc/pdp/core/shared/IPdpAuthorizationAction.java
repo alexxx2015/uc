@@ -2,21 +2,23 @@ package de.tum.in.i22.uc.pdp.core.shared;
 
 import java.util.List;
 
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
+
 public interface IPdpAuthorizationAction {
 
 	boolean getAuthorizationAction();
 
-	List<IPdpExecuteAction> getExecuteActions();
+	List<ExecuteAction> getExecuteActions();
 
 	List<Param<?>> getModifiers();
 
-	void setExecuteActions(List<IPdpExecuteAction> executeActions);
+	void setExecuteActions(List<ExecuteAction> executeActions);
 
 	void setModifiers(List<Param<?>> modifiers);
 
 	void addModifier(Param<?> parameter);
 
-	void addExecuteAction(IPdpExecuteAction executeAction);
+	void addExecuteAction(ExecuteAction executeAction);
 
 	long getDelay();
 

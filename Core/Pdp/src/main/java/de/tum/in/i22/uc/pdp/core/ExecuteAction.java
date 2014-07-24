@@ -9,13 +9,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
-public class ExecuteAction implements Serializable, IPdpExecuteAction {
+public class ExecuteAction implements Serializable {
 	private static final long serialVersionUID = 8451999937686098519L;
 	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
 
@@ -51,17 +50,14 @@ public class ExecuteAction implements Serializable, IPdpExecuteAction {
 		}
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public Collection<Param<?>> getParams() {
 		return parameters;
 	}
 
-	@Override
 	public Param<?> getParameterForName(String name) {
 		for (Param<?> p : parameters) {
 			if (p.getName().equalsIgnoreCase(name)) {
@@ -71,12 +67,10 @@ public class ExecuteAction implements Serializable, IPdpExecuteAction {
 		return null;
 	}
 
-	@Override
 	public String getProcessor() {
 		return processor;
 	}
 
-	@Override
 	public String getId() {
 		return this.id;
 	}

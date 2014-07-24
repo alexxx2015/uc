@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
@@ -31,14 +30,14 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 	private String name = "";
 	private IPdpAuthorizationAction fallback = AUTHORIZATION_INHIBIT;
 	private String fallbackName = "";
-	private List<IPdpExecuteAction> executeSyncActions = new ArrayList<IPdpExecuteAction>();
+	private List<ExecuteAction> executeSyncActions = new ArrayList<ExecuteAction>();
 	private List<Param<?>> modifiers = new ArrayList<Param<?>>();
 	private long delay = 0;
 
 	public AuthorizationAction() {
 	}
 
-	public AuthorizationAction(int start, String name, boolean type, List<IPdpExecuteAction> executeActions,
+	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
 			long delay, List<Param<?>> modifiers, IPdpAuthorizationAction fallback) {
 		this.type = type;
 		if (name != null)
@@ -110,7 +109,7 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 	}
 
 	@Override
-	public List<IPdpExecuteAction> getExecuteActions() {
+	public List<ExecuteAction> getExecuteActions() {
 		return executeSyncActions;
 	}
 
@@ -120,7 +119,7 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 	}
 
 	@Override
-	public void setExecuteActions(List<IPdpExecuteAction> executeActions) {
+	public void setExecuteActions(List<ExecuteAction> executeActions) {
 		this.executeSyncActions = executeActions;
 	}
 
@@ -136,7 +135,7 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 	}
 
 	@Override
-	public void addExecuteAction(IPdpExecuteAction executeAction) {
+	public void addExecuteAction(ExecuteAction executeAction) {
 		executeSyncActions.add(executeAction);
 	}
 
@@ -202,7 +201,7 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 			str += p.toString() + ",";
 		str += "}; mandatory execs: {";
 
-		for (IPdpExecuteAction a : this.executeSyncActions)
+		for (ExecuteAction a : this.executeSyncActions)
 			str += a.toString() + ", ";
 		str += "}; Fallback: [" + getFallbackName() + "]";
 

@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 
 /**
@@ -36,7 +37,7 @@ public class Decision implements java.io.Serializable {
 	private IPdpAuthorizationAction _mAuthorizationAction;
 
 	/** 'optional' executeActions processed by PEP */
-	private ArrayList<IPdpExecuteAction> _mExecuteActions = new ArrayList<IPdpExecuteAction>();
+	private ArrayList<ExecuteAction> _mExecuteActions = new ArrayList<ExecuteAction>();
 	private PxpManager _pxpManager;
 
 	public Decision(IPdpAuthorizationAction authAction, PxpManager pxpManager) {
@@ -52,15 +53,15 @@ public class Decision implements java.io.Serializable {
 		this._mAuthorizationAction = mAuthorizationAction;
 	}
 
-	public ArrayList<IPdpExecuteAction> getExecuteActions() {
+	public ArrayList<ExecuteAction> getExecuteActions() {
 		return _mExecuteActions;
 	}
 
-	public void setExecuteActions(ArrayList<IPdpExecuteAction> mExecuteActions) {
+	public void setExecuteActions(ArrayList<ExecuteAction> mExecuteActions) {
 		this._mExecuteActions = mExecuteActions;
 	}
 
-	public void addExecuteAction(IPdpExecuteAction mExecuteActionTmp) {
+	public void addExecuteAction(ExecuteAction mExecuteActionTmp) {
 		_mExecuteActions.add(mExecuteActionTmp);
 	}
 
@@ -77,7 +78,7 @@ public class Decision implements java.io.Serializable {
 					boolean executionReturn = false;
 					if (curAuthAction.getExecuteActions().size() == 0)
 						executionReturn = true;
-					for (IPdpExecuteAction execAction : curAuthAction.getExecuteActions()) {
+					for (ExecuteAction execAction : curAuthAction.getExecuteActions()) {
 						log.debug("Executing [{}]", execAction.getName());
 
 						// TODO: Execution should be forwarded to appropriate
@@ -119,11 +120,11 @@ public class Decision implements java.io.Serializable {
 				this.getAuthorizationAction().addModifier(curParam);
 		}
 
-		List<IPdpExecuteAction> asyncActions = mech.getExecuteAsyncActions();
+		List<ExecuteAction> asyncActions = mech.getExecuteAsyncActions();
 		if (asyncActions == null)
 			return;
 		log.debug("Processing asynchronous executeActions ({})", asyncActions.size());
-		for (IPdpExecuteAction execAction : asyncActions) {
+		for (ExecuteAction execAction : asyncActions) {
 			if (execAction.getProcessor().equals("pep")) {
 				log.debug("Copying executeAction {} for processing by pep", execAction.getName());
 				this.addExecuteAction(execAction);
@@ -147,7 +148,7 @@ public class Decision implements java.io.Serializable {
 			str += this._mAuthorizationAction.toString();
 
 		str += "; optional executeActions: [";
-		for (IPdpExecuteAction a : _mExecuteActions)
+		for (ExecuteAction a : _mExecuteActions)
 			str += a.toString();
 		str += "]";
 
@@ -174,7 +175,7 @@ public class Decision implements java.io.Serializable {
 
 		List<IEvent> list = new ArrayList<IEvent>();
 
-		for (IPdpExecuteAction ea : getExecuteActions()) {
+		for (ExecuteAction ea : getExecuteActions()) {
 			Event e = new Event(ea.getName(), true);
 			for (Param<?> p : ea.getParams())
 				e.addParam(p);
