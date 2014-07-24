@@ -74,6 +74,11 @@ public class EventBasic implements IEvent, Serializable {
 	}
 
 	@Override
+	public ParamBasic getParameter(String name) {
+		return new ParamBasic(name, _parameters.get(name));
+	}
+
+	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
 				.add("_name", _name)

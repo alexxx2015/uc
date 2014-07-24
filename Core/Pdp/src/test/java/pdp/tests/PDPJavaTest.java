@@ -1,6 +1,8 @@
 package pdp.tests;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -16,6 +18,8 @@ public class PDPJavaTest {
 	private static Logger log = LoggerFactory.getLogger(PDPJavaTest.class);
 
 	private static PolicyDecisionPoint lpdp = null;
+
+	private static Map<String,String> params = new HashMap<>();
 
 	@Test
 	public void test() {
@@ -40,17 +44,19 @@ public class PDPJavaTest {
 		log.info("Test Condtion Parameter Match Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testCPMEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "xyz");
-		e.addStringParameter("name2", "value2");
+		params.clear();
+		params.put("name1", "xyz");
+		params.put("name2", "value2");
+		e = new Event("testCPMEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testCPMEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "value123");
-		e.addStringParameter("name2", "value2");
+		params.clear();
+		params.put("name1", "value123");
+		params.put("name2", "value2");
+		e = new Event("testCPMEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -63,15 +69,17 @@ public class PDPJavaTest {
 		log.info("\nTest Element in list Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "15 17 18");
+		params.clear();
+		params.put("name1", "15 17 18");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "15 16 17 18");
+		params.clear();
+		params.put("name1", "15 16 17 18");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -84,15 +92,17 @@ public class PDPJavaTest {
 		log.info("\nTest Ends with Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "play");
+		params.clear();
+		params.put("name1", "play");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "playing");
+		params.clear();
+		params.put("name1", "playing");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -103,15 +113,17 @@ public class PDPJavaTest {
 		log.info("\nTest Equals Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "the same");
+		params.clear();
+		params.put("name1", "the same");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "not the same");
+		params.clear();
+		params.put("name1", "not the same");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -122,15 +134,17 @@ public class PDPJavaTest {
 		log.info("\nTest default Comparison Operator (equals):");
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "default value");
+		params.clear();
+		params.put("name1", "default value");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "not the default value");
+		params.clear();
+		params.put("name1", "not the default value");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -143,15 +157,17 @@ public class PDPJavaTest {
 		log.info("\nTest Equals Ignore case Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "value2");
+		params.clear();
+		params.put("name1", "value2");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEvent", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "value");
+		params.clear();
+		params.put("name1", "value");
+		e = new Event("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -162,85 +178,97 @@ public class PDPJavaTest {
 		log.info("\nTest Math Comparison Operators (gt, ge, lt and le):");
 
 		log.debug("Notifying event");
-		e = new Event("testEventge", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "33");
+		params.clear();
+		params.put("name1", "33");
+		e = new Event("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventge", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "34");
+		params.clear();
+		params.put("name1", "34");
+		e = new Event("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventge", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "35");
+		params.clear();
+		params.put("name1", "35");
+		e = new Event("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventgt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "55");
+		params.clear();
+		params.put("name1", "55");
+		e = new Event("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventgt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "56");
+		params.clear();
+		params.put("name1", "56");
+		e = new Event("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventgt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "57");
+		params.clear();
+		params.put("name1", "57");
+		e = new Event("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventle", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "33");
+		params.clear();
+		params.put("name1", "33");
+		e = new Event("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventle", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "34");
+		params.clear();
+		params.put("name1", "34");
+		e = new Event("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventle", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "35");
+		params.clear();
+		params.put("name1", "35");
+		e = new Event("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventlt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "55");
+		params.clear();
+		params.put("name1", "55");
+		e = new Event("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventlt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "56");
+		params.clear();
+		params.put("name1", "56");
+		e = new Event("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventlt", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "57");
+		params.clear();
+		params.put("name1", "57");
+		e = new Event("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -251,22 +279,25 @@ public class PDPJavaTest {
 
 
 		log.debug("Notifying event");
-		e = new Event("testEventList", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "D E F");
+		params.clear();
+		params.put("name1", "D E F");
+		e = new Event("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventList", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "A B D E F");
+		params.clear();
+		params.put("name1", "A B D E F");
+		e = new Event("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventList", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "D A E B C F");
+		params.clear();
+		params.put("name1", "D A E B C F");
+		e = new Event("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -275,15 +306,17 @@ public class PDPJavaTest {
 		log.info("\nTest Not Equals Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEventNeq", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "ABC");
+		params.clear();
+		params.put("name1", "ABC");
+		e = new Event("testEventNeq", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventNeq", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "Banana");
+		params.clear();
+		params.put("name1", "Banana");
+		e = new Event("testEventNeq", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -293,15 +326,17 @@ public class PDPJavaTest {
 		log.info("\nTest Starts With Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEventSW", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "RABC");
+		params.clear();
+		params.put("name1", "RABC");
+		e = new Event("testEventSW", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventSW", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "ABCR");
+		params.clear();
+		params.put("name1", "ABCR");
+		e = new Event("testEventSW", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -312,15 +347,17 @@ public class PDPJavaTest {
 		log.info("Test Substring Comparison Operator:");
 
 		log.debug("Notifying event");
-		e = new Event("testEventSubstr", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "ARBRC");
+		params.clear();
+		params.put("name1", "ARBRC");
+		e = new Event("testEventSubstr", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("Notifying event");
-		e = new Event("testEventSubstr", null, false, System.currentTimeMillis());
-		e.addStringParameter("name1", "RABCR");
+		params.clear();
+		params.put("name1", "RABCR");
+		e = new Event("testEventSubstr", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);

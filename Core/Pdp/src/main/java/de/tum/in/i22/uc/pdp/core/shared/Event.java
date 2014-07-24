@@ -40,7 +40,8 @@ public class Event implements Serializable {
 			// TUM events only have strings parameters
 			if (ev.getParameters() != null) {
 				for (Map.Entry<String, String> entry : ev.getParameters().entrySet()) {
-					addStringParameter(entry.getKey(), entry.getValue());
+					if (entry.getValue() != null)
+					params.put(entry.getKey(), new ParamBasic(entry.getKey(), entry.getValue()));
 				}
 			}
 		}
@@ -57,10 +58,33 @@ public class Event implements Serializable {
 		this.timestamp = System.currentTimeMillis();
 	}
 
+
+
 	public Event(String action, Collection<ParamBasic> params, boolean isActual, long time) {
 		this.eventAction = action;
 		this.isActual = isActual;
 		this.timestamp = time;
+	}
+
+	public Event(String name, Map<String, String> map, boolean isActual) {
+		if (map != null) {
+			for (String key : map.keySet()) {
+				params.put(key, new ParamBasic(key, map.get(key)));
+			}
+		}
+		eventAction = name;
+		this.isActual = isActual;
+	}
+
+	public Event(String name, Map<String, String> map, boolean isActual, long time) {
+		if (map != null) {
+			for (String key : map.keySet()) {
+				params.put(key, new ParamBasic(key, map.get(key)));
+			}
+		}
+		eventAction = name;
+		this.isActual = isActual;
+		timestamp = time;
 	}
 
 	public String getName() {
@@ -75,14 +99,14 @@ public class Event implements Serializable {
 		return timestamp;
 	}
 
-	public ParamBasic getParameterForName(String name) {
+	public ParamBasic getParameter(String name) {
 		return params.get(name);
 	}
 
-	public void addStringParameter(String name, String value) {
-		if (value != null)
-			params.put(name, new ParamBasic(name, value));
-	}
+//	public void addStringParameter(String name, String value) {
+//		if (value != null)
+//			params.put(name, new ParamBasic(name, value));
+//	}
 
 	@Override
 	public String toString() {

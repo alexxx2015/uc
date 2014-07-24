@@ -47,7 +47,7 @@ public class EventMatch extends EventMatchingOperatorType {
 					_logger.debug("Matching param [{}]", p);
 					_logger.debug("setting pdp for current parameter");
 					curParamMatch.setPdp(_pdp);
-					ret = curParamMatch.paramMatches(curEvent.getParameterForName(p.getName()));
+					ret = curParamMatch.paramMatches(curEvent.getParameter(p.getName()));
 					if (!ret)
 						break;
 				}

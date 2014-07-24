@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
 import java.util.Map;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
+
 public interface IEvent {
 	/**
 	 * This event's name.
@@ -45,4 +47,6 @@ public interface IEvent {
 	 * @return
 	 */
 	public boolean allowImpliesActual();
+
+	public ParamBasic getParameter(String name);
 }
