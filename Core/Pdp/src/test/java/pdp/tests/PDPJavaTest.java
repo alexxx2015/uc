@@ -1,5 +1,9 @@
 package pdp.tests;
 
+import java.util.LinkedList;
+import java.util.Set;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,6 +331,50 @@ public class PDPJavaTest {
 		log.info("terminating...");
 
 		assert (true);
+	}
+
+
+	@Test
+	public void testDeployPolicy() {
+		String policyName = "testPolicy";
+		String policyURI = "src/test/resources/testTUM.xml";
+
+		Set<String> deployedMechanisms1;
+		Set<String> deployedMechanisms2;
+
+		/*
+		 * Create a new PDP and deploy a policy
+		 */
+		lpdp = new PolicyDecisionPoint();
+		lpdp.deployPolicyURI(policyURI);
+
+		/*
+		 * Test 1: Retrieve all deployed mechanisms. There should be at
+		 * least one mechanism that has been deployed.
+		 */
+		deployedMechanisms1 = lpdp.listDeployedMechanisms().get(policyName);
+		Assert.assertTrue(deployedMechanisms1.size() > 0);
+
+		/*
+		 * Test 2: Revoke a mechanism and test whether exactly one mechanism has been revoked.
+		 */
+		lpdp.revokeMechanism(policyName, (new LinkedList<String>(deployedMechanisms1)).getFirst());
+		deployedMechanisms2 = lpdp.listDeployedMechanisms().get(policyName);
+		Assert.assertEquals(deployedMechanisms1.size() - 1, deployedMechanisms2.size());
+
+		/*
+		 * Test 3: Revoke a policy. No more mechanisms must be deployed thereafter.
+		 */
+		lpdp.revokePolicy(policyName);
+		Assert.assertEquals(null, lpdp.listDeployedMechanisms().get(policyName));
+
+		/*
+		 * Test 4: Re-deploying the initial policy must result in the same amount of
+		 * mechanisms to be deployed as in the beginning
+		 */
+		lpdp.deployPolicyURI(policyURI);
+		deployedMechanisms2 = lpdp.listDeployedMechanisms().get(policyName);
+		Assert.assertEquals(deployedMechanisms1.size(), deployedMechanisms2.size());
 	}
 
 }

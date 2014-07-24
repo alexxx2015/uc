@@ -159,13 +159,11 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint {
 	public boolean revokeMechanism(String policyName, String mechName) {
 		_logger.info("revokeMechanism({}, {}) invoked.", policyName, mechName);
 
+		IPdpMechanism mech;
 		Map<String,IPdpMechanism> mechanisms = _policyTable.get(policyName);
-		if (mechanisms == null) {
-			return false;
-		}
 
-		IPdpMechanism mech = mechanisms.remove(mechName);
-		if (mech == null) {
+		if (mechanisms == null || (mech = mechanisms.remove(mechName)) == null) {
+			_logger.info("Mechanism [{}] did not exist for policy [{}] and could not be revoked.", mechName, policyName);
 			return false;
 		}
 
