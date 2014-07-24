@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 
@@ -34,22 +35,22 @@ public class Decision implements java.io.Serializable {
 	// public static final Decision RESPONSE_INHIBIT =new Decision("INHIBIT",
 	// Constants.AUTHORIZATION_INHIBIT);
 
-	private IPdpAuthorizationAction _mAuthorizationAction;
+	private AuthorizationAction _mAuthorizationAction;
 
 	/** 'optional' executeActions processed by PEP */
 	private ArrayList<ExecuteAction> _mExecuteActions = new ArrayList<ExecuteAction>();
 	private PxpManager _pxpManager;
 
-	public Decision(IPdpAuthorizationAction authAction, PxpManager pxpManager) {
+	public Decision(AuthorizationAction authAction, PxpManager pxpManager) {
 		_mAuthorizationAction = authAction;
 		_pxpManager = pxpManager;
 	}
 
-	public IPdpAuthorizationAction getAuthorizationAction() {
+	public AuthorizationAction getAuthorizationAction() {
 		return _mAuthorizationAction;
 	}
 
-	public void setAuthorizationAction(IPdpAuthorizationAction mAuthorizationAction) {
+	public void setAuthorizationAction(AuthorizationAction mAuthorizationAction) {
 		this._mAuthorizationAction = mAuthorizationAction;
 	}
 
@@ -68,7 +69,7 @@ public class Decision implements java.io.Serializable {
 	public void processMechanism(Mechanism mech, Event curEvent) {
 		log.debug("Processing mechanism={} for decision", mech.getName());
 
-		IPdpAuthorizationAction curAuthAction = mech.getAuthorizationAction();
+		AuthorizationAction curAuthAction = mech.getAuthorizationAction();
 		if (this.getAuthorizationAction().getType() == Constants.AUTHORIZATION_ALLOW) {
 			log.debug("Decision still allowing event, processing mechanisms authActions");
 			do {

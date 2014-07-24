@@ -14,7 +14,6 @@ import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -30,7 +29,7 @@ public class Mechanism implements Runnable {
 	private long _timestep = 0;
 	private EventMatch _triggerEvent = null;
 	private Condition _condition = null;
-	private IPdpAuthorizationAction _authorizationAction = null;
+	private AuthorizationAction _authorizationAction = null;
 	private List<ExecuteAction> _executeAsyncActions = new ArrayList<ExecuteAction>();
 	private PolicyDecisionPoint _pdp = null;
 	private boolean _interrupted = false;
@@ -84,13 +83,13 @@ public class Mechanism implements Runnable {
 			_authorizationAction = authActions.get("start");
 
 			if (curMech.getAuthorizationAction().size() > 1) {
-				IPdpAuthorizationAction curAuth = _authorizationAction;
+				AuthorizationAction curAuth = _authorizationAction;
 				_logger.debug("starting with curAuth: {}", curAuth.getName());
 				do {
 					_logger.debug("searching for fallback={}", curAuth.getFallbackName());
 					if (!curAuth.getFallbackName().equalsIgnoreCase("allow")
 							&& !curAuth.getFallbackName().equalsIgnoreCase("inhibit")) {
-						IPdpAuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
+						AuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
 						if (fallbackAuth == null) {
 							_logger.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
 							throw new InvalidMechanismException("Requested fallback authorizationAction not specified");
@@ -123,7 +122,7 @@ public class Mechanism implements Runnable {
 		return _name;
 	}
 
-	public IPdpAuthorizationAction getAuthorizationAction() {
+	public AuthorizationAction getAuthorizationAction() {
 		return _authorizationAction;
 	}
 

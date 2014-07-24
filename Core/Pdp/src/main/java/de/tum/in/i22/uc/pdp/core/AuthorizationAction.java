@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.shared.Param;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
@@ -17,18 +16,18 @@ import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
-public class AuthorizationAction implements Serializable, IPdpAuthorizationAction {
+public class AuthorizationAction implements Serializable {
 	private static final long serialVersionUID = 3456284152512343695L;
 	private static Logger log = LoggerFactory.getLogger(AuthorizationAction.class);
 
-	public static final IPdpAuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT",
+	public static final AuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT",
 			Constants.AUTHORIZATION_INHIBIT);
-	public static final IPdpAuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW",
+	public static final AuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW",
 			Constants.AUTHORIZATION_ALLOW);
 
 	private boolean type = false;
 	private String name = "";
-	private IPdpAuthorizationAction fallback = AUTHORIZATION_INHIBIT;
+	private AuthorizationAction fallback = AUTHORIZATION_INHIBIT;
 	private String fallbackName = "";
 	private List<ExecuteAction> executeSyncActions = new ArrayList<ExecuteAction>();
 	private List<Param<?>> modifiers = new ArrayList<Param<?>>();
@@ -38,7 +37,7 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 	}
 
 	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
-			long delay, List<Param<?>> modifiers, IPdpAuthorizationAction fallback) {
+			long delay, List<Param<?>> modifiers, AuthorizationAction fallback) {
 		this.type = type;
 		if (name != null)
 			this.name = name;
@@ -103,89 +102,72 @@ public class AuthorizationAction implements Serializable, IPdpAuthorizationActio
 		}
 	}
 
-	@Override
 	public boolean getAuthorizationAction() {
 		return type;
 	}
 
-	@Override
 	public List<ExecuteAction> getExecuteActions() {
 		return executeSyncActions;
 	}
 
-	@Override
 	public List<Param<?>> getModifiers() {
 		return modifiers;
 	}
 
-	@Override
 	public void setExecuteActions(List<ExecuteAction> executeActions) {
 		this.executeSyncActions = executeActions;
 	}
 
-	@Override
 	public void setModifiers(List<Param<?>> modifiers) {
 		if (type == Constants.AUTHORIZATION_ALLOW)
 			this.modifiers = modifiers;
 	}
 
-	@Override
 	public void addModifier(Param<?> parameter) {
 		modifiers.add(parameter);
 	}
 
-	@Override
 	public void addExecuteAction(ExecuteAction executeAction) {
 		executeSyncActions.add(executeAction);
 	}
 
-	@Override
 	public long getDelay() {
 		return delay;
 	}
 
-	@Override
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
 
-	@Override
 	public boolean getType() {
 		return type;
 	}
 
-	@Override
 	public void setType(boolean type) {
 		this.type = type;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public void setName(String name) {
 		if (name != null)
 			this.name = name;
 	}
 
-	@Override
-	public IPdpAuthorizationAction getFallback() {
+	public AuthorizationAction getFallback() {
 		return fallback == null ? AUTHORIZATION_INHIBIT : fallback;
 	}
 
-	@Override
-	public void setFallback(IPdpAuthorizationAction fallback) {
+	public void setFallback(AuthorizationAction fallback) {
 		this.fallback = fallback;
 	}
 
-	@Override
 	public String getFallbackName() {
 		return fallbackName;
 	}
 
-	@Override
 	public void setFallbackName(String fallbackName) {
 		this.fallbackName = fallbackName;
 	}
