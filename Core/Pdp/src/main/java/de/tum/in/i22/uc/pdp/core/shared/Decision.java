@@ -64,7 +64,7 @@ public class Decision implements java.io.Serializable {
 	}
 
 	public void processMechanism(IPdpMechanism mech, Event curEvent) {
-		log.debug("Processing mechanism={} for decision", mech.getMechanismName());
+		log.debug("Processing mechanism={} for decision", mech.getName());
 
 		IPdpAuthorizationAction curAuthAction = mech.getAuthorizationAction();
 		if (this.getAuthorizationAction().getType() == Constants.AUTHORIZATION_ALLOW) {

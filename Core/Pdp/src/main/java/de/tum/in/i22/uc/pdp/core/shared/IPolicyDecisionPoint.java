@@ -11,6 +11,11 @@ import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 public interface IPolicyDecisionPoint {
 	public Decision notifyEvent(Event event);
 
+	/**
+	 * Deploys the specified policy file.
+	 * @param filename the policy file to be deployed
+	 * @return true, if deployment was successful
+	 */
 	public boolean deployPolicyURI(String filename);
 
 	public boolean deployPolicyXML(XmlPolicy XMLPolicy);
