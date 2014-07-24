@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,7 +68,7 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() throws TException {
+	public Map<String, Set<String>> listMechanismsPmp() throws TException {
 		return _handler.listMechanismsPmp();
 	}
 

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +34,16 @@ public class Mechanism implements IPdpMechanism {
 	private Condition _condition = null;
 	private IPdpAuthorizationAction _authorizationAction = null;
 	private List<IPdpExecuteAction> _executeAsyncActions = new ArrayList<IPdpExecuteAction>();
-
 	private PolicyDecisionPoint _pdp = null;
-
 	private boolean _interrupted = false;
-
 	private PxpManager _pxpManager;
 
-	public Mechanism(MechanismBaseType mech, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+	/**
+	 * The name of the policy of which this mechanism is a part of
+	 */
+	private final String _policyName;
+
+	public Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
 		_pdp = pdp;
 		if (pdp == null) {
@@ -48,12 +51,12 @@ public class Mechanism implements IPdpMechanism {
 			throw new RuntimeException();
 		}
 
+		_policyName = policyName;
 		_pxpManager = pdp.getPxpManager();
 		_name = mech.getName();
 		_description = mech.getDescription();
 		_lastUpdate = 0;
-		_timestepSize = mech.getTimestep().getAmount()
-				* TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
+		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		_timestep = 0;
 
 		if (mech instanceof PreventiveMechanismType) {
@@ -118,21 +121,10 @@ public class Mechanism implements IPdpMechanism {
 		}
 	}
 
-	void init() {
-		_logger.debug("Initializing mechanism update thread");
-		_lastUpdate = System.currentTimeMillis();
-		_condition.operator.initOperatorForMechanism(this);
-	}
-
 	@Override
 	public String getName() {
 		return _name;
 	}
-
-	public String getDescription() {
-		return _description;
-	}
-
 	@Override
 	public IPdpAuthorizationAction getAuthorizationAction() {
 		return _authorizationAction;
@@ -143,10 +135,7 @@ public class Mechanism implements IPdpMechanism {
 		return _executeAsyncActions;
 	}
 
-	public void setExecuteAsyncActions(List<IPdpExecuteAction> executeAsyncActions) {
-		_executeAsyncActions = executeAsyncActions;
-	}
-
+	@Override
 	public EventMatch getTriggerEvent() {
 		return _triggerEvent;
 	}
@@ -162,7 +151,7 @@ public class Mechanism implements IPdpMechanism {
 	}
 
 	public synchronized Decision notifyEvent(Event curEvent, Decision d) {
-		_logger.debug("updating mechanism [{}]", getName());
+		_logger.debug("updating mechanism [{}]", _name);
 		if (_triggerEvent.eventMatches(curEvent)) {
 			_logger.info("Event matches -> evaluating condition");
 			boolean ret = _condition.evaluate(curEvent);
@@ -217,6 +206,9 @@ public class Mechanism implements IPdpMechanism {
 		long sleepValue = _timestepSize / 1000;
 		_logger.info("Started mechanism update thread usleep={} ms", sleepValue);
 
+		_lastUpdate = System.currentTimeMillis();
+		_condition.operator.initOperatorForMechanism(this);
+
 		while (!_interrupted) {
 			try {
 				boolean mechanismValue = mechanismUpdate();
@@ -234,13 +226,13 @@ public class Mechanism implements IPdpMechanism {
 				}
 
 				if (_interrupted) {
-					_logger.info("Mechanism thread was interrupted. terminating...");
+					_logger.info("Mechanism [{}] thread was interrupted. terminating...", _name);
 					return;
 				}
 
 				Thread.sleep(sleepValue);
 			} catch (InterruptedException e) {
-				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", getName());
+				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", _name);
 			}
 		}
 	}
@@ -270,4 +262,18 @@ public class Mechanism implements IPdpMechanism {
 		return _pdp;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Mechanism) {
+			Mechanism other = (Mechanism) obj;
+			return Objects.equals(_name, other._name)
+					&& Objects.equals(_policyName, other._policyName);
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_name, _policyName);
+	}
 }

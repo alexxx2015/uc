@@ -2,8 +2,8 @@ package de.tum.in.i22.uc.gui;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,7 +57,7 @@ public class SceneGenerator {
 	protected Thread autoRefreshThread;
 	protected boolean autoRefresh = false;
 	protected String interval = "1";
-	
+
 	protected Label lab_info;
 
 	protected TableView<DeployedMechanism> tv;
@@ -73,6 +73,7 @@ public class SceneGenerator {
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
 				new Thread() {
+					@Override
 					public void run() {
 						controller.startUc();
 					}
@@ -87,7 +88,8 @@ public class SceneGenerator {
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				new Thread(){public void run(){controller.stopUc();}}.start();
+				new Thread(){@Override
+				public void run(){controller.stopUc();}}.start();
 			}
 
 		});
@@ -122,7 +124,7 @@ public class SceneGenerator {
 				}
 			}
 		});
-		
+
 		final Tab pmpTab = new Tab();
 		pmpTab.setClosable(false);
 		pmpTab.setText("PMP");
@@ -132,7 +134,7 @@ public class SceneGenerator {
 		this.tabpane_center.getTabs().addAll(pdpTab, pipTab, pmpTab);
 		return this.tabpane_center;
 	}
-	
+
 	private Node generatePmpTab(){
 		StackPane pane = new StackPane();
 		Label lab = new Label("PMP policy template generation goes here");
@@ -248,6 +250,7 @@ public class SceneGenerator {
 					if(autoRefreshThread != null)
 						autoRefreshThread.interrupt();
 					autoRefreshThread = new Thread() {
+						@Override
 						public void run() {
 							while (autoRefresh && !isInterrupted()) {
 								controller.refreshPipState();
@@ -359,14 +362,14 @@ public class SceneGenerator {
 	}
 
 	protected void updateDeployedPolicies(
-			Map<String, List<String>> deployedPolicies) {
+			Map<String, Set<String>> deployedPolicies) {
 		Iterator<String> it = deployedPolicies.keySet().iterator();
 		ObservableList<DeployedMechanism> data = FXCollections
 				.observableArrayList();
 
 		while (it.hasNext()) {
 			String policy = it.next();
-			List<String> mechanisms = deployedPolicies.get(policy);
+			Set<String> mechanisms = deployedPolicies.get(policy);
 			Iterator<String> itMech = mechanisms.iterator();
 			while (itMech.hasNext()) {
 				String mechanism = itMech.next();
@@ -384,14 +387,14 @@ public class SceneGenerator {
 		this.tabpane_center.setDisable(!p);
 		this.btn_start.setDisable(p);
 	}
-	
+
 	public Node generateBottom(){
 		HBox hbox = new HBox();
 		hbox.setSpacing(5);
 		hbox.setPadding(new Insets(10,10,10,10));
 		this.lab_info = new Label();
 		hbox.getChildren().add(this.lab_info);
-		
+
 		return hbox;
 	}
 }

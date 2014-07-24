@@ -1,14 +1,14 @@
 package de.tum.in.i22.uc.pmp.requests;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
-public class ListMechanismsPmpPmpRequest extends PmpRequest<Map<String,List<String>>> {
+public class ListMechanismsPmpPmpRequest extends PmpRequest<Map<String,Set<String>>> {
 
 	@Override
-	public Map<String,List<String>> process(PmpProcessor processor) {
+	public Map<String,Set<String>> process(PmpProcessor processor) {
 		return processor.listMechanismsPmp();
 	}
 

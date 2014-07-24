@@ -1,7 +1,5 @@
 package pdp.tests;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +33,7 @@ public class PDPJavaTest {
 		log.debug("Deployed Mechanisms: [{}]", lpdp.listDeployedMechanisms());
 
 
-				
+
 		log.info("Test Condtion Parameter Match Operator:");
 
 		log.debug("Notifying event");
@@ -54,11 +52,11 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
-		
-		
+
+
+
+
+
 		log.info("\nTest Element in list Comparison Operator:");
 
 		log.debug("Notifying event");
@@ -76,12 +74,12 @@ public class PDPJavaTest {
 		log.info("e: " + e + "    d: " + d);
 
 
-		
-		
-		
-		
+
+
+
+
 		log.info("\nTest Ends with Comparison Operator:");
-		
+
 		log.debug("Notifying event");
 		e = new Event("testEvent", true, System.currentTimeMillis());
 		e.addStringParameter("name1", "play");
@@ -96,9 +94,9 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
+
+
+
 		log.info("\nTest Equals Comparison Operator:");
 
 		log.debug("Notifying event");
@@ -115,9 +113,9 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
+
+
+
 		log.info("\nTest default Comparison Operator (equals):");
 
 		log.debug("Notifying event");
@@ -134,11 +132,11 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
-			
-		
+
+
+
+
+
 		log.info("\nTest Equals Ignore case Comparison Operator:");
 
 		log.debug("Notifying event");
@@ -155,11 +153,11 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
+
+
+
 		log.info("\nTest Math Comparison Operators (gt, ge, lt and le):");
-			
+
 		log.debug("Notifying event");
 		e = new Event("testEventge", true, System.currentTimeMillis());
 		e.addStringParameter("name1", "33");
@@ -244,11 +242,11 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-	
-		
+
+
 		log.info("\nTest List in list Comparison Operator:");
 
-		
+
 		log.debug("Notifying event");
 		e = new Event("testEventList", true, System.currentTimeMillis());
 		e.addStringParameter("name1", "D E F");
@@ -270,9 +268,9 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
+
 		log.info("\nTest Not Equals Comparison Operator:");
-		
+
 		log.debug("Notifying event");
 		e = new Event("testEventNeq", true, System.currentTimeMillis());
 		e.addStringParameter("name1", "ABC");
@@ -287,8 +285,8 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
+
+
 		log.info("\nTest Starts With Comparison Operator:");
 
 		log.debug("Notifying event");
@@ -305,9 +303,9 @@ public class PDPJavaTest {
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
 
-		
-		
-		
+
+
+
 		log.info("Test Substring Comparison Operator:");
 
 		log.debug("Notifying event");
@@ -325,7 +323,7 @@ public class PDPJavaTest {
 		log.info("e: " + e + "    d: " + d);
 
 		log.debug("revoking test mechanism...");
-		ret = lpdp.revokePolicy("testPolicy");
+		lpdp.revokePolicy("testPolicy");
 		log.info("terminating...");
 
 		assert (true);

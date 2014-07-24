@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pdp;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +51,8 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public IStatus revokePolicy(String policyName) {
-		boolean b = _lpdp.revokePolicy(policyName);
-		return b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
-				EStatus.ERROR, "revokePolicy failed");
+		_lpdp.revokePolicy(policyName);
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
@@ -79,7 +78,7 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		return _lpdp.listDeployedMechanisms();
 	}
 

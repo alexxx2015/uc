@@ -25,9 +25,9 @@ import de.tum.in.i22.uc.thrift.types.TobiasResponse;
 
 /**
  * Use {@link ThriftServerFactory} to create an instance.
- * 
+ *
  * @author Enrico Lovat & Florian Kelbert
- * 
+ *
  */
 class TAny2AnyThriftServer extends ThriftServerHandler implements
 TAny2Any.Iface {
@@ -82,7 +82,7 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() throws TException {
+	public Map<String, Set<String>> listMechanisms() throws TException {
 		return _pdpServer.listMechanisms();
 	}
 
@@ -202,7 +202,7 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() throws TException {
+	public Map<String, Set<String>> listMechanismsPmp() throws TException {
 		return _pdpServer.listMechanisms();
 	}
 

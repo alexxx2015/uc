@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pdp.core.shared;
 
 import java.util.List;
 
+import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public interface IPdpMechanism extends Runnable {
@@ -19,5 +20,7 @@ public interface IPdpMechanism extends Runnable {
 	public void revoke();
 
 	public PolicyDecisionPoint getPolicyDecisionPoint();
+
+	public EventMatch getTriggerEvent();
 
 }

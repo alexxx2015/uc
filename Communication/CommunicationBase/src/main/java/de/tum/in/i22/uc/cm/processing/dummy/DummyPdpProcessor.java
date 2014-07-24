@@ -20,8 +20,8 @@
 
 package de.tum.in.i22.uc.cm.processing.dummy;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("listMechanisms method invoked");
@@ -132,7 +132,7 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

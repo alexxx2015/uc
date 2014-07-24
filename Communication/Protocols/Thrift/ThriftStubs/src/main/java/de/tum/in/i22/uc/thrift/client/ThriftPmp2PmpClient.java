@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +72,7 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		return _impl.listMechanismsPmp();
 	}
 

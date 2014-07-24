@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -347,7 +346,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		ListMechanismsPdpRequest request = new ListMechanismsPdpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
@@ -388,7 +387,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		ListMechanismsPmpPmpRequest request = new ListMechanismsPmpPmpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);

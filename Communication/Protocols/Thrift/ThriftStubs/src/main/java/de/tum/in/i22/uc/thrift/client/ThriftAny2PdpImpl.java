@@ -2,8 +2,8 @@ package de.tum.in.i22.uc.thrift.client;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -89,7 +89,7 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		_logger.debug("listMechanisms (Pdp client)");
 		try {
 			return _handle.listMechanisms();
@@ -141,7 +141,7 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 	@Override
 	public void processEventAsync(IEvent pepEvent) {
 		_logger.debug("TobiasProcessEventAsync (Pdp client)");
-		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
+		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters());
 		map.remove("senderID");
 		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
 		try {
@@ -150,15 +150,15 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 		} catch (TException e) {
 			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
 			e.printStackTrace();
-		}	
-		
+		}
+
 		}
 
 
 	@Override
 	public IResponse processEventSync(IEvent pepEvent) {
 		_logger.debug("TobiasProcessEventSync (Pdp client)");
-		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters()); 
+		Map<String,String> map = new HashMap<String,String>(pepEvent.getParameters());
 		map.remove("senderID");
 		TobiasEvent ev = new TobiasEvent(pepEvent.getName(), map, pepEvent.getTimestamp());
 		TobiasResponse tr = null;
@@ -168,7 +168,7 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 		} catch (TException e) {
 			_logger.error("TobiasProcessEventAsync failed. Exception follows:");
 			e.printStackTrace();
-		}	
+		}
 		if (tr==null) return new ResponseBasic(new StatusBasic(EStatus.ERROR, "Error! Didn't manage to execute TobiasProcessEventSync"), null, null);
 		TobiasStatusType st= tr.getStatus();
 		EStatus resStatus= null;

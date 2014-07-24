@@ -1,12 +1,11 @@
 package de.tum.in.i22.uc.gui;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -63,6 +62,7 @@ public class GuiController extends Controller {
 					this.sceneGenerator.switchGuiCmp(true);
 					this.refreshPipState();
 					Platform.runLater(new Runnable() {
+						@Override
 						public void run() {
 							sceneGenerator.lab_info.setText("PDP running");
 						}
@@ -89,6 +89,7 @@ public class GuiController extends Controller {
 				sceneGenerator.autoRefresh = false;
 				stop();
 				Platform.runLater(new Runnable() {
+					@Override
 					public void run() {
 						sceneGenerator.lab_info.setText("PDP stoppded");
 					}
@@ -97,7 +98,7 @@ public class GuiController extends Controller {
 		}
 	}
 
-	public Map<String, List<String>> getDeployedMechanisms() {
+	public Map<String, Set<String>> getDeployedMechanisms() {
 		if ((this.pmpClient != null) && isRunning())
 			return this.pmpClient.listMechanismsPmp();
 		return null;

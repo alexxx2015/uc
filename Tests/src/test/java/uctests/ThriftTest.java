@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -40,24 +38,24 @@ public class ThriftTest extends GenericTest {
 	@Test
 	public void testPmpSpecifyPolicyFor() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
-		
+
 		IContainer c1 = new ContainerBasic("container1");
 		IContainer c2 = new ContainerBasic("container2");
 		IContainer c3 = new ContainerBasic("container3");
-		
+
 		Set<IContainer> representations = new HashSet<IContainer>();
 		representations.add(c1);
 		representations.add(c2);
 		representations.add(c3);
-		
+
 		IStatus st= pmp.specifyPolicyFor(representations, "myDataClass");
 		Assert.assertEquals(st.getEStatus(), EStatus.OKAY);
-		
+
 		st = pmp.specifyPolicyFor(representations, Settings.getInstance().getPolicySpecificationStarDataClass());
 		Assert.assertEquals(st.getEStatus(), EStatus.OKAY);
-		
+
 	}
-	
+
 	@Test
 	public void testDataContEventMatching() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
@@ -81,7 +79,7 @@ public class ThriftTest extends GenericTest {
 			}
 		}
 		if (attempts==10) Assert.fail("Impossible to connect clientPdp");
-		
+
 		IResponse response;
 		Map<String, String> map = new HashMap<>();
 		Map<String, String> map2 = new HashMap<>();
@@ -137,7 +135,7 @@ public class ThriftTest extends GenericTest {
 		int x = 0;
 		IResponse response;
 		IStatus status;
-		Map<String, List<String>> mechanisms;
+		Map<String, Set<String>> mechanisms;
 
 		Map<String, String> map = new HashMap<>();
 		map.put("name1", "value1");
@@ -161,14 +159,14 @@ public class ThriftTest extends GenericTest {
 				.getEStatus());
 
 		_logger.info(""+x++);
-		
+
 		/*
 		 * Signal TobiasAsync event
 		 */
 		clientPdp.processEventAsync(new EventBasic("t", map, false));
 		_logger.info(""+x++);
 
-		
+
 		/*
 		 * list all mechanisms. Expected result is empty.
 		 */

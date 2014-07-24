@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,15 +21,15 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 
 /**
  * The client side of a remote Thrift {@link PmpProcessor} server.
- * 
+ *
  * Create a instance of this class, connect it (using
  * {@link Any2PmpClient#connect()}) and do calls on a remote
  * {@link PmpProcessor}.
- * 
+ *
  * Use {@link ThriftClientFactory} to get an instance.
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
 class ThriftAny2PmpClient extends Any2PmpClient {
 	protected static final Logger _logger = LoggerFactory
@@ -44,9 +43,9 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	 * Creates a {@link ThriftAny2PmpClient} that will be connected (upon
 	 * calling {@link Any2PmpClient#connect()}) the the specified thrift server
 	 * on the specified address/port.
-	 * 
+	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
-	 * 
+	 *
 	 * @param address
 	 *            the address of the remote point
 	 * @param port
@@ -59,9 +58,9 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	/**
 	 * Creates a new {@link ThriftAny2PmpClient} that will be connected to the
 	 * specified {@link IPLocation}.
-	 * 
+	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
-	 * 
+	 *
 	 * @param location
 	 *            the location of the remote point
 	 */
@@ -117,7 +116,7 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		return _impl.listMechanismsPmp();
 	}
 
