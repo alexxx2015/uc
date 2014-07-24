@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
 public class OSLTrue extends TrueType {
@@ -13,11 +13,11 @@ public class OSLTrue extends TrueType {
 	public OSLTrue() {
 	}
 
-	public OSLTrue(TrueType op, IPdpMechanism curMechanism) {
+	public OSLTrue(TrueType op, Mechanism curMechanism) {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
+	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 	}
 

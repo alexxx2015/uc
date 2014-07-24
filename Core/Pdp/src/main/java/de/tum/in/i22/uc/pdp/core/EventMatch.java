@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -28,7 +27,7 @@ public class EventMatch extends EventMatchingOperatorType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
+	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 	}
 

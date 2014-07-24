@@ -7,7 +7,6 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType {
@@ -25,7 +24,7 @@ public class StateBasedOperator extends StateBasedOperatorType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
+	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 	}
 

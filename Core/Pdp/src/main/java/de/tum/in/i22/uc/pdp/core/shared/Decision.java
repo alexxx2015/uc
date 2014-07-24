@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.Mechanism;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It
@@ -63,7 +64,7 @@ public class Decision implements java.io.Serializable {
 		_mExecuteActions.add(mExecuteActionTmp);
 	}
 
-	public void processMechanism(IPdpMechanism mech, Event curEvent) {
+	public void processMechanism(Mechanism mech, Event curEvent) {
 		log.debug("Processing mechanism={} for decision", mech.getName());
 
 		IPdpAuthorizationAction curAuthAction = mech.getAuthorizationAction();

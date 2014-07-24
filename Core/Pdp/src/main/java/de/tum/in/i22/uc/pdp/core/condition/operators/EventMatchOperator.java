@@ -5,31 +5,17 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
+import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 
 public class EventMatchOperator extends EventMatch {
-	private static Logger log = LoggerFactory.getLogger(EventMatchOperator.class);
+	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
 
 	public EventMatchOperator() {
 	}
 
-	// public EventMatchOperator(EventMatch op, Mechanism curMechanism)
-	// {
-	// this((EventMatchingOperatorType)op, curMechanism);
-	// }
-	//
-	// public EventMatchOperator(EventMatchingOperatorType op, Mechanism
-	// curMechanism)
-	// {
-	// super(op, curMechanism);
-	//
-	// ActionDescriptionStore ads = ActionDescriptionStore.getInstance();
-	// ads.addEventMatch(this);
-	// }
-
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
+	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 		ActionDescriptionStore ads = _pdp.getActionDescriptionStore();
 		ads.addEventMatch(this);
@@ -40,13 +26,13 @@ public class EventMatchOperator extends EventMatch {
 		boolean ret = false;
 		if (curEvent != null) {
 			if (eventMatches(curEvent))
-				this.state.value = true;
-			ret = this.state.value;
+				_state.value = true;
+			ret = _state.value;
 		} else { // reset at end of timestep (i.e. curEvent==null)
-			ret = this.state.value;
-			this.state.value = false;
+			ret = _state.value;
+			_state.value = false;
 		}
-		log.debug("eval EVENTMATCH [{}]", ret);
+		_logger.debug("eval EVENTMATCH [{}]", ret);
 		return ret;
 	}
 }

@@ -16,13 +16,12 @@ import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class Mechanism implements IPdpMechanism {
+public class Mechanism implements Runnable {
 	private static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
 	private String _name = null;
@@ -121,31 +120,26 @@ public class Mechanism implements IPdpMechanism {
 		}
 	}
 
-	@Override
 	public String getName() {
 		return _name;
 	}
-	@Override
+
 	public IPdpAuthorizationAction getAuthorizationAction() {
 		return _authorizationAction;
 	}
 
-	@Override
 	public List<IPdpExecuteAction> getExecuteAsyncActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public EventMatch getTriggerEvent() {
 		return _triggerEvent;
 	}
 
-	@Override
 	public long getTimestepSize() {
 		return _timestepSize;
 	}
 
-	@Override
 	public void revoke() {
 		_interrupted = true;
 	}
@@ -252,12 +246,10 @@ public class Mechanism implements IPdpMechanism {
 				.toString();
 	}
 
-	@Override
 	public List<IPdpExecuteAction> getExecuteActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public PolicyDecisionPoint getPolicyDecisionPoint() {
 		return _pdp;
 	}
