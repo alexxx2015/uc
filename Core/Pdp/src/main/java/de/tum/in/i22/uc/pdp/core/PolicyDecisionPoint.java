@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,27 +168,33 @@ public class PolicyDecisionPoint {
 	}
 
 	public Decision notifyEvent(Event event) {
+		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW), _pxpManager);
+
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
-		if (eventMatchList == null)
-			eventMatchList = new LinkedList<EventMatch>();
-		_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
-				event.getName(), eventMatchList.size());
-		for (EventMatch eventMatch : eventMatchList) {
-			_logger.info("Processing EventMatchOperator for event [{}]", eventMatch.getAction());
-			eventMatch.evaluate(event);
+		if (eventMatchList != null) {
+			_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}", event.getName(), eventMatchList.size());
+
+			synchronized (eventMatchList) {
+				for (EventMatch eventMatch : eventMatchList) {
+					_logger.info("Processing EventMatchOperator for event [{}]", eventMatch.getAction());
+					eventMatch.evaluate(event);
+				}
+			}
 		}
 
 		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getName());
-		if (mechanismList == null)
-			mechanismList = new LinkedList<Mechanism>();
-		_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
+		if (mechanismList != null) {
+			_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
 				mechanismList.size());
 
-		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW), _pxpManager);
-		for (Mechanism mech : mechanismList) {
-			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
-			mech.notifyEvent(event, d);
+			synchronized (mechanismList) {
+				for (Mechanism mech : mechanismList) {
+					_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
+					mech.notifyEvent(event, d);
+				}
+			}
 		}
+
 		return d;
 	}
 

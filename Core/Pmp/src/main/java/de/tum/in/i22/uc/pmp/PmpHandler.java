@@ -104,7 +104,6 @@ public class PmpHandler extends PmpProcessor {
 	private String policyToXML(PolicyType policy) {
 		String result = "";
 		_logger.debug("PolicyToXML conversion...");
-		_logger.trace("Policy to convert: " + policy);
 		ObjectFactory of = new ObjectFactory();
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {

@@ -103,11 +103,6 @@ public class Event implements Serializable {
 		return params.get(name);
 	}
 
-//	public void addStringParameter(String name, String value) {
-//		if (value != null)
-//			params.put(name, new ParamBasic(name, value));
-//	}
-
 	@Override
 	public String toString() {
 		String str = "Event      action='" + eventAction + "' isTry='" + !isActual + "' timestamp='" + timestamp

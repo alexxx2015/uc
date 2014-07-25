@@ -34,8 +34,7 @@ public class EventMatch extends EventMatchingOperatorType {
 	public boolean eventMatches(Event curEvent) {
 		if (curEvent == null)
 			return false;
-		_logger.info("Matching      [{}]", this);
-		_logger.info("against event [{}]", curEvent);
+		_logger.info("Matching [{}] against [{}]", this, curEvent);
 		if (this.isTryEvent() != curEvent.isActual()) {
 			if (this.getAction().equals(curEvent.getName())
 					|| this.getAction().equals(Settings.getInstance().getStarEvent())) {
@@ -45,7 +44,6 @@ public class EventMatch extends EventMatchingOperatorType {
 				for (ParamMatchType p : this.getParams()) {
 					ParamMatch curParamMatch = (ParamMatch) p;
 					_logger.debug("Matching param [{}]", p);
-					_logger.debug("setting pdp for current parameter");
 					curParamMatch.setPdp(_pdp);
 					ret = curParamMatch.paramMatches(curEvent.getParameter(p.getName()));
 					if (!ret)
@@ -66,13 +64,11 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public String toString() {
-		String str = "eventMatch action='" + this.getAction() + "' isTry='" + this.isTryEvent() + "': [";
-		for (ParamMatchType p : this.getParams()) {
-			ParamMatch p2 = (ParamMatch) p;
-			str += p2.toString() + ", ";
-		}
-		str += "]";
-		return str;
+		return com.google.common.base.Objects.toStringHelper(getClass())
+				.add("action", action)
+				.add("isTry", isTryEvent())
+				.add("params", getParams())
+				.toString();
 	}
 
 }

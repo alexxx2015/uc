@@ -8,26 +8,26 @@ import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
 public class Condition {
-	private static Logger log = LoggerFactory.getLogger(Condition.class);
+	private static Logger _logger = LoggerFactory.getLogger(Condition.class);
 
-	public Operator operator = null;
+	public Operator _operator = null;
 
 	public Condition() {
 	}
 
 	public Condition(ConditionType cond, Mechanism curMechanism) {
-		log.debug("Preparing condition from ConditionType");
-		this.operator = (Operator) cond.getOperators();
-		this.operator.initOperatorForMechanism(curMechanism);
+		_logger.debug("Preparing condition from ConditionType");
+		_operator = (Operator) cond.getOperators();
+		_operator.initOperatorForMechanism(curMechanism);
 
 		// try
 		// {
 		// Constructor<? extends Object> constructor =
 		// cond.getOperators().getClass().getConstructor((cond.getOperators().getClass().getSuperclass()),
 		// Mechanism.class);
-		// this.operator =
+		// operator =
 		// (Operator)constructor.newInstance(cond.getOperators(), curMechanism);
-		// log.debug("this.operator = {}", this.operator);
+		// log.debug("operator = {}", operator);
 		// }
 		// catch(NoSuchMethodException | InstantiationException |
 		// IllegalAccessException | IllegalArgumentException |
@@ -35,28 +35,28 @@ public class Condition {
 		// {
 		// e.printStackTrace();
 		// }
-		log.debug("condition: {}", this.operator);
+		_logger.debug("condition: {}", _operator);
 	}
 
 	@Override
 	public String toString() {
-		return "Condition: { " + this.operator + " }";
+		return "Condition: { " + _operator + " }";
 	}
 
 	public boolean evaluate(Event curEvent) {
-		log.debug("Evaluating condition...");
-		if (operator == null) {
-			log.error("condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
+		_logger.debug("Evaluating condition...");
+		if (_operator == null) {
+			_logger.error("condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
 			return true;
 		}
+
 		boolean ret = false;
 		try {
-			ret = this.operator.evaluate(curEvent);
+			ret = _operator.evaluate(curEvent);
 		} catch (Exception e) {
-			log.error("Exception during evaluation: {}", e.getMessage());
-			e.printStackTrace();
+			_logger.error("Exception during evaluation: {}", e.getMessage());
 		}
-		log.debug("condition value: [{}]", ret);
+		_logger.debug("condition value: [{}]", ret);
 		return ret;
 	}
 
