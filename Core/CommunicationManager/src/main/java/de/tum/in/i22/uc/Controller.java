@@ -478,4 +478,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.specifyPolicyFor(representations, dataClass);
 	}
 
+	@Override
+	public IData getDataFromId(String id) {
+		return _requestHandler.getDataFromId(id);
+	}
+
 }

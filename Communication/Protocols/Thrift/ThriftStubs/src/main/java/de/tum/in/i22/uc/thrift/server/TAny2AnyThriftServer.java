@@ -260,4 +260,9 @@ TAny2Any.Iface {
 		return _pmpServer.specifyPolicyFor(representations, dataClass);
 	}
 
+	@Override
+	public TData getDataFromId(String id) throws TException {
+		return _pipServer.getDataFromId(id);
+	}
+
 }

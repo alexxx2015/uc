@@ -110,4 +110,9 @@ class ThriftPip2PipClient extends Pip2PipClient {
 	public Set<IData> flattenStructure(IData data) {
 		return _impl.flattenStructure(data);
 	}
+
+	@Override
+	public IData getDataFromId(String id) {
+		return _impl.getDataFromId(id);
+	}
 }
