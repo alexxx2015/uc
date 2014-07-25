@@ -17,15 +17,32 @@ import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.LtComparisonOper
 import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.NotEqualsComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.StartsWithComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.SubstringComparisonOperator;
+import de.tum.in.i22.uc.pdp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class ParamMatch extends ParamMatchType {
 	private static Logger log = LoggerFactory.getLogger(ParamMatch.class);
 	private PolicyDecisionPoint _pdp;
 
-	public void setPdp(PolicyDecisionPoint pdp) {
-		if (_pdp == null)
-			_pdp = pdp;
+
+	public ParamMatch() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public ParamMatch(String name, String value, ComparisonOperatorTypes cmpOp, PolicyDecisionPoint pdp) {
+		this.name = name;
+		this.value = value;
+		this.cmpOp = cmpOp;
+		_pdp = pdp;
+	}
+
+	public static ParamMatch createFrom(ParamMatchType p, PolicyDecisionPoint pdp) {
+		if (p instanceof ParamMatch) {
+			ParamMatch newp = (ParamMatch) p;
+			newp._pdp = pdp;
+			return newp;
+		}
+		throw new IllegalArgumentException(p + " is not of type " + ParamMatch.class);
 	}
 
 	@Override

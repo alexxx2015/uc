@@ -37,13 +37,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 
 		// creates a corresponding paramMatch object
 
-		ParamMatch pm = new ParamMatch();
-		pm.setCmpOp(this.getCmpOp());
-		pm.setName(this.getName());
-		pm.setValue(this.getValue());
-
-		pm.setPdp(_pdp);
-		// use the parmMatches method for the evaluation
+		ParamMatch pm = new ParamMatch(this.getName(), this.getValue(),this.getCmpOp(), _pdp);
 
 		return pm.paramMatches(pm.getName(), curEvent.getParameterValue(pm.getName()));
 	}
