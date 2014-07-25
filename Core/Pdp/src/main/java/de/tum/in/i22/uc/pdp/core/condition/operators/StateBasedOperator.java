@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType {

@@ -18,48 +18,46 @@ import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
 public class AuthorizationAction implements Serializable {
 	private static final long serialVersionUID = 3456284152512343695L;
-	private static Logger log = LoggerFactory.getLogger(AuthorizationAction.class);
+	private static Logger _logger = LoggerFactory.getLogger(AuthorizationAction.class);
 
-	public static final AuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT",
-			Constants.AUTHORIZATION_INHIBIT);
-	public static final AuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW",
-			Constants.AUTHORIZATION_ALLOW);
+	public static final AuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
+	public static final AuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW", Constants.AUTHORIZATION_ALLOW);
 
-	private boolean type = false;
-	private String name = "";
-	private AuthorizationAction fallback = AUTHORIZATION_INHIBIT;
-	private String fallbackName = "";
-	private List<ExecuteAction> executeSyncActions = new ArrayList<ExecuteAction>();
-	private List<ParamBasic> modifiers = new ArrayList<>();
-	private long delay = 0;
+	private boolean _type = false;
+	private String _name = "";
+	private AuthorizationAction _fallback = AUTHORIZATION_INHIBIT;
+	private String _fallbackName = "";
+	private List<ExecuteAction> _executeSyncActions = new ArrayList<ExecuteAction>();
+	private List<ParamBasic> _modifiers = new ArrayList<>();
+	private long _delay = 0;
 
 	public AuthorizationAction() {
 	}
 
 	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
 			long delay, List<ParamBasic> modifiers, AuthorizationAction fallback) {
-		this.type = type;
+		_type = type;
 		if (name != null)
-			this.name = name;
+			_name = name;
 		if (executeActions != null)
-			this.executeSyncActions = executeActions;
+			_executeSyncActions = executeActions;
 		if (fallback != null)
-			this.fallback = fallback;
+			_fallback = fallback;
 		if (type == Constants.AUTHORIZATION_ALLOW) {
-			this.modifiers = modifiers;
-			this.delay = delay;
+			_modifiers = modifiers;
+			_delay = delay;
 		}
 	}
 
 	public AuthorizationAction(String name, boolean type) {
-		this.name = name;
-		this.type = type;
+		_name = name;
+		_type = type;
 	}
 
 	public AuthorizationAction(AuthorizationActionType auth) {
-		log.debug("Preparing AuthorizationAction from AuthorizationActionType");
-		this.name = auth.getName();
-		this.setFallbackName(auth.getFallback());
+		_logger.debug("Preparing AuthorizationAction from AuthorizationActionType");
+		_name = auth.getName();
+		_fallbackName = auth.getFallback();
 
 		Object obj = auth.getAllowOrInhibit();
 		AuthorizationAllowType allow = null;
@@ -71,122 +69,113 @@ public class AuthorizationAction implements Serializable {
 			inhibit = (AuthorizationInhibitType) obj;
 
 		if (inhibit != null) {
-			this.type = Constants.AUTHORIZATION_INHIBIT;
+			_type = Constants.AUTHORIZATION_INHIBIT;
 			if (inhibit.getDelay() != null)
-				this.delay = inhibit.getDelay().getAmount()
+				_delay = inhibit.getDelay().getAmount()
 						* TimeAmount.getTimeUnitMultiplier(inhibit.getDelay().getUnit());
 		} else {
-			this.type = Constants.AUTHORIZATION_ALLOW;
+			_type = Constants.AUTHORIZATION_ALLOW;
 			try {
 				if (allow.getDelay() != null)
-					this.delay = allow.getDelay().getAmount()
+					_delay = allow.getDelay().getAmount()
 							* TimeAmount.getTimeUnitMultiplier(allow.getDelay().getUnit());
 				else
-					this.delay = 0;
+					_delay = 0;
 
 				if (allow.getModify() != null) {
 					for (ParameterType param : allow.getModify().getParameter()) {
-						log.debug("modify: {} -> {}", param.getName(), param.getValue());
+						_logger.debug("modify: {} -> {}", param.getName(), param.getValue());
 						// TODO: use different parameter types?!
-						this.modifiers.add(new ParamBasic(param.getName(), param.getValue()));
+						_modifiers.add(new ParamBasic(param.getName(), param.getValue()));
 					}
 				}
 				for (ExecuteActionType execAction : allow.getExecuteSyncAction()) {
-					this.executeSyncActions.add(new ExecuteAction(execAction));
+					_executeSyncActions.add(new ExecuteAction(execAction));
 				}
 			} catch (Exception e) {
-				log.error("exception occured...");
+				_logger.error("exception occured...");
 				e.printStackTrace();
-				log.error(e.getMessage());
+				_logger.error(e.getMessage());
 			}
 		}
 	}
 
 	public boolean getAuthorizationAction() {
-		return type;
+		return _type;
 	}
 
 	public List<ExecuteAction> getExecuteActions() {
-		return executeSyncActions;
+		return _executeSyncActions;
 	}
 
 	public List<ParamBasic> getModifiers() {
-		return modifiers;
+		return _modifiers;
 	}
 
 	public void setExecuteActions(List<ExecuteAction> executeActions) {
-		this.executeSyncActions = executeActions;
+		_executeSyncActions = executeActions;
 	}
 
 	public void setModifiers(List<ParamBasic> modifiers) {
-		if (type == Constants.AUTHORIZATION_ALLOW)
-			this.modifiers = modifiers;
+		if (_type == Constants.AUTHORIZATION_ALLOW)
+			_modifiers = modifiers;
 	}
 
 	public void addModifier(ParamBasic parameter) {
-		modifiers.add(parameter);
+		_modifiers.add(parameter);
 	}
 
 	public void addExecuteAction(ExecuteAction executeAction) {
-		executeSyncActions.add(executeAction);
+		_executeSyncActions.add(executeAction);
 	}
 
 	public long getDelay() {
-		return delay;
+		return _delay;
 	}
 
 	public void setDelay(long delay) {
-		this.delay = delay;
+		_delay = delay;
 	}
 
 	public boolean getType() {
-		return type;
+		return _type;
 	}
 
 	public void setType(boolean type) {
-		this.type = type;
+		_type = type;
 	}
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	public void setName(String name) {
 		if (name != null)
-			this.name = name;
+			_name = name;
 	}
 
 	public AuthorizationAction getFallback() {
-		return fallback == null ? AUTHORIZATION_INHIBIT : fallback;
+		return _fallback == null ? AUTHORIZATION_INHIBIT : _fallback;
 	}
 
 	public void setFallback(AuthorizationAction fallback) {
-		this.fallback = fallback;
+		_fallback = fallback;
 	}
 
 	public String getFallbackName() {
-		return fallbackName;
-	}
-
-	public void setFallbackName(String fallbackName) {
-		this.fallbackName = fallbackName;
+		return _fallbackName;
 	}
 
 	@Override
 	public String toString() {
-		String str = "[" + this.getName() + ": " + (this.getType() ? "ALLOW" : "INHIBIT") + "; ";
-		if (this.getDelay() != 0)
-			str += " Delay: " + this.getDelay();
-
-		str += "; Modifiers: {";
-		for (ParamBasic p : this.getModifiers())
-			str += p.toString() + ",";
-		str += "}; mandatory execs: {";
-
-		for (ExecuteAction a : this.executeSyncActions)
-			str += a.toString() + ", ";
-		str += "}; Fallback: [" + getFallbackName() + "]";
-
-		return str;
+		return com.google.common.base.Objects.toStringHelper(getClass())
+				.add("_name", _name)
+				.add("_type", _type)
+				.add("_delay", _delay)
+				.add("_modifiers", _modifiers)
+				.add("_executeAction", _executeSyncActions)
+				.add("_fallback", _fallback)
+				.add("_fallbackName", _fallbackName)
+				.toString();
 	}
 }

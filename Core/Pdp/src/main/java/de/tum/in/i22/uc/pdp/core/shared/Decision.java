@@ -19,7 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It
@@ -31,14 +31,9 @@ public class Decision implements java.io.Serializable {
 
 	private static final long serialVersionUID = 4922446035665121547L;
 
-	// public static final Decision RESPONSE_ALLOW =new Decision("ALLOW",
-	// Constants.AUTHORIZATION_ALLOW);
-	// public static final Decision RESPONSE_INHIBIT =new Decision("INHIBIT",
-	// Constants.AUTHORIZATION_INHIBIT);
-
 	private AuthorizationAction _mAuthorizationAction;
 
-	/** 'optional' executeActions processed by PEP */
+	/** 'optional' executeActions processed by PXP */
 	private ArrayList<ExecuteAction> _mExecuteActions = new ArrayList<ExecuteAction>();
 	private PxpManager _pxpManager;
 

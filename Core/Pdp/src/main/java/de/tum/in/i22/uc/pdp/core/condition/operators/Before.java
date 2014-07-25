@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.condition.CircularArray;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.BeforeType;
 
 public class Before extends BeforeType {

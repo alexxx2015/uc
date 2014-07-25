@@ -1,7 +1,6 @@
-package de.tum.in.i22.uc.pdp.core;
+package de.tum.in.i22.uc.pdp.core.mechanisms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,17 +9,19 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
+import de.tum.in.i22.uc.pdp.core.EventMatch;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
-import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class Mechanism implements Runnable {
-	private static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
+public abstract class Mechanism implements Runnable {
+	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
 	private String _name = null;
 	private String _description = null;
@@ -29,7 +30,7 @@ public class Mechanism implements Runnable {
 	private long _timestep = 0;
 	private EventMatch _triggerEvent = null;
 	private Condition _condition = null;
-	private AuthorizationAction _authorizationAction = null;
+	protected AuthorizationAction _authorizationAction = null;
 	private List<ExecuteAction> _executeAsyncActions = new ArrayList<ExecuteAction>();
 	private PolicyDecisionPoint _pdp = null;
 	private boolean _interrupted = false;
@@ -40,8 +41,9 @@ public class Mechanism implements Runnable {
 	 */
 	private final String _policyName;
 
-	public Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
+
 		_pdp = pdp;
 		if (pdp == null) {
 			_logger.error("Impossible to take proper decision with a null pdp. failing miserably");
@@ -55,59 +57,7 @@ public class Mechanism implements Runnable {
 		_lastUpdate = 0;
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		_timestep = 0;
-
-		if (mech instanceof PreventiveMechanismType) {
-			PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
-			_logger.debug("Processing PreventiveMechanism");
-
-			_triggerEvent = new EventMatch(curMech.getTrigger(), this);
-
-			ActionDescriptionStore ads = pdp.getActionDescriptionStore();
-			ads.addMechanism(this);
-
-			// TODO: subscription to PEP?!
-
-			_logger.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech
-					.getAuthorizationAction().size());
-			HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
-
-			for (AuthorizationActionType auth : curMech.getAuthorizationAction()) {
-				_logger.debug("Found authAction {}", auth.getName());
-				if (auth.isSetStart() || curMech.getAuthorizationAction().size() == 1)
-					authActions.put("start", new AuthorizationAction(auth));
-				else
-					authActions.put(auth.getName(), new AuthorizationAction(auth));
-			}
-
-			_logger.debug("Preparing hierarchy of authorizationActions (list: {})", authActions.size());
-			_authorizationAction = authActions.get("start");
-
-			if (curMech.getAuthorizationAction().size() > 1) {
-				AuthorizationAction curAuth = _authorizationAction;
-				_logger.debug("starting with curAuth: {}", curAuth.getName());
-				do {
-					_logger.debug("searching for fallback={}", curAuth.getFallbackName());
-					if (!curAuth.getFallbackName().equalsIgnoreCase("allow")
-							&& !curAuth.getFallbackName().equalsIgnoreCase("inhibit")) {
-						AuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
-						if (fallbackAuth == null) {
-							_logger.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
-							throw new InvalidMechanismException("Requested fallback authorizationAction not specified");
-						}
-						curAuth.setFallback(fallbackAuth);
-						_logger.debug("  set fallback to {}", curAuth.getFallback().getName());
-					} else {
-						if (curAuth.getFallbackName().equalsIgnoreCase("allow")) {
-							curAuth.setFallback(AuthorizationAction.AUTHORIZATION_ALLOW);
-						}
-						_logger.debug("  set fallback to static {}", curAuth.getFallback().getName());
-						break;
-					}
-					curAuth = curAuth.getFallback();
-				} while (true);
-			}
-			_logger.debug("AuthorizationActions successfully processed.");
-		}
+		_triggerEvent = new EventMatch(mech.getTrigger(), this);
 
 		_condition = new Condition(mech.getCondition(), this);
 

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public class EventMatchOperator extends EventMatch {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;

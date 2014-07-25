@@ -25,6 +25,8 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -40,10 +42,10 @@ public class PolicyDecisionPoint {
 	private final ActionDescriptionStore _actionDescriptionStore;
 
 	/**
-	 * Maps policy names to its set of mechanisms, where for each
-	 * mechanism the mechanism name maps to the actual mechanism
+	 * Maps policy names to its set of mechanisms, where for each mechanism the
+	 * mechanism name maps to the actual mechanism
 	 */
-	private final Map<String, Map<String,Mechanism>> _policyTable;
+	private final Map<String, Map<String, Mechanism>> _policyTable;
 
 	private final PxpManager _pxpManager;
 
@@ -54,7 +56,7 @@ public class PolicyDecisionPoint {
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
-		_policyTable = new HashMap<String, Map<String,Mechanism>>();
+		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
 
@@ -87,7 +89,8 @@ public class PolicyDecisionPoint {
 		}
 
 		try {
-			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller().unmarshal(is);
+			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller()
+					.unmarshal(is);
 			PolicyType policy = (PolicyType) poElement.getValue();
 
 			_logger.debug("Deploying policy [name={}]: {}", policy.getName(), policy.toString());
@@ -95,28 +98,28 @@ public class PolicyDecisionPoint {
 			/*
 			 * Get the set of mechanisms of this policy (if any)
 			 */
-			Map<String,Mechanism> mechanisms = _policyTable.get(policy.getName());
+			Map<String, Mechanism> mechanisms = _policyTable.get(policy.getName());
 			if (mechanisms == null) {
-				mechanisms = new HashMap<String,Mechanism>();
+				mechanisms = new HashMap<String, Mechanism>();
 				_policyTable.put(policy.getName(), mechanisms);
 			}
 
 			/*
-			 * Loop over all mechanisms, add them to the set of mechanisms
-			 * for this policy, and start the mechanism
+			 * Loop over all mechanisms, add them to the set of mechanisms for
+			 * this policy, and start the mechanism
 			 */
 			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
-					Mechanism curMechanism = new Mechanism(mech, policy.getName(), this);
+					Mechanism curMechanism = MechanismFactory.create(mech, policy.getName(), this);
 
 					if (!mechanisms.containsKey(mech.getName())) {
 						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
 						mechanisms.put(mech.getName(), curMechanism);
 						new Thread(curMechanism).start();
-					}
-					else {
-						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policy.getName());
+					} else {
+						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(),
+								policy.getName());
 					}
 				} catch (InvalidMechanismException e) {
 					_logger.error("Invalid mechanism specified: {}", e.getMessage());
@@ -137,7 +140,7 @@ public class PolicyDecisionPoint {
 	public void revokePolicy(String policyName) {
 		_logger.debug("revokePolicy({}) invoked.", policyName);
 
-		Map<String,Mechanism> mechanisms = _policyTable.remove(policyName);
+		Map<String, Mechanism> mechanisms = _policyTable.remove(policyName);
 		if (mechanisms == null) {
 			_logger.warn("Policy {} was not deployed. Unable to revoke.", policyName);
 			return;
@@ -153,7 +156,7 @@ public class PolicyDecisionPoint {
 		_logger.info("revokeMechanism({}, {}) invoked.", policyName, mechName);
 
 		Mechanism mech;
-		Map<String,Mechanism> mechanisms = _policyTable.get(policyName);
+		Map<String, Mechanism> mechanisms = _policyTable.get(policyName);
 
 		if (mechanisms == null || (mech = mechanisms.remove(mechName)) == null) {
 			_logger.info("Mechanism [{}] did not exist for policy [{}] and could not be revoked.", mechName, policyName);
@@ -172,7 +175,8 @@ public class PolicyDecisionPoint {
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
 		if (eventMatchList != null) {
-			_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}", event.getName(), eventMatchList.size());
+			_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
+					event.getName(), eventMatchList.size());
 
 			synchronized (eventMatchList) {
 				for (EventMatch eventMatch : eventMatchList) {
@@ -185,7 +189,7 @@ public class PolicyDecisionPoint {
 		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getName());
 		if (mechanismList != null) {
 			_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
-				mechanismList.size());
+					mechanismList.size());
 
 			synchronized (mechanismList) {
 				for (Mechanism mech : mechanismList) {
@@ -225,23 +229,23 @@ public class PolicyDecisionPoint {
 	}
 
 	public void stop() {
-		for (Map<String,Mechanism> map : _policyTable.values()) {
+		for (Map<String, Mechanism> map : _policyTable.values()) {
 			for (Mechanism mech : map.values()) {
 				mech.revoke();
 			}
 		}
 
-//		// Old implementation
-//		Set<String> _policyTableKeys = _policyTable.keySet();
-//		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
-//		while (_policyTableKeysIt.hasNext()) {
-//			String _policyTableKey = _policyTableKeysIt.next();
-//			Map<String,Mechanism> mechanisms = _policyTable.get(_policyTableKey);
-//			Iterator<Mechanism> mechanismsIt = mechanisms.values().iterator();
-//			while (mechanismsIt.hasNext()) {
-//				mechanismsIt.next().revoke();
-//			}
-//		}
+		// // Old implementation
+		// Set<String> _policyTableKeys = _policyTable.keySet();
+		// Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
+		// while (_policyTableKeysIt.hasNext()) {
+		// String _policyTableKey = _policyTableKeysIt.next();
+		// Map<String,Mechanism> mechanisms = _policyTable.get(_policyTableKey);
+		// Iterator<Mechanism> mechanismsIt = mechanisms.values().iterator();
+		// while (mechanismsIt.hasNext()) {
+		// mechanismsIt.next().revoke();
+		// }
+		// }
 
 		_policyTable.clear();
 	}

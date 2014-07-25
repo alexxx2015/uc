@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.condition;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator {
 	protected PolicyDecisionPoint _pdp;

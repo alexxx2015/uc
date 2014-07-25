@@ -3,20 +3,20 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EqualsComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EqualsIgnoreCaseComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GeComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GenericComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GtComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.LeComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ListInListComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.LtComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.NotEqualsComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.StartsWithComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.SubstringComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.DataInContainerComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.ElementInListComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EndsWithComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EqualsComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EqualsIgnoreCaseComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GeComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GenericComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GtComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.LeComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.ListInListComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.LtComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.NotEqualsComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.StartsWithComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.SubstringComparisonOperator;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class ParamMatch extends ParamMatchType {
