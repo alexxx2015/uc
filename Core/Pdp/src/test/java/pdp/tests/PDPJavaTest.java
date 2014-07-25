@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
 
 public class PDPJavaTest {
 	private static Logger log = LoggerFactory.getLogger(PDPJavaTest.class);

@@ -1,6 +1,5 @@
 package pdp.tests;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -12,8 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
+import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 
 public class OperatorTest {
 	private static Logger log = LoggerFactory.getLogger(OperatorTest.class);
@@ -52,7 +52,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert (a < 2 == d.getAuthorizationAction().getType());
+			assert (a < 2 == (d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW));
 
 			sleep(3000);
 		}
@@ -74,7 +74,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a == 0) == d.getAuthorizationAction().getType());
+			assert ((a == 0) == (d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW));
 
 			sleep(3000);
 		}
@@ -97,7 +97,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 4) == d.getAuthorizationAction().getType());
+			assert ((a < 4) == (d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW));
 
 			sleep(3000);
 		}
@@ -119,7 +119,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == !d.getAuthorizationAction().getType());
+			assert ((a < 3) == (d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT));
 
 			sleep(3000 + (a == 2 ? 3000 : 0));
 		}
@@ -142,7 +142,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == !d.getAuthorizationAction().getType());
+			assert ((a < 3) == (d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT));
 
 			sleep(3000);
 		}
@@ -166,7 +166,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a == 0 || a > 2) == d.getAuthorizationAction().getType());
+			assert ((a == 0 || a > 2) == (d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW));
 			log.debug("##################################");
 			sleep(3000);
 		}
@@ -178,7 +178,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == !d.getAuthorizationAction().getType());
+			assert ((a < 3) == (d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT));
 			log.debug("##################################");
 			sleep(3000);
 		}
@@ -210,7 +210,7 @@ public class OperatorTest {
 				// this event doesn't trigger any mechanism, not possible to
 				// check the internal condition state which should be
 				// set to TRUE due to this event...
-				assertTrue(d.getAuthorizationAction().getType());
+				assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW);
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -220,7 +220,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertFalse(d.getAuthorizationAction().getType());
+			assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT);
 			log.debug("##################################");
 
 			sleep(3000);
@@ -228,7 +228,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertFalse(d.getAuthorizationAction().getType());
+			assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT);
 			log.debug("##################################");
 			sleep(3000);
 
@@ -237,7 +237,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getAuthorizationAction().getType());
+				assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW);
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -247,7 +247,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertFalse(d.getAuthorizationAction().getType());
+			assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT);
 			log.debug("##################################");
 			sleep(3000);
 
@@ -262,7 +262,7 @@ public class OperatorTest {
 				// can be checked with some optional executeAction which should
 				// be triggered at the end
 				// of each timestep...
-				assertTrue(d.getAuthorizationAction().getType());
+				assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW);
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -294,7 +294,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertFalse(d.getAuthorizationAction().getType());
+			assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT);
 			log.debug("##################################");
 			sleep(3000);
 
@@ -303,7 +303,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getAuthorizationAction().getType());
+				assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW);
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -313,7 +313,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertFalse(d.getAuthorizationAction().getType());
+			assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.INHIBIT);
 			log.debug("##################################");
 
 			sleep(3000);
@@ -322,7 +322,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getAuthorizationAction().getType());
+				assertTrue(d.getAuthorizationAction().getAuthorization() == Authorization.ALLOW);
 				log.debug("##################################");
 				sleep(3000);
 			}

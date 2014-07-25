@@ -35,7 +35,7 @@ public class PxpManager {
 
 	public boolean execute(ExecuteAction execAction, boolean synchronous) {
 		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
-				(synchronous==true?"":"a"),execAction.getName(), execAction.getParams());
+				(synchronous==true?"":"a"),execAction.getName(), execAction.getParameters());
 
 		String pxpId = execAction.getId();
 		IStatus res = null;
@@ -55,7 +55,7 @@ public class PxpManager {
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
 					Map<String, String> par = new HashMap<String, String>();
 
-					for (ParamBasic p : execAction.getParams()){
+					for (ParamBasic p : execAction.getParameters()){
 						par.put(p.getName(),p.getValue().toString());
 					}
 

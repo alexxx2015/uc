@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
@@ -20,10 +19,10 @@ public class AuthorizationAction implements Serializable {
 	private static final long serialVersionUID = 3456284152512343695L;
 	private static Logger _logger = LoggerFactory.getLogger(AuthorizationAction.class);
 
-	public static final AuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT", Constants.AUTHORIZATION_INHIBIT);
-	public static final AuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW", Constants.AUTHORIZATION_ALLOW);
+	public static final AuthorizationAction AUTHORIZATION_INHIBIT = new AuthorizationAction("INHIBIT", Authorization.INHIBIT);
+	public static final AuthorizationAction AUTHORIZATION_ALLOW = new AuthorizationAction("ALLOW", Authorization.ALLOW);
 
-	private boolean _type = false;
+	private Authorization _auth = Authorization.INHIBIT;
 	private String _name = "";
 	private AuthorizationAction _fallback = AUTHORIZATION_INHIBIT;
 	private String _fallbackName = "";
@@ -34,24 +33,24 @@ public class AuthorizationAction implements Serializable {
 	public AuthorizationAction() {
 	}
 
-	public AuthorizationAction(int start, String name, boolean type, List<ExecuteAction> executeActions,
+	public AuthorizationAction(int start, String name, Authorization auth, List<ExecuteAction> executeActions,
 			long delay, List<ParamBasic> modifiers, AuthorizationAction fallback) {
-		_type = type;
+		_auth = auth;
 		if (name != null)
 			_name = name;
 		if (executeActions != null)
 			_executeSyncActions = executeActions;
 		if (fallback != null)
 			_fallback = fallback;
-		if (type == Constants.AUTHORIZATION_ALLOW) {
+		if (auth == Authorization.ALLOW) {
 			_modifiers = modifiers;
 			_delay = delay;
 		}
 	}
 
-	public AuthorizationAction(String name, boolean type) {
+	public AuthorizationAction(String name, Authorization auth) {
 		_name = name;
-		_type = type;
+		_auth = auth;
 	}
 
 	public AuthorizationAction(AuthorizationActionType auth) {
@@ -69,12 +68,12 @@ public class AuthorizationAction implements Serializable {
 			inhibit = (AuthorizationInhibitType) obj;
 
 		if (inhibit != null) {
-			_type = Constants.AUTHORIZATION_INHIBIT;
+			_auth = Authorization.INHIBIT;
 			if (inhibit.getDelay() != null)
 				_delay = inhibit.getDelay().getAmount()
 						* TimeAmount.getTimeUnitMultiplier(inhibit.getDelay().getUnit());
 		} else {
-			_type = Constants.AUTHORIZATION_ALLOW;
+			_auth = Authorization.ALLOW;
 			try {
 				if (allow.getDelay() != null)
 					_delay = allow.getDelay().getAmount()
@@ -100,8 +99,8 @@ public class AuthorizationAction implements Serializable {
 		}
 	}
 
-	public boolean getAuthorizationAction() {
-		return _type;
+	public Authorization getAuthorization() {
+		return _auth;
 	}
 
 	public List<ExecuteAction> getExecuteActions() {
@@ -112,21 +111,8 @@ public class AuthorizationAction implements Serializable {
 		return _modifiers;
 	}
 
-	public void setExecuteActions(List<ExecuteAction> executeActions) {
-		_executeSyncActions = executeActions;
-	}
-
-	public void setModifiers(List<ParamBasic> modifiers) {
-		if (_type == Constants.AUTHORIZATION_ALLOW)
-			_modifiers = modifiers;
-	}
-
 	public void addModifier(ParamBasic parameter) {
 		_modifiers.add(parameter);
-	}
-
-	public void addExecuteAction(ExecuteAction executeAction) {
-		_executeSyncActions.add(executeAction);
 	}
 
 	public long getDelay() {
@@ -137,21 +123,12 @@ public class AuthorizationAction implements Serializable {
 		_delay = delay;
 	}
 
-	public boolean getType() {
-		return _type;
-	}
-
-	public void setType(boolean type) {
-		_type = type;
+	public void setAuthorization(Authorization auth) {
+		_auth = auth;
 	}
 
 	public String getName() {
 		return _name;
-	}
-
-	public void setName(String name) {
-		if (name != null)
-			_name = name;
 	}
 
 	public AuthorizationAction getFallback() {
@@ -170,12 +147,17 @@ public class AuthorizationAction implements Serializable {
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(getClass())
 				.add("_name", _name)
-				.add("_type", _type)
+				.add("_type", _auth)
 				.add("_delay", _delay)
 				.add("_modifiers", _modifiers)
 				.add("_executeAction", _executeSyncActions)
 				.add("_fallback", _fallback)
 				.add("_fallbackName", _fallbackName)
 				.toString();
+	}
+
+	public enum Authorization {
+		ALLOW,
+		INHIBIT;
 	}
 }

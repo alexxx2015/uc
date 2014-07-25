@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
+import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 

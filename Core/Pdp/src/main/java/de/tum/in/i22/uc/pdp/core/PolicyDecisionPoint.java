@@ -24,11 +24,10 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
-import de.tum.in.i22.uc.pdp.core.shared.Constants;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
@@ -171,7 +170,7 @@ public class PolicyDecisionPoint {
 	}
 
 	public Decision notifyEvent(IEvent event) {
-		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW), _pxpManager);
+		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
 		if (eventMatchList != null) {

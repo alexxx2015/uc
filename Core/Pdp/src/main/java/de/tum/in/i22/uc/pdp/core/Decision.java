@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core.shared;
+package de.tum.in.i22.uc.pdp.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +17,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
-import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 /**
@@ -66,11 +64,11 @@ public class Decision implements java.io.Serializable {
 		_logger.debug("Processing mechanism={} for decision", mech.getName());
 
 		AuthorizationAction curAuthAction = mech.getAuthorizationAction();
-		if (getAuthorizationAction().getType() == Constants.AUTHORIZATION_ALLOW) {
+		if (getAuthorizationAction().getAuthorization() == Authorization.ALLOW) {
 			_logger.debug("Decision still allowing event, processing mechanisms authActions");
 			do {
 				_logger.debug("Processing authorizationAction {}", curAuthAction.getName());
-				if (curAuthAction.getType() == Constants.AUTHORIZATION_ALLOW) {
+				if (curAuthAction.getAuthorization() == Authorization.ALLOW) {
 					_logger.debug("Executing specified executeActions: {}", curAuthAction.getExecuteActions().size());
 					boolean executionReturn = false;
 					if (curAuthAction.getExecuteActions().size() == 0)
@@ -88,25 +86,25 @@ public class Decision implements java.io.Serializable {
 						curAuthAction = curAuthAction.getFallback();
 						if (curAuthAction == null) {
 							_logger.warn("No fallback present; implicit INHIBIT");
-							getAuthorizationAction().setType(Constants.AUTHORIZATION_INHIBIT);
+							getAuthorizationAction().setAuthorization(Authorization.INHIBIT);
 							break;
 						}
 						continue;
 					}
 
 					_logger.debug("All specified execution actions executed successfully!");
-					getAuthorizationAction().setType(curAuthAction.getType());
+					getAuthorizationAction().setAuthorization(curAuthAction.getAuthorization());
 					break;
 				} else {
 					_logger.debug("Authorization action={} requires inhibiting event; adjusting decision",
 							curAuthAction.getName());
-					getAuthorizationAction().setType(Constants.AUTHORIZATION_INHIBIT);
+					getAuthorizationAction().setAuthorization(Authorization.INHIBIT);
 					break;
 				}
 			} while (true);
 		}
 
-		if (getAuthorizationAction().getType() == Constants.AUTHORIZATION_INHIBIT) {
+		if (getAuthorizationAction().getAuthorization() == Authorization.INHIBIT) {
 			_logger.debug("Decision requires inhibiting event; adjusting delay");
 			getAuthorizationAction().setDelay(
 					Math.max(getAuthorizationAction().getDelay(), curAuthAction.getDelay()));
@@ -157,7 +155,7 @@ public class Decision implements java.io.Serializable {
 		IStatus status;
 
 		try {
-			if (getAuthorizationAction().getAuthorizationAction()) {
+			if (getAuthorizationAction().getAuthorization() == Authorization.ALLOW) {
 				if (getAuthorizationAction().getModifiers() != null
 						&& getAuthorizationAction().getModifiers().size() != 0)
 					status = new StatusBasic(EStatus.MODIFY);
@@ -173,7 +171,7 @@ public class Decision implements java.io.Serializable {
 		List<IEvent> list = new ArrayList<IEvent>();
 
 		for (ExecuteAction ea : getExecuteActions()) {
-			list.add(new EventBasic(ea.getName(), ea.getParams(), false));
+			list.add(new EventBasic(ea.getName(), ea.getParameters(), false));
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
