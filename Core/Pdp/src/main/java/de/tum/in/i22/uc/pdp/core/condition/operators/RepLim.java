@@ -3,11 +3,11 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.condition.CircularArray;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 
 public class RepLim extends RepLimType {
@@ -33,7 +33,7 @@ public class RepLim extends RepLimType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		log.debug("circularArray: {}", this._state.circArray);
 		if (this._state.counter >= this.getLowerLimit() && this._state.counter <= this.getUpperLimit())
 			this._state.value = true;

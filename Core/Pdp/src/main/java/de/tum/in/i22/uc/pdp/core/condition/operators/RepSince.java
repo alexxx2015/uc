@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.RepSinceType;
 
 public class RepSince extends RepSinceType {
@@ -28,7 +28,7 @@ public class RepSince extends RepSinceType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) { // repsince(n, A, B); // n = limit
+	public boolean evaluate(IEvent curEvent) { // repsince(n, A, B); // n = limit
 												// / A = op1 / B = op2
 												// B(n) >= limit n times
 												// subformula B since the last

@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.AlwaysType;
 
 public class Always extends AlwaysType {
@@ -30,7 +30,7 @@ public class Always extends AlwaysType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		if (!this._state.immutable) {
 			this._state.value = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (!this._state.value && curEvent == null) {

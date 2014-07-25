@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.pdp.core.condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
 public class Condition {
@@ -43,7 +43,7 @@ public class Condition {
 		return "Condition: { " + _operator + " }";
 	}
 
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		_logger.debug("Evaluating condition...");
 		if (_operator == null) {
 			_logger.error("condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");

@@ -3,10 +3,10 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 
 public class EventMatchOperator extends EventMatch {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
@@ -22,7 +22,7 @@ public class EventMatchOperator extends EventMatch {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		boolean ret = false;
 		if (curEvent != null) {
 			if (eventMatches(curEvent))

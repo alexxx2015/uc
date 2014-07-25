@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -31,7 +31,7 @@ public class EventMatch extends EventMatchingOperatorType {
 		super.initOperatorForMechanism(mech);
 	}
 
-	public boolean eventMatches(Event curEvent) {
+	public boolean eventMatches(IEvent curEvent) {
 		if (curEvent == null)
 			return false;
 		_logger.info("Matching [{}] against [{}]", this, curEvent);
@@ -57,7 +57,7 @@ public class EventMatch extends EventMatchingOperatorType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		_logger.error("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
 		return false;
 	}

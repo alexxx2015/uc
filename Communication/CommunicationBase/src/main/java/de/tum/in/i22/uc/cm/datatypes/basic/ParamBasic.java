@@ -10,8 +10,9 @@ public class ParamBasic implements Serializable {
 	private final String _value;
 
 	public ParamBasic(String name, String value) {
-		if (name == null || value == null)
-			throw new NullPointerException("Name and/or value may not be null");
+		if (name == null || value == null) {
+			throw new NullPointerException("Name and/or value may not be null (" + name + "," + value + ")");
+		}
 		_name = name;
 		_value = value;
 	}

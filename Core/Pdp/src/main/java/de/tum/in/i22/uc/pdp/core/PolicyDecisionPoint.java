@@ -20,13 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
@@ -167,7 +167,7 @@ public class PolicyDecisionPoint {
 		return true;
 	}
 
-	public Decision notifyEvent(Event event) {
+	public Decision notifyEvent(IEvent event) {
 		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW), _pxpManager);
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());

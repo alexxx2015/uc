@@ -25,7 +25,6 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 
 public class PdpHandler extends PdpProcessor {
 
@@ -88,7 +87,7 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		_lpdp.notifyEvent(new Event(event));
+		_lpdp.notifyEvent(event);
 		if (event.isActual()) {
 			getPip().update(event);
 		}
@@ -100,7 +99,7 @@ public class PdpHandler extends PdpProcessor {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR,
 					"null event received"), null, null);
 		}
-		IResponse res = _lpdp.notifyEvent(new Event(event)).getResponse();
+		IResponse res = _lpdp.notifyEvent(event).getResponse();
 
 		/**
 		 * (1) If the event is actual, we update the PIP in any case

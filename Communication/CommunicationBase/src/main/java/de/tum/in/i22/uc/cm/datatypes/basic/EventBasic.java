@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,16 @@ public class EventBasic implements IEvent, Serializable {
 		_timestamp = timeStamp;
 	}
 
+	public EventBasic(String name, Collection<ParamBasic> params, boolean isActual) {
+		this(name, (Map<String,String>) null, isActual);
+
+		if (params != null) {
+			for (ParamBasic p : params) {
+				_parameters.put(p.getName(), p.getValue());
+			}
+		}
+	}
+
 	@Override
 	public long getTimestamp() {
 		return _timestamp;
@@ -75,7 +86,12 @@ public class EventBasic implements IEvent, Serializable {
 
 	@Override
 	public ParamBasic getParameter(String name) {
-		return new ParamBasic(name, _parameters.get(name));
+		String value;
+		if (name == null || (value = _parameters.get(name)) == null) {
+			return null;
+		}
+
+		return new ParamBasic(name, value);
 	}
 
 	@Override

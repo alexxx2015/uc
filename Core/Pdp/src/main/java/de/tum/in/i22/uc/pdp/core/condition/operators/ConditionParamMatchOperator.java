@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.ParamMatch;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
 public class ConditionParamMatchOperator extends ConditionParamMatchType {
@@ -27,7 +27,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		log.debug("ConditionParamMatchOperator");
 
 		if (curEvent == null) {

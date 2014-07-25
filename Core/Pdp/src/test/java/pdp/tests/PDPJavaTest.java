@@ -10,9 +10,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 
 public class PDPJavaTest {
 	private static Logger log = LoggerFactory.getLogger(PDPJavaTest.class);
@@ -28,7 +29,7 @@ public class PDPJavaTest {
 		 * As of now, it is disabled (level ERROR)
 		 */
 
-		Event e;
+		IEvent e;
 		Decision d;
 		log.debug("PDPJavaTest");
 		lpdp = new PolicyDecisionPoint();
@@ -47,7 +48,7 @@ public class PDPJavaTest {
 		params.clear();
 		params.put("name1", "xyz");
 		params.put("name2", "value2");
-		e = new Event("testCPMEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testCPMEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -56,7 +57,7 @@ public class PDPJavaTest {
 		params.clear();
 		params.put("name1", "value123");
 		params.put("name2", "value2");
-		e = new Event("testCPMEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testCPMEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -71,7 +72,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "15 17 18");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -79,7 +80,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "15 16 17 18");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -94,7 +95,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "play");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -102,7 +103,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "playing");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -115,7 +116,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "the same");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -123,7 +124,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "not the same");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -136,7 +137,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "default value");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -144,7 +145,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "not the default value");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -159,7 +160,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "value2");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -167,7 +168,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "value");
-		e = new Event("testEvent", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEvent", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -180,7 +181,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "33");
-		e = new Event("testEventge", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -188,7 +189,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "34");
-		e = new Event("testEventge", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -196,7 +197,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "35");
-		e = new Event("testEventge", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventge", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -204,7 +205,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "55");
-		e = new Event("testEventgt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -212,7 +213,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "56");
-		e = new Event("testEventgt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -220,7 +221,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "57");
-		e = new Event("testEventgt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventgt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -228,7 +229,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "33");
-		e = new Event("testEventle", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -236,7 +237,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "34");
-		e = new Event("testEventle", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -244,7 +245,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "35");
-		e = new Event("testEventle", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventle", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -252,7 +253,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "55");
-		e = new Event("testEventlt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -260,7 +261,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "56");
-		e = new Event("testEventlt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -268,7 +269,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "57");
-		e = new Event("testEventlt", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventlt", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -281,7 +282,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "D E F");
-		e = new Event("testEventList", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -289,7 +290,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "A B D E F");
-		e = new Event("testEventList", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -297,7 +298,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "D A E B C F");
-		e = new Event("testEventList", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventList", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -308,7 +309,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "ABC");
-		e = new Event("testEventNeq", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventNeq", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -316,7 +317,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "Banana");
-		e = new Event("testEventNeq", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventNeq", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -328,7 +329,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "RABC");
-		e = new Event("testEventSW", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventSW", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -336,7 +337,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "ABCR");
-		e = new Event("testEventSW", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventSW", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -349,7 +350,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "ARBRC");
-		e = new Event("testEventSubstr", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventSubstr", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);
@@ -357,7 +358,7 @@ public class PDPJavaTest {
 		log.debug("Notifying event");
 		params.clear();
 		params.put("name1", "RABCR");
-		e = new Event("testEventSubstr", params, false, System.currentTimeMillis());
+		e = new EventBasic("testEventSubstr", params, false, System.currentTimeMillis());
 		d = lpdp.notifyEvent(e);
 		log.debug("d: [{}]", d);
 		log.info("e: " + e + "    d: " + d);

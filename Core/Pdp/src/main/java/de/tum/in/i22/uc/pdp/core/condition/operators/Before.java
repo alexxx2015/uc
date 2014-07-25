@@ -3,11 +3,11 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.condition.CircularArray;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.BeforeType;
 
 public class Before extends BeforeType {
@@ -33,7 +33,7 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) { // before = at (currentTime -
+	public boolean evaluate(IEvent curEvent) { // before = at (currentTime -
 												// interval) operand was true
 		log.debug("circularArray: {}", this._state.circArray);
 

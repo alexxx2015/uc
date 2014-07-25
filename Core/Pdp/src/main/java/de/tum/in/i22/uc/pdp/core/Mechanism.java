@@ -8,12 +8,12 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -142,7 +142,7 @@ public class Mechanism implements Runnable {
 		_interrupted = true;
 	}
 
-	public synchronized Decision notifyEvent(Event curEvent, Decision d) {
+	public synchronized Decision notifyEvent(IEvent curEvent, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
 		if (_triggerEvent.eventMatches(curEvent)) {
 			_logger.info("Event matches -> evaluating condition");

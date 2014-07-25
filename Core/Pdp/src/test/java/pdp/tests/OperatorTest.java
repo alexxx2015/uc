@@ -10,9 +10,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
 
 public class OperatorTest {
 	private static Logger log = LoggerFactory.getLogger(OperatorTest.class);
@@ -45,7 +46,7 @@ public class OperatorTest {
 		log.debug("Starting before-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		for (int a = 0; a < 3; a++) {
 			log.info("Notifying event");
@@ -67,7 +68,7 @@ public class OperatorTest {
 		log.info("Starting within-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		for (int a = 0; a < 3; a++) {
 			log.info("Notifying event");
@@ -89,7 +90,7 @@ public class OperatorTest {
 		log.info("Starting during-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		sleep(3000);
 		for (int a = 0; a < 5; a++) {
@@ -112,7 +113,7 @@ public class OperatorTest {
 		log.info("Starting always-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		for (int a = 0; a < 5; a++) {
 			log.info("Notifying event");
@@ -134,7 +135,7 @@ public class OperatorTest {
 		log.info("Starting repmax-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		sleep(3000);
 		for (int a = 0; a < 5; a++) {
@@ -157,7 +158,7 @@ public class OperatorTest {
 		log.info("Starting replim-test");
 		params.clear();
 		params.put("val1", "value1");
-		Event levent = new Event("action1", params, false);
+		IEvent levent = new EventBasic("action1", params, false);
 
 		sleep(1000);
 		for (int a = 0; a < 5; a++) {
@@ -194,11 +195,11 @@ public class OperatorTest {
 			log.info("Starting since-test");
 			params.clear();
 			params.put("val1", "value1");
-			Event levent = new Event("action1", params, false);
+			IEvent levent = new EventBasic("action1", params, false);
 
 			params.clear();
 			params.put("val2", "value2");
-			Event levent2 = new Event("action2", params, false);
+			IEvent levent2 = new EventBasic("action2", params, false);
 
 			sleep(1000);
 			for (int a = 0; a < 3; a++) {
@@ -282,11 +283,11 @@ public class OperatorTest {
 			log.info("Starting repSince-test");
 			params.clear();
 			params.put("val1", "value1");
-			Event levent = new Event("action1", params, false);
+			IEvent levent = new EventBasic("action1", params, false);
 
 			params.clear();
 			params.put("val2", "value2");
-			Event levent2 = new Event("action2", params, false);
+			IEvent levent2 = new EventBasic("action2", params, false);
 
 			sleep(1000);
 			log.debug("##################################");

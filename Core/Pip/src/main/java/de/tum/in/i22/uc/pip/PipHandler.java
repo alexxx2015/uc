@@ -67,7 +67,7 @@ public class PipHandler extends PipProcessor {
 
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
-				null, true));
+				(Map<String,String>) null, true));
 	}
 
 	@Override
