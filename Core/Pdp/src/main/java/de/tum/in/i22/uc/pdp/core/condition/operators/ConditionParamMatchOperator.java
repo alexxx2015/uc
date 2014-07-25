@@ -45,6 +45,6 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 		pm.setPdp(_pdp);
 		// use the parmMatches method for the evaluation
 
-		return pm.paramMatches(curEvent.getParameter(pm.getName()));
+		return pm.paramMatches(pm.getName(), curEvent.getParameterValue(pm.getName()));
 	}
 }

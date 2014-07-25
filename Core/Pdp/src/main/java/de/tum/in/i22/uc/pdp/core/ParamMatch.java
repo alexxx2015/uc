@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
@@ -34,13 +33,13 @@ public class ParamMatch extends ParamMatchType {
 		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
 	}
 
-	public boolean paramMatches(ParamBasic param) {
+	public boolean paramMatches(String paramName, String paramValue) {
 		boolean matches = false;
-		if (param == null) {
+		if (paramName == null || paramValue == null) {
 			log.trace("Parameter [{}] not present", this.getName());
 			return false;
 		}
-		if (this.getName().equals(param.getName())) {
+		if (this.getName().equals(paramName)) {
 			log.trace("param name [" + this.getName() + "] matches");
 			GenericComparisonOperator compOp;
 			if (this.getCmpOp() != null) {
@@ -104,9 +103,9 @@ public class ParamMatch extends ParamMatchType {
 																// equality
 					break;
 				}
-				matches = compOp.compare(param.getValue(), this.getValue());
+				matches = compOp.compare(paramValue, this.getValue());
 			}
-			log.trace("param value [" + param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
+			log.trace("param value [" + paramValue + "] does " + (matches ? "" : "NOT ") + "match ["
 					+ this.getValue() + "]");
 			return matches;
 		}

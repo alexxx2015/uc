@@ -85,13 +85,15 @@ public class EventBasic implements IEvent, Serializable {
 	}
 
 	@Override
-	public ParamBasic getParameter(String name) {
-		String value;
-		if (name == null || (value = _parameters.get(name)) == null) {
-			return null;
-		}
+	public String getParameterValue(String name) {
+//		String value;
+//		if (name == null || (value = _parameters.get(name)) == null) {
+//			return null;
+//		}
+//
+//		return new ParamBasic(name, value);
 
-		return new ParamBasic(name, value);
+		return name == null ? null : _parameters.get(name);
 	}
 
 	@Override
