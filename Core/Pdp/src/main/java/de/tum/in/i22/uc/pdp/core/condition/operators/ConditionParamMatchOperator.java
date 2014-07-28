@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
 public class ConditionParamMatchOperator extends ConditionParamMatchType {
-	private static Logger log = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
+	private static Logger _logger = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
 
 	public ConditionParamMatchOperator() {
 	}
@@ -28,17 +28,14 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.debug("ConditionParamMatchOperator");
+		_logger.debug("ConditionParamMatchOperator");
 
 		if (curEvent == null) {
-			log.debug("null event received. ConditionParamMatchOperator returns false.");
+			_logger.debug("null event received. ConditionParamMatchOperator returns false.");
 			return false;
 		}
 
-		// creates a corresponding paramMatch object
-
 		ParamMatch pm = new ParamMatch(this.getName(), this.getValue(),this.getCmpOp(), _pdp);
-
-		return pm.paramMatches(pm.getName(), curEvent.getParameterValue(pm.getName()));
+		return pm.matches(pm.getName(), curEvent.getParameterValue(pm.getName()));
 	}
 }
