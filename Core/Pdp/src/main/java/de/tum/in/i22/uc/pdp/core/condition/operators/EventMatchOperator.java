@@ -22,17 +22,20 @@ public class EventMatchOperator extends EventMatch {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	public boolean evaluate(IEvent ev) {
 		boolean ret = false;
-		if (curEvent != null) {
-			if (matches(curEvent))
+
+		if (ev != null) {
+			if (matches(ev)) {
 				_state.value = true;
+			}
 			ret = _state.value;
-		} else { // reset at end of timestep (i.e. curEvent==null)
+		} else { // reset at end of timestep (i.e. ev==null)
 			ret = _state.value;
 			_state.value = false;
 		}
-		_logger.debug("eval EVENTMATCH [{}]", ret);
+
+		_logger.debug("Evaluated [{}] with result [{}]", this, ret);
 		return ret;
 	}
 }
