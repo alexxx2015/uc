@@ -47,11 +47,6 @@ public class PipHandler extends PipProcessor {
 
 	private final PipManager _pipManager;
 
-	//	/**
-	//	 * Manages everything related to distributed data flow tracking
-	//	 */
-	//	private final PipDistributionManager _distributedPipManager;
-
 	public PipHandler() {
 		this(new InformationFlowModelManager());
 	}
@@ -305,7 +300,7 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IData getDataFromId(String id) {
-		IData d=_ifModelManager.getDataFromId(id);
-		return (d==null)?new DataBasic("null"):d;
+		IData d = _ifModelManager.getDataFromId(id);
+		return (d == null) ? new DataBasic("null") : d;
 	}
 }

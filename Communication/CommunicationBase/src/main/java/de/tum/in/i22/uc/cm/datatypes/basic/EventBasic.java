@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,16 +46,6 @@ public class EventBasic implements IEvent, Serializable {
 	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
 		this(name, map, isActual);
 		_timestamp = timeStamp;
-	}
-
-	public EventBasic(String name, Collection<ParamBasic> params, boolean isActual) {
-		this(name, (Map<String,String>) null, isActual);
-
-		if (params != null) {
-			for (ParamBasic p : params) {
-				_parameters.put(p.getName(), p.getValue());
-			}
-		}
 	}
 
 	@Override

@@ -65,6 +65,13 @@ public class ParamMatch extends ParamMatchType {
 		throw new IllegalArgumentException(p + " is not of type " + ParamMatch.class);
 	}
 
+
+	/**
+	 * Returns true if this element matches the specified parameter name and value.
+	 * @param paramName
+	 * @param paramValue
+	 * @return
+	 */
 	public boolean matches(String paramName, String paramValue) {
 		if (paramName == null || paramValue == null) {
 			_logger.trace("Parameter [{}] not present", paramName);

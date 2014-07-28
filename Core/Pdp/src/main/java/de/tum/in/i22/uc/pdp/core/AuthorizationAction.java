@@ -2,12 +2,14 @@ package de.tum.in.i22.uc.pdp.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
@@ -27,14 +29,19 @@ public class AuthorizationAction implements Serializable {
 	private AuthorizationAction _fallback = AUTHORIZATION_INHIBIT;
 	private String _fallbackName = "";
 	private List<ExecuteAction> _executeSyncActions = new ArrayList<ExecuteAction>();
-	private List<ParamBasic> _modifiers = new ArrayList<>();
+
+	/*
+	 * Parameter modifiers
+	 */
+	private final Map<String,String> _modifiers = new HashMap<>();
+
 	private long _delay = 0;
 
 	public AuthorizationAction() {
 	}
 
 	public AuthorizationAction(int start, String name, Authorization auth, List<ExecuteAction> executeActions,
-			long delay, List<ParamBasic> modifiers, AuthorizationAction fallback) {
+			long delay, Map<String,String> modifiers, AuthorizationAction fallback) {
 		_auth = auth;
 		if (name != null)
 			_name = name;
@@ -43,7 +50,7 @@ public class AuthorizationAction implements Serializable {
 		if (fallback != null)
 			_fallback = fallback;
 		if (auth == Authorization.ALLOW) {
-			_modifiers = modifiers;
+			_modifiers.putAll(modifiers);;
 			_delay = delay;
 		}
 	}
@@ -85,7 +92,7 @@ public class AuthorizationAction implements Serializable {
 					for (ParameterType param : allow.getModify().getParameter()) {
 						_logger.debug("modify: {} -> {}", param.getName(), param.getValue());
 						// TODO: use different parameter types?!
-						_modifiers.add(new ParamBasic(param.getName(), param.getValue()));
+						_modifiers.put(param.getName(), param.getValue());
 					}
 				}
 				for (ExecuteActionType execAction : allow.getExecuteSyncAction()) {
@@ -107,12 +114,12 @@ public class AuthorizationAction implements Serializable {
 		return _executeSyncActions;
 	}
 
-	public List<ParamBasic> getModifiers() {
-		return _modifiers;
+	public Map<String,String> getModifiers() {
+		return Collections.unmodifiableMap(_modifiers);
 	}
 
-	public void addModifier(ParamBasic parameter) {
-		_modifiers.add(parameter);
+	public void addModifier(String name, String value) {
+		_modifiers.put(name, value);
 	}
 
 	public long getDelay() {

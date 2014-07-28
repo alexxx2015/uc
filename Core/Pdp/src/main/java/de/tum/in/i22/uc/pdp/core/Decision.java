@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.pdp.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -112,8 +110,8 @@ public class Decision implements java.io.Serializable {
 		} else {
 			_logger.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
-			for (ParamBasic curParam : curAuthAction.getModifiers())
-				getAuthorizationAction().addModifier(curParam);
+			for (Map.Entry<String,String> curParam : curAuthAction.getModifiers().entrySet())
+				getAuthorizationAction().addModifier(curParam.getKey(), curParam.getValue());
 		}
 
 		List<ExecuteAction> asyncActions = mech.getExecuteAsyncActions();
@@ -176,14 +174,7 @@ public class Decision implements java.io.Serializable {
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
-		List<ParamBasic> modifiedParameters = getAuthorizationAction().getModifiers();
-		Map<String, String> modifiedParamI = new HashMap<String, String>();
-
-		for (ParamBasic p : modifiedParameters) {
-			modifiedParamI.put(p.getName(), p.getValue().toString());
-		}
-
-		IEvent modifiedEvent = new EventBasic("triggerEvent", modifiedParamI);
+		IEvent modifiedEvent = new EventBasic("triggerEvent", getAuthorizationAction().getModifiers());
 		IResponse res = new ResponseBasic(status, list, modifiedEvent);
 
 		return res;

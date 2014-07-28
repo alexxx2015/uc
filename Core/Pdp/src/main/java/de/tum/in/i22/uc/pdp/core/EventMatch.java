@@ -39,7 +39,6 @@ public class EventMatch extends EventMatchingOperatorType {
 
 		/*
 		 *  Be aware: tryEvent vs. isActual must be unequal (!=).
-		 *
 		 */
 		if (tryEvent != ev.isActual()) {
 			if (action.equals(ev.getName()) || action.equals(Settings.getInstance().getStarEvent())) {

@@ -24,7 +24,7 @@ class PreventiveMechanism extends Mechanism {
 
 		_logger.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech
 				.getAuthorizationAction().size());
-		HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
+		HashMap<String, AuthorizationAction> authActions = new HashMap<>();
 
 		for (AuthorizationActionType auth : curMech.getAuthorizationAction()) {
 			_logger.debug("Found authAction {}", auth.getName());
