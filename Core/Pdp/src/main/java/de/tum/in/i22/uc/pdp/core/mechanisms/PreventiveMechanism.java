@@ -2,7 +2,6 @@ package de.tum.in.i22.uc.pdp.core.mechanisms;
 
 import java.util.HashMap;
 
-import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
@@ -19,8 +18,7 @@ class PreventiveMechanism extends Mechanism {
 		PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
 		_logger.debug("Processing PreventiveMechanism");
 
-		ActionDescriptionStore ads = pdp.getActionDescriptionStore();
-		ads.addMechanism(this);
+		pdp.addMechanism(this);
 
 		// TODO: subscription to PEP?!
 

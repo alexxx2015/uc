@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.ActionDescriptionStore;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
@@ -17,8 +16,7 @@ public class EventMatchOperator extends EventMatch {
 	@Override
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
-		ActionDescriptionStore ads = _pdp.getActionDescriptionStore();
-		ads.addEventMatch(this);
+		_pdp.addEventMatch(this);
 	}
 
 	@Override

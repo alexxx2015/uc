@@ -186,16 +186,12 @@ public class PolicyDecisionPoint {
 		}
 
 		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getName());
-		if (mechanismList != null) {
-			_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
-					mechanismList.size());
+		_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
+				mechanismList.size());
 
-			synchronized (mechanismList) {
-				for (Mechanism mech : mechanismList) {
-					_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
-					mech.notifyEvent(event, d);
-				}
-			}
+		for (Mechanism mech : mechanismList) {
+			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
+			mech.notifyEvent(event, d);
 		}
 
 		return d;
@@ -219,10 +215,6 @@ public class PolicyDecisionPoint {
 		return _pip;
 	}
 
-	public ActionDescriptionStore getActionDescriptionStore() {
-		return _actionDescriptionStore;
-	}
-
 	public PxpManager getPxpManager() {
 		return _pxpManager;
 	}
@@ -234,19 +226,15 @@ public class PolicyDecisionPoint {
 			}
 		}
 
-		// // Old implementation
-		// Set<String> _policyTableKeys = _policyTable.keySet();
-		// Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
-		// while (_policyTableKeysIt.hasNext()) {
-		// String _policyTableKey = _policyTableKeysIt.next();
-		// Map<String,Mechanism> mechanisms = _policyTable.get(_policyTableKey);
-		// Iterator<Mechanism> mechanismsIt = mechanisms.values().iterator();
-		// while (mechanismsIt.hasNext()) {
-		// mechanismsIt.next().revoke();
-		// }
-		// }
-
 		_policyTable.clear();
+	}
+
+	public void addEventMatch(EventMatch eventMatch) {
+		_actionDescriptionStore.addEventMatch(eventMatch);
+	}
+
+	public void addMechanism(Mechanism mechanism) {
+		_actionDescriptionStore.addMechanism(mechanism);
 	}
 
 }

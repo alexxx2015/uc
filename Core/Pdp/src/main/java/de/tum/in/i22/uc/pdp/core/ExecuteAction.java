@@ -26,6 +26,7 @@ public class ExecuteAction implements Serializable {
 		_name = name;
 		_id = id;
 		_processor = processor;
+
 		for (ParameterType param : params) {
 			_parameters.put(param.getName(), param.getValue());
 		}
@@ -60,10 +61,10 @@ public class ExecuteAction implements Serializable {
 	@Override
 	public String toString() {
 		return com.google.common.base.Objects.toStringHelper(this)
-				.add("name", _name)
-				.add("id", _id)
+				.add("_name", _name)
+				.add("_id", _id)
 				.add("_processor", _processor)
-				.add("parameters", _parameters)
+				.add("_parameters", _parameters)
 				.toString();
 	}
 }
