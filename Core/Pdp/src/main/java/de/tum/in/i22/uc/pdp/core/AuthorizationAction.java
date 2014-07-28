@@ -91,7 +91,6 @@ public class AuthorizationAction implements Serializable {
 				if (allow.getModify() != null) {
 					for (ParameterType param : allow.getModify().getParameter()) {
 						_logger.debug("modify: {} -> {}", param.getName(), param.getValue());
-						// TODO: use different parameter types?!
 						_modifiers.put(param.getName(), param.getValue());
 					}
 				}

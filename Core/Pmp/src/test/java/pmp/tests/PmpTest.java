@@ -24,8 +24,6 @@ import de.tum.in.i22.uc.pmp.PmpHandler;
 
 public class PmpTest {
 
-	private static Logger log = LoggerFactory.getLogger(PmpTest.class);
-
 	@Test
 	public void test() {
 		PipProcessor pip = new MyDummyPipProcessor();

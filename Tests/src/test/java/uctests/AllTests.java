@@ -17,17 +17,16 @@ import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 /****
  * This is the only class executed
- * 
+ *
  * @author moka
- * 
+ *
  */
 
 @RunWith(Suite.class)
 @SuiteClasses({ PdpTest.class, PipTest.class, PmpTest.class,
 	StateBasedOperatorTest.class, TestConnectionManager.class,
 	TestPep2PdpCommunication.class, TestPmp2PdpCommunication.class,
-	TestPmp2PipCommunication.class, TestThriftPep.class, ThriftTest.class,
-	DistributionTest.class })
+	TestPmp2PipCommunication.class, TestThriftPep.class, ThriftTest.class })
 public class AllTests extends GenericTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(AllTests.class);

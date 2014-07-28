@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.mechanisms;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,16 +23,16 @@ import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 public abstract class Mechanism implements Runnable {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
-	private String _name = null;
-	private String _description = null;
+	private final String _name;
+	private final String _description;
 	private long _lastUpdate = 0;
 	private long _timestepSize = 0;
 	private long _timestep = 0;
-	private EventMatch _triggerEvent = null;
-	private Condition _condition = null;
+	private final EventMatch _triggerEvent;
+	private final Condition _condition;
 	protected AuthorizationAction _authorizationAction = null;
-	private List<ExecuteAction> _executeAsyncActions = new ArrayList<ExecuteAction>();
-	private PolicyDecisionPoint _pdp = null;
+	private final List<ExecuteAction> _executeAsyncActions;
+	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
 	private PxpManager _pxpManager;
 
@@ -60,6 +60,7 @@ public abstract class Mechanism implements Runnable {
 		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
 		_condition = new Condition(mech.getCondition(), this);
+		_executeAsyncActions = new LinkedList<ExecuteAction>();
 
 		_logger.debug("Processing executeAsyncActions");
 		// Processing synchronous executeActions for allow
@@ -92,16 +93,17 @@ public abstract class Mechanism implements Runnable {
 		_interrupted = true;
 	}
 
-	public synchronized Decision notifyEvent(IEvent curEvent, Decision d) {
+	public synchronized Decision notifyEvent(IEvent event, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
-		if (_triggerEvent.matches(curEvent)) {
+
+		if (_triggerEvent.matches(event)) {
 			_logger.info("Event matches -> evaluating condition");
-			boolean ret = _condition.evaluate(curEvent);
-			if (ret) {
+			if (_condition.evaluate(event)) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
-				d.processMechanism(this, curEvent);
-			} else
+				d.processMechanism(this, event);
+			} else {
 				_logger.info("condition NOT satisfied");
+			}
 		}
 
 		return d;

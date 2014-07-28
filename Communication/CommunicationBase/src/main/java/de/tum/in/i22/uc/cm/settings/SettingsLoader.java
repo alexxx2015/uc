@@ -24,7 +24,7 @@ public class SettingsLoader {
 	 * loaded from the jar file itself. This enables to easily override default
 	 * properties which are specified in the file which is placed in the
 	 * resource folder in the jar.
-	 * 
+	 *
 	 * @param propertiesFileName
 	 *            Name of the properties file to be loaded.
 	 * @return Properties object with loaded properties.
@@ -58,7 +58,6 @@ public class SettingsLoader {
 				if (cl == null) {
 					_logger.error("CLassloader is null");
 				} else{
-					_logger.error("CLassloader is not null");
 					is = SettingsLoader.class.getClassLoader()
 							.getResourceAsStream(propertiesFileName);
 				}

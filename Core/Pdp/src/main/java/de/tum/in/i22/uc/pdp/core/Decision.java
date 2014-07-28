@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pdp.core;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,42 +29,22 @@ public class Decision implements java.io.Serializable {
 
 	private static final long serialVersionUID = 4922446035665121547L;
 
-	private AuthorizationAction _mAuthorizationAction;
+	private AuthorizationAction _authorizationAction;
 
 	/** 'optional' executeActions processed by PXP */
-	private ArrayList<ExecuteAction> _mExecuteActions = new ArrayList<ExecuteAction>();
+	private List<ExecuteAction> _executeActions = new LinkedList<>();
 	private PxpManager _pxpManager;
 
 	public Decision(AuthorizationAction authAction, PxpManager pxpManager) {
-		_mAuthorizationAction = authAction;
+		_authorizationAction = authAction;
 		_pxpManager = pxpManager;
-	}
-
-	public AuthorizationAction getAuthorizationAction() {
-		return _mAuthorizationAction;
-	}
-
-	public void setAuthorizationAction(AuthorizationAction mAuthorizationAction) {
-		_mAuthorizationAction = mAuthorizationAction;
-	}
-
-	public ArrayList<ExecuteAction> getExecuteActions() {
-		return _mExecuteActions;
-	}
-
-	public void setExecuteActions(ArrayList<ExecuteAction> mExecuteActions) {
-		_mExecuteActions = mExecuteActions;
-	}
-
-	public void addExecuteAction(ExecuteAction mExecuteActionTmp) {
-		_mExecuteActions.add(mExecuteActionTmp);
 	}
 
 	public void processMechanism(Mechanism mech, IEvent curEvent) {
 		_logger.debug("Processing mechanism={} for decision", mech.getName());
 
 		AuthorizationAction curAuthAction = mech.getAuthorizationAction();
-		if (getAuthorizationAction().getAuthorization() == Authorization.ALLOW) {
+		if (_authorizationAction.getAuthorization() == Authorization.ALLOW) {
 			_logger.debug("Decision still allowing event, processing mechanisms authActions");
 			do {
 				_logger.debug("Processing authorizationAction {}", curAuthAction.getName());
@@ -85,33 +66,33 @@ public class Decision implements java.io.Serializable {
 						curAuthAction = curAuthAction.getFallback();
 						if (curAuthAction == null) {
 							_logger.warn("No fallback present; implicit INHIBIT");
-							getAuthorizationAction().setAuthorization(Authorization.INHIBIT);
+							_authorizationAction.setAuthorization(Authorization.INHIBIT);
 							break;
 						}
 						continue;
 					}
 
 					_logger.debug("All specified execution actions executed successfully!");
-					getAuthorizationAction().setAuthorization(curAuthAction.getAuthorization());
+					_authorizationAction.setAuthorization(curAuthAction.getAuthorization());
 					break;
 				} else {
 					_logger.debug("Authorization action={} requires inhibiting event; adjusting decision",
 							curAuthAction.getName());
-					getAuthorizationAction().setAuthorization(Authorization.INHIBIT);
+					_authorizationAction.setAuthorization(Authorization.INHIBIT);
 					break;
 				}
 			} while (true);
 		}
 
-		if (getAuthorizationAction().getAuthorization() == Authorization.INHIBIT) {
+		if (_authorizationAction.getAuthorization() == Authorization.INHIBIT) {
 			_logger.debug("Decision requires inhibiting event; adjusting delay");
-			getAuthorizationAction().setDelay(
-					Math.max(getAuthorizationAction().getDelay(), curAuthAction.getDelay()));
+			_authorizationAction.setDelay(
+					Math.max(_authorizationAction.getDelay(), curAuthAction.getDelay()));
 		} else {
 			_logger.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
 			for (Map.Entry<String,String> curParam : curAuthAction.getModifiers().entrySet())
-				getAuthorizationAction().addModifier(curParam.getKey(), curParam.getValue());
+				_authorizationAction.addModifier(curParam.getKey(), curParam.getValue());
 		}
 
 		List<ExecuteAction> asyncActions = mech.getExecuteAsyncActions();
@@ -121,7 +102,7 @@ public class Decision implements java.io.Serializable {
 		for (ExecuteAction execAction : asyncActions) {
 			if (execAction.getProcessor().equals("pep")) {
 				_logger.debug("Copying executeAction {} for processing by pep", execAction.getName());
-				addExecuteAction(execAction);
+				_executeActions.add(execAction);
 			} else {
 				_logger.debug("Execute asynchronous action [{}]", execAction.getName());
 				_pxpManager.execute(execAction, false);
@@ -132,21 +113,11 @@ public class Decision implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		if (_mAuthorizationAction == null && _mExecuteActions == null)
-			return "Decision: null";
-
-		String str = "Decision: ";
-		if (_mAuthorizationAction == null)
-			str += "[]";
-		else
-			str += _mAuthorizationAction.toString();
-
-		str += "; optional executeActions: [";
-		for (ExecuteAction a : _mExecuteActions)
-			str += a.toString();
-		str += "]";
-
-		return str;
+		return com.google.common.base.Objects.toStringHelper(getClass())
+				.add("_authorizationAction", _authorizationAction)
+				.add("_executeActions", _executeActions)
+				.add("_pxpManager", _pxpManager)
+				.toString();
 	}
 
 	public IResponse getResponse() {
@@ -154,9 +125,9 @@ public class Decision implements java.io.Serializable {
 		IStatus status;
 
 		try {
-			if (getAuthorizationAction().getAuthorization() == Authorization.ALLOW) {
-				if (getAuthorizationAction().getModifiers() != null
-						&& getAuthorizationAction().getModifiers().size() != 0)
+			if (_authorizationAction.getAuthorization() == Authorization.ALLOW) {
+				if (_authorizationAction.getModifiers() != null
+						&& _authorizationAction.getModifiers().size() != 0)
 					status = new StatusBasic(EStatus.MODIFY);
 				else
 					status = new StatusBasic(EStatus.ALLOW);
@@ -169,12 +140,12 @@ public class Decision implements java.io.Serializable {
 
 		List<IEvent> list = new ArrayList<IEvent>();
 
-		for (ExecuteAction ea : getExecuteActions()) {
+		for (ExecuteAction ea : _executeActions) {
 			list.add(new EventBasic(ea.getName(), ea.getParameters(), false));
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
-		IEvent modifiedEvent = new EventBasic("triggerEvent", getAuthorizationAction().getModifiers());
+		IEvent modifiedEvent = new EventBasic("triggerEvent", _authorizationAction.getModifiers());
 		IResponse res = new ResponseBasic(status, list, modifiedEvent);
 
 		return res;
