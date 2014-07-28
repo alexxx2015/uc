@@ -85,31 +85,31 @@ public class AuthorizationAction implements Serializable {
 		}
 	}
 
-	public Authorization getAuthorization() {
+	Authorization getAuthorization() {
 		return _auth;
 	}
 
-	public List<ExecuteAction> getExecuteActions() {
+	List<ExecuteAction> getExecuteActions() {
 		return _executeSyncActions;
 	}
 
-	public Map<String,String> getModifiers() {
+	Map<String,String> getModifiers() {
 		return Collections.unmodifiableMap(_modifiers);
 	}
 
-	public void addModifier(String name, String value) {
+	void addModifier(String name, String value) {
 		_modifiers.put(name, value);
 	}
 
-	public long getDelay() {
+	long getDelay() {
 		return _delay;
 	}
 
-	public void setDelay(long delay) {
+	void setDelay(long delay) {
 		_delay = delay;
 	}
 
-	public void setAuthorization(Authorization auth) {
+	void setAuthorization(Authorization auth) {
 		_auth = auth;
 	}
 

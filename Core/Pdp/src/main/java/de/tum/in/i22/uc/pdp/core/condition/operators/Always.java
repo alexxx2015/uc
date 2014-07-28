@@ -9,13 +9,13 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.AlwaysType;
 
 public class Always extends AlwaysType {
-	private static Logger log = LoggerFactory.getLogger(Always.class);
+	private static Logger _logger = LoggerFactory.getLogger(Always.class);
 
 	public Always() {
 	}
 
 	public Always(Operator operand1) {
-		this.setOperators(operand1);
+		this.operators = operand1;
 	}
 
 	@Override
@@ -26,19 +26,20 @@ public class Always extends AlwaysType {
 
 	@Override
 	public String toString() {
-		return "ALWAYS (" + this.getOperators() + ")";
+		return "ALWAYS (" + operators + ")";
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		if (!this._state.immutable) {
-			this._state.value = ((Operator) this.getOperators()).evaluate(curEvent);
-			if (!this._state.value && curEvent == null) {
-				log.debug("evaluating ALWAYS: activating IMMUTABILITY");
-				this._state.immutable = true;
+		if (!_state.immutable) {
+			_state.value = ((Operator) operators).evaluate(curEvent);
+			// FIXME: I do not understand why curEvent == null  ... -FK-
+			if (!_state.value && curEvent == null) {
+				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
+				_state.immutable = true;
 			}
 		}
-		log.debug("eval ALWAYS [{}]", this._state.value);
-		return this._state.value;
+		_logger.debug("eval ALWAYS [{}]", _state.value);
+		return _state.value;
 	}
 }

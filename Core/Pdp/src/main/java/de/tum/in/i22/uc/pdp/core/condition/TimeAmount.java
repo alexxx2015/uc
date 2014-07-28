@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.xsd.time.TimeUnitType;
 
 public class TimeAmount {
-	private static Logger log = LoggerFactory.getLogger(TimeAmount.class);
+	private static Logger _logger = LoggerFactory.getLogger(TimeAmount.class);
 
 	public long amount = 0;
 	public TimeUnitType timeUnit = TimeUnitType.TIMESTEPS;
@@ -26,12 +26,12 @@ public class TimeAmount {
 		this.interval = amount * getTimeUnitMultiplier(tu);
 		this.timestepInterval = this.interval / mechanismTimestepSize;
 
-		log.debug("Interval: {}, timestepInterval: {}", this.interval, this.timestepInterval);
+		_logger.debug("Interval: {}, timestepInterval: {}", this.interval, this.timestepInterval);
 	}
 
 	public static long getTimeUnitMultiplier(TimeUnitType tu) {
 		if (tu == null) {
-			log.warn("Cannot calculate timeUnit-multiplier for null!");
+			_logger.warn("Cannot calculate timeUnit-multiplier for null!");
 			return 1;
 		}
 		switch (tu) {
@@ -56,7 +56,7 @@ public class TimeAmount {
 		case NANOSECONDS:
 		case TIMESTEPS:
 		default:
-			log.warn("Unexpected (unsupported) timeunit found: ", tu.value());
+			_logger.warn("Unexpected (unsupported) timeunit found: ", tu.value());
 			return 1;
 		}
 	}

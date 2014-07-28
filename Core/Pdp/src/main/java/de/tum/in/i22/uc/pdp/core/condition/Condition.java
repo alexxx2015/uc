@@ -20,21 +20,6 @@ public class Condition {
 		_operator = (Operator) cond.getOperators();
 		_operator.initOperatorForMechanism(curMechanism);
 
-		// try
-		// {
-		// Constructor<? extends Object> constructor =
-		// cond.getOperators().getClass().getConstructor((cond.getOperators().getClass().getSuperclass()),
-		// Mechanism.class);
-		// operator =
-		// (Operator)constructor.newInstance(cond.getOperators(), curMechanism);
-		// log.debug("operator = {}", operator);
-		// }
-		// catch(NoSuchMethodException | InstantiationException |
-		// IllegalAccessException | IllegalArgumentException |
-		// InvocationTargetException e)
-		// {
-		// e.printStackTrace();
-		// }
 		_logger.debug("condition: {}", _operator);
 	}
 

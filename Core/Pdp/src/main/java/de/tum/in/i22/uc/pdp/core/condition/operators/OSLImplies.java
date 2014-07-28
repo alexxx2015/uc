@@ -15,28 +15,28 @@ public class OSLImplies extends ImpliesType {
 	}
 
 	public OSLImplies(Operator operand1, Operator operand2) {
-		this.getOperators().add(operand1);
-		this.getOperators().add(operand2);
+		operators.add(operand1);
+		operators.add(operand2);
 	}
 
 	@Override
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(0)).initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
+		((Operator) operators.get(0)).initOperatorForMechanism(mech);
+		((Operator) operators.get(1)).initOperatorForMechanism(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "(" + this.getOperators().get(0) + "  ==> " + this.getOperators().get(1) + ")";
+		return "(" + operators.get(0) + "  ==> " + operators.get(1) + ")";
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		Boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
-		Boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
-		this._state.value = !op1state || op2state;
-		log.debug("eval IMPLIES [{}]", this._state.value);
-		return this._state.value;
+		Boolean op1state = ((Operator) operators.get(0)).evaluate(curEvent);
+		Boolean op2state = ((Operator) operators.get(1)).evaluate(curEvent);
+		_state.value = !op1state || op2state;
+		log.debug("eval IMPLIES [{}]", _state.value);
+		return _state.value;
 	}
 }

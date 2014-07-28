@@ -21,18 +21,18 @@ public class OSLNot extends NotType {
 	@Override
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+		((Operator) operators).initOperatorForMechanism(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "! " + this.getOperators();
+		return "! " + operators;
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		this._state.value = !((Operator) this.getOperators()).evaluate(curEvent);
-		log.debug("eval NOT [{}]", this._state.value);
-		return this._state.value;
+		_state.value = !((Operator) operators).evaluate(curEvent);
+		log.debug("eval NOT [{}]", _state.value);
+		return _state.value;
 	}
 }

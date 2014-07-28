@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
 public class OSLAnd extends AndType {
-	private static Logger log = LoggerFactory.getLogger(OSLAnd.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLAnd.class);
 
 	public OSLAnd() {
 	}
@@ -36,7 +36,7 @@ public class OSLAnd extends AndType {
 		Boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
 		Boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 		this._state.value = op1state && op2state;
-		log.debug("eval AND [{}]", this._state.value);
+		_logger.debug("eval AND [{}]", this._state.value);
 		return this._state.value;
 	}
 }

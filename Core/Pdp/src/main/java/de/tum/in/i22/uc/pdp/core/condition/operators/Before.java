@@ -11,8 +11,8 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.BeforeType;
 
 public class Before extends BeforeType {
-	private static Logger log = LoggerFactory.getLogger(Before.class);
-	public TimeAmount timeAmount = null;
+	private static Logger _logger = LoggerFactory.getLogger(Before.class);
+	public TimeAmount _timeAmount = null;
 
 	public Before() {
 	}
@@ -20,22 +20,23 @@ public class Before extends BeforeType {
 	@Override
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-		this._state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
-		for (int a = 0; a < this.timeAmount.timestepInterval; a++)
-			this._state.circArray.set(false, a);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		this._state.circArray = new CircularArray<Boolean>(this._timeAmount.timestepInterval);
+		for (int a = 0; a < _timeAmount.timestepInterval; a++) {
+			_state.circArray.set(false, a);
+		}
+		((Operator) operators).initOperatorForMechanism(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "BEFORE (" + this.timeAmount + ", " + this.getOperators() + " )";
+		return "BEFORE (" + this._timeAmount + ", " + this.getOperators() + " )";
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) { // before = at (currentTime -
 												// interval) operand was true
-		log.debug("circularArray: {}", this._state.circArray);
+		_logger.debug("circularArray: {}", this._state.circArray);
 
 		Boolean curValue = this._state.circArray.readFirst();
 		this._state.value = curValue;
@@ -44,10 +45,10 @@ public class Before extends BeforeType {
 			Boolean operandState = ((Operator) this.getOperators()).evaluate(curEvent);
 			this._state.circArray.push(operandState);
 
-			log.debug("circularArray: {}", this._state.circArray);
+			_logger.debug("circularArray: {}", this._state.circArray);
 		}
 
-		log.debug("eval BEFORE [{}]", this._state.value);
+		_logger.debug("eval BEFORE [{}]", this._state.value);
 		return this._state.value;
 	}
 }
