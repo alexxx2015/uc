@@ -3,13 +3,10 @@ package de.tum.in.i22.uc.pdp;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.ParamBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -53,16 +50,7 @@ public class PxpManager {
 					}
 
 					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
-					Map<String, String> par = new HashMap<String, String>();
-
-					for (ParamBasic p : execAction.getParameters()){
-						par.put(p.getName(),p.getValue().toString());
-					}
-
-					// Parameter olderthan is added as a string parameter
-					// instead of short
-
-					listOfEventsToBeExecuted.add(new EventBasic(execAction.getName(), par));
+					listOfEventsToBeExecuted.add(new EventBasic(execAction.getName(), execAction.getParameters()));
 
 					if (synchronous==true) res = client.executeSync(listOfEventsToBeExecuted);
 					else client.executeAsync(listOfEventsToBeExecuted);

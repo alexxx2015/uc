@@ -1,8 +1,5 @@
 package de.tum.in.i22.uc.pdp.core.condition.operators;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -10,18 +7,10 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType {
-	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperator.class);
 
 	public StateBasedOperator() {
 	}
 
-	public StateBasedOperator(StateBasedOperatorType op, Mechanism curMechanism) {
-		_logger.debug("Processing StateBasedFormula from StateBasedOperatorType");
-		operator = op.getOperator();
-		param1 = op.getParam1();
-		param2 = op.getParam2();
-		param3 = op.getParam3();
-	}
 
 	@Override
 	public void initOperatorForMechanism(Mechanism mech) {
@@ -30,8 +19,12 @@ public class StateBasedOperator extends StateBasedOperatorType {
 
 	@Override
 	public String toString() {
-		return "StateBasedFormula [operator='" + getOperator() + "', param1='" + getParam1() + "', param2='"
-				+ getParam2() + "', param3='" + getParam3() + "']";
+		return com.google.common.base.Objects.toStringHelper(getClass())
+				.add("operator", operator)
+				.add("param1", param1)
+				.add("param2", param2)
+				.add("param3", param3)
+				.toString();
 	}
 
 	@Override

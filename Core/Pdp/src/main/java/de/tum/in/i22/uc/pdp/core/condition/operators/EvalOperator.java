@@ -25,7 +25,7 @@ public class EvalOperator extends EvalOperatorType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.debug("eval EvalOperator");
+		log.error("evalate EvalOperator. Not yet implemented.");
 		// TODO: evalOperator evaluation NYI; forward to external evaluation
 		// engine
 		return false;

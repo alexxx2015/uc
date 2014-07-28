@@ -21,9 +21,11 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 
 	@Override
 	public String toString() {
-		return "ConditionParamMatchOperator [Name: " + this.getName() + ", Value: " + this.getValue() + ", CompOp: "
-				+ this.getCmpOp() + "]";
-
+		return com.google.common.base.Objects.toStringHelper(getClass())
+				.add("name", name)
+				.add("value", value)
+				.add("cmpOp", cmpOp)
+				.toString();
 	}
 
 	@Override
