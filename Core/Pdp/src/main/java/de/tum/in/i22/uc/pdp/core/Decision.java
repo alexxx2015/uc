@@ -56,7 +56,6 @@ public class Decision implements java.io.Serializable {
 					for (ExecuteAction execAction : curAuthAction.getExecuteActions()) {
 						_logger.debug("Executing [{}]", execAction.getName());
 
-						// FIXME: This variable must not be assigned upon every loop! -FK-
 						executionSuccess &= _pxpManager.execute(execAction, true);
 					}
 
@@ -121,11 +120,12 @@ public class Decision implements java.io.Serializable {
 
 		try {
 			if (_authorizationAction.getAuthorization() == Authorization.ALLOW) {
-				if (_authorizationAction.getModifiers() != null
-						&& _authorizationAction.getModifiers().size() != 0)
-					status = new StatusBasic(EStatus.MODIFY);
-				else
+				if (_authorizationAction.getModifiers().size() == 0) {
 					status = new StatusBasic(EStatus.ALLOW);
+				}
+				else {
+					status = new StatusBasic(EStatus.MODIFY);
+				}
 			} else {
 				status = new StatusBasic(EStatus.INHIBIT);
 			}
@@ -133,16 +133,17 @@ public class Decision implements java.io.Serializable {
 			status = new StatusBasic(EStatus.ERROR, "PDP returned wrong status (" + e + ")");
 		}
 
-		List<IEvent> list = new ArrayList<IEvent>();
+		List<IEvent> list = new ArrayList<>(_executeActions.size());
 
 		for (ExecuteAction ea : _executeActions) {
 			list.add(new EventBasic(ea.getName(), ea.getParameters(), false));
 			// TODO: take care of processor. for the time being ignored by TUM
 		}
 
+		// FIXME: This looks odd. Each PEP would need to know about the fact that "triggerEvent" is returned
+		// as an event name in case of MODIFY and the PEP would need to adjust the modified event
+		// using the modifiers (getModifiers()) itself. Why not assemble the exact modified event and return it instead?! -FK-
 		IEvent modifiedEvent = new EventBasic("triggerEvent", _authorizationAction.getModifiers());
-		IResponse res = new ResponseBasic(status, list, modifiedEvent);
-
-		return res;
+		return new ResponseBasic(status, list, modifiedEvent);
 	}
 }
