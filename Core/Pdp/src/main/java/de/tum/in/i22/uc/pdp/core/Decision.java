@@ -29,10 +29,10 @@ public class Decision implements java.io.Serializable {
 
 	private static final long serialVersionUID = 4922446035665121547L;
 
-	private AuthorizationAction _authorizationAction;
+	private final AuthorizationAction _authorizationAction;
 
 	/** 'optional' executeActions processed by PXP */
-	private List<ExecuteAction> _executeActions = new LinkedList<>();
+	private final List<ExecuteAction> _executeActions = new LinkedList<>();
 	private PxpManager _pxpManager;
 
 	public Decision(AuthorizationAction authAction, PxpManager pxpManager) {
@@ -46,22 +46,21 @@ public class Decision implements java.io.Serializable {
 		AuthorizationAction curAuthAction = mech.getAuthorizationAction();
 		if (_authorizationAction.getAuthorization() == Authorization.ALLOW) {
 			_logger.debug("Decision still allowing event, processing mechanisms authActions");
+
 			do {
 				_logger.debug("Processing authorizationAction {}", curAuthAction.getName());
 				if (curAuthAction.getAuthorization() == Authorization.ALLOW) {
 					_logger.debug("Executing specified executeActions: {}", curAuthAction.getExecuteActions().size());
-					boolean executionReturn = false;
-					if (curAuthAction.getExecuteActions().size() == 0)
-						executionReturn = true;
+					boolean executionSuccess = true;
+
 					for (ExecuteAction execAction : curAuthAction.getExecuteActions()) {
 						_logger.debug("Executing [{}]", execAction.getName());
 
-						// TODO: Execution should be forwarded to appropriate
-						// execution instance!
-						executionReturn = _pxpManager.execute(execAction, true);
+						// FIXME: This variable must not be assigned upon every loop! -FK-
+						executionSuccess &= _pxpManager.execute(execAction, true);
 					}
 
-					if (!executionReturn) {
+					if (!executionSuccess) {
 						_logger.warn("Execution failed; continuing with fallback authorization action (if present)");
 						curAuthAction = curAuthAction.getFallback();
 						if (curAuthAction == null) {
@@ -86,8 +85,7 @@ public class Decision implements java.io.Serializable {
 
 		if (_authorizationAction.getAuthorization() == Authorization.INHIBIT) {
 			_logger.debug("Decision requires inhibiting event; adjusting delay");
-			_authorizationAction.setDelay(
-					Math.max(_authorizationAction.getDelay(), curAuthAction.getDelay()));
+			_authorizationAction.setDelay(Math.max(_authorizationAction.getDelay(), curAuthAction.getDelay()));
 		} else {
 			_logger.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
@@ -95,11 +93,8 @@ public class Decision implements java.io.Serializable {
 				_authorizationAction.addModifier(curParam.getKey(), curParam.getValue());
 		}
 
-		List<ExecuteAction> asyncActions = mech.getExecuteAsyncActions();
-		if (asyncActions == null)
-			return;
-		_logger.debug("Processing asynchronous executeActions ({})", asyncActions.size());
-		for (ExecuteAction execAction : asyncActions) {
+		_logger.debug("Processing asynchronous executeActions " + mech.getExecuteAsyncActions());
+		for (ExecuteAction execAction : mech.getExecuteAsyncActions()) {
 			if (execAction.getProcessor().equals("pep")) {
 				_logger.debug("Copying executeAction {} for processing by pep", execAction.getName());
 				_executeActions.add(execAction);

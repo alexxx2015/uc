@@ -28,7 +28,7 @@ public class AuthorizationAction implements Serializable {
 	private String _name = "";
 	private AuthorizationAction _fallback = AUTHORIZATION_INHIBIT;
 	private String _fallbackName = "";
-	private List<ExecuteAction> _executeSyncActions = new ArrayList<ExecuteAction>();
+	private final List<ExecuteAction> _executeSyncActions = new ArrayList<>();
 
 	/*
 	 * Parameter modifiers
@@ -40,22 +40,7 @@ public class AuthorizationAction implements Serializable {
 	public AuthorizationAction() {
 	}
 
-	public AuthorizationAction(int start, String name, Authorization auth, List<ExecuteAction> executeActions,
-			long delay, Map<String,String> modifiers, AuthorizationAction fallback) {
-		_auth = auth;
-		if (name != null)
-			_name = name;
-		if (executeActions != null)
-			_executeSyncActions = executeActions;
-		if (fallback != null)
-			_fallback = fallback;
-		if (auth == Authorization.ALLOW) {
-			_modifiers.putAll(modifiers);;
-			_delay = delay;
-		}
-	}
-
-	public AuthorizationAction(String name, Authorization auth) {
+	AuthorizationAction(String name, Authorization auth) {
 		_name = name;
 		_auth = auth;
 	}
@@ -66,27 +51,14 @@ public class AuthorizationAction implements Serializable {
 		_fallbackName = auth.getFallback();
 
 		Object obj = auth.getAllowOrInhibit();
-		AuthorizationAllowType allow = null;
-		AuthorizationInhibitType inhibit = null;
+		if (obj instanceof AuthorizationAllowType) {
+			AuthorizationAllowType allow = (AuthorizationAllowType) obj;
 
-		if (obj instanceof AuthorizationAllowType)
-			allow = (AuthorizationAllowType) obj;
-		else
-			inhibit = (AuthorizationInhibitType) obj;
-
-		if (inhibit != null) {
-			_auth = Authorization.INHIBIT;
-			if (inhibit.getDelay() != null)
-				_delay = inhibit.getDelay().getAmount()
-						* TimeAmount.getTimeUnitMultiplier(inhibit.getDelay().getUnit());
-		} else {
 			_auth = Authorization.ALLOW;
 			try {
-				if (allow.getDelay() != null)
-					_delay = allow.getDelay().getAmount()
-							* TimeAmount.getTimeUnitMultiplier(allow.getDelay().getUnit());
-				else
-					_delay = 0;
+				if (allow.getDelay() != null) {
+					_delay = allow.getDelay().getAmount() * TimeAmount.getTimeUnitMultiplier(allow.getDelay().getUnit());
+				}
 
 				if (allow.getModify() != null) {
 					for (ParameterType param : allow.getModify().getParameter()) {
@@ -101,6 +73,14 @@ public class AuthorizationAction implements Serializable {
 				_logger.error("exception occured...");
 				e.printStackTrace();
 				_logger.error(e.getMessage());
+			}
+		}
+		else {
+			AuthorizationInhibitType inhibit = (AuthorizationInhibitType) obj;
+
+			_auth = Authorization.INHIBIT;
+			if (inhibit.getDelay() != null) {
+				_delay = inhibit.getDelay().getAmount() * TimeAmount.getTimeUnitMultiplier(inhibit.getDelay().getUnit());
 			}
 		}
 	}

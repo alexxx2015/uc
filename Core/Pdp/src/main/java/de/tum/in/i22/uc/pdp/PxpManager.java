@@ -37,8 +37,8 @@ public class PxpManager {
 		String pxpId = execAction.getId();
 		IStatus res = null;
 		if (pxpId != null) {
-			if (pxpSpec.containsKey(pxpId)) {
-				PxpSpec pxp = pxpSpec.get(pxpId);
+			PxpSpec pxp = pxpSpec.get(pxpId);
+			if (pxp != null) {
 
 				try {
 					Any2PxpClient client = new ThriftClientFactory().createAny2PxpClient(new IPLocation(pxp.getIp(), pxp.getPort()));
