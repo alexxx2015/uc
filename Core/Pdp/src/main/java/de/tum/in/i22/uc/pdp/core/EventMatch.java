@@ -15,16 +15,14 @@ public class EventMatch extends EventMatchingOperatorType {
 	public EventMatch() {
 	}
 
-	public EventMatch(EventMatchingOperatorType op, Mechanism curMechanism) {
-		_logger.debug("Preparing eventMatch from EventMatchingOperatorType");
-		_pdp = curMechanism.getPolicyDecisionPoint();
-		this.setAction(op.getAction());
-		this.setTryEvent(op.isTryEvent());
-		for (ParamMatchType paramMatch : op.getParams()) {
-			// if paramMatch.getType()=
-			// initialization
-			this.getParams().add(paramMatch);
+	public static EventMatch convertFrom(EventMatchingOperatorType e, PolicyDecisionPoint pdp) {
+		if (e instanceof EventMatch) {
+			EventMatch newe = (EventMatch) e;
+			newe._pdp = pdp;
+			return newe;
 		}
+
+		throw new IllegalArgumentException(e + " is not of type " + EventMatch.class);
 	}
 
 	@Override
@@ -32,26 +30,39 @@ public class EventMatch extends EventMatchingOperatorType {
 		super.initOperatorForMechanism(mech);
 	}
 
-	public boolean eventMatches(IEvent curEvent) {
-		if (curEvent == null)
+	public boolean matches(IEvent ev) {
+		if (ev == null) {
 			return false;
-		_logger.info("Matching [{}] against [{}]", this, curEvent);
-		if (this.isTryEvent() != curEvent.isActual()) {
-			if (this.getAction().equals(curEvent.getName())
-					|| this.getAction().equals(Settings.getInstance().getStarEvent())) {
-				if (this.getParams().size() == 0)
+		}
+
+		_logger.info("Matching [{}] against [{}]", this, ev);
+
+		/*
+		 *  Be aware: tryEvent vs. isActual must be unequal (!=).
+		 *
+		 */
+		if (tryEvent != ev.isActual()) {
+			if (action.equals(ev.getName()) || action.equals(Settings.getInstance().getStarEvent())) {
+				if (params.size() == 0) {
+					_logger.info("Event DOES match.");
 					return true;
-				boolean ret = false;
-				for (ParamMatchType p : this.getParams()) {
-					ParamMatch curParamMatch = ParamMatch.createFrom(p, _pdp);
-					_logger.debug("Matching param [{}]", p);
-					ret = curParamMatch.matches(p.getName(), curEvent.getParameterValue(p.getName()));
-					if (!ret)
-						break;
 				}
-				return ret;
+
+				/*
+				 * Compare each parameter
+				 */
+				for (ParamMatchType p : params) {
+					_logger.debug("Matching param [{}]", p);
+					if (!ParamMatch.convertFrom(p, _pdp).matches(p.getName(), ev.getParameterValue(p.getName()))) {
+						_logger.info("Event does NOT match.");
+						return false;
+					}
+				}
+				_logger.info("Event DOES match.");
+				return true;
 			}
 		}
+
 		_logger.info("Event does NOT match.");
 		return false;
 	}

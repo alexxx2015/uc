@@ -25,7 +25,7 @@ public class EventMatchOperator extends EventMatch {
 	public boolean evaluate(IEvent curEvent) {
 		boolean ret = false;
 		if (curEvent != null) {
-			if (eventMatches(curEvent))
+			if (matches(curEvent))
 				_state.value = true;
 			ret = _state.value;
 		} else { // reset at end of timestep (i.e. curEvent==null)

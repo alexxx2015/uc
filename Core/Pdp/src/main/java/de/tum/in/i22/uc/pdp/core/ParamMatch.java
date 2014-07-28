@@ -56,7 +56,7 @@ public class ParamMatch extends ParamMatchType {
 		_pdp = pdp;
 	}
 
-	public static ParamMatch createFrom(ParamMatchType p, PolicyDecisionPoint pdp) {
+	public static ParamMatch convertFrom(ParamMatchType p, PolicyDecisionPoint pdp) {
 		if (p instanceof ParamMatch) {
 			ParamMatch newp = (ParamMatch) p;
 			newp._pdp = pdp;

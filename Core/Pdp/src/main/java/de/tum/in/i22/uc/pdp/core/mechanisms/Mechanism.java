@@ -44,12 +44,12 @@ public abstract class Mechanism implements Runnable {
 	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
 
-		_pdp = pdp;
 		if (pdp == null) {
 			_logger.error("Impossible to take proper decision with a null pdp. failing miserably");
 			throw new RuntimeException();
 		}
 
+		_pdp = pdp;
 		_policyName = policyName;
 		_pxpManager = pdp.getPxpManager();
 		_name = mech.getName();
@@ -57,7 +57,7 @@ public abstract class Mechanism implements Runnable {
 		_lastUpdate = 0;
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		_timestep = 0;
-		_triggerEvent = new EventMatch(mech.getTrigger(), this);
+		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
 		_condition = new Condition(mech.getCondition(), this);
 
@@ -94,7 +94,7 @@ public abstract class Mechanism implements Runnable {
 
 	public synchronized Decision notifyEvent(IEvent curEvent, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
-		if (_triggerEvent.eventMatches(curEvent)) {
+		if (_triggerEvent.matches(curEvent)) {
 			_logger.info("Event matches -> evaluating condition");
 			boolean ret = _condition.evaluate(curEvent);
 			if (ret) {
