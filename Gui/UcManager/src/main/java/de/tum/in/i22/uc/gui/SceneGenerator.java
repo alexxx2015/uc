@@ -195,6 +195,7 @@ public class SceneGenerator {
 		AnchorPane.setLeftAnchor(hbox, 10.0);
 
 		this.txta_pipState = new TextArea();
+		this.txta_pipState.setStyle("-fx-font-family: 'Courier New', MONOSPACE;");
 		AnchorPane.setTopAnchor(this.txta_pipState, 45.0);
 		AnchorPane.setLeftAnchor(this.txta_pipState, 10.0);
 		AnchorPane.setBottomAnchor(this.txta_pipState, 10.0);
