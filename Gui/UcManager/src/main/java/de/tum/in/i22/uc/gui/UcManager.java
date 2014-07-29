@@ -17,8 +17,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -451,13 +451,13 @@ public class UcManager extends Controller {
 						dtm.getDataVector().removeAllElements();
 						dtm.fireTableDataChanged();
 
-						Map<String, List<String>> deployedMech = pmpClient
+						Map<String, Set<String>> deployedMech = pmpClient
 								.listMechanismsPmp();
 						Iterator<String> arIt = deployedMech.keySet()
 								.iterator();
 						while (arIt.hasNext()) {
 							String policyName = arIt.next();
-							List<String> mechanism = deployedMech
+							Set<String> mechanism = deployedMech
 									.get(policyName);
 							Iterator<String> mechIt = mechanism.iterator();
 							while (mechIt.hasNext()) {
@@ -682,7 +682,7 @@ public class UcManager extends Controller {
 			// deployedPolicies.clear();
 
 			if (!isStarted()) {
-				start();	
+				start();
 				if (this.clientFactory != null) {
 					int pmpPort=Settings.getInstance().getPmpListenerPort();
 					int pdpPort=Settings.getInstance().getPdpListenerPort();

@@ -20,15 +20,14 @@ public class Before extends BeforeType {
 	@Override
 	public void initOperatorForMechanism(IPdpMechanism mech) {
 		super.initOperatorForMechanism(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(),
-				mech.getTimestepSize());
-		this.state.circArray = new CircularArray<Boolean>(
-				this.timeAmount.timestepInterval);
+		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
+		this.state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
 		for (int a = 0; a < this.timeAmount.timestepInterval; a++)
 			this.state.circArray.set(false, a);
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return "BEFORE (" + this.timeAmount + ", " + this.getOperators() + " )";
 	}
@@ -42,8 +41,7 @@ public class Before extends BeforeType {
 		this.state.value = curValue;
 		if (curEvent == null) {
 			curValue = this.state.circArray.pop();
-			Boolean operandState = ((Operator) this.getOperators())
-					.evaluate(curEvent);
+			Boolean operandState = ((Operator) this.getOperators()).evaluate(curEvent);
 			this.state.circArray.push(operandState);
 
 			log.debug("circularArray: {}", this.state.circArray);

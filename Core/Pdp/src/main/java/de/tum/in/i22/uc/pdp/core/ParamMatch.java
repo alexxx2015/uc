@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
@@ -25,14 +24,14 @@ public class ParamMatch extends ParamMatchType {
 	private static Logger log = LoggerFactory.getLogger(ParamMatch.class);
 	private PolicyDecisionPoint _pdp;
 
-	public void setPdp(PolicyDecisionPoint pdp){
-		if (_pdp==null) _pdp=pdp;
+	public void setPdp(PolicyDecisionPoint pdp) {
+		if (_pdp == null)
+			_pdp = pdp;
 	}
-	
+
+	@Override
 	public String toString() {
-		String str = "" + this.getName() + " -> " + this.getValue() + " ("
-				+ this.getType() + ")";
-		return str;
+		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
 	}
 
 	public boolean paramMatches(Param<?> param) {
@@ -92,13 +91,7 @@ public class ParamMatch extends ParamMatchType {
 					break;
 				case DATA_IN_CONTAINER:
 					log.debug("parameter value checked for \"data in container\" comparison");
-					IPdp2Pip pip = _pdp.getPip();
-					if (pip == null) {
-						log.error("Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");
-						throw new RuntimeException(
-								"Impossible to run a data-container comparison with empty PIP. Better crash now than live like this.");
-					}
-					compOp = new DataInContainerComparisonOperator(pip);
+					compOp = new DataInContainerComparisonOperator(_pdp.getPip());
 					break;
 				case SUBSTRING:
 					log.debug("parameter value checked for \"substring\" comparison");
@@ -111,12 +104,10 @@ public class ParamMatch extends ParamMatchType {
 																// equality
 					break;
 				}
-				matches = compOp.compare((String) param.getValue(),
-						this.getValue());
+				matches = compOp.compare((String) param.getValue(), this.getValue());
 			}
-			log.trace("param value [" + (String) param.getValue() + "] does "
-					+ (matches ? "" : "NOT ") + "match [" + this.getValue()
-					+ "]");
+			log.trace("param value [" + (String) param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
+					+ this.getValue() + "]");
 			return matches;
 		}
 		log.trace("param name [" + this.getName() + "] does NOT match");

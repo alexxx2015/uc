@@ -21,7 +21,6 @@
 
 package de.tum.in.i22.uc.cm.processing.dummy;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,7 +93,7 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("listMechanisms method invoked");

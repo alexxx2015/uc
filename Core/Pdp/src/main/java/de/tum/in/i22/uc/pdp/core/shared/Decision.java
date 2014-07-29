@@ -47,8 +47,7 @@ public class Decision implements java.io.Serializable {
 		return _mAuthorizationAction;
 	}
 
-	public void setAuthorizationAction(
-			IPdpAuthorizationAction mAuthorizationAction) {
+	public void setAuthorizationAction(IPdpAuthorizationAction mAuthorizationAction) {
 		this._mAuthorizationAction = mAuthorizationAction;
 	}
 
@@ -65,23 +64,19 @@ public class Decision implements java.io.Serializable {
 	}
 
 	public void processMechanism(IPdpMechanism mech, Event curEvent) {
-		log.debug("Processing mechanism={} for decision",
-				mech.getMechanismName());
+		log.debug("Processing mechanism={} for decision", mech.getName());
 
 		IPdpAuthorizationAction curAuthAction = mech.getAuthorizationAction();
 		if (this.getAuthorizationAction().getType() == Constants.AUTHORIZATION_ALLOW) {
 			log.debug("Decision still allowing event, processing mechanisms authActions");
 			do {
-				log.debug("Processing authorizationAction {}",
-						curAuthAction.getName());
+				log.debug("Processing authorizationAction {}", curAuthAction.getName());
 				if (curAuthAction.getType() == Constants.AUTHORIZATION_ALLOW) {
-					log.debug("Executing specified executeActions: {}",
-							curAuthAction.getExecuteActions().size());
+					log.debug("Executing specified executeActions: {}", curAuthAction.getExecuteActions().size());
 					boolean executionReturn = false;
 					if (curAuthAction.getExecuteActions().size() == 0)
 						executionReturn = true;
-					for (IPdpExecuteAction execAction : curAuthAction
-							.getExecuteActions()) {
+					for (IPdpExecuteAction execAction : curAuthAction.getExecuteActions()) {
 						log.debug("Executing [{}]", execAction.getName());
 
 						// TODO: Execution should be forwarded to appropriate
@@ -94,23 +89,19 @@ public class Decision implements java.io.Serializable {
 						curAuthAction = curAuthAction.getFallback();
 						if (curAuthAction == null) {
 							log.warn("No fallback present; implicit INHIBIT");
-							this.getAuthorizationAction().setType(
-									Constants.AUTHORIZATION_INHIBIT);
+							this.getAuthorizationAction().setType(Constants.AUTHORIZATION_INHIBIT);
 							break;
 						}
 						continue;
 					}
 
 					log.debug("All specified execution actions executed successfully!");
-					this.getAuthorizationAction().setType(
-							curAuthAction.getType());
+					this.getAuthorizationAction().setType(curAuthAction.getType());
 					break;
 				} else {
-					log.debug(
-							"Authorization action={} requires inhibiting event; adjusting decision",
+					log.debug("Authorization action={} requires inhibiting event; adjusting decision",
 							curAuthAction.getName());
-					this.getAuthorizationAction().setType(
-							Constants.AUTHORIZATION_INHIBIT);
+					this.getAuthorizationAction().setType(Constants.AUTHORIZATION_INHIBIT);
 					break;
 				}
 			} while (true);
@@ -119,8 +110,7 @@ public class Decision implements java.io.Serializable {
 		if (this.getAuthorizationAction().getType() == Constants.AUTHORIZATION_INHIBIT) {
 			log.debug("Decision requires inhibiting event; adjusting delay");
 			this.getAuthorizationAction().setDelay(
-					Math.max(this.getAuthorizationAction().getDelay(),
-							curAuthAction.getDelay()));
+					Math.max(this.getAuthorizationAction().getDelay(), curAuthAction.getDelay()));
 		} else {
 			log.debug("Decision allows event; copying modifiers (if present)");
 			// TODO: modifier collision is not resolved here!
@@ -131,16 +121,13 @@ public class Decision implements java.io.Serializable {
 		List<IPdpExecuteAction> asyncActions = mech.getExecuteAsyncActions();
 		if (asyncActions == null)
 			return;
-		log.debug("Processing asynchronous executeActions ({})",
-				asyncActions.size());
+		log.debug("Processing asynchronous executeActions ({})", asyncActions.size());
 		for (IPdpExecuteAction execAction : asyncActions) {
 			if (execAction.getProcessor().equals("pep")) {
-				log.debug("Copying executeAction {} for processing by pep",
-						execAction.getName());
+				log.debug("Copying executeAction {} for processing by pep", execAction.getName());
 				this.addExecuteAction(execAction);
 			} else {
-				log.debug("Execute asynchronous action [{}]",
-						execAction.getName());
+				log.debug("Execute asynchronous action [{}]", execAction.getName());
 				_pxpManager.execute(execAction, false);
 			}
 		}
@@ -181,8 +168,7 @@ public class Decision implements java.io.Serializable {
 				status = new StatusBasic(EStatus.INHIBIT);
 			}
 		} catch (Exception e) {
-			status = new StatusBasic(EStatus.ERROR,
-					"PDP returned wrong status (" + e + ")");
+			status = new StatusBasic(EStatus.ERROR, "PDP returned wrong status (" + e + ")");
 		}
 
 		List<IEvent> list = new ArrayList<IEvent>();
@@ -196,12 +182,12 @@ public class Decision implements java.io.Serializable {
 		}
 
 		List<Param<?>> modifiedParameters = getAuthorizationAction().getModifiers();
-		Map<String,String> modifiedParamI = new HashMap<String,String>();
-		
-		for (Param<?> p : modifiedParameters){
+		Map<String, String> modifiedParamI = new HashMap<String, String>();
+
+		for (Param<?> p : modifiedParameters) {
 			modifiedParamI.put(p.getName(), p.getValue().toString());
 		}
-		
+
 		IEvent modifiedEvent = new EventBasic("triggerEvent", modifiedParamI);
 		IResponse res = new ResponseBasic(status, list, modifiedEvent);
 

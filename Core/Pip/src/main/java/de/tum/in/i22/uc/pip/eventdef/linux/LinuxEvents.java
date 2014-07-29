@@ -3,8 +3,8 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,13 +24,14 @@ import de.tum.in.i22.uc.cm.datatypes.linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.SharedFiledescr;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
+import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 
 /**
@@ -39,7 +40,7 @@ import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
  * @author Florian Kelbert
  *
  */
-public abstract class LinuxEvents extends BaseEventHandler {
+public abstract class LinuxEvents extends AbstractScopeEventHandler {
 
 	protected static final Logger _logger = LoggerFactory.getLogger(LinuxEvents.class);
 
@@ -47,7 +48,6 @@ public abstract class LinuxEvents extends BaseEventHandler {
 	 *	TODO: Remember man 2 open, fcntl, accept, socket, pipe, dup, socketpair:
 	 *some file descriptors close automatically on execve()
 	 */
-
 
 	static String toRealPath(String file) {
 		return toRealPath(file, "");
@@ -64,6 +64,12 @@ public abstract class LinuxEvents extends BaseEventHandler {
 
 
 	void exit(String host, int pid) {
+
+		/**
+		 * TODO: There is no exit() or exit_group() system call if a process
+		 * gets killed. Therefore, the resources would not be freed.
+		 */
+
 		ProcessContainer procCont = (ProcessContainer) _informationFlowModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return;
@@ -74,9 +80,11 @@ public abstract class LinuxEvents extends BaseEventHandler {
 		_informationFlowModel.removeAllAliasesTo(procCont);
 		_informationFlowModel.remove(procCont);
 
-		for (IName nm : getAllProcessRelativeNames(procCont.getPid())) {
+		for (IProcessRelativeName nm : getAllProcessRelativeNames(procCont.getPid())) {
 			close(nm);
 		}
+
+		SharedFiledescr.unshare(pid);
 	}
 
 
@@ -242,13 +250,13 @@ public abstract class LinuxEvents extends BaseEventHandler {
 	}
 
 
-	List<IName> getAllProcessRelativeNames(int pid) {
-		List<IName> result = new ArrayList<IName>();
+	List<IProcessRelativeName> getAllProcessRelativeNames(int pid) {
+		List<IProcessRelativeName> result = new LinkedList<IProcessRelativeName>();
 
 		for (IName name : _informationFlowModel.getAllNames()) {
 			if (name instanceof IProcessRelativeName) {
 				IProcessRelativeName pname = (IProcessRelativeName) name;
-				if (pname.getPid() == pid) {
+				if (pname.hasPid(pid)) {
 					result.add(pname);
 				}
 			}

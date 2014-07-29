@@ -157,7 +157,7 @@ public class WriteFileEventHandler extends WindowsEvents {
 		// TEST 2 : GENERIC JBC APP WRITING TO THIS FILE?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_OUT;
+		type = EScopeType.JBC_GENERIC_SAVE;
 		attributes.put("fileDescriptor", fileDescriptor);
 		attributes.put("pid", pid);
 //		attributes.put("tid", tid);

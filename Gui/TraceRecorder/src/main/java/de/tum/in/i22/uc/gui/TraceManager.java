@@ -90,7 +90,7 @@ public class TraceManager {
 
 		JPanel panel_6 = new JPanel();
 		panel_3.add(panel_6);
-		panel_6.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		panel_6.setLayout(new GridLayout(0, 1, 0, 0));
 
 		JPanel panel_4 = new JPanel();
 		panel_6.add(panel_4);

@@ -358,7 +358,7 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		return getPdp().listMechanisms();
 	}
 

@@ -23,9 +23,9 @@ public class Event implements Serializable {
 		this.timestamp = System.currentTimeMillis();
 	}
 
-
 	/***
 	 * Generate an (IESE) event out of a given (TUM) event
+	 *
 	 * @param ev
 	 */
 	public Event(IEvent ev) {
@@ -38,8 +38,7 @@ public class Event implements Serializable {
 
 			// TUM events only have strings parameters
 			if (ev.getParameters() != null) {
-				for (Map.Entry<String, String> entry : ev.getParameters()
-						.entrySet()) {
+				for (Map.Entry<String, String> entry : ev.getParameters().entrySet()) {
 					addStringParameter(entry.getKey(), entry.getValue());
 				}
 			}
@@ -115,35 +114,34 @@ public class Event implements Serializable {
 
 	public void addStringParameter(String name, String value) {
 		if (value != null)
-			addParam(new Param<String>(name, value,
-					Constants.PARAMETER_TYPE_STRING));
+			addParam(new Param<String>(name, value, Constants.PARAMETER_TYPE_STRING));
 	}
 
-//	public void addIntParameter(String name, int value) {
-//		addParam(new Param<Integer>(name, value, Constants.PARAMETER_TYPE_INT));
-//	}
-//
-//	public void addBooleanParameter(String name, boolean value) {
-//		addParam(new Param<Boolean>(name, value, Constants.PARAMETER_TYPE_BOOL));
-//	}
+	// public void addIntParameter(String name, int value) {
+	// addParam(new Param<Integer>(name, value, Constants.PARAMETER_TYPE_INT));
+	// }
+	//
+	// public void addBooleanParameter(String name, boolean value) {
+	// addParam(new Param<Boolean>(name, value, Constants.PARAMETER_TYPE_BOOL));
+	// }
 
-//	public void addLongParameter(String name, long value) {
-//		addParam(new Param<Long>(name, value, Constants.PARAMETER_TYPE_LONG));
-//	}
-//
-//	public void addStringArrayParameter(String name, String[] value) {
-//		if (value != null)
-//			addParam(new Param<String[]>(name, value,
-//					Constants.PARAMETER_TYPE_STRING_ARRAY));
-//	}
+	// public void addLongParameter(String name, long value) {
+	// addParam(new Param<Long>(name, value, Constants.PARAMETER_TYPE_LONG));
+	// }
+	//
+	// public void addStringArrayParameter(String name, String[] value) {
+	// if (value != null)
+	// addParam(new Param<String[]>(name, value,
+	// Constants.PARAMETER_TYPE_STRING_ARRAY));
+	// }
 
-//	public void addByteArrayParameter(String name, byte[] value) {
-//		if (value != null) {
-//			Param<byte[]> param = new Param<byte[]>(name, value,
-//					Constants.PARAMETER_TYPE_BINARY);
-//			addParam(param);
-//		}
-//	}
+	// public void addByteArrayParameter(String name, byte[] value) {
+	// if (value != null) {
+	// Param<byte[]> param = new Param<byte[]>(name, value,
+	// Constants.PARAMETER_TYPE_BINARY);
+	// addParam(param);
+	// }
+	// }
 
 	public String getStringParameter(String name) {
 		try {
@@ -214,18 +212,18 @@ public class Event implements Serializable {
 
 	@Override
 	public String toString() {
-		String str = "Event      action='" + eventAction + "' isTry='"
-				+ tryEvent + "' timestamp='" + timestamp + "': [";
+		String str = "Event      action='" + eventAction + "' isTry='" + tryEvent + "' timestamp='" + timestamp
+				+ "': [";
 		for (Param<?> param : params.values())
 			str += param.toString() + ", ";
 		str += "]";
 		return str;
 	}
 
-	public IEvent toIEvent(){
-		Map<String,String> m= new HashMap<String,String>();
-		for (Param<?> p : getParams()){
-			m.put(p.getName(),p.getValue().toString());
+	public IEvent toIEvent() {
+		Map<String, String> m = new HashMap<String, String>();
+		for (Param<?> p : getParams()) {
+			m.put(p.getName(), p.getValue().toString());
 		}
 		return new EventBasic(this.eventAction, m, !isTryEvent());
 	}

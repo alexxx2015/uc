@@ -22,6 +22,7 @@ public class RepMax extends RepMaxType {
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
 		return "REPMAX (" + this.getLimit() + ", " + this.getOperators() + ")";
 	}
@@ -29,12 +30,9 @@ public class RepMax extends RepMaxType {
 	@Override
 	public boolean evaluate(Event curEvent) {
 		if (!this.state.immutable) {
-			if (curEvent != null
-					&& ((Operator) this.getOperators()).evaluate(curEvent)) {
+			if (curEvent != null && ((Operator) this.getOperators()).evaluate(curEvent)) {
 				this.state.counter++;
-				log.debug(
-						"[REPMAX] Subformula was satisfied; counter incremented to [{}]",
-						this.state.counter);
+				log.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", this.state.counter);
 			}
 
 			if (this.state.counter <= this.getLimit())

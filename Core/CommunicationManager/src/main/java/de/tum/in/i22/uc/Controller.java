@@ -3,7 +3,6 @@ package de.tum.in.i22.uc;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -311,7 +310,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		return _requestHandler.listMechanisms();
 	}
 
@@ -429,7 +428,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		return _requestHandler.listMechanismsPmp();
 	}
 
@@ -477,6 +476,11 @@ public class Controller implements IRequestHandler  {
 	public IStatus specifyPolicyFor(Set<IContainer> representations,
 			String dataClass) {
 		return _requestHandler.specifyPolicyFor(representations, dataClass);
+	}
+
+	@Override
+	public IData getDataFromId(String id) {
+		return _requestHandler.getDataFromId(id);
 	}
 
 }

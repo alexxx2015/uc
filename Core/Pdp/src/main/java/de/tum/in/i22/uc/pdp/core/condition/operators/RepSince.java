@@ -21,11 +21,10 @@ public class RepSince extends RepSinceType {
 		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
-		String str = "REPSINCE (" + this.getLimit() + ", "
-				+ this.getOperators().get(0) + ", "
-				+ this.getOperators().get(1) + " )";
-		return str;
+		return "REPSINCE (" + this.getLimit() + ", " + this.getOperators().get(0) + ", " + this.getOperators().get(1)
+				+ " )";
 	}
 
 	@Override
@@ -34,18 +33,15 @@ public class RepSince extends RepSinceType {
 												// B(n) >= limit n times
 												// subformula B since the last
 												// occurrence of subformula A
-		Boolean operand1state = ((Operator) this.getOperators().get(0))
-				.evaluate(curEvent);
-		Boolean operand2state = ((Operator) this.getOperators().get(1))
-				.evaluate(curEvent);
+		Boolean operand1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
+		Boolean operand2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 
 		if (operand1state) {
 			log.debug("[REPSINCE] Subformula A satisfied this timestep => TRUE");
 			this.state.value = true;
 		} else {
 			long limitComparison = this.state.counter + (operand2state ? 1 : 0);
-			log.debug("[REPSINCE] Counter for subformula B [{}]",
-					limitComparison);
+			log.debug("[REPSINCE] Counter for subformula B [{}]", limitComparison);
 
 			if (this.state.subEverTrue) {
 				log.debug("[REPSINCE] Subformula A was satisfied any previous timestep");
@@ -75,14 +71,12 @@ public class RepSince extends RepSinceType {
 				this.state.subEverTrue = true;
 
 				this.state.counter = 0;
-				log.debug("[REPSINCE] Counter for subformula B [{}]",
-						this.state.counter);
+				log.debug("[REPSINCE] Counter for subformula B [{}]", this.state.counter);
 			}
 
 			if (operand2state) {
 				this.state.counter++;
-				log.debug("[REPSINCE] Counter for subformula B [{}]",
-						this.state.counter);
+				log.debug("[REPSINCE] Counter for subformula B [{}]", this.state.counter);
 			}
 		}
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +50,7 @@ import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
+import de.tum.in.i22.uc.pip.requests.GetDataFromIdPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetStructureOfPipRequest;
@@ -347,7 +347,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		ListMechanismsPdpRequest request = new ListMechanismsPdpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
@@ -388,7 +388,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		ListMechanismsPmpPmpRequest request = new ListMechanismsPmpPmpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
@@ -578,6 +578,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	public IStatus specifyPolicyFor(Set<IContainer> representations,
 			String dataClass) {
 		SpecifyPolicyForPmpRequest request = new SpecifyPolicyForPmpRequest(representations,dataClass);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IData getDataFromId(String id) {
+		GetDataFromIdPipRequest request = new GetDataFromIdPipRequest(id);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

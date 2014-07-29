@@ -26,10 +26,9 @@ public class Since extends SinceType {
 		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
 	}
 
+	@Override
 	public String toString() {
-		String str = "SINCE (" + this.getOperators().get(0) + ", "
-				+ this.getOperators().get(1) + " )";
-		return str;
+		return "SINCE (" + this.getOperators().get(0) + ", " + this.getOperators().get(1) + " )";
 	}
 
 	@Override
@@ -37,10 +36,8 @@ public class Since extends SinceType {
 												// (LTL doesn't state anything
 												// about B in the timestep when
 												// A happens)
-		Boolean operand1state = ((Operator) this.getOperators().get(0))
-				.evaluate(curEvent);
-		Boolean operand2state = ((Operator) this.getOperators().get(1))
-				.evaluate(curEvent);
+		Boolean operand1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
+		Boolean operand2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 
 		if (operand1state) {
 			log.debug("[SINCE] Subformula A satisfied this timestep => TRUE");

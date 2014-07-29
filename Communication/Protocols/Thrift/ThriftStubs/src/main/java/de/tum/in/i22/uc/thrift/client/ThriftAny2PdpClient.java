@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
@@ -18,18 +18,18 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 
 /**
  * The client side of a remote Thrift {@link PdpProcessor} server.
- * 
+ *
  * Create a instance of this class, connects it and does calls on a remote
  * {@link PdpProcessor}.
- * 
+ *
  * The goal of this class is usually to convert types from/to thrift types,
  * invoke the respective dual method "on the other side", and convert back the
  * result
- * 
+ *
  * Use {@link ThriftClientFactory} to get an instance.
- * 
+ *
  * @author Florian Kelbert & Enrico Lovat
- * 
+ *
  */
 class ThriftAny2PdpClient extends Any2PdpClient {
 
@@ -41,9 +41,9 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	 * Creates a {@link ThriftAny2PdpClient} that will be connected (upon
 	 * calling {@link Any2PdpClient#connect()}) the the specified thrift server
 	 * on the specified address/port.
-	 * 
+	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
-	 * 
+	 *
 	 * @param address
 	 *            the address of the remote point
 	 * @param port
@@ -56,9 +56,9 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	/**
 	 * Creates a new {@link ThriftAny2PdpClient} that will be connected to the
 	 * specified {@link IPLocation}.
-	 * 
+	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
-	 * 
+	 *
 	 * @param location
 	 *            the location of the remote point
 	 */
@@ -123,7 +123,7 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		return _impl.listMechanisms();
 	}
 
@@ -140,7 +140,7 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

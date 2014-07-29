@@ -205,4 +205,12 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		
 	}
 
+	@Override
+	public IData getDataFromId(String id) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("getDataFromId method invoked");
+		return null;
+	}
+
 }

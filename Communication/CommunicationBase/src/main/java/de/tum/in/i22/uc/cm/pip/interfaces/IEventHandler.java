@@ -15,6 +15,10 @@ public interface IEventHandler {
 	public IEventHandler setEvent(IEvent event);
 
 	public void setInformationFlowModel(IInformationFlowModel ifm);
-	
+
+	/**
+	 * Resets the event, i.e. all of its attributes, such that
+	 * the object can be reused.
+	 */
 	public void reset();
 }

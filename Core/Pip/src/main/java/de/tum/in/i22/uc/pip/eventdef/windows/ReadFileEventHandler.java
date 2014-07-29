@@ -152,7 +152,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 		// TEST 2 : GENERIC JBC APP READING THIS FILE?
 		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_IN;
+		type = EScopeType.JBC_GENERIC_LOAD;
 		attributes.put("fileDescriptor", fileDescriptor);
 		attributes.put("pid", pid);
 		// attributes.put("tid", tid);

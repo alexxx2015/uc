@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -70,7 +70,7 @@ class ThriftPmp2PdpClient extends Pmp2PdpClient {
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() {
+	public Map<String, Set<String>> listMechanisms() {
 		return _impl.listMechanisms();
 	}
 }

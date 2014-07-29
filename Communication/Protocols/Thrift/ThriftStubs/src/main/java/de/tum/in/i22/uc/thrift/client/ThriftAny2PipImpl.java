@@ -220,4 +220,14 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 		return null;
 	}
+
+	@Override
+	public IData getDataFromId(String id) {
+		try {
+			return ThriftConverter.fromThrift(_handle.getDataFromId(id));
+		} catch (TException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

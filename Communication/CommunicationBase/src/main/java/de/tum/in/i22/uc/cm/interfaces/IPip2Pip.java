@@ -19,6 +19,9 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  */
 @AThriftService(name="TPip2Pip")
 public interface IPip2Pip {
+	@AThriftMethod(signature="Types.TData getDataFromId(1: string id)")
+    public IData getDataFromId (String id);
+
 	@AThriftMethod(signature="bool hasAllData(1: set<Types.TData> data)")
     public boolean hasAllData(Set<IData> data);
 

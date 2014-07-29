@@ -1,31 +1,28 @@
 package de.tum.in.i22.uc.pdp.core;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.shared.Constants;
@@ -36,163 +33,154 @@ import de.tum.in.i22.uc.pdp.core.shared.IPolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
-	private static Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
-	private static final long serialVersionUID = -6823961095919408237L;
+public class PolicyDecisionPoint implements IPolicyDecisionPoint {
+	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
-	private static IPdp2Pip _pip;
+	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
 
-	private ActionDescriptionStore _actionDescriptionStore = null;
+	private final IPdp2Pip _pip;
 
-	private final HashMap<String, ArrayList<IPdpMechanism>> _policyTable = new HashMap<String, ArrayList<IPdpMechanism>>();
+	private final ActionDescriptionStore _actionDescriptionStore;
+
+	/**
+	 * Maps policy names to its set of mechanisms, where for each
+	 * mechanism the mechanism name maps to the actual mechanism
+	 */
+	private final HashMap<String, Map<String,IPdpMechanism>> _policyTable;
+
 	private final PxpManager _pxpManager;
 
 	public PolicyDecisionPoint() {
-		_actionDescriptionStore = new ActionDescriptionStore();
-		_pxpManager = new PxpManager();
+		this(new DummyPipProcessor(), new PxpManager());
 	}
 
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
-		_pxpManager = pxpManager;
-		_actionDescriptionStore = new ActionDescriptionStore();
 		_pip = pip;
+		_pxpManager = pxpManager;
+		_policyTable = new HashMap<String, Map<String,IPdpMechanism>>();
+		_actionDescriptionStore = new ActionDescriptionStore();
 	}
 
 	@Override
-	public boolean deployPolicyXML(XmlPolicy XMLPolicy) {
-		_logger.debug("deployPolicyXML (before) : " + XMLPolicy.getName());
-		InputStream is = new ByteArrayInputStream(XMLPolicy.getXml().getBytes());
-		_logger.debug("deployPolicyXML (IS created) : " + XMLPolicy.getName());
-		boolean b = deployXML(is);
-		_logger.debug("deployPolicyXML (after) : " + XMLPolicy.getName());
-		return b;
+	public boolean deployPolicyXML(XmlPolicy xmlPolicy) {
+		_logger.debug("deployPolicyXML: " + xmlPolicy.getName());
+		return deployXML(new ByteArrayInputStream(xmlPolicy.getXml().getBytes()));
 	}
 
 	@Override
 	public boolean deployPolicyURI(String policyFilename) {
-		if (policyFilename.endsWith(".xml")) {
-			InputStream inp = null;
-			try {
-				inp = new FileInputStream(policyFilename);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return deployXML(inp);
+		_logger.warn("Unsupported message format of policy! " + policyFilename + ". Not deploying policy.");
+		if (!policyFilename.endsWith(".xml")) {
+			return false;
 		}
-		_logger.warn("Unsupported message format of policy! " + policyFilename);
-		return false;
+
+		InputStream is = null;
+		try {
+			is = new FileInputStream(policyFilename);
+		} catch (FileNotFoundException e) {
+			_logger.warn("Policy file " + policyFilename + " not found.");
+			e.printStackTrace();
+			return false;
+		}
+
+		return deployXML(is);
 	}
 
-	public boolean deployXML(InputStream inp) {
-		if (inp == null)
+	private boolean deployXML(InputStream is) {
+		if (is == null) {
 			return false;
+		}
+
 		try {
-			JAXBContext jc = JAXBContext.newInstance("de.tum.in.i22.uc.pdp.xsd");
-			Unmarshaller u = jc.createUnmarshaller();
+			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller().unmarshal(is);
+			PolicyType policy = (PolicyType) poElement.getValue();
 
-			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
-			PolicyType curPolicy = (PolicyType) poElement.getValue();
+			_logger.debug("deploying policy [name={}]: {}", policy.getName(), policy.toString());
 
-			_logger.debug("curPolicy [name={}]: {}", curPolicy.getName(), curPolicy.toString());
-
-			List<MechanismBaseType> mechanisms = curPolicy.getDetectiveMechanismOrPreventiveMechanism();
-
-			if (_policyTable.containsKey(curPolicy.getName())) {
-				// log.error("Policy [{}] already deployed! Aborting...",
-				// curPolicy.getName());
-				// return false;
+			/*
+			 * Get the set of mechanisms of this policy (if any)
+			 */
+			Map<String,IPdpMechanism> mechanisms = _policyTable.get(policy.getName());
+			if (mechanisms == null) {
+				mechanisms = new HashMap<String,IPdpMechanism>();
+				_policyTable.put(policy.getName(), mechanisms);
 			}
 
-			for (MechanismBaseType mech : mechanisms) {
+			/*
+			 * Loop over all mechanisms, add them to the set of mechanisms
+			 * for this policy, and start the mechanism
+			 */
+			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
-					IPdpMechanism curMechanism = new Mechanism(mech, this);
-					ArrayList<IPdpMechanism> mechanismList = _policyTable.get(curPolicy.getName());
-					if (mechanismList == null)
-						mechanismList = new ArrayList<IPdpMechanism>();
-					if (mechanismList.contains(curMechanism)) {
-						_logger.error("Mechanism [{}] is already deployed for policy [{}]",
-								curMechanism.getMechanismName(), curPolicy.getName());
-						continue;
-					}
+					IPdpMechanism curMechanism = new Mechanism(mech, policy.getName(), this);
 
-					mechanismList.add(curMechanism);
-					_policyTable.put(curPolicy.getName(), mechanismList);
-
-					_logger.debug("Starting mechanism update thread...");
-					if (curMechanism instanceof Mechanism) {
-						((Mechanism) curMechanism).init();
-						((Mechanism) curMechanism).start();
+					if (!mechanisms.containsKey(mech.getName())) {
+						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
+						mechanisms.put(mech.getName(), curMechanism);
+						new Thread(curMechanism).start();
 					}
-					_logger.info("Mechanism {} started...", curMechanism.getMechanismName());
+					else {
+						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policy.getName());
+					}
 				} catch (InvalidMechanismException e) {
 					_logger.error("Invalid mechanism specified: {}", e.getMessage());
 					return false;
 				}
 			}
-			return true;
 		} catch (UnmarshalException e) {
 			_logger.error("Syntax error in policy: " + e.getMessage());
+			return false;
 		} catch (JAXBException | ClassCastException e) {
-			e.printStackTrace();
+			_logger.error("Error while deploying policy: " + e.getMessage());
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 
 	@Override
-	public boolean revokePolicy(String policyName) {
-		boolean ret = false;
-		if (_policyTable == null) {
-			_logger.error("Empty Policy Table. impossible to revoke policy");
-			return false;
-		}
-		List<IPdpMechanism> mlist = _policyTable.get(policyName);
-		if (mlist == null)
-			return false;
+	public void revokePolicy(String policyName) {
+		_logger.debug("revokePolicy({}) invoked.", policyName);
 
-		for (IPdpMechanism mech : mlist) {
-			_logger.info("Revoking mechanism: {}", mech.getMechanismName());
-			ret = mech.revoke();
+		Map<String,IPdpMechanism> mechanisms = _policyTable.remove(policyName);
+		if (mechanisms == null) {
+			_logger.warn("Policy {} was not deployed. Unable to revoke.", policyName);
+			return;
 		}
-		return ret;
+
+		for (IPdpMechanism mech : mechanisms.values()) {
+			_logger.info("Revoking mechanism: {}", mech.getName());
+			mech.revoke();
+		}
 	}
 
 	@Override
 	public boolean revokeMechanism(String policyName, String mechName) {
-		boolean ret = false;
-		if (_policyTable == null) {
-			_logger.error("Empty Policy Table. impossible to revoke policy");
+		_logger.info("revokeMechanism({}, {}) invoked.", policyName, mechName);
+
+		Map<String,IPdpMechanism> mechanisms = _policyTable.get(policyName);
+		if (mechanisms == null) {
 			return false;
 		}
-		ArrayList<IPdpMechanism> mechanisms = _policyTable.get(policyName);
-		if (mechanisms != null) {
-			IPdpMechanism mech = null;
-			for (IPdpMechanism m : mechanisms) {
-				if (m.getMechanismName().equals(mechName)) {
-					_logger.info("Revoking mechanism: {}", m.getMechanismName());
-					ret = m.revoke();
-					mech = m;
-					break;
-				}
-			}
-			if (mech != null) {
-				mechanisms.remove(mech);
-				if (mech instanceof Mechanism) {
-					_actionDescriptionStore
-					.removeMechanism(((Mechanism) mech)
-							.getTriggerEvent().getAction());
-				}
-			}
+
+		IPdpMechanism mech = mechanisms.remove(mechName);
+		if (mech == null) {
+			return false;
 		}
-		return ret;
+
+		_logger.info("Revoking mechanism: {}", mechName);
+		mech.revoke();
+		_actionDescriptionStore.removeMechanism(mech.getTriggerEvent().getAction());
+
+		return true;
 	}
 
 	@Override
 	public Decision notifyEvent(Event event) {
-		ArrayList<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getEventAction());
+		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getEventAction());
 		if (eventMatchList == null)
-			eventMatchList = new ArrayList<EventMatch>();
+			eventMatchList = new LinkedList<EventMatch>();
 		_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
 				event.getEventAction(), eventMatchList.size());
 		for (EventMatch eventMatch : eventMatchList) {
@@ -200,47 +188,33 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 			eventMatch.evaluate(event);
 		}
 
-		ArrayList<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getEventAction());
+		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getEventAction());
 		if (mechanismList == null)
-			mechanismList = new ArrayList<Mechanism>();
+			mechanismList = new LinkedList<Mechanism>();
 		_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getEventAction(),
 				mechanismList.size());
 
 		Decision d = new Decision(new AuthorizationAction("default", Constants.AUTHORIZATION_ALLOW), _pxpManager);
 		for (Mechanism mech : mechanismList) {
-			_logger.info("Processing mechanism [{}] for event [{}]", mech.getMechanismName(), event.getEventAction());
+			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getEventAction());
 			mech.notifyEvent(event, d);
 		}
 		return d;
 	}
 
 	@Override
-	public Map<String, List<String>> listDeployedMechanisms() {
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
+	public Map<String, Set<String>> listDeployedMechanisms() {
+		Map<String, Set<String>> map = new TreeMap<String, Set<String>>();
 
 		for (String policyName : _policyTable.keySet()) {
-			List<String> mechanismList = new ArrayList<String>();
-			for (IPdpMechanism m : _policyTable.get(policyName)) {
-				mechanismList.add(m.getMechanismName());
+			Set<String> mechanisms = new TreeSet<String>();
+			for (String mechName : _policyTable.get(policyName).keySet()) {
+				mechanisms.add(mechName);
 			}
-			map.put(policyName, mechanismList);
+			map.put(policyName, mechanisms);
 		}
 
 		return map;
-	}
-
-	private String readFile(String file) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String line = null;
-		StringBuilder stringBuilder = new StringBuilder();
-		String ls = System.getProperty("line.separator");
-
-		while ((line = reader.readLine()) != null) {
-			stringBuilder.append(line);
-			stringBuilder.append(ls);
-		}
-		reader.close();
-		return stringBuilder.toString();
 	}
 
 	@Override
@@ -260,21 +234,25 @@ public class PolicyDecisionPoint implements IPolicyDecisionPoint, Serializable {
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		Set<String> _policyTableKeys = this._policyTable.keySet();
-		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
-		while(_policyTableKeysIt.hasNext()){
-			String _policyTableKey = _policyTableKeysIt.next();
-			ArrayList<IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
-			Iterator<IPdpMechanism> mechanismsIt = mechanisms.iterator();
-			while(mechanismsIt.hasNext()){				
-				IPdpMechanism mechanism = mechanismsIt.next();
-				if(mechanism instanceof Runnable){
-					((Thread)mechanism).interrupt();					
-				}
+		for (Map<String,IPdpMechanism> map : _policyTable.values()) {
+			for (IPdpMechanism mech : map.values()) {
+				mech.revoke();
 			}
 		}
-		this._policyTable.clear();
+
+//		// Old implementation
+//		Set<String> _policyTableKeys = _policyTable.keySet();
+//		Iterator<String> _policyTableKeysIt = _policyTableKeys.iterator();
+//		while (_policyTableKeysIt.hasNext()) {
+//			String _policyTableKey = _policyTableKeysIt.next();
+//			Map<String,IPdpMechanism> mechanisms = _policyTable.get(_policyTableKey);
+//			Iterator<IPdpMechanism> mechanismsIt = mechanisms.values().iterator();
+//			while (mechanismsIt.hasNext()) {
+//				mechanismsIt.next().revoke();
+//			}
+//		}
+
+		_policyTable.clear();
 	}
 
 }

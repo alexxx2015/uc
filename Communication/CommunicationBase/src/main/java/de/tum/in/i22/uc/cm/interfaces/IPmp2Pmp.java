@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,10 +19,10 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
 @AThriftService(name="TPmp2Pmp")
 public interface IPmp2Pmp {
 	/**
-	 * 
+	 *
 	 * Same methods that can be found in the PDP.
 	 * In this case the PMP acts as Man-in-the-middle.
-	 * 
+	 *
 	 * @param par
 	 * @return
 	 */
@@ -43,8 +42,8 @@ public interface IPmp2Pmp {
 	@AThriftMethod(signature="Types.TStatus deployPolicyXMLPmp (1: Types.TXmlPolicy XMLPolicy)")
 	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy);
 
-	@AThriftMethod(signature="map<string,list<string>> listMechanismsPmp()")
-	public Map<String, List<String>> listMechanismsPmp();
+	@AThriftMethod(signature="map<string,set<string>> listMechanismsPmp()")
+	public Map<String, Set<String>> listMechanismsPmp();
 
 	@AThriftMethod(signature="Types.TStatus deployPolicyRawXMLPmp(1: string xml)")
 	public IStatus deployPolicyRawXMLPmp(String xml);

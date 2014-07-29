@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	}
 
 	@Override
-	public Map<String, List<String>> listMechanisms() throws TException {
+	public Map<String, Set<String>> listMechanisms() throws TException {
 		_logger.debug("TAny2Pdp: listMech");
 		return _requestHandler.listMechanismsPmp();
 	}
@@ -102,7 +102,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
 		_logger.debug("TAny2Pdp: processEventSync");
-		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		Map<String,String> map = new HashMap<String,String>(e.getParameters());
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, false);
 		IResponse res = _requestHandler.processEventSync(ev);
@@ -142,7 +142,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	public void processEventAsync(TobiasEvent e, String senderID)
 			throws TException {
 		_logger.debug("TAny2Pdp: processEventAsync");
-		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		Map<String,String> map = new HashMap<String,String>(e.getParameters());
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, true);
 		_requestHandler.processEventAsync(ev);

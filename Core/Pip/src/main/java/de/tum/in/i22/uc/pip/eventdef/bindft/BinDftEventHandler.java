@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.eventdef.java;
+package de.tum.in.i22.uc.pip.eventdef.bindft;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +17,11 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
-public abstract class JavaEventHandler extends AbstractScopeEventHandler {
+public abstract class BinDftEventHandler extends AbstractScopeEventHandler {
 
 	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
 
 	protected static Map<String, Set<IContainer>> containersByPid = new HashMap<String, Set<IContainer>>();
-	
 
 	protected static Map<String, String> contextToObject = new HashMap<String, String>();
 

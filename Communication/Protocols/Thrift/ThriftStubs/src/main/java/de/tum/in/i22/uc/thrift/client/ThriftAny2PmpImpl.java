@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,7 +82,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 
 	@Override
-	public Map<String, List<String>> listMechanismsPmp() {
+	public Map<String, Set<String>> listMechanismsPmp() {
 		try {
 			return _handle.listMechanismsPmp();
 		} catch (TException e) {

@@ -54,12 +54,12 @@ public class AcceptEventHandler extends BaseEventHandler {
 			listeningSocket = (SocketContainer) _informationFlowModel.getContainer(FiledescrName.create(host, pid, oldFd));
 		}
 		catch (ClassCastException e) {
-			_logger.error("Expected container did not exist or was of wrong type.");
+			_logger.error("Expected container was of wrong type.");
 			return STATUS_ERROR;
 		}
 
 		if (listeningSocket == null) {
-			_logger.error("Expected container did not exist or was of wrong type.");
+			_logger.error("Expected container did not exist.");
 			return STATUS_ERROR;
 		}
 

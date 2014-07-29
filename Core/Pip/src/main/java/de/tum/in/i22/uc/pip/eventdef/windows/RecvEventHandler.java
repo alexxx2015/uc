@@ -126,7 +126,7 @@ public class RecvEventHandler extends WindowsEvents {
 		// TEST : GENERIC JBC APP READING FROM THIS SOCKET?
 		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
-		type = EScopeType.JBC_GENERIC_IN;
+		type = EScopeType.JBC_GENERIC_LOAD;
 		attributes.put("fileDescriptor", socketHandle);
 		attributes.put("pid", pid);
 		scopeToCheck = new ScopeBasic("Generic JBC app IN scope", type,

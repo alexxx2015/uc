@@ -361,4 +361,10 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 		_logger.error("Method addName() not implemented.");
 	}
 
+	@Override
+	public IData getDataFromId(String id) {
+		_logger.error("Method getDataFromId() not implemented.");
+		return null;
+	}
+
 }

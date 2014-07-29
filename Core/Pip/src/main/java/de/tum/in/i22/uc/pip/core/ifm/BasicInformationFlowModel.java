@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -27,7 +28,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * Information flow model Singleton.
  */
 public final class BasicInformationFlowModel implements
-IBasicInformationFlowModel {
+		IBasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(BasicInformationFlowModel.class);
 
@@ -611,7 +612,7 @@ IBasicInformationFlowModel {
 	 */
 	@Override
 	public void addData(Collection<IData> data, IContainer container) {
-		if (data == null || container == null || data.size()==0) {
+		if (data == null || container == null || data.size() == 0) {
 			return;
 		}
 
@@ -623,7 +624,7 @@ IBasicInformationFlowModel {
 
 		_logger.info("Adding data " + data + " to container " + container);
 		dstData.addAll(data);
-		
+
 	}
 
 	/*
@@ -893,8 +894,9 @@ IBasicInformationFlowModel {
 			int nameLength = 0;
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
-				if (((ds!=null)&&(ds.size()>0))||showFullIFM){
-					int currLength = entry.getKey().getName().toString().length();
+				if (((ds != null) && (ds.size() > 0)) || showFullIFM) {
+					int currLength = entry.getKey().getName().toString()
+							.length();
 					if (currLength > nameLength)
 						nameLength = currLength;
 				}
@@ -929,7 +931,7 @@ IBasicInformationFlowModel {
 										sb.append(" ");
 									}
 								}
-								sb.append(d.getId() +"  "+ nl);
+								sb.append(d.getId() + "  " + nl);
 							}
 						}
 					} else {
@@ -971,7 +973,8 @@ IBasicInformationFlowModel {
 		sb.append(nl);
 
 		sb.append("  Aliases:" + nl);
-		if (_aliasesMap.size()==0) sb.append("  Empty" + nl);
+		if (_aliasesMap.size() == 0)
+			sb.append("  Empty" + nl);
 		for (Entry<IContainer, Set<IContainer>> entry : _aliasesMap.entrySet()) {
 			if (entry.getValue() != null && entry.getValue().size() != 0
 					|| showFullIFM) {
@@ -998,13 +1001,14 @@ IBasicInformationFlowModel {
 		sb.append(nl);
 
 		sb.append("  Naming:" + nl);
-		if (_namingMap.size()==0) sb.append("  Empty" + nl);
+		if (_namingMap.size() == 0)
+			sb.append("  Empty" + nl);
 		Set<IContainer> wasPrinted = new HashSet<IContainer>();
 		for (IContainer cont : _namingMap.values()) {
 			Set<IData> isItAContainerWorthPrinting = _containerToDataMap
 					.get(cont);
-			if (isItAContainerWorthPrinting != null && isItAContainerWorthPrinting
-					.size() != 0 || showFullIFM) {
+			if (isItAContainerWorthPrinting != null
+					&& isItAContainerWorthPrinting.size() != 0 || showFullIFM) {
 				if (wasPrinted.contains(cont)) {
 					continue;
 				}
@@ -1050,6 +1054,20 @@ IBasicInformationFlowModel {
 				Entry<IName, IContainer> e2) {
 			return e1.getKey().getName().compareTo(e2.getKey().getName());
 		}
+	}
+
+	@Override
+	public IData getDataFromId(String id) {
+		if ((id != null) && (!"".equals(id))) {
+			Set<IData> union = new HashSet<IData>();
+			for (Set<IData> set : _containerToDataMap.values()) {
+				union.addAll(set);
+			}
+			for (IData d : union){
+				if (d.getId().equals(id)) return d; 
+			}
+		}
+		return null;
 	}
 
 }

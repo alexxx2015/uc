@@ -118,6 +118,8 @@ class CassandraDistributionManager implements IDistributionManager {
 			 * (3) if the keyspace was in fact extended
 			 *     (meaning that the provided location was not yet aware of the policy),
 			 *     then the policy is sent to the remote PMP.
+			 * (4) if remote deployment of the policy fails, then the given location
+			 *     is removed from the policy's keyspace
 			 */
 
 			switchKeyspace(policy.getName());
@@ -130,8 +132,6 @@ class CassandraDistributionManager implements IDistributionManager {
 				try {
 					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
 
-					// If remote deployment of the policy fails,
-					// then we remove the location from the keyspace
 					if (remotePmp.deployPolicyRawXMLPmp(policy.getXml()).getEStatus() != EStatus.OKAY) {
 						success = false;
 					}
@@ -142,8 +142,10 @@ class CassandraDistributionManager implements IDistributionManager {
 					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
 				}
 
+				// If remote deployment of the policy fails,
+				// then we remove the location from the keyspace
 				if (!success) {
-					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);;
+					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
 				}
 			}
 
@@ -159,6 +161,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	 */
 	private void doCrossSystemDataTrackingCoarse(Set<IData> data, IPLocation dstLocation) {
 		_logger.debug("doCrossSystemDataTrackingCoarse invoked: " + dstLocation + " -> " + data);
+
 		for (IData d : data) {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				switchKeyspace(p.getName());
@@ -175,16 +178,16 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * The mapping between containers (more precisely: their names) and the
 	 * set of data being transferred to them is specified by parameter flows.
 	 *
-	 * @param dstLocation the location to which the data flow occurred.
+	 * @param pipLocation the location to which the data flow occurred.
 	 * @param flows maps the destination container name to set of data it is receiving
 	 */
-	private void doCrossSystemDataTrackingFine(IPLocation dstLocation, Map<IName, Set<IData>> flows) {
+	private void doCrossSystemDataTrackingFine(IPLocation pipLocation, Map<IName, Set<IData>> flows) {
 		Pip2PipClient remotePip = null;
 
 		try {
-			remotePip = _pipConnectionManager.obtain(new ThriftClientFactory().createPip2PipClient(dstLocation));
+			remotePip = _pipConnectionManager.obtain(new ThriftClientFactory().createPip2PipClient(pipLocation));
 		} catch (IOException e) {
-			_logger.error("Unable to perform remote data transfer with [" + dstLocation + "]");
+			_logger.error("Unable to perform remote data transfer with [" + pipLocation + "]");
 			return;
 		}
 
@@ -314,7 +317,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
-//				doCrossSystemDataTrackingFine((IPLocation) dstLocation, flows.get(pipLocation));
+				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
 			}
 			else {
 				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");

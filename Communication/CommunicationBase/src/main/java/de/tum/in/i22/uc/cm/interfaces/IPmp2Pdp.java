@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -31,6 +31,6 @@ public interface IPmp2Pdp {
 	@AThriftMethod(signature="Types.TStatus deployPolicyXML (1: Types.TXmlPolicy XMLPolicy)")
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy);
 
-	@AThriftMethod(signature="map<string,list<string>> listMechanisms()")
-	public Map<String, List<String>> listMechanisms();
+	@AThriftMethod(signature="map<string,set<string>> listMechanisms()")
+	public Map<String, Set<String>> listMechanisms();
 }

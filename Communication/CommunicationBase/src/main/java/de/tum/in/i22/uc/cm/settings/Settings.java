@@ -97,15 +97,16 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
-	
-	
+
+
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 	private static final String PROP_NAME_excelOcbName = "excelOcbName";
 	private static final String PROP_NAME_excelScbName = "excelScbName";
-	
+
 	private static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
 	private static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
+
 	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
 
 	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
@@ -560,11 +561,11 @@ public class Settings extends SettingsLoader {
 	public String getExcelScbName(){
 		return getValue(PROP_NAME_excelScbName);
 	}
-	
+
 	public String getJoanaDelimiter1(){
 		return getValue(PROP_NAME_joanaDelimiter1);
 	}
-	
+
 	public String getJoanaDelimiter2(){
 		return getValue(PROP_NAME_joanaDelimiter2);
 	}

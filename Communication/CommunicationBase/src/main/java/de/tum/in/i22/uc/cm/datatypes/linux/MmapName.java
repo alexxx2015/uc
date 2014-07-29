@@ -41,8 +41,8 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 	}
 
 	@Override
-	public int getPid() {
-		return _pid;
+	public boolean hasPid(int pid) {
+		return _pid == pid;
 	}
 
 	public String getAddr() {
