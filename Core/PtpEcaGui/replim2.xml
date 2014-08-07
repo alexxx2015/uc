@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><policySet xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action" xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <preventiveMechanism name="Mechanism 1">
+    <trigger action="any" isTry="true"/>
+    <condition>
+      <and>
+        <before amount="5" unit="MINUTES">
+          <eventMatch action="activateMechanism" isTry="true">
+            <paramMatch name="object" type="dataUsage" value="mechanismID"/>
+          </eventMatch>
+        </before>
+        <or>
+          <repSince xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+          <not>
+            <repSince limit="5"/>
+          </not>
+        </or>
+      </and>
+    </condition>
+    <authorizationAction name="Authorization 1">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+</policySet>
+

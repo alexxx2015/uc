@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Page page-color="40 40 40" page-drawer="Usage Control Policy" page-infullview="yes" page-name="Usage Control Policy" page-width="1920">
+<PageBlocks>
+
+    <Block genus-name="action" id="27">
+        <Location><X>149</X><Y>75</Y></Location>
+        <Plug><BlockConnector con-block-id="24" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="single"/></Plug>
+        <Sockets num-sockets="2">
+            <BlockConnector con-block-id="28" connector-kind="socket" connector-type="string" init-type="string" label="name" position-type="single"/>
+            <BlockConnector con-block-id="29" connector-kind="socket" connector-type="string" init-type="string" label="type" position-type="single"/>
+        </Sockets>
+    </Block>
+
+    <Block genus-name="desiredEv" id="29">
+        <Location><X>277</X><Y>126</Y></Location>
+        <Plug><BlockConnector con-block-id="27" connector-kind="plug" connector-type="string" init-type="string" label="" position-type="mirror"/></Plug>
+    </Block>
+
+    <Block genus-name="copy" id="28">
+        <Location><X>277</X><Y>75</Y></Location>
+        <Params>
+            <Param class="photo" name="object" policyType="dataUsage" status="true" value="test.xml"/>
+            <Param class=" " name="device" status="false" value=""/>
+            <Location><X>413</X><Y>35</Y></Location>
+            <BoxSize><Width>300</Width><Height>113</Height></BoxSize>
+        </Params>
+        <Plug><BlockConnector con-block-id="27" connector-kind="plug" connector-type="string" init-type="string" label="" position-type="mirror"/></Plug>
+    </Block>
+
+    <Block genus-name="Policy" id="24">
+        <Location><X>8</X><Y>24</Y></Location>
+        <Sockets num-sockets="2">
+            <BlockConnector con-block-id="25" connector-kind="socket" connector-type="string" init-type="string" label="Subject" position-type="single"/>
+            <BlockConnector con-block-id="27" connector-kind="socket" connector-type="boolean" init-type="boolean" label="Obligation" position-type="single"/>
+        </Sockets>
+    </Block>
+    
+    <Block genus-name="subject" id="25">
+        <Location><X>149</X><Y>24</Y></Location>
+        <Plug><BlockConnector con-block-id="24" connector-kind="plug" connector-type="string" init-type="string" label="" position-type="mirror"/></Plug>
+    </Block>
+    
+</PageBlocks>
+</Page>
