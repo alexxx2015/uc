@@ -14,6 +14,15 @@ public abstract class Operator {
 		}
 	}
 
+	/**
+	 * Evaluates this operator given the specified event.
+	 * If the specified event is null, then this is interpreted
+	 * as the end of a timestep and this operator is
+	 * evaluated accordingly.
+	 *
+	 * @param curEvent
+	 * @return
+	 */
 	public boolean evaluate(IEvent curEvent) {
 		return false;
 	}

@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.pdp.xsd.WithinType;
 
 public class Within extends WithinType {
 	private static Logger log = LoggerFactory.getLogger(Within.class);
-	public TimeAmount timeAmount = null;
+	private TimeAmount timeAmount = null;
 
 	public Within() {
 	}
@@ -39,7 +39,7 @@ public class Within extends WithinType {
 		if (curEvent == null) {
 			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (operandValue) {
-				this._state.counter = this.timeAmount.timestepInterval + 1;
+				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 				log.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
 						this._state.counter, operandValue);
 			} else {

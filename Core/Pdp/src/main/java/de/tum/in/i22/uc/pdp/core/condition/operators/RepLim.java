@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 
 public class RepLim extends RepLimType {
 	private static Logger log = LoggerFactory.getLogger(RepLim.class);
-	public TimeAmount timeAmount = null;
+	private TimeAmount timeAmount = null;
 
 	public RepLim() {
 	}
@@ -21,8 +21,8 @@ public class RepLim extends RepLimType {
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-		this._state.circArray = new CircularArray<Boolean>(this.timeAmount.timestepInterval);
-		for (int a = 0; a < this.timeAmount.timestepInterval; a++)
+		this._state.circArray = new CircularArray<Boolean>(this.timeAmount.getTimestepInterval());
+		for (int a = 0; a < this.timeAmount.getTimestepInterval(); a++)
 			this._state.circArray.set(false, a);
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}

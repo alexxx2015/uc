@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.pdp.xsd.DuringType;
 
 public class During extends DuringType {
 	private static Logger log = LoggerFactory.getLogger(During.class);
-	public TimeAmount timeAmount = null;
+	private TimeAmount timeAmount = null;
 
 	public During() {
 	}
@@ -22,7 +22,7 @@ public class During extends DuringType {
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
 
 		// for evaluation without history set counter to interval for DURING
-		this._state.counter = this.timeAmount.timestepInterval + 1;
+		this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 
 		((Operator) this.getOperators()).initOperatorForMechanism(mech);
 	}
@@ -43,7 +43,7 @@ public class During extends DuringType {
 		if (curEvent == null) {
 			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (!operandValue) {
-				this._state.counter = this.timeAmount.timestepInterval + 1;
+				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 				log.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
 						this._state.counter, operandValue);
 			} else {

@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.pdp.xsd.BeforeType;
 
 public class Before extends BeforeType {
 	private static Logger _logger = LoggerFactory.getLogger(Before.class);
-	public TimeAmount _timeAmount = null;
+	private TimeAmount _timeAmount;
 
 	public Before() {
 	}
@@ -21,8 +21,8 @@ public class Before extends BeforeType {
 	public void initOperatorForMechanism(Mechanism mech) {
 		super.initOperatorForMechanism(mech);
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
-		this._state.circArray = new CircularArray<Boolean>(this._timeAmount.timestepInterval);
-		for (int a = 0; a < _timeAmount.timestepInterval; a++) {
+		this._state.circArray = new CircularArray<Boolean>(this._timeAmount.getTimestepInterval());
+		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			_state.circArray.set(false, a);
 		}
 		((Operator) operators).initOperatorForMechanism(mech);

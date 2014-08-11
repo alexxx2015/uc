@@ -33,7 +33,6 @@ public class Always extends AlwaysType {
 	public boolean evaluate(IEvent curEvent) {
 		if (!_state.immutable) {
 			_state.value = ((Operator) operators).evaluate(curEvent);
-			// FIXME: I do not understand why curEvent == null  ... -FK-
 			if (!_state.value && curEvent == null) {
 				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
 				_state.immutable = true;

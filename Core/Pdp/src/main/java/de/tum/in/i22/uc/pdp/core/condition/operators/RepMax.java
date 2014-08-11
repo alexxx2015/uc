@@ -11,8 +11,6 @@ import de.tum.in.i22.uc.pdp.xsd.RepMaxType;
 public class RepMax extends RepMaxType {
 	private static Logger log = LoggerFactory.getLogger(RepMax.class);
 
-	// public long limit =0;
-
 	public RepMax() {
 	}
 

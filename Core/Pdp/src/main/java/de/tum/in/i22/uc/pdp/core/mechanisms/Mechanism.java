@@ -109,6 +109,7 @@ public abstract class Mechanism implements Runnable {
 		return d;
 	}
 
+
 	private synchronized boolean mechanismUpdate() { // TODO improve accuracy to
 		// microseconds?
 		long now = System.currentTimeMillis();
