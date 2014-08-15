@@ -80,7 +80,7 @@ public class EventBasic implements IEvent, Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.add("_pep", _pep)
 				.add("_isActual", _isActual)

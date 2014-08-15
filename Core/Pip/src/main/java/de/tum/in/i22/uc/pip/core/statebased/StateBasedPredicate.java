@@ -60,7 +60,7 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 
 	@Override
 	public String toString() {
-		return Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_predicate", _predicate)
 				.toString();
 	}

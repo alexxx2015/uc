@@ -19,7 +19,7 @@ public class StateBasedOperator extends StateBasedOperatorType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("operator", operator)
 				.add("param1", param1)
 				.add("param2", param2)

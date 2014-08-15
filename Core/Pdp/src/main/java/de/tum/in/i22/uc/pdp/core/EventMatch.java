@@ -73,7 +73,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("action", action)
 				.add("isTry", isTryEvent())
 				.add("params", getParams())

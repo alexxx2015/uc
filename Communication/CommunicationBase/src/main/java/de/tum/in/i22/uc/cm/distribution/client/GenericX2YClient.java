@@ -25,7 +25,7 @@ public abstract class GenericX2YClient implements IConnectable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_connector", _connector)
 				.toString();
 	}

@@ -10,7 +10,6 @@ import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.TcpConnector;
 
 /**

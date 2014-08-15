@@ -35,7 +35,7 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	}
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_pid", _pid)
 				.toString();

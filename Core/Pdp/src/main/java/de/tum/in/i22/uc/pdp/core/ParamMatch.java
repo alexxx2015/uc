@@ -103,7 +103,7 @@ public class ParamMatch extends ParamMatchType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("name", name)
 				.add("value", value)
 				.add("type", type)

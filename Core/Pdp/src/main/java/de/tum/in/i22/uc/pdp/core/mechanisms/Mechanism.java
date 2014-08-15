@@ -184,7 +184,7 @@ public abstract class Mechanism implements Runnable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this.getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(this.getClass())
 				.add("_name", _name)
 				.add("_description", _description)
 				.add("_timestepSize", _timestepSize)

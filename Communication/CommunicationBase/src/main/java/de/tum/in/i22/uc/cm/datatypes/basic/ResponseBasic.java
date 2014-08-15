@@ -38,7 +38,7 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeAction", _executeActions)
 				.add("_modifiedEvent", _modifiedEvent)

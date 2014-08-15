@@ -56,7 +56,7 @@ public class StatusBasic implements IStatus {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_eStatus", _eStatus)
 				.add("_errorMessage", _errorMessage)
 				.toString();

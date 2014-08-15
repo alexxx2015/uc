@@ -40,7 +40,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
-import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
@@ -70,7 +69,7 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATA = "data";
 
 	private IPmp2Ptp _ptp;
-	
+
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
@@ -312,7 +311,6 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation,
 			Location dstLocation, Set<IData> dataflow) {
-		Set<IData> d = new HashSet<>();
 
 		// TODO: Get policies for data and send them
 

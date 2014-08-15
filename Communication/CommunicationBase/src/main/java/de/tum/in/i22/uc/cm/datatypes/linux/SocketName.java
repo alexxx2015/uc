@@ -55,7 +55,7 @@ public class SocketName extends NameBasic {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_localIP", _localIP)
 				.add("_localPort", _localPort)
 				.add("_remoteIP", _remoteIP)

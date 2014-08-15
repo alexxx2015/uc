@@ -131,7 +131,7 @@ public class AuthorizationAction implements Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("_name", _name)
 				.add("_type", _auth)
 				.add("_delay", _delay)

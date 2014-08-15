@@ -1042,7 +1042,7 @@ public final class BasicInformationFlowModel implements
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_containerToDataMap", _containerToDataMap)
 				.add("_aliasesMap", _aliasesMap).add("_namingMap", _namingMap)
 				.toString();
