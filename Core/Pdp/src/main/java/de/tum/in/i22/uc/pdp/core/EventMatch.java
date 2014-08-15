@@ -26,8 +26,8 @@ public class EventMatch extends EventMatchingOperatorType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 	}
 
 	public boolean matches(IEvent ev) {

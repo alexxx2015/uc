@@ -15,9 +15,9 @@ public class RepMax extends RepMaxType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override

@@ -17,14 +17,14 @@ public class During extends DuringType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
 
 		// for evaluation without history set counter to interval for DURING
 		this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override

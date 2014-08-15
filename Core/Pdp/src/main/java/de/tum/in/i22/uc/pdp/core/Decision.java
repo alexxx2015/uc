@@ -107,7 +107,7 @@ public class Decision implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeActions", _executeActions)
 				.add("_pxpManager", _pxpManager)

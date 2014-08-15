@@ -18,7 +18,7 @@ public class Condition {
 	public Condition(ConditionType cond, Mechanism curMechanism) {
 		_logger.debug("Preparing condition from ConditionType");
 		_operator = (Operator) cond.getOperators();
-		_operator.initOperatorForMechanism(curMechanism);
+		_operator.init(curMechanism);
 
 		_logger.debug("condition: {}", _operator);
 	}

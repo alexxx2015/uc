@@ -8,9 +8,12 @@ public abstract class Operator {
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state = new OperatorState();
 
-	public void initOperatorForMechanism(Mechanism mech) {
+	public void init(Mechanism mech) {
 		if (_pdp == null) {
 			_pdp = mech.getPolicyDecisionPoint();
+		}
+		else {
+			throw new UnsupportedOperationException("Operator may only get initialized once.");
 		}
 	}
 

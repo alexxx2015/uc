@@ -18,14 +18,14 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 		this._state.circArray = new CircularArray<Boolean>(this._timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			_state.circArray.set(false, a);
 		}
-		((Operator) operators).initOperatorForMechanism(mech);
+		((Operator) operators).init(mech);
 	}
 
 	@Override

@@ -20,10 +20,10 @@ public class Since extends SinceType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(0)).initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) this.getOperators().get(0)).init(mech);
+		((Operator) this.getOperators().get(1)).init(mech);
 	}
 
 	@Override

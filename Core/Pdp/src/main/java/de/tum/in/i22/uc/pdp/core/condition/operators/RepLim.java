@@ -18,13 +18,13 @@ public class RepLim extends RepLimType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
 		this._state.circArray = new CircularArray<Boolean>(this.timeAmount.getTimestepInterval());
 		for (int a = 0; a < this.timeAmount.getTimestepInterval(); a++)
 			this._state.circArray.set(false, a);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override

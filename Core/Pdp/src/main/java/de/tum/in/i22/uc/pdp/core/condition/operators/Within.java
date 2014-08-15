@@ -17,10 +17,10 @@ public class Within extends WithinType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override

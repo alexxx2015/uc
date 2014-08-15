@@ -17,8 +17,8 @@ public class OSLFalse extends FalseType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 	}
 
 	@Override

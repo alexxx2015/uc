@@ -14,8 +14,8 @@ public class EventMatchOperator extends EventMatch {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 		_pdp.addEventMatch(this);
 	}
 

@@ -19,9 +19,9 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(Mechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) operators).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) operators).init(mech);
 	}
 
 	@Override
