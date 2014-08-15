@@ -68,8 +68,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		_logger.error("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
-		return false;
+		throw new UnsupportedOperationException("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
 	}
 
 	@Override

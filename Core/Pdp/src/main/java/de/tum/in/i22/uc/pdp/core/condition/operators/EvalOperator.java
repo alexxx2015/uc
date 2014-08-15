@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.EvalOperatorType;
 
 public class EvalOperator extends EvalOperatorType {
-	private static Logger log = LoggerFactory.getLogger(EvalOperator.class);
+	private static Logger _logger = LoggerFactory.getLogger(EvalOperator.class);
 
 	public EvalOperator() {
 	}
@@ -25,9 +25,7 @@ public class EvalOperator extends EvalOperatorType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.error("evalate EvalOperator. Not yet implemented.");
-		// TODO: evalOperator evaluation NYI; forward to external evaluation
-		// engine
-		return false;
+		// TODO: evalOperator evaluation NYI; forward to external evaluation engine
+		throw new UnsupportedOperationException("evalate EvalOperator. Not yet implemented.");
 	}
 }

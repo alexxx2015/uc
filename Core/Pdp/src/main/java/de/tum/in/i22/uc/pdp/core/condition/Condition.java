@@ -28,21 +28,33 @@ public class Condition {
 		return "Condition: { " + _operator + " }";
 	}
 
-	public boolean evaluate(IEvent curEvent) {
+	/**
+	 * This method evaluates this {@link Condition} in the presence
+	 * of the specified event at the current point in time.
+	 * Evaluation takes into account that the specified event is
+	 * currently happening. If the specified event is null, then this
+	 * {@link Condition} is evaluated as-is. This is useful for evaluating
+	 * the condition at the end of a timestep.
+	 *
+	 * @param event
+	 * @return
+	 */
+	public boolean evaluate(IEvent event) {
 		_logger.debug("Evaluating condition...");
+
 		if (_operator == null) {
-			_logger.error("condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
+			_logger.error("Condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
 			return true;
 		}
 
 		boolean ret = false;
 		try {
-			ret = _operator.evaluate(curEvent);
+			ret = _operator.evaluate(event);
 		} catch (Exception e) {
 			_logger.error("Exception during evaluation: {}", e.getMessage());
 		}
+
 		_logger.debug("condition value: [{}]", ret);
 		return ret;
 	}
-
 }
