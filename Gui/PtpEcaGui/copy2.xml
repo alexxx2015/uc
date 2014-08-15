@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><policySet xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action" xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <preventiveMechanism name="Mechanism 1">
+    <trigger action="send" isTry="true">
+      <paramMatch name="object" type="dataUsage" value="test.xml"/>
+    </trigger>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="Authorization 1">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism 2">
+    <trigger action="write" isTry="true">
+      <paramMatch name="object" type="dataUsage" value="test.xml"/>
+    </trigger>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="Authorization 2">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism 3">
+    <trigger action="saveAs" isTry="true">
+      <paramMatch name="object" type="dataUsage" value="test.xml"/>
+    </trigger>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="Authorization 3">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism 4">
+    <trigger action="any" isTry="true"/>
+    <condition>
+      <not>
+        <isNotIn data="test.xml">
+          <containers>
+            <container>KlipperMem</container>
+          </containers>
+        </isNotIn>
+      </not>
+    </condition>
+    <authorizationAction name="Authorization 4">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+</policySet>

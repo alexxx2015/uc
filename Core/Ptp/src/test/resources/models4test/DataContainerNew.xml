@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<de.tum.in.i22.uc.metamodel:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0">
+	<pims name="SNS_PIM">
+		<!--
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5" name="city"/>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5" name="country"/>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5" name="state"/>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5" name="zipcode"/>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5" name="picture"/>
+		-->
+		<pimdata storedin="//@psms/@psmcontainers.0" name="picture"/>
+		<pimdata storedin="//@psms/@psmcontainers.3" name="birthday"/>
+		<pimdata storedin="//@psms/@psmcontainers.1" name="album">
+			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0"/>
+		</pimdata>
+		<pimdata storedin="//@psms/@psmcontainers.1" name="profile">
+			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0"/>
+			<dataAssoLinks assoType="isCompositionOf" targetAssoData="//@pims/@pimdata.1"/>
+		</pimdata>
+	</pims>
+	<psms name="SNS_PSM">
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.0 //@isms/@ismcontainers.1" name="file"/>
+		<psmcontainers containersassociation="//@psms/@psmcontainers.0" contimplementedas="//@isms/@ismcontainers.2 //@isms/@ismcontainers.3" name="directory"/>
+	</psms>
+	<isms name="SNS_ISM">
+		<ismcontainers name="distrFile"/>		
+		<ismcontainers name="unixFile"/>
+		<ismcontainers name="file"/>
+		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 //@isms/@ismcontainers.2" name="unixDir"/>
+		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.0" name="distrDir"/>
+	</isms>
+</de.tum.in.i22.uc.metamodel:domain>

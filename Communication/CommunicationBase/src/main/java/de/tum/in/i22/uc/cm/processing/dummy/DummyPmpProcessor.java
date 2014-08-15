@@ -31,6 +31,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -128,6 +129,20 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		// TODO Auto-generated method stub
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("specifyPolicyFor method invoked");
+		return null;
+	}
+
+	@Override
+	public IPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

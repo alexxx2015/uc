@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TName;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
@@ -263,6 +264,22 @@ TAny2Any.Iface {
 	@Override
 	public TData getDataFromId(String id) throws TException {
 		return _pipServer.getDataFromId(id);
+	}
+
+	@Override
+	public TPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlPolicy)
+			throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlDomainModel)
+			throws TException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

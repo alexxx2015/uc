@@ -148,6 +148,26 @@ public class ReadFileEventHandler extends WindowsEvents {
 		} else {
 			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
 		}
+		
+		// TEST 1 : WEBAPP LOADING THIS FILE?
+		// If so behave as OUT
+
+		if (processName.equalsIgnoreCase("Thunderbird")) {
+			attributes = new HashMap<String, Object>();
+			attributes.put("app", "Thunderbird");
+			attributes.put("filename", filename);
+			scopeToCheck = new ScopeBasic("TB loading file " + filename, type,
+					attributes);
+
+			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		}
+
+		if (existingScope != null) {
+			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
+			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
+		} else {
+			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
+		}
 
 		// TEST 2 : GENERIC JBC APP READING THIS FILE?
 		// If so behave as OUT

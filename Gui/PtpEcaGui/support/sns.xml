@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<de.tum.in.i22.uc.metamodel:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0">
+  <pims name="SNS_PIM">
+    <pimactions name="copy" seq="0" actionRefmnt="//@psms/@psmtransformers.0" paramData="//@pims/@pimdata.0"/>
+    <pimdata storedin="//@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.0" name="photo"/>
+  </pims>
+  <psms name="SNS_PSM">
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.0" name="clipboard"/>
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.1" name="processMem"/>
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.2" name="file"/>
+    <psmtransformers name="distriFile" seq="0" outputcontainer="//@psms/@psmcontainers.2" psmRefmnt="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1" inputcontainer="//@psms/@psmcontainers.2"/>
+    <psmtransformers name="copyOut" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.2" crossPsmRefmnt="//@isms/@ismtransformers.4 //@isms/@ismtransformers.1"/>
+    <psmtransformers name="sendEmail" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.2" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
+    <psmsystems systemtransformers="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1 //@psms/@psmtransformers.0" sysimplementedas="//@isms/@ismsystems.0" name="fileSystem"/>
+  </psms>
+  <isms name="SNS_ISM">
+    <ismcontainers name="xclipboard"/>
+    <ismcontainers name="procMem"/>
+    <ismcontainers name="unixfile"/>
+    <ismtransformers name="send" seq="0" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="saveAs" seq="0" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="copyFile" seq="0" refType="seqRefmnt" ismRefmnt="//@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.5" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="write" seq="3" inputimplecontainer="//@isms/@ismcontainers.1" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5" name="unix"/>
+  </isms>
+</de.tum.in.i22.uc.metamodel:domain>

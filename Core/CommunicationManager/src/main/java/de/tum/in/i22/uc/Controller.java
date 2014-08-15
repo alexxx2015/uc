@@ -20,6 +20,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -481,6 +482,16 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IData getDataFromId(String id) {
 		return _requestHandler.getDataFromId(id);
+	}
+
+	@Override
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		return _requestHandler.translatePolicy(requestId, parameters, xmlPolicy);
+	}
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel); 
 	}
 
 }

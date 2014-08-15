@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
@@ -98,5 +99,19 @@ TAny2Pmp.Iface {
 			representationsI.add(ThriftConverter.fromThrift(cont));
 		return ThriftConverter.toThrift(_handler.specifyPolicyFor(
 				representationsI, dataClass));
+	}
+
+	@Override
+	public TPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlPolicy)
+			throws TException {
+		return ThriftConverter.toThrift(_handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlPolicy)));
+	}
+
+	@Override
+	public TPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlDomainModel)
+			throws TException {
+		return ThriftConverter.toThrift(_handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
 	}
 }

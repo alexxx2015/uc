@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
@@ -115,6 +116,25 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		for (IContainer cont : representations) representationsT.add(ThriftConverter.toThrift(cont));
 		try {
 			return ThriftConverter.fromThrift(_handle.specifyPolicyFor(representationsT, dataClass));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public IPtpResponse translatePolicy(String requestId,Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		//TODO: sanitize input
+		try {
+			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlPolicy)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		try {
+			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlDomainModel)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

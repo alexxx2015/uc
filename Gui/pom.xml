@@ -15,6 +15,6 @@
 		<module>UcManager</module>
 		<module>Jni</module>
 		<module>TraceRecorder</module>
-		
+		<module>PolicyTemplateEditor</module>
 	</modules>
 </project>

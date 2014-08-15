@@ -17,7 +17,7 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  *
  */
 @AThriftService(name="TPmp2Pmp")
-public interface IPmp2Pmp {
+public interface IPmp2Pmp extends IPmp2Ptp{
 	/**
 	 *
 	 * Same methods that can be found in the PDP.
