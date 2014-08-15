@@ -35,10 +35,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp;
+import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
@@ -50,6 +53,7 @@ import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pmp.xsd.ObjectFactory;
 import de.tum.in.i22.uc.pmp.xsd.ParamMatchType;
 import de.tum.in.i22.uc.pmp.xsd.PolicyType;
+import de.tum.in.i22.uc.remotelistener.PtpHandler;
 
 public class PmpHandler extends PmpProcessor {
 	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
@@ -65,10 +69,13 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
+	private IPmp2Ptp _ptp;
+	
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_dataToPolicies = new HashMap<>();
+		_ptp = new PtpHandler();
 	}
 
 	private PolicyType xmlToPolicy(String XMLPolicy) {
@@ -378,5 +385,15 @@ public class PmpHandler extends PmpProcessor {
 		_logger.debug("specifyPolicyFor method invoked for containers " + representations + " and dataclass " + dataClass);
 		if (representations==null||"".equals(dataClass)) return new StatusBasic(EStatus.ERROR);
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		return _ptp.translatePolicy(requestId, parameters, xmlPolicy);
+	}
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		return _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 }

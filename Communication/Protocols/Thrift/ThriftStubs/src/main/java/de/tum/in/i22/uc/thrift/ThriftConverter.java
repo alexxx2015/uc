@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -27,6 +28,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -37,6 +39,7 @@ import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TName;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
@@ -139,6 +142,15 @@ public final class ThriftConverter {
 				ThriftConverter.fromThrift(r.getModifiedEvents()));
 	}
 
+	public static IPtpResponse fromThrift(TPtpResponse r) {
+		if (r == null) {
+			_logger.debug("TPtpResponse was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
+		}
+
+		return new PtpResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
+				ThriftConverter.fromThrift(r.getPolicy()));
+	}
 
 	public static Location fromThrift(String location) {
 		if (location == null || location.equals("")) {
@@ -287,6 +299,16 @@ public final class ThriftConverter {
 		return res;
 	}
 
+	public static TPtpResponse toThrift(IPtpResponse r) {
+		if (r == null) {
+			_logger.debug("IPtpResponse was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
+		}
+
+		TPtpResponse res = new TPtpResponse(toThrift(r.getPolicy()), toThrift(r.getStatus()));
+		return res;
+	}
+	
 	public static String toThrift(Location location) {
 		if (location == null) {
 			return "";

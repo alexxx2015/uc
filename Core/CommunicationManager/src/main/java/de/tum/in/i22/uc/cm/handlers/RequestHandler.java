@@ -19,6 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.DistributionManagerFactory;
@@ -588,6 +589,22 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		GetDataFromIdPipRequest request = new GetDataFromIdPipRequest(id);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		// TODO Not yet implemented
+		return null;
+	}
+
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		// TODO Not yet implemented
+		return null;
 	}
 
 }

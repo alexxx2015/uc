@@ -86,6 +86,11 @@ struct TXmlPolicy {
 	2: required string xml
 }
 
+struct TPtpResponse {
+	1: TXmlPolicy policy,
+	2: TStatus status,
+}
+
 /*
 * Tobias old stuff
 * (required for WinPep communication)
