@@ -1,3 +1,5 @@
+package de.tum.in.i22.uc.tests;
+
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
