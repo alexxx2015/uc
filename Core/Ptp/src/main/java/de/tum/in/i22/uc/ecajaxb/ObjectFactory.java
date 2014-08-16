@@ -35,7 +35,7 @@ public class ObjectFactory {
     private final static QName _ContextDescriptions_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/context", "contextDescriptions");
     private final static QName _Event_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/event", "event");
     private final static QName _ActionDescriptions_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/action", "actionDescriptions");
-    private final static QName _PolicySet_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/enforcementLanguage", "policySet");
+    private final static QName _PolicySet_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/enforcementLanguage", "policy");
     private final static QName _BinaryOperatorTypeWithin_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/enforcementLanguage", "within");
     private final static QName _BinaryOperatorTypeRepSince_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/enforcementLanguage", "repSince");
     private final static QName _BinaryOperatorTypeFalse_QNAME = new QName("http://www.iese.fhg.de/pef/1.0/enforcementLanguage", "false");
@@ -407,7 +407,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link PolicySetType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.iese.fhg.de/pef/1.0/enforcementLanguage", name = "policySet")
+    @XmlElementDecl(namespace = "http://www.iese.fhg.de/pef/1.0/enforcementLanguage", name = "policy")
     public JAXBElement<PolicySetType> createPolicySet(PolicySetType value) {
         return new JAXBElement<PolicySetType>(_PolicySet_QNAME, PolicySetType.class, null, value);
     }

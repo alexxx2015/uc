@@ -8,6 +8,9 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -123,7 +126,11 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 	@Override
 	public IPtpResponse translatePolicy(String requestId,Map<String, String> parameters, XmlPolicy xmlPolicy) {
-		//TODO: sanitize input
+		if((requestId == null) || parameters==null || xmlPolicy==null){
+			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
+			return response;
+		}
+		
 		try {
 			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlPolicy)));
 		} catch (TException e) {
@@ -133,6 +140,11 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		if((requestId == null) || parameters==null || xmlDomainModel==null){
+			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
+			return response;
+		}
+		
 		try {
 			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlDomainModel)));
 		} catch (TException e) {

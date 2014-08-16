@@ -263,6 +263,7 @@ public class ECARulesCreator implements Filter{
 			//stream.close();
 			
 			
+			
 			String sResult=getNodeString(doc.getDocumentElement());
 			
 			sResult=organizeNamespaces(sResult);
@@ -312,10 +313,8 @@ public class ECARulesCreator implements Filter{
 		sResult=sResult.replaceAll("ns4:", "");	
 		
 		//modify <policySet>
-		String sReplacement="<policySet xmlns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:tns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:a=\"http://www22.in.tum.de/action\" xmlns:e=\"http://www22.in.tum.de/event\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
-		sResult=sResult.replaceAll("<policySet (.+)>", sReplacement);
-		
-		
+		String sReplacement="<policy xmlns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:tns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:a=\"http://www22.in.tum.de/action\" xmlns:e=\"http://www22.in.tum.de/event\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+		sResult=sResult.replaceAll("<policy (.+)>", sReplacement);
 		
 		return sResult;
 	}

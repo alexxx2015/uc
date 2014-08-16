@@ -37,6 +37,7 @@ import de.tum.in.i22.policyeditor.logger.EditorLogger;
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
 import de.tum.in.i22.policyeditor.translator.DeploymentController;
 import de.tum.in.i22.policyeditor.util.Config;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
@@ -53,7 +54,7 @@ public class PolicyTemplatesEditor {
 	private final DeploymentController deploymentController;
 	
 	private String policyClass;
-	private Set<TContainer> representations;
+	private Set<IContainer> representations;
 	private Pmp2PdpClient clientPmp;
 	
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
@@ -71,24 +72,24 @@ public class PolicyTemplatesEditor {
 
 	/**
 	 * Create the application.
-	 * @param representations 
+	 * @param representations2 
 	 */
-	public PolicyTemplatesEditor(Set<TContainer> representations, String policyClass) {
+	public PolicyTemplatesEditor(Set<IContainer> representations2, String policyClass) {
 		this.deploymentController = new DeploymentController();
 		this.policyClass = policyClass;
-		this.representations = representations;
+		this.representations = representations2;
 		logger = EditorLogger.instance();
 		initialize();
 	}
 
-	public static void startEditor(final Set<TContainer> representations, final String dataClass){
+	public static void startEditor(final Set<IContainer> representations2, final String dataClass){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 					ToolTipManager.sharedInstance().setInitialDelay(500);
 			        ToolTipManager.sharedInstance().setDismissDelay(1500);
-			        PolicyTemplatesEditor window = new PolicyTemplatesEditor(representations, dataClass);
+			        PolicyTemplatesEditor window = new PolicyTemplatesEditor(representations2, dataClass);
 					window.frmTemplatePolicyEditor.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

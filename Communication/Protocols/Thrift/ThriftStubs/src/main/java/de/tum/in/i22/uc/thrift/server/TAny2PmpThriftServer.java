@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
@@ -102,10 +103,9 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public TPtpResponse translatePolicy(String requestId,
-			Map<String, String> parameters, TXmlPolicy xmlPolicy)
-			throws TException {
-		return ThriftConverter.toThrift(_handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlPolicy)));
+	public TPtpResponse translatePolicy(String requestId, Map<String, String> parameters, TXmlPolicy xmlPolicy) throws TException {
+		IPtpResponse response = _handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlPolicy));
+		return ThriftConverter.toThrift(response);
 	}
 
 	@Override

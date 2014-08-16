@@ -51,6 +51,7 @@
 								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pxp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pmp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2PtEditor</param>
 							</interfaces>
 							<includes>
 								<param>Types.thrift</param>
