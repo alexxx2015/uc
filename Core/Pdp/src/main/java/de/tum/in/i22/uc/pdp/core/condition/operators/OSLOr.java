@@ -33,8 +33,8 @@ public class OSLOr extends OrType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		Boolean op1state = ((Operator) operators.get(0)).evaluate(curEvent);
-		Boolean op2state = ((Operator) operators.get(1)).evaluate(curEvent);
+		boolean op1state = ((Operator) operators.get(0)).evaluate(curEvent);
+		boolean op2state = ((Operator) operators.get(1)).evaluate(curEvent);
 		_state.value = op1state || op2state;
 		log.debug("eval OR [{}]", _state.value);
 		return _state.value;

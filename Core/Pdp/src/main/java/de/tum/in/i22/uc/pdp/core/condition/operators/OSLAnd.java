@@ -33,8 +33,11 @@ public class OSLAnd extends AndType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		Boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
-		Boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
+		/*
+		 * Important: _Always_ evaluate both operators
+		 */
+		boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
+		boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 		this._state.value = op1state && op2state;
 		_logger.debug("eval AND [{}]", this._state.value);
 		return this._state.value;
