@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.condition.operators;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -7,6 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType implements LiteralOperator  {
+	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperatorType.class);
 
 	public StateBasedOperator() {
 	}
@@ -14,6 +18,13 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);
+	}
+
+	@Override
+	int initId(int id) {
+		_id = id + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
 	}
 
 	@Override

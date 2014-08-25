@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.RepSinceType;
 
 public class RepSince extends RepSinceType {
 	private static Logger _logger = LoggerFactory.getLogger(RepSince.class);
+
+	private Operator op1;
+	private Operator op2;
 
 	public RepSince() {
 	}
@@ -17,14 +19,21 @@ public class RepSince extends RepSinceType {
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);
-		((Operator) this.getOperators().get(0)).init(mech);
-		((Operator) this.getOperators().get(1)).init(mech);
+		op1 = (Operator) operators.get(0);
+		op2 = (Operator) operators.get(1);
 	}
 
 	@Override
+	int initId(int id) {
+		_id = op1.initId(id) + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return op2.initId(_id);
+	}
+
+
+	@Override
 	public String toString() {
-		return "REPSINCE (" + this.getLimit() + ", " + this.getOperators().get(0) + ", " + this.getOperators().get(1)
-				+ " )";
+		return "REPSINCE (" + this.getLimit() + ", " + op1 + ", " + op2 + " )";
 	}
 
 	@Override
@@ -33,8 +42,8 @@ public class RepSince extends RepSinceType {
 												// B(n) >= limit n times
 												// subformula B since the last
 												// occurrence of subformula A
-		Boolean operand1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
-		Boolean operand2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
+		Boolean operand1state = op1.evaluate(curEvent);
+		Boolean operand2state = op2.evaluate(curEvent);
 
 		if (operand1state) {
 			_logger.debug("[REPSINCE] Subformula A satisfied this timestep => TRUE");

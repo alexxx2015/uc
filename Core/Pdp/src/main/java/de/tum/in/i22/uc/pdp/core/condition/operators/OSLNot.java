@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
@@ -35,6 +34,13 @@ public class OSLNot extends NotType {
 		}
 
 		op.init(mech);
+	}
+
+	@Override
+	int initId(int id) {
+		_id = op.initId(id) + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
 	}
 
 	@Override

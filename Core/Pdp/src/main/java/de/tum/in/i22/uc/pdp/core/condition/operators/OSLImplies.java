@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ImpliesType;
 
@@ -26,6 +25,13 @@ public class OSLImplies extends ImpliesType {
 
 		op1.init(mech);
 		op2.init(mech);
+	}
+
+	@Override
+	int initId(int id) {
+		_id = op1.initId(id) + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return op2.initId(_id);
 	}
 
 	@Override

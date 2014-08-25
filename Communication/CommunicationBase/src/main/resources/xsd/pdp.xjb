@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<jxb:bindings version="1.0" 
-  xmlns:jxb="http://java.sun.com/xml/ns/jaxb" 
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+<jxb:bindings version="1.0"
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
   xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
   jxb:extensionBindingPrefixes="xjc">
@@ -11,103 +11,103 @@
     <jxb:schemaBindings>
       <jxb:package name="de.tum.in.i22.uc.pdp.xsd" />
     </jxb:schemaBindings>
-    <jxb:globalBindings choiceContentProperty="true" 
+    <jxb:globalBindings choiceContentProperty="true"
                         generateIsSetMethod="true"
-                        collectionType="java.util.ArrayList" 
-                        underscoreBinding="asCharInWord" 
+                        collectionType="java.util.ArrayList"
+                        underscoreBinding="asCharInWord"
                         enableJavaNamingConventions="true">
-    </jxb:globalBindings>    
-    
+    </jxb:globalBindings>
+
     <jxb:bindings node="//xs:complexType[@name='NotType']">
       <jxb:package name="de.tum.in.i22.uc.pdp.xsd.condition" />
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLNot" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='TrueType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLTrue" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='FalseType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLFalse" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='OrType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLOr" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='AndType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLAnd" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='ImpliesType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.OSLImplies" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
-    
+   
     <jxb:bindings node="//xs:complexType[@name='SinceType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.Since" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='AlwaysType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.Always" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='BeforeType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.Before" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='DuringType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.During" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='WithinType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.Within" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepLimType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.RepLim" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepSinceType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.RepSince" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
 
     <jxb:bindings node="//xs:complexType[@name='RepMaxType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.RepMax" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
-    
+   
     <jxb:bindings node="//xs:complexType[@name='StateBasedOperatorType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
     </jxb:bindings>
-    
+   
     <jxb:bindings node="//xs:complexType[@name='EvalOperatorType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.EvalOperator" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
-    </jxb:bindings>    
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
+    </jxb:bindings>   
 
     <jxb:bindings node="//xs:complexType[@name='ConditionParamMatchType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.ConditionParamMatchOperator" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
-    </jxb:bindings>    
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
+    </jxb:bindings>   
 
     <jxb:bindings node="//xs:complexType[@name='EventMatchingOperatorType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator" />
-      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.Operator</inheritance:extends> 
-      
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.condition.operators.Operator</inheritance:extends>
+     
       <jxb:bindings node="//xs:element[@name='paramMatch']">
         <jxb:property name="params" />
       </jxb:bindings>
@@ -116,26 +116,26 @@
     <jxb:bindings node="//xs:complexType[@name='ParamMatchType']">
       <!--<jxb:class implClass = "de.tum.in.i22.uc.cm.pdp.core.Param" />-->
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.ParamMatch" />
-    </jxb:bindings>    
+    </jxb:bindings>   
   </jxb:bindings>
 
 
   <jxb:bindings schemaLocation="event.xsd">
     <jxb:schemaBindings>
       <jxb:package name="de.tum.in.i22.uc.pdp.xsd.event" />
-    </jxb:schemaBindings>  
+    </jxb:schemaBindings> 
   </jxb:bindings>
-  
+ 
   <jxb:bindings schemaLocation="action.xsd">
     <jxb:schemaBindings>
       <jxb:package name="de.tum.in.i22.uc.pdp.xsd.action" />
-    </jxb:schemaBindings>  
-  </jxb:bindings>    
+    </jxb:schemaBindings>
+  </jxb:bindings>
 
   <jxb:bindings schemaLocation="time.xsd">
     <jxb:schemaBindings>
       <jxb:package name="de.tum.in.i22.uc.pdp.xsd.time" />
-    </jxb:schemaBindings>  
-  </jxb:bindings>    
-  
+    </jxb:schemaBindings>
+  </jxb:bindings>
+
 </jxb:bindings>

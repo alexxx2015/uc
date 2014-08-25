@@ -20,6 +20,13 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 	}
 
 	@Override
+	int initId(int id) {
+		_id = id + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
+	}
+
+	@Override
 	public boolean evaluate(IEvent ev) {
 		boolean result;
 

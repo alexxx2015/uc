@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.DuringType;
@@ -12,6 +11,8 @@ import de.tum.in.i22.uc.pdp.xsd.DuringType;
 public class During extends DuringType {
 	private static Logger _logger = LoggerFactory.getLogger(During.class);
 	private TimeAmount timeAmount = null;
+
+	private Operator op;
 
 	public During() {
 	}
@@ -21,15 +22,25 @@ public class During extends DuringType {
 		super.init(mech);
 		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
 
+		op = (Operator) operators;
+
 		// for evaluation without history set counter to interval for DURING
 		this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 
-		((Operator) this.getOperators()).init(mech);
+		op.init(mech);
 	}
 
 	@Override
+	int initId(int id) {
+		_id = op.initId(id) + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
+	}
+
+
+	@Override
 	public String toString() {
-		return "DURING (" + this.timeAmount + ", " + this.getOperators() + " )";
+		return "DURING (" + this.timeAmount + ", " + op + " )";
 	}
 
 	@Override
@@ -41,7 +52,7 @@ public class During extends DuringType {
 			this._state.value = false;
 
 		if (curEvent == null) {
-			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
+			boolean operandValue = op.evaluate(curEvent);
 			if (!operandValue) {
 				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
 				_logger.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",

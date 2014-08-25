@@ -19,6 +19,13 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 	}
 
 	@Override
+	int initId(int id) {
+		_id = id + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
+	}
+
+	@Override
 	public String toString() {
 		return "TRUE";
 	}

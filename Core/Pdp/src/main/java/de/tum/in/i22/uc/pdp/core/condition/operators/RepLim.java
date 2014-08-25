@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.CircularArray;
-import de.tum.in.i22.uc.pdp.core.condition.Operator;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.RepLimType;
@@ -13,6 +12,7 @@ import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 public class RepLim extends RepLimType {
 	private static Logger _logger = LoggerFactory.getLogger(RepLim.class);
 	private TimeAmount timeAmount = null;
+	private Operator op;
 
 	public RepLim() {
 	}
@@ -24,12 +24,21 @@ public class RepLim extends RepLimType {
 		this._state.circArray = new CircularArray<Boolean>(this.timeAmount.getTimestepInterval());
 		for (int a = 0; a < this.timeAmount.getTimestepInterval(); a++)
 			this._state.circArray.set(false, a);
-		((Operator) this.getOperators()).init(mech);
+
+		op = (Operator) operators;
+		op.init(mech);
+	}
+
+	@Override
+	int initId(int id) {
+		_id = op.initId(id) + 1;
+		_logger.debug("My [{}] id is {}.", this, _id);
+		return _id;
 	}
 
 	@Override
 	public String toString() {
-		return "REPLIM (" + this.timeAmount + ", " + this.getOperators() + " )";
+		return "REPLIM (" + this.timeAmount + ", " + op + " )";
 	}
 
 	@Override
@@ -47,7 +56,7 @@ public class RepLim extends RepLimType {
 				_logger.debug("[REPLIM] Decrementing counter to [{}]", this._state.counter);
 			}
 
-			Boolean operandState = ((Operator) this.getOperators()).evaluate(curEvent);
+			Boolean operandState = op.evaluate(curEvent);
 			if (operandState) {
 				this._state.counter++;
 				_logger.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this._state.counter);

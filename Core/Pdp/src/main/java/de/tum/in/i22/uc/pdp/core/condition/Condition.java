@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.pdp.core.condition.operators.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
@@ -25,6 +26,7 @@ public class Condition {
 		}
 
 		_operator.init(mechanism);
+		_operator.initId();
 
 		_logger.debug("condition: {}", _operator);
 	}
