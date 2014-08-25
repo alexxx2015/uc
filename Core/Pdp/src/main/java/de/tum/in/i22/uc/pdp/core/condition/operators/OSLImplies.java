@@ -9,7 +9,10 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ImpliesType;
 
 public class OSLImplies extends ImpliesType {
-	private static Logger log = LoggerFactory.getLogger(OSLImplies.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLImplies.class);
+
+	private Operator op1;
+	private Operator op2;
 
 	public OSLImplies() {
 	}
@@ -17,21 +20,28 @@ public class OSLImplies extends ImpliesType {
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);
-		((Operator) operators.get(0)).init(mech);
-		((Operator) operators.get(1)).init(mech);
+
+		op1 = (Operator) operators.get(0);
+		op2 = (Operator) operators.get(1);
+
+		op1.init(mech);
+		op2.init(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "(" + operators.get(0) + "  ==> " + operators.get(1) + ")";
+		return "(" + op1 + "  ==> " + op2 + ")";
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		boolean op1state = ((Operator) operators.get(0)).evaluate(curEvent);
-		boolean op2state = ((Operator) operators.get(1)).evaluate(curEvent);
+		/*
+		 * Important: _Always_ evaluate both operators
+		 */
+		boolean op1state = op1.evaluate(curEvent);
+		boolean op2state = op2.evaluate(curEvent);
 		_state.value = !op1state || op2state;
-		log.debug("eval IMPLIES [{}]", _state.value);
+		_logger.debug("eval IMPLIES [{}]", _state.value);
 		return _state.value;
 	}
 }

@@ -11,19 +11,26 @@ import de.tum.in.i22.uc.pdp.xsd.SinceType;
 public class Since extends SinceType {
 	private static Logger log = LoggerFactory.getLogger(Since.class);
 
+	private Operator op1;
+	private Operator op2;
+
 	public Since() {
 	}
 
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);
-		((Operator) this.getOperators().get(0)).init(mech);
-		((Operator) this.getOperators().get(1)).init(mech);
+
+		op1 = (Operator) operators.get(0);
+		op2 = (Operator) operators.get(1);
+
+		op1.init(mech);
+		op2.init(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "SINCE (" + this.getOperators().get(0) + ", " + this.getOperators().get(1) + " )";
+		return "SINCE (" + op1 + ", " + op2 + " )";
 	}
 
 	@Override
@@ -31,8 +38,8 @@ public class Since extends SinceType {
 												// (LTL doesn't state anything
 												// about B in the timestep when
 												// A happens)
-		boolean operand1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
-		boolean operand2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
+		boolean operand1state = op1.evaluate(curEvent);
+		boolean operand2state = op2.evaluate(curEvent);
 
 		if (operand1state) {
 			log.debug("[SINCE] Subformula A satisfied this timestep => TRUE");

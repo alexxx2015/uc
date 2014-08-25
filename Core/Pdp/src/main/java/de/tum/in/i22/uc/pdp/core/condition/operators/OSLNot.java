@@ -12,6 +12,8 @@ import de.tum.in.i22.uc.pdp.xsd.NotType;
 public class OSLNot extends NotType {
 	private static Logger log = LoggerFactory.getLogger(OSLNot.class);
 
+	private Operator op;
+
 	public OSLNot() {
 	}
 
@@ -19,28 +21,30 @@ public class OSLNot extends NotType {
 	public void init(Mechanism mech) {
 		super.init(mech);
 
+		op = (Operator) operators;
+
 		/*
 		 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
-		 * At this place, we check whether the operand of not(.) is a Literal. If this is not
+		 * At this place, we check whether the operand of NOT(.) is a Literal. If this is not
 		 * the case, an IllegalArgumentException is thrown.
 		 */
-		if (Settings.getInstance().getDistributionEnabled() && !(operators instanceof LiteralOperator)) {
+		if (Settings.getInstance().getDistributionEnabled() && !(op instanceof LiteralOperator)) {
 			throw new IllegalArgumentException(
 					"Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (operand of "
 							+ this.getClass() + " was not of type " + LiteralOperator.class + ").");
 		}
 
-		((Operator) operators).init(mech);
+		op.init(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "! " + operators;
+		return "! " + op;
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		_state.value = !((Operator) operators).evaluate(curEvent);
+		_state.value = !op.evaluate(curEvent);
 		log.debug("eval NOT [{}]", _state.value);
 		return _state.value;
 	}
