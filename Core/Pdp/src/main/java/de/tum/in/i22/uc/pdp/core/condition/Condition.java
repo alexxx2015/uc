@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 public class Condition {
 	private static Logger _logger = LoggerFactory.getLogger(Condition.class);
 
-	public Operator _operator = null;
+	private Operator _operator = null;
 
 	public Condition() {
 	}
@@ -18,6 +18,12 @@ public class Condition {
 	public Condition(ConditionType cond, Mechanism curMechanism) {
 		_logger.debug("Preparing condition from ConditionType");
 		_operator = (Operator) cond.getOperators();
+
+		if (_operator == null) {
+			_logger.error("Condition is empty.");
+			throw new NullPointerException("Condition is empty.");
+		}
+
 		_operator.init(curMechanism);
 
 		_logger.debug("condition: {}", _operator);
@@ -41,11 +47,6 @@ public class Condition {
 	 */
 	public boolean evaluate(IEvent event) {
 		_logger.debug("Evaluating condition...");
-
-		if (_operator == null) {
-			_logger.error("Condition is empty. evaluates to true. Strange, though. Who writes such mechanisms?");
-			return true;
-		}
 
 		boolean ret = false;
 		try {

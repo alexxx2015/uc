@@ -152,8 +152,6 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		if (_event == null)
 			return _messageFactory.createStatus(EStatus.ERROR);
 
-		String errorString = "";
-
 		/*
 		 * 1) create the list of scopes affected by the execution of the current
 		 * event and store the number in scopeNum (XDelim)

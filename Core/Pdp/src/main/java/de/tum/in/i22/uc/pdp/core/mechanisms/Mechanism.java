@@ -152,7 +152,6 @@ public abstract class Mechanism implements Runnable {
 		_logger.info("Started mechanism update thread usleep={} ms", sleepValue);
 
 		_lastUpdate = System.currentTimeMillis();
-		_condition._operator.init(this);
 
 		while (!_interrupted) {
 			try {

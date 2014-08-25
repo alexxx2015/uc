@@ -28,13 +28,13 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 public class PxpManager {
 	private static Logger _logger = LoggerFactory.getLogger(PxpManager.class);
 
-	public static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
+	private static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
 
 	public boolean execute(ExecuteAction execAction, boolean synchronous) {
 		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
-				(synchronous==true?"":"a"),execAction.getName(), execAction.getParameters());
+				(synchronous == true ? "" : "a"), execAction.getName(), execAction.getParameters());
 
-		String pxpId = execAction.getId();
+		String pxpId = execAction.getPxpId();
 		IStatus res = null;
 		if (pxpId != null) {
 			PxpSpec pxp = pxpSpec.get(pxpId);
@@ -72,7 +72,7 @@ public class PxpManager {
 		boolean b = false;
 		if (!pxpSpec.containsKey(pxp.getId())) {
 			b = pxpSpec.put(pxp.getId(), pxp) == null;
-			_logger.info("PXP "+pxp.getId()+" registered.");
+			_logger.info("PXP " + pxp.getId() + " registered.");
 		}
 		return b;
 	}
