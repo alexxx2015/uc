@@ -49,7 +49,7 @@ public class ThriftConnector<HandleType extends TServiceClient> extends TcpConne
 			_transport.open();
 			handle = _iface.getConstructor(TProtocol.class).newInstance(new TBinaryProtocol(_transport));
 		} catch (Exception e) {
-			_logger.debug("Failed to establish connection.", e);
+			_logger.debug("Failed to establish connection to " + this + ".");
 			disconnect();
 			throw new IOException(e.getMessage(), e);
 		}
@@ -64,6 +64,4 @@ public class ThriftConnector<HandleType extends TServiceClient> extends TcpConne
 			_transport = null;
 		}
 	}
-
-
 }
