@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 
 public class RepLim extends RepLimType {
-	private static Logger log = LoggerFactory.getLogger(RepLim.class);
+	private static Logger _logger = LoggerFactory.getLogger(RepLim.class);
 	private TimeAmount timeAmount = null;
 
 	public RepLim() {
@@ -34,7 +34,7 @@ public class RepLim extends RepLimType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.debug("circularArray: {}", this._state.circArray);
+		_logger.debug("circularArray: {}", this._state.circArray);
 		if (this._state.counter >= this.getLowerLimit() && this._state.counter <= this.getUpperLimit())
 			this._state.value = true;
 		else
@@ -44,20 +44,20 @@ public class RepLim extends RepLimType {
 			Boolean curValue = this._state.circArray.pop();
 			if (curValue) {
 				this._state.counter--;
-				log.debug("[REPLIM] Decrementing counter to [{}]", this._state.counter);
+				_logger.debug("[REPLIM] Decrementing counter to [{}]", this._state.counter);
 			}
 
 			Boolean operandState = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (operandState) {
 				this._state.counter++;
-				log.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this._state.counter);
+				_logger.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this._state.counter);
 			}
 
 			this._state.circArray.push(operandState);
-			log.debug("circularArray: {}", this._state.circArray);
+			_logger.debug("circularArray: {}", this._state.circArray);
 		}
 
-		log.debug("eval REPLIM [{}]", this._state.value);
+		_logger.debug("eval REPLIM [{}]", this._state.value);
 		return this._state.value;
 	}
 }

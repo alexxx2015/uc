@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.DuringType;
 
 public class During extends DuringType {
-	private static Logger log = LoggerFactory.getLogger(During.class);
+	private static Logger _logger = LoggerFactory.getLogger(During.class);
 	private TimeAmount timeAmount = null;
 
 	public During() {
@@ -34,7 +34,7 @@ public class During extends DuringType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.trace("current state counter: {}", this._state.counter);
+		_logger.trace("current state counter: {}", this._state.counter);
 		if (this._state.counter == 0)
 			this._state.value = true;
 		else
@@ -44,12 +44,12 @@ public class During extends DuringType {
 			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (!operandValue) {
 				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
-				log.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
+				_logger.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
 						this._state.counter, operandValue);
 			} else {
 				if (this._state.counter > 0)
 					this._state.counter--;
-				log.debug("[DURING} New state counter: [{}]", this._state.counter);
+				_logger.debug("[DURING} New state counter: [{}]", this._state.counter);
 			}
 
 			// update state->value for logging output
@@ -59,7 +59,7 @@ public class During extends DuringType {
 				this._state.value = false;
 		}
 
-		log.debug("eval DURING [{}]", this._state.value);
+		_logger.debug("eval DURING [{}]", this._state.value);
 		return this._state.value;
 	}
 }

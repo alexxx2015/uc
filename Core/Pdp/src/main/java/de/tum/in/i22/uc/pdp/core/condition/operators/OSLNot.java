@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
 public class OSLNot extends NotType {
-	private static Logger log = LoggerFactory.getLogger(OSLNot.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLNot.class);
 
 	private Operator op;
 
@@ -45,7 +45,7 @@ public class OSLNot extends NotType {
 	@Override
 	public boolean evaluate(IEvent curEvent) {
 		_state.value = !op.evaluate(curEvent);
-		log.debug("eval NOT [{}]", _state.value);
+		_logger.debug("eval NOT [{}]", _state.value);
 		return _state.value;
 	}
 }

@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
 public class OSLTrue extends TrueType implements LiteralOperator {
-	private static Logger log = LoggerFactory.getLogger(OSLTrue.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLTrue.class);
 
 	public OSLTrue() {
 	}
@@ -25,7 +25,7 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.debug("eval TRUE");
+		_logger.debug("eval TRUE");
 		return true;
 	}
 }

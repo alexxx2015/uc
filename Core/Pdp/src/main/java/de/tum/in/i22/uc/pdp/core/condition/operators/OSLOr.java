@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.OrType;
 
 public class OSLOr extends OrType {
-	private static Logger log = LoggerFactory.getLogger(OSLOr.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLOr.class);
 
 	private Operator op1;
 	private Operator op2;
@@ -58,7 +58,7 @@ public class OSLOr extends OrType {
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
 		_state.value = op1state || op2state;
-		log.debug("eval OR [{}]", _state.value);
+		_logger.debug("eval OR [{}]", _state.value);
 		return _state.value;
 	}
 }

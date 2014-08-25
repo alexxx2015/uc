@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.WithinType;
 
 public class Within extends WithinType {
-	private static Logger log = LoggerFactory.getLogger(Within.class);
+	private static Logger _logger = LoggerFactory.getLogger(Within.class);
 	private TimeAmount timeAmount = null;
 
 	public Within() {
@@ -30,7 +30,7 @@ public class Within extends WithinType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		log.debug("[WITHIN] Current state counter=[{}]", this._state.counter);
+		_logger.debug("[WITHIN] Current state counter=[{}]", this._state.counter);
 		if (this._state.counter > 0)
 			this._state.value = true;
 		else
@@ -40,12 +40,12 @@ public class Within extends WithinType {
 			boolean operandValue = ((Operator) this.getOperators()).evaluate(curEvent);
 			if (operandValue) {
 				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
-				log.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
+				_logger.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
 						this._state.counter, operandValue);
 			} else {
 				if (this._state.counter > 0)
 					this._state.counter--;
-				log.debug("[WITHIN} New state counter: [{}]", this._state.counter);
+				_logger.debug("[WITHIN} New state counter: [{}]", this._state.counter);
 			}
 
 			// update state->value for logging output
@@ -55,7 +55,7 @@ public class Within extends WithinType {
 				this._state.value = false;
 		}
 
-		log.debug("eval WITHIN [{}]", this._state.value);
+		_logger.debug("eval WITHIN [{}]", this._state.value);
 		return this._state.value;
 	}
 

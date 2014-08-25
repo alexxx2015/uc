@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.RepSinceType;
 
 public class RepSince extends RepSinceType {
-	private static Logger log = LoggerFactory.getLogger(RepSince.class);
+	private static Logger _logger = LoggerFactory.getLogger(RepSince.class);
 
 	public RepSince() {
 	}
@@ -37,28 +37,28 @@ public class RepSince extends RepSinceType {
 		Boolean operand2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
 
 		if (operand1state) {
-			log.debug("[REPSINCE] Subformula A satisfied this timestep => TRUE");
+			_logger.debug("[REPSINCE] Subformula A satisfied this timestep => TRUE");
 			this._state.value = true;
 		} else {
 			long limitComparison = this._state.counter + (operand2state ? 1 : 0);
-			log.debug("[REPSINCE] Counter for subformula B [{}]", limitComparison);
+			_logger.debug("[REPSINCE] Counter for subformula B [{}]", limitComparison);
 
 			if (this._state.subEverTrue) {
-				log.debug("[REPSINCE] Subformula A was satisfied any previous timestep");
+				_logger.debug("[REPSINCE] Subformula A was satisfied any previous timestep");
 				if (limitComparison <= this.getLimit()) {
-					log.debug("[REPSINCE] Amount of occurrences of subformula B <= limit ==> TRUE");
+					_logger.debug("[REPSINCE] Amount of occurrences of subformula B <= limit ==> TRUE");
 					this._state.value = true;
 				} else {
-					log.debug("[REPSINCE] Occurrence limitation exceeded! ==> FALSE");
+					_logger.debug("[REPSINCE] Occurrence limitation exceeded! ==> FALSE");
 					this._state.value = false;
 				}
 			} else {
-				log.debug("[REPSINCE] Subformula A NOT satisfied this timestep or any previous timestep");
+				_logger.debug("[REPSINCE] Subformula A NOT satisfied this timestep or any previous timestep");
 				if (limitComparison <= this.getLimit()) {
-					log.debug("[REPSINCE] Global amount of occurrences of subformula B <= limit ==> TRUE");
+					_logger.debug("[REPSINCE] Global amount of occurrences of subformula B <= limit ==> TRUE");
 					this._state.value = true;
 				} else {
-					log.debug("[REPSINCE] Global occurrence limitation exceeded! ==> FALSE");
+					_logger.debug("[REPSINCE] Global occurrence limitation exceeded! ==> FALSE");
 					this._state.value = false;
 				}
 
@@ -67,20 +67,20 @@ public class RepSince extends RepSinceType {
 
 		if (curEvent == null) {
 			if (operand1state) {
-				log.debug("[REPSINCE] Subformula A satisfied this timestep => setting flag and resetting counter");
+				_logger.debug("[REPSINCE] Subformula A satisfied this timestep => setting flag and resetting counter");
 				this._state.subEverTrue = true;
 
 				this._state.counter = 0;
-				log.debug("[REPSINCE] Counter for subformula B [{}]", this._state.counter);
+				_logger.debug("[REPSINCE] Counter for subformula B [{}]", this._state.counter);
 			}
 
 			if (operand2state) {
 				this._state.counter++;
-				log.debug("[REPSINCE] Counter for subformula B [{}]", this._state.counter);
+				_logger.debug("[REPSINCE] Counter for subformula B [{}]", this._state.counter);
 			}
 		}
 
-		log.debug("eval REPSINCE [{}]", this._state.value);
+		_logger.debug("eval REPSINCE [{}]", this._state.value);
 		return this._state.value;
 	}
 }
