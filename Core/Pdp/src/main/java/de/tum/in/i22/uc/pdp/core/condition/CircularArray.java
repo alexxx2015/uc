@@ -4,23 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CircularArray<T> {
-	private static Logger log = LoggerFactory.getLogger(CircularArray.class);
+	private static Logger _logger = LoggerFactory.getLogger(CircularArray.class);
 	private T values[] = null;
 
-	public int first = 0;
-	public int next = 0;
-	public int size = 0;
+	private int first = 0;
+	private int next = 0;
 
 	@SuppressWarnings("unchecked")
 	public CircularArray(int size) {
 		values = (T[]) new Object[size];
-		this.size = size;
 	}
 
 	@SuppressWarnings("unchecked")
 	public CircularArray(long size) {
 		values = (T[]) new Object[(int) size];
-		this.size = (int) size;
 	}
 
 	public T get(int pos) {
@@ -33,33 +30,33 @@ public class CircularArray<T> {
 
 	public T readFirst() {
 		T val = values[this.first];
-		log.trace("readFirst (first={}) -> {}", this.first, val);
+		_logger.trace("readFirst (first={}) -> {}", this.first, val);
 		return val;
 	}
 
 	public T pop() {
 		T val = values[this.first];
-		log.trace("pop (first={}) -> {}", this.first, val);
+		_logger.trace("pop (first={}) -> {}", this.first, val);
 
 		this.first++;
-		log.trace("first++ -> {}", this.first);
+		_logger.trace("first++ -> {}", this.first);
 		if (this.first == this.values.length) {
-			log.trace("first reached boundary, resetting to 0");
+			_logger.trace("first reached boundary, resetting to 0");
 			this.first = 0;
 		}
 		return val;
 	}
 
 	public void push(T val) {
-		log.trace("push (next={}) -> {}", this.next, val);
+		_logger.trace("push (next={}) -> {}", this.next, val);
 		this.values[this.next] = val;
 
 		this.next++;
-		log.trace("next++ -> {}", this.next);
+		_logger.trace("next++ -> {}", this.next);
 
 		if (this.next == this.values.length) {
 			this.next = 0;
-			log.trace("next reached boundary, resetting to 0");
+			_logger.trace("next reached boundary, resetting to 0");
 		}
 	}
 
