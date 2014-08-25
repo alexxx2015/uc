@@ -13,9 +13,6 @@ public class OSLFalse extends FalseType implements LiteralOperator {
 	public OSLFalse() {
 	}
 
-	public OSLFalse(FalseType op, Mechanism curMechanism) {
-	}
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

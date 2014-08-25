@@ -14,11 +14,6 @@ public class OSLImplies extends ImpliesType {
 	public OSLImplies() {
 	}
 
-	public OSLImplies(Operator operand1, Operator operand2) {
-		operators.add(operand1);
-		operators.add(operand2);
-	}
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

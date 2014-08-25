@@ -11,7 +11,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	public StateBasedOperator() {
 	}
 
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

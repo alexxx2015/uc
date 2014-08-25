@@ -13,9 +13,6 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 	public OSLTrue() {
 	}
 
-	public OSLTrue(TrueType op, Mechanism curMechanism) {
-	}
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

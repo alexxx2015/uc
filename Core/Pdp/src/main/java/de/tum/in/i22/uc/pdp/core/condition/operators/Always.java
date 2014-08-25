@@ -14,10 +14,6 @@ public class Always extends AlwaysType {
 	public Always() {
 	}
 
-	public Always(Operator operand1) {
-		this.operators = operand1;
-	}
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

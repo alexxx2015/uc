@@ -14,11 +14,6 @@ public class OSLAnd extends AndType {
 	public OSLAnd() {
 	}
 
-	public OSLAnd(Operator operand1, Operator operand2) {
-		this.getOperators().add(operand1);
-		this.getOperators().add(operand2);
-	}
-
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);

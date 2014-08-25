@@ -92,7 +92,7 @@ public class PolicyDecisionPoint {
 					.unmarshal(is);
 			PolicyType policy = (PolicyType) poElement.getValue();
 
-			_logger.debug("Deploying policy [name={}]: {}", policy.getName(), policy.toString());
+			_logger.debug("Deploying policy [name={}]", policy.getName());
 
 			/*
 			 * Get the set of mechanisms of this policy (if any)
