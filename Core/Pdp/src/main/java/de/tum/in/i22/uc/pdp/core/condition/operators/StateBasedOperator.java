@@ -6,7 +6,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
-public class StateBasedOperator extends StateBasedOperatorType {
+public class StateBasedOperator extends StateBasedOperatorType implements LiteralOperator  {
 
 	public StateBasedOperator() {
 	}

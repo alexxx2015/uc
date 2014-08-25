@@ -15,7 +15,7 @@ public class OSLNot extends NotType {
 	}
 
 	public OSLNot(Operator operand) {
-		this.operators = operand;
+		operators = operand;
 	}
 
 	@Override

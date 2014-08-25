@@ -15,7 +15,7 @@ public class Condition {
 	public Condition() {
 	}
 
-	public Condition(ConditionType cond, Mechanism curMechanism) {
+	public Condition(ConditionType cond, Mechanism mechanism) {
 		_logger.debug("Preparing condition from ConditionType");
 		_operator = (Operator) cond.getOperators();
 
@@ -24,7 +24,7 @@ public class Condition {
 			throw new NullPointerException("Condition is empty.");
 		}
 
-		_operator.init(curMechanism);
+		_operator.init(mechanism);
 
 		_logger.debug("condition: {}", _operator);
 	}

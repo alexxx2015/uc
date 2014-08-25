@@ -7,7 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
-public class EventMatchOperator extends EventMatch {
+public class EventMatchOperator extends EventMatch implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
 
 	public EventMatchOperator() {

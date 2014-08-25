@@ -4,7 +4,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.EvalOperatorType;
 
-public class EvalOperator extends EvalOperatorType {
+public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 
 	public EvalOperator() {
 	}

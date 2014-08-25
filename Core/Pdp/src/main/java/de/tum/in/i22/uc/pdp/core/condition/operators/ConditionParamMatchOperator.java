@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.pdp.core.ParamMatch;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
-public class ConditionParamMatchOperator extends ConditionParamMatchType {
+public class ConditionParamMatchOperator extends ConditionParamMatchType implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
 
 	public ConditionParamMatchOperator() {

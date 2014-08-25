@@ -23,7 +23,14 @@ import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 public abstract class Mechanism implements Runnable {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
+	/**
+	 * The name of this {@link Mechanism}.
+	 */
 	private final String _name;
+
+	/**
+	 * A description of what this {@link Mechanism}.
+	 */
 	private final String _description;
 	private long _lastUpdate = 0;
 	private long _timestepSize = 0;
@@ -37,7 +44,7 @@ public abstract class Mechanism implements Runnable {
 	private PxpManager _pxpManager;
 
 	/**
-	 * The name of the policy of which this mechanism is a part of
+	 * The name of the policy to which this {@link Mechanism} belongs.
 	 */
 	private final String _policyName;
 
@@ -69,6 +76,10 @@ public abstract class Mechanism implements Runnable {
 		}
 	}
 
+	/**
+	 * Returns the name of this {@link Mechanism}.
+	 * @return the name of this {@link Mechanism}.
+	 */
 	public String getName() {
 		return _name;
 	}
@@ -87,6 +98,14 @@ public abstract class Mechanism implements Runnable {
 
 	public long getTimestepSize() {
 		return _timestepSize;
+	}
+
+	/**
+	 * Returns the name of the policy to which this {@link Mechanism} belongs.
+	 * @return the name of the policy to which this {@link Mechanism} belongs.
+	 */
+	public String getPolicyName() {
+		return _policyName;
 	}
 
 	public void revoke() {

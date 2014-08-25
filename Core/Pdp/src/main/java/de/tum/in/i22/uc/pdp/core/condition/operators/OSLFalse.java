@@ -7,7 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.FalseType;
 
-public class OSLFalse extends FalseType {
+public class OSLFalse extends FalseType implements LiteralOperator {
 	private static Logger log = LoggerFactory.getLogger(OSLFalse.class);
 
 	public OSLFalse() {

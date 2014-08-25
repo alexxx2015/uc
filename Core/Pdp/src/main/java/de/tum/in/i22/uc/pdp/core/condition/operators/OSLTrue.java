@@ -7,7 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
-public class OSLTrue extends TrueType {
+public class OSLTrue extends TrueType implements LiteralOperator {
 	private static Logger log = LoggerFactory.getLogger(OSLTrue.class);
 
 	public OSLTrue() {
