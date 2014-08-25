@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -60,7 +62,12 @@ class CassandraDistributionManager implements IDistributionManager {
 	private boolean _initialized = false;
 
 	public CassandraDistributionManager() {
-		_cluster = Cluster.builder().addContactPoint("localhost").build();
+		/*
+		 * FIXME make ConsistencyLevel changable from Settings.
+		 */
+		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
+
+		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_currentSession = _cluster.connect();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
@@ -79,9 +86,9 @@ class CassandraDistributionManager implements IDistributionManager {
 		_initialized = true;
 	}
 
-	private Session switchKeyspace(String keyspace) {
+	private void switchKeyspace(String keyspace) {
 		if (keyspace != null && keyspace.equals(_currentKeyspace)) {
-			return _currentSession;
+			return;
 		}
 
 		try {
@@ -94,17 +101,12 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		if (_currentKeyspace == null) {
 			createPolicyKeyspace(keyspace, IPLocation.localIpLocation);
-			return switchKeyspace(keyspace);
 		}
-
-		return _currentSession;
 	}
 
 	@Override
 	public void newPolicy(XmlPolicy policy) {
 		switchKeyspace(policy.getName());
-
-		//TODO initialization of distributed policy information
 	}
 
 	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
@@ -147,8 +149,12 @@ class CassandraDistributionManager implements IDistributionManager {
 				if (!success) {
 					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
 				}
-			}
 
+				/*
+				 * TODO: We need to deal with the fact that success == false at this place.
+				 * Possible options: Retry, throw exception, cancel data transfer
+				 */
+			}
 		}
 	}
 
@@ -163,11 +169,21 @@ class CassandraDistributionManager implements IDistributionManager {
 		_logger.debug("doCrossSystemDataTrackingCoarse invoked: " + dstLocation + " -> " + data);
 
 		for (IData d : data) {
+			String dataID = d.getId();
+
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				switchKeyspace(p.getName());
 
-				_currentSession.execute("INSERT INTO hasdata (data, location) " + "VALUES ('" + d.getId() + "','"
-						+ dstLocation.getHost() + "')");
+				/*
+				 *
+				 */
+				if (_currentSession.execute("SELECT data from hasdata WHERE data = '" + dataID + "';").isExhausted()) {
+					_currentSession.execute("INSERT INTO hasdata (data, locations) VALUES ('" + dataID + "',{'"
+							+ IPLocation.localIpLocation.getHost() + "'})");
+				}
+
+				_currentSession.execute("UPDATE hasdata SET locations = locations + {'" + dstLocation.getHost()
+						+ "'} WHERE data = '" + dataID + "'");
 			}
 		}
 	}
@@ -226,7 +242,11 @@ class CassandraDistributionManager implements IDistributionManager {
 		try {
 			_currentSession.execute(queryCreateKeyspace.toString());
 			switchKeyspace(policyName);
-			_currentSession.execute("CREATE TABLE hasdata (data text,location text,PRIMARY KEY (data))");
+			_currentSession.execute("CREATE TABLE hasdata ("
+					+ "data text,"
+					+ "locations set<text>,"
+					+ "PRIMARY KEY (data)"
+					+ ");");
 		}
 		catch (AlreadyExistsException e) {
 			// don't worry.. about a thing.
@@ -251,7 +271,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
-		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
+		ResultSet rows = _currentSession.execute("SELECT strategy_options FROM system.schema_keyspaces "
 				+ "WHERE keyspace_name = '" + name + "'");
 
 		// (2) We build the set of locations that are currently known within the keyspace
@@ -315,6 +335,9 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
+				/*
+				 * TODO: These three tasks can be parallelized
+				 */
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
