@@ -18,7 +18,7 @@ public interface IDistributionManager {
 
 	/**
 	 * Method to be invoked whenever a new policy ought to be managed.
-	 * 
+	 *
 	 * @param xmlPolicy
 	 */
 	void newPolicy(XmlPolicy xmlPolicy);

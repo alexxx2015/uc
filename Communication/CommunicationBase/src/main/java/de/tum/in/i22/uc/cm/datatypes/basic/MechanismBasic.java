@@ -54,14 +54,6 @@ public class MechanismBasic implements IMechanism {
 		return _triggerEvent;
 	}
 
-	// I doubt that these setters are necessary. Use an appropriate constructor instead.
-	@Deprecated
-	public void setCondition(ICondition condition) {
-		_condition = condition;
-	}
-
-
-
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;
@@ -91,7 +83,4 @@ public class MechanismBasic implements IMechanism {
 				.add("_triggerEvent", _triggerEvent)
 				.toString();
 	}
-
-
-
 }
