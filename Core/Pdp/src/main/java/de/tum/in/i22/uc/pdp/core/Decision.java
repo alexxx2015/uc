@@ -114,7 +114,7 @@ public class Decision implements java.io.Serializable {
 				.toString();
 	}
 
-	public IResponse getResponse() {
+	public IResponse toResponse() {
 		// Convert an (IESE) Decision object into a (TUM) Response
 		IStatus status;
 

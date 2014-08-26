@@ -52,7 +52,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert (a < 2 == (d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
+			assert (a < 2 == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
 			sleep(3000);
 		}
@@ -74,7 +74,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a == 0) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
+			assert ((a == 0) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
 			sleep(3000);
 		}
@@ -97,7 +97,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 4) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
+			assert ((a < 4) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
 			sleep(3000);
 		}
@@ -119,7 +119,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
+			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 
 			sleep(3000 + (a == 2 ? 3000 : 0));
 		}
@@ -142,7 +142,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
+			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 
 			sleep(3000);
 		}
@@ -166,7 +166,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a == 0 || a > 2) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
+			assert ((a == 0 || a > 2) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 			log.debug("##################################");
 			sleep(3000);
 		}
@@ -178,7 +178,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assert ((a < 3) == (d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
+			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 			log.debug("##################################");
 			sleep(3000);
 		}
@@ -210,7 +210,7 @@ public class OperatorTest {
 				// this event doesn't trigger any mechanism, not possible to
 				// check the internal condition state which should be
 				// set to TRUE due to this event...
-				assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
+				assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -220,7 +220,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
+			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
 
 			sleep(3000);
@@ -228,7 +228,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
+			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
 			sleep(3000);
 
@@ -237,7 +237,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
+				assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -247,7 +247,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
+			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
 			sleep(3000);
 
@@ -262,7 +262,7 @@ public class OperatorTest {
 				// can be checked with some optional executeAction which should
 				// be triggered at the end
 				// of each timestep...
-				assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
+				assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -294,7 +294,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			Decision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
+			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
 			sleep(3000);
 
@@ -303,7 +303,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
+				assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
 				log.debug("##################################");
 				sleep(3000);
 			}
@@ -313,7 +313,7 @@ public class OperatorTest {
 			log.info("Notifying event");
 			d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
-			assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
+			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
 
 			sleep(3000);
@@ -322,7 +322,7 @@ public class OperatorTest {
 				log.info("Notifying event");
 				d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
-				assertTrue(d.getResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
+				assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW));
 				log.debug("##################################");
 				sleep(3000);
 			}

@@ -99,7 +99,7 @@ public class PdpHandler extends PdpProcessor {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR,
 					"null event received"), null, null);
 		}
-		IResponse res = _lpdp.notifyEvent(event).getResponse();
+		IResponse res = _lpdp.notifyEvent(event).toResponse();
 
 		/**
 		 * (1) If the event is actual, we update the PIP in any case
