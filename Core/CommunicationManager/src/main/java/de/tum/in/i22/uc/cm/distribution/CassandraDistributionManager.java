@@ -351,7 +351,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
 				/*
-				 * TODO: These three tasks can be parallelized
+				 * TODO: These three tasks can be parallelized(?!?)
 				 */
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
@@ -362,9 +362,6 @@ class CassandraDistributionManager implements IDistributionManager {
 			}
 		}
 	}
-
-
-
 
 	private Set<XmlPolicy> getAllPolicies(Set<IData> data) {
 		if (data == null || data.size() == 0) {

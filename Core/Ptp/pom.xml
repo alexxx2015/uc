@@ -18,17 +18,6 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftDefinitions</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>UsageControlSystem</groupId>
-			<artifactId>ThriftStubs</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
-		<dependency>
 			<groupId>rita</groupId>
 			<artifactId>rita</artifactId>
 			<scope>system</scope>
