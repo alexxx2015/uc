@@ -10,4 +10,10 @@ class OperatorState {
 	boolean subEverTrue = false;
 
 	CircularArray<Boolean> circArray = null;
+
+	/**
+	 * Indicates whether this operator can be decided locally, or
+	 * whether coordination with other PDPs is required.
+	 */
+	boolean locallyDecidable = true;
 }

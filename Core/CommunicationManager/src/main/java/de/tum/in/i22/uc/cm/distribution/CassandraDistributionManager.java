@@ -39,6 +39,32 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
+	private static final String TABLE_NAME_DATA = "hasdata";
+	private static final String TABLE_NAME_EVENTS = "issueevents";
+	private static final String TABLE_NAME_STATES = "operatorstates";
+
+	private static final String QUERY_CREATE_TABLE_DATA = "CREATE TABLE " + TABLE_NAME_DATA + " ("
+			+ "data text,"
+			+ "locations set<text>,"
+			+ "PRIMARY KEY (data)"
+			+ ");";
+
+	private static final String QUERY_CREATE_TABLE_EVENTS = "CREATE TABLE " + TABLE_NAME_EVENTS + " ("
+			+ "event text,"
+			+ "locations set<text>,"
+			+ "PRIMARY KEY (event)"
+			+ ");";
+
+	private static final String QUERY_CREATE_TABLE_STATES = "CREATE TABLE " + TABLE_NAME_STATES + " ("
+			+ "id text,"
+			+ "value boolean,"
+			+ "immutable boolean,"
+			+ "counter counter,"
+			+ "subevertrue boolean,"
+			+ "circArry list<text>,"
+			+ "PRIMARY KEY (id)"
+			+ ");";
+
 	/*
 	 * IMPORTANT:
 	 * Cassandra 2.1.0-beta causes some trouble with upper/lowercase
@@ -63,7 +89,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	public CassandraDistributionManager() {
 		/*
-		 * FIXME make ConsistencyLevel changable from Settings.
+		 * FIXME make ConsistencyLevel configurable from Settings.
 		 */
 		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
 
@@ -174,16 +200,19 @@ class CassandraDistributionManager implements IDistributionManager {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				switchKeyspace(p.getName());
 
-				/*
-				 *
-				 */
-				if (_currentSession.execute("SELECT data from hasdata WHERE data = '" + dataID + "';").isExhausted()) {
-					_currentSession.execute("INSERT INTO hasdata (data, locations) VALUES ('" + dataID + "',{'"
-							+ IPLocation.localIpLocation.getHost() + "'})");
+				// Check whether there already exists an entry for this dataID ...
+				if (_currentSession.execute("SELECT data from " + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+					// ... if not, insert the corresponding row
+					_currentSession.execute("INSERT INTO " + TABLE_NAME_DATA
+							+ " (data, locations) VALUES ('" + dataID + "',{'"
+							+ IPLocation.localIpLocation.getHost() + "','"
+							+ dstLocation.getHost() + "'})");
 				}
-
-				_currentSession.execute("UPDATE hasdata SET locations = locations + {'" + dstLocation.getHost()
-						+ "'} WHERE data = '" + dataID + "'");
+				else {
+					// ... otherwise add the additional location to the existing row
+					_currentSession.execute("UPDATE " + TABLE_NAME_DATA + " SET locations = locations + {'"
+							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
+				}
 			}
 		}
 	}
@@ -214,44 +243,30 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private void createPolicyKeyspace(String policyName, IPLocation... locations) {
-		if (locations == null || locations.length == 0) {
-			_logger.info("Unable to create keyspace. No locations provided.");
+	private void createPolicyKeyspace(String policyName, IPLocation location) {
+		if (location == null) {
+			_logger.info("Unable to create keyspace. No location provided.");
 			return;
 		}
 
 		policyName = policyName.toLowerCase();
 
-		// check whether the keyspace exists already
-		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
-				+ "WHERE keyspace_name = '" + policyName + "'");
-		if (rows.iterator().hasNext()) {
-			// if the keyspace does exist, then we return
+		// Return if the keyspace exists already
+		if (!_currentSession.execute("SELECT strategy_options FROM system.schema_keyspaces WHERE keyspace_name = '" + policyName + "'").isExhausted()) {
 			return;
 		}
 
-		StringBuilder queryCreateKeyspace = new StringBuilder();
-		queryCreateKeyspace.append("CREATE KEYSPACE " + policyName + " WITH replication ");
-		queryCreateKeyspace.append("= {'class':'NetworkTopologyStrategy',");
-		for (IPLocation loc : locations) {
-			queryCreateKeyspace.append("'" + loc.getHost() + "':1,");
-		}
-		queryCreateKeyspace.deleteCharAt(queryCreateKeyspace.length() - 1);
-		queryCreateKeyspace.append("}");
-
 		try {
-			_currentSession.execute(queryCreateKeyspace.toString());
+			_currentSession.execute("CREATE KEYSPACE " + policyName
+					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + location.getHost() + "':1}");
 			switchKeyspace(policyName);
-			_currentSession.execute("CREATE TABLE hasdata ("
-					+ "data text,"
-					+ "locations set<text>,"
-					+ "PRIMARY KEY (data)"
-					+ ");");
+			_currentSession.execute(QUERY_CREATE_TABLE_DATA);
+			_currentSession.execute(QUERY_CREATE_TABLE_EVENTS);
+			_currentSession.execute(QUERY_CREATE_TABLE_STATES);
 		}
 		catch (AlreadyExistsException e) {
 			// don't worry.. about a thing.
 		}
-
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise

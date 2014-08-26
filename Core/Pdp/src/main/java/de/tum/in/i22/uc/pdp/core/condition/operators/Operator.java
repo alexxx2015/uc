@@ -7,9 +7,13 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator {
 	protected PolicyDecisionPoint _pdp;
-	protected OperatorState _state = new OperatorState();
+	protected OperatorState _state;
 	protected Mechanism _mechanism;
 
+	/**
+	 * Internal identifier for this {@link Operator}, assigned
+	 * by {@link Operator#setFullId(int)}; based on {@link Operator#_id}.
+	 */
 	private String _fullId;
 
 	/**
@@ -18,6 +22,10 @@ public abstract class Operator {
 	 * of this {@link Condition}.
 	 */
 	protected int _id;
+
+	public Operator() {
+		_state = new OperatorState();
+	}
 
 	public void init(Mechanism mech) {
 		if (mech == null) {
