@@ -1,17 +1,18 @@
 package de.tum.in.i22.uc.pdp.core.condition.operators;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
-public abstract class Operator {
+public abstract class Operator implements IOperator {
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state;
-	protected Mechanism _mechanism;
+	protected IMechanism _mechanism;
 
 	/**
-	 * Internal identifier for this {@link Operator}, assigned
+	 * Internal identifier for this {@link IOperator}, assigned
 	 * by {@link Operator#setFullId(int)}; based on {@link Operator#_id}.
 	 */
 	private String _fullId;
@@ -19,7 +20,7 @@ public abstract class Operator {
 	/**
 	 * Internal identifier for this {@link Operator}, assigned
 	 * by invoking {@link Operator#initId()} on the root operator
-	 * of this {@link Condition}.
+	 * of this {@link ICondition}.
 	 */
 	protected int _id;
 
@@ -67,26 +68,18 @@ public abstract class Operator {
 		_fullId = _mechanism.getPolicyName() + "#" + _mechanism.getName() + "#" + id;
 	}
 
-	/**
-	 * Returns this {@link Operator}'s internal identifier as a string.
-	 * @return this {@link Operator}'s internal identifier as a string.
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pdp.core.condition.operators.IOperator#getFullId()
 	 */
+	@Override
 	public final String getFullId() {
 		return _fullId;
 	}
 
-	/**
-	 * Evaluates this operator given the specified event.
-	 * If the specified event is null, then this is interpreted
-	 * as the end of a timestep and this {@link Operator} is
-	 * evaluated accordingly.
-	 *
-	 * This method is only to be called on subtypes of this class.
-	 * Otherwise, a {@link UnsupportedOperationException} will be thrown.
-	 *
-	 * @param curEvent
-	 * @return
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.pdp.core.condition.operators.IOperator#evaluate(de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent)
 	 */
+	@Override
 	public boolean evaluate(IEvent curEvent) {
 		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
 	}

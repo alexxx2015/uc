@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
@@ -174,8 +175,8 @@ public class PolicyDecisionPoint {
 		return true;
 	}
 
-	public Decision notifyEvent(IEvent event) {
-		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
+	public IDecision notifyEvent(IEvent event) {
+		IDecision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
 		if (eventMatchList != null) {

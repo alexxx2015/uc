@@ -3,12 +3,13 @@ package de.tum.in.i22.uc.pdp.core.condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.operators.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
-public class Condition {
+public class Condition implements ICondition {
 	private static Logger _logger = LoggerFactory.getLogger(Condition.class);
 
 	private Operator _operator = null;
@@ -36,17 +37,7 @@ public class Condition {
 		return "Condition: { " + _operator + " }";
 	}
 
-	/**
-	 * This method evaluates this {@link Condition} in the presence
-	 * of the specified event at the current point in time.
-	 * Evaluation takes into account that the specified event is
-	 * currently happening. If the specified event is null, then this
-	 * {@link Condition} is evaluated as-is. This is useful for evaluating
-	 * the condition at the end of a timestep.
-	 *
-	 * @param event
-	 * @return
-	 */
+	@Override
 	public boolean evaluate(IEvent event) {
 		_logger.debug("Evaluating condition...");
 

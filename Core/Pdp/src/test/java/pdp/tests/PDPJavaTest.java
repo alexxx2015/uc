@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class PDPJavaTest {
@@ -30,7 +30,7 @@ public class PDPJavaTest {
 		 */
 
 		IEvent e;
-		Decision d;
+		IDecision d;
 		log.debug("PDPJavaTest");
 		lpdp = new PolicyDecisionPoint();
 

@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
 public class OperatorTest {
@@ -50,7 +50,7 @@ public class OperatorTest {
 
 		for (int a = 0; a < 3; a++) {
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert (a < 2 == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
@@ -72,7 +72,7 @@ public class OperatorTest {
 
 		for (int a = 0; a < 3; a++) {
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a == 0) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
@@ -95,7 +95,7 @@ public class OperatorTest {
 		sleep(3000);
 		for (int a = 0; a < 5; a++) {
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a < 4) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 
@@ -117,7 +117,7 @@ public class OperatorTest {
 
 		for (int a = 0; a < 5; a++) {
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 
@@ -140,7 +140,7 @@ public class OperatorTest {
 		sleep(3000);
 		for (int a = 0; a < 5; a++) {
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 
@@ -164,7 +164,7 @@ public class OperatorTest {
 		for (int a = 0; a < 5; a++) {
 			log.debug("##################################");
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a == 0 || a > 2) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.ALLOW)));
 			log.debug("##################################");
@@ -176,7 +176,7 @@ public class OperatorTest {
 		for (int a = 0; a < 5; a++) {
 			log.debug("##################################");
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assert ((a < 3) == (d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT)));
 			log.debug("##################################");
@@ -205,7 +205,7 @@ public class OperatorTest {
 			for (int a = 0; a < 3; a++) {
 				log.debug("##################################");
 				log.info("Notifying event");
-				Decision d = lpdp.notifyEvent(levent2);
+				IDecision d = lpdp.notifyEvent(levent2);
 				log.debug("Decision: {}", d);
 				// this event doesn't trigger any mechanism, not possible to
 				// check the internal condition state which should be
@@ -218,7 +218,7 @@ public class OperatorTest {
 			sleep(6000);
 			log.debug("##################################");
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");
@@ -292,7 +292,7 @@ public class OperatorTest {
 			sleep(1000);
 			log.debug("##################################");
 			log.info("Notifying event");
-			Decision d = lpdp.notifyEvent(levent);
+			IDecision d = lpdp.notifyEvent(levent);
 			log.debug("Decision: {}", d);
 			assertTrue(d.toResponse().getAuthorizationAction().isStatus(EStatus.INHIBIT));
 			log.debug("##################################");

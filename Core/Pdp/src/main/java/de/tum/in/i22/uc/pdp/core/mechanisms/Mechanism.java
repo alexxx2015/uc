@@ -7,9 +7,11 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -19,7 +21,7 @@ import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
-public abstract class Mechanism implements Runnable {
+public abstract class Mechanism implements Runnable, IMechanism {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
 	/**
@@ -35,7 +37,7 @@ public abstract class Mechanism implements Runnable {
 	private long _timestepSize = 0;
 	private long _timestep = 0;
 	private final EventMatch _triggerEvent;
-	private final Condition _condition;
+	private final ICondition _condition;
 	protected AuthorizationAction _authorizationAction = null;
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
@@ -73,10 +75,7 @@ public abstract class Mechanism implements Runnable {
 		}
 	}
 
-	/**
-	 * Returns the name of this {@link Mechanism}.
-	 * @return the name of this {@link Mechanism}.
-	 */
+	@Override
 	public String getName() {
 		return _name;
 	}
@@ -97,10 +96,12 @@ public abstract class Mechanism implements Runnable {
 		return _timestepSize;
 	}
 
-	/**
-	 * Returns the name of the policy to which this {@link Mechanism} belongs.
-	 * @return the name of the policy to which this {@link Mechanism} belongs.
-	 */
+	@Override
+	public ICondition getCondition() {
+		return _condition;
+	}
+
+	@Override
 	public String getPolicyName() {
 		return _policyName;
 	}
@@ -109,7 +110,7 @@ public abstract class Mechanism implements Runnable {
 		_interrupted = true;
 	}
 
-	public synchronized Decision notifyEvent(IEvent event, Decision d) {
+	public synchronized IDecision notifyEvent(IEvent event, IDecision d) {
 		_logger.debug("updating mechanism [{}]", _name);
 
 		if (_triggerEvent.matches(event)) {

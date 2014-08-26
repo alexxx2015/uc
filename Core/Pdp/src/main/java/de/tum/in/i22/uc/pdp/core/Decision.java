@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +13,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
@@ -24,7 +27,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
  * contains information about permissiveness of the event and desired actions to
  * be performed.
  */
-public class Decision implements java.io.Serializable {
+public class Decision implements IDecision, Serializable {
 	private static Logger _logger = LoggerFactory.getLogger(Decision.class);
 
 	private static final long serialVersionUID = 4922446035665121547L;
@@ -40,7 +43,14 @@ public class Decision implements java.io.Serializable {
 		_pxpManager = pxpManager;
 	}
 
-	public void processMechanism(Mechanism mech, IEvent curEvent) {
+	@Override
+	public void processMechanism(IMechanism m, IEvent curEvent) {
+		if (!(m instanceof Mechanism)) {
+			throw new IllegalArgumentException("Mechanism of type " + Mechanism.class + " expected, but got " + m.getClass() + ".");
+		}
+
+		Mechanism mech = (Mechanism) m;
+
 		_logger.debug("Processing mechanism={} for decision", mech.getName());
 
 		AuthorizationAction curAuthAction = mech.getAuthorizationAction();
@@ -114,6 +124,7 @@ public class Decision implements java.io.Serializable {
 				.toString();
 	}
 
+	@Override
 	public IResponse toResponse() {
 		// Convert an (IESE) Decision object into a (TUM) Response
 		IStatus status;
