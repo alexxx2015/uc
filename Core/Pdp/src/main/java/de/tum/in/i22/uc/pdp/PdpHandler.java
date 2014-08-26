@@ -129,7 +129,7 @@ public class PdpHandler extends PdpProcessor {
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is "
 				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
 	}
 
 	@Override

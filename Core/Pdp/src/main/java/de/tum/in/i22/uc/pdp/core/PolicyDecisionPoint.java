@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
@@ -48,13 +50,16 @@ public class PolicyDecisionPoint {
 
 	private final PxpManager _pxpManager;
 
+	private final IDistributionManager _distributionManager;
+
 	public PolicyDecisionPoint() {
-		this(new DummyPipProcessor(), new PxpManager());
+		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
+		_distributionManager = distributionManager;
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
