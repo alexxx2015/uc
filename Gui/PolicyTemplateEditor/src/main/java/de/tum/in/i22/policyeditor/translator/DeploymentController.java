@@ -7,6 +7,7 @@ import de.tum.in.i22.policyeditor.logger.EditorLogger;
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
 import de.tum.in.i22.policyeditor.model.UserClass;
 import de.tum.in.i22.policyeditor.model.UserObject;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 
 public class DeploymentController {
@@ -17,11 +18,11 @@ public class DeploymentController {
 	/**
 	 * For all the data representations of the data,
 	 * deploy all the policies.
-	 * @param dataRepresentations
+	 * @param representations
 	 * @param dataClass
 	 * @param policies
 	 */
-	public void deployPolicies(Set<TContainer> dataRepresentations, String dataClass, List<PolicyTemplate> policies){
+	public void deployPolicies(Set<IContainer> representations, String dataClass, List<PolicyTemplate> policies){
 		String message = "policies translated: "+ policies.size();
 		logger.infoLog(message, null);
 		

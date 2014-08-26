@@ -63,7 +63,9 @@ public class TemplatesLoader {
 	}
 	
 	public static TemplatesLoader loadPolicyTemplates() {
-		String templatesFile = "templates.cfg"; 
+		logger.debugLog(System.getProperty("user.dir"), null);
+		String templatesFile = System.getProperty("user.dir")+"\\src\\main\\resources\\templates.cfg"; 
+		
 		TemplatesLoader templates = new TemplatesLoader();
 		String json = "";
 		try {
@@ -86,7 +88,7 @@ public class TemplatesLoader {
 	}
 			
 	private static void loadActionTemplates(){
-		String actionsFile = "actions.cfg";
+		String actionsFile = System.getProperty("user.dir")+"\\src\\main\\resources\\actions.cfg";
 		String file = "";
 		try {
 			file = PublicMethods.readFile(actionsFile, StandardCharsets.UTF_8);
@@ -112,7 +114,7 @@ public class TemplatesLoader {
 	}
 	
 	private static void loadSubjectTemplates(){
-		String subjectsFile = "subjects.cfg";
+		String subjectsFile = System.getProperty("user.dir")+"\\src\\main\\resources\\subjects.cfg";
 		String file = "";
 		try {
 			file = PublicMethods.readFile(subjectsFile, StandardCharsets.UTF_8);

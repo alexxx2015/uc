@@ -43,9 +43,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlRootElement(name="policySet")
+@XmlRootElement(name="policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "policySet", propOrder = {
+@XmlType(name = "policy", propOrder = {
     "interfaceDescriptions",
     "actionDescriptions",
     "contextDescriptions",

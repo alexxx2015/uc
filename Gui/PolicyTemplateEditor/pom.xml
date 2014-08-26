@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<artifactId>PolicyTemplateEditor</artifactId>
+	<artifactId>PtEditor</artifactId>
 
 	<dependencies>		
 		<dependency>
@@ -72,7 +72,7 @@
 		</plugins>
 	</build>
 	
-	<name>PolicyTemplateEditor</name>
+	<name>PtEditor</name>
 	<description>Policy Template Editor</description>
 	
 </project>

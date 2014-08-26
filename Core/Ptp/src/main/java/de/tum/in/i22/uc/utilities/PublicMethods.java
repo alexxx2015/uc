@@ -27,8 +27,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+
 
 //import de.tum.in.i22.uc.blocks.controller.Config;
 import de.tum.in.i22.uc.policy.translation.ecacreation.SubformulaEvent;
@@ -96,7 +99,7 @@ public class PublicMethods {
 	 * @param doc
 	 * @return strOutput
 	 */
-	public String convertDocumentToString(Document doc) {
+	public static String convertDocumentToString(Document doc) {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try {
@@ -323,6 +326,67 @@ public class PublicMethods {
 		return retAttrib;
 	}
 
+	/**
+	 * Provide help with reading from xml strings and file paths 
+	 * 
+	 * @param input
+	 * @param type
+	 * @return Returns an xml document
+	 */
+	public static Document openXmlInput(String input, String type){
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc=null;
+			
+			try {
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				InputSource inputSource;
+				if(type.equalsIgnoreCase("string"))
+				 {
+					inputSource = new InputSource(new StringReader(input));
+					doc = builder.parse(inputSource);
+				 }
+				else if(type.equalsIgnoreCase("file"))
+					doc=builder.parse(new File(input));		
+							
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			Node root1 = doc.getFirstChild();
+			removeWhitespaceNodes(root1);
+			Node root2 = doc.getParentNode();
+			removeWhitespaceNodes(root2);
+			Node root3 = doc.getNextSibling();
+			removeWhitespaceNodes(root3);
+			
+			return doc;
+	}
+	
+	/**
+	   * This method just removes the whitespaces from an xml document/node
+	   * 
+	   * @param node
+	   */
+	public static void removeWhitespaceNodes(Node node) {
+		if (node != null) {
+			NodeList children = node.getChildNodes();
+			for (int i = children.getLength() - 1; i >= 0; i--) {
+				Node child = children.item(i);
+				if (child instanceof Text
+						&& ((Text) child).getData().trim().length() == 0) {
+					node.removeChild(child);
+				} else if (child instanceof Element) {
+					removeWhitespaceNodes((Element) child);
+				}
+			}
+		}
+	}
+	
+	
 	/* a testing block for functions defined here */
 //	public static void main(String args[]) {
 //		List<String> list = new PublicMethods().returnValuesByParam("play", "device");

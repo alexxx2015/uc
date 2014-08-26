@@ -20,9 +20,10 @@ public class Config
    {
 	configFile = new java.util.Properties();
 	try {	
-        configFile.load(new FileInputStream("src/main/resources/config.cfg"));		
+        configFile.load(new FileInputStream("src/main/resources/translation/config.cfg"));		
 	}
 	catch(FileNotFoundException eta){
+		System.out.println("user directory: " + System.getProperty("user.dir"));
 		System.out.println("error: "+eta.getLocalizedMessage());
 	}
    }

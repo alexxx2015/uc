@@ -34,6 +34,8 @@ public class TranslationServerTest {
 		} 
 		try {
 			 
+			//this is an old example of the ptp server
+			//the new version uses TAny2PmpThriftServer server
 			 int port = TranslationEngine_ThriftServer.getPort();
 			 			 
 		      transport = new TSocket("localhost", port);

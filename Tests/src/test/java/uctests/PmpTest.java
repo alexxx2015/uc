@@ -29,7 +29,6 @@ public class PmpTest extends GenericTest{
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
