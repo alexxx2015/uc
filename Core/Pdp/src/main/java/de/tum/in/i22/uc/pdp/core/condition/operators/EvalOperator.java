@@ -21,7 +21,8 @@ public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 	@Override
 	int initId(int id) {
 		_id = id + 1;
-		_logger.debug("My [{}] id is {}.", this, _id);
+		setFullId(_id);
+		_logger.debug("My [{}] id is {}.", this, getFullId());
 		return _id;
 	}
 

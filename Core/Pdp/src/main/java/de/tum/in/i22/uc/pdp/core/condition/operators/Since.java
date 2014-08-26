@@ -30,7 +30,8 @@ public class Since extends SinceType {
 	@Override
 	int initId(int id) {
 		_id = op1.initId(id) + 1;
-		_logger.debug("My [{}] id is {}.", this, _id);
+		setFullId(_id);
+		_logger.debug("My [{}] id is {}.", this, getFullId());
 		return op2.initId(_id);
 	}
 

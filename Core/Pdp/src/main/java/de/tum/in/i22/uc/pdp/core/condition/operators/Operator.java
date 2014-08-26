@@ -2,18 +2,32 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.OperatorState;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator {
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state = new OperatorState();
+	protected Mechanism _mechanism;
 
+	private String _fullId;
+
+	/**
+	 * Internal identifier for this {@link Operator}, assigned
+	 * by invoking {@link Operator#initId()} on the root operator
+	 * of this {@link Condition}.
+	 */
 	protected int _id;
 
 	public void init(Mechanism mech) {
+		if (mech == null) {
+			throw new NullPointerException("Provided mechanism was null.");
+		}
+
 		if (_pdp == null) {
 			_pdp = mech.getPolicyDecisionPoint();
+			_mechanism = mech;
 		}
 		else {
 			throw new UnsupportedOperationException("Operator may only get initialized once.");
@@ -35,6 +49,24 @@ public abstract class Operator {
 		throw new UnsupportedOperationException("Calling initId() is only allowed on subtypes of " + Operator.class + " (was: " + getClass() + ")");
 	}
 
+	/**
+	 * Sets this {@link Operator}'s internal identifier such that the
+	 * {@link Operator} can be uniquely identified even if the policy
+	 * is sent to another PDP/PMP.
+	 *
+	 * @param id
+	 */
+	protected final void setFullId(int id) {
+		_fullId = _mechanism.getPolicyName() + "#" + _mechanism.getName() + "#" + id;
+	}
+
+	/**
+	 * Returns this {@link Operator}'s internal identifier as a string.
+	 * @return this {@link Operator}'s internal identifier as a string.
+	 */
+	public final String getFullId() {
+		return _fullId;
+	}
 
 	/**
 	 * Evaluates this operator given the specified event.
