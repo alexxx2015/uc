@@ -218,8 +218,8 @@ public class PolicyDecisionPoint {
 		return _pip;
 	}
 
-	public PxpManager getPxpManager() {
-		return _pxpManager;
+	public boolean executeAction(ExecuteAction execAction, boolean synchronous) {
+		return _pxpManager.execute(execAction, synchronous);
 	}
 
 	public void stop() {

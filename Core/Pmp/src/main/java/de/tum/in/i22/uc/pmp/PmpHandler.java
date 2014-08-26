@@ -68,6 +68,8 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
+	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pmp.xsd";
+
 	private IPmp2Ptp _ptp;
 
 	public PmpHandler() {
@@ -83,14 +85,8 @@ public class PmpHandler extends PmpProcessor {
 		_logger.trace("Policy to be converted: " + XMLPolicy);
 		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
 		try {
-			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.uc.pmp.xsd");
+			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
 			Unmarshaller u = jc.createUnmarshaller();
-			// u.setEventHandler(new DefaultValidationEventHandler(){
-			// public boolean handleEvent(ValidationEvent ve){
-			// return super.handleEvent(ve);
-			// }
-			// });
 
 			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
 
@@ -113,8 +109,7 @@ public class PmpHandler extends PmpProcessor {
 		ObjectFactory of = new ObjectFactory();
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {
-			JAXBContext jc = JAXBContext
-					.newInstance("de.tum.in.i22.uc.pmp.xsd");
+			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
 			Marshaller m = jc.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			StringWriter res = new StringWriter();
@@ -183,10 +178,7 @@ public class PmpHandler extends PmpProcessor {
 		// gathers all data this policy is about
 		Set<IData> allData = new HashSet<>();
 
-		List<MechanismBaseType> mechanisms = policy
-				.getDetectiveMechanismOrPreventiveMechanism();
-
-		for (MechanismBaseType mech : mechanisms) {
+		for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 			List<ParamMatchType> paramList = mech.getTrigger().getParams();
 			List<ParamMatchType> newParamList = new ArrayList<>();
 

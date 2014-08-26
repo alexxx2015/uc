@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
 import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
@@ -29,7 +28,7 @@ public abstract class Mechanism implements Runnable {
 	private final String _name;
 
 	/**
-	 * A description of what this {@link Mechanism}.
+	 * A description of this {@link Mechanism}.
 	 */
 	private final String _description;
 	private long _lastUpdate = 0;
@@ -41,7 +40,6 @@ public abstract class Mechanism implements Runnable {
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
-	private PxpManager _pxpManager;
 
 	/**
 	 * The name of the policy to which this {@link Mechanism} belongs.
@@ -58,7 +56,6 @@ public abstract class Mechanism implements Runnable {
 
 		_pdp = pdp;
 		_policyName = policyName;
-		_pxpManager = pdp.getPxpManager();
 		_name = mech.getName();
 		_description = mech.getDescription();
 		_lastUpdate = 0;
@@ -183,7 +180,7 @@ public abstract class Mechanism implements Runnable {
 									execAction.getName());
 						else {
 							_logger.debug("Execute asynchronous action [{}]", execAction.getName());
-							_pxpManager.execute(execAction, false);
+							_pdp.executeAction(execAction, false);
 						}
 					}
 				}

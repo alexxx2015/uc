@@ -135,6 +135,14 @@ class CassandraDistributionManager implements IDistributionManager {
 		switchKeyspace(policy.getName());
 	}
 
+
+	/**
+	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
+	 * via Thrift interfaces.
+	 *
+	 * @param policies the policies to send
+	 * @param pmpLocation the location to which the policies are sent
+	 */
 	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
 		_logger.debug("doStickyPolicyTransfer invoked: " + pmpLocation + ": " + policies);
 
@@ -148,6 +156,10 @@ class CassandraDistributionManager implements IDistributionManager {
 			 *     then the policy is sent to the remote PMP.
 			 * (4) if remote deployment of the policy fails, then the given location
 			 *     is removed from the policy's keyspace
+			 */
+
+			/**
+			 * FIXME: There might be potential to parallelize policy transfer
 			 */
 
 			switchKeyspace(policy.getName());
@@ -322,8 +334,6 @@ class CassandraDistributionManager implements IDistributionManager {
 		return true;
 	}
 
-
-
 	@Override
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
@@ -356,6 +366,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
+
 			}
 			else {
 				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");
