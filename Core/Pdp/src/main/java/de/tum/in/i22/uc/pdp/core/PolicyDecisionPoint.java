@@ -103,10 +103,10 @@ public class PolicyDecisionPoint {
 			/*
 			 * Get the set of mechanisms of this policy (if any)
 			 */
-			Map<String, Mechanism> mechanisms = _policyTable.get(policy.getName());
-			if (mechanisms == null) {
-				mechanisms = new HashMap<String, Mechanism>();
-				_policyTable.put(policy.getName(), mechanisms);
+			Map<String, Mechanism> allMechanisms = _policyTable.get(policy.getName());
+			if (allMechanisms == null) {
+				allMechanisms = new HashMap<String, Mechanism>();
+				_policyTable.put(policy.getName(), allMechanisms);
 			}
 
 			/*
@@ -118,9 +118,10 @@ public class PolicyDecisionPoint {
 					_logger.debug("Processing mechanism: {}", mech.getName());
 					Mechanism curMechanism = MechanismFactory.create(mech, policy.getName(), this);
 
-					if (!mechanisms.containsKey(mech.getName())) {
+					if (!allMechanisms.containsKey(mech.getName())) {
 						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
-						mechanisms.put(mech.getName(), curMechanism);
+						allMechanisms.put(mech.getName(), curMechanism);
+						_distributionManager.register(curMechanism);
 						new Thread(curMechanism).start();
 					} else {
 						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(),

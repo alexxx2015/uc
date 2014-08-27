@@ -68,17 +68,11 @@ public abstract class Operator implements IOperator {
 		_fullId = _mechanism.getPolicyName() + "#" + _mechanism.getName() + "#" + id;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pdp.core.condition.operators.IOperator#getFullId()
-	 */
 	@Override
 	public final String getFullId() {
 		return _fullId;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.tum.in.i22.uc.pdp.core.condition.operators.IOperator#evaluate(de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent)
-	 */
 	@Override
 	public boolean evaluate(IEvent curEvent) {
 		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
