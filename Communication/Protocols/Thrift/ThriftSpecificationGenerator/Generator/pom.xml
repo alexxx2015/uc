@@ -12,4 +12,5 @@
 	<artifactId>Generator</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1</version>
+	
 </project>
