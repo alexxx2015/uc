@@ -18,14 +18,11 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -42,6 +39,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final String TABLE_NAME_DATA = "hasdata";
 	private static final String TABLE_NAME_EVENTS = "issueevents";
 	private static final String TABLE_NAME_STATES = "operatorstates";
+	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
 
 	private static final String QUERY_CREATE_TABLE_DATA = "CREATE TABLE " + TABLE_NAME_DATA + " ("
 			+ "data text,"
@@ -59,9 +57,14 @@ class CassandraDistributionManager implements IDistributionManager {
 			+ "id text,"
 			+ "value boolean,"
 			+ "immutable boolean,"
-			+ "counter counter,"
 			+ "subevertrue boolean,"
-			+ "circArry list<text>,"
+			+ "circarray list<text>,"
+			+ "PRIMARY KEY (id)"
+			+ ");";
+
+	private static final String QUERY_CREATE_TABLE_STATES_COUNTER = "CREATE TABLE " + TABLE_NAME_STATES_COUNTER + " ("
+			+ "id text,"
+			+ "counter counter,"
 			+ "PRIMARY KEY (id)"
 			+ ");";
 
@@ -131,8 +134,8 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void newPolicy(XmlPolicy policy) {
-		switchKeyspace(policy.getName());
+	public void register(IMechanism mechanism) {
+		switchKeyspace(mechanism.getPolicyName());
 	}
 
 
@@ -275,6 +278,7 @@ class CassandraDistributionManager implements IDistributionManager {
 			_currentSession.execute(QUERY_CREATE_TABLE_DATA);
 			_currentSession.execute(QUERY_CREATE_TABLE_EVENTS);
 			_currentSession.execute(QUERY_CREATE_TABLE_STATES);
+			_currentSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
 		}
 		catch (AlreadyExistsException e) {
 			// don't worry.. about a thing.

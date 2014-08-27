@@ -349,7 +349,7 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
-		_distributionManager.newPolicy(xmlPolicy);
+//		_distributionManager.newPolicy(xmlPolicy);
 		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 
