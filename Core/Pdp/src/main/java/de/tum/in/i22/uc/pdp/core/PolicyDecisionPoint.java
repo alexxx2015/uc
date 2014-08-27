@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -22,19 +24,23 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
+import de.tum.in.i22.uc.pdp.core.condition.operators.Operator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PolicyDecisionPoint {
+public class PolicyDecisionPoint implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
 	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
@@ -240,5 +246,12 @@ public class PolicyDecisionPoint {
 
 	public void addMechanism(Mechanism mechanism) {
 		_actionDescriptionStore.addMechanism(mechanism);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof Operator && arg instanceof OperatorState) {
+			_distributionManager.update((IOperator) o, (IOperatorState) arg);
+		}
 	}
 }

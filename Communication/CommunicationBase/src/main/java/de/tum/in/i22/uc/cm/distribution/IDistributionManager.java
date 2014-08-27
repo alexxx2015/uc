@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.cm.distribution;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -21,4 +23,6 @@ public interface IDistributionManager {
 	 * @param mechanism
 	 */
 	public void register(IMechanism mechanism);
+
+	void update(IOperator o, IOperatorState arg);
 }

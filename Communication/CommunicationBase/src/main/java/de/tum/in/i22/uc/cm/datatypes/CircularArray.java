@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core.condition;
+package de.tum.in.i22.uc.cm.datatypes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -64,7 +64,15 @@ public class OSLAnd extends AndType {
 		 */
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
-		_state.value = op1state && op2state;
+
+		boolean newStateValue = op1state && op2state;
+		if (newStateValue != _state.value) {
+			_state.value = newStateValue;
+			setChanged();
+			_logger.info("Notifying observers: {}", countObservers());
+			notifyObservers(_state);
+		}
+
 		_logger.debug("eval AND [{}]", _state.value);
 		return _state.value;
 	}

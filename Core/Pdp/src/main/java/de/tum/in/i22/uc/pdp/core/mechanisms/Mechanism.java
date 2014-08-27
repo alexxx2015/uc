@@ -114,7 +114,7 @@ public abstract class Mechanism implements Runnable, IMechanism {
 		_logger.debug("updating mechanism [{}]", _name);
 
 		if (_triggerEvent.matches(event)) {
-			_logger.info("Event matches -> evaluating condition");
+			_logger.info("Trigger event matches -> evaluating condition");
 			if (_condition.evaluate(event)) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
 				d.processMechanism(this, event);

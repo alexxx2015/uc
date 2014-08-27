@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -16,13 +17,13 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
-import com.datastax.driver.core.exceptions.InvalidQueryException;
-
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -68,9 +69,11 @@ class CassandraDistributionManager implements IDistributionManager {
 			+ "PRIMARY KEY (id)"
 			+ ");";
 
+	private final Set<String> _insertedOperators;
+
 	/*
 	 * IMPORTANT:
-	 * Cassandra 2.1.0-beta causes some trouble with upper/lowercase
+	 * Cassandra 2.1.0-rc6 causes some trouble with upper/lowercase
 	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
 	 *  which was afterwards not found by a lookup with name 'testPolicy')
 	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
@@ -80,9 +83,14 @@ class CassandraDistributionManager implements IDistributionManager {
 	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
 	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
 
+	private final Session _defaultSession;
+
+	/**
+	 * Map keyspace names (i.e. policy names) to Cassandra {@link Session}s.
+	 */
+	private final Map<String,Session> _sessions;
+
 	private final Cluster _cluster;
-	private Session _currentSession;
-	private String _currentKeyspace;
 
 	private PdpProcessor _pdp;
 	private PipProcessor _pip;
@@ -97,7 +105,9 @@ class CassandraDistributionManager implements IDistributionManager {
 		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
-		_currentSession = _cluster.connect();
+		_defaultSession = _cluster.connect();
+		_insertedOperators = new HashSet<>();
+		_sessions = new HashMap<>();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -115,27 +125,14 @@ class CassandraDistributionManager implements IDistributionManager {
 		_initialized = true;
 	}
 
-	private void switchKeyspace(String keyspace) {
-		if (keyspace != null && keyspace.equals(_currentKeyspace)) {
-			return;
-		}
-
-		try {
-			_currentSession = _cluster.connect(keyspace);
-			_currentKeyspace = _currentSession.getLoggedKeyspace();
-		} catch (InvalidQueryException e) {
-			// this happens if the keyspace did not exist
-			_currentKeyspace = null;
-		}
-
-		if (_currentKeyspace == null) {
-			createPolicyKeyspace(keyspace, IPLocation.localIpLocation);
-		}
-	}
-
 	@Override
 	public void register(IMechanism mechanism) {
-		switchKeyspace(mechanism.getPolicyName());
+		String policyName = mechanism.getPolicyName().toLowerCase();
+		Session session = _sessions.get(policyName);
+		if (session == null) {
+			session = createPolicyKeyspace(policyName, IPLocation.localIpLocation);
+			_sessions.put(session.getLoggedKeyspace(), session);
+		}
 	}
 
 
@@ -152,22 +149,21 @@ class CassandraDistributionManager implements IDistributionManager {
 		for (XmlPolicy policy : policies) {
 			/*
 			 * For each policy, the protocol is as follows:
-			 * (1) switch to the policy's keyspace
-			 * (2) extend the keyspace with the given location
-			 * (3) if the keyspace was in fact extended
+			 * (1) extend the keyspace with the given location
+			 * (2) if the keyspace was in fact extended
 			 *     (meaning that the provided location was not yet aware of the policy),
 			 *     then the policy is sent to the remote PMP.
-			 * (4) if remote deployment of the policy fails, then the given location
+			 * (3) if remote deployment of the policy fails, then the given location
 			 *     is removed from the policy's keyspace
 			 */
+
+			String policyName = policy.getName().toLowerCase();
 
 			/**
 			 * FIXME: There might be potential to parallelize policy transfer
 			 */
 
-			switchKeyspace(policy.getName());
-
-			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
+			if (adjustPolicyKeyspace(policyName, pmpLocation, true)) {
 				boolean success = true;
 
 				// if the location was not yet part of the keyspace, then we need to
@@ -188,7 +184,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				// If remote deployment of the policy fails,
 				// then we remove the location from the keyspace
 				if (!success) {
-					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+					adjustPolicyKeyspace(policyName, pmpLocation, false);
 				}
 
 				/*
@@ -213,19 +209,22 @@ class CassandraDistributionManager implements IDistributionManager {
 			String dataID = d.getId();
 
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
-				switchKeyspace(p.getName());
+				String policyName = p.getName().toLowerCase();
+
+				Session session = _sessions.get(policyName);
+				_logger.info("CASSANDRA asking for mapping {} -> {}", policyName, session);
 
 				// Check whether there already exists an entry for this dataID ...
-				if (_currentSession.execute("SELECT data from " + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+				if (session.execute("SELECT data from " + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
 					// ... if not, insert the corresponding row
-					_currentSession.execute("INSERT INTO " + TABLE_NAME_DATA
+					session.execute("INSERT INTO " + TABLE_NAME_DATA
 							+ " (data, locations) VALUES ('" + dataID + "',{'"
 							+ IPLocation.localIpLocation.getHost() + "','"
 							+ dstLocation.getHost() + "'})");
 				}
 				else {
 					// ... otherwise add the additional location to the existing row
-					_currentSession.execute("UPDATE " + TABLE_NAME_DATA + " SET locations = locations + {'"
+					session.execute("UPDATE " + TABLE_NAME_DATA + " SET locations = locations + {'"
 							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
 				}
 			}
@@ -258,31 +257,32 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private void createPolicyKeyspace(String policyName, IPLocation location) {
+	private Session createPolicyKeyspace(String policyName, IPLocation location) {
 		if (location == null) {
 			_logger.info("Unable to create keyspace. No location provided.");
-			return;
+			return null;
 		}
 
-		policyName = policyName.toLowerCase();
-
-		// Return if the keyspace exists already
-		if (!_currentSession.execute("SELECT strategy_options FROM system.schema_keyspaces WHERE keyspace_name = '" + policyName + "'").isExhausted()) {
-			return;
-		}
+		boolean alreadyExists = false;
 
 		try {
-			_currentSession.execute("CREATE KEYSPACE " + policyName
+			_defaultSession.execute("CREATE KEYSPACE " + policyName
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + location.getHost() + "':1}");
-			switchKeyspace(policyName);
-			_currentSession.execute(QUERY_CREATE_TABLE_DATA);
-			_currentSession.execute(QUERY_CREATE_TABLE_EVENTS);
-			_currentSession.execute(QUERY_CREATE_TABLE_STATES);
-			_currentSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
 		}
 		catch (AlreadyExistsException e) {
-			// don't worry.. about a thing.
+			alreadyExists = true;
 		}
+
+		Session newSession = _cluster.connect(policyName);
+
+		if (!alreadyExists) {
+			newSession.execute(QUERY_CREATE_TABLE_DATA);
+			newSession.execute(QUERY_CREATE_TABLE_EVENTS);
+			newSession.execute(QUERY_CREATE_TABLE_STATES);
+			newSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
+		}
+
+		return newSession;
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -299,10 +299,9 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * 		i.e. if the provided location was added or removed.
 	 */
 	private boolean adjustPolicyKeyspace(String name, IPLocation location, boolean add) {
-		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
-		ResultSet rows = _currentSession.execute("SELECT strategy_options FROM system.schema_keyspaces "
+		ResultSet rows = _defaultSession.execute("SELECT strategy_options FROM system.schema_keyspaces "
 				+ "WHERE keyspace_name = '" + name + "'");
 
 		// (2) We build the set of locations that are currently known within the keyspace
@@ -333,7 +332,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		query.append("}");
 
 		// (4) We execute the query
-		_currentSession.execute(query.toString());
+		_defaultSession.execute(query.toString());
 
 		return true;
 	}
@@ -390,5 +389,14 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 
 		return policies;
+	}
+
+
+	@Override
+	public void update(IOperator operator, IOperatorState state) {
+		_logger.warn("UPDATING CASSANDRA STATE: {}, {}", operator, state);
+		if (!_insertedOperators.contains(operator.getFullId())) {
+			_insertedOperators.add(operator.getFullId());
+		}
 	}
 }

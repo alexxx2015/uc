@@ -2,7 +2,6 @@ package de.tum.in.i22.uc.pmp;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -338,8 +337,8 @@ public class PmpHandler extends PmpProcessor {
 				return deployPolicyRawXMLPmp(com.google.common.io.Files
 						.toString(new File(policyFilePath),
 								Charset.defaultCharset()));
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				_logger.warn("Error deploying policy {}: {}", policyFilePath, e);
 			}
 		}
 		return new StatusBasic(EStatus.ERROR,
@@ -349,7 +348,6 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
-//		_distributionManager.newPolicy(xmlPolicy);
 		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 

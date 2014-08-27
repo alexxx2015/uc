@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -33,5 +35,13 @@ public class DummyDistributionManager implements IDistributionManager {
 		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
+	}
+
+	@Override
+	public void update(IOperator o, IOperatorState arg) {
+		// TODO Auto-generated method stub
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("update method invoked");
+
 	}
 }

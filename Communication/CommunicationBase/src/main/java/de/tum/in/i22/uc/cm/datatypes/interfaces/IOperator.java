@@ -6,7 +6,7 @@ public interface IOperator {
 	 * Returns this {@link IOperator}'s internal identifier as a string.
 	 * @return this {@link IOperator}'s internal identifier as a string.
 	 */
-	public abstract String getFullId();
+	public String getFullId();
 
 	/**
 	 * Evaluates this operator given the specified event.
@@ -20,6 +20,11 @@ public interface IOperator {
 	 * @param curEvent
 	 * @return
 	 */
-	public abstract boolean evaluate(IEvent curEvent);
+	public boolean evaluate(IEvent curEvent);
 
+	/**
+	 * Returns the {@link IMechanism} to which this {@link IOperator} belongs.
+	 * @return the {@link IMechanism} to which this {@link IOperator} belongs.
+	 */
+	public IMechanism getMechanism();
 }

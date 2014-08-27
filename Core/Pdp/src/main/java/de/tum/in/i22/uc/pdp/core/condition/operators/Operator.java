@@ -1,12 +1,15 @@
 package de.tum.in.i22.uc.pdp.core.condition.operators;
 
+import java.util.Observable;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
-public abstract class Operator implements IOperator {
+public abstract class Operator extends Observable implements IOperator {
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state;
 	protected IMechanism _mechanism;
@@ -36,6 +39,7 @@ public abstract class Operator implements IOperator {
 		if (_pdp == null) {
 			_pdp = mech.getPolicyDecisionPoint();
 			_mechanism = mech;
+			this.addObserver(_pdp);
 		}
 		else {
 			throw new UnsupportedOperationException("Operator may only get initialized once.");
@@ -76,5 +80,10 @@ public abstract class Operator implements IOperator {
 	@Override
 	public boolean evaluate(IEvent curEvent) {
 		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
+	}
+
+	@Override
+	public IMechanism getMechanism() {
+		return _mechanism;
 	}
 }
