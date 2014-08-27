@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +84,6 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	private final Session _defaultSession;
 
-	/**
-	 * Map keyspace names (i.e. policy names) to Cassandra {@link Session}s.
-	 */
-	private final Map<String,Session> _sessions;
-
 	private final Cluster _cluster;
 
 	private PdpProcessor _pdp;
@@ -107,7 +101,6 @@ class CassandraDistributionManager implements IDistributionManager {
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
 		_insertedOperators = new HashSet<>();
-		_sessions = new ConcurrentHashMap<>();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -127,12 +120,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void register(String policyName) {
-		policyName = policyName.toLowerCase();
-		Session session = _sessions.get(policyName);
-		if (session == null) {
-			session = createPolicyKeyspace(policyName);
-			_sessions.put(session.getLoggedKeyspace(), session);
-		}
+		createPolicyKeyspace(policyName.toLowerCase());
 	}
 
 
@@ -211,23 +199,22 @@ class CassandraDistributionManager implements IDistributionManager {
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
 				String policyName = p.getName().toLowerCase();
 
-				Session session = _sessions.get(policyName);
-				if (session == null) {
-					register(policyName);
-					session = _sessions.get(policyName);
-				}
+				/*
+				 * FIXME: The below statements may fail because the
+				 * keyspace and tables might not have been created yet. Handle this.
+				 */
 
 				// Check whether there already exists an entry for this dataID ...
-				if (session.execute("SELECT data from " + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+				if (_defaultSession.execute("SELECT data from " + policyName + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
 					// ... if not, insert the corresponding row
-					session.execute("INSERT INTO " + TABLE_NAME_DATA
+					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_DATA
 							+ " (data, locations) VALUES ('" + dataID + "',{'"
 							+ IPLocation.localIpLocation.getHost() + "','"
 							+ dstLocation.getHost() + "'})");
 				}
 				else {
 					// ... otherwise add the additional location to the existing row
-					session.execute("UPDATE " + TABLE_NAME_DATA + " SET locations = locations + {'"
+					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
 							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
 				}
 			}
@@ -260,7 +247,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private Session createPolicyKeyspace(String policyName) {
+	private void createPolicyKeyspace(String policyName) {
 		try {
 			_defaultSession.execute("CREATE KEYSPACE " + policyName
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
@@ -282,7 +269,6 @@ class CassandraDistributionManager implements IDistributionManager {
 			newSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
 		} catch (AlreadyExistsException e) {}
 
-		return newSession;
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -395,8 +381,25 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public void update(IOperator operator, IOperatorState state) {
 		_logger.warn("UPDATING CASSANDRA STATE: {}, {}", operator, state);
+
+		String policyName = operator.getMechanism().getPolicyName().toLowerCase();
+
 		if (!_insertedOperators.contains(operator.getFullId())) {
 			_insertedOperators.add(operator.getFullId());
+			_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
+					+ " (id, value, immutable, subevertrue) VALUES ("
+					+ "'" + operator.getFullId() + "',"
+					+ state.value() + ","
+					+ state.isImmutable() + ","
+					+ state.isSubEverTrue()
+					+ ");");
+		}
+		else {
+			_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
+					+ " SET value = " + state.value() + ","
+					+ " immutable = " + state.isImmutable() + ","
+					+ " subevertrue = " + state.isSubEverTrue()
+					+ " WHERE id = '" + operator.getFullId() + "';");
 		}
 	}
 }
