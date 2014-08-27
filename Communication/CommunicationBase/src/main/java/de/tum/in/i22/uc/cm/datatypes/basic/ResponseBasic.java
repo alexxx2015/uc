@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -38,7 +40,7 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeAction", _executeActions)
 				.add("_modifiedEvent", _modifiedEvent)

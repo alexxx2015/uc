@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 /**
@@ -24,7 +26,7 @@ public class NameBasic implements IName {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.toString();
 	}

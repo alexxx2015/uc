@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
 public class StatusBasic implements IStatus {
@@ -56,7 +58,7 @@ public class StatusBasic implements IStatus {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_eStatus", _eStatus)
 				.add("_errorMessage", _errorMessage)
 				.toString();

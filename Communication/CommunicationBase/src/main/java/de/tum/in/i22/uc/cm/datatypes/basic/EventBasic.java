@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
@@ -80,7 +82,7 @@ public class EventBasic implements IEvent, Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.add("_pep", _pep)
 				.add("_isActual", _isActual)

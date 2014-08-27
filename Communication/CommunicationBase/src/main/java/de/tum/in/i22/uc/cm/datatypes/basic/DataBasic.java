@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.UUID;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 
 public class DataBasic implements IData {
@@ -39,7 +41,7 @@ public class DataBasic implements IData {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_id", _id)
 				.toString();
 	}
