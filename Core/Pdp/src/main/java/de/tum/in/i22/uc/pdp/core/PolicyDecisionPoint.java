@@ -100,19 +100,28 @@ public class PolicyDecisionPoint implements Observer {
 		}
 
 		try {
-			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller()
-					.unmarshal(is);
+			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller().unmarshal(is);
 			PolicyType policy = (PolicyType) poElement.getValue();
+			final String policyName = policy.getName();
 
-			_logger.debug("Deploying policy [name={}]", policy.getName());
+			_logger.debug("Deploying policy [name={}]", policyName);
+
+			// Registering the policy for remote purposes might take a while.
+			// Thus, we start the registration process in a new thread and go on.
+			new Thread() {
+				@Override
+				public void run() {
+					_distributionManager.register(policyName);
+				}
+			}.start();
 
 			/*
 			 * Get the set of mechanisms of this policy (if any)
 			 */
-			Map<String, Mechanism> allMechanisms = _policyTable.get(policy.getName());
+			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
 			if (allMechanisms == null) {
 				allMechanisms = new HashMap<String, Mechanism>();
-				_policyTable.put(policy.getName(), allMechanisms);
+				_policyTable.put(policyName, allMechanisms);
 			}
 
 			/*
@@ -122,16 +131,15 @@ public class PolicyDecisionPoint implements Observer {
 			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
-					Mechanism curMechanism = MechanismFactory.create(mech, policy.getName(), this);
+					Mechanism curMechanism = MechanismFactory.create(mech, policyName, this);
 
 					if (!allMechanisms.containsKey(mech.getName())) {
 						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
 						allMechanisms.put(mech.getName(), curMechanism);
-						_distributionManager.register(curMechanism);
 						new Thread(curMechanism).start();
 					} else {
 						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(),
-								policy.getName());
+								policyName);
 					}
 				} catch (InvalidMechanismException e) {
 					_logger.error("Invalid mechanism specified: {}", e.getMessage());

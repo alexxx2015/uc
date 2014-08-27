@@ -7,12 +7,12 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -23,6 +23,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
@@ -74,7 +76,7 @@ public class PmpHandler extends PmpProcessor {
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
-		_dataToPolicies = new HashMap<>();
+		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
 	}
 
@@ -326,23 +328,19 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
 		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
-		PolicyType policy = xmlToPolicy(xml);
-		return deployPolicyXMLPmp(new XmlPolicy(policy.getName(), xml));
+		return deployPolicyXMLPmp(new XmlPolicy(xmlToPolicy(xml).getName(), xml));
 	}
 
 	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
 			try {
-				return deployPolicyRawXMLPmp(com.google.common.io.Files
-						.toString(new File(policyFilePath),
-								Charset.defaultCharset()));
+				return deployPolicyRawXMLPmp(Files.toString(new File(policyFilePath), Charset.defaultCharset()));
 			} catch (Exception e) {
 				_logger.warn("Error deploying policy {}: {}", policyFilePath, e);
 			}
 		}
-		return new StatusBasic(EStatus.ERROR,
-				"Error while loading policy file " + policyFilePath);
+		return new StatusBasic(EStatus.ERROR, "Error while loading policy file " + policyFilePath);
 	}
 
 	@Override

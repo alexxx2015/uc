@@ -2,10 +2,10 @@ package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +17,10 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
@@ -107,7 +107,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
 		_insertedOperators = new HashSet<>();
-		_sessions = new HashMap<>();
+		_sessions = new ConcurrentHashMap<>();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -126,11 +126,11 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(IMechanism mechanism) {
-		String policyName = mechanism.getPolicyName().toLowerCase();
+	public void register(String policyName) {
+		policyName = policyName.toLowerCase();
 		Session session = _sessions.get(policyName);
 		if (session == null) {
-			session = createPolicyKeyspace(policyName, IPLocation.localIpLocation);
+			session = createPolicyKeyspace(policyName);
 			_sessions.put(session.getLoggedKeyspace(), session);
 		}
 	}
@@ -212,7 +212,10 @@ class CassandraDistributionManager implements IDistributionManager {
 				String policyName = p.getName().toLowerCase();
 
 				Session session = _sessions.get(policyName);
-				_logger.info("CASSANDRA asking for mapping {} -> {}", policyName, session);
+				if (session == null) {
+					register(policyName);
+					session = _sessions.get(policyName);
+				}
 
 				// Check whether there already exists an entry for this dataID ...
 				if (session.execute("SELECT data from " + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
@@ -257,30 +260,27 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private Session createPolicyKeyspace(String policyName, IPLocation location) {
-		if (location == null) {
-			_logger.info("Unable to create keyspace. No location provided.");
-			return null;
-		}
-
-		boolean alreadyExists = false;
-
+	private Session createPolicyKeyspace(String policyName) {
 		try {
 			_defaultSession.execute("CREATE KEYSPACE " + policyName
-					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + location.getHost() + "':1}");
+					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
-		catch (AlreadyExistsException e) {
-			alreadyExists = true;
-		}
+		catch (AlreadyExistsException e) {}
 
 		Session newSession = _cluster.connect(policyName);
 
-		if (!alreadyExists) {
+		try {
 			newSession.execute(QUERY_CREATE_TABLE_DATA);
+		} catch (AlreadyExistsException e) {}
+		try {
 			newSession.execute(QUERY_CREATE_TABLE_EVENTS);
+		} catch (AlreadyExistsException e) {}
+		try {
 			newSession.execute(QUERY_CREATE_TABLE_STATES);
+		} catch (AlreadyExistsException e) {}
+		try {
 			newSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
-		}
+		} catch (AlreadyExistsException e) {}
 
 		return newSession;
 	}

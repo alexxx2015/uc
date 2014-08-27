@@ -491,7 +491,7 @@ public class Controller implements IRequestHandler  {
 
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
-		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel); 
+		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 
 }

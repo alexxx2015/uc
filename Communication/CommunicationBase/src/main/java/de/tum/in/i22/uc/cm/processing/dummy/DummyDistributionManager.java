@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.cm.processing.dummy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
@@ -31,7 +30,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(IMechanism mechanism) {
+	public void register(String policyName) {
 		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
