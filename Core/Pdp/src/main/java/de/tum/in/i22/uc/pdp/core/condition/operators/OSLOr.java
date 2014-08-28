@@ -24,20 +24,8 @@ public class OSLOr extends OrType {
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
 
-		/*
-		 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
-		 * At this place, we check whether the operands of OR(.,.) are OR, AND, NOT, or a Literal.
-		 * If this is not the case, an IllegalArgumentException is thrown.
-		 */
 		if (Settings.getInstance().getDistributionEnabled()) {
-			if (!(op1 instanceof OSLOr) && !(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof LiteralOperator)) {
-				throw new IllegalArgumentException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
-							+ this.getClass() + " was of type " + op1.getClass() + ").");
-			}
-			if (!(op2 instanceof OSLOr) && !(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof LiteralOperator)) {
-				throw new IllegalArgumentException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
-						+ this.getClass() + " was of type " + op2.getClass() + ").");
-			}
+			ensureDNF();
 		}
 
 		op1.init(mech);
@@ -65,8 +53,34 @@ public class OSLOr extends OrType {
 		 */
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
-		_state.value = op1state || op2state;
+
+		boolean newStateValue = op1state || op2state;
+		if (newStateValue != _state.value) {
+			_state.value = newStateValue;
+			setChanged();
+			notifyObservers(_state);
+		}
+
 		_logger.debug("eval OR [{}]", _state.value);
 		return _state.value;
+	}
+
+
+	/**
+	 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
+	 * This method checks whether the operands of OR(.,.) are OR, AND, NOT, or a Literal.
+	 * If this is not the case, an IllegalStateException is thrown.
+	 *
+	 * @throws IllegalStateException if this object is not in DNF.
+	 */
+	private void ensureDNF() throws IllegalStateException {
+		if (!(op1 instanceof OSLOr) && !(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof LiteralOperator)) {
+			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
+						+ getClass() + " was of type " + op1.getClass() + ").");
+		}
+		if (!(op2 instanceof OSLOr) && !(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof LiteralOperator)) {
+			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
+					+ getClass() + " was of type " + op2.getClass() + ").");
+		}
 	}
 }
