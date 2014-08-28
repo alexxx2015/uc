@@ -21,7 +21,7 @@ public class IsOnlyIn extends StateBasedPredicate {
 	}
 
 	@Override
-	public Boolean evaluate() throws InvalidStateBasedFormulaException {
+	public boolean evaluate() throws InvalidStateBasedFormulaException {
 
 		if ((_param1==null) || (_param2==null)){
 			throw new InvalidStateBasedFormulaException("Impossible to evaluate a formula where parameters have not been initialized [ param1 = "+_param1+" , param2 = "+_param2+"]");

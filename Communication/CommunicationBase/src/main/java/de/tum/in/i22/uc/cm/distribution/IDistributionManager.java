@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import java.util.Queue;
-
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -24,5 +22,5 @@ public interface IDistributionManager {
 	 */
 	public void register(String policyName);
 
-	void update(Queue<IOperatorState> operatorStateChanges);
+	void update(IResponse res);
 }

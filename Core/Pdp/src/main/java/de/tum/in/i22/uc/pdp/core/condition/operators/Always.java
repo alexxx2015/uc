@@ -37,13 +37,25 @@ public class Always extends AlwaysType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
+		// If immutable, then there is nothing to do. State remains as-is.
 		if (!_state.immutable) {
-			_state.value = op.evaluate(curEvent);
-			if (!_state.value && curEvent == null) {
+			boolean newStateValue = op.evaluate(curEvent);
+			boolean newStateImmutable = false;
+
+			// if state turns false, then the formula will always be violated from now on.
+			if (!newStateValue && curEvent == null) {
 				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
-				_state.immutable = true;
+				newStateImmutable = true;
+			}
+
+			if (newStateValue != _state.value || newStateImmutable != _state.immutable) {
+				_state.value = newStateValue;
+				_state.immutable = newStateImmutable;
+				setChanged();
+				notifyObservers(_state);
 			}
 		}
+
 		_logger.debug("eval ALWAYS [{}]", _state.value);
 		return _state.value;
 	}

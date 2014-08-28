@@ -103,7 +103,7 @@ public class PdpHandler extends PdpProcessor implements Observer {
 		 * only be performed if the event is actual.
 		 */
 		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(((DistributedPdpResponse) res).getOperatorStateChanges());
+			_distributionManager.update(res);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class PdpHandler extends PdpProcessor implements Observer {
 		 * only be performed if the event is actual.
 		 */
 		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(((DistributedPdpResponse) res).getOperatorStateChanges());
+			_distributionManager.update(res);
 		}
 
 		return res;
@@ -173,18 +173,24 @@ public class PdpHandler extends PdpProcessor implements Observer {
 
 	@Override
 	public void update(Observable o, final Object arg) {
-		/*
-		 * The PolicyDecisionPoint will inform us about Policies to register
-		 * with the DistributionManager. As registering the policy for remote
-		 * purposes might take a while, we start the registration process in a new thread and go on.
-		 */
-		if ((o instanceof PolicyDecisionPoint) && (arg instanceof PolicyType)) {
-			new Thread() {
-				@Override
-				public void run() {
-					_distributionManager.register(((PolicyType) arg).getName());
-				}
-			}.start();
+		if (o instanceof PolicyDecisionPoint) {
+			if (arg instanceof DistributedPdpResponse) {
+				_distributionManager.update((IResponse) arg);
+			}
+			else if (arg instanceof PolicyType) {
+				/*
+				 * The PolicyDecisionPoint will inform us about Policies to register
+				 * with the DistributionManager. As registering the policy for remote
+				 * purposes might take a while, we start the registration process in a new thread and go on.
+				 */
+
+				new Thread() {
+					@Override
+					public void run() {
+						_distributionManager.register(((PolicyType) arg).getName());
+					}
+				}.start();
+			}
 		}
 	}
 }

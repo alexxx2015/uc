@@ -3,9 +3,12 @@ package de.tum.in.i22.uc.pdp.core.mechanisms;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Observable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -21,8 +24,10 @@ import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
-public abstract class Mechanism implements Runnable, IMechanism {
+public abstract class Mechanism extends Observable implements Runnable, IMechanism {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
+
+	public static final Object END_OF_TIMESTEP = new Object();
 
 	/**
 	 * The name of this {@link Mechanism}.
@@ -73,6 +78,9 @@ public abstract class Mechanism implements Runnable, IMechanism {
 		for (ExecuteAsyncActionType execAction : mech.getExecuteAsyncAction()) {
 			_executeAsyncActions.add(new ExecuteAction(execAction));
 		}
+
+		// Get observed by the PDP, such that we can signal the end of a timestep
+		addObserver(pdp);
 	}
 
 	@Override
@@ -160,6 +168,9 @@ public abstract class Mechanism implements Runnable, IMechanism {
 		_logger.debug("conditionValue: {}", conditionValue);
 		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
 
+		setChanged();
+		notifyObservers(END_OF_TIMESTEP);
+
 		return conditionValue;
 	}
 
@@ -200,7 +211,7 @@ public abstract class Mechanism implements Runnable, IMechanism {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this.getClass())
+		return MoreObjects.toStringHelper(this.getClass())
 				.add("_name", _name)
 				.add("_description", _description)
 				.add("_timestepSize", _timestepSize)

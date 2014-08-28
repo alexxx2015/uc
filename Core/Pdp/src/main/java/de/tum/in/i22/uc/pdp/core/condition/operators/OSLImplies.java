@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ImpliesType;
 
@@ -22,6 +23,10 @@ public class OSLImplies extends ImpliesType {
 
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
+
+		if (Settings.getInstance().getDistributionEnabled()) {
+			throw new IllegalStateException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
+		}
 
 		op1.init(mech);
 		op2.init(mech);

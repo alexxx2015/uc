@@ -180,16 +180,13 @@ public class PipHandler extends PipProcessor {
 		Boolean res = null;
 
 		if (_ifModelManager.startSimulation().getEStatus() == EStatus.OKAY) {
-			_logger.trace("Updating PIP semantics with current event ("
-					+ (event == null ? "null" : event.getName()) + ")");
+			_logger.trace("Updating PIP semantics with current event ({})", event);
 			update(event);
-			_logger.trace("Evaluate predicate in new updated state ("
-					+ predicate + ")");
+			_logger.trace("Evaluate predicate in new updated state ("+ predicate + ")");
 			res = evaluatePredicateCurrentState(predicate);
 			_logger.trace("Result of the evaluation is " + res);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModelManager.stopSimulation();
-			_logger.trace("done!");
 		} else {
 			_logger.error("Failed! Stack not empty!");
 		}

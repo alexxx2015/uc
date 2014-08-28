@@ -28,12 +28,20 @@ public class CircularArray<T> {
 		values[pos] = val;
 	}
 
-	public T readFirst() {
+	/**
+	 * Retrieves, but does not remove, the first entry.
+	 * @return
+	 */
+	public T peek() {
 		T val = values[this.first];
-		_logger.trace("readFirst (first={}) -> {}", this.first, val);
+		_logger.trace("peek (first={}) -> {}", this.first, val);
 		return val;
 	}
 
+	/**
+	 * Retrieves and removes the first entry.
+	 * @return
+	 */
 	public T pop() {
 		T val = values[this.first];
 		_logger.trace("pop (first={}) -> {}", this.first, val);

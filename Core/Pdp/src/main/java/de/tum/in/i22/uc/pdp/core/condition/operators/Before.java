@@ -25,7 +25,7 @@ public class Before extends BeforeType {
 		op = ((Operator) operators);
 
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
-		this._state.circArray = new CircularArray<Boolean>(this._timeAmount.getTimestepInterval());
+		_state.circArray = new CircularArray<Boolean>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			_state.circArray.set(false, a);
 		}
@@ -42,25 +42,36 @@ public class Before extends BeforeType {
 
 	@Override
 	public String toString() {
-		return "BEFORE (" + this._timeAmount + ", " + op + " )";
+		return "BEFORE (" + _timeAmount + ", " + op + " )";
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) { // before = at (currentTime -
-												// interval) operand was true
-		_logger.debug("circularArray: {}", this._state.circArray);
+	public boolean evaluate(IEvent curEvent) {
+		// before = at (currentTime - interval) operand was true
+		_logger.debug("circularArray: {}", _state.circArray);
 
-		Boolean curValue = this._state.circArray.readFirst();
-		this._state.value = curValue;
+		// Look at the first entry of the array. The retrieved value
+		// corresponds to the result of the evaluation at this point in time.
+		boolean newStateValue = _state.circArray.peek();
+
 		if (curEvent == null) {
-			curValue = this._state.circArray.pop();
-			Boolean operandState = op.evaluate(curEvent);
-			this._state.circArray.push(operandState);
+			// If we are evaluating at the end of a timestep, then
+			// (1) remove the first entry
+			// (2) evaluate the internal operand at this point in time
+			//     and push the result to the array
+			_state.circArray.pop();
+			_state.circArray.push(op.evaluate(null));
 
-			_logger.debug("circularArray: {}", this._state.circArray);
+			_logger.debug("circularArray: {}", _state.circArray);
 		}
 
-		_logger.debug("eval BEFORE [{}]", this._state.value);
-		return this._state.value;
+		if (newStateValue != _state.value) {
+			_state.value = newStateValue;
+			setChanged();
+			notifyObservers(_state);
+		}
+
+		_logger.debug("eval BEFORE [{}]", _state.value);
+		return _state.value;
 	}
 }

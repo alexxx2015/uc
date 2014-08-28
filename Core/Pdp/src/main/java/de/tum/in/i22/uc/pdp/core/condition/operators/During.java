@@ -20,12 +20,12 @@ public class During extends DuringType {
 	@Override
 	public void init(Mechanism mech) {
 		super.init(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
+		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
 
 		op = (Operator) operators;
 
 		// for evaluation without history set counter to interval for DURING
-		this._state.counter = this.timeAmount.getTimestepInterval() + 1;
+		_state.counter = timeAmount.getTimestepInterval() + 1;
 
 		op.init(mech);
 	}
@@ -41,37 +41,37 @@ public class During extends DuringType {
 
 	@Override
 	public String toString() {
-		return "DURING (" + this.timeAmount + ", " + op + " )";
+		return "DURING (" + timeAmount + ", " + op + " )";
 	}
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		_logger.trace("current state counter: {}", this._state.counter);
-		if (this._state.counter == 0)
-			this._state.value = true;
+		_logger.trace("current state counter: {}", _state.counter);
+		if (_state.counter == 0)
+			_state.value = true;
 		else
-			this._state.value = false;
+			_state.value = false;
 
 		if (curEvent == null) {
 			boolean operandValue = op.evaluate(curEvent);
 			if (!operandValue) {
-				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
+				_state.counter = timeAmount.getTimestepInterval() + 1;
 				_logger.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-						this._state.counter, operandValue);
+						_state.counter, operandValue);
 			} else {
-				if (this._state.counter > 0)
-					this._state.counter--;
-				_logger.debug("[DURING} New state counter: [{}]", this._state.counter);
+				if (_state.counter > 0)
+					_state.counter--;
+				_logger.debug("[DURING} New state counter: [{}]", _state.counter);
 			}
 
 			// update state->value for logging output
-			if (this._state.counter == 0)
-				this._state.value = true;
+			if (_state.counter == 0)
+				_state.value = true;
 			else
-				this._state.value = false;
+				_state.value = false;
 		}
 
-		_logger.debug("eval DURING [{}]", this._state.value);
-		return this._state.value;
+		_logger.debug("eval DURING [{}]", _state.value);
+		return _state.value;
 	}
 }

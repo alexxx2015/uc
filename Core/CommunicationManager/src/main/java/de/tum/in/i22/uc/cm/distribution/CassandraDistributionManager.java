@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,8 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -32,15 +30,20 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
 	private static final String TABLE_NAME_DATA = "hasdata";
-	private static final String TABLE_NAME_EVENTS = "issueevents";
+	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
+	private static final String TABLE_NAME_EVENTS_HAPPENED = "eventshappened";
 	private static final String TABLE_NAME_STATES = "operatorstates";
 	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
+	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
 
 	private static final String QUERY_CREATE_TABLE_DATA = "CREATE TABLE " + TABLE_NAME_DATA + " ("
 			+ "data text,"
@@ -48,11 +51,27 @@ class CassandraDistributionManager implements IDistributionManager {
 			+ "PRIMARY KEY (data)"
 			+ ");";
 
-	private static final String QUERY_CREATE_TABLE_EVENTS = "CREATE TABLE " + TABLE_NAME_EVENTS + " ("
+	private static final String QUERY_CREATE_TABLE_ISSUES_EVENTS = "CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
 			+ "event text,"
 			+ "locations set<text>,"
 			+ "PRIMARY KEY (event)"
 			+ ");";
+
+	private static final String QUERY_CREATE_TABLE_EVENTS_HAPPENED = "CREATE TABLE " + TABLE_NAME_EVENTS_HAPPENED + " ("
+			+ "eventid text,"
+			+ "location text,"
+			+ "time timeuuid,"
+			+ "PRIMARY KEY (location,time)"
+			+ ") "
+			+ "WITH CLUSTERING ORDER BY (time DESC);";
+
+	private static final String QUERY_CREATE_TABLE_STATEBASED_OP_TRUE = "CREATE TABLE " + TABLE_NAME_STATEBASED_OP_TRUE + " ("
+			+ "opid text,"
+			+ "location text,"
+			+ "time timeuuid,"
+			+ "PRIMARY KEY (location,time)"
+			+ ") "
+			+ "WITH CLUSTERING ORDER BY (time DESC);";
 
 	private static final String QUERY_CREATE_TABLE_STATES = "CREATE TABLE " + TABLE_NAME_STATES + " ("
 			+ "id text,"
@@ -69,7 +88,7 @@ class CassandraDistributionManager implements IDistributionManager {
 			+ "PRIMARY KEY (id)"
 			+ ");";
 
-	private final Set<String> _insertedOperators;
+//	private final Set<String> _insertedOperators;
 
 	/*
 	 * IMPORTANT:
@@ -101,7 +120,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
-		_insertedOperators = new HashSet<>();
+//		_insertedOperators = new HashSet<>();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -261,7 +280,13 @@ class CassandraDistributionManager implements IDistributionManager {
 			newSession.execute(QUERY_CREATE_TABLE_DATA);
 		} catch (AlreadyExistsException e) {}
 		try {
-			newSession.execute(QUERY_CREATE_TABLE_EVENTS);
+			newSession.execute(QUERY_CREATE_TABLE_ISSUES_EVENTS);
+		} catch (AlreadyExistsException e) {}
+		try {
+			newSession.execute(QUERY_CREATE_TABLE_EVENTS_HAPPENED);
+		} catch (AlreadyExistsException e) {}
+		try {
+			newSession.execute(QUERY_CREATE_TABLE_STATEBASED_OP_TRUE);
 		} catch (AlreadyExistsException e) {}
 		try {
 			newSession.execute(QUERY_CREATE_TABLE_STATES);
@@ -380,31 +405,62 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(Queue<IOperatorState> operatorStateChanges) {
-		for (IOperatorState state : operatorStateChanges) {
-			IOperator operator = state.getOperator();
-
-			_logger.warn("UPDATING CASSANDRA STATE: {}, {}", operator, state);
-
-			String policyName = operator.getMechanism().getPolicyName().toLowerCase();
-
-			if (!_insertedOperators.contains(operator.getFullId())) {
-				_insertedOperators.add(operator.getFullId());
-				_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
-						+ " (id, value, immutable, subevertrue) VALUES ("
-						+ "'" + operator.getFullId() + "',"
-						+ state.value() + ","
-						+ state.isImmutable() + ","
-						+ state.isSubEverTrue()
-						+ ");");
-			}
-			else {
-				_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
-						+ " SET value = " + state.value() + ","
-						+ " immutable = " + state.isImmutable() + ","
-						+ " subevertrue = " + state.isSubEverTrue()
-						+ " WHERE id = '" + operator.getFullId() + "';");
-			}
+	public void update(IResponse response) {
+		if (!(response instanceof DistributedPdpResponse)) {
+			return;
 		}
+
+		DistributedPdpResponse res = (DistributedPdpResponse) response;
+
+		for (EventMatchOperator event : res.getEventMatches()) {
+			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
+
+			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_EVENTS_HAPPENED
+					+ " (eventid, location, time) VALUES ("
+					+ "'" + event.getFullId() + "',"
+					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ "now()"
+					+ ");");
+		}
+
+
+		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
+			_logger.info("UPDATING CASSANDRA STATE: state based operator turned true: {}", sbo.getFullId());
+
+			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_STATEBASED_OP_TRUE
+					+ " (opid, location, time) VALUES ("
+					+ "'" + sbo.getFullId() + "',"
+					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ "now()"
+					+ ");");
+		}
+
+
+
+//			for (IOperatorState state : res.getOperatorStateChanges()) {
+//				IOperator operator = state.getOperator();
+//
+//				_logger.info("UPDATING CASSANDRA STATE: {}, {}", operator, state);
+//
+//				String policyName = operator.getMechanism().getPolicyName().toLowerCase();
+//
+//				if (!_insertedOperators.contains(operator.getFullId())) {
+//					_insertedOperators.add(operator.getFullId());
+//					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
+//							+ " (id, value, immutable, subevertrue) VALUES ("
+//							+ "'" + operator.getFullId() + "',"
+//							+ state.value() + ","
+//							+ state.isImmutable() + ","
+//							+ state.isSubEverTrue()
+//							+ ");");
+//				}
+//				else {
+//					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
+//							+ " SET value = " + state.value() + ","
+//							+ " immutable = " + state.isImmutable() + ","
+//							+ " subevertrue = " + state.isSubEverTrue()
+//							+ " WHERE id = '" + operator.getFullId() + "';");
+//				}
+//			}
 	}
 }

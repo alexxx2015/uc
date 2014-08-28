@@ -2,13 +2,13 @@ package de.tum.in.i22.uc.pdp.distribution;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
+import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
 
 /**
  * This class wraps an IResponse and adds additional functions
@@ -20,7 +20,9 @@ import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
 public class DistributedPdpResponse implements IResponse {
 
 	private final IResponse _response;
-	private final Queue<IOperatorState> _operatorStateChanges;
+//	private final Queue<IOperatorState> _operatorStateChanges;
+	private final List<EventMatchOperator> _eventMatches;
+	private final List<StateBasedOperator> _stateBasedOperatorTrue;
 
 	/**
 	 * Creates a new {@link DistributedPdpResponse} instance by wrapping the specified
@@ -29,21 +31,36 @@ public class DistributedPdpResponse implements IResponse {
 	 * the assembly of the provided {@link IResponse}.
 	 *
 	 * @param response
+	 * @param _stateBasedOperatorTrue
 	 * @param operatorStateChanges
 	 */
-	public DistributedPdpResponse(IResponse response, Queue<IOperatorState> operatorStateChanges) {
+	public DistributedPdpResponse(IResponse response, List<EventMatchOperator> eventMatches, List<StateBasedOperator> stateBasedOperatorTrue) {
 		_response = response;
-		_operatorStateChanges = new LinkedList<>(operatorStateChanges);
+//		_operatorStateChanges = new LinkedList<>(operatorStateChanges);
+
+		/*
+		 * TODO: Check whether creating a new list is actually necessary or whether we can reuse the passed list
+		 */
+		_eventMatches = new LinkedList<>(eventMatches);
+		_stateBasedOperatorTrue = new LinkedList<>(stateBasedOperatorTrue);
 	}
 
-	/**
-	 * Returns the {@link OperatorState}s that have been changed during the
-	 * assembly of the wrapped {@link IResponse} object.
-	 *
-	 * @return
-	 */
-	public Queue<IOperatorState> getOperatorStateChanges() {
-		return _operatorStateChanges;
+//	/**
+//	 * Returns the {@link OperatorState}s that have been changed during the
+//	 * assembly of the wrapped {@link IResponse} object.
+//	 *
+//	 * @return
+//	 */
+//	public Queue<IOperatorState> getOperatorStateChanges() {
+//		return _operatorStateChanges;
+//	}
+
+	public List<EventMatchOperator> getEventMatches() {
+		return _eventMatches;
+	}
+
+	public List<StateBasedOperator> getStateBasedOperatorTrue() {
+		return _stateBasedOperatorTrue;
 	}
 
 	/**

@@ -10,7 +10,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType implements LiteralOperator  {
-	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperatorType.class);
+	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperator.class);
 
 	public StateBasedOperator() {
 	}
@@ -46,7 +46,29 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 		String p = operator + separator + param1 + separator + param2 + separator + param3;
 
-		return curEvent == null ? pip.evaluatePredicateCurrentState(p) : pip.evaluatePredicateSimulatingNextState(
-				curEvent, p);
+		boolean result;
+
+		if (curEvent == null) {
+			/*
+			 * We are evaluating at the end of a timestep
+			 */
+			result = pip.evaluatePredicateCurrentState(p);
+		}
+		else {
+			/*
+			 * We are evaluating in the presence of a given event
+			 */
+			result = pip.evaluatePredicateSimulatingNextState(curEvent, p);
+		}
+
+		if (result) {
+			// Notify observers that predicate is true
+			setChanged();
+			notifyObservers();
+		}
+
+		_logger.debug("eval StateBasedOperator [{}: {}]", this, result);
+
+		return result;
 	}
 }

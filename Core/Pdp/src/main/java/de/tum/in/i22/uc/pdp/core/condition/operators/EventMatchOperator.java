@@ -30,7 +30,6 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 	@Override
 	public boolean evaluate(IEvent ev) {
 		boolean result;
-		boolean newStateValue = _state.value;
 
 		if (ev == null) {
 			/*
@@ -42,7 +41,7 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			 * that the event did not yet happen.
 			 */
 			result = _state.value;
-			newStateValue = false;
+			_state.value = false;
 		}
 		else {
 			/*
@@ -56,15 +55,15 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			 * event happened earlier within this timestep and the state is true anyway.
 			 */
 			if (!_state.value && matches(ev)) {
-				newStateValue = true;
+				_state.value = true;
+
+				/*
+				 * Notify about the fact that the event did match
+				 */
+				setChanged();
+				notifyObservers();
 			}
 			result = _state.value;
-		}
-
-		if (newStateValue != _state.value) {
-			_state.value = newStateValue;
-			setChanged();
-			notifyObservers(_state);
 		}
 
 		_logger.debug("Evaluated [{}] with result [{}]", this, result);

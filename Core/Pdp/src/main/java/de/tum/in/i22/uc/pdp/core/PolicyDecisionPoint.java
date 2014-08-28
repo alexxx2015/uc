@@ -4,13 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -23,16 +23,17 @@ import javax.xml.bind.UnmarshalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
-import de.tum.in.i22.uc.pdp.core.condition.operators.Operator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
+import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
@@ -61,7 +62,11 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	 * Accumulates all changed {@link OperatorState}s during
 	 * an ongoing event evaluation ({@link PolicyDecisionPoint#notifyEvent(IEvent)}).
 	 */
-	private final Queue<IOperatorState> _changedOperatorStates;
+//	private final Queue<IOperatorState> _changedOperatorStates;
+
+	private final List<EventMatchOperator> _eventMatches;
+
+	private final List<StateBasedOperator> _stateBasedOperatorTrue;
 
 	public PolicyDecisionPoint() {
 		this(new DummyPipProcessor(), new PxpManager());
@@ -70,7 +75,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
-		_changedOperatorStates = new LinkedList<>();
+//		_changedOperatorStates = new LinkedList<>();
+		_stateBasedOperatorTrue = new LinkedList<>();
+		_eventMatches = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
@@ -189,8 +196,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	}
 
 	public IResponse notifyEvent(IEvent event) {
-		_changedOperatorStates.clear();
-
 		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
@@ -213,13 +218,17 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			mech.notifyEvent(event, d);
 		}
 
-		_logger.info("Accumulated state changes during notifyEvent({}): {}", event, _changedOperatorStates);
-
-		if (_changedOperatorStates.isEmpty()) {
+		if (_stateBasedOperatorTrue.isEmpty() && _eventMatches.isEmpty()) {
 			return d.toResponse();
 		}
 
-		return new DistributedPdpResponse(d.toResponse(), _changedOperatorStates);
+		IResponse response = new DistributedPdpResponse(d.toResponse(), _eventMatches, _stateBasedOperatorTrue);
+
+		// prepare for next
+		_eventMatches.clear();
+		_stateBasedOperatorTrue.clear();
+
+		return response;
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
@@ -264,8 +273,29 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof Operator && arg instanceof OperatorState) {
-			_changedOperatorStates.add((OperatorState) arg);
+//		if (o instanceof Operator) {
+//			if (arg instanceof OperatorState) {
+//				_changedOperatorStates.add((OperatorState) arg);
+//			}
+//			else if (o instanceof EventMatchOperator) {
+//				_eventMatches.add((EventMatchOperator) o);
+//			}
+//		}
+
+		if (o instanceof EventMatchOperator) {
+			_eventMatches.add((EventMatchOperator) o);
+		}
+		else if (o instanceof StateBasedOperator) {
+			_stateBasedOperatorTrue.add((StateBasedOperator) o);
+		}
+		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
+			if (!_stateBasedOperatorTrue.isEmpty()) {
+				setChanged();
+				notifyObservers(new DistributedPdpResponse(new ResponseBasic(), Collections.<EventMatchOperator> emptyList(), _stateBasedOperatorTrue));
+			}
+
+			// Prepare for next
+			_stateBasedOperatorTrue.clear();
 		}
 	}
 }

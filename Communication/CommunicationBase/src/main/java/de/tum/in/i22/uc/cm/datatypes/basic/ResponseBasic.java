@@ -15,6 +15,13 @@ public class ResponseBasic implements IResponse {
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
 
+	public ResponseBasic() {
+	}
+
+	public ResponseBasic(IStatus authorizationAction) {
+		_authorizationAction = authorizationAction;
+	}
+
 	public ResponseBasic(IStatus authorizationAction, List<IEvent> executeActions, IEvent modifiedEvent) {
 		_authorizationAction = authorizationAction;
 		_executeActions = executeActions;
