@@ -56,7 +56,6 @@ public class PipHandler extends PipProcessor {
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
-		//		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 
@@ -127,16 +126,14 @@ public class PipHandler extends PipProcessor {
 		eventHandler.setEvent(event);
 		eventHandler.setInformationFlowModel(_ifModelManager);
 
-		_logger.info(System.lineSeparator() + "Executing PipHandler for "
-				+ event);
+		_logger.info("Executing PipHandler for " + event);
 		status = eventHandler.performUpdate();
 
 		/*
 		 * The returned status will tell us whether we have to do some more
 		 * work, namely remote data flow tracking and policy shipment
 		 */
-		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
-				&& status instanceof DistributedPipStatus) {
+		if (status instanceof DistributedPipStatus) {
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 		}
 

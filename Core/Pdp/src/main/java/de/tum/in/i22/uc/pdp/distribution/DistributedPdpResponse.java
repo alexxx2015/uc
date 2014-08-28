@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Queue;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
@@ -19,7 +20,7 @@ import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
 public class DistributedPdpResponse implements IResponse {
 
 	private final IResponse _response;
-	private final Queue<OperatorState> _operatorStateChanges;
+	private final Queue<IOperatorState> _operatorStateChanges;
 
 	/**
 	 * Creates a new {@link DistributedPdpResponse} instance by wrapping the specified
@@ -30,7 +31,7 @@ public class DistributedPdpResponse implements IResponse {
 	 * @param response
 	 * @param operatorStateChanges
 	 */
-	public DistributedPdpResponse(IResponse response, Queue<OperatorState> operatorStateChanges) {
+	public DistributedPdpResponse(IResponse response, Queue<IOperatorState> operatorStateChanges) {
 		_response = response;
 		_operatorStateChanges = new LinkedList<>(operatorStateChanges);
 	}
@@ -41,7 +42,7 @@ public class DistributedPdpResponse implements IResponse {
 	 *
 	 * @return
 	 */
-	public Queue<OperatorState> getOperatorStateChanges() {
+	public Queue<IOperatorState> getOperatorStateChanges() {
 		return _operatorStateChanges;
 	}
 

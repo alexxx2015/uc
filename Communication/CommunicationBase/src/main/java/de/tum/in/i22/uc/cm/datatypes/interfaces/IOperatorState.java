@@ -16,4 +16,5 @@ public interface IOperatorState {
 
 	public abstract boolean isLocallyDecidable();
 
+	public IOperator getOperator();
 }

@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.pdp;
 
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -25,8 +27,10 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
+import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PdpHandler extends PdpProcessor {
+public class PdpHandler extends PdpProcessor implements Observer {
 
 	private static Logger _logger = LoggerFactory.getLogger(PdpHandler.class);
 
@@ -87,9 +91,19 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		_lpdp.notifyEvent(event);
+		IResponse res = _lpdp.notifyEvent(event);
 		if (event.isActual()) {
 			getPip().update(event);
+		}
+
+		/*
+		 * FIXME: It seems that as of now PolicyDecisionPoint
+		 * handles all events as being actual events. This needs
+		 * to be changed. Updating the distributed state must then
+		 * only be performed if the event is actual.
+		 */
+		if (res instanceof DistributedPdpResponse) {
+			_distributionManager.update(((DistributedPdpResponse) res).getOperatorStateChanges());
 		}
 	}
 
@@ -116,6 +130,16 @@ public class PdpHandler extends PdpProcessor {
 			notifyEventAsync(ev2);
 		}
 
+		/*
+		 * FIXME: It seems that as of now PolicyDecisionPoint
+		 * handles all events as being actual events. This needs
+		 * to be changed. Updating the distributed state must then
+		 * only be performed if the event is actual.
+		 */
+		if (res instanceof DistributedPdpResponse) {
+			_distributionManager.update(((DistributedPdpResponse) res).getOperatorStateChanges());
+		}
+
 		return res;
 	}
 
@@ -124,9 +148,12 @@ public class PdpHandler extends PdpProcessor {
 		super.init(iface1, iface2, distributionManager);
 
 		IPdp2Pip pip = getPip();
-		_logger.debug("initializing PDP. Pip reference is "
-				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
+		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
+
+		// Observe the PolicyDecisionPoint. The PolicyDecisionPoint will
+		// tell us if a policy needs to be registered with the DistributionManager
+		_lpdp.addObserver(this);
 	}
 
 	@Override
@@ -142,5 +169,22 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public void stop() {
 		_lpdp.stop();
+	}
+
+	@Override
+	public void update(Observable o, final Object arg) {
+		/*
+		 * The PolicyDecisionPoint will inform us about Policies to register
+		 * with the DistributionManager. As registering the policy for remote
+		 * purposes might take a while, we start the registration process in a new thread and go on.
+		 */
+		if ((o instanceof PolicyDecisionPoint) && (arg instanceof PolicyType)) {
+			new Thread() {
+				@Override
+				public void run() {
+					_distributionManager.register(((PolicyType) arg).getName());
+				}
+			}.start();
+		}
 	}
 }

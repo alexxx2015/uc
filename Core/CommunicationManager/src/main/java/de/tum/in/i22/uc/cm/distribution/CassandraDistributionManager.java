@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -379,27 +380,31 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(IOperator operator, IOperatorState state) {
-		_logger.warn("UPDATING CASSANDRA STATE: {}, {}", operator, state);
+	public void update(Queue<IOperatorState> operatorStateChanges) {
+		for (IOperatorState state : operatorStateChanges) {
+			IOperator operator = state.getOperator();
 
-		String policyName = operator.getMechanism().getPolicyName().toLowerCase();
+			_logger.warn("UPDATING CASSANDRA STATE: {}, {}", operator, state);
 
-		if (!_insertedOperators.contains(operator.getFullId())) {
-			_insertedOperators.add(operator.getFullId());
-			_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
-					+ " (id, value, immutable, subevertrue) VALUES ("
-					+ "'" + operator.getFullId() + "',"
-					+ state.value() + ","
-					+ state.isImmutable() + ","
-					+ state.isSubEverTrue()
-					+ ");");
-		}
-		else {
-			_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
-					+ " SET value = " + state.value() + ","
-					+ " immutable = " + state.isImmutable() + ","
-					+ " subevertrue = " + state.isSubEverTrue()
-					+ " WHERE id = '" + operator.getFullId() + "';");
+			String policyName = operator.getMechanism().getPolicyName().toLowerCase();
+
+			if (!_insertedOperators.contains(operator.getFullId())) {
+				_insertedOperators.add(operator.getFullId());
+				_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
+						+ " (id, value, immutable, subevertrue) VALUES ("
+						+ "'" + operator.getFullId() + "',"
+						+ state.value() + ","
+						+ state.isImmutable() + ","
+						+ state.isSubEverTrue()
+						+ ");");
+			}
+			else {
+				_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
+						+ " SET value = " + state.value() + ","
+						+ " immutable = " + state.isImmutable() + ","
+						+ " subevertrue = " + state.isSubEverTrue()
+						+ " WHERE id = '" + operator.getFullId() + "';");
+			}
 		}
 	}
 }

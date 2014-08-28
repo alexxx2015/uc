@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.CircularArray;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 
 public class OperatorState implements IOperatorState {
@@ -74,5 +75,8 @@ public class OperatorState implements IOperatorState {
 				.toString();
 	}
 
-
+	@Override
+	public IOperator getOperator() {
+		return _operator;
+	}
 }

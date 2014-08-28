@@ -25,10 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
@@ -41,7 +40,7 @@ import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PolicyDecisionPoint implements Observer {
+public class PolicyDecisionPoint extends Observable implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
 	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
@@ -58,18 +57,19 @@ public class PolicyDecisionPoint implements Observer {
 
 	private final PxpManager _pxpManager;
 
-	private final IDistributionManager _distributionManager;
-
-	private final Queue<OperatorState> _changedOperatorStates;
+	/**
+	 * Accumulates all changed {@link OperatorState}s during
+	 * an ongoing event evaluation ({@link PolicyDecisionPoint#notifyEvent(IEvent)}).
+	 */
+	private final Queue<IOperatorState> _changedOperatorStates;
 
 	public PolicyDecisionPoint() {
-		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
+		this(new DummyPipProcessor(), new PxpManager());
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
-		_distributionManager = distributionManager;
 		_changedOperatorStates = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
@@ -110,14 +110,8 @@ public class PolicyDecisionPoint implements Observer {
 
 			_logger.debug("Deploying policy [name={}]", policyName);
 
-			// Registering the policy for remote purposes might take a while.
-			// Thus, we start the registration process in a new thread and go on.
-			new Thread() {
-				@Override
-				public void run() {
-					_distributionManager.register(policyName);
-				}
-			}.start();
+			setChanged();
+			notifyObservers(policy);
 
 			/*
 			 * Get the set of mechanisms of this policy (if any)
@@ -271,7 +265,6 @@ public class PolicyDecisionPoint implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof Operator && arg instanceof OperatorState) {
-//			_distributionManager.update((IOperator) o, (IOperatorState) arg);
 			_changedOperatorStates.add((OperatorState) arg);
 		}
 	}
