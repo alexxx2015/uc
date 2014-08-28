@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
+import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -110,7 +110,7 @@ public abstract class Mechanism implements Runnable, IMechanism {
 		_interrupted = true;
 	}
 
-	public synchronized IDecision notifyEvent(IEvent event, IDecision d) {
+	public synchronized Decision notifyEvent(IEvent event, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
 
 		if (_triggerEvent.matches(event)) {

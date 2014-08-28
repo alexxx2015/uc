@@ -137,7 +137,6 @@ public class PipHandler extends PipProcessor {
 		 */
 		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
 				&& status instanceof DistributedPipStatus) {
-
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 		}
 

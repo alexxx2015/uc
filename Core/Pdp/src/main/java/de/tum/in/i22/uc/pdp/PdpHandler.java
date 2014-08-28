@@ -96,12 +96,11 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
 		if (event == null) {
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR,
-					"null event received"), null, null);
+			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		IResponse res = _lpdp.notifyEvent(event).toResponse();
+		IResponse res = _lpdp.notifyEvent(event);
 
-		/**
+		/*
 		 * (1) If the event is actual, we update the PIP in any case
 		 *
 		 * (2) If the event is *not* actual AND if the event was allowed by the
@@ -112,10 +111,8 @@ public class PdpHandler extends PdpProcessor {
 
 		if (event.isActual()) {
 			getPip().update(event);
-		} else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW)
-				&& event.allowImpliesActual()) {
-			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(),
-					true);
+		} else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && event.allowImpliesActual()) {
+			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
 			notifyEventAsync(ev2);
 		}
 

@@ -207,7 +207,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 						remoteDataFlow = new RemoteDataFlowInfo(remoteLocation);
 						remoteDataFlow.addFlow(localLocation, localLocation, data);
 
-						return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
+						return new DistributedPipStatus(remoteDataFlow);
 					}
 
 					break;
@@ -243,7 +243,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		 * so, return a corresponding status.
 		 */
 		if (remoteDataFlow != null && !remoteDataFlow.isEmpty()) {
-			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
+			return new DistributedPipStatus(remoteDataFlow);
 		}
 
 		return STATUS_OKAY;

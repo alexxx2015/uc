@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -22,10 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
@@ -37,6 +37,7 @@ import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
@@ -59,6 +60,8 @@ public class PolicyDecisionPoint implements Observer {
 
 	private final IDistributionManager _distributionManager;
 
+	private final Queue<OperatorState> _changedOperatorStates;
+
 	public PolicyDecisionPoint() {
 		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
@@ -67,6 +70,7 @@ public class PolicyDecisionPoint implements Observer {
 		_pip = pip;
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
+		_changedOperatorStates = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
@@ -190,8 +194,10 @@ public class PolicyDecisionPoint implements Observer {
 		return true;
 	}
 
-	public IDecision notifyEvent(IEvent event) {
-		IDecision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
+	public IResponse notifyEvent(IEvent event) {
+		_changedOperatorStates.clear();
+
+		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
 		if (eventMatchList != null) {
@@ -213,7 +219,13 @@ public class PolicyDecisionPoint implements Observer {
 			mech.notifyEvent(event, d);
 		}
 
-		return d;
+		_logger.info("Accumulated state changes during notifyEvent({}): {}", event, _changedOperatorStates);
+
+		if (_changedOperatorStates.isEmpty()) {
+			return d.toResponse();
+		}
+
+		return new DistributedPdpResponse(d.toResponse(), _changedOperatorStates);
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
@@ -259,7 +271,8 @@ public class PolicyDecisionPoint implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof Operator && arg instanceof OperatorState) {
-			_distributionManager.update((IOperator) o, (IOperatorState) arg);
+//			_distributionManager.update((IOperator) o, (IOperatorState) arg);
+			_changedOperatorStates.add((OperatorState) arg);
 		}
 	}
 }

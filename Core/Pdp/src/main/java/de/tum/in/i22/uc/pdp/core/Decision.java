@@ -13,7 +13,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IDecision;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -27,7 +26,7 @@ import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
  * contains information about permissiveness of the event and desired actions to
  * be performed.
  */
-public class Decision implements IDecision, Serializable {
+public class Decision implements Serializable {
 	private static Logger _logger = LoggerFactory.getLogger(Decision.class);
 
 	private static final long serialVersionUID = 4922446035665121547L;
@@ -43,7 +42,6 @@ public class Decision implements IDecision, Serializable {
 		_pxpManager = pxpManager;
 	}
 
-	@Override
 	public void processMechanism(IMechanism m, IEvent curEvent) {
 		if (!(m instanceof Mechanism)) {
 			throw new IllegalArgumentException("Mechanism of type " + Mechanism.class + " expected, but got " + m.getClass() + ".");
@@ -124,7 +122,6 @@ public class Decision implements IDecision, Serializable {
 				.toString();
 	}
 
-	@Override
 	public IResponse toResponse() {
 		// Convert an (IESE) Decision object into a (TUM) Response
 		IStatus status;

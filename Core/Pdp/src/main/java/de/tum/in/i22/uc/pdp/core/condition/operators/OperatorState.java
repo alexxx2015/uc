@@ -20,6 +20,17 @@ public class OperatorState implements IOperatorState {
 	 */
 	boolean locallyDecidable = true;
 
+	private final Operator _operator;
+
+	/**
+	 * Creates a new {@link OperatorState}, referring to the
+	 * {@link Operator} to which this {@link OperatorState} belongs.
+	 *
+	 * @param operator the {@link Operator} to which this instance belongs.
+	 */
+	public OperatorState(Operator operator) {
+		_operator = operator;
+	}
 
 	@Override
 	public boolean value() {
@@ -62,4 +73,6 @@ public class OperatorState implements IOperatorState {
 				.add("locallyDecidable", locallyDecidable)
 				.toString();
 	}
+
+
 }

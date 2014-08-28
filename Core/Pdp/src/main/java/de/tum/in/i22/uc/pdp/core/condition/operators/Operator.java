@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.condition.operators;
 
+import java.util.Objects;
 import java.util.Observable;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
@@ -28,7 +29,7 @@ public abstract class Operator extends Observable implements IOperator {
 	protected int _id;
 
 	public Operator() {
-		_state = new OperatorState();
+		_state = new OperatorState(this);
 	}
 
 	public void init(Mechanism mech) {
@@ -85,5 +86,18 @@ public abstract class Operator extends Observable implements IOperator {
 	@Override
 	public IMechanism getMechanism() {
 		return _mechanism;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Operator) {
+			return Objects.equals(_fullId, ((Operator) obj)._fullId);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_fullId);
 	}
 }
