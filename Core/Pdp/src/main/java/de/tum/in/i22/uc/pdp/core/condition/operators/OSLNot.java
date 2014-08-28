@@ -44,13 +44,13 @@ public class OSLNot extends NotType {
 		}
 	}
 
-	@Override
-	int initId(int id) {
-		_id = op.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
-	}
+//	@Override
+//	int initId(int id) {
+//		_id = op.initId(id) + 1;
+//		setFullId(_id);
+//		_logger.debug("My [{}] id is {}.", this, getFullId());
+//		return _id;
+//	}
 
 	@Override
 	public String toString() {
@@ -59,13 +59,15 @@ public class OSLNot extends NotType {
 
 	@Override
 	public boolean evaluate(IEvent curEvent) {
-		boolean newStateValue = !op.evaluate(curEvent);
+//		boolean newStateValue = !op.evaluate(curEvent);
 
-		if (newStateValue != _state.value) {
-			_state.value = newStateValue;
-			setChanged();
-			notifyObservers(_state);
-		}
+//		if (newStateValue != _state.value) {
+//			_state.value = newStateValue;
+//			setChanged();
+//			notifyObservers(_state);
+//		}
+
+		_state.value = !op.evaluate(curEvent);
 
 		_logger.debug("eval NOT [{}]", _state.value);
 		return _state.value;

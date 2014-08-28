@@ -59,7 +59,8 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	int initId(int id) {
-		throw new UnsupportedOperationException("Calling initId() is only allowed on subtypes of " + Operator.class + " (was: " + getClass() + ")");
+		// By default, no ID is set for an Operator
+		return id;
 	}
 
 	/**

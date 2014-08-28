@@ -26,7 +26,6 @@ public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 		return _id;
 	}
 
-
 	@Override
 	public String toString() {
 		return "EvalOperator [Type: " + this.getType() + ", [" + this.getContent() + "]]";

@@ -32,13 +32,13 @@ public class OSLAnd extends AndType {
 		op2.init(mech);
 	}
 
-	@Override
-	int initId(int id) {
-		_id = op1.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return op2.initId(_id);
-	}
+//	@Override
+//	int initId(int id) {
+//		_id = op1.initId(id) + 1;
+//		setFullId(_id);
+//		_logger.debug("My [{}] id is {}.", this, getFullId());
+//		return op2.initId(_id);
+//	}
 
 	@Override
 	public String toString() {
@@ -53,12 +53,14 @@ public class OSLAnd extends AndType {
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
 
-		boolean newStateValue = op1state && op2state;
-		if (newStateValue != _state.value) {
-			_state.value = newStateValue;
-			setChanged();
-			notifyObservers(_state);
-		}
+//		boolean newStateValue = op1state && op2state;
+//		if (newStateValue != _state.value) {
+//			_state.value = newStateValue;
+//			setChanged();
+//			notifyObservers(_state);
+//		}
+
+		_state.value = op1state && op2state;
 
 		_logger.debug("eval AND [{}]", _state.value);
 		return _state.value;

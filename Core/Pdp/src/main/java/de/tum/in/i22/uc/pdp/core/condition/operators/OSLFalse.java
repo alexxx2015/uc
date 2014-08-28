@@ -19,17 +19,6 @@ public class OSLFalse extends FalseType implements LiteralOperator {
 	}
 
 	@Override
-	int initId(int id) {
-//		_id = id + 1;
-//		setFullId(_id);
-//		_logger.debug("My [{}] id is {}.", this, getFullId());
-//		return _id;
-
-		// No ID for this class, as it can always be decided locally
-		return id;
-	}
-
-	@Override
 	public String toString() {
 		return "FALSE";
 	}

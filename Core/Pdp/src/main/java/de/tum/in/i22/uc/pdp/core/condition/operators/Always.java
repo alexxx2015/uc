@@ -22,13 +22,13 @@ public class Always extends AlwaysType {
 		op.init(mech);
 	}
 
-	@Override
-	int initId(int id) {
-		_id = op.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
-	}
+//	@Override
+//	int initId(int id) {
+//		_id = op.initId(id) + 1;
+//		setFullId(_id);
+//		_logger.debug("My [{}] id is {}.", this, getFullId());
+//		return _id;
+//	}
 
 	@Override
 	public String toString() {
@@ -48,12 +48,15 @@ public class Always extends AlwaysType {
 				newStateImmutable = true;
 			}
 
-			if (newStateValue != _state.value || newStateImmutable != _state.immutable) {
-				_state.value = newStateValue;
-				_state.immutable = newStateImmutable;
-				setChanged();
-				notifyObservers(_state);
-			}
+//			if (newStateValue != _state.value || newStateImmutable != _state.immutable) {
+//				_state.value = newStateValue;
+//				_state.immutable = newStateImmutable;
+//				setChanged();
+//				notifyObservers(_state);
+//			}
+
+			_state.value = newStateValue;
+			_state.immutable = newStateImmutable;
 		}
 
 		_logger.debug("eval ALWAYS [{}]", _state.value);
