@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayer;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.utilities.PtpLogger;
 

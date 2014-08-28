@@ -350,10 +350,13 @@ public class PublicMethods {
 							
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
+				return null;
 			} catch (SAXException e) {
 				e.printStackTrace();
+				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return null;
 			}
 			
 			Node root1 = doc.getFirstChild();

@@ -1,5 +1,6 @@
 package de.tum.in.i22.policyeditor.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -64,7 +65,11 @@ public class TemplatesLoader {
 	
 	public static TemplatesLoader loadPolicyTemplates() {
 		logger.debugLog(System.getProperty("user.dir"), null);
-		String templatesFile = System.getProperty("user.dir")+"\\src\\main\\resources\\templates.cfg"; 
+		String templatesFile = System.getProperty("user.dir")+File.separator+"src"
+						+File.separator
+						+"main"+File.separator
+						+"resources"+File.separator
+						+"templates.cfg"; 
 		
 		TemplatesLoader templates = new TemplatesLoader();
 		String json = "";
@@ -88,7 +93,11 @@ public class TemplatesLoader {
 	}
 			
 	private static void loadActionTemplates(){
-		String actionsFile = System.getProperty("user.dir")+"\\src\\main\\resources\\actions.cfg";
+		String actionsFile = System.getProperty("user.dir")+File.separator+"src"
+				+File.separator
+				+"main"+File.separator
+				+"resources"+File.separator
+				+"actions.cfg";
 		String file = "";
 		try {
 			file = PublicMethods.readFile(actionsFile, StandardCharsets.UTF_8);
@@ -114,7 +123,11 @@ public class TemplatesLoader {
 	}
 	
 	private static void loadSubjectTemplates(){
-		String subjectsFile = System.getProperty("user.dir")+"\\src\\main\\resources\\subjects.cfg";
+		String subjectsFile = System.getProperty("user.dir")+File.separator+"src"
+				+File.separator
+				+"main"+File.separator
+				+"resources"+File.separator
+				+"subjects.cfg";
 		String file = "";
 		try {
 			file = PublicMethods.readFile(subjectsFile, StandardCharsets.UTF_8);

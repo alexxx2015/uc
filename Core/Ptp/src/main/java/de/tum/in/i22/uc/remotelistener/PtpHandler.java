@@ -29,10 +29,25 @@ public class PtpHandler implements IPmp2Ptp {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PtpHandler.class);
 	
+	private int policiesTranslatedTotalCounter = 0;
+	
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp#translatePolicy(java.lang.String, java.util.Map, de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy)
+	 * paramters must have keys: template_id, object_instance
+	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		
 		String policy = xmlPolicy.getXml();
+		
+		String mechanismId = parameters.get("policy_id");
+		if(mechanismId == null){
+			mechanismId = "p"+policiesTranslatedTotalCounter++;
+		}
+		else{
+			mechanismId += "_p"+policiesTranslatedTotalCounter++;
+		}
+		parameters.put("policy_id", mechanismId);
 		
 		String message = "" + "Req: "+requestId +"translateg policy: \n" + policy;
 		System.out.println(message);
@@ -68,9 +83,9 @@ public class PtpHandler implements IPmp2Ptp {
 		}
 		
 		outputPolicy = addTimeStepToPolicy(outputPolicy);
-		//TODO: add also "eventually" replacement operator
+		outputPolicy = replaceEventually(outputPolicy);
 		
-		XmlPolicy translatedXmlPolicy = new XmlPolicy(xmlPolicy.getName()+"_translated", outputPolicy);
+		XmlPolicy translatedXmlPolicy = new XmlPolicy(mechanismId+"_"+xmlPolicy.getName(), outputPolicy);
 		IPtpResponse response = new PtpResponseBasic(translationStatus, translatedXmlPolicy);
 		
 		return response;
@@ -78,18 +93,96 @@ public class PtpHandler implements IPmp2Ptp {
 
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
-		_logger.info("updateDomainModel");
+		_logger.info("updateDomainModel: " + requestId + " "+ xmlDomainModel.toString());
 		
 		
-		return null;
+		StatusBasic adaptationStatus = new StatusBasic(EStatus.OKAY, "adaptation success");
+		XmlPolicy adaptedXmlDomainModel = new XmlPolicy(xmlDomainModel.getName()+"_adapted", "");
+		
+		IPtpResponse response = new PtpResponseBasic(adaptationStatus, adaptedXmlDomainModel);
+		return response;
 	}
 
+	/**
+	 * The syntax of eventually has changed.
+	 * @param xml
+	 * @return
+	 */
+	private String replaceEventually(String xml){
+ 		Document doc = PublicMethods.openXmlInput(xml, "string");
+ 		if(doc==null)
+ 			return xml;
+		String expression = "//eventually";
+		XPathFactory factory=XPathFactory.newInstance();
+		XPath xPath=factory.newXPath();
+		NodeList nodeList = null;
+		try {
+			nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+			String logMsg = "eventually: xml value parsing error";
+			System.out.println( logMsg );
+			return logMsg;
+		}
+		
+		int eventuallyCounter = nodeList.getLength();
+		System.out.println("eventuallyCounter: "+ eventuallyCounter);
+		for (int i = 0; i < eventuallyCounter; i++) {
+			Node n = nodeList.item(i);
+			if(n.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			
+			Node parent = n.getParentNode();						
+			PublicMethods.removeWhitespaceNodes(parent);
+			
+			Element not1 = doc.createElement("not");
+			parent.appendChild(not1);
+			Element always = doc.createElement("always");
+			not1.appendChild(always);
+			Element not2 = doc.createElement("not");
+			always.appendChild(not2);
+			
+			NodeList children = n.getChildNodes();
+			int childrenLength = children.getLength();
+			for(int j=0; j<childrenLength; j++){
+				Node c = children.item(j);
+				if(c!=null)
+					not2.appendChild(c);
+				else{
+					Element empty = doc.createElement("empty");
+					not2.appendChild(empty);
+				}
+			}
+			
+			String pName = parent.getNodeName();
+			String pValue = parent.getNodeValue();
+			
+			String value = n.getNodeValue();
+			String name = n.getNodeName();
+			System.out.println(i + " " + name + " " + value + "[" + pName + " " + pValue + "]");
+			parent.removeChild(n);
+		}
+		
+		String result = "";
+		result = PublicMethods.convertDocumentToString(doc) + "";
+		return result;
+	}
+	
+	/**
+	 * The PDP expects a policy which has a "timestep" node with a value.
+	 * This method adds a default timestep node.
+	 * Without it, the deployment fails.
+	 * @param policy
+	 * @return
+	 */
 	private String addTimeStepToPolicy(String policy){
 		if(policy == null)
 			return "";
 		if(policy.length()==0)
 			return "";
 		Document doc = PublicMethods.openXmlInput(policy, "string");
+		if(doc==null)
+			return policy;
 		XPathFactory factory=XPathFactory.newInstance();
 		XPath xpath=factory.newXPath();
 		

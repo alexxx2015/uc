@@ -8,11 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.DefaultListModel;
@@ -23,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -33,15 +33,12 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-import de.tum.in.i22.policyeditor.logger.EditorLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.policyeditor.deployment.DeploymentController;
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
-import de.tum.in.i22.policyeditor.translator.DeploymentController;
-import de.tum.in.i22.policyeditor.util.Config;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
-import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
-import de.tum.in.i22.uc.thrift.types.TContainer;
 
 
 /**
@@ -55,41 +52,28 @@ public class PolicyTemplatesEditor {
 	
 	private String policyClass;
 	private Set<IContainer> representations;
-	private Pmp2PdpClient clientPmp;
 	
-	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
-	
-	private EditorLogger logger; 
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		String dataClass = "picture";
-		
-		PolicyTemplatesEditor.startEditor(null, dataClass);
-	}
+	private static final Logger _logger = LoggerFactory.getLogger(PolicyTemplatesEditor.class); 
 
 	/**
 	 * Create the application.
 	 * @param representations2 
 	 */
-	public PolicyTemplatesEditor(Set<IContainer> representations2, String policyClass) {
-		this.deploymentController = new DeploymentController();
+	public PolicyTemplatesEditor(DeploymentController deploymentController, Set<IContainer> representations2, String policyClass) {
+		this.deploymentController = deploymentController;
 		this.policyClass = policyClass;
 		this.representations = representations2;
-		logger = EditorLogger.instance();
 		initialize();
 	}
 
-	public static void startEditor(final Set<IContainer> representations2, final String dataClass){
+	public static void startEditor(final DeploymentController deploymentController, final Set<IContainer> representations2, final String dataClass){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					ToolTipManager.sharedInstance().setInitialDelay(500);
 			        ToolTipManager.sharedInstance().setDismissDelay(1500);
-			        PolicyTemplatesEditor window = new PolicyTemplatesEditor(representations2, dataClass);
+			        final PolicyTemplatesEditor window = new PolicyTemplatesEditor(deploymentController, representations2, dataClass);
 					window.frmTemplatePolicyEditor.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -106,6 +90,12 @@ public class PolicyTemplatesEditor {
 		frmTemplatePolicyEditor.setTitle("Template Policy Editor");
 		frmTemplatePolicyEditor.setBounds(100, 100, 1029, 523);
 		frmTemplatePolicyEditor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTemplatePolicyEditor.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        deploymentController.closeConnection();
+		    }
+		});
 		
 		final JPanel editorPanel = new JPanel();
 		editorPanel.setBorder(new TitledBorder(null, "Editor", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -313,24 +303,8 @@ public class PolicyTemplatesEditor {
 		return deployed;
 	}
 	
-	private void initializePMP(){
-		String host = "localhost";
-		int port = 0;
-		try {
-			Config config = new Config();
-			String portString=config.getProperty("policyManagementPort");
-			port = Integer.parseInt(portString);
-			String hostString = config.getProperty("policyManagemtnHost");
-			host = hostString;
-		} catch (Exception e) {
-		}
-		
-		try{ 
-			clientPmp=thriftClientFactory.createPmp2PdpClient(new IPLocation(host, port));
-			clientPmp.connect();
-		} 
-		catch(IOException ex){
-			logger.errorLog("Pmp launch failed", ex);
-		}
-	}
+	
 }
+
+
+

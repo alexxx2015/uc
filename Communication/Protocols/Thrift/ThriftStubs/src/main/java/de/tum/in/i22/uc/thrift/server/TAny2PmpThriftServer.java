@@ -109,9 +109,8 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public TPtpResponse updateDomainModel(String requestId,
-			Map<String, String> parameters, TXmlPolicy xmlDomainModel)
+	public TPtpResponse updateDomainModel(String requestId, Map<String, String> parameters, TXmlPolicy xmlDomainModel)
 			throws TException {
-		return ThriftConverter.toThrift(_handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
+		return ThriftConverter.toThrift(_handler.updateDomainModel(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
 	}
 }

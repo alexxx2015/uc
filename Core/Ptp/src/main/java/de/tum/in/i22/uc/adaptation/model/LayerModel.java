@@ -2,12 +2,12 @@ package de.tum.in.i22.uc.adaptation.model;
 
 import java.util.ArrayList;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayer;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
 
 public class LayerModel {
 	
 	private String name;
-	private DomainLayer type;
+	private DomainLayerType type;
 	
 	public static final String indentation = "	";
 	
@@ -18,7 +18,7 @@ public class LayerModel {
 	
 	private LayerModel refinedAs;
 	
-	public LayerModel(String name, DomainLayer type){
+	public LayerModel(String name, DomainLayerType type){
 		this.name = name;
 		this.type = type;
 		systems = new ArrayList<>();
@@ -50,7 +50,7 @@ public class LayerModel {
 		return this.name;
 	}
 	
-	public DomainLayer getType(){
+	public DomainLayerType getType(){
 		return this.type;
 	}
 	
@@ -101,7 +101,7 @@ public class LayerModel {
 		}
 
 		String actionsString = "";
-		if(this.type.equals(DomainLayer.PIM)){
+		if(this.type.equals(DomainLayerType.PIM)){
 			for(ActionTransformerModel ac : this.actionTransformers){
 				actionsString += "\n" + ac.toString();
 			}

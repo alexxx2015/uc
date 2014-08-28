@@ -146,7 +146,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		}
 		
 		try {
-			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlDomainModel)));
+			return ThriftConverter.fromThrift(_handle.updateDomainModel(requestId, parameters, ThriftConverter.toThrift(xmlDomainModel)));
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
