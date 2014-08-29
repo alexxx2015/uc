@@ -32,7 +32,7 @@ public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		// TODO: evalOperator evaluation NYI; forward to external evaluation engine
 		throw new UnsupportedOperationException("evalate EvalOperator. Not yet implemented.");
 	}

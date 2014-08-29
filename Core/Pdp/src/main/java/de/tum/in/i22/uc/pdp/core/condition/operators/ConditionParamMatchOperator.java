@@ -29,7 +29,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		_logger.debug("ConditionParamMatchOperator");
 
 		if (curEvent == null) {

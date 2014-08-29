@@ -25,7 +25,7 @@ public class During extends DuringType {
 		op = (Operator) operators;
 
 		// for evaluation without history set counter to interval for DURING
-		_state.counter = timeAmount.getTimestepInterval() + 1;
+		_state.setCounter(timeAmount.getTimestepInterval() + 1);
 
 		op.init(mech);
 	}
@@ -45,33 +45,33 @@ public class During extends DuringType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
-		_logger.trace("current state counter: {}", _state.counter);
-		if (_state.counter == 0)
-			_state.value = true;
+	protected boolean localEvaluation(IEvent curEvent) {
+		_logger.trace("current state counter: {}", _state.getCounter());
+		if (_state.getCounter() == 0)
+			_state.setValue(true);
 		else
-			_state.value = false;
+			_state.setValue(false);
 
 		if (curEvent == null) {
 			boolean operandValue = op.evaluate(curEvent);
 			if (!operandValue) {
-				_state.counter = timeAmount.getTimestepInterval() + 1;
+				_state.setCounter(timeAmount.getTimestepInterval() + 1);
 				_logger.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-						_state.counter, operandValue);
+						_state.getCounter(), operandValue);
 			} else {
-				if (_state.counter > 0)
-					_state.counter--;
-				_logger.debug("[DURING} New state counter: [{}]", _state.counter);
+				if (_state.getCounter() > 0)
+					_state.decCounter();
+				_logger.debug("[DURING} New state counter: [{}]", _state.getCounter());
 			}
 
 			// update state->value for logging output
-			if (_state.counter == 0)
-				_state.value = true;
+			if (_state.getCounter() == 0)
+				_state.setValue(true);
 			else
-				_state.value = false;
+				_state.setValue(false);
 		}
 
-		_logger.debug("eval DURING [{}]", _state.value);
-		return _state.value;
+		_logger.debug("eval DURING [{}]", _state.value());
+		return _state.value();
 	}
 }

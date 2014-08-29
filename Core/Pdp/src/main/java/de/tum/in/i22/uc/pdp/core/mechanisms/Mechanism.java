@@ -104,6 +104,10 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return _timestepSize;
 	}
 
+	public long getLastUpdate() {
+		return _lastUpdate;
+	}
+
 	@Override
 	public ICondition getCondition() {
 		return _condition;

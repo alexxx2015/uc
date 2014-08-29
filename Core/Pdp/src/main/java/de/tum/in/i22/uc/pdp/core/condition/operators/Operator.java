@@ -7,13 +7,16 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator extends Observable implements IOperator {
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state;
+	protected DistributedOperatorState _dstate;
 	protected IMechanism _mechanism;
+
 
 	/**
 	 * Internal identifier for this {@link IOperator}, assigned
@@ -30,6 +33,10 @@ public abstract class Operator extends Observable implements IOperator {
 
 	public Operator() {
 		_state = new OperatorState(this);
+
+		if (Settings.getInstance().getDistributionEnabled()) {
+			_dstate = new DistributedOperatorState(this);
+		}
 	}
 
 	public void init(Mechanism mech) {
@@ -80,13 +87,27 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
-		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
+	public IMechanism getMechanism() {
+		return _mechanism;
 	}
 
 	@Override
-	public IMechanism getMechanism() {
-		return _mechanism;
+	public final boolean evaluate(IEvent ev) {
+		if (Settings.getInstance().getDistributionEnabled()) {
+			return distributedEvaluation(ev);
+		}
+		else {
+			return localEvaluation(ev);
+		}
+//		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
+	}
+
+	protected boolean localEvaluation(IEvent ev) {
+		throw new UnsupportedOperationException("Calling localEvaluation() is only allowed on subtypes of " + Operator.class);
+	}
+
+	protected boolean distributedEvaluation(IEvent ev) {
+		return localEvaluation(ev);
 	}
 
 	@Override

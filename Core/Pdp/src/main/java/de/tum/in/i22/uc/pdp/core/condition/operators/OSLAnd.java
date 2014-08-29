@@ -46,7 +46,7 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
@@ -60,10 +60,10 @@ public class OSLAnd extends AndType {
 //			notifyObservers(_state);
 //		}
 
-		_state.value = op1state && op2state;
+		_state.setValue(op1state && op2state);
 
-		_logger.debug("eval AND [{}]", _state.value);
-		return _state.value;
+		_logger.debug("eval AND [{}]", _state.value());
+		return _state.value();
 	}
 
 

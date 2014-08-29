@@ -32,7 +32,6 @@ import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.condition.operators.OperatorState;
 import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
@@ -62,7 +61,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	 * Accumulates all changed {@link OperatorState}s during
 	 * an ongoing event evaluation ({@link PolicyDecisionPoint#notifyEvent(IEvent)}).
 	 */
-//	private final Queue<IOperatorState> _changedOperatorStates;
 
 	private final List<EventMatchOperator> _eventMatches;
 
@@ -75,7 +73,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
-//		_changedOperatorStates = new LinkedList<>();
 		_stateBasedOperatorTrue = new LinkedList<>();
 		_eventMatches = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
@@ -273,15 +270,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-//		if (o instanceof Operator) {
-//			if (arg instanceof OperatorState) {
-//				_changedOperatorStates.add((OperatorState) arg);
-//			}
-//			else if (o instanceof EventMatchOperator) {
-//				_eventMatches.add((EventMatchOperator) o);
-//			}
-//		}
-
 		if (o instanceof EventMatchOperator) {
 			_eventMatches.add((EventMatchOperator) o);
 		}

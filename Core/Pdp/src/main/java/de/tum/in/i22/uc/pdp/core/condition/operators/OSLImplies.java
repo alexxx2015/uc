@@ -46,14 +46,14 @@ public class OSLImplies extends ImpliesType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
-		_state.value = !op1state || op2state;
-		_logger.debug("eval IMPLIES [{}]", _state.value);
-		return _state.value;
+		_state.setValue(!op1state || op2state);
+		_logger.debug("eval IMPLIES [{}]", _state.value());
+		return _state.value();
 	}
 }

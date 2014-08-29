@@ -6,20 +6,14 @@ import de.tum.in.i22.uc.cm.datatypes.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperatorState;
 
-public class OperatorState implements IOperatorState {
-	boolean value = false;
-	boolean immutable = false;
+class OperatorState implements IOperatorState {
+	private boolean value = false;
+	private boolean immutable = false;
 
-	long counter = 0;
-	boolean subEverTrue = false;
+	private long counter = 0;
+	private boolean subEverTrue = false;
 
-	CircularArray<Boolean> circArray = null;
-
-	/**
-	 * Indicates whether this operator can be decided locally, or
-	 * whether coordination with other PDPs is required.
-	 */
-	boolean locallyDecidable = true;
+	private CircularArray<Boolean> circArray = null;
 
 	private final Operator _operator;
 
@@ -29,38 +23,60 @@ public class OperatorState implements IOperatorState {
 	 *
 	 * @param operator the {@link Operator} to which this instance belongs.
 	 */
-	public OperatorState(Operator operator) {
+	OperatorState(Operator operator) {
 		_operator = operator;
 	}
 
-	@Override
-	public boolean value() {
+	boolean value() {
 		return value;
 	}
 
-	@Override
-	public boolean isImmutable() {
+	boolean isImmutable() {
 		return immutable;
 	}
 
-	@Override
-	public long getCounter() {
+	long getCounter() {
 		return counter;
 	}
 
-	@Override
-	public boolean isSubEverTrue() {
+	boolean isSubEverTrue() {
 		return subEverTrue;
 	}
 
-	@Override
-	public CircularArray<Boolean> getCircArray() {
+	CircularArray<Boolean> getCircArray() {
 		return circArray;
 	}
 
-	@Override
-	public boolean isLocallyDecidable() {
-		return locallyDecidable;
+	void setValue(boolean value) {
+		this.value = value;
+	}
+
+	void setImmutable(boolean immutable) {
+		this.immutable = immutable;
+	}
+
+	void setCounter(long counter) {
+		this.counter = counter;
+	}
+
+	void decCounter() {
+		this.counter--;
+	}
+
+	void incCounter() {
+		this.counter++;
+	}
+
+	void setSubEverTrue() {
+		this.subEverTrue = true;
+	}
+
+	void setCircArray(CircularArray<Boolean> circArray) {
+		this.circArray = circArray;
+	}
+
+	void newCircArray(long size) {
+		this.circArray = new CircularArray<Boolean>(size);
 	}
 
 	@Override
@@ -71,7 +87,6 @@ public class OperatorState implements IOperatorState {
 				.add("counter", counter)
 				.add("subEverTrue", subEverTrue)
 				.add("circArray", circArray)
-				.add("locallyDecidable", locallyDecidable)
 				.toString();
 	}
 

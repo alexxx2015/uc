@@ -41,34 +41,34 @@ public class Within extends WithinType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
-		_logger.debug("[WITHIN] Current state counter=[{}]", this._state.counter);
-		if (this._state.counter > 0)
-			this._state.value = true;
+	protected boolean localEvaluation(IEvent curEvent) {
+		_logger.debug("[WITHIN] Current state counter=[{}]", this._state.getCounter());
+		if (this._state.getCounter() > 0)
+			this._state.setValue(true);
 		else
-			this._state.value = false;
+			this._state.setValue(false);
 
 		if (curEvent == null) {
 			boolean operandValue = op.evaluate(curEvent);
 			if (operandValue) {
-				this._state.counter = this.timeAmount.getTimestepInterval() + 1;
+				this._state.setCounter(this.timeAmount.getTimestepInterval() + 1);
 				_logger.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-						this._state.counter, operandValue);
+						this._state.getCounter(), operandValue);
 			} else {
-				if (this._state.counter > 0)
-					this._state.counter--;
-				_logger.debug("[WITHIN} New state counter: [{}]", this._state.counter);
+				if (this._state.getCounter() > 0)
+					this._state.decCounter();
+				_logger.debug("[WITHIN} New state counter: [{}]", this._state.getCounter());
 			}
 
 			// update state->value for logging output
-			if (this._state.counter > 0)
-				this._state.value = true;
+			if (this._state.getCounter() > 0)
+				this._state.setValue(true);
 			else
-				this._state.value = false;
+				this._state.setValue(false);
 		}
 
-		_logger.debug("eval WITHIN [{}]", this._state.value);
-		return this._state.value;
+		_logger.debug("eval WITHIN [{}]", this._state.value());
+		return this._state.value();
 	}
 
 }

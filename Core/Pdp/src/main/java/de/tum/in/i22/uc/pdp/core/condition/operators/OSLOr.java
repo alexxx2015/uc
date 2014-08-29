@@ -47,7 +47,7 @@ public class OSLOr extends OrType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
@@ -60,10 +60,10 @@ public class OSLOr extends OrType {
 //			setChanged();
 //			notifyObservers(_state);
 //		}
-		_state.value = op1state || op2state;
+		_state.setValue(op1state || op2state);;
 
-		_logger.debug("eval OR [{}]", _state.value);
-		return _state.value;
+		_logger.debug("eval OR [{}]", _state.value());
+		return _state.value();
 	}
 
 

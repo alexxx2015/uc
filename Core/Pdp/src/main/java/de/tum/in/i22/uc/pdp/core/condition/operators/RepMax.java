@@ -35,22 +35,22 @@ public class RepMax extends RepMaxType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
-		if (!_state.immutable) {
+	protected boolean localEvaluation(IEvent curEvent) {
+		if (!_state.isImmutable()) {
 			if (curEvent != null && op.evaluate(curEvent)) {
-				_state.counter++;
-				_logger.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", _state.counter);
+				_state.incCounter();
+				_logger.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", _state.getCounter());
 			}
 
-			_state.value = (_state.counter <= getLimit());
+			_state.setValue(_state.getCounter() <= getLimit());
 
-			if (curEvent == null && !_state.value) {
+			if (curEvent == null && !_state.value()) {
 				_logger.debug("[REPMAX] Activating immutability");
-				_state.immutable = true;
+				_state.setImmutable(true);
 			}
 		}
 
-		_logger.debug("eval REPMAX [{}]", _state.value);
-		return _state.value;
+		_logger.debug("eval REPMAX [{}]", _state.value());
+		return _state.value();
 	}
 }

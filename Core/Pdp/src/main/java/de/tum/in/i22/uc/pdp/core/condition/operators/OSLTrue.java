@@ -24,7 +24,7 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		_logger.debug("eval TRUE");
 		return true;
 	}

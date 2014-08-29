@@ -24,7 +24,7 @@ public class OSLFalse extends FalseType implements LiteralOperator {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 		_logger.debug("eval FALSE");
 		return false;
 	}

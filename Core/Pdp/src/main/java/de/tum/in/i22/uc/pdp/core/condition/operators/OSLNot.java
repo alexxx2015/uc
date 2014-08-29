@@ -58,7 +58,7 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent curEvent) {
 //		boolean newStateValue = !op.evaluate(curEvent);
 
 //		if (newStateValue != _state.value) {
@@ -67,9 +67,9 @@ public class OSLNot extends NotType {
 //			notifyObservers(_state);
 //		}
 
-		_state.value = !op.evaluate(curEvent);
+		_state.setValue(!op.evaluate(curEvent));;
 
-		_logger.debug("eval NOT [{}]", _state.value);
-		return _state.value;
+		_logger.debug("eval NOT [{}]", _state.value());
+		return _state.value();
 	}
 }

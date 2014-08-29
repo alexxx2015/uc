@@ -39,7 +39,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	}
 
 	@Override
-	public boolean evaluate(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent ev) {
 
 		IPdp2Pip pip = _pdp.getPip();
 		String separator = Settings.getInstance().getSeparator1();
@@ -48,7 +48,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 		boolean result;
 
-		if (curEvent == null) {
+		if (ev == null) {
 			/*
 			 * We are evaluating at the end of a timestep
 			 */
@@ -58,7 +58,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 			/*
 			 * We are evaluating in the presence of a given event
 			 */
-			result = pip.evaluatePredicateSimulatingNextState(curEvent, p);
+			result = pip.evaluatePredicateSimulatingNextState(ev, p);
 		}
 
 		if (result) {
