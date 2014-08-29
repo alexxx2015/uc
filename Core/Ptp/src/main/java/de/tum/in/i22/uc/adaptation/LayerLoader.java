@@ -8,7 +8,7 @@ import org.w3c.dom.NodeList;
 import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel;
 import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel.RefinementType;
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayer;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.adaptation.model.SystemModel;
 

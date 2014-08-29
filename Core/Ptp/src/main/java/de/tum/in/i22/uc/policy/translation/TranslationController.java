@@ -142,24 +142,24 @@ public class TranslationController implements Filter{
 	
 	/**************************************************************/
 	
-	public static void main(String[] args){
-		String sSrc = "d:\\Users\\Cipri_L\\GitHub_cipri88\\policytranslation\\policy_ptp\\policyinput.xml";
-		String sDest = "d:\\Users\\Cipri_L\\GitHub_cipri88\\policytranslation\\policy_ptp\\policyinput2.xml";
-		//1st: Create a policy file from a diagram file
-		PolicyCreator policyCreator = new PolicyCreator(sSrc);
-		policyCreator.filter();	
-		FilterStatus fStatus=policyCreator.getFilterStatus();
-		String sMessage=policyCreator.getMessage();
-		if(fStatus==FilterStatus.FAILURE) return;
-		DOMResult policy = policyCreator.getOutput();
-        try {
-			System.out.println("policy stripped is:"+ PublicMethods.TransformDomresultToString(policy));
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}		
-		
-		TranslationController transController=new TranslationController((Document) policy.getNode());
-		transController.filter();
-	}
+//	public static void main(String[] args){
+//		String sSrc = "d:\\Users\\Cipri_L\\GitHub_cipri88\\policytranslation\\policy_ptp\\policyinput.xml";
+//		String sDest = "d:\\Users\\Cipri_L\\GitHub_cipri88\\policytranslation\\policy_ptp\\policyinput2.xml";
+//		//1st: Create a policy file from a diagram file
+//		PolicyCreator policyCreator = new PolicyCreator(sSrc);
+//		policyCreator.filter();	
+//		FilterStatus fStatus=policyCreator.getFilterStatus();
+//		String sMessage=policyCreator.getMessage();
+//		if(fStatus==FilterStatus.FAILURE) return;
+//		DOMResult policy = policyCreator.getOutput();
+//        try {
+//			System.out.println("policy stripped is:"+ PublicMethods.TransformDomresultToString(policy));
+//		} catch (TransformerException e) {
+//			e.printStackTrace();
+//		}		
+//		
+//		TranslationController transController=new TranslationController((Document) policy.getNode());
+//		transController.filter();
+//	}
 	
 }

@@ -8,6 +8,7 @@ package de.tum.in.i22.policyeditor.util;
  *
  */
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,10 +21,15 @@ public class Config
    {
 	configFile = new java.util.Properties();
 	try {	
-        configFile.load(new FileInputStream("config.cfg"));		
+		String configPath = System.getProperty("user.dir")+File.separator+"src"
+				+File.separator
+				+"main"+File.separator
+				+"resources"+File.separator
+				+ "config.cfg";
+        configFile.load(new FileInputStream(configPath));		
 	}
 	catch(FileNotFoundException eta){
-		System.out.println("error: "+eta.getLocalizedMessage());
+		System.out.println("error: "+eta);
 	}
    }
  

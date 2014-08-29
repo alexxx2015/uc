@@ -313,7 +313,7 @@ public class ECARulesCreator implements Filter{
 		sResult=sResult.replaceAll("ns4:", "");	
 		
 		//modify <policySet>
-		String sReplacement="<policy xmlns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:tns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:a=\"http://www22.in.tum.de/action\" xmlns:e=\"http://www22.in.tum.de/event\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+		String sReplacement="<policy name=\""+ this.policyParams.get("policy_id") +"\" xmlns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:tns=\"http://www22.in.tum.de/enforcementLanguage\" xmlns:a=\"http://www22.in.tum.de/action\" xmlns:e=\"http://www22.in.tum.de/event\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
 		sResult=sResult.replaceAll("<policy (.+)>", sReplacement);
 		
 		return sResult;
@@ -356,6 +356,9 @@ public class ECARulesCreator implements Filter{
 	private PreventiveMechanismType getMechanismType(ECARule rule, int iSubformula){
 		PreventiveMechanismType mechanism=new PreventiveMechanismType();
 		String sMechanism="Mechanism_"+ecaTemplateId+"_"+String.valueOf(iSubformula+1)+"_"+rule.getType()+"_"+policyObjectId;
+		/* used to uniquely identify a policy */
+		String policyId = policyParams.get("policy_id");
+		sMechanism = policyId +"_"+ sMechanism;
 		mechanism.setName(sMechanism);
 		
 		if(rule!=null){			
@@ -702,7 +705,7 @@ public class ECARulesCreator implements Filter{
 	private AuthorizationActionType getAuthorizationAction(Object action, int iSubformula){
 		AuthorizationActionType aAllowType=new AuthorizationActionType();
 		AuthorizationAllowType aActionType = new AuthorizationAllowType(); 
-		String sAuth="Authorization_"+String.valueOf(iSubformula+1);
+		String sAuth=this.policyParams.get("policy_id")+"_"+"Authorization_"+String.valueOf(iSubformula+1);
 		aAllowType.setName(sAuth);
 		if(action!=null){			
 			int iSel=alSubformula.get(iSubformula).getJcbAction();

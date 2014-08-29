@@ -128,6 +128,9 @@ public class PolicyTemplate {
 		this.instance = instance;
 	}
 	
+	/**
+	 * Instantiate a policy with its specific class.
+	 */
 	public void instantiatePolicyClass(){
 		String instance = this.instance;
 		String generic = UserClass.CLASS;
@@ -144,6 +147,10 @@ public class PolicyTemplate {
 		this.instance = instance;
 	}
 	
+	/**
+	 * Instantiate a policy with a specific container.
+	 * @param obj - the container
+	 */
 	public void instantiatePolicyObject(UserObject obj){
 		String instance = this.instance;
 		String generic = UserObject.CLASS;
@@ -177,12 +184,15 @@ public class PolicyTemplate {
 		return clone;
 	}
 	
-	public static void main(String[] args){
-		String instance = "#{<subject>}# must delete this data after #0[<number>]# @[<time>]@";
-		String generic = "@\\[<time>\\]@";
-		String subject = "@\\[seconds\\]@";
-		instance = instance.replaceAll(generic,subject );
-		System.out.println(instance);
-	}
+	/*
+	 * *************************************************
+	 */
+//	public static void main(String[] args){
+//		String instance = "#{<subject>}# must delete this data after #0[<number>]# @[<time>]@";
+//		String generic = "@\\[<time>\\]@";
+//		String subject = "@\\[seconds\\]@";
+//		instance = instance.replaceAll(generic,subject );
+//		System.out.println(instance);
+//	}
 	
 }

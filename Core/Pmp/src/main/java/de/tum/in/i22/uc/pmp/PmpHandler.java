@@ -28,6 +28,7 @@ import com.google.common.io.Files;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
@@ -372,9 +373,23 @@ public class PmpHandler extends PmpProcessor {
 		return new StatusBasic(EStatus.OKAY);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp#translatePolicy(java.lang.String, java.util.Map, de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy)
+	 * Policies are translated and then deployed on the PDP.
+	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
-		return _ptp.translatePolicy(requestId, parameters, xmlPolicy);
+		
+		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy); 
+		if(translationResponse.getStatus().equals(EStatus.ERROR))
+			return translationResponse;
+		
+		XmlPolicy translatedPolicy = translationResponse.getPolicy();
+		
+		IStatus deploymentStatus = this.deployPolicyXMLPmp(translatedPolicy);
+		
+		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy);
+		return deploymentResponse;
 	}
 
 	@Override

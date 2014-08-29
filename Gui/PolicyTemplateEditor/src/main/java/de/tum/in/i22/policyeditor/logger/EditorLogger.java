@@ -42,7 +42,7 @@ public class EditorLogger {
 				int month = calendar.get(Calendar.MONTH)+1;
 				int year = calendar.get(Calendar.YEAR);
 				timestamp = year+"-"+month+"-"+day;
-				logging = new EditorLogger("logs"+File.separator+timestamp+"_policytemplateeditor.log",	Level.ALL);
+				logging = new EditorLogger("logging"+File.separator+timestamp+"_policytemplateeditor.log",	Level.ALL);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

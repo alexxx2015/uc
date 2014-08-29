@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayer;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
 
 public class DataContainerModel {
 
@@ -20,7 +20,7 @@ public class DataContainerModel {
 	 */
 	private ArrayList<String> aliases;
 	
-	private DomainLayer type ;
+	private DomainLayerType type ;
 	/**
 	 * This is used for the XPath processing.
 	 */
@@ -35,7 +35,7 @@ public class DataContainerModel {
 	
 	private boolean isMerged ;
 	
-	public DataContainerModel(String name, DomainLayer type){
+	public DataContainerModel(String name, DomainLayerType type){
 		this.name = name;
 		this.type = type;
 		this.xmlPosition = -1;
@@ -60,7 +60,7 @@ public class DataContainerModel {
 		this.name = newName;
 	}
 	
-	public DomainLayer getLayerType(){
+	public DomainLayerType getLayerType(){
 		return this.type;
 	}
 	

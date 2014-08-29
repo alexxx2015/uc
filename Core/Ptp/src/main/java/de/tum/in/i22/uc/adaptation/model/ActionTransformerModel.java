@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.adaptation.model;
 
 import java.util.ArrayList;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayer;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
 
 /**
  * @author Cipri
@@ -35,7 +35,7 @@ public class ActionTransformerModel {
 	 */
 	private ArrayList<String> aliases;
 	
-	private DomainLayer layerType;
+	private DomainLayerType layerType;
 	/**
 	 * This is used for the XPath processing.
 	 */
@@ -57,7 +57,7 @@ public class ActionTransformerModel {
 	
 	private SystemModel parentSystem;
 	
-	public ActionTransformerModel(String name, DomainLayer type){
+	public ActionTransformerModel(String name, DomainLayerType type){
 		this.name = name;
 		this.layerType = type;
 		refinements = new ArrayList<>();
@@ -131,7 +131,7 @@ public class ActionTransformerModel {
 	public void addOutputParam(DataContainerModel output){
 		if(output == null)
 			return;
-		if(this.parentLayer.equals(DomainModel.DomainLayer.PIM))
+		if(this.parentLayer.equals(DomainModel.DomainLayerType.PIM))
 			return;
 		this.outputParams.add(output);
 	}
@@ -159,8 +159,8 @@ public class ActionTransformerModel {
 			return false;
 		ActionTransformerModel obj = (ActionTransformerModel) o;
 		boolean result = this.name.equals(obj.name)
-					&& (this.xmlPosition == obj.xmlPosition)
 					&& (this.layerType.equals(obj.layerType))
+					&& (this.parentSystem.equals(obj.parentSystem))
 					;
 		return result;
 	}
