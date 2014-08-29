@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.cm.distribution;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,56 +41,70 @@ class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
 	private static final String TABLE_NAME_DATA = "hasdata";
-	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
-	private static final String TABLE_NAME_EVENTS_HAPPENED = "eventshappened";
-	private static final String TABLE_NAME_STATES = "operatorstates";
-	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
-	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
+//	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
+//	private static final String TABLE_NAME_EVENTS_HAPPENED = "eventshappened";
+//	private static final String TABLE_NAME_STATES = "operatorstates";
+//	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
+//	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
+	private static final String TABLE_NAME_OP_TRUE = "optrue";
 
-	private static final String QUERY_CREATE_TABLE_DATA = "CREATE TABLE " + TABLE_NAME_DATA + " ("
-			+ "data text,"
-			+ "locations set<text>,"
-			+ "PRIMARY KEY (data)"
-			+ ");";
 
-	private static final String QUERY_CREATE_TABLE_ISSUES_EVENTS = "CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
-			+ "event text,"
-			+ "locations set<text>,"
-			+ "PRIMARY KEY (event)"
-			+ ");";
+	private static final List<String> _tables;
 
-	private static final String QUERY_CREATE_TABLE_EVENTS_HAPPENED = "CREATE TABLE " + TABLE_NAME_EVENTS_HAPPENED + " ("
-			+ "eventid text,"
-			+ "location text,"
-			+ "time timeuuid,"
-			+ "PRIMARY KEY (location,time)"
-			+ ") "
-			+ "WITH CLUSTERING ORDER BY (time DESC);";
+	static {
+		_tables = new LinkedList<>();
+		_tables.add(
+				"CREATE TABLE " + TABLE_NAME_DATA + " ("
+						+ "data text,"
+						+ "locations set<text>,"
+						+ "PRIMARY KEY (data)"
+						+ ");");
+		_tables.add(
+				"CREATE TABLE " + TABLE_NAME_OP_TRUE + " ("
+						+ "opid text,"
+						+ "location text,"
+						+ "time timeuuid,"
+						+ "PRIMARY KEY (time)"
+						+ ");");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
+//						+ "event text,"
+//						+ "locations set<text>,"
+//						+ "PRIMARY KEY (event)"
+//						+ ");");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_EVENTS_HAPPENED + " ("
+//						+ "eventid text,"
+//						+ "location text,"
+//						+ "time timeuuid,"
+//						+ "PRIMARY KEY (location,time)"
+//						+ ") "
+//						+ "WITH CLUSTERING ORDER BY (time DESC);");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATEBASED_OP_TRUE + " ("
+//						+ "opid text,"
+//						+ "location text,"
+//						+ "time timeuuid,"
+//						+ "PRIMARY KEY (location,time)"
+//						+ ") "
+//						+ "WITH CLUSTERING ORDER BY (time DESC);");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATES + " ("
+//						+ "id text,"
+//						+ "value boolean,"
+//						+ "immutable boolean,"
+//						+ "subevertrue boolean,"
+//						+ "circarray list<text>,"
+//						+ "PRIMARY KEY (id)"
+//						+ ");");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATES_COUNTER + " ("
+//						+ "id text,"
+//						+ "counter counter,"
+//						+ "PRIMARY KEY (id)"
+//						+ ");");
+	};
 
-	private static final String QUERY_CREATE_TABLE_STATEBASED_OP_TRUE = "CREATE TABLE " + TABLE_NAME_STATEBASED_OP_TRUE + " ("
-			+ "opid text,"
-			+ "location text,"
-			+ "time timeuuid,"
-			+ "PRIMARY KEY (location,time)"
-			+ ") "
-			+ "WITH CLUSTERING ORDER BY (time DESC);";
-
-	private static final String QUERY_CREATE_TABLE_STATES = "CREATE TABLE " + TABLE_NAME_STATES + " ("
-			+ "id text,"
-			+ "value boolean,"
-			+ "immutable boolean,"
-			+ "subevertrue boolean,"
-			+ "circarray list<text>,"
-			+ "PRIMARY KEY (id)"
-			+ ");";
-
-	private static final String QUERY_CREATE_TABLE_STATES_COUNTER = "CREATE TABLE " + TABLE_NAME_STATES_COUNTER + " ("
-			+ "id text,"
-			+ "counter counter,"
-			+ "PRIMARY KEY (id)"
-			+ ");";
-
-//	private final Set<String> _insertedOperators;
 
 	/*
 	 * IMPORTANT:
@@ -120,7 +136,6 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
-//		_insertedOperators = new HashSet<>();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -276,25 +291,12 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		Session newSession = _cluster.connect(policyName);
 
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_DATA);
-		} catch (AlreadyExistsException e) {}
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_ISSUES_EVENTS);
-		} catch (AlreadyExistsException e) {}
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_EVENTS_HAPPENED);
-		} catch (AlreadyExistsException e) {}
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_STATEBASED_OP_TRUE);
-		} catch (AlreadyExistsException e) {}
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_STATES);
-		} catch (AlreadyExistsException e) {}
-		try {
-			newSession.execute(QUERY_CREATE_TABLE_STATES_COUNTER);
-		} catch (AlreadyExistsException e) {}
-
+		// Create all tables
+		for (String tbl : _tables) {
+			try {
+				newSession.execute(tbl);
+			} catch (AlreadyExistsException e) {}
+		}
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -415,8 +417,8 @@ class CassandraDistributionManager implements IDistributionManager {
 		for (EventMatchOperator event : res.getEventMatches()) {
 			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_EVENTS_HAPPENED
-					+ " (eventid, location, time) VALUES ("
+			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
+					+ " (opid, location, time) VALUES ("
 					+ "'" + event.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
 					+ "now()"
@@ -427,7 +429,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
 			_logger.info("UPDATING CASSANDRA STATE: state based operator turned true: {}", sbo.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_STATEBASED_OP_TRUE
+			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
 					+ " (opid, location, time) VALUES ("
 					+ "'" + sbo.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"

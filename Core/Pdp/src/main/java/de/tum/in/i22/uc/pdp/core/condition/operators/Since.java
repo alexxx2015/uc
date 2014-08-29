@@ -27,13 +27,13 @@ public class Since extends SinceType {
 		op2.init(mech);
 	}
 
-//	@Override
-//	int initId(int id) {
-//		_id = op1.initId(id) + 1;
-//		setFullId(_id);
-//		_logger.debug("My [{}] id is {}.", this, getFullId());
-//		return op2.initId(_id);
-//	}
+	@Override
+	int initId(int id) {
+		_id = op1.initId(id) + 1;
+		setFullId(_id);
+		_logger.debug("My [{}] id is {}.", this, getFullId());
+		return op2.initId(_id);
+	}
 
 	@Override
 	public String toString() {

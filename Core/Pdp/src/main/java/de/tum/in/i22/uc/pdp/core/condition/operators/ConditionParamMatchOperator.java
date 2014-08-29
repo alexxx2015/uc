@@ -20,6 +20,11 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	}
 
 	@Override
+	int initId(int id) {
+		return id;
+	}
+
+	@Override
 	public String toString() {
 		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("name", name)

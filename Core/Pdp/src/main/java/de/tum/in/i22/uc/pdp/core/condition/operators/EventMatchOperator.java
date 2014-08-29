@@ -57,8 +57,10 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			if (!_state.value() && matches(ev)) {
 				_state.setValue(true);
 
-				setChanged();
-				notifyObservers();
+				if (ev.isActual()) {
+					setChanged();
+					notifyObservers();
+				}
 			}
 			result = _state.value();
 		}

@@ -3,6 +3,9 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import java.util.Objects;
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -12,6 +15,8 @@ import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator extends Observable implements IOperator {
+	protected static final Logger _logger = LoggerFactory.getLogger(Operator.class);
+
 	protected PolicyDecisionPoint _pdp;
 	protected OperatorState _state;
 	protected DistributedOperatorState _dstate;
@@ -66,7 +71,8 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	int initId(int id) {
-		// By default, no ID is set for an Operator
+		// By default, no ID is set for an Operator, and, subsequently,
+		// all of its children
 		return id;
 	}
 
@@ -99,7 +105,6 @@ public abstract class Operator extends Observable implements IOperator {
 		else {
 			return localEvaluation(ev);
 		}
-//		throw new UnsupportedOperationException("Calling evaluate() is only allowed on subtypes of " + Operator.class);
 	}
 
 	protected boolean localEvaluation(IEvent ev) {

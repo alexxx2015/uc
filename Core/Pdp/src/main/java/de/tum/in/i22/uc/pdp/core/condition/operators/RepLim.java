@@ -28,13 +28,13 @@ public class RepLim extends RepLimType {
 		op.init(mech);
 	}
 
-//	@Override
-//	int initId(int id) {
-//		_id = op.initId(id) + 1;
-//		setFullId(_id);
-//		_logger.debug("My [{}] id is {}.", this, getFullId());
-//		return _id;
-//	}
+	@Override
+	int initId(int id) {
+		_id = op.initId(id) + 1;
+		setFullId(_id);
+		_logger.debug("My [{}] id is {}.", this, getFullId());
+		return _id;
+	}
 
 	@Override
 	public String toString() {
