@@ -3,13 +3,13 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
 public class OSLAnd extends AndType {
-	private static Logger log = LoggerFactory.getLogger(OSLAnd.class);
+	private static Logger _logger = LoggerFactory.getLogger(OSLAnd.class);
 
 	public OSLAnd() {
 	}
@@ -20,10 +20,10 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(0)).initOperatorForMechanism(mech);
-		((Operator) this.getOperators().get(1)).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) this.getOperators().get(0)).init(mech);
+		((Operator) this.getOperators().get(1)).init(mech);
 	}
 
 	@Override
@@ -32,11 +32,11 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
+	public boolean evaluate(IEvent curEvent) {
 		Boolean op1state = ((Operator) this.getOperators().get(0)).evaluate(curEvent);
 		Boolean op2state = ((Operator) this.getOperators().get(1)).evaluate(curEvent);
-		this.state.value = op1state && op2state;
-		log.debug("eval AND [{}]", this.state.value);
-		return this.state.value;
+		this._state.value = op1state && op2state;
+		_logger.debug("eval AND [{}]", this._state.value);
+		return this._state.value;
 	}
 }

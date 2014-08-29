@@ -6,32 +6,30 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.pdp.xsd.time.TimeUnitType;
 
 public class TimeAmount {
-	private static Logger log = LoggerFactory.getLogger(TimeAmount.class);
+	private static Logger _logger = LoggerFactory.getLogger(TimeAmount.class);
 
-	public long amount = 0;
-	public TimeUnitType timeUnit = TimeUnitType.TIMESTEPS;
+	private final long _amount;
 
-	public String unit = "";
-	public long interval = 0;
-	public long timestepInterval = 0;
-
-	public TimeAmount(long amount, String unit) {
-		this.amount = amount;
-		this.unit = unit;
-	}
+	private final String _unit;
+	private final long _interval;
+	private final long _timestepInterval;
 
 	public TimeAmount(long amount, TimeUnitType tu, long mechanismTimestepSize) {
-		this.amount = amount;
-		this.unit = tu.value();
-		this.interval = amount * getTimeUnitMultiplier(tu);
-		this.timestepInterval = this.interval / mechanismTimestepSize;
+		_amount = amount;
+		_unit = tu.value();
+		_interval = amount * getTimeUnitMultiplier(tu);
+		_timestepInterval = _interval / mechanismTimestepSize;
 
-		log.debug("Interval: {}, timestepInterval: {}", this.interval, this.timestepInterval);
+		_logger.debug("Interval: {}, timestepInterval: {}", _interval, _timestepInterval);
+	}
+
+	public long getTimestepInterval() {
+		return _timestepInterval;
 	}
 
 	public static long getTimeUnitMultiplier(TimeUnitType tu) {
 		if (tu == null) {
-			log.warn("Cannot calculate timeUnit-multiplier for null!");
+			_logger.warn("Cannot calculate timeUnit-multiplier for null!");
 			return 1;
 		}
 		switch (tu) {
@@ -56,13 +54,13 @@ public class TimeAmount {
 		case NANOSECONDS:
 		case TIMESTEPS:
 		default:
-			log.warn("Unexpected (unsupported) timeunit found: ", tu.value());
+			_logger.warn("Unexpected (unsupported) timeunit found: ", tu.value());
 			return 1;
 		}
 	}
 
 	@Override
 	public String toString() {
-		return this.amount + " " + this.unit + "(" + this.timestepInterval + ")";
+		return _amount + " " + _unit + "(" + _timestepInterval + ")";
 	}
 }

@@ -3,23 +3,21 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.RepMaxType;
 
 public class RepMax extends RepMaxType {
 	private static Logger log = LoggerFactory.getLogger(RepMax.class);
 
-	// public long limit =0;
-
 	public RepMax() {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override
@@ -28,25 +26,25 @@ public class RepMax extends RepMaxType {
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
-		if (!this.state.immutable) {
+	public boolean evaluate(IEvent curEvent) {
+		if (!this._state.immutable) {
 			if (curEvent != null && ((Operator) this.getOperators()).evaluate(curEvent)) {
-				this.state.counter++;
-				log.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", this.state.counter);
+				this._state.counter++;
+				log.debug("[REPMAX] Subformula was satisfied; counter incremented to [{}]", this._state.counter);
 			}
 
-			if (this.state.counter <= this.getLimit())
-				this.state.value = true;
+			if (this._state.counter <= this.getLimit())
+				this._state.value = true;
 			else
-				this.state.value = false;
+				this._state.value = false;
 
-			if (curEvent == null && !this.state.value) {
+			if (curEvent == null && !this._state.value) {
 				log.debug("[REPMAX] Activating immutability");
-				this.state.immutable = true;
+				this._state.immutable = true;
 			}
 		}
 
-		log.debug("eval REPMAX [{}]", this.state.value);
-		return this.state.value;
+		log.debug("eval REPMAX [{}]", this._state.value);
+		return this._state.value;
 	}
 }

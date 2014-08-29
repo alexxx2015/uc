@@ -10,9 +10,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class EventBasic implements IEvent, Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4317254908091570374L;
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
 
@@ -26,14 +23,18 @@ public class EventBasic implements IEvent, Serializable {
 	public EventBasic(String name, Map<String, String> map) {
 		_name = name;
 		if (map != null) {
-			_parameters.putAll(map);			
+			_parameters.putAll(map);
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
-			
-			// If the event has a AIA parameter, use it
-			String AIA=_parameters.get(Settings.PROP_NAME_allowImpliesActual);
-			if (AIA!=null) _allowImpliesActual = Boolean.valueOf(AIA);
-			//otherwise, fallback to Setting default value
-			else  _allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
+
+			String allowImpliesActual = _parameters.get(Settings.PROP_NAME_allowImpliesActual);
+			if (allowImpliesActual != null) {
+				// If the event has a AIA parameter, use it
+				_allowImpliesActual = Boolean.valueOf(allowImpliesActual);
+			}
+			else {
+				// otherwise, fallback to Setting default value
+				_allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
+			}
 		}
 	}
 
@@ -44,7 +45,7 @@ public class EventBasic implements IEvent, Serializable {
 
 	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
 		this(name, map, isActual);
-		_timestamp=timeStamp;
+		_timestamp = timeStamp;
 	}
 
 	@Override
@@ -73,8 +74,13 @@ public class EventBasic implements IEvent, Serializable {
 	}
 
 	@Override
+	public String getParameterValue(String name) {
+		return name == null ? null : _parameters.get(name);
+	}
+
+	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.add("_pep", _pep)
 				.add("_isActual", _isActual)

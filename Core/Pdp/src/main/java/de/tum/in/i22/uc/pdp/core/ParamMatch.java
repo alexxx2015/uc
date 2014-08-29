@@ -1,117 +1,114 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.DataInContainerComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ElementInListComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EndsWithComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EqualsComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.EqualsIgnoreCaseComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GeComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GenericComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.GtComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.LeComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.ListInListComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.LtComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.NotEqualsComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.StartsWithComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.condition.comparisonOperators.SubstringComparisonOperator;
-import de.tum.in.i22.uc.pdp.core.shared.Param;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.DataInContainerComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.ElementInListComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EndsWithComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EqualsComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.EqualsIgnoreCaseComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GeComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GenericComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.GtComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.LeComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.ListInListComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.LtComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.NotEqualsComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.StartsWithComparisonOperator;
+import de.tum.in.i22.uc.pdp.core.condition.operators.comparison.SubstringComparisonOperator;
+import de.tum.in.i22.uc.pdp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class ParamMatch extends ParamMatchType {
-	private static Logger log = LoggerFactory.getLogger(ParamMatch.class);
+	private static Logger _logger = LoggerFactory.getLogger(ParamMatch.class);
 	private PolicyDecisionPoint _pdp;
 
-	public void setPdp(PolicyDecisionPoint pdp) {
-		if (_pdp == null)
-			_pdp = pdp;
+	private final static Map<ComparisonOperatorTypes,GenericComparisonOperator> _comparisonOperators;
+
+	static {
+		_comparisonOperators = new HashMap<>();
+		_comparisonOperators.put(ComparisonOperatorTypes.DATA_IN_CONTAINER, new DataInContainerComparisonOperator(null));
+		_comparisonOperators.put(ComparisonOperatorTypes.ELEMENT_IN_LIST, new ElementInListComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.ENDS_WITH, new EndsWithComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.EQUALS, new EqualsComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.EQUALS_IGNORE_CASE, new EqualsIgnoreCaseComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.GE, new GeComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.GT, new GtComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.LE, new LeComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.LIST_IN_LIST, new ListInListComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.LT, new LtComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.NOT_EQUALS, new NotEqualsComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.STARTS_WITH, new StartsWithComparisonOperator());
+		_comparisonOperators.put(ComparisonOperatorTypes.SUBSTRING, new SubstringComparisonOperator());
+	}
+
+	public ParamMatch() {
+	}
+
+	public ParamMatch(String name, String value, ComparisonOperatorTypes cmpOp, PolicyDecisionPoint pdp) {
+		this.name = name;
+		this.value = value;
+		this.cmpOp = cmpOp;
+		_pdp = pdp;
+	}
+
+	public static ParamMatch convertFrom(ParamMatchType p, PolicyDecisionPoint pdp) {
+		if (p instanceof ParamMatch) {
+			ParamMatch newp = (ParamMatch) p;
+			newp._pdp = pdp;
+			return newp;
+		}
+		throw new IllegalArgumentException(p + " is not of type " + ParamMatch.class);
+	}
+
+
+	/**
+	 * Returns true if this element matches the specified parameter name and value.
+	 * @param paramName
+	 * @param paramValue
+	 * @return
+	 */
+	public boolean matches(String paramName, String paramValue) {
+		if (paramName == null || paramValue == null) {
+			_logger.trace("Parameter [{}] not present", paramName);
+			return false;
+		}
+
+		if (!paramName.equals(name)) {
+			_logger.trace("param name [" + name + "] does NOT match");
+			return false;
+		}
+
+		_logger.trace("param name [" + name + "] matches");
+
+		GenericComparisonOperator comparer = _comparisonOperators.get(cmpOp);
+		if (comparer == null) {
+			// default comparison is equality
+			comparer = _comparisonOperators.get(ComparisonOperatorTypes.EQUALS);
+		}
+		else if (comparer instanceof DataInContainerComparisonOperator) {
+			((DataInContainerComparisonOperator) comparer).setPip(_pdp.getPip());
+		}
+
+		boolean matches = comparer.compare(paramValue, this.getValue());
+		_logger.trace("param value [" + paramValue + "] does " + (matches ? "" : "NOT ") + "match ["
+				+ this.getValue() + "]");
+		return matches;
+
 	}
 
 	@Override
 	public String toString() {
-		return this.getName() + " -> " + this.getValue() + " (" + this.getType() + ")";
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+				.add("name", name)
+				.add("value", value)
+				.add("type", type)
+				.add("cmpOp", cmpOp)
+				.add("dataID", dataID)
+				.toString();
 	}
-
-	public boolean paramMatches(Param<?> param) {
-		boolean matches = false;
-		if (param == null) {
-			log.trace("Parameter [{}] not present", this.getName());
-			return false;
-		}
-		if (this.getName().equals(param.getName())) {
-			log.trace("param name [" + this.getName() + "] matches");
-			GenericComparisonOperator compOp;
-			if (this.getCmpOp() != null) {
-				switch (this.getCmpOp()) {
-				case ELEMENT_IN_LIST:
-					log.debug("parameter value checked for \"element in list\" comparison");
-					compOp = new ElementInListComparisonOperator();
-					break;
-				case ENDS_WITH:
-					log.debug("parameter value checked for \"ends with\" comparison");
-					compOp = new EndsWithComparisonOperator();
-					break;
-				case EQUALS:
-					log.debug("parameter value checked for \"equals\" comparison");
-					compOp = new EqualsComparisonOperator();
-					break;
-				case EQUALS_IGNORE_CASE:
-					log.debug("parameter value checked for \"equals ignore case\" comparison");
-					compOp = new EqualsIgnoreCaseComparisonOperator();
-					break;
-				case GE:
-					log.debug("parameter value checked for \"greater or equal than\" comparison");
-					compOp = new GeComparisonOperator();
-					break;
-				case GT:
-					log.debug("parameter value checked for \"greater than\" comparison");
-					compOp = new GtComparisonOperator();
-					break;
-				case LE:
-					log.debug("parameter value checked for \"smaller or equal than\" comparison");
-					compOp = new LeComparisonOperator();
-					break;
-				case LIST_IN_LIST:
-					log.debug("parameter value checked for \"list in list\" comparison");
-					compOp = new ListInListComparisonOperator();
-					break;
-				case LT:
-					log.debug("parameter value checked for \"smaller than\" comparison");
-					compOp = new LtComparisonOperator();
-					break;
-				case NOT_EQUALS:
-					log.debug("parameter value checked for \"different than\" comparison");
-					compOp = new NotEqualsComparisonOperator();
-					break;
-				case STARTS_WITH:
-					log.debug("parameter value checked for \"starts with\" comparison");
-					compOp = new StartsWithComparisonOperator();
-					break;
-				case DATA_IN_CONTAINER:
-					log.debug("parameter value checked for \"data in container\" comparison");
-					compOp = new DataInContainerComparisonOperator(_pdp.getPip());
-					break;
-				case SUBSTRING:
-					log.debug("parameter value checked for \"substring\" comparison");
-					compOp = new SubstringComparisonOperator();
-					break;
-				default:
-					log.debug("parameter value checked for default comparison (equals)");
-					compOp = new EqualsComparisonOperator(); // default
-																// comparison is
-																// equality
-					break;
-				}
-				matches = compOp.compare((String) param.getValue(), this.getValue());
-			}
-			log.trace("param value [" + (String) param.getValue() + "] does " + (matches ? "" : "NOT ") + "match ["
-					+ this.getValue() + "]");
-			return matches;
-		}
-		log.trace("param name [" + this.getName() + "] does NOT match");
-		return false;
-	}
-
 }

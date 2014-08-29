@@ -453,7 +453,6 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_communicationProtocol);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}

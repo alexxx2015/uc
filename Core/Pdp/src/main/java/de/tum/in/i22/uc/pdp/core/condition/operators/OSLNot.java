@@ -3,9 +3,9 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
 public class OSLNot extends NotType {
@@ -19,19 +19,20 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
-	}
-
-	public String toString() {
-		return "! " + this.getOperators();
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) operators).init(mech);
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
-		this.state.value = !((Operator) this.getOperators()).evaluate(curEvent);
-		log.debug("eval NOT [{}]", this.state.value);
-		return this.state.value;
+	public String toString() {
+		return "! " + operators;
+	}
+
+	@Override
+	public boolean evaluate(IEvent curEvent) {
+		_state.value = !((Operator) operators).evaluate(curEvent);
+		log.debug("eval NOT [{}]", _state.value);
+		return _state.value;
 	}
 }

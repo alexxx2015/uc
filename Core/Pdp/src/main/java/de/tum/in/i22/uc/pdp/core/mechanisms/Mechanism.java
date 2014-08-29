@@ -1,40 +1,38 @@
-package de.tum.in.i22.uc.pdp.core;
+package de.tum.in.i22.uc.pdp.core.mechanisms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.PxpManager;
+import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
+import de.tum.in.i22.uc.pdp.core.Decision;
+import de.tum.in.i22.uc.pdp.core.EventMatch;
+import de.tum.in.i22.uc.pdp.core.ExecuteAction;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.condition.Condition;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
-import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
-import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class Mechanism implements IPdpMechanism {
-	private static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
+public abstract class Mechanism implements Runnable {
+	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
-	private String _name = null;
-	private String _description = null;
+	private final String _name;
+	private final String _description;
 	private long _lastUpdate = 0;
 	private long _timestepSize = 0;
 	private long _timestep = 0;
-	private EventMatch _triggerEvent = null;
-	private Condition _condition = null;
-	private IPdpAuthorizationAction _authorizationAction = null;
-	private List<IPdpExecuteAction> _executeAsyncActions = new ArrayList<IPdpExecuteAction>();
-	private PolicyDecisionPoint _pdp = null;
+	private final EventMatch _triggerEvent;
+	private final Condition _condition;
+	protected AuthorizationAction _authorizationAction = null;
+	private final List<ExecuteAction> _executeAsyncActions;
+	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
 	private PxpManager _pxpManager;
 
@@ -43,14 +41,15 @@ public class Mechanism implements IPdpMechanism {
 	 */
 	private final String _policyName;
 
-	public Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
-		_pdp = pdp;
+
 		if (pdp == null) {
 			_logger.error("Impossible to take proper decision with a null pdp. failing miserably");
 			throw new RuntimeException();
 		}
 
+		_pdp = pdp;
 		_policyName = policyName;
 		_pxpManager = pdp.getPxpManager();
 		_name = mech.getName();
@@ -58,61 +57,10 @@ public class Mechanism implements IPdpMechanism {
 		_lastUpdate = 0;
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 		_timestep = 0;
-
-		if (mech instanceof PreventiveMechanismType) {
-			PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
-			_logger.debug("Processing PreventiveMechanism");
-
-			_triggerEvent = new EventMatch(curMech.getTrigger(), this);
-
-			ActionDescriptionStore ads = pdp.getActionDescriptionStore();
-			ads.addMechanism(this);
-
-			// TODO: subscription to PEP?!
-
-			_logger.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech
-					.getAuthorizationAction().size());
-			HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
-
-			for (AuthorizationActionType auth : curMech.getAuthorizationAction()) {
-				_logger.debug("Found authAction {}", auth.getName());
-				if (auth.isSetStart() || curMech.getAuthorizationAction().size() == 1)
-					authActions.put("start", new AuthorizationAction(auth));
-				else
-					authActions.put(auth.getName(), new AuthorizationAction(auth));
-			}
-
-			_logger.debug("Preparing hierarchy of authorizationActions (list: {})", authActions.size());
-			_authorizationAction = authActions.get("start");
-
-			if (curMech.getAuthorizationAction().size() > 1) {
-				IPdpAuthorizationAction curAuth = _authorizationAction;
-				_logger.debug("starting with curAuth: {}", curAuth.getName());
-				do {
-					_logger.debug("searching for fallback={}", curAuth.getFallbackName());
-					if (!curAuth.getFallbackName().equalsIgnoreCase("allow")
-							&& !curAuth.getFallbackName().equalsIgnoreCase("inhibit")) {
-						IPdpAuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
-						if (fallbackAuth == null) {
-							_logger.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
-							throw new InvalidMechanismException("Requested fallback authorizationAction not specified");
-						}
-						curAuth.setFallback(fallbackAuth);
-						_logger.debug("  set fallback to {}", curAuth.getFallback().getName());
-					} else {
-						if (curAuth.getFallbackName().equalsIgnoreCase("allow")) {
-							curAuth.setFallback(AuthorizationAction.AUTHORIZATION_ALLOW);
-						}
-						_logger.debug("  set fallback to static {}", curAuth.getFallback().getName());
-						break;
-					}
-					curAuth = curAuth.getFallback();
-				} while (true);
-			}
-			_logger.debug("AuthorizationActions successfully processed.");
-		}
+		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
 		_condition = new Condition(mech.getCondition(), this);
+		_executeAsyncActions = new LinkedList<ExecuteAction>();
 
 		_logger.debug("Processing executeAsyncActions");
 		// Processing synchronous executeActions for allow
@@ -121,49 +69,46 @@ public class Mechanism implements IPdpMechanism {
 		}
 	}
 
-	@Override
 	public String getName() {
 		return _name;
 	}
-	@Override
-	public IPdpAuthorizationAction getAuthorizationAction() {
+
+	public AuthorizationAction getAuthorizationAction() {
 		return _authorizationAction;
 	}
 
-	@Override
-	public List<IPdpExecuteAction> getExecuteAsyncActions() {
+	public List<ExecuteAction> getExecuteAsyncActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public EventMatch getTriggerEvent() {
 		return _triggerEvent;
 	}
 
-	@Override
 	public long getTimestepSize() {
 		return _timestepSize;
 	}
 
-	@Override
 	public void revoke() {
 		_interrupted = true;
 	}
 
-	public synchronized Decision notifyEvent(Event curEvent, Decision d) {
+	public synchronized Decision notifyEvent(IEvent event, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
-		if (_triggerEvent.eventMatches(curEvent)) {
+
+		if (_triggerEvent.matches(event)) {
 			_logger.info("Event matches -> evaluating condition");
-			boolean ret = _condition.evaluate(curEvent);
-			if (ret) {
+			if (_condition.evaluate(event)) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
-				d.processMechanism(this, curEvent);
-			} else
+				d.processMechanism(this, event);
+			} else {
 				_logger.info("condition NOT satisfied");
+			}
 		}
 
 		return d;
 	}
+
 
 	private synchronized boolean mechanismUpdate() { // TODO improve accuracy to
 		// microseconds?
@@ -207,14 +152,14 @@ public class Mechanism implements IPdpMechanism {
 		_logger.info("Started mechanism update thread usleep={} ms", sleepValue);
 
 		_lastUpdate = System.currentTimeMillis();
-		_condition.operator.initOperatorForMechanism(this);
+		_condition._operator.init(this);
 
 		while (!_interrupted) {
 			try {
 				boolean mechanismValue = mechanismUpdate();
 				if (mechanismValue) {
 					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (IPdpExecuteAction execAction : getExecuteAsyncActions()) {
+					for (ExecuteAction execAction : getExecuteAsyncActions()) {
 						if (execAction.getProcessor().equals("pep"))
 							_logger.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
 									execAction.getName());
@@ -239,7 +184,7 @@ public class Mechanism implements IPdpMechanism {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this.getClass())
+		return com.google.common.base.MoreObjects.toStringHelper(this.getClass())
 				.add("_name", _name)
 				.add("_description", _description)
 				.add("_timestepSize", _timestepSize)
@@ -252,12 +197,10 @@ public class Mechanism implements IPdpMechanism {
 				.toString();
 	}
 
-	@Override
-	public List<IPdpExecuteAction> getExecuteActions() {
+	public List<ExecuteAction> getExecuteActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public PolicyDecisionPoint getPolicyDecisionPoint() {
 		return _pdp;
 	}

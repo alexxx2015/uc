@@ -3,77 +3,81 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
 public class EventMatch extends EventMatchingOperatorType {
-	private static Logger log = LoggerFactory.getLogger(EventMatch.class);
+	private static Logger _logger = LoggerFactory.getLogger(EventMatch.class);
 
 	public EventMatch() {
 	}
 
-	public EventMatch(EventMatchingOperatorType op, Mechanism curMechanism) {
-		log.debug("Preparing eventMatch from EventMatchingOperatorType");
-		_pdp = curMechanism.getPolicyDecisionPoint();
-		this.setAction(op.getAction());
-		this.setTryEvent(op.isTryEvent());
-		for (ParamMatchType paramMatch : op.getParams()) {
-			// if paramMatch.getType()=
-			// initialization
-			this.getParams().add(paramMatch);
+	public static EventMatch convertFrom(EventMatchingOperatorType e, PolicyDecisionPoint pdp) {
+		if (e instanceof EventMatch) {
+			EventMatch newe = (EventMatch) e;
+			newe._pdp = pdp;
+			return newe;
 		}
+
+		throw new IllegalArgumentException(e + " is not of type " + EventMatch.class);
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 	}
 
-	public boolean eventMatches(Event curEvent) {
-		if (curEvent == null)
+	public boolean matches(IEvent ev) {
+		if (ev == null) {
 			return false;
-		log.info("Matching      [{}]", this);
-		log.info("against event [{}]", curEvent);
-		if (this.isTryEvent() == curEvent.isTryEvent()) {
-			if (this.getAction().equals(curEvent.getEventAction())
-					|| this.getAction().equals(Settings.getInstance().getStarEvent())) {
-				if (this.getParams().size() == 0)
+		}
+
+		_logger.info("Matching [{}] against [{}]", this, ev);
+
+		/*
+		 *  Be aware: tryEvent vs. isActual must be unequal (!=).
+		 */
+		if (tryEvent != ev.isActual()) {
+			if (action.equals(ev.getName()) || action.equals(Settings.getInstance().getStarEvent())) {
+				if (params.size() == 0) {
+					_logger.info("Event DOES match.");
 					return true;
-				boolean ret = false;
-				for (ParamMatchType p : this.getParams()) {
-					ParamMatch curParamMatch = (ParamMatch) p;
-					log.debug("Matching param [{}]", p);
-					log.debug("setting pdp for current parameter");
-					curParamMatch.setPdp(_pdp);
-					ret = curParamMatch.paramMatches(curEvent.getParameterForName(p.getName()));
-					if (!ret)
-						break;
 				}
-				return ret;
+
+				/*
+				 * Compare each parameter
+				 */
+				for (ParamMatchType p : params) {
+					_logger.debug("Matching param [{}]", p);
+					if (!ParamMatch.convertFrom(p, _pdp).matches(p.getName(), ev.getParameterValue(p.getName()))) {
+						_logger.info("Event does NOT match.");
+						return false;
+					}
+				}
+				_logger.info("Event DOES match.");
+				return true;
 			}
 		}
-		log.info("Event does NOT match.");
+
+		_logger.info("Event does NOT match.");
 		return false;
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
-		log.error("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
-		return false;
+	public boolean evaluate(IEvent curEvent) {
+		throw new UnsupportedOperationException("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
 	}
 
 	@Override
 	public String toString() {
-		String str = "eventMatch action='" + this.getAction() + "' isTry='" + this.isTryEvent() + "': [";
-		for (ParamMatchType p : this.getParams()) {
-			ParamMatch p2 = (ParamMatch) p;
-			str += p2.toString() + ", ";
-		}
-		str += "]";
-		return str;
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+				.add("action", action)
+				.add("isTry", isTryEvent())
+				.add("params", getParams())
+				.toString();
 	}
 
 }

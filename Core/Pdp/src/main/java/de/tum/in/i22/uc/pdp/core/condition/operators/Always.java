@@ -3,42 +3,42 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.Operator;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.AlwaysType;
 
 public class Always extends AlwaysType {
-	private static Logger log = LoggerFactory.getLogger(Always.class);
+	private static Logger _logger = LoggerFactory.getLogger(Always.class);
 
 	public Always() {
 	}
 
 	public Always(Operator operand1) {
-		this.setOperators(operand1);
+		this.operators = operand1;
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
-		((Operator) this.getOperators()).initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
+		((Operator) this.getOperators()).init(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "ALWAYS (" + this.getOperators() + ")";
+		return "ALWAYS (" + operators + ")";
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
-		if (!this.state.immutable) {
-			this.state.value = ((Operator) this.getOperators()).evaluate(curEvent);
-			if (!this.state.value && curEvent == null) {
-				log.debug("evaluating ALWAYS: activating IMMUTABILITY");
-				this.state.immutable = true;
+	public boolean evaluate(IEvent curEvent) {
+		if (!_state.immutable) {
+			_state.value = ((Operator) operators).evaluate(curEvent);
+			if (!_state.value && curEvent == null) {
+				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
+				_state.immutable = true;
 			}
 		}
-		log.debug("eval ALWAYS [{}]", this.state.value);
-		return this.state.value;
+		_logger.debug("eval ALWAYS [{}]", _state.value);
+		return _state.value;
 	}
 }

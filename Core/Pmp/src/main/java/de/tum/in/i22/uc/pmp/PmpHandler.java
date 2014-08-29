@@ -70,7 +70,7 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATA = "data";
 
 	private IPmp2Ptp _ptp;
-	
+
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
@@ -111,7 +111,6 @@ public class PmpHandler extends PmpProcessor {
 	private String policyToXML(PolicyType policy) {
 		String result = "";
 		_logger.debug("PolicyToXML conversion...");
-		_logger.trace("Policy to convert: " + policy);
 		ObjectFactory of = new ObjectFactory();
 		JAXBElement<PolicyType> pol = of.createPolicy(policy);
 		try {
@@ -313,7 +312,6 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus informRemoteDataFlow(Location srcLocation,
 			Location dstLocation, Set<IData> dataflow) {
-		Set<IData> d = new HashSet<>();
 
 		// TODO: Get policies for data and send them
 
@@ -360,7 +358,7 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		XmlPolicy convertedPolicy = convertPolicy(xmlPolicy);
-//		_distributionManager.newPolicy(xmlPolicy);
+		_distributionManager.newPolicy(xmlPolicy);
 		return getPdp().deployPolicyXML(convertedPolicy);
 	}
 

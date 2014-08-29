@@ -61,7 +61,7 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_address", _address)
 				.add("_port", _port)
 				.toString();

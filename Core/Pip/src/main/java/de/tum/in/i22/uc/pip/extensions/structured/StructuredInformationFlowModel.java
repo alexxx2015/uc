@@ -236,7 +236,7 @@ public final class StructuredInformationFlowModel extends
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_structure", _structureMap).toString();
 	}
 

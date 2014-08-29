@@ -13,9 +13,7 @@ public class ResponseBasic implements IResponse {
 	private List<IEvent> _executeActions = null;
 	private IEvent _modifiedEvent = null;
 
-	public ResponseBasic(IStatus authorizationAction,
-			List<IEvent> executeActions, IEvent modifiedEvent) {
-		super();
+	public ResponseBasic(IStatus authorizationAction, List<IEvent> executeActions, IEvent modifiedEvent) {
 		_authorizationAction = authorizationAction;
 		_executeActions = executeActions;
 		_modifiedEvent = modifiedEvent;
@@ -40,7 +38,7 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeAction", _executeActions)
 				.add("_modifiedEvent", _modifiedEvent)

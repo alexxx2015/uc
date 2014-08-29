@@ -50,7 +50,7 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_pid", _pid)
 				.add("_fd", _fd)

@@ -45,4 +45,6 @@ public interface IEvent {
 	 * @return
 	 */
 	public boolean allowImpliesActual();
+
+	public String getParameterValue(String name);
 }

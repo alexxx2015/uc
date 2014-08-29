@@ -3,48 +3,41 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.ParamMatch;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
+import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
 public class ConditionParamMatchOperator extends ConditionParamMatchType {
-	private static Logger log = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
+	private static Logger _logger = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
 
 	public ConditionParamMatchOperator() {
 	}
 
 	@Override
-	public void initOperatorForMechanism(IPdpMechanism mech) {
-		super.initOperatorForMechanism(mech);
+	public void init(Mechanism mech) {
+		super.init(mech);
 	}
 
 	@Override
 	public String toString() {
-		return "ConditionParamMatchOperator [Name: " + this.getName() + ", Value: " + this.getValue() + ", CompOp: "
-				+ this.getCmpOp() + "]";
-
+		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+				.add("name", name)
+				.add("value", value)
+				.add("cmpOp", cmpOp)
+				.toString();
 	}
 
 	@Override
-	public boolean evaluate(Event curEvent) {
-		log.debug("ConditionParamMatchOperator");
+	public boolean evaluate(IEvent curEvent) {
+		_logger.debug("ConditionParamMatchOperator");
 
 		if (curEvent == null) {
-			log.debug("null event received. ConditionParamMatchOperator returns false.");
+			_logger.debug("null event received. ConditionParamMatchOperator returns false.");
 			return false;
 		}
 
-		// creates a corresponding paramMatch object
-
-		ParamMatch pm = new ParamMatch();
-		pm.setCmpOp(this.getCmpOp());
-		pm.setName(this.getName());
-		pm.setValue(this.getValue());
-
-		pm.setPdp(_pdp);
-		// use the parmMatches method for the evaluation
-
-		return pm.paramMatches(curEvent.getParameterForName(pm.getName()));
+		ParamMatch pm = new ParamMatch(this.getName(), this.getValue(),this.getCmpOp(), _pdp);
+		return pm.matches(pm.getName(), curEvent.getParameterValue(pm.getName()));
 	}
 }

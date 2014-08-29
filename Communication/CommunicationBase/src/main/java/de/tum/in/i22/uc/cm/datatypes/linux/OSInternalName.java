@@ -38,7 +38,7 @@ public class OSInternalName extends NameBasic {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_identifier", _identifier)
 				.toString();

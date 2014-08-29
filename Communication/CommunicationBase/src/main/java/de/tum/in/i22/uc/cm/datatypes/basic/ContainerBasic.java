@@ -97,7 +97,7 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_id", _id).toString();
 	}
 

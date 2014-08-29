@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core.condition.comparisonOperators;
+package de.tum.in.i22.uc.pdp.core.condition.operators.comparison;
 
 import java.util.Set;
 
@@ -19,12 +19,16 @@ public class DataInContainerComparisonOperator extends GenericComparisonOperator
 		_pip = pip;
 	}
 
+	public void setPip(IPdp2Pip pip) {
+		_pip = pip;
+	}
+
 	@Override
 	public boolean compare(String cont, String data) {
 		_logger.trace("Data in Container comparison. cont = [" + cont + "], data = [" + data + "]");
 
 		if (cont == null) {
-			_logger.debug("cont == null. returnign false");
+			_logger.debug("cont == null. returning false");
 		}
 
 		Set<IData> dataSet = _pip.getDataInContainer(new NameBasic(cont));

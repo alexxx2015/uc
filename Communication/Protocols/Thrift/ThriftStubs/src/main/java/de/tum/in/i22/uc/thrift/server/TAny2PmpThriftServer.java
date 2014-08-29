@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -31,8 +28,6 @@ import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
  */
 class TAny2PmpThriftServer extends ThriftServerHandler implements
 TAny2Pmp.Iface {
-	private static Logger _logger = LoggerFactory
-			.getLogger(TAny2PmpThriftServer.class);
 
 	private final IAny2Pmp _handler;
 

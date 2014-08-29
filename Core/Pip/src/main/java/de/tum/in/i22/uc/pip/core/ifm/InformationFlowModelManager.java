@@ -11,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -34,7 +33,7 @@ public final class InformationFlowModelManager implements
 	private boolean _simulating;
 
 	/**
-	 * 
+	 *
 	 */
 	public InformationFlowModelManager() {
 		_ifModelExtensions = new HashMap<>();
@@ -72,7 +71,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.
 	 * in.i22.uc.cm.pip.EInformationFlowModel)
@@ -90,7 +89,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isSimulating()
 	 */
 	@Override
@@ -100,7 +99,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#startSimulation()
 	 */
@@ -121,7 +120,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#stopSimulation()
 	 */
 	@Override
@@ -141,7 +140,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#reset()
 	 */
 	@Override
@@ -154,7 +153,7 @@ public final class InformationFlowModelManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#niceString()
 	 */
 	@Override
@@ -165,7 +164,7 @@ public final class InformationFlowModelManager implements
  		sb.append(_basicIfModel.niceString()+nl);
 
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			String model = ifme.niceString(); 
+			String model = ifme.niceString();
 			if (model != null) sb.append(model+nl);
 		}
 

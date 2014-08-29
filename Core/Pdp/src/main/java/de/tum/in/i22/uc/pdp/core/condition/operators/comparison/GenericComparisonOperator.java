@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core.condition.comparisonOperators;
+package de.tum.in.i22.uc.pdp.core.condition.operators.comparison;
 
 /**
  * Class for a generic Comparison operator.
