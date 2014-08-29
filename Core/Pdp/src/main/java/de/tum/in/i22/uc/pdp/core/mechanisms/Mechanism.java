@@ -104,6 +104,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return _timestepSize;
 	}
 
+	@Override
 	public long getLastUpdate() {
 		return _lastUpdate;
 	}
@@ -155,7 +156,6 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		// Correct time substracting possible delay in the execution because
 		// difference between timestep and last time
 		// mechanism was updated will not be exactly the timestepSize
-		_lastUpdate = now - difference;
 		if (difference > _timestepSize) {
 			_logger.warn(
 					"[{}] Timestep difference is larger than mechanism's timestep size => we missed to evaluate at least one timestep!!",
@@ -174,6 +174,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		setChanged();
 		notifyObservers(END_OF_TIMESTEP);
+
+		/*
+		 * Important! Do this after _condition.evaluate(),
+		 * as it will rely on _lastUpdate value.
+		 */
+		_lastUpdate = now - difference;
 
 		return conditionValue;
 	}

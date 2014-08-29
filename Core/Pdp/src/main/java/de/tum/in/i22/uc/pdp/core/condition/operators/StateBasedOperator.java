@@ -38,9 +38,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 				.toString();
 	}
 
-	@Override
-	protected boolean localEvaluation(IEvent ev) {
-
+	private boolean eval(IEvent ev) {
 		IPdp2Pip pip = _pdp.getPip();
 		String separator = Settings.getInstance().getSeparator1();
 
@@ -62,13 +60,32 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 		}
 
 		if (result) {
-			// Notify observers that predicate is true
+			/*
+			 * Notify observers that predicate turned true
+			 */
 			setChanged();
 			notifyObservers();
 		}
 
-		_logger.debug("eval StateBasedOperator [{}: {}]", this, result);
+		return result;
+	}
 
+	@Override
+	protected boolean localEvaluation(IEvent ev) {
+		boolean result = eval(ev);
+		_logger.debug("eval StateBasedOperator [{}: {}]", this, result);
+		return result;
+	}
+
+	@Override
+	protected boolean distributedEvaluation(IEvent ev) {
+		boolean result = eval(ev);
+
+		if (!result) {
+			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
+		}
+
+		_logger.debug("eval StateBasedOperator [{}: {}]", this, result);
 		return result;
 	}
 }

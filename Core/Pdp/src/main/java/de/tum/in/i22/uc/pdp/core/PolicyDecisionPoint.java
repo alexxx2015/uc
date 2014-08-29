@@ -27,7 +27,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
@@ -66,13 +68,16 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final List<StateBasedOperator> _stateBasedOperatorTrue;
 
+	private final IDistributionManager _distributionManager;
+
 	public PolicyDecisionPoint() {
-		this(new DummyPipProcessor(), new PxpManager());
+		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
+		_distributionManager = distributionManager;
 		_stateBasedOperatorTrue = new LinkedList<>();
 		_eventMatches = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
@@ -285,5 +290,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			// Prepare for next
 			_stateBasedOperatorTrue.clear();
 		}
+	}
+
+	public IDistributionManager getDistributionManager() {
+		return _distributionManager;
 	}
 }

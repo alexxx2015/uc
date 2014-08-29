@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,6 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
@@ -39,6 +42,8 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
+
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
 	private static final String TABLE_NAME_DATA = "hasdata";
 //	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
@@ -64,8 +69,8 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "opid text,"
 						+ "location text,"
 						+ "time timeuuid,"
-						+ "PRIMARY KEY (time)"
-						+ ");");
+						+ "PRIMARY KEY (opid,time)) "
+						+ "WITH CLUSTERING ORDER BY (time DESC);");
 //		_tables.add(
 //				"CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
 //						+ "event text,"
@@ -214,6 +219,9 @@ class CassandraDistributionManager implements IDistributionManager {
 				 * TODO: We need to deal with the fact that success == false at this place.
 				 * Possible options: Retry, throw exception, cancel data transfer
 				 */
+			}
+			else {
+				_logger.debug("Not performing remote policy transfer. Policy should already be present remotely.");
 			}
 		}
 	}
@@ -464,5 +472,15 @@ class CassandraDistributionManager implements IDistributionManager {
 //							+ " WHERE id = '" + operator.getFullId() + "';");
 //				}
 //			}
+	}
+
+
+	@Override
+	public boolean wasTrueSince(IOperator operator, long since) {
+		_logger.debug("wasTrueSince {} {}", operator, since);
+		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
+						+ " WHERE opid = '" + operator.getFullId() + "'"
+						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
+						+ " LIMIT 1;").isExhausted();
 	}
 }

@@ -36,12 +36,9 @@ public abstract class Operator extends Observable implements IOperator {
 	 */
 	protected int _id;
 
-	public Operator() {
-		_state = new OperatorState(this);
+	private boolean _initialized = false;
 
-		if (Settings.getInstance().getDistributionEnabled()) {
-			_dstate = new DistributedOperatorState(this);
-		}
+	public Operator() {
 	}
 
 	public void init(Mechanism mech) {
@@ -49,13 +46,20 @@ public abstract class Operator extends Observable implements IOperator {
 			throw new NullPointerException("Provided mechanism was null.");
 		}
 
-		if (_pdp == null) {
-			_pdp = mech.getPolicyDecisionPoint();
-			_mechanism = mech;
-			this.addObserver(_pdp);
+		if (_initialized) {
+			throw new IllegalStateException("Operator may only get initialized once.");
 		}
-		else {
-			throw new UnsupportedOperationException("Operator may only get initialized once.");
+
+		_initialized = true;
+
+		_pdp = mech.getPolicyDecisionPoint();
+		_mechanism = mech;
+
+		_state = new OperatorState(this);
+
+		if (Settings.getInstance().getDistributionEnabled()) {
+			this.addObserver(_pdp);
+			_dstate = new DistributedOperatorState(this, _pdp.getDistributionManager());
 		}
 	}
 

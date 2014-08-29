@@ -149,7 +149,7 @@ public class PdpHandler extends PdpProcessor implements Observer {
 
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
 
 		// Observe the PolicyDecisionPoint. The PolicyDecisionPoint will
 		// tell us if a policy needs to be registered with the DistributionManager

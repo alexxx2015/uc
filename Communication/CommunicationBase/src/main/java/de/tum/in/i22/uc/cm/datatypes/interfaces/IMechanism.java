@@ -6,14 +6,16 @@ public interface IMechanism {
 	 * Returns the name of this {@link IMechanism}.
 	 * @return the name of this {@link IMechanism}.
 	 */
-	public abstract String getName();
+	public String getName();
 
-	public abstract ICondition getCondition();
+	public ICondition getCondition();
 
 	/**
 	 * Returns the name of the policy to which this {@link IMechanism} belongs.
 	 * @return the name of the policy to which this {@link IMechanism} belongs.
 	 */
-	public abstract String getPolicyName();
+	public String getPolicyName();
+
+	public long getLastUpdate();
 
 }

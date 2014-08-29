@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.processing.dummy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
@@ -40,6 +41,13 @@ public class DummyDistributionManager implements IDistributionManager {
 		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("update method invoked");
+	}
+
+	@Override
+	public boolean wasTrueSince(IOperator operator, long since) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("wasTrueSince method invoked");
+		return true;
 	}
 
 }

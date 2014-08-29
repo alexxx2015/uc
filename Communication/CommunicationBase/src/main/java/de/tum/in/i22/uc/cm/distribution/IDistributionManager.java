@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -23,4 +24,6 @@ public interface IDistributionManager {
 	public void register(String policyName);
 
 	void update(IResponse res);
+
+	boolean wasTrueSince(IOperator operator, long since);
 }

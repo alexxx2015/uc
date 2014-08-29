@@ -27,8 +27,7 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 		return _id;
 	}
 
-	@Override
-	protected boolean localEvaluation(IEvent ev) {
+	private boolean eval(IEvent ev) {
 		boolean result;
 
 		if (ev == null) {
@@ -54,30 +53,39 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			 * matches, if the current state is false. Otherwise, a matching
 			 * event happened earlier within this timestep and the state is true anyway.
 			 */
-			if (!_state.value() && matches(ev)) {
+			if (!_state.value() && ev.isActual() && matches(ev)) {
 				_state.setValue(true);
 
-				if (ev.isActual()) {
-					setChanged();
-					notifyObservers();
-				}
+				setChanged();
+				notifyObservers();
 			}
 			result = _state.value();
 		}
 
+		return result;
+	}
+
+	@Override
+	protected boolean localEvaluation(IEvent ev) {
+		boolean result = eval(ev);
 		_logger.debug("Evaluated [{}] with result [{}]", this, result);
 		return result;
 	}
 
 	@Override
 	protected boolean distributedEvaluation(IEvent ev) {
-		return localEvaluation(ev);
-//		boolean result;
-//
-//
-//
-//
-//		_logger.debug("Evaluated [{}] with result [{}]", this, result);
-//		return result;
+		boolean result = eval(ev);
+
+		/*
+		 * If the event did not happen locally within this timestep,
+		 * it might still be the case that it happened earlier within
+		 * this timestep, but remotely. Ask the DistributionManager.
+		 */
+		if (!result) {
+			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
+		}
+
+		_logger.debug("Evaluated [{}] with result [{}]", this, result);
+		return result;
 	}
 }
