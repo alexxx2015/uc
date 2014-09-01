@@ -54,12 +54,6 @@ public class OSLOr extends OrType {
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
 
-//		boolean newStateValue = op1state || op2state;
-//		if (newStateValue != _state.value) {
-//			_state.value = newStateValue;
-//			setChanged();
-//			notifyObservers(_state);
-//		}
 		_state.setValue(op1state || op2state);;
 
 		_logger.debug("eval OR [{}]", _state.value());
