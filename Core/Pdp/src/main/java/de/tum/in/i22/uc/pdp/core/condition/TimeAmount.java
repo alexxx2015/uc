@@ -27,14 +27,6 @@ public class TimeAmount {
 		return _timestepInterval;
 	}
 
-	public long getAmount() {
-		return _amount;
-	}
-
-	public long getInterval() {
-		return _interval;
-	}
-
 	public static long getTimeUnitMultiplier(TimeUnitType tu) {
 		if (tu == null) {
 			_logger.warn("Cannot calculate timeUnit-multiplier for null!");
