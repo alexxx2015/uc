@@ -27,7 +27,8 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 		return _id;
 	}
 
-	private boolean eval(IEvent ev) {
+	@Override
+	protected boolean localEvaluation(IEvent ev) {
 		boolean result;
 
 		if (ev == null) {
@@ -66,26 +67,12 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent ev) {
-		boolean result = eval(ev);
-		_logger.debug("Evaluated [{}] with result [{}]", this, result);
-		return result;
-	}
-
-	@Override
-	protected boolean distributedEvaluation(IEvent ev) {
-		boolean result = eval(ev);
-
+	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
 		/*
-		 * If the event did not happen locally within this timestep,
-		 * it might still be the case that it happened earlier within
-		 * this timestep, but remotely. Ask the DistributionManager.
+		 * Ask the DistributionManager whether this event
+		 * happened earlier within this timestep remotely.
+		 *
 		 */
-		if (!result) {
-			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
-		}
-
-		_logger.debug("Evaluated [{}] with result [{}]", this, result);
-		return result;
+		return _pdp.getDistributionManager().wasObservedSince(this, _mechanism.getLastUpdate());
 	}
 }

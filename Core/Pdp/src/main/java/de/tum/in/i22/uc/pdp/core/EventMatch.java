@@ -75,7 +75,7 @@ public class EventMatch extends EventMatchingOperatorType {
 	public String toString() {
 		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("action", action)
-				.add("isTry", isTryEvent())
+				.add("isActual", !isTryEvent())
 				.add("params", getParams())
 				.toString();
 	}

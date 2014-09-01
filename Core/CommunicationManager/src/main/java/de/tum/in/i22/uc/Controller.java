@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -114,8 +115,8 @@ public class Controller implements IRequestHandler  {
 	 */
 	private void deployInitialPolicies() {
 		for (String uri : Settings.getInstance().getPmpInitialPolicies()) {
-			deployPolicyURIPmp(uri);
-			_logger.info(" ... deployed " + uri);
+			IStatus status = deployPolicyURIPmp(uri);
+			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully." : "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
 		}
 	}
 

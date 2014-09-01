@@ -18,4 +18,6 @@ public interface IMechanism {
 
 	public long getLastUpdate();
 
+	public long getTimestepSize();
+
 }

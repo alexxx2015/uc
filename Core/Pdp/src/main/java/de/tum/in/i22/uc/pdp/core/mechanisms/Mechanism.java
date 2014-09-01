@@ -144,7 +144,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		// microseconds?
 		long now = System.currentTimeMillis();
 		long elapsedLastUpdate = now - _lastUpdate;
-		long difference = elapsedLastUpdate - _timestepSize / 1000;
+		long difference = elapsedLastUpdate - _timestepSize;
 
 		if (difference < 0) { // Aborting update because the timestep has not
 			// yet passed
@@ -186,8 +186,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	@Override
 	public void run() {
-		long sleepValue = _timestepSize / 1000;
-		_logger.info("Started mechanism update thread usleep={} ms", sleepValue);
+		_logger.info("Started mechanism update thread usleep={} ms", _timestepSize);
 
 		_lastUpdate = System.currentTimeMillis();
 
@@ -212,7 +211,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 					return;
 				}
 
-				Thread.sleep(sleepValue);
+				Thread.sleep(_timestepSize);
 			} catch (InterruptedException e) {
 				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", _name);
 			}

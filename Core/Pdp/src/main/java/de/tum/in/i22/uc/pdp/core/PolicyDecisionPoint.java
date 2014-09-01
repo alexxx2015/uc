@@ -59,11 +59,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final PxpManager _pxpManager;
 
-	/**
-	 * Accumulates all changed {@link OperatorState}s during
-	 * an ongoing event evaluation ({@link PolicyDecisionPoint#notifyEvent(IEvent)}).
-	 */
-
 	private final List<EventMatchOperator> _eventMatches;
 
 	private final List<StateBasedOperator> _stateBasedOperatorTrue;

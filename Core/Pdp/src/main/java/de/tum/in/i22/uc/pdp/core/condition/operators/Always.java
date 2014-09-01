@@ -36,30 +36,23 @@ public class Always extends AlwaysType {
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent ev) {
 		// If immutable, then there is nothing to do. State remains as-is.
 		if (!_state.isImmutable()) {
-			boolean newStateValue = op.evaluate(curEvent);
-			boolean newStateImmutable = false;
+			_state.setValue(op.evaluate(ev));
 
 			// if state turns false, then the formula will always be violated from now on.
-			if (!newStateValue && curEvent == null) {
+			if (!_state.value() && ev == null) {
 				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
-				newStateImmutable = true;
+				_state.setImmutable(true);
 			}
-
-//			if (newStateValue != _state.value || newStateImmutable != _state.immutable) {
-//				_state.value = newStateValue;
-//				_state.immutable = newStateImmutable;
-//				setChanged();
-//				notifyObservers(_state);
-//			}
-
-			_state.setValue(newStateValue);
-			_state.setImmutable(newStateImmutable);
 		}
 
-		_logger.debug("eval ALWAYS [{}]", _state.value());
 		return _state.value();
+	}
+
+	@Override
+	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
+		return false;
 	}
 }

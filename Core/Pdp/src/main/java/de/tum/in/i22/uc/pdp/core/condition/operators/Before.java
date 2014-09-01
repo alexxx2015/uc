@@ -23,11 +23,20 @@ public class Before extends BeforeType {
 
 		op = ((Operator) operators);
 
+		if (amount <= 0) {
+			throw new IllegalArgumentException("Amount must be positive.");
+		}
+
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		if (_timeAmount.getTimestepInterval() <= 0) {
+			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
+		}
+
 		_state.newCircArray(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			_state.getCircArray().set(false, a);
 		}
+
 		op.init(mech);
 	}
 
@@ -41,7 +50,7 @@ public class Before extends BeforeType {
 
 	@Override
 	public String toString() {
-		return "BEFORE (" + _timeAmount + ", " + op + " )";
+		return "BEFORE(" + _timeAmount + ", " + op + " )";
 	}
 
 	@Override
@@ -51,7 +60,7 @@ public class Before extends BeforeType {
 
 		// Look at the first entry of the array. The retrieved value
 		// corresponds to the result of the evaluation at this point in time.
-		boolean newStateValue = _state.getCircArray().peek();
+		_state.setValue(_state.getCircArray().peek());
 
 		if (curEvent == null) {
 			// If we are evaluating at the end of a timestep, then
@@ -64,15 +73,15 @@ public class Before extends BeforeType {
 			_logger.debug("circularArray: {}", _state.getCircArray());
 		}
 
-//		if (newStateValue != _state.value) {
-//			_state.value = newStateValue;
-//			setChanged();
-//			notifyObservers(_state);
-//		}
-
-		_state.setValue(newStateValue);
-
-		_logger.debug("eval BEFORE [{}]", _state.value());
 		return _state.value();
+	}
+
+	@Override
+	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
+		long lastUpdate = _mechanism.getLastUpdate();
+
+		return _pdp.getDistributionManager().wasObservedInBetween(op,
+				lastUpdate - (_mechanism.getTimestepSize() * (_timeAmount.getTimestepInterval() + 1)),
+				lastUpdate - (_mechanism.getTimestepSize() * _timeAmount.getTimestepInterval()));
 	}
 }

@@ -44,9 +44,16 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public boolean wasTrueSince(IOperator operator, long since) {
+	public boolean wasObservedSince(IOperator operator, long since) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
-		_logger.error("wasTrueSince method invoked");
+		_logger.error("wasObservedSince method invoked");
+		return false;
+	}
+
+	@Override
+	public boolean wasObservedInBetween(IOperator operator, long from, long to) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("wasObservedInBetween method invoked");
 		return true;
 	}
 

@@ -103,20 +103,25 @@ public abstract class Operator extends Observable implements IOperator {
 
 	@Override
 	public final boolean evaluate(IEvent ev) {
+		boolean result = localEvaluation(ev);
+
 		if (Settings.getInstance().getDistributionEnabled()) {
-			return distributedEvaluation(ev);
+			result = distributedEvaluation(result, ev);
+			_logger.debug("distributedEvaluation({}): {}", this, result);
 		}
 		else {
-			return localEvaluation(ev);
+			_logger.debug("localEvaluation({}): {}", this, result);
 		}
+
+		return result;
 	}
 
 	protected boolean localEvaluation(IEvent ev) {
 		throw new UnsupportedOperationException("Calling localEvaluation() is only allowed on subtypes of " + Operator.class);
 	}
 
-	protected boolean distributedEvaluation(IEvent ev) {
-		return localEvaluation(ev);
+	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
+		return resultLocalEval;
 	}
 
 	@Override

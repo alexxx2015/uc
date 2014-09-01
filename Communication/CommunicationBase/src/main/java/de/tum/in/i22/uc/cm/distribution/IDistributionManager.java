@@ -25,5 +25,7 @@ public interface IDistributionManager {
 
 	void update(IResponse res);
 
-	boolean wasTrueSince(IOperator operator, long since);
+	boolean wasObservedSince(IOperator operator, long since);
+
+	boolean wasObservedInBetween(IOperator operator, long from, long to);
 }

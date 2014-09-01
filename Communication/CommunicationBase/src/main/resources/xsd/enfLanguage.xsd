@@ -60,7 +60,7 @@
 
 	<complexType name="ConditionType">
 		<sequence>
-			<group ref="tns:Operators" minOccurs="1" maxOccurs="1" />
+			<group ref="tns:Operators" />
 		</sequence>
 	</complexType>
 

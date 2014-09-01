@@ -27,31 +27,38 @@ public class TimeAmount {
 		return _timestepInterval;
 	}
 
+	public long getAmount() {
+		return _amount;
+	}
+
+	public long getInterval() {
+		return _interval;
+	}
+
 	public static long getTimeUnitMultiplier(TimeUnitType tu) {
 		if (tu == null) {
 			_logger.warn("Cannot calculate timeUnit-multiplier for null!");
 			return 1;
 		}
 		switch (tu) {
-		case MICROSECONDS:
-			return 1;
 		case MILLISECONDS:
-			return 1000;
+			return 1;
 		case SECONDS:
-			return 1000000;
+			return 1000;
 		case MINUTES:
-			return 60000000;
+			return 60000;
 		case HOURS:
-			return 3600000000L;
+			return 3600000L;
 		case DAYS:
-			return 86400000000L;
+			return 86400000L;
 		case WEEKS:
-			return 604800000000L;
+			return 604800000L;
 		case MONTHS:
-			return 2592000000000L;
+			return 2592000000L;
 		case YEARS:
-			return 31104000000000L;
+			return 31104000000L;
 		case NANOSECONDS:
+		case MICROSECONDS:
 		case TIMESTEPS:
 		default:
 			_logger.warn("Unexpected (unsupported) timeunit found: ", tu.value());

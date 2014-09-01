@@ -51,7 +51,7 @@ class CassandraDistributionManager implements IDistributionManager {
 //	private static final String TABLE_NAME_STATES = "operatorstates";
 //	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
 //	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
-	private static final String TABLE_NAME_OP_TRUE = "optrue";
+	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
 
 
 	private static final List<String> _tables;
@@ -65,7 +65,7 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "PRIMARY KEY (data)"
 						+ ");");
 		_tables.add(
-				"CREATE TABLE " + TABLE_NAME_OP_TRUE + " ("
+				"CREATE TABLE " + TABLE_NAME_OP_OBSERVED + " ("
 						+ "opid text,"
 						+ "location text,"
 						+ "time timeuuid,"
@@ -199,7 +199,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				try {
 					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
 
-					if (remotePmp.deployPolicyRawXMLPmp(policy.getXml()).getEStatus() != EStatus.OKAY) {
+					if (!remotePmp.deployPolicyRawXMLPmp(policy.getXml()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
 
@@ -425,7 +425,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		for (EventMatchOperator event : res.getEventMatches()) {
 			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
+			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
 					+ "'" + event.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
@@ -435,9 +435,9 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
-			_logger.info("UPDATING CASSANDRA STATE: state based operator turned true: {}", sbo.getFullId());
+			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
+			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
 					+ "'" + sbo.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
@@ -476,11 +476,22 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueSince(IOperator operator, long since) {
-		_logger.debug("wasTrueSince {} {}", operator, since);
-		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_TRUE
+	public boolean wasObservedSince(IOperator operator, long since) {
+		_logger.debug("wasObservedSince({}, {})", operator, since);
+		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;").isExhausted();
+	}
+
+
+	@Override
+	public boolean wasObservedInBetween(IOperator operator, long from, long to) {
+		_logger.debug("wasObservedInBetween({}, {}, {})", operator, from, to);
+		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
+				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
+				+ " LIMIT 1;").isExhausted();
 	}
 }

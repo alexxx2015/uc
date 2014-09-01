@@ -338,7 +338,7 @@ public class PmpHandler extends PmpProcessor {
 			try {
 				return deployPolicyRawXMLPmp(Files.toString(new File(policyFilePath), Charset.defaultCharset()));
 			} catch (Exception e) {
-				_logger.warn("Error deploying policy {}: {}", policyFilePath, e);
+				return new StatusBasic(EStatus.ERROR, e.getMessage());
 			}
 		}
 		return new StatusBasic(EStatus.ERROR, "Error while loading policy file " + policyFilePath);
@@ -379,15 +379,15 @@ public class PmpHandler extends PmpProcessor {
 	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
-		
-		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy); 
+
+		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
 		if(translationResponse.getStatus().equals(EStatus.ERROR))
 			return translationResponse;
-		
+
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
-		
+
 		IStatus deploymentStatus = this.deployPolicyXMLPmp(translatedPolicy);
-		
+
 		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy);
 		return deploymentResponse;
 	}
