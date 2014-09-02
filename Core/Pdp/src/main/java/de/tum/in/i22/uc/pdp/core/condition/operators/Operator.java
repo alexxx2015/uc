@@ -18,10 +18,19 @@ public abstract class Operator extends Observable implements IOperator {
 	protected static final Logger _logger = LoggerFactory.getLogger(Operator.class);
 
 	protected PolicyDecisionPoint _pdp;
-	protected OperatorState _state;
-	protected DistributedOperatorState _dstate;
+//	private OperatorState _state;
 	protected IMechanism _mechanism;
 
+	/**
+	 * The parent operator, or null for the root node.
+	 */
+	private Operator _parent;
+
+	/**
+	 * Time to live; i.e. how long _each_ state of this {@link Operator} must not be deleted.
+	 * Specified in milliseconds.
+	 */
+	protected long _ttl;
 
 	/**
 	 * Internal identifier for this {@link IOperator}, assigned
@@ -41,7 +50,11 @@ public abstract class Operator extends Observable implements IOperator {
 	public Operator() {
 	}
 
-	public void init(Mechanism mech) {
+	public final void init(Mechanism mechanism) {
+		init(mechanism, null, Long.MIN_VALUE);
+	}
+
+	protected void init(Mechanism mech, Operator parent, long ttl) {
 		if (mech == null) {
 			throw new NullPointerException("Provided mechanism was null.");
 		}
@@ -54,12 +67,13 @@ public abstract class Operator extends Observable implements IOperator {
 
 		_pdp = mech.getPolicyDecisionPoint();
 		_mechanism = mech;
+		_parent = parent;
+		_ttl = ttl;
 
-		_state = new OperatorState(this);
+//		_state = new OperatorState(this);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
 			this.addObserver(_pdp);
-			_dstate = new DistributedOperatorState(this, _pdp.getDistributionManager());
 		}
 	}
 
@@ -74,7 +88,7 @@ public abstract class Operator extends Observable implements IOperator {
 		initId(0);
 	}
 
-	int initId(int id) {
+	protected int initId(int id) {
 		// By default, no ID is set for an Operator, and, subsequently,
 		// all of its children
 		return id;
@@ -97,7 +111,7 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	@Override
-	public IMechanism getMechanism() {
+	public final IMechanism getMechanism() {
 		return _mechanism;
 	}
 
@@ -125,7 +139,7 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj instanceof Operator) {
 			return Objects.equals(_fullId, ((Operator) obj)._fullId);
 		}
@@ -133,7 +147,17 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return Objects.hash(_fullId);
+	}
+
+	/**
+	 * Returns the Time to live (TTL) of this {@link Operator}.
+	 * The TTL specifies how long _each_ state of this {@link Operator} must not be deleted.
+	 * Specified in milliseconds.
+	 * @return the time-to-live value of this {@link Operator}.
+	 */
+	public final long getTTL() {
+		return _ttl;
 	}
 }

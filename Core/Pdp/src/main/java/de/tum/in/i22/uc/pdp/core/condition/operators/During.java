@@ -14,24 +14,33 @@ public class During extends DuringType {
 
 	private Operator op;
 
+	private long _initialCounterValue;
+
+	private long _stateCounter;
+
 	public During() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
 
 		op = (Operator) operators;
 
-		// for evaluation without history set counter to interval for DURING
-		_state.setCounter(timeAmount.getTimestepInterval() + 1);
+		_initialCounterValue = timeAmount.getTimestepInterval() + 1;
 
-		op.init(mech);
+		/*
+		 * The During Operator evaluates to true,
+		 * if this counter reaches a value of 0.
+		 */
+		_stateCounter = _initialCounterValue;
+
+		op.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -41,37 +50,40 @@ public class During extends DuringType {
 
 	@Override
 	public String toString() {
-		return "DURING (" + timeAmount + ", " + op + " )";
+		return "DURING(" + timeAmount + "," + op + " )";
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
-		_logger.trace("current state counter: {}", _state.getCounter());
-		if (_state.getCounter() == 0)
-			_state.setValue(true);
-		else
-			_state.setValue(false);
+	protected boolean localEvaluation(IEvent ev) {
+		_logger.trace("Current state counter: {}", _stateCounter);
 
-		if (curEvent == null) {
-			boolean operandValue = op.evaluate(curEvent);
-			if (!operandValue) {
-				_state.setCounter(timeAmount.getTimestepInterval() + 1);
-				_logger.debug("[DURING] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-						_state.getCounter(), operandValue);
-			} else {
-				if (_state.getCounter() > 0)
-					_state.decCounter();
-				_logger.debug("[DURING} New state counter: [{}]", _state.getCounter());
+		if (ev == null) {
+			/*
+			 * We are updating at the end of a timestep
+			 */
+
+			if (op.evaluate(null)) {
+				/*
+				 * Subformula evaluated to true.
+				 * Decrement the counter if it is still positive.
+				 */
+				if (_stateCounter > 0) {
+					_stateCounter--;
+				}
+				_logger.debug("Subformula evaluated to true. Decrementing counter to {}.", _stateCounter);
 			}
+			else {
+				/*
+				 * Subformula evaluated to false.
+				 * Reset the counter to the initial value.
+				 */
+				_stateCounter = _initialCounterValue;
+				_logger.debug("Subformula evaluated to false. Resetting counter to {}.", _initialCounterValue);
 
-			// update state->value for logging output
-			if (_state.getCounter() == 0)
-				_state.setValue(true);
-			else
-				_state.setValue(false);
+			}
 		}
 
-		_logger.debug("eval DURING [{}]", _state.value());
-		return _state.value();
+		// The result is true, if the counter reaches 0.
+		return (_stateCounter == 0);
 	}
 }

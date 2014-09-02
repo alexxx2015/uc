@@ -18,8 +18,8 @@ public class OSLImplies extends ImpliesType {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
@@ -28,12 +28,12 @@ public class OSLImplies extends ImpliesType {
 			throw new IllegalStateException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
 
-		op1.init(mech);
-		op2.init(mech);
+		op1.init(mech, this, ttl);
+		op2.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op1.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -52,8 +52,7 @@ public class OSLImplies extends ImpliesType {
 		 */
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
-		_state.setValue(!op1state || op2state);
-		_logger.debug("eval IMPLIES [{}]", _state.value());
-		return _state.value();
+
+		return !op1state || op2state;
 	}
 }

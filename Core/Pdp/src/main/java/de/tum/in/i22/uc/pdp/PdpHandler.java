@@ -187,7 +187,7 @@ public class PdpHandler extends PdpProcessor implements Observer {
 				new Thread() {
 					@Override
 					public void run() {
-						_distributionManager.register(((PolicyType) arg).getName());
+						_distributionManager.registerPolicy(((PolicyType) arg).getName());
 					}
 				}.start();
 			}

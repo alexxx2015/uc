@@ -25,8 +25,8 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -159,7 +159,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(String policyName) {
+	public void registerPolicy(String policyName) {
 		createPolicyKeyspace(policyName.toLowerCase());
 	}
 
@@ -422,6 +422,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		DistributedPdpResponse res = (DistributedPdpResponse) response;
 
+		_defaultSession.execute("BEGIN UNLOGGED BATCH");
+
 		for (EventMatchOperator event : res.getEventMatches()) {
 			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
 
@@ -444,6 +446,8 @@ class CassandraDistributionManager implements IDistributionManager {
 					+ "now()"
 					+ ");");
 		}
+
+		_defaultSession.execute("APPLY BATCH;");
 
 
 
@@ -476,22 +480,34 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasObservedSince(IOperator operator, long since) {
-		_logger.debug("wasObservedSince({}, {})", operator, since);
-		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+	public boolean wasTrueSince(LiteralOperator operator, long since) {
+		_logger.debug("wasTrueSince({}, {})", operator, since);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
-						+ " LIMIT 1;").isExhausted();
+						+ " LIMIT 1;");
+		if (operator.isPositive()) {
+			return !rs.isExhausted();
+		}
+		else {
+			return rs.isExhausted();
+		}
 	}
 
 
 	@Override
-	public boolean wasObservedInBetween(IOperator operator, long from, long to) {
-		_logger.debug("wasObservedInBetween({}, {}, {})", operator, from, to);
-		return !_defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+	public boolean wasTrueInBetween(LiteralOperator operator, long from, long to) {
+		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
-				+ " LIMIT 1;").isExhausted();
+				+ " LIMIT 1;");
+		if (operator.isPositive()) {
+			return !rs.isExhausted();
+		}
+		else {
+			return rs.isExhausted();
+		}
 	}
 }

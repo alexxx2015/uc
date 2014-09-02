@@ -13,18 +13,25 @@ public class RepSince extends RepSinceType {
 	private Operator op1;
 	private Operator op2;
 
+	long _counter = 0;
+	boolean _value = false;
+	boolean _subEverTrue = false;
+
 	public RepSince() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
+
+		op1.init(mech, this, ttl);
+		op2.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op1.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -34,63 +41,42 @@ public class RepSince extends RepSinceType {
 
 	@Override
 	public String toString() {
-		return "REPSINCE (" + this.getLimit() + ", " + op1 + ", " + op2 + " )";
+		return "REPSINCE (" + getLimit() + ", " + op1 + ", " + op2 + " )";
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) { // repsince(n, A, B); // n = limit
+	protected boolean localEvaluation(IEvent ev) { // repsince(n, A, B); // n = limit
 												// / A = op1 / B = op2
 												// B(n) >= limit n times
 												// subformula B since the last
 												// occurrence of subformula A
-		Boolean operand1state = op1.evaluate(curEvent);
-		Boolean operand2state = op2.evaluate(curEvent);
+		boolean operand1state = op1.evaluate(ev);
+		boolean operand2state = op2.evaluate(ev);
 
 		if (operand1state) {
 			_logger.debug("[REPSINCE] Subformula A satisfied this timestep => TRUE");
-			this._state.setValue(true);
+			_value = true;
 		} else {
-			long limitComparison = this._state.getCounter() + (operand2state ? 1 : 0);
-			_logger.debug("[REPSINCE] Counter for subformula B [{}]", limitComparison);
+			long limitComparison = _counter + (operand2state ? 1 : 0);
 
-			if (this._state.isSubEverTrue()) {
-				_logger.debug("[REPSINCE] Subformula A was satisfied any previous timestep");
-				if (limitComparison <= this.getLimit()) {
-					_logger.debug("[REPSINCE] Amount of occurrences of subformula B <= limit ==> TRUE");
-					this._state.setValue(true);
-				} else {
-					_logger.debug("[REPSINCE] Occurrence limitation exceeded! ==> FALSE");
-					this._state.setValue(false);
-				}
-			} else {
-				_logger.debug("[REPSINCE] Subformula A NOT satisfied this timestep or any previous timestep");
-				if (limitComparison <= this.getLimit()) {
-					_logger.debug("[REPSINCE] Global amount of occurrences of subformula B <= limit ==> TRUE");
-					this._state.setValue(true);
-				} else {
-					_logger.debug("[REPSINCE] Global occurrence limitation exceeded! ==> FALSE");
-					this._state.setValue(false);
-				}
-
-			}
+			_value = (limitComparison <= limit);
+			_logger.debug("[REPSINCE] Subformula A was " + (_subEverTrue ? "satisfied" : "NOT satisfied this timestep or") +
+					" any previous timestep. B happened {} times.", limitComparison);
 		}
 
-		if (curEvent == null) {
+		if (ev == null) {
 			if (operand1state) {
-				_logger.debug("[REPSINCE] Subformula A satisfied this timestep => setting flag and resetting counter");
-				this._state.setSubEverTrue();
-
-				this._state.setCounter(0);
-				_logger.debug("[REPSINCE] Counter for subformula B [{}]", this._state.getCounter());
+				_subEverTrue = true;
+				_counter = 0;
+				_logger.debug("[REPSINCE] Subformula A satisfied this timestep => setting flag and resetting counter to 0.");
 			}
 
 			if (operand2state) {
-				this._state.incCounter();
-				_logger.debug("[REPSINCE] Counter for subformula B [{}]", this._state.getCounter());
+				_counter++;
+				_logger.debug("[REPSINCE] Counter for subformula B: {}.", _counter);
 			}
 		}
 
-		_logger.debug("eval REPSINCE [{}]", this._state.value());
-		return this._state.value();
+		return _value;
 	}
 }

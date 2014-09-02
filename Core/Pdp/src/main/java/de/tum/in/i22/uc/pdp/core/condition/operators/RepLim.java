@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
@@ -13,23 +14,29 @@ public class RepLim extends RepLimType {
 	private TimeAmount timeAmount = null;
 	private Operator op;
 
+	private long _stateCounter = 0;
+	private CircularArray<Boolean> _stateCircArray;
+
 	public RepLim() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-		this._state.newCircArray(this.timeAmount.getTimestepInterval());
-		for (int a = 0; a < this.timeAmount.getTimestepInterval(); a++)
-			this._state.getCircArray().set(false, a);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
+
+		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
+
+		_stateCircArray = new CircularArray<>(timeAmount.getTimestepInterval());
+		for (int a = 0; a < timeAmount.getTimestepInterval(); a++) {
+			_stateCircArray.set(false, a);
+		}
 
 		op = (Operator) operators;
-		op.init(mech);
+		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + mech.getTimestepSize()));
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -38,35 +45,35 @@ public class RepLim extends RepLimType {
 
 	@Override
 	public String toString() {
-		return "REPLIM (" + this.timeAmount + ", " + op + " )";
+		return "REPLIM(" + timeAmount + ", " + op + " )";
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
-		_logger.debug("circularArray: {}", this._state.getCircArray());
-		if (this._state.getCounter() >= this.getLowerLimit() && this._state.getCounter() <= this.getUpperLimit())
-			this._state.setValue(true);
-		else
-			this._state.setValue(false);
+	protected boolean localEvaluation(IEvent ev) {
+		_logger.debug("circularArray: {}", _stateCircArray);
 
-		if (curEvent == null) {
-			Boolean curValue = this._state.getCircArray().pop();
-			if (curValue) {
-				this._state.decCounter();
-				_logger.debug("[REPLIM] Decrementing counter to [{}]", this._state.getCounter());
+		boolean result = (_stateCounter >= lowerLimit && _stateCounter <= upperLimit);
+
+		if (ev == null) {
+			/*
+			 * We are evaluating at the end of a timestep
+			 */
+
+			if (_stateCircArray.pop()) {
+				_stateCounter--;
+				_logger.debug("Oldest value was true. Removing it. Therefore also decrementing counter to {}.", _stateCounter);
 			}
 
-			Boolean operandState = op.evaluate(curEvent);
+			boolean operandState = op.evaluate(null);
 			if (operandState) {
-				this._state.incCounter();
-				_logger.debug("[REPLIM] Incrementing counter to [{}] due to intercepted event", this._state.getCounter());
+				_stateCounter++;
+				_logger.debug("Current value is true. Therefore incrementing counter to {}.", _stateCounter);
 			}
 
-			this._state.getCircArray().push(operandState);
-			_logger.debug("circularArray: {}", this._state.getCircArray());
+			_stateCircArray.push(operandState);
+			_logger.debug("circularArray: {}", _stateCircArray);
 		}
 
-		_logger.debug("eval REPLIM [{}]", this._state.value());
-		return this._state.value();
+		return result;
 	}
 }

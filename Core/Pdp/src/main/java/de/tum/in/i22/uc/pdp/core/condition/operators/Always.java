@@ -12,18 +12,21 @@ public class Always extends AlwaysType {
 
 	private Operator op;
 
+	private boolean _immutable = false;
+	private boolean _value = false;
+
 	public Always() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 		op = ((Operator) operators);
-		op.init(mech);
+		op.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -38,21 +41,16 @@ public class Always extends AlwaysType {
 	@Override
 	protected boolean localEvaluation(IEvent ev) {
 		// If immutable, then there is nothing to do. State remains as-is.
-		if (!_state.isImmutable()) {
-			_state.setValue(op.evaluate(ev));
+		if (!_immutable) {
+			_value = op.evaluate(ev);
 
 			// if state turns false, then the formula will always be violated from now on.
-			if (!_state.value() && ev == null) {
+			if (!_value && ev == null) {
 				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
-				_state.setImmutable(true);
+				_immutable = true;
 			}
 		}
 
-		return _state.value();
-	}
-
-	@Override
-	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-		return false;
+		return _value;
 	}
 }

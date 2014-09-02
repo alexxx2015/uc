@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -21,11 +21,11 @@ public interface IDistributionManager {
 	 * Method to be invoked whenever a new policy name ought to be managed.
 	 * @param policyName the name of the policy to be managed.
 	 */
-	public void register(String policyName);
+	public void registerPolicy(String policyName);
 
 	void update(IResponse res);
 
-	boolean wasObservedSince(IOperator operator, long since);
+	boolean wasTrueSince(LiteralOperator operator, long since);
 
-	boolean wasObservedInBetween(IOperator operator, long from, long to);
+	boolean wasTrueInBetween(LiteralOperator operator, long from, long to);
 }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
@@ -18,8 +19,8 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
@@ -28,12 +29,12 @@ public class OSLAnd extends AndType {
 			ensureDNF();
 		}
 
-		op1.init(mech);
-		op2.init(mech);
+		op1.init(mech, this, ttl);
+		op2.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op1.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -53,10 +54,7 @@ public class OSLAnd extends AndType {
 		boolean op1state = op1.evaluate(curEvent);
 		boolean op2state = op2.evaluate(curEvent);
 
-		_state.setValue(op1state && op2state);
-
-		_logger.debug("eval AND [{}]", _state.value());
-		return _state.value();
+		return op1state && op2state;
 	}
 
 

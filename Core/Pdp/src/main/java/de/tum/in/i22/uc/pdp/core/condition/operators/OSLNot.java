@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
@@ -17,8 +18,8 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 
 		op = (Operator) operators;
 
@@ -26,7 +27,7 @@ public class OSLNot extends NotType {
 			ensureDNF();
 		}
 
-		op.init(mech);
+		op.init(mech, this, ttl);
 	}
 
 	/**
@@ -45,7 +46,7 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -54,14 +55,11 @@ public class OSLNot extends NotType {
 
 	@Override
 	public String toString() {
-		return "! " + op;
+		return "!(" + op + ")";
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
-		_state.setValue(!op.evaluate(curEvent));;
-
-		_logger.debug("eval NOT [{}]", _state.value());
-		return _state.value();
+	protected boolean localEvaluation(IEvent ev) {
+		return !op.evaluate(ev);
 	}
 }

@@ -100,6 +100,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return _triggerEvent;
 	}
 
+	@Override
 	public long getTimestepSize() {
 		return _timestepSize;
 	}
@@ -165,11 +166,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		_timestep++;
 		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
-		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep,
-				_timestepSize);
+		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
 
 		boolean conditionValue = _condition.evaluate(null);
-		_logger.debug("conditionValue: {}", conditionValue);
 		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
 
 		setChanged();

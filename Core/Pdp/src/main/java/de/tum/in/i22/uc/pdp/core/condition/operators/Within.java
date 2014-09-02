@@ -10,25 +10,45 @@ import de.tum.in.i22.uc.pdp.xsd.WithinType;
 
 public class Within extends WithinType {
 	private static Logger _logger = LoggerFactory.getLogger(Within.class);
-	private TimeAmount timeAmount = null;
+	private TimeAmount _timeAmount = null;
 
 	private Operator op;
+
+	private long _maxCounterValue;
+
+	private long _stateCounter;
 
 	public Within() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 
-		op = (Operator) this.getOperators();
+		op = (Operator) getOperators();
 
-		this.timeAmount = new TimeAmount(this.getAmount(), this.getUnit(), mech.getTimestepSize());
-		op.init(mech);
+		if (amount <= 0) {
+			throw new IllegalArgumentException("Amount must be positive.");
+		}
+
+		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		if (_timeAmount.getTimestepInterval() <= 0) {
+			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
+		}
+
+		_maxCounterValue = _timeAmount.getTimestepInterval() + 1;
+
+		/*
+		 * The Within Operator evaluates to true,
+		 * if this counter has a value larger than 0.
+		 */
+		_stateCounter = 0;
+
+		op.init(mech, this, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -37,38 +57,38 @@ public class Within extends WithinType {
 
 	@Override
 	public String toString() {
-		return "WITHIN (" + this.timeAmount + ", " + op + " )";
+		return "WITHIN(" + _timeAmount + "," + op + " )";
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
-		_logger.debug("[WITHIN] Current state counter=[{}]", this._state.getCounter());
-		if (this._state.getCounter() > 0)
-			this._state.setValue(true);
-		else
-			this._state.setValue(false);
+	protected boolean localEvaluation(IEvent ev) {
+		_logger.trace("Current state counter: {}", _stateCounter);
 
-		if (curEvent == null) {
-			boolean operandValue = op.evaluate(curEvent);
-			if (operandValue) {
-				this._state.setCounter(this.timeAmount.getTimestepInterval() + 1);
-				_logger.debug("[WITHIN] Set negative counter to interval=[{}] due to subformulas state value=[{}]",
-						this._state.getCounter(), operandValue);
+		if (ev == null) {
+			/*
+			 * We are updating at the end of a timestep
+			 */
+
+			if (op.evaluate(ev)) {
+				/*
+				 * Subformula evaluated to true.
+				 * Set the counter to its maximum value.
+				 */
+				_stateCounter = _maxCounterValue;
+				_logger.debug("Subformula evaluated to true. Resetting counter to {}.", _maxCounterValue);
 			} else {
-				if (this._state.getCounter() > 0)
-					this._state.decCounter();
-				_logger.debug("[WITHIN} New state counter: [{}]", this._state.getCounter());
+				/*
+				 * Subformula evaluated to false.
+				 * Decrement the counter, if still greather than 0.
+				 */
+				if (_stateCounter > 0) {
+					_stateCounter--;
+				}
+				_logger.debug("Subformula evaluated to false. Decrementing counter to {}.", _stateCounter);
 			}
-
-			// update state->value for logging output
-			if (this._state.getCounter() > 0)
-				this._state.setValue(true);
-			else
-				this._state.setValue(false);
 		}
 
-		_logger.debug("eval WITHIN [{}]", this._state.value());
-		return this._state.value();
+		// The result is true, if the counter is greater than 0
+		return (_stateCounter > 0);
 	}
-
 }

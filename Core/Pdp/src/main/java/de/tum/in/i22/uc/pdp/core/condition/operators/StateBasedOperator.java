@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
@@ -22,12 +23,12 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = id + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -66,23 +67,28 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 			result = pip.evaluatePredicateSimulatingNextState(ev, p);
 		}
 
-		if (result) {
-			if (operator.equals(OP_IS_COMBINED_WITH)) {
-				/*
-				 * Notify observers that 'isCombinedWith' turned true.
-				 */
-				setChanged();
-				notifyObservers();
-			}
+
+		/* TODO
+		 * Alternatively:
+		 * if (result == isPositive()) {
+		 *   setChanged();
+		 *   notifyObservers();
+		 * }
+		 * Done.
+		 */
+		if (result && isPositive()) {
+			/*
+			 * Notify observers that a 'positive' state based operator turned true.
+			 */
+			setChanged();
+			notifyObservers();
 		}
-		else {
-			if (operator.equals(OP_IS_NOT_IN)) {
-				/*
-				 * Notify observers that 'isNotIn' turned false.
-				 */
-				setChanged();
-				notifyObservers();
-			}
+		else if (!result && !isPositive()) {
+			/*
+			 * Notify observers that 'non-positive' state based operators turned false.
+			 */
+			setChanged();
+			notifyObservers();
 		}
 
 		return result;
@@ -92,44 +98,46 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
 		boolean result = resultLocalEval;
 
-		if (resultLocalEval) {
+		/* TODO
+		 * Alternatively:
+		 * if (resultLocalEval != isPositive()) {
+		 *   ...
+		 * }
+		 * Done.
+		 */
+		if (resultLocalEval && !isPositive()) {
 			/*
 			 * The Operator is locally satisfied. This implies global satisfaction
 			 * for 'isCombinedWith' according to CANS'14.
 			 * However, for 'isNotIn', it might be the case that the operator is violated
-			 * remotely. Thus, we need to ask the DitributionManager.
+			 * remotely. Thus, we need to ask the DistributionManager.
+			 * Note: isNotIn is signaled to the DistributionManager if it is _false_.
 			 */
-			if (operator.equals("isNotIn")) {
-				/*
-				 * Note: isNotIn is signaled to the DistributionManager if it is _false_.
-				 * Therefore, if we get a _positive_ result (i.e. true) from the below query, this means that
-				 * isNotIn was _false_. In this case, the overall result is false.
-				 */
-				if (_pdp.getDistributionManager().wasObservedSince(this, _mechanism.getLastUpdate())) {
-					result = false;
-				}
-				else {
-					result = true;
-				}
-			}
+			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
 		}
-		else {
+		else if (!resultLocalEval && isPositive()) {
 			/*
 			 * The operator is locally violated. This implies global violation for
 			 * 'isNotIn' according to CANS'14.
 			 * However, for 'isCombinedWith', it might be the case that the operator
-			 * is satisfied remotely. Thus, we need to ask the DitributionManager.
+			 * is satisfied remotely. Thus, we need to ask the DistributionManager.
 			 */
-			if (operator.equals("isCombinedWith")) {
-				if (_pdp.getDistributionManager().wasObservedSince(this, _mechanism.getLastUpdate())) {
-					result = true;
-				}
-				else {
-					result  = false;
-				}
-			}
+			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
 		}
 
 		return result;
+	}
+
+	@Override
+	public boolean isPositive() {
+		switch (operator) {
+			case OP_IS_COMBINED_WITH:
+				return true;
+			case OP_IS_NOT_IN:
+			case OP_IS_ONLY_IN:
+				return false;
+			default:
+				throw new UnsupportedOperationException("Unknown Predicate type: " + operator);
+		}
 	}
 }

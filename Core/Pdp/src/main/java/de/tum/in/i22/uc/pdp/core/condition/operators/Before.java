@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core.condition.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
@@ -14,12 +15,14 @@ public class Before extends BeforeType {
 
 	private Operator op;
 
+	private CircularArray<Boolean> _statCircArray;
+
 	public Before() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 
 		op = ((Operator) operators);
 
@@ -32,16 +35,16 @@ public class Before extends BeforeType {
 			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
 		}
 
-		_state.newCircArray(_timeAmount.getTimestepInterval());
+		_statCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
-			_state.getCircArray().set(false, a);
+			_statCircArray.set(false, a);
 		}
 
-		op.init(mech);
+		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = op.initId(id) + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -54,34 +57,34 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
+	protected boolean localEvaluation(IEvent ev) {
 		// before = at (currentTime - interval) operand was true
-		_logger.debug("circularArray: {}", _state.getCircArray());
+		_logger.debug("circularArray: {}", _statCircArray);
 
 		// Look at the first entry of the array. The retrieved value
 		// corresponds to the result of the evaluation at this point in time.
-		_state.setValue(_state.getCircArray().peek());
+		boolean result = _statCircArray.peek();
 
-		if (curEvent == null) {
+		if (ev == null) {
 			// If we are evaluating at the end of a timestep, then
 			// (1) remove the first entry
 			// (2) evaluate the internal operand at this point in time
 			//     and push the result to the array
-			_state.getCircArray().pop();
-			_state.getCircArray().push(op.evaluate(null));
+			_statCircArray.pop();
+			_statCircArray.push(op.evaluate(null));
 
-			_logger.debug("circularArray: {}", _state.getCircArray());
+			_logger.debug("circularArray: {}", _statCircArray);
 		}
 
-		return _state.value();
+		return result;
 	}
 
-	@Override
-	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-		long lastUpdate = _mechanism.getLastUpdate();
-
-		return _pdp.getDistributionManager().wasObservedInBetween(op,
-				lastUpdate - (_mechanism.getTimestepSize() * (_timeAmount.getTimestepInterval() + 1)),
-				lastUpdate - (_mechanism.getTimestepSize() * _timeAmount.getTimestepInterval()));
-	}
+//	@Override
+//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
+//		long lastUpdate = _mechanism.getLastUpdate();
+//
+//		return _pdp.getDistributionManager().wasTrueInBetween(op,
+//				lastUpdate - (_mechanism.getTimestepSize() * (_timeAmount.getTimestepInterval() + 1)),
+//				lastUpdate - (_mechanism.getTimestepSize() * _timeAmount.getTimestepInterval()));
+//	}
 }

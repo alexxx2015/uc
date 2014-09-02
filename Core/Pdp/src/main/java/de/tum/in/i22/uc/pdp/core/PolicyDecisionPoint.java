@@ -140,8 +140,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 						allMechanisms.put(mech.getName(), curMechanism);
 						new Thread(curMechanism).start();
 					} else {
-						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(),
-								policyName);
+						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
 					}
 				} catch (InvalidMechanismException e) {
 					_logger.error("Invalid mechanism specified: {}", e.getMessage());

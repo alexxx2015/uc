@@ -4,23 +4,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public class EventMatchOperator extends EventMatch implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
 
+	private boolean _value = false;
+
 	public EventMatchOperator() {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 		_pdp.addEventMatch(this);
 	}
 
 	@Override
-	int initId(int id) {
+	protected int initId(int id) {
 		_id = id + 1;
 		setFullId(_id);
 		_logger.debug("My [{}] id is {}.", this, getFullId());
@@ -40,8 +43,8 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			 * next timestep by resetting the state to false, indicating
 			 * that the event did not yet happen.
 			 */
-			result = _state.value();
-			_state.setValue(false);
+			result = _value;
+			_value = false;
 		}
 		else {
 			/*
@@ -54,13 +57,13 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 			 * matches, if the current state is false. Otherwise, a matching
 			 * event happened earlier within this timestep and the state is true anyway.
 			 */
-			if (!_state.value() && ev.isActual() && matches(ev)) {
-				_state.setValue(true);
+			if (!_value && ev.isActual() && matches(ev)) {
+				_value = true;
 
 				setChanged();
 				notifyObservers();
 			}
-			result = _state.value();
+			result = _value;
 		}
 
 		return result;
@@ -68,11 +71,29 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 
 	@Override
 	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-		/*
-		 * Ask the DistributionManager whether this event
-		 * happened earlier within this timestep remotely.
-		 *
-		 */
-		return _pdp.getDistributionManager().wasObservedSince(this, _mechanism.getLastUpdate());
+		boolean result = resultLocalEval;
+
+		if (!resultLocalEval) {
+			/*
+			 * The event did not happen locally. Therefore, ask the DistributionManager
+			 * whether the event happened remotely. If so, the result is true.
+			 * If we are evaluating in the presence of an event, i.e. _not_ at the end
+			 * of a timestep, we set the state value to true for further lookups.
+			 */
+			if (_pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate())) {
+				result = true;
+
+				if (ev != null) {
+					_value = true;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean isPositive() {
+		return true;
 	}
 }

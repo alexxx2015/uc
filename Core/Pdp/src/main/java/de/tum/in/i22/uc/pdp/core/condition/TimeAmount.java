@@ -11,6 +11,10 @@ public class TimeAmount {
 	private final long _amount;
 
 	private final String _unit;
+
+	/**
+	 * The interval in milliseconds
+	 */
 	private final long _interval;
 	private final long _timestepInterval;
 
@@ -27,34 +31,42 @@ public class TimeAmount {
 		return _timestepInterval;
 	}
 
+	/**
+	 * Returns the interval in milliseconds.
+	 * @return the interval in milliseconds.
+	 */
+	public long getInterval() {
+		return _interval;
+	}
+
 	public static long getTimeUnitMultiplier(TimeUnitType tu) {
 		if (tu == null) {
 			_logger.warn("Cannot calculate timeUnit-multiplier for null!");
 			return 1;
 		}
 		switch (tu) {
-		case MILLISECONDS:
-			return 1;
-		case SECONDS:
-			return 1000;
-		case MINUTES:
-			return 60000;
-		case HOURS:
-			return 3600000L;
-		case DAYS:
-			return 86400000L;
-		case WEEKS:
-			return 604800000L;
-		case MONTHS:
-			return 2592000000L;
-		case YEARS:
-			return 31104000000L;
-		case NANOSECONDS:
-		case MICROSECONDS:
-		case TIMESTEPS:
-		default:
-			_logger.warn("Unexpected (unsupported) timeunit found: ", tu.value());
-			return 1;
+			case MILLISECONDS:
+				return 1;
+			case SECONDS:
+				return 1000;
+			case MINUTES:
+				return 60000;
+			case HOURS:
+				return 3600000L;
+			case DAYS:
+				return 86400000L;
+			case WEEKS:
+				return 604800000L;
+			case MONTHS:
+				return 2592000000L;
+			case YEARS:
+				return 31104000000L;
+			case NANOSECONDS:
+			case MICROSECONDS:
+			case TIMESTEPS:
+			default:
+				_logger.warn("Unexpected (unsupported) timeunit found: ", tu.value());
+				return 1;
 		}
 	}
 
