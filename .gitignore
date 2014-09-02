@@ -5,3 +5,5 @@
 logging
 pipdb/
 derby.log
+log
+logs
