@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -16,6 +17,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -33,6 +35,8 @@ import org.xml.sax.SAXException;
 
 
 
+
+
 //import de.tum.in.i22.uc.blocks.controller.Config;
 import de.tum.in.i22.uc.policy.translation.ecacreation.SubformulaEvent;
 
@@ -42,6 +46,11 @@ public class PublicMethods {
 	public static String readFile(String path, Charset encoding) throws IOException {
 	  byte[] encoded = Files.readAllBytes(Paths.get(path));
 	  return encoding.decode(ByteBuffer.wrap(encoded)).toString();
+	}
+	
+	public static void writeFile(String path, String data) throws IOException {
+		String msg = data;
+		Files.write(Paths.get(path), msg.getBytes());
 	}
 	
 	/**
@@ -387,6 +396,16 @@ public class PublicMethods {
 				}
 			}
 		}
+	}
+	
+	public static String prettyPrint(Document xml) throws Exception {
+		Transformer tf = TransformerFactory.newInstance().newTransformer();
+		tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		tf.setOutputProperty(OutputKeys.INDENT, "yes");
+		Writer out = new StringWriter();
+		tf.transform(new DOMSource(xml), new StreamResult(out));
+		String prettyXML = out.toString();
+		return prettyXML;
 	}
 	
 	

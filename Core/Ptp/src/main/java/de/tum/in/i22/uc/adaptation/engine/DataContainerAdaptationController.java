@@ -1,10 +1,10 @@
-package de.tum.in.i22.uc.adaptation;
+package de.tum.in.i22.uc.adaptation.engine;
 
 import java.util.ArrayList;
 
 import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.utilities.PtpLogger;
 
@@ -60,6 +60,10 @@ public class DataContainerAdaptationController {
 		mergeDCRefinements(baseDm, newDm);
 		// see STEP 3
 		mergeData(baseDm, newDm);
+		
+		baseDm.getIsmLayer().filterDataContainerRefinements();
+		baseDm.getPsmLayer().filterDataContainerRefinements();
+		baseDm.getPimLayer().filterDataContainerRefinements();
 	}
 
 	/**
@@ -96,8 +100,8 @@ public class DataContainerAdaptationController {
 	 */
 	private void mergeDCLayer(LayerModel baseLayer, LayerModel newLayer) {
 		ArrayList<DataContainerModel> newContainers = newLayer.getDataContainers();
-		for(DataContainerModel dc : newContainers){
-			addNewContainerToBase(dc, baseLayer);
+		for(DataContainerModel newDc : newContainers){
+			addNewContainerToBase(newDc, baseLayer);
 		}
 	}
 
@@ -126,7 +130,7 @@ public class DataContainerAdaptationController {
 		if(existsDC == null){
 			existsDC = new DataContainerModel(newDc.getName(), newDc.getLayerType());
 			existsDC.setParenLayer(baseLayer);
-			baseLayerContainers.add(existsDC);
+			baseLayer.addDataContainer(existsDC);
 		}
 
 		//add associations links
@@ -144,8 +148,9 @@ public class DataContainerAdaptationController {
 	}
 
 	/**
-	 * PIM:
+	 * PIM: <br>
 	 * PSM: container checked based on name equality
+	 * <br>
 	 * ISM: container checked based on name equality
 	 * @param newDc
 	 * @param baseDc
@@ -159,11 +164,11 @@ public class DataContainerAdaptationController {
 			return true;
 		}
 		
-		// check the newName in the aliases of the base
+		// check the newName in the synonyms of the base
 		if(baseDc.alsoKnownAs(newName)){
 			return true;
 		}
-		// check the baseName in the aliases of the new
+		// check the baseName in the synonyms of the new
 		if(newDc.alsoKnownAs(baseName)){
 			return true;
 		}
@@ -208,7 +213,13 @@ public class DataContainerAdaptationController {
 		for(DataContainerModel newRef : newDc.getRefinements()){
 			DataContainerModel baseDcRef = baseDc.getRefinementByName(newRef.getName());
 			if(baseDcRef == null){
-				baseDcRef = baseDm.getLayer(baseDc.getLayerType()).getRefinementLayer().getDataContainer(newRef.getName());
+				if(newRef.getLayerType().equals(baseDc.getLayerType())){
+					// refinement at the same level
+					baseDcRef = baseDm.getLayer(baseDc.getLayerType()).getDataContainer(newRef.getName());
+				}
+				else {
+					baseDcRef = baseDm.getLayer(baseDc.getLayerType()).getRefinementLayer().getDataContainer(newRef.getName());
+				}
 				baseDc.addRefinement(baseDcRef);
 			}
 		}
@@ -265,47 +276,52 @@ public class DataContainerAdaptationController {
 		DataContainerModel existsDC = null;
 		float relationRatioMax = WordnetEngine.MAX_ALLOWED_DISTANCE; 
 
-		//TODO: to optimize search for string matching first. 
-		// you avoid conflicts of names in case of renaming.
+		//to optimize search for string matching first. 
 		
-		//find the closest match
+		//you avoid conflicts of names in case of renaming.
+		
+		//1. find the closest match - string
 		for(DataContainerModel baseDc : basePIM.getDataContainers()){
 			//check first if the names are equal or there is a match between the aliases
 			boolean similarContainer = isDataContainerSimilar(newDc, baseDc);
-			float relationRatio = relationRatioMax;
-			
 			if(similarContainer){
-				//skip the Wordnet search
-				relationRatio = WordnetEngine.EQUAL_DISTANCE;
+				//do nothing - container already exists in the base
+				existsDC = baseDc;					
+				break;
 			}
-			else {
+		}
+		
+		if(existsDC == null){
+			//2. find the closest match - wordnet
+			float relationRatio = relationRatioMax;
+			for(DataContainerModel baseDc : basePIM.getDataContainers()){
 				//try to find some similarity between the concepts.
 				relationRatio = wordnetEngine.getDistance(newDc.getName(), baseDc.getName());
 				//search in the aliases only if there was no direct match between the names
 				if(relationRatio > WordnetEngine.EQUAL_DISTANCE){
-					float relationRatioAliasBase = wordnetEngine.getBestDistance(newDc.getName(), baseDc.getAliases());
-					float relationRatioAliasNew = wordnetEngine.getBestDistance(baseDc.getName(), newDc.getAliases());
+					float relationRatioAliasBase = wordnetEngine.getBestDistance(newDc.getName(), baseDc.getSynonyms());
+					float relationRatioAliasNew = wordnetEngine.getBestDistance(baseDc.getName(), newDc.getSynonyms());
 					if(relationRatioAliasBase < relationRatio)
 						relationRatio = relationRatioAliasBase;
 					if(relationRatioAliasNew < relationRatio)
 						relationRatio = relationRatioAliasBase;
 				}
-			}
-			
-			if(relationRatio == WordnetEngine.EQUAL_DISTANCE){
-				//do nothing - container already exists in the base
-				existsDC = baseDc;					
-				relationRatioMax = relationRatio;
-				break;
-			} else if (relationRatio < WordnetEngine.VERY_SIMILAR_DISTANCE){
-				//do nothing - container already exists in the base
-				if(relationRatio < relationRatioMax){
-					existsDC = baseDc;
+				
+				if(relationRatio == WordnetEngine.EQUAL_DISTANCE){
+					//do nothing - container already exists in the base
+					existsDC = baseDc;					
 					relationRatioMax = relationRatio;
-				}
-			}else {
-				if(relationRatio < relationRatioMax){
-					relationRatioMax = relationRatio;
+					break;
+				} else if (relationRatio < WordnetEngine.VERY_SIMILAR_DISTANCE){
+					//do nothing - container already exists in the base
+					if(relationRatio < relationRatioMax){
+						existsDC = baseDc;
+						relationRatioMax = relationRatio;
+					}
+				}else {
+					if(relationRatio < relationRatioMax){
+						relationRatioMax = relationRatio;
+					}
 				}
 			}
 		}
@@ -314,24 +330,24 @@ public class DataContainerAdaptationController {
 			//no relation was established. this is a new type of DATA
 			existsDC = new DataContainerModel(newDc.getName(), newDc.getLayerType());
 			existsDC.setParenLayer(basePIM);
-			for(String newAlias : newDc.getAliases()){
-				existsDC.addAliasName(newAlias);
+			for(String newAlias : newDc.getSynonyms()){
+				existsDC.addSynonym(newAlias);
 			}
 			basePIM.addDataContainer(existsDC);
 		}
 		else {
 			if(!existsDC.getName().equals(newDc.getName())){
-				existsDC.addAliasName(newDc.getName());
+				existsDC.addSynonym(newDc.getName());
 				//rename for the newDC to optimize the search
 				String newName = newDc.getName();
 				newDc.setName(existsDC.getName());
-				newDc.addAliasName(newName);
+				newDc.addSynonym(newName);
 				String logMsg = "similiratity found: (base-new) " + existsDC.getName() +"-"+ newName;
 				logger.infoLog(logMsg, null);
 			}
 				
-			for(String alias : newDc.getAliases()){
-				existsDC.addAliasName(alias);
+			for(String alias : newDc.getSynonyms()){
+				existsDC.addSynonym(alias);
 			}
 		}
 		

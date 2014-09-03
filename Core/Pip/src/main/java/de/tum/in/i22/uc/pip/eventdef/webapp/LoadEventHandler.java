@@ -37,10 +37,11 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 		}
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("app", "Thunderbird");
+		attributes.put("app", "IFSWebApp");
 		attributes.put("filename", filename);
-
-		return new ScopeBasic("TB loading file " + filename,
+		//add PID
+		
+		return new ScopeBasic("IFSWebApp loading file " + filename,
 				EScopeType.LOAD_FILE, attributes);
 	}
 
@@ -98,7 +99,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 			IContainer src = _informationFlowModel.getContainer(new NameBasic(
 					scope.getId()));
 			_informationFlowModel.addData(
-					_informationFlowModel.getData(src), _informationFlowModel.getContainer(new NameBasic("myAppInternalContainer")));
+					_informationFlowModel.getData(src), _informationFlowModel.getContainer(new NameBasic("myIFSWebAppInternalContainer")));
 			return new StatusBasic(EStatus.OKAY);
 		} else return super.update(direction, scope);
 	}

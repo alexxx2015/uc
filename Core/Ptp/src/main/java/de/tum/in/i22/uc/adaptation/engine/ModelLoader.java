@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.adaptation;
+package de.tum.in.i22.uc.adaptation.engine;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import de.tum.in.i22.uc.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.policy.translation.Config;
 import de.tum.in.i22.uc.utilities.PtpLogger;
+import de.tum.in.i22.uc.utilities.PublicMethods;
 
 public class ModelLoader {
 
@@ -111,6 +112,7 @@ public class ModelLoader {
 			String sIsmTransformerExpression="//ismtransformers";
 			NodeList ismTransformerList=(NodeList)xpath.evaluate(sIsmTransformerExpression, xmlDocXpath, XPathConstants.NODESET);
 			addActionTransformers(pimActionList, psmTransformerList, ismTransformerList);
+			
 			/* process SYSTEMS of the layers */
 			String sPsmSystemExpression = "//psmsystems";
 			NodeList psmSystemList=(NodeList)xpath.evaluate(sPsmSystemExpression, xmlDocXpath, XPathConstants.NODESET);
@@ -167,6 +169,69 @@ public class ModelLoader {
 		psmLoader.addSystems(psmSystemList);
 	}
 
+	/**
+	 * The Adaptation Engine assumes there is a template of the Domain Model already stored.
+	 * A template means a file with no data, containers, actions, transformers, systems.
+	 * The nodes for PIM, PSM and ISM must be defined.
+	 * If the destination already contains some nodes, these will be updated.
+	 * @param destination
+	 * @param domain
+	 */
+	public void storeXmlDomainModel(String destination, DomainModel domain){
+		try{
+			String domainModelFile=destination;
+			Document xmlDocXpath=openXmlInput(domainModelFile, "file");
+			
+			XPathFactory factory=XPathFactory.newInstance();
+			XPath xpath=factory.newXPath();
+			
+			/* process name of the layers */
+			String sPimLayerName = "//pims";
+			NodeList pimsList=(NodeList)xpath.evaluate(sPimLayerName, xmlDocXpath, XPathConstants.NODESET);
+			Node pimRoot = pimsList.item(0);
+			
+			String sPsmLayerName = "//psms";
+			NodeList psmsList=(NodeList)xpath.evaluate(sPsmLayerName, xmlDocXpath, XPathConstants.NODESET);
+			Node psmRoot = psmsList.item(0);
+			
+			String sIsmLayerName = "//isms";
+			NodeList ismsList=(NodeList)xpath.evaluate(sIsmLayerName, xmlDocXpath, XPathConstants.NODESET);
+			Node ismRoot = ismsList.item(0);
+			
+			Node layerRoot;
+			
+			if(pimRoot!=null){
+				layerRoot = pimRoot.getParentNode();
+				layerRoot.removeChild(pimRoot);
+				layerRoot.removeChild(psmRoot);
+				layerRoot.removeChild(ismRoot);
+			}
+			else{
+				layerRoot = xmlDocXpath.getFirstChild();
+			}
+			
+			Element pimXML = domain.getPimLayer().getXmlNode(xmlDocXpath);
+			Element psmXML = domain.getPsmLayer().getXmlNode(xmlDocXpath);
+			Element ismXML = domain.getIsmLayer().getXmlNode(xmlDocXpath);
+			
+			layerRoot.appendChild(pimXML);
+			layerRoot.appendChild(psmXML);
+			layerRoot.appendChild(ismXML);
+			
+			String xmlData = PublicMethods.prettyPrint(xmlDocXpath);
+			String logMsg = ">>>Adaptation Complete: DomainModel: \n"
+							+ "\n###############################\n" 
+							+ xmlData +"\n";
+			logger.infoLog(logMsg, null);
+			PublicMethods.writeFile(destination, xmlData);
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+		}
+		
+		
+		
+	}
 	
 	/**
 	 * Provide help with reading from xml strings and file paths 
@@ -199,32 +264,14 @@ public class ModelLoader {
 			}
 			
 			Node root1 = doc.getFirstChild();
-			removeWhitespaceNodes(root1);
+			PublicMethods.removeWhitespaceNodes(root1);
 			Node root2 = doc.getParentNode();
-			removeWhitespaceNodes(root2);
+			PublicMethods.removeWhitespaceNodes(root2);
 			Node root3 = doc.getNextSibling();
-			removeWhitespaceNodes(root3);
+			PublicMethods.removeWhitespaceNodes(root3);
 			
 			return doc;
 	}
 	
-	/**
-	   * This method just removes the whitespaces from an xml document/node
-	   * 
-	   * @param node
-	   */
-	private static void removeWhitespaceNodes(Node node) {
-		if (node != null) {
-			NodeList children = node.getChildNodes();
-			for (int i = children.getLength() - 1; i >= 0; i--) {
-				Node child = children.item(i);
-				if (child instanceof Text
-						&& ((Text) child).getData().trim().length() == 0) {
-					node.removeChild(child);
-				} else if (child instanceof Element) {
-					removeWhitespaceNodes((Element) child);
-				}
-			}
-		}
-	}
+	
 }

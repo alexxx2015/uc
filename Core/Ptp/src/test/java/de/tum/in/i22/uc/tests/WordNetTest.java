@@ -22,7 +22,7 @@ import rita.wordnet.jwnl.wndata.relationship.RelationshipList;
 public class WordNetTest {
 
 	private static RiWordNet wordnet;	
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -46,6 +46,9 @@ public class WordNetTest {
 			assertTrue("WordNetTest disabled", true);
 			return;
 		}
+		computeSimilarity("photo", "picture");
+		computeSimilarity("photo", "car");
+		computeSimilarity("photo", "child");
 		computeSimilarity("picture", "album");
 		computeSimilarity("document", "file");
 		computeSimilarity("directory", "folder");

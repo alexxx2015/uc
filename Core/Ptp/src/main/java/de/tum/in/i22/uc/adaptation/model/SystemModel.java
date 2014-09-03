@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.adaptation.model;
 
 import java.util.ArrayList;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class SystemModel {
 
@@ -11,7 +11,7 @@ public class SystemModel {
 	/**
 	 * PIM, PSM, ISM
 	 */
-	private DomainLayerType type;
+	private LayerType type;
 	/**
 	 * This is used for the XPath processing.
 	 */
@@ -25,7 +25,7 @@ public class SystemModel {
 	private SystemModel parentModel;
 	private LayerModel parentLayer;
 	
-	public SystemModel(String name, DomainLayerType type){
+	public SystemModel(String name, LayerType type){
 		this.name = name;
 		this.type = type;
 		refinedAs = new ArrayList<>();

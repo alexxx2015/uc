@@ -45,10 +45,10 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 			}
 
 			Map<String, Object> attributes = new HashMap<String, Object>();
-			attributes.put("app", "Thunderbird");
+			attributes.put("app", "IFSWebApp");
 			attributes.put("filename", filename);
 
-			return new ScopeBasic("TB saving file " + filename,
+			return new ScopeBasic("IFSWebApp saving file " + filename,
 					EScopeType.SAVE_FILE, attributes);
 		}
 
@@ -96,7 +96,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 				IContainer dest = _informationFlowModel.getContainer(new NameBasic(
 						scope.getId()));
 				_informationFlowModel.addData(
-						_informationFlowModel.getData(_informationFlowModel.getContainer(new NameBasic("myAppInternalContainer"))),dest);
+						_informationFlowModel.getData(_informationFlowModel.getContainer(new NameBasic("myIFSWebAppInternalContainer"))),dest);
 				return new StatusBasic(EStatus.OKAY);
 			} else return super.update(direction, scope);
 		}

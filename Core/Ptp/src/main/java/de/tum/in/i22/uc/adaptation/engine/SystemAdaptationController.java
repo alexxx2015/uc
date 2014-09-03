@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.adaptation;
+package de.tum.in.i22.uc.adaptation.engine;
 
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
 

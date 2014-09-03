@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.adaptation.model;
 
 import java.util.ArrayList;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 /**
  * @author Cipri
@@ -31,11 +31,11 @@ public class ActionTransformerModel {
 	private String name;
 	/**
 	 * After merging, there can be the same action with multiple similar names.
-	 * To avoid duplicating the entry, an alias list is kept.
+	 * To avoid duplicating the entry, a synonym list is kept.
 	 */
-	private ArrayList<String> aliases;
+	private ArrayList<String> synonyms;
 	
-	private DomainLayerType layerType;
+	private LayerType layerType;
 	/**
 	 * This is used for the XPath processing.
 	 */
@@ -57,13 +57,13 @@ public class ActionTransformerModel {
 	
 	private SystemModel parentSystem;
 	
-	public ActionTransformerModel(String name, DomainLayerType type){
+	public ActionTransformerModel(String name, LayerType type){
 		this.name = name;
 		this.layerType = type;
 		refinements = new ArrayList<>();
 		inputParams = new ArrayList<>();
 		outputParams = new ArrayList<>();
-		aliases = new ArrayList<String>();
+		synonyms = new ArrayList<String>();
 		this.indentationLevel = "";
 		this.xmlPosition = -1;
 	}
@@ -80,13 +80,13 @@ public class ActionTransformerModel {
 		return this.refinementType;
 	}
 	
-	public void addAliasName(String name){
-		if(!this.aliases.contains(name))
-			this.aliases.add(name);
+	public void addSynonym(String name){
+		if(!this.synonyms.contains(name))
+			this.synonyms.add(name);
 	}
 	
-	public boolean alsoKnownAs(String alias){
-		return this.aliases.contains(alias);
+	public boolean alsoKnownAs(String synonym){
+		return this.synonyms.contains(synonym);
 	}
 	
 	public void setXmlPosition(int position){
@@ -131,7 +131,7 @@ public class ActionTransformerModel {
 	public void addOutputParam(DataContainerModel output){
 		if(output == null)
 			return;
-		if(this.parentLayer.equals(DomainModel.DomainLayerType.PIM))
+		if(this.parentLayer.equals(DomainModel.LayerType.PIM))
 			return;
 		this.outputParams.add(output);
 	}

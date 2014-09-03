@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="photo" storedin="//@psms/@psmcontainers.0 " synonym=""/>
+<pimdata name="album" storedin="//@psms/@psmcontainers.1 " synonym="album1 album2 ">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+<pimdata name="profile" storedin="//@psms/@psmcontainers.1 " synonym="">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="file"/>
+<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.2 " name="directory"/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="htmlEle"/>
+<ismcontainers name="unixFile"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 " name="unixDir"/>
+</isms>
+</de.tum.in.i22.uc.metamodel:domain>

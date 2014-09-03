@@ -2,12 +2,15 @@ package de.tum.in.i22.uc.adaptation.model;
 
 import java.util.ArrayList;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class LayerModel {
 	
 	private String name;
-	private DomainLayerType type;
+	private LayerType type;
 	
 	public static final String indentation = "	";
 	
@@ -18,7 +21,7 @@ public class LayerModel {
 	
 	private LayerModel refinedAs;
 	
-	public LayerModel(String name, DomainLayerType type){
+	public LayerModel(String name, LayerType type){
 		this.name = name;
 		this.type = type;
 		systems = new ArrayList<>();
@@ -50,7 +53,7 @@ public class LayerModel {
 		return this.name;
 	}
 	
-	public DomainLayerType getType(){
+	public LayerType getType(){
 		return this.type;
 	}
 	
@@ -59,6 +62,11 @@ public class LayerModel {
 	}
 	
 	public void addDataContainer(DataContainerModel dataContainer){
+		if(dataContainer == null){
+			return;
+		}
+		int index = this.dataContainers.size();
+		dataContainer.setXmlPosition(index);
 		this.dataContainers.add(dataContainer);
 	}
 	
@@ -101,7 +109,7 @@ public class LayerModel {
 		}
 
 		String actionsString = "";
-		if(this.type.equals(DomainLayerType.PIM)){
+		if(this.type.equals(LayerType.PIM)){
 			for(ActionTransformerModel ac : this.actionTransformers){
 				actionsString += "\n" + ac.toString();
 			}
@@ -117,8 +125,9 @@ public class LayerModel {
 		return result;
 	}
 	
-	public String toXMLString(){
-		String result = "";
+	public Element getXmlNode(Document doc){
+		if(doc == null)
+			return null;
 		String layerType = "";
 		switch (this.type) {
 		case PIM:
@@ -126,29 +135,36 @@ public class LayerModel {
 			break;
 		case PSM:
 			layerType = "psms";
+			break;
 		case ISM:
 			layerType = "isms";
+			break;
 		default:
 			break;
 		}
-		String startNode = "<"+ layerType +" name=" + "\"" + this.name + "\"" +">";
-		String endNode = "</"+layerType+">";
+		Element element = doc.createElement(layerType);
+		element.setAttribute("name", this.name);
 		
-		String containers = "";
 		for(DataContainerModel dc : this.dataContainers){
-			containers += "\n" + "		" + dc.toXMLString();
+			Element container = dc.getXmlNode(doc);
+			element.appendChild(container);
 		}
 		
-		String transformers = "";
-		//TODO:
-		String systems = "";
-		//TODO:
-		
-		result += "		" + startNode;
-		result += "\n		"+ containers;
-		result += "\n		"+ transformers;
-		result += "\n		"+ systems;
-		
-		return result;
+		return element;
+	}
+	
+	/**
+	 * There can be cases where there is a redundant implementation link which needs to be removed.
+	 * <p>For example: Base model had a container "domElement" refined as "img" at the lower level.
+	 *  The New model has the same container "domElement" refined at the same level with "media".	 *  
+	 *  "Media" is refined at the same level as "img" and "img" is refined at the lower level with "img".
+	 *  <p>
+	 *  Before the filtering, "domElement" is refined as [ "img"-lower, "media"-same = ["img"-same"="img"-lower"]].
+	 *  The problem is that "img"-lower is contained twice in the refinement.
+	 *  After refinement only the refinement from "media" is left.
+	 */
+	public void filterDataContainerRefinements(){
+		for(DataContainerModel dc : dataContainers)
+			dc.trimRefinements();
 	}
 }

@@ -154,7 +154,25 @@ public class WriteFileEventHandler extends WindowsEvents {
 			_logger.debug("Test1 failed. TB is NOT saving to file " + filename);
 		}
 
-		// TEST 2 : GENERIC JBC APP WRITING TO THIS FILE?
+		// TEST 2 : IFSWebApp SAVING THIS FILE?
+		// If so behave as IN
+		if (processName.equalsIgnoreCase("IFSWebApp")) {
+			type = EScopeType.LOAD_FILE;
+			attributes = new HashMap<String, Object>();
+			attributes.put("app", "IFSWebApp");
+			attributes.put("filename", filename);
+			scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
+					attributes);
+			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		}
+		if (existingScope != null) {
+			_logger.debug("Test2 succeeded. IFSWebApp is saving to file " + filename);
+			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
+		} else {
+			_logger.debug("Test2 failed. IFSWebApp is NOT saving to file " + filename);
+		}
+		
+		// TEST 3 : GENERIC JBC APP WRITING TO THIS FILE?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.JBC_GENERIC_SAVE;
@@ -165,11 +183,11 @@ public class WriteFileEventHandler extends WindowsEvents {
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. Generic JBC App is writing to file "
+			_logger.debug("Test3 succeeded. Generic JBC App is writing to file "
 					+ filename);
 			return new Pair<EBehavior, IScope>(EBehavior.IN, existingScope);
 		} else {
-			_logger.debug("Test2 failed. Generic JBC App is NOT writing to file "
+			_logger.debug("Test3 failed. Generic JBC App is NOT writing to file "
 					+ filename);
 		}
 

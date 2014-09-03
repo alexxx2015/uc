@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.adaptation.model;
 
 public class DomainModel {
 
-	public static enum DomainLayerType {
+	public static enum LayerType {
 		PIM,
 		PSM,
 		ISM
@@ -20,9 +20,9 @@ public class DomainModel {
 	
 	public DomainModel(String name){
 		this.name = name;
-		pimLayer = new LayerModel("PIM", DomainLayerType.PIM);
-		psmLayer = new LayerModel("PSM", DomainLayerType.PSM);
-		ismLayer = new LayerModel("ISM", DomainLayerType.ISM);
+		pimLayer = new LayerModel("PIM", LayerType.PIM);
+		psmLayer = new LayerModel("PSM", LayerType.PSM);
+		ismLayer = new LayerModel("ISM", LayerType.ISM);
 		pimLayer.setRefinedAs(psmLayer);
 		psmLayer.setRefinedAs(ismLayer);
 		ismLayer.setRefinedAs(ismLayer);
@@ -36,7 +36,7 @@ public class DomainModel {
 		return name;
 	}
 	
-	public LayerModel getLayer(DomainLayerType type){
+	public LayerModel getLayer(LayerType type){
 		switch(type){
 		case PIM:
 			return pimLayer;

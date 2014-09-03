@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.adaptation.model.DomainModel.DomainLayerType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class DataContainerModel {
 
@@ -18,9 +21,9 @@ public class DataContainerModel {
 	 * After merging, there can be the same action with multiple similar names.
 	 * To avoid duplicating the entry, an alias list is kept.
 	 */
-	private ArrayList<String> aliases;
+	private ArrayList<String> synonyms;
 	
-	private DomainLayerType type ;
+	private LayerType type ;
 	/**
 	 * This is used for the XPath processing.
 	 */
@@ -35,13 +38,13 @@ public class DataContainerModel {
 	
 	private boolean isMerged ;
 	
-	public DataContainerModel(String name, DomainLayerType type){
+	public DataContainerModel(String name, LayerType type){
 		this.name = name;
 		this.type = type;
 		this.xmlPosition = -1;
 		this.isMerged = false;
 		this.refinements = new ArrayList<>();
-		aliases = new ArrayList<String>();
+		synonyms = new ArrayList<String>();
 		ArrayList<DataContainerModel> compositions = new ArrayList<DataContainerModel>();
 		ArrayList<DataContainerModel> aggregations = new ArrayList<DataContainerModel>();
 		this.associations = new HashMap<>();
@@ -60,7 +63,7 @@ public class DataContainerModel {
 		this.name = newName;
 	}
 	
-	public DomainLayerType getLayerType(){
+	public LayerType getLayerType(){
 		return this.type;
 	}
 	
@@ -138,23 +141,27 @@ public class DataContainerModel {
 		return this.isMerged;
 	}
 	
-	public void addAliasName(String alias){
-		if(alias == null)
+	/**
+	 * Adds a synonym of the name of the element.
+	 * @param synonym
+	 */
+	public void addSynonym(String synonym){
+		if(synonym == null)
 			return;
-		if(this.name.equals(alias))
+		if(this.name.equals(synonym))
 			return;
-		if(!this.aliases.contains(alias))
-			this.aliases.add(alias);
+		if(!this.synonyms.contains(synonym))
+			this.synonyms.add(synonym);
 	}
 	
-	public boolean alsoKnownAs(String alias){
-		if(alias == null)
+	public boolean alsoKnownAs(String synonym){
+		if(synonym == null)
 			return false;
-		return this.aliases.contains(alias);
+		return this.synonyms.contains(synonym);
 	}
 	
-	public ArrayList<String> getAliases(){
-		return this.aliases;
+	public ArrayList<String> getSynonyms(){
+		return this.synonyms;
 	}
 	
 	public void setXmlPosition(int position){
@@ -170,6 +177,10 @@ public class DataContainerModel {
 		this.indentationLevel = layer.indentation +"	";
 	}
 	
+	public LayerModel getLayerModel(){
+		return this.parentLayer;
+	}
+	
 	public void addRefinement(DataContainerModel refinedAs){
 		if(refinedAs == null)
 			return;
@@ -180,6 +191,7 @@ public class DataContainerModel {
 	 * Association is used at PSM and ISM layer.
 	 * It is not specified if it aggregation or composition.
 	 * By default, it is considered aggregation.
+	 * In the paper this is also named an innerLink.
 	 * @param association
 	 */
 	public void addAssociation(DataContainerModel association){
@@ -205,7 +217,7 @@ public class DataContainerModel {
 	
 	public String toString(){
 		String result ="";
-		result += this.indentationLevel+ name + " "+this.aliases +" - "+ type.name();
+		result += this.indentationLevel+ name + " "+this.synonyms +" - "+ type.name();
 		
 		String aggregations = "\n	"+this.indentationLevel +"aggregations:";
 		boolean existsAggregation = false;
@@ -227,108 +239,196 @@ public class DataContainerModel {
 		return result;
 	}
 	
-	public String toXMLString(){
-		String result = "";
-		switch(this.type){
-			case PIM:
-				result += toPimXmlRepresentation();
-				break;
-			case PSM:
-				result += toPsmXmlRepresentation();
-				break;
-			case ISM:
-				result += toIsmXmlRepresentation();
-				break;
+	public Element getXmlNode(Document doc){
+		if(doc == null)
+			return null;
+		Element element = null;
+		String layerType = "";
+		switch (this.type) {
+		case PIM:			
+			layerType = "pimdata";
+			element = doc.createElement(layerType);
+			element.setAttribute("name", this.name);
+			addPimDataAttributes(element);
+			break;
+		case PSM:
+			layerType = "psmcontainers";
+			element = doc.createElement(layerType);
+			element.setAttribute("name", this.name);
+			addPsmContainerAttributes(element);
+			break;
+		case ISM:
+			layerType = "ismcontainers";
+			element = doc.createElement(layerType);
+			element.setAttribute("name", this.name);
+			addIsmContainerAttributes(element);
+			break;
+		default:
+			break;
 		}
-		return result;
+		
+		return element;
 	}
 	
-	private String toPimXmlRepresentation(){
-		String result = "";
-		String startNode = "<pimdata ";
-		String endNode = "</pimdata>";
-		String nameAttribute = "name=\"" + this.name +"\" ";
-		
-		String aggregationData = "";
-		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
-			String association = "<dataAssoLinks assoType=\"isAggregationOf\" targetAssoData=\"//@pims/@pimdata.";
-			association += assoc.xmlPosition + "/>";
-			aggregationData += "\n" + this.indentationLevel +"	"+ association;
+	private void addPimDataAttributes(Element data){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
 		}
+		data.setAttribute(synonymName, synonymValue);
 		
-		String compositionData = "";
-		for(DataContainerModel assoc : this.associations.get(AssociationType.COMPOSITION)){
-			String association = "<dataAssoLinks assoType=\"isAggregationOf\" targetAssoData=\"//@pims/@pimdata.";
-			association += assoc.xmlPosition + "/>";
-			compositionData += "\n" + this.indentationLevel +"	"+ association;
-		}
+		String associationNodeName = "dataAssoLinks";
+		String associationTypeName = "assoType";
 		
-		String refinementAttributeStart = "storedin=\"";
-		String refinementData = "";
-		for(DataContainerModel ref : this.refinements){
-			refinementData += "//@psms/@psmcontainers." + ref.xmlPosition +" ";
-		}
-		String refinementAttributeEnd = "\"";
-		
-		result += startNode + nameAttribute 
-				+ aggregationData  
-				+ compositionData
-				+ refinementAttributeStart + refinementData + refinementAttributeEnd
-				+ endNode;
-		return result;
-	}
-	
-	private String toPsmXmlRepresentation(){
-		String result = "";
-		String startNode = "<psmcontainers ";
-		String endNode = " />";
-		String nameAttribute = "name=\"" + this.name +"\" ";
-		
-		String associationAttributeStart = "containersassociation=\"";
+		//process aggregations
+		Element aggregation = data.getOwnerDocument().createElement(associationNodeName);
+		String associationType = "isAggregationOf";
+		aggregation.setAttribute(associationTypeName, associationType);
+		String associationDataName = "targetAssoData";
 		String associationData = "";
+		boolean existsAssociation = false;
+		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
+			associationData += "//@pims/@pimdata." + assoc.xmlPosition +" ";
+			existsAssociation = true;
+		}
+		if(existsAssociation){
+			aggregation.setAttribute(associationDataName, associationData);
+			data.appendChild(aggregation);
+		}
+		
+		// process compositions
+		Element composition = data.getOwnerDocument().createElement(associationNodeName);
+		associationType = "isCompositionOf";
+		composition.setAttribute(associationTypeName, associationType);
+		String compostionData = "";
+		boolean existsComposition = false;
+		for(DataContainerModel assoc : this.associations.get(AssociationType.COMPOSITION)){
+			compostionData += "//@pims/@pimdata." + assoc.xmlPosition +" ";
+			existsComposition = true;
+		}
+		if(existsComposition){
+			composition.setAttribute(associationDataName, compostionData);
+			data.appendChild(composition);
+		}
+		
+		//process refinements
+		String refinementAttribute = "storedin";
+		String refinementData = "";
+		boolean existsRefinement = false;
+		for(DataContainerModel ref : this.refinements){
+			String refLevel = "";
+			if(ref.getLayerType().equals(LayerType.PIM))
+				refLevel = "//@pims/@pimdata.";
+			else if(ref.getLayerType().equals(LayerType.PSM))
+				refLevel = "//@psms/@psmcontainers.";
+			refinementData += refLevel + ref.xmlPosition +" ";
+			existsRefinement = true;
+		}
+		if(existsRefinement)
+			data.setAttribute(refinementAttribute, refinementData);
+	}
+	
+	private void addPsmContainerAttributes(Element container){
+		String associationAttribute = "containersassociation";
+		String associationData = "";
+		boolean existsAssociation = false;
 		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
 			associationData += "//@psms/@psmcontainers." + assoc.xmlPosition +" ";
+			existsAssociation = true;
 		}
-		String associationAttributeEnd = "\"";
+		if(existsAssociation)
+			container.setAttribute(associationAttribute, associationData);
 		
-		String refinementAttributeStart = "contimplementedas=\"";
+		String refinementAttribute = "contimplementedas";
 		String refinementData = "";
+		boolean existsRefinement = false;
 		for(DataContainerModel ref : this.refinements){
-			refinementData += "//@isms/@ismcontainers." + ref.xmlPosition +" ";
+			String refLevel = "";
+			if(ref.getLayerType().equals(LayerType.PSM))
+				refLevel = "//@psms/@psmcontainers.";
+			else if(ref.getLayerType().equals(LayerType.ISM))
+				refLevel = "//@isms/@ismcontainers.";
+			refinementData += refLevel + ref.xmlPosition +" ";
+			existsRefinement = true;
 		}
-		String refinementAttributeEnd = "\"";
-		
-		result += startNode + nameAttribute 
-				+ associationAttributeStart + associationData + associationAttributeEnd 
-				+ refinementAttributeStart + refinementData + refinementAttributeEnd
-				+ endNode;
-		return result;
+		if(existsRefinement)
+			container.setAttribute(refinementAttribute, refinementData);
 	}
 	
-	private String toIsmXmlRepresentation(){
-		String result = "";
-		String startNode = "<ismcontainers ";
-		String endNode = " />";
-		String nameAttribute = "name=\"" + this.name +"\" ";
-		String associationAttributeStart = "implecontainerassociation=\"";
+	private void addIsmContainerAttributes(Element container){
+		String associationAttribute = "implecontainerassociation";
 		String associationData = "";
+		boolean existsAssociation = false;
 		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
 			associationData += "//@isms/@ismcontainers." + assoc.xmlPosition +" ";
+			existsAssociation = true;
 		}
-		String associationAttributeEnd = "\"";
-		result += startNode + nameAttribute 
-				+ associationAttributeStart + associationData + associationAttributeEnd 
-				+ endNode;
-		return result;
+		if(existsAssociation)
+			container.setAttribute(associationAttribute, associationData);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 * 
+	 * The type must be the same.
+	 * If the name is equal or there is a match between the name and the synonyms.
+	 */
 	public boolean equals(Object o){
 		if (o == null)
 			return false;
 		if (!(o instanceof DataContainerModel))
 			return false;
 		DataContainerModel obj = (DataContainerModel) o;
-		boolean result = this.name.equals(obj.name) && this.type.equals(obj.type);
-		return result;
+		if(!this.type.equals(obj.type))
+			return false; 
+		if(this.name.equals(obj.name))
+			return true;
+		if(this.alsoKnownAs(obj.name))
+			return true;
+		if(obj.alsoKnownAs(this.name))
+			return true;
+		return false;
+	}
+	
+	public void trimRefinements(){
+		boolean removed = true;
+		DataContainerModel toRemove = null;
+		while(removed){
+			removed = false;
+			for(DataContainerModel refCheck : this.refinements){
+				for(DataContainerModel refSibling : this.refinements){
+					if(refCheck.equals(refSibling))
+						continue;
+					removed = refSibling.containsRefinement(refCheck);
+					if(removed){
+						toRemove = refCheck;
+						break;
+					}
+				}
+				if(toRemove !=null)
+					break;
+			}
+			if(toRemove!=null){
+				this.refinements.remove(toRemove);
+				toRemove = null;
+				removed = true;
+			}
+			
+		}
+	}
+	
+	private boolean containsRefinement(DataContainerModel ref){
+		boolean result = false;
+		result = this.refinements.contains(ref);
+		if(result)
+			return true;
+		for(DataContainerModel r : this.refinements){
+			result = r.containsRefinement(ref);
+			if(result)
+				return true;
+		}
+		return false;
 	}
 }
