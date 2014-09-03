@@ -6,8 +6,8 @@ import java.util.List;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
 /**
  * This class wraps an IResponse and adds additional functions

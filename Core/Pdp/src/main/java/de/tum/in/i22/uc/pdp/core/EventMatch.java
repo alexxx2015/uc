@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.condition.operators.Operator;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -67,10 +67,12 @@ public class EventMatch extends EventMatchingOperatorType {
 		return false;
 	}
 
-	@Override
-	protected boolean localEvaluation(IEvent curEvent) {
-		throw new UnsupportedOperationException("Operator localEvaluation was triggered for EventMatch instead of EventMatchOperator?!");
-	}
+//	@Override
+//	protected boolean localEvaluation(IEvent curEvent) {
+//		throw new UnsupportedOperationException("Operator localEvaluation was triggered for EventMatch instead of EventMatchOperator?!");
+//	}
+
+
 
 	@Override
 	public String toString() {

@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc.pdp;
 
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -28,9 +26,8 @@ import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
-import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-public class PdpHandler extends PdpProcessor implements Observer {
+public class PdpHandler extends PdpProcessor {
 
 	private static Logger _logger = LoggerFactory.getLogger(PdpHandler.class);
 
@@ -150,10 +147,6 @@ public class PdpHandler extends PdpProcessor implements Observer {
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
 		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
-
-		// Observe the PolicyDecisionPoint. The PolicyDecisionPoint will
-		// tell us if a policy needs to be registered with the DistributionManager
-		_lpdp.addObserver(this);
 	}
 
 	@Override
@@ -169,28 +162,5 @@ public class PdpHandler extends PdpProcessor implements Observer {
 	@Override
 	public void stop() {
 		_lpdp.stop();
-	}
-
-	@Override
-	public void update(Observable o, final Object arg) {
-		if (o instanceof PolicyDecisionPoint) {
-			if (arg instanceof DistributedPdpResponse) {
-				_distributionManager.update((IResponse) arg);
-			}
-			else if (arg instanceof PolicyType) {
-				/*
-				 * The PolicyDecisionPoint will inform us about Policies to register
-				 * with the DistributionManager. As registering the policy for remote
-				 * purposes might take a while, we start the registration process in a new thread and go on.
-				 */
-
-				new Thread() {
-					@Override
-					public void run() {
-						_distributionManager.registerPolicy(((PolicyType) arg).getName());
-					}
-				}.start();
-			}
-		}
 	}
 }

@@ -31,13 +31,14 @@ import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
-import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
@@ -114,8 +115,19 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 			_logger.debug("Deploying policy [name={}]", policyName);
 
-			setChanged();
-			notifyObservers(policy);
+			if (Settings.getInstance().getDistributionEnabled()) {
+				/*
+				 * As registering the policy for remote
+				 * purposes might take a while, we start
+				 * the registration process in a new thread and go on.
+				 */
+				new Thread() {
+					@Override
+					public void run() {
+						_distributionManager.registerPolicy(policyName);
+					}
+				}.start();
+			}
 
 			/*
 			 * Get the set of mechanisms of this policy (if any)
@@ -194,20 +206,17 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	public IResponse notifyEvent(IEvent event) {
 		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
-		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
-		if (eventMatchList != null) {
-			_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
-					event.getName(), eventMatchList.size());
+		_logger.info("notifyEvent: {}", event);
 
-			for (EventMatch eventMatch : eventMatchList) {
-				_logger.info("Processing EventMatchOperator for event [{}]", eventMatch.getAction());
-				eventMatch.evaluate(event);
-			}
-		}
+		/*
+		 * Notify the event to all Observers,
+		 * i.e. StateBasedOperators and EventMatchOperators
+		 */
+		setChanged();
+		notifyObservers(event);
 
 		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getName());
-		_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
-				mechanismList.size());
+		_logger.debug("Triggered mechanisms for event=[{}]: {}", event.getName(), mechanismList.size());
 
 		for (Mechanism mech : mechanismList) {
 			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
@@ -259,9 +268,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_policyTable.clear();
 	}
 
-	public void addEventMatch(EventMatch eventMatch) {
-		_actionDescriptionStore.addEventMatch(eventMatch);
-	}
+//	public void addEventMatch(EventMatch eventMatch) {
+//		_actionDescriptionStore.addEventMatch(eventMatch);
+//	}
 
 	public void addMechanism(Mechanism mechanism) {
 		_actionDescriptionStore.addMechanism(mechanism);
@@ -270,15 +279,16 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof EventMatchOperator) {
+			_logger.info("Got update about EventMatchOperator: {}.", o);
 			_eventMatches.add((EventMatchOperator) o);
 		}
 		else if (o instanceof StateBasedOperator) {
+			_logger.info("Got update about StateBasedOperator: {}.", o);
 			_stateBasedOperatorTrue.add((StateBasedOperator) o);
 		}
 		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
-			if (!_stateBasedOperatorTrue.isEmpty()) {
-				setChanged();
-				notifyObservers(new DistributedPdpResponse(new ResponseBasic(), Collections.<EventMatchOperator> emptyList(), _stateBasedOperatorTrue));
+			if (!_stateBasedOperatorTrue.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
+				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), Collections.<EventMatchOperator> emptyList(), _stateBasedOperatorTrue));
 			}
 
 			// Prepare for next

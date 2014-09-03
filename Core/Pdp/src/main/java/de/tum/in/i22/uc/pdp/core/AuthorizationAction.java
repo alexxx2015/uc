@@ -10,7 +10,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;

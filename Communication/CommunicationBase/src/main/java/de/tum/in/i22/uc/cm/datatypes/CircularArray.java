@@ -88,4 +88,28 @@ public class CircularArray<T> {
 
 		return str;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public CircularArray<T> clone() {
+		CircularArray<T> cloned = null;
+		try {
+			cloned = (CircularArray<T>) super.clone();
+		} catch (CloneNotSupportedException e) {
+		}
+
+		if (cloned == null) {
+			cloned = new CircularArray<>(this.values.length);
+		}
+
+		cloned.values = (T[]) new Object[this.values.length];
+		cloned.first = this.first;
+		cloned.next = this.next;
+
+		for (int i = 0; i < this.values.length; i++) {
+			cloned.values[i] = this.values[i];
+		}
+
+		return cloned;
+	}
 }

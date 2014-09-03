@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: de.tum.in.i22.uc.tests.AdaptationEngineTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.166 sec - in de.tum.in.i22.uc.tests.AdaptationEngineTest

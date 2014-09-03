@@ -35,8 +35,8 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.condition.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.condition.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 

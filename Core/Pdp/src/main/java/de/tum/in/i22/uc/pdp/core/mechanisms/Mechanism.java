@@ -14,12 +14,12 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
+import de.tum.in.i22.uc.pdp.core.Condition;
 import de.tum.in.i22.uc.pdp.core.Decision;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.condition.Condition;
-import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
+import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -129,11 +129,16 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		if (_triggerEvent.matches(event)) {
 			_logger.info("Trigger event matches -> evaluating condition");
-			if (_condition.evaluate(event)) {
+
+			_condition.startSimulation();
+			boolean conditionVal = _condition.tick();
+			_condition.stopSimulation();
+
+			if (conditionVal) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
 				d.processMechanism(this, event);
 			} else {
-				_logger.info("condition NOT satisfied");
+				_logger.info("Condition NOT satisfied");
 			}
 		}
 
@@ -141,8 +146,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 
-	private synchronized boolean mechanismUpdate() { // TODO improve accuracy to
-		// microseconds?
+	private synchronized boolean mechanismUpdate() {
 		long now = System.currentTimeMillis();
 		long elapsedLastUpdate = now - _lastUpdate;
 		long difference = elapsedLastUpdate - _timestepSize;
@@ -168,7 +172,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
 		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
 
-		boolean conditionValue = _condition.evaluate(null);
+		boolean conditionValue = _condition.tick();
+		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
 
 		setChanged();
