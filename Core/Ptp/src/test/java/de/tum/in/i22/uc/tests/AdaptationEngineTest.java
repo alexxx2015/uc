@@ -8,15 +8,17 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.uc.adaptation.AdaptationController;
-import de.tum.in.i22.uc.adaptation.DomainMergeException;
-import de.tum.in.i22.uc.adaptation.ModelLoader;
+import de.tum.in.i22.uc.adaptation.engine.AdaptationController;
+import de.tum.in.i22.uc.adaptation.engine.DomainMergeException;
+import de.tum.in.i22.uc.adaptation.engine.ModelLoader;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
 
 public class AdaptationEngineTest {
 
 	private ModelLoader modelHandler;
 	private static final boolean TESTS_ENABLED = false;
+	
+	private static String MODELS4TEST_DIR = "src/test/resources/models4test/DataContainerModels/";
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -44,7 +46,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = "src/test/resources/models4test/" + "BaseDomainModel0.xml";
+		String file = MODELS4TEST_DIR + "BaseDomainModel0.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 		assertNotNull(base);
 	}
@@ -56,7 +58,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = "src/test/resources/models4test/" + "BaseDomainModel1.xml";
+		String file = MODELS4TEST_DIR + "BaseDomainModel1.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 		assertNotNull(base);
 	}
@@ -68,7 +70,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = "src/test/resources/models4test/" + "BaseDomainModel2.xml";
+		String file = MODELS4TEST_DIR + "BaseDomainModel2.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 		assertNotNull(base);
 	}
@@ -80,10 +82,10 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = "src/test/resources/models4test/" + "DataContainerBase.xml";
+		String file = MODELS4TEST_DIR + "DataContainerBase.xml";
 		DomainModel baseDM = modelHandler.loadDomainModel(file);
 
-		file = "src/test/resources/models4test/" + "DataContainerNew.xml";
+		file = MODELS4TEST_DIR + "DataContainerNew.xml";
 		DomainModel newDM = modelHandler.loadDomainModel(file);
 		
 		AdaptationController ac = new AdaptationController();
@@ -106,4 +108,37 @@ public class AdaptationEngineTest {
 		assertTrue(psmContainers == 2);
 		assertTrue(ismContainers == 6);
 	}
+	
+	@Test
+	public void testStoreContainersXML(){
+		modelHandler = new ModelLoader();
+		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
+		String destination = MODELS4TEST_DIR + "DataContainerDestination.xml";
+		DomainModel baseDM = modelHandler.loadDomainModel(baseFile);
+		
+		modelHandler.storeXmlDomainModel(destination, baseDM);
+	}
+	
+	@Test
+	public void testMergeAndStoreContainersXML(){
+		modelHandler = new ModelLoader();
+		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
+		String newFile = MODELS4TEST_DIR + "DataContainerNew.xml";
+		String destination = MODELS4TEST_DIR + "DataContainerDestination.xml";
+		DomainModel baseDM = modelHandler.loadDomainModel(baseFile);
+		DomainModel newDM = modelHandler.loadDomainModel(newFile);
+		
+		AdaptationController ac = new AdaptationController();
+		ac.setBaseDomainModel(baseDM);
+		ac.setNewDomainModel(newDM);
+		try {
+			ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		
+		modelHandler.storeXmlDomainModel(destination, baseDM);
+	}
+	
 }

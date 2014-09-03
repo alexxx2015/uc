@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.adaptation;
+package de.tum.in.i22.uc.adaptation.engine;
 
 import java.util.ArrayList;
 
@@ -30,6 +30,13 @@ public class WordnetEngine {
 		return _instance;
 	}
 	
+	/** 
+	 * A lower value means closer similarity between concepts.
+	 * @param conceptA
+	 * @param conceptB
+	 * @return a value between 0.0 and 1.0<br>
+	 * Everything that is above 0.4 is approximated to 1.0
+	 */
 	public float getDistance(String conceptA, String conceptB){
 		String pos = wordnet.getBestPos(conceptA); 
 		float distance = wordnet.getDistance(conceptA, conceptB, pos);
@@ -40,6 +47,14 @@ public class WordnetEngine {
 		return distance;
 	}
 	
+	/** A lower value means closer similarity between concepts.
+	 * Only the closest distance between the conceptA and one concept from the list is returned.
+	 * The best similarity is searched.
+	 * @param conceptA
+	 * @param concepts
+	 * @return a value between 0.0 and 1.0<br>
+	 * Everything that is above 0.4 is approximated to 1.0
+	 */
 	public float getBestDistance(String conceptA, ArrayList<String> concepts){
 		String pos = wordnet.getBestPos(conceptA); 
 		float maxDistance = MAX_ALLOWED_DISTANCE;

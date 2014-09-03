@@ -62,6 +62,12 @@ public class PIMAction extends Event {
 			Node nodePIMData=null;
 			nodePIMData=ActionRefinement.processXpathExpression(sExpression).item(0);			
 			
+			//check for synonyms of that data
+			if(nodePIMData==null){
+				sExpression="//pimdata[contains(@synonym,'"+resource.getDataClass()+"']";
+				nodePIMData=ActionRefinement.processXpathExpression(sExpression).item(0);
+			}
+			
 			if(nodePIMData!=null){
 				//now we really have a match :)
 				//so prepare a concrete action object	
