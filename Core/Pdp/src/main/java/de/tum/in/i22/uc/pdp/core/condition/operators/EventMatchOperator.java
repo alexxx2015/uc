@@ -24,10 +24,7 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator {
 
 	@Override
 	protected int initId(int id) {
-		_id = id + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
+		return setId(id + 1);
 	}
 
 	@Override

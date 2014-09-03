@@ -422,32 +422,35 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		DistributedPdpResponse res = (DistributedPdpResponse) response;
 
-		_defaultSession.execute("BEGIN UNLOGGED BATCH");
+		StringBuilder batchJob = new StringBuilder(512);
+		batchJob.append("BEGIN UNLOGGED BATCH ");
 
 		for (EventMatchOperator event : res.getEventMatches()) {
 			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+			batchJob.append("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
 					+ "'" + event.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
 					+ "now()"
-					+ ");");
+					+ ") USING TTL " + event.getTTL() / 1000 + ";");
 		}
 
 
 		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
 			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
 
-			_defaultSession.execute("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
 					+ "'" + sbo.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
 					+ "now()"
-					+ ");");
+					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
 		}
 
-		_defaultSession.execute("APPLY BATCH;");
+		batchJob.append(" APPLY BATCH;");
+
+		_defaultSession.execute(batchJob.toString());
 
 
 

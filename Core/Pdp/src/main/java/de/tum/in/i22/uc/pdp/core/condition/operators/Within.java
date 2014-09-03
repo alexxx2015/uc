@@ -49,10 +49,7 @@ public class Within extends WithinType {
 
 	@Override
 	protected int initId(int id) {
-		_id = op.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
+		return setId(op.initId(id) + 1);
 	}
 
 	@Override
@@ -79,7 +76,7 @@ public class Within extends WithinType {
 			} else {
 				/*
 				 * Subformula evaluated to false.
-				 * Decrement the counter, if still greather than 0.
+				 * Decrement the counter, if still greater than 0.
 				 */
 				if (_stateCounter > 0) {
 					_stateCounter--;

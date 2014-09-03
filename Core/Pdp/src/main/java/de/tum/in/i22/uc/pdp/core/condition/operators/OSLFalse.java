@@ -12,6 +12,7 @@ public class OSLFalse extends FalseType implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OSLFalse.class);
 
 	public OSLFalse() {
+		_valueAtLastTick = false;
 	}
 
 	@Override
@@ -32,6 +33,11 @@ public class OSLFalse extends FalseType implements LiteralOperator {
 
 	@Override
 	public boolean isPositive() {
+		return false;
+	}
+
+	@Override
+	protected boolean tick() {
 		return false;
 	}
 }

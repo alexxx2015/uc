@@ -15,7 +15,7 @@ public class Before extends BeforeType {
 
 	private Operator op;
 
-	private CircularArray<Boolean> _statCircArray;
+	private CircularArray<Boolean> _stateCircArray;
 
 	public Before() {
 	}
@@ -35,9 +35,9 @@ public class Before extends BeforeType {
 			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
 		}
 
-		_statCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
+		_stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
-			_statCircArray.set(false, a);
+			_stateCircArray.set(false, a);
 		}
 
 		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
@@ -45,10 +45,7 @@ public class Before extends BeforeType {
 
 	@Override
 	protected int initId(int id) {
-		_id = op.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
+		return setId(op.initId(id) + 1);
 	}
 
 	@Override
@@ -59,32 +56,23 @@ public class Before extends BeforeType {
 	@Override
 	protected boolean localEvaluation(IEvent ev) {
 		// before = at (currentTime - interval) operand was true
-		_logger.debug("circularArray: {}", _statCircArray);
+		_logger.debug("circularArray: {}", _stateCircArray);
 
 		// Look at the first entry of the array. The retrieved value
 		// corresponds to the result of the evaluation at this point in time.
-		boolean result = _statCircArray.peek();
+		boolean result = _stateCircArray.peek();
 
 		if (ev == null) {
 			// If we are evaluating at the end of a timestep, then
 			// (1) remove the first entry
 			// (2) evaluate the internal operand at this point in time
 			//     and push the result to the array
-			_statCircArray.pop();
-			_statCircArray.push(op.evaluate(null));
+			_stateCircArray.pop();
+			_stateCircArray.push(op.evaluate(null));
 
-			_logger.debug("circularArray: {}", _statCircArray);
+			_logger.debug("circularArray: {}", _stateCircArray);
 		}
 
 		return result;
 	}
-
-//	@Override
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		long lastUpdate = _mechanism.getLastUpdate();
-//
-//		return _pdp.getDistributionManager().wasTrueInBetween(op,
-//				lastUpdate - (_mechanism.getTimestepSize() * (_timeAmount.getTimestepInterval() + 1)),
-//				lastUpdate - (_mechanism.getTimestepSize() * _timeAmount.getTimestepInterval()));
-//	}
 }

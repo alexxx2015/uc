@@ -34,10 +34,8 @@ public class OSLImplies extends ImpliesType {
 
 	@Override
 	protected int initId(int id) {
-		_id = op1.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return op2.initId(_id);
+		setId(op1.initId(id) + 1);
+		return op2.initId(getId());
 	}
 
 	@Override

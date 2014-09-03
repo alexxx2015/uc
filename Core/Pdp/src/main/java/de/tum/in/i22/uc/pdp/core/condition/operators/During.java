@@ -41,10 +41,7 @@ public class During extends DuringType {
 
 	@Override
 	protected int initId(int id) {
-		_id = op.initId(id) + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
+		return setId(op.initId(id) + 1);
 	}
 
 

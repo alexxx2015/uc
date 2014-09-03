@@ -12,6 +12,7 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OSLTrue.class);
 
 	public OSLTrue() {
+		_valueAtLastTick = true;
 	}
 
 	@Override
@@ -32,6 +33,11 @@ public class OSLTrue extends TrueType implements LiteralOperator {
 
 	@Override
 	public boolean isPositive() {
+		return true;
+	}
+
+	@Override
+	protected boolean tick() {
 		return true;
 	}
 }

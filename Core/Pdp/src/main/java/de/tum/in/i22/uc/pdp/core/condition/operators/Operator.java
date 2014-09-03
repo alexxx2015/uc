@@ -21,6 +21,8 @@ public abstract class Operator extends Observable implements IOperator {
 //	private OperatorState _state;
 	protected IMechanism _mechanism;
 
+	protected boolean _valueAtLastTick;
+
 	/**
 	 * The parent operator, or null for the root node.
 	 */
@@ -34,7 +36,7 @@ public abstract class Operator extends Observable implements IOperator {
 
 	/**
 	 * Internal identifier for this {@link IOperator}, assigned
-	 * by {@link Operator#setFullId(int)}; based on {@link Operator#_id}.
+	 * by {@link Operator#setId(int)}; based on {@link Operator#_id}.
 	 */
 	private String _fullId;
 
@@ -43,11 +45,13 @@ public abstract class Operator extends Observable implements IOperator {
 	 * by invoking {@link Operator#initId()} on the root operator
 	 * of this {@link ICondition}.
 	 */
-	protected int _id;
+	private int _id;
 
-	private boolean _initialized = false;
+	private boolean _initialized;
 
 	public Operator() {
+		_valueAtLastTick = false;
+		_initialized = false;
 	}
 
 	public final void init(Mechanism mechanism) {
@@ -101,8 +105,15 @@ public abstract class Operator extends Observable implements IOperator {
 	 *
 	 * @param id
 	 */
-	protected final void setFullId(int id) {
-		_fullId = _mechanism.getPolicyName() + "#" + _mechanism.getName() + "#" + id;
+	protected final int setId(int id) {
+		_id = id;
+		_fullId = _mechanism.getPolicyName() + "#" + _mechanism.getName() + "#" + _id;
+		_logger.debug("My [{}] id is {}.", this, _fullId);
+		return _id;
+	}
+
+	public int getId() {
+		return _id;
 	}
 
 	@Override
@@ -138,6 +149,10 @@ public abstract class Operator extends Observable implements IOperator {
 		return resultLocalEval;
 	}
 
+	protected boolean tick() {
+		throw new UnsupportedOperationException("Calling tick() is only allowed on subtypes of " + Operator.class);
+	}
+
 	@Override
 	public final boolean equals(Object obj) {
 		if (obj instanceof Operator) {
@@ -159,5 +174,9 @@ public abstract class Operator extends Observable implements IOperator {
 	 */
 	public final long getTTL() {
 		return _ttl;
+	}
+
+	public final boolean getValueAtLastTick() {
+		return _valueAtLastTick;
 	}
 }

@@ -29,10 +29,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 	@Override
 	protected int initId(int id) {
-		_id = id + 1;
-		setFullId(_id);
-		_logger.debug("My [{}] id is {}.", this, getFullId());
-		return _id;
+		return setId(id + 1);
 	}
 
 	@Override
@@ -68,24 +65,13 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 		}
 
 
-		/* TODO
-		 * Alternatively:
-		 * if (result == isPositive()) {
-		 *   setChanged();
-		 *   notifyObservers();
-		 * }
-		 * Done.
-		 */
-		if (result && isPositive()) {
+		if (result == isPositive()) {
 			/*
-			 * Notify observers that a 'positive' state based operator turned true.
-			 */
-			setChanged();
-			notifyObservers();
-		}
-		else if (!result && !isPositive()) {
-			/*
-			 * Notify observers that 'non-positive' state based operators turned false.
+			 * There are two situations in which this condition may turn true:
+			 * a) a 'positive' state based operator's state turned true.
+			 * b) a 'non-positive' state based operator's state turned false.
+			 *
+			 * In both cases we want to signal the state change to our observers.
 			 */
 			setChanged();
 			notifyObservers();
@@ -98,31 +84,18 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
 		boolean result = resultLocalEval;
 
-		/* TODO
-		 * Alternatively:
-		 * if (resultLocalEval != isPositive()) {
-		 *   ...
-		 * }
-		 * Done.
-		 */
-		if (resultLocalEval && !isPositive()) {
+		if (resultLocalEval != isPositive()) {
 			/*
-			 * The Operator is locally satisfied. This implies global satisfaction
-			 * for 'isCombinedWith' according to CANS'14.
-			 * However, for 'isNotIn', it might be the case that the operator is violated
-			 * remotely. Thus, we need to ask the DistributionManager.
-			 * Note: isNotIn is signaled to the DistributionManager if it is _false_.
+			 * There are two situations in which this condition may turn true:
+			 * a) the operator's state is locally satisfied and this does
+			 *    _not_ imply global satisfaction (e.g. isNotIn)
+			 * b) the operator's state is locally violated and this does
+			 *    _not_ imply global violation (e.g. isCombinedWith)
+			 *
+			 * In both cases we ask the DistributionManager what the remote state
+			 * of those operators is.
 			 */
-			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
-		}
-		else if (!resultLocalEval && isPositive()) {
-			/*
-			 * The operator is locally violated. This implies global violation for
-			 * 'isNotIn' according to CANS'14.
-			 * However, for 'isCombinedWith', it might be the case that the operator
-			 * is satisfied remotely. Thus, we need to ask the DistributionManager.
-			 */
-			result = _pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate());
+			result = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 		}
 
 		return result;
