@@ -1,6 +1,5 @@
-package de.tum.in.i22.uc.pdp.core.mechanisms;
+package de.tum.in.i22.uc.pdp.core;
 
-import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 

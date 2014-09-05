@@ -10,8 +10,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public abstract class Operator extends Observable implements IOperator {
 	protected static final Logger _logger = LoggerFactory.getLogger(Operator.class);

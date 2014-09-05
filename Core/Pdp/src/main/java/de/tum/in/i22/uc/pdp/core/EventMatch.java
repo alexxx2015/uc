@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;

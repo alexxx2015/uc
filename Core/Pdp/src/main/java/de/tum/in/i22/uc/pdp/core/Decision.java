@@ -19,7 +19,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 /**
  * Decision is the object produced by the PDP as a result of an event. It

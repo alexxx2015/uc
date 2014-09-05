@@ -10,8 +10,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
+import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 public class EventMatchOperator extends EventMatch implements LiteralOperator, Observer {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);

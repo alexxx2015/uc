@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp.core.mechanisms;
+package de.tum.in.i22.uc.pdp.core;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,13 +13,6 @@ import com.google.common.base.MoreObjects;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
-import de.tum.in.i22.uc.pdp.core.AuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.Condition;
-import de.tum.in.i22.uc.pdp.core.Decision;
-import de.tum.in.i22.uc.pdp.core.EventMatch;
-import de.tum.in.i22.uc.pdp.core.ExecuteAction;
-import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;

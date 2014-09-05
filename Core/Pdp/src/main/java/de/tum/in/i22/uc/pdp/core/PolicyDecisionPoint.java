@@ -35,13 +35,13 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
-import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
+import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
+import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
 public class PolicyDecisionPoint extends Observable implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
@@ -145,7 +145,17 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
-					Mechanism curMechanism = MechanismFactory.create(mech, policyName, this);
+					Mechanism curMechanism;
+
+					if (mech instanceof PreventiveMechanismType) {
+						curMechanism = new PreventiveMechanism(mech, policyName, this);
+					}
+					else if (mech instanceof DetectiveMechanismType) {
+						curMechanism = new DetectiveMechanism(mech, policyName, this);
+					}
+					else {
+						throw new InvalidMechanismException("" + mech);
+					}
 
 					if (!allMechanisms.containsKey(mech.getName())) {
 						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());

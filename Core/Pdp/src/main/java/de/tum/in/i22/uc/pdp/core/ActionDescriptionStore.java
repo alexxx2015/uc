@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 class ActionDescriptionStore {
 	/**
