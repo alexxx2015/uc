@@ -63,7 +63,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>**/AllTests.class</include>
+						<include>**/*Test*.class</include>
 					</includes>
 				</configuration>
 			</plugin>

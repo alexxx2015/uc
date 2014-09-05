@@ -43,63 +43,62 @@ public abstract class GenericTest {
 	protected static int PMP_SERVER_PORT = 40012;
 	protected static int ANY_SERVER_PORT = 40013;
 
-	protected static boolean hasBeenSetUpByAllTests = false;
+	protected static boolean initialized = false;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		if (hasBeenSetUpByAllTests == false) {
-			_logger.debug("\n\n NEW TEST CLASS START \n");
-			mf = MessageFactoryCreator.createMessageFactory();
-			thriftClientFactory = new ThriftClientFactory();
-			thriftServerFactory = new ThriftServerFactory();
-			String[] args = {
-					"--"
-							+ CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
-							Integer.toString(PDP_SERVER_PORT),
-							"--"
-									+ CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
-									Integer.toString(PIP_SERVER_PORT),
-									"--"
-											+ CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
-											Integer.toString(PMP_SERVER_PORT),
-											"--"
-													+ CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
-													Integer.toString(ANY_SERVER_PORT), };
+		_logger.debug("\n\n NEW TEST CLASS START \n");
+		mf = MessageFactoryCreator.createMessageFactory();
+		thriftClientFactory = new ThriftClientFactory();
+		thriftServerFactory = new ThriftServerFactory();
+		String[] args = {
+				"--"
+						+ CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
+						Integer.toString(PDP_SERVER_PORT),
+						"--"
+								+ CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+								Integer.toString(PIP_SERVER_PORT),
+								"--"
+										+ CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+										Integer.toString(PMP_SERVER_PORT),
+										"--"
+												+ CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+												Integer.toString(ANY_SERVER_PORT), };
 
-			box = new Controller(args);
-			pmp = box;
-			pdp = box;
-			pip = box;
-			box.start();
-		}
+		box = new Controller(args);
+		pmp = box;
+		pdp = box;
+		pip = box;
+		box.start();
+		initialized = true;
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		if (hasBeenSetUpByAllTests == false) {
-			_logger.debug("\n\n TEST CLASS END \n");
-			box.stop();
-			// give it a second to free the sockets
-			//Thread.sleep(1000);
-		}
+		_logger.debug("\n\n TEST CLASS END \n");
+		box.stop();
+		// give it a second to free the sockets
+		//Thread.sleep(1000);
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		if (hasBeenSetUpByAllTests == false) {
-			_logger.debug("\n\n Resetting box status for new test: new ports are ("
-					+ PDP_SERVER_PORT
-					+ ","
-					+ PIP_SERVER_PORT
-					+ ","
-					+ PMP_SERVER_PORT + ")\n\n");
-			box.resetOnlyRequestHandler();
+		while (!initialized) {
+			Thread.sleep(1000);
 		}
+
+		_logger.debug("\n\n Resetting box status for new test: new ports are ("
+				+ PDP_SERVER_PORT
+				+ ","
+				+ PIP_SERVER_PORT
+				+ ","
+				+ PMP_SERVER_PORT + ")\n\n");
+		box.resetOnlyRequestHandler();
 	}
 
 	/**
 	 * http://goo.gl/JLYmlS
-	 * 
+	 *
 	 * 1:10 (1:48)
 	 */
 
