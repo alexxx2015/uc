@@ -56,8 +56,6 @@ import de.tum.in.i22.uc.remotelistener.PtpHandler;
 public class PmpHandler extends PmpProcessor {
 	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
 
-	private final ObjectFactory of = new ObjectFactory();
-
 	/**
 	 * Maps data to the XML policies in which it occurs. Used for fast lookup of
 	 * policies for a given data.
@@ -71,11 +69,14 @@ public class PmpHandler extends PmpProcessor {
 
 	private IPmp2Ptp _ptp;
 
+	private final Set<String> _deployedPolicies;
+
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
+		_deployedPolicies = new HashSet<>();
 	}
 
 	private PolicyType xmlToPolicy(String xml) {
@@ -318,20 +319,27 @@ public class PmpHandler extends PmpProcessor {
 		// Convert the string xml to a PolicyType
 		PolicyType policy = xmlToPolicy(xml);
 
-		// Initialize the initial representations specified in the policy
-		initInitialRepresentations(policy);
+		if (_deployedPolicies.add(policy.getName())) {
 
-		// Convert DATAUSAGE parameters within the policy
-		Pair<PolicyType,Set<IData>> convertedPolicy = convertDatausageParameters(policy);
+			// Initialize the initial representations specified in the policy
+			initInitialRepresentations(policy);
 
-		// create an XmlPolicy out of the converted policy; the policy's name remains the same
-		XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()));
+			// Convert DATAUSAGE parameters within the policy
+			Pair<PolicyType,Set<IData>> convertedPolicy = convertDatausageParameters(policy);
 
-		// map all data IDs to the new XmlPolicy
-		mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
+			// create an XmlPolicy out of the converted policy; the policy's name remains the same
+			XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()));
 
-		// finally, deploy at the PDP
-		return getPdp().deployPolicyXML(convertedXmlPolicy);
+			// map all data IDs to the new XmlPolicy
+			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
+
+			// finally, deploy at the PDP
+			return getPdp().deployPolicyXML(convertedXmlPolicy);
+		}
+		else {
+			_logger.debug("Policy was deployed before. Not deploying again.");
+			return new StatusBasic(EStatus.OKAY);
+		}
 	}
 
 	@Override
