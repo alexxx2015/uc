@@ -17,7 +17,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
@@ -31,12 +30,6 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	public ThriftAny2PmpImpl(TAny2Pmp.Client handle) {
 		_handle = handle;
 	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> data) {
-		throw new RuntimeException("informRemoteDataFlow not implemented");
-	}
-
 
 	@Override
 	public IMechanism exportMechanismPmp(String par) {
@@ -130,7 +123,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
 			return response;
 		}
-		
+
 		try {
 			return ThriftConverter.fromThrift(_handle.translatePolicy(requestId, parameters, ThriftConverter.toThrift(xmlPolicy)));
 		} catch (TException e) {
@@ -144,7 +137,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
 			return response;
 		}
-		
+
 		try {
 			return ThriftConverter.fromThrift(_handle.updateDomainModel(requestId, parameters, ThriftConverter.toThrift(xmlDomainModel)));
 		} catch (TException e) {

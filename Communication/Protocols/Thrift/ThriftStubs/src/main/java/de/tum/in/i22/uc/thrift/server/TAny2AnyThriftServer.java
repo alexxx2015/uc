@@ -174,13 +174,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress,
-				dstPort, data);
-	}
-
-	@Override
 	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
 			throws TException {
 		return _pipServer.whoHasData(data, recursionDepth);

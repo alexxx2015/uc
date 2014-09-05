@@ -36,15 +36,6 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		IStatus status = _handler.informRemoteDataFlow(new IPLocation(
-				srcAddress, srcPort), new IPLocation(dstAddress, dstPort), d);
-		return ThriftConverter.toThrift(status);
-	}
-
-	@Override
 	public TStatus revokeMechanismPmp(String policyName, String mechName)
 			throws TException {
 		IStatus status = _handler.revokeMechanismPmp(policyName, mechName);

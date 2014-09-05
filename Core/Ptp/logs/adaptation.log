@@ -675,3 +675,137 @@ DomainModel: src/test/resources/models4test/DataContainerModels/DataContainerBas
 </de.tum.in.i22.uc.metamodel:domain>
 
 
+2014-09-05 13:13:22,727 INFO  [main] root: Loaded DomainModel: 
+DomainModel: src/test/resources/models4test/DataContainerModels/DataContainerBase.xml
+
+	SNS_PIM:PIM
+		photo [] - PIM
+		album [album1, album2] - PIM
+			aggregations: 				photo [] - PIM
+		profile [] - PIM
+			aggregations: 				photo [] - PIM
+	SNS_PSM:PSM
+		file [] - PSM
+		directory [] - PSM
+			aggregations: 				file [] - PSM
+	SNS_ISM:ISM
+		htmlEle [] - ISM
+		unixFile [] - ISM
+		unixDir [] - ISM
+			aggregations: 				unixFile [] - ISM
+
+2014-09-05 13:13:22,745 INFO  [main] root: Loaded DomainModel: 
+DomainModel: src/test/resources/models4test/DataContainerModels/DataContainerNew.xml
+
+	SNS_PIM:PIM
+		picture [] - PIM
+		birthday [date-of-birth] - PIM
+		album [] - PIM
+			aggregations: 				picture [] - PIM
+		profile [] - PIM
+			aggregations: 				picture [] - PIM
+			compositions: 				birthday [date-of-birth] - PIM
+	SNS_PSM:PSM
+		file [] - PSM
+		directory [] - PSM
+			aggregations: 				file [] - PSM
+		img [] - PSM
+	SNS_ISM:ISM
+		img [] - ISM
+		distrFile [] - ISM
+		unixFile [] - ISM
+		file [] - ISM
+		unixDir [] - ISM
+			aggregations: 				distrFile [] - ISM 				unixFile [] - ISM
+		distrDir [] - ISM
+			aggregations: 				img [] - ISM
+
+2014-09-05 13:13:23,003 INFO  [main] root: distance: picture-photo: 0.0
+2014-09-05 13:13:23,003 INFO  [main] root: similiratity found: (base-new) photo-picture
+2014-09-05 13:13:23,009 INFO  [main] root: distance: birthday-photo: 0.875
+2014-09-05 13:13:23,017 INFO  [main] root: similarity: birthday-picture: 0.71428573
+2014-09-05 13:13:23,018 INFO  [main] root: similarity: photo-date-of-birth: 1.0
+2014-09-05 13:13:23,021 INFO  [main] root: distance: birthday-album: 0.875
+2014-09-05 13:13:23,022 INFO  [main] root: similarity: birthday-album1: 1.0
+2014-09-05 13:13:23,023 INFO  [main] root: similarity: birthday-album2: 1.0
+2014-09-05 13:13:23,024 INFO  [main] root: similarity: album-date-of-birth: 1.0
+2014-09-05 13:13:23,029 INFO  [main] root: distance: birthday-profile: 0.71428573
+2014-09-05 13:13:23,031 INFO  [main] root: similarity: profile-date-of-birth: 1.0
+2014-09-05 13:13:23,076 INFO  [main] root: >>>Adaptation Complete: DomainModel: 
+
+###############################
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="photo" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.2 " synonym="picture "/>
+<pimdata name="album" storedin="//@psms/@psmcontainers.1 " synonym="album1 album2 ">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+<pimdata name="profile" storedin="//@psms/@psmcontainers.1 " synonym="">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+<dataAssoLinks assoType="isCompositionOf" targetAssoData="//@pims/@pimdata.3 "/>
+</pimdata>
+<pimdata name="birthday" synonym="date-of-birth "/>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.1 //@isms/@ismcontainers.4 " name="file"/>
+<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.2 //@isms/@ismcontainers.6 " name="directory"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="img"/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="htmlEle"/>
+<ismcontainers name="unixFile"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 //@isms/@ismcontainers.4 " name="unixDir"/>
+<ismcontainers name="img"/>
+<ismcontainers name="distrFile"/>
+<ismcontainers name="file"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.3 " name="distrDir"/>
+</isms>
+</de.tum.in.i22.uc.metamodel:domain>
+
+
+2014-09-05 13:13:23,093 INFO  [main] root: Loaded DomainModel: 
+DomainModel: src/test/resources/models4test/DataContainerModels/DataContainerBase.xml
+
+	SNS_PIM:PIM
+		photo [] - PIM
+		album [album1, album2] - PIM
+			aggregations: 				photo [] - PIM
+		profile [] - PIM
+			aggregations: 				photo [] - PIM
+	SNS_PSM:PSM
+		file [] - PSM
+		directory [] - PSM
+			aggregations: 				file [] - PSM
+	SNS_ISM:ISM
+		htmlEle [] - ISM
+		unixFile [] - ISM
+		unixDir [] - ISM
+			aggregations: 				unixFile [] - ISM
+
+2014-09-05 13:13:23,101 INFO  [main] root: >>>Adaptation Complete: DomainModel: 
+
+###############################
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="photo" storedin="//@psms/@psmcontainers.0 " synonym=""/>
+<pimdata name="album" storedin="//@psms/@psmcontainers.1 " synonym="album1 album2 ">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+<pimdata name="profile" storedin="//@psms/@psmcontainers.1 " synonym="">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="file"/>
+<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.2 " name="directory"/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="htmlEle"/>
+<ismcontainers name="unixFile"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 " name="unixDir"/>
+</isms>
+</de.tum.in.i22.uc.metamodel:domain>
+
+

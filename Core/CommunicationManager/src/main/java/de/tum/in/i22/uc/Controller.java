@@ -399,12 +399,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-		return _requestHandler.informRemoteDataFlow(srcLocation, dstLocation, dataflow);
-	}
-
-	@Override
 	public IMechanism exportMechanismPmp(String par) {
 		return _requestHandler.exportMechanismPmp(par);
 	}

@@ -40,7 +40,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
@@ -81,11 +80,11 @@ public class PmpHandler extends PmpProcessor {
 		_ptp = new PtpHandler();
 	}
 
-	private PolicyType xmlToPolicy(String XMLPolicy) {
+	private PolicyType xmlToPolicy(String xml) {
 		PolicyType curPolicy = null;
 		_logger.debug("XMLtoPolicy");
-		_logger.trace("Policy to be converted: " + XMLPolicy);
-		InputStream inp = new ByteArrayInputStream(XMLPolicy.getBytes());
+		_logger.trace("Policy to be converted: " + xml);
+		InputStream inp = new ByteArrayInputStream(xml.getBytes());
 		try {
 			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
 			Unmarshaller u = jc.createUnmarshaller();
@@ -300,15 +299,6 @@ public class PmpHandler extends PmpProcessor {
 			res.add(new DataBasic(st.nextToken()));
 		}
 		return res;
-	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-
-		// TODO: Get policies for data and send them
-
-		return new StatusBasic(EStatus.ERROR);
 	}
 
 	@Override
