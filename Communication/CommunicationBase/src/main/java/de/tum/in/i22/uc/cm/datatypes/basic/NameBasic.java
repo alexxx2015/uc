@@ -16,7 +16,7 @@ public class NameBasic implements IName {
 	private final String _name ;
 
 	public NameBasic(String name) {
-		this._name = name;
+		_name = name;
 	}
 
 	@Override
