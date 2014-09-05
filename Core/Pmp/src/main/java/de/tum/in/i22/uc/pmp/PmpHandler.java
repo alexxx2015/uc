@@ -317,7 +317,7 @@ public class PmpHandler extends PmpProcessor {
 		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
 
 		// Convert the string xml to a PolicyType
-		PolicyType policy = xmlToPolicy(xml);
+		final PolicyType policy = xmlToPolicy(xml);
 
 		if (_deployedPolicies.add(policy.getName())) {
 
@@ -332,6 +332,20 @@ public class PmpHandler extends PmpProcessor {
 
 			// map all data IDs to the new XmlPolicy
 			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
+
+			if (Settings.getInstance().getDistributionEnabled()) {
+				/*
+				 * As registering the policy for remote
+				 * purposes might take a while, we start
+				 * the registration process in a new thread and go on.
+				 */
+				new Thread() {
+					@Override
+					public void run() {
+						_distributionManager.registerPolicy(policy.getName());
+					}
+				}.start();
+			}
 
 			// finally, deploy at the PDP
 			return getPdp().deployPolicyXML(convertedXmlPolicy);

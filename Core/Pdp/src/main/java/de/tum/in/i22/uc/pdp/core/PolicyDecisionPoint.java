@@ -115,20 +115,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 			_logger.debug("Deploying policy [name={}]", policyName);
 
-			if (Settings.getInstance().getDistributionEnabled()) {
-				/*
-				 * As registering the policy for remote
-				 * purposes might take a while, we start
-				 * the registration process in a new thread and go on.
-				 */
-				new Thread() {
-					@Override
-					public void run() {
-						_distributionManager.registerPolicy(policyName);
-					}
-				}.start();
-			}
-
 			/*
 			 * Get the set of mechanisms of this policy (if any)
 			 */
