@@ -35,7 +35,7 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
+import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory

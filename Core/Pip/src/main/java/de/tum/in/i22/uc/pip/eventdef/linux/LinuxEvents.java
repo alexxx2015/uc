@@ -30,9 +30,9 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
+import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.

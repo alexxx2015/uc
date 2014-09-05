@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pip.extensions.distribution;
+package de.tum.in.i22.uc.pip.distribution;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
