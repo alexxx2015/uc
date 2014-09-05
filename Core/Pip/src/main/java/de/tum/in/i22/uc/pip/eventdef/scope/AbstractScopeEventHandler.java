@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -81,16 +82,16 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 			return 0;
 		int res = 0;
 		for (Pair<EScopeState, IScope> p : scopeChanges) {
-			if (p.getFirst().equals(EScopeState.OPEN)) {
+			if (p.getLeft().equals(EScopeState.OPEN)) {
 				if (_scopesToBeOpened == null)
 					_scopesToBeOpened = new HashSet<IScope>();
-				_scopesToBeOpened.add(p.getSecond());
+				_scopesToBeOpened.add(p.getRight());
 				res++;
 			}
-			if (p.getFirst().equals(EScopeState.CLOSE)) {
+			if (p.getLeft().equals(EScopeState.CLOSE)) {
 				if (_scopesToBeClosed == null)
 					_scopesToBeClosed = new HashSet<IScope>();
-				_scopesToBeClosed.add(p.getSecond());
+				_scopesToBeClosed.add(p.getRight());
 				res++;
 			}
 		}
@@ -181,7 +182,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 		IStatus resStatus = null;
 
 		if (xlBehavior != null) {
-			switch ((xlBehavior.getFirst())) {
+			switch ((xlBehavior.getLeft())) {
 			case INTRA:
 				resStatus = update();
 				break;
@@ -190,9 +191,9 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 			case INTRAIN:
 			case INTRAOUT:
 				_logger.debug("performUpdate - step 3. cross layer behavior="
-						+ xlBehavior.getFirst());
-				resStatus = update(xlBehavior.getFirst(),
-						xlBehavior.getSecond());
+						+ xlBehavior.getLeft());
+				resStatus = update(xlBehavior.getLeft(),
+						xlBehavior.getRight());
 				break;
 			case UNKNOWN:
 				// TODO: implement fallback
@@ -217,7 +218,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	}
 
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
-		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+		return Pair.of(EBehavior.INTRA, null);
 	}
 
 	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {

@@ -5,8 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -61,10 +62,10 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 		}
 		Set<Pair<EScopeState, IScope>> res = new HashSet<Pair<EScopeState, IScope>>();
 		if (delimiter.equals(_openDelimiter)) {
-			res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
+			res.add(Pair.of(EScopeState.OPEN, scope));
 			return res;
 		} else if (delimiter.equals(_closeDelimiter)) {
-			res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSE, scope));
+			res.add(Pair.of(EScopeState.CLOSE, scope));
 			return res;
 		}
 		return res;
@@ -79,12 +80,12 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
-			return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
+			return Pair.of(EBehavior.IN, scope);
 		}
 		_delimiter=_delimiter.toLowerCase();
 		if ((scope == null) || !( _closeDelimiter.equals(_delimiter)))
-			return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
-		return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
+			return Pair.of(EBehavior.UNKNOWN, null);
+		return Pair.of(EBehavior.IN, scope);
 	}
 
 	@Override
