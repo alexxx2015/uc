@@ -49,7 +49,6 @@
 
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<filesets>
 						<fileset>
@@ -62,10 +61,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.16</version>
 				<configuration>
 					<includes>
-						<include>**/AllTests.class</include>
+						<include>**/*Test*.class</include>
 					</includes>
 				</configuration>
 			</plugin>

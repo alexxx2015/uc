@@ -28,31 +28,4 @@ public class PxpSpec {
 	public String getId() {
 		return id;
 	}
-
-
-
-//	@Override
-//	public void setIp(String ip) {
-//		// TODO Auto-generated method stub
-//		this.ip = ip;
-//	}
-//
-//	@Override
-//	public void setPort(int port) {
-//		// TODO Auto-generated method stub
-//		this.port = port;
-//	}
-//
-//	@Override
-//	public void setDesc(String description) {
-//		// TODO Auto-generated method stub
-//		this.description = description;
-//	}
-//
-//	@Override
-//	public void setId(String id) {
-//		// TODO Auto-generated method stub
-//		this.id = id;
-//	}
-
 }

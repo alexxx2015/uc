@@ -4,9 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -19,19 +23,27 @@ import javax.xml.bind.UnmarshalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
-import de.tum.in.i22.uc.pdp.core.mechanisms.MechanismFactory;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
+import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
+import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class PolicyDecisionPoint {
+public class PolicyDecisionPoint extends Observable implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
 	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
@@ -48,13 +60,22 @@ public class PolicyDecisionPoint {
 
 	private final PxpManager _pxpManager;
 
+	private final List<EventMatchOperator> _eventMatches;
+
+	private final List<StateBasedOperator> _stateBasedOperatorTrue;
+
+	private final IDistributionManager _distributionManager;
+
 	public PolicyDecisionPoint() {
-		this(new DummyPipProcessor(), new PxpManager());
+		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager) {
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
 		_pip = pip;
 		_pxpManager = pxpManager;
+		_distributionManager = distributionManager;
+		_stateBasedOperatorTrue = new LinkedList<>();
+		_eventMatches = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
@@ -88,19 +109,19 @@ public class PolicyDecisionPoint {
 		}
 
 		try {
-			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller()
-					.unmarshal(is);
+			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller().unmarshal(is);
 			PolicyType policy = (PolicyType) poElement.getValue();
+			final String policyName = policy.getName();
 
-			_logger.debug("Deploying policy [name={}]: {}", policy.getName(), policy.toString());
+			_logger.debug("Deploying policy [name={}]", policyName);
 
 			/*
 			 * Get the set of mechanisms of this policy (if any)
 			 */
-			Map<String, Mechanism> mechanisms = _policyTable.get(policy.getName());
-			if (mechanisms == null) {
-				mechanisms = new HashMap<String, Mechanism>();
-				_policyTable.put(policy.getName(), mechanisms);
+			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
+			if (allMechanisms == null) {
+				allMechanisms = new HashMap<String, Mechanism>();
+				_policyTable.put(policyName, allMechanisms);
 			}
 
 			/*
@@ -110,15 +131,24 @@ public class PolicyDecisionPoint {
 			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
-					Mechanism curMechanism = MechanismFactory.create(mech, policy.getName(), this);
+					Mechanism curMechanism;
 
-					if (!mechanisms.containsKey(mech.getName())) {
+					if (mech instanceof PreventiveMechanismType) {
+						curMechanism = new PreventiveMechanism(mech, policyName, this);
+					}
+					else if (mech instanceof DetectiveMechanismType) {
+						curMechanism = new DetectiveMechanism(mech, policyName, this);
+					}
+					else {
+						throw new InvalidMechanismException("" + mech);
+					}
+
+					if (!allMechanisms.containsKey(mech.getName())) {
 						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
-						mechanisms.put(mech.getName(), curMechanism);
+						allMechanisms.put(mech.getName(), curMechanism);
 						new Thread(curMechanism).start();
 					} else {
-						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(),
-								policy.getName());
+						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
 					}
 				} catch (InvalidMechanismException e) {
 					_logger.error("Invalid mechanism specified: {}", e.getMessage());
@@ -169,30 +199,37 @@ public class PolicyDecisionPoint {
 		return true;
 	}
 
-	public Decision notifyEvent(IEvent event) {
+	public IResponse notifyEvent(IEvent event) {
 		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
-		List<EventMatch> eventMatchList = _actionDescriptionStore.getEventList(event.getName());
-		if (eventMatchList != null) {
-			_logger.debug("Searching for subscribed condition nodes for event=[{}] -> subscriptions: {}",
-					event.getName(), eventMatchList.size());
+		_logger.info("notifyEvent: {}", event);
 
-			for (EventMatch eventMatch : eventMatchList) {
-				_logger.info("Processing EventMatchOperator for event [{}]", eventMatch.getAction());
-				eventMatch.evaluate(event);
-			}
-		}
+		/*
+		 * Notify the event to all Observers,
+		 * i.e. StateBasedOperators and EventMatchOperators
+		 */
+		setChanged();
+		notifyObservers(event);
 
 		List<Mechanism> mechanismList = _actionDescriptionStore.getMechanismList(event.getName());
-		_logger.debug("Searching for triggered mechanisms for event=[{}] -> subscriptions: {}", event.getName(),
-				mechanismList.size());
+		_logger.debug("Triggered mechanisms for event=[{}]: {}", event.getName(), mechanismList.size());
 
 		for (Mechanism mech : mechanismList) {
 			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
 			mech.notifyEvent(event, d);
 		}
 
-		return d;
+		if (_stateBasedOperatorTrue.isEmpty() && _eventMatches.isEmpty()) {
+			return d.toResponse();
+		}
+
+		IResponse response = new DistributedPdpResponse(d.toResponse(), _eventMatches, _stateBasedOperatorTrue);
+
+		// prepare for next
+		_eventMatches.clear();
+		_stateBasedOperatorTrue.clear();
+
+		return response;
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
@@ -213,8 +250,8 @@ public class PolicyDecisionPoint {
 		return _pip;
 	}
 
-	public PxpManager getPxpManager() {
-		return _pxpManager;
+	public boolean executeAction(ExecuteAction execAction, boolean synchronous) {
+		return _pxpManager.execute(execAction, synchronous);
 	}
 
 	public void stop() {
@@ -227,11 +264,35 @@ public class PolicyDecisionPoint {
 		_policyTable.clear();
 	}
 
-	public void addEventMatch(EventMatch eventMatch) {
-		_actionDescriptionStore.addEventMatch(eventMatch);
-	}
+//	public void addEventMatch(EventMatch eventMatch) {
+//		_actionDescriptionStore.addEventMatch(eventMatch);
+//	}
 
 	public void addMechanism(Mechanism mechanism) {
 		_actionDescriptionStore.addMechanism(mechanism);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof EventMatchOperator) {
+			_logger.info("Got update about EventMatchOperator: {}.", o);
+			_eventMatches.add((EventMatchOperator) o);
+		}
+		else if (o instanceof StateBasedOperator) {
+			_logger.info("Got update about StateBasedOperator: {}.", o);
+			_stateBasedOperatorTrue.add((StateBasedOperator) o);
+		}
+		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
+			if (!_stateBasedOperatorTrue.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
+				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), Collections.<EventMatchOperator> emptyList(), _stateBasedOperatorTrue));
+			}
+
+			// Prepare for next
+			_stateBasedOperatorTrue.clear();
+		}
+	}
+
+	public IDistributionManager getDistributionManager() {
+		return _distributionManager;
 	}
 }

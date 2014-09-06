@@ -5,8 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -29,7 +30,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 			_delimiter=null;
 			//other parameters don't need to be reset cause they are settings values
 		}
-		
+
 		public SaveEventHandler() {
 			super();
 		}
@@ -68,10 +69,10 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 			}
 						Set<Pair<EScopeState, IScope>> res = new HashSet<Pair<EScopeState, IScope>>();
 			if (_delimiter.equals(_openDelimiter)) {
-				res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
+				res.add(Pair.of(EScopeState.OPEN, scope));
 				return res;
 			} else if (_delimiter.equals(_closeDelimiter)) {
-				res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSE, scope));
+				res.add(Pair.of(EScopeState.CLOSE, scope));
 				return res;
 			}
 			return res;
@@ -81,8 +82,8 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 		protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 			IScope scope = buildScope();
 			if ((scope == null) || !( _closeDelimiter.equals(_delimiter)))
-				return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
-			return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);
+				return Pair.of(EBehavior.UNKNOWN, null);
+			return Pair.of(EBehavior.OUT, scope);
 		}
 
 		@Override

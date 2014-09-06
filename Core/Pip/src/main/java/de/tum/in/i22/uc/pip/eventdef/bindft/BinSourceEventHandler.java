@@ -2,9 +2,10 @@ package de.tum.in.i22.uc.pip.eventdef.bindft;
 
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -86,13 +87,13 @@ public class BinSourceEventHandler extends BinDftEventHandler {
 		delimiter = delimiter.toLowerCase();
 		IScope scope = buildScope(delimiter);
 		if (scope == null)
-			return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+			return Pair.of(EBehavior.UNKNOWN, null);
 		if (delimiter.equals(_openDelimiter))
-			return new Pair<EBehavior, IScope>(EBehavior.INTRA, scope);
+			return Pair.of(EBehavior.INTRA, scope);
 		if (delimiter.equals(_closeDelimiter))
-			return new Pair<EBehavior, IScope>(EBehavior.IN, scope);
+			return Pair.of(EBehavior.IN, scope);
 		// this line should never be reached
-		return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+		return Pair.of(EBehavior.UNKNOWN, null);
 	}
 
 }

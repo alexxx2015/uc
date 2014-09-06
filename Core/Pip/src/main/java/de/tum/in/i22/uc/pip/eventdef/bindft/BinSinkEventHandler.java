@@ -3,9 +3,10 @@ package de.tum.in.i22.uc.pip.eventdef.bindft;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -24,12 +25,12 @@ public class BinSinkEventHandler extends BinDftEventHandler {
 		return buildScope(EScopeType.BIN_GENERIC_SAVE);
 	}
 
-	
+
 	@Override
 	protected IStatus update() {
 		return update(EBehavior.INTRA, null);
 	}
-	
+
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
 		try {
@@ -38,17 +39,17 @@ public class BinSinkEventHandler extends BinDftEventHandler {
 			int pid = Integer.valueOf(getParameterValue("PID"));
 			String nonce = getParameterValue("nonce");
 			String listOfData = getParameterValue("listOfData");
-			
+
 			String[] data = listOfData.split(":");
-			
+
 			Set<IData> setOfData = new HashSet<IData>();
-			
+
 			for (String sd: data){
 				IData d=_informationFlowModel.getDataFromId(sd);
 				if ((d!=null) && (d.equals(new DataBasic("null")))) setOfData.add(d);
 			}
-			
-			
+
+
 			if ((direction.equals(EBehavior.IN))
 						|| (direction.equals(EBehavior.INTRAIN))) {
 					// ERROR: a sink event is never IN
@@ -73,9 +74,9 @@ public class BinSinkEventHandler extends BinDftEventHandler {
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		String delimiter = null;
@@ -85,14 +86,14 @@ public class BinSinkEventHandler extends BinDftEventHandler {
 			_logger.error(e.getMessage());
 			return null;
 		}
-		
+
 		delimiter=delimiter.toLowerCase();
 		IScope scope = buildScope(delimiter);
-		if (scope==null)return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
-		if (delimiter.equals(_openDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.OUT, scope);
-		if (delimiter.equals(_closeDelimiter)) return new Pair<EBehavior, IScope>(EBehavior.INTRA, scope);
+		if (scope==null)return Pair.of(EBehavior.UNKNOWN, null);
+		if (delimiter.equals(_openDelimiter)) return Pair.of(EBehavior.OUT, scope);
+		if (delimiter.equals(_closeDelimiter)) return Pair.of(EBehavior.INTRA, scope);
 		//this line should never be reached
-		return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
+		return Pair.of(EBehavior.UNKNOWN, null);
 	}
 
 }

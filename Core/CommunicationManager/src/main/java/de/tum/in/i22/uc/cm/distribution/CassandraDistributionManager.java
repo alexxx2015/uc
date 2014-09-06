@@ -1,8 +1,12 @@
 package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,20 +14,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
-import com.datastax.driver.core.exceptions.InvalidQueryException;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -32,14 +35,85 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+
+	private static final String TABLE_NAME_DATA = "hasdata";
+//	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
+//	private static final String TABLE_NAME_EVENTS_HAPPENED = "eventshappened";
+//	private static final String TABLE_NAME_STATES = "operatorstates";
+//	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
+//	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
+	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
+
+
+	private static final List<String> _tables;
+
+	static {
+		_tables = new LinkedList<>();
+		_tables.add(
+				"CREATE TABLE " + TABLE_NAME_DATA + " ("
+						+ "data text,"
+						+ "locations set<text>,"
+						+ "PRIMARY KEY (data)"
+						+ ");");
+		_tables.add(
+				"CREATE TABLE " + TABLE_NAME_OP_OBSERVED + " ("
+						+ "opid text,"
+						+ "location text,"
+						+ "time timeuuid,"
+						+ "PRIMARY KEY (opid,time)) "
+						+ "WITH CLUSTERING ORDER BY (time DESC);");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
+//						+ "event text,"
+//						+ "locations set<text>,"
+//						+ "PRIMARY KEY (event)"
+//						+ ");");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_EVENTS_HAPPENED + " ("
+//						+ "eventid text,"
+//						+ "location text,"
+//						+ "time timeuuid,"
+//						+ "PRIMARY KEY (location,time)"
+//						+ ") "
+//						+ "WITH CLUSTERING ORDER BY (time DESC);");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATEBASED_OP_TRUE + " ("
+//						+ "opid text,"
+//						+ "location text,"
+//						+ "time timeuuid,"
+//						+ "PRIMARY KEY (location,time)"
+//						+ ") "
+//						+ "WITH CLUSTERING ORDER BY (time DESC);");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATES + " ("
+//						+ "id text,"
+//						+ "value boolean,"
+//						+ "immutable boolean,"
+//						+ "subevertrue boolean,"
+//						+ "circarray list<text>,"
+//						+ "PRIMARY KEY (id)"
+//						+ ");");
+//		_tables.add(
+//				"CREATE TABLE " + TABLE_NAME_STATES_COUNTER + " ("
+//						+ "id text,"
+//						+ "counter counter,"
+//						+ "PRIMARY KEY (id)"
+//						+ ");");
+	};
+
+
 	/*
 	 * IMPORTANT:
-	 * Cassandra 2.1.0-beta causes some trouble with upper/lowercase
+	 * Cassandra 2.1.0-rc6 causes some trouble with upper/lowercase
 	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
 	 *  which was afterwards not found by a lookup with name 'testPolicy')
 	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
@@ -49,9 +123,9 @@ class CassandraDistributionManager implements IDistributionManager {
 	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
 	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
 
+	private final Session _defaultSession;
+
 	private final Cluster _cluster;
-	private Session _currentSession;
-	private String _currentKeyspace;
 
 	private PdpProcessor _pdp;
 	private PipProcessor _pip;
@@ -60,8 +134,13 @@ class CassandraDistributionManager implements IDistributionManager {
 	private boolean _initialized = false;
 
 	public CassandraDistributionManager() {
-		_cluster = Cluster.builder().addContactPoint("localhost").build();
-		_currentSession = _cluster.connect();
+		/*
+		 * FIXME make ConsistencyLevel configurable from Settings.
+		 */
+		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
+
+		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
+		_defaultSession = _cluster.connect();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
 	}
@@ -79,52 +158,40 @@ class CassandraDistributionManager implements IDistributionManager {
 		_initialized = true;
 	}
 
-	private Session switchKeyspace(String keyspace) {
-		if (keyspace != null && keyspace.equals(_currentKeyspace)) {
-			return _currentSession;
-		}
-
-		try {
-			_currentSession = _cluster.connect(keyspace);
-			_currentKeyspace = _currentSession.getLoggedKeyspace();
-		} catch (InvalidQueryException e) {
-			// this happens if the keyspace did not exist
-			_currentKeyspace = null;
-		}
-
-		if (_currentKeyspace == null) {
-			createPolicyKeyspace(keyspace, IPLocation.localIpLocation);
-			return switchKeyspace(keyspace);
-		}
-
-		return _currentSession;
-	}
-
 	@Override
-	public void newPolicy(XmlPolicy policy) {
-		switchKeyspace(policy.getName());
-
-		//TODO initialization of distributed policy information
+	public void registerPolicy(String policyName) {
+		createPolicyKeyspace(policyName.toLowerCase());
 	}
 
+
+	/**
+	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
+	 * via Thrift interfaces.
+	 *
+	 * @param policies the policies to send
+	 * @param pmpLocation the location to which the policies are sent
+	 */
 	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
 		_logger.debug("doStickyPolicyTransfer invoked: " + pmpLocation + ": " + policies);
 
 		for (XmlPolicy policy : policies) {
 			/*
 			 * For each policy, the protocol is as follows:
-			 * (1) switch to the policy's keyspace
-			 * (2) extend the keyspace with the given location
-			 * (3) if the keyspace was in fact extended
+			 * (1) extend the keyspace with the given location
+			 * (2) if the keyspace was in fact extended
 			 *     (meaning that the provided location was not yet aware of the policy),
 			 *     then the policy is sent to the remote PMP.
-			 * (4) if remote deployment of the policy fails, then the given location
+			 * (3) if remote deployment of the policy fails, then the given location
 			 *     is removed from the policy's keyspace
 			 */
 
-			switchKeyspace(policy.getName());
+			String policyName = policy.getName().toLowerCase();
 
-			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
+			/**
+			 * FIXME: There might be potential to parallelize policy transfer
+			 */
+
+			if (adjustPolicyKeyspace(policyName, pmpLocation, true)) {
 				boolean success = true;
 
 				// if the location was not yet part of the keyspace, then we need to
@@ -132,7 +199,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				try {
 					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
 
-					if (remotePmp.deployPolicyRawXMLPmp(policy.getXml()).getEStatus() != EStatus.OKAY) {
+					if (!remotePmp.deployPolicyRawXMLPmp(policy.getXml()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
 
@@ -145,10 +212,17 @@ class CassandraDistributionManager implements IDistributionManager {
 				// If remote deployment of the policy fails,
 				// then we remove the location from the keyspace
 				if (!success) {
-					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
+					adjustPolicyKeyspace(policyName, pmpLocation, false);
 				}
-			}
 
+				/*
+				 * TODO: We need to deal with the fact that success == false at this place.
+				 * Possible options: Retry, throw exception, cancel data transfer
+				 */
+			}
+			else {
+				_logger.debug("Not performing remote policy transfer. Policy should already be present remotely.");
+			}
 		}
 	}
 
@@ -163,11 +237,29 @@ class CassandraDistributionManager implements IDistributionManager {
 		_logger.debug("doCrossSystemDataTrackingCoarse invoked: " + dstLocation + " -> " + data);
 
 		for (IData d : data) {
-			for (XmlPolicy p : _pmp.getPolicies(d)) {
-				switchKeyspace(p.getName());
+			String dataID = d.getId();
 
-				_currentSession.execute("INSERT INTO hasdata (data, location) " + "VALUES ('" + d.getId() + "','"
-						+ dstLocation.getHost() + "')");
+			for (XmlPolicy p : _pmp.getPolicies(d)) {
+				String policyName = p.getName().toLowerCase();
+
+				/*
+				 * FIXME: The below statements may fail because the
+				 * keyspace and tables might not have been created yet. Handle this.
+				 */
+
+				// Check whether there already exists an entry for this dataID ...
+				if (_defaultSession.execute("SELECT data from " + policyName + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+					// ... if not, insert the corresponding row
+					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_DATA
+							+ " (data, locations) VALUES ('" + dataID + "',{'"
+							+ IPLocation.localIpLocation.getHost() + "','"
+							+ dstLocation.getHost() + "'})");
+				}
+				else {
+					// ... otherwise add the additional location to the existing row
+					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
+							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
+				}
 			}
 		}
 	}
@@ -198,40 +290,21 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private void createPolicyKeyspace(String policyName, IPLocation... locations) {
-		if (locations == null || locations.length == 0) {
-			_logger.info("Unable to create keyspace. No locations provided.");
-			return;
-		}
-
-		policyName = policyName.toLowerCase();
-
-		// check whether the keyspace exists already
-		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
-				+ "WHERE keyspace_name = '" + policyName + "'");
-		if (rows.iterator().hasNext()) {
-			// if the keyspace does exist, then we return
-			return;
-		}
-
-		StringBuilder queryCreateKeyspace = new StringBuilder();
-		queryCreateKeyspace.append("CREATE KEYSPACE " + policyName + " WITH replication ");
-		queryCreateKeyspace.append("= {'class':'NetworkTopologyStrategy',");
-		for (IPLocation loc : locations) {
-			queryCreateKeyspace.append("'" + loc.getHost() + "':1,");
-		}
-		queryCreateKeyspace.deleteCharAt(queryCreateKeyspace.length() - 1);
-		queryCreateKeyspace.append("}");
-
+	private void createPolicyKeyspace(String policyName) {
 		try {
-			_currentSession.execute(queryCreateKeyspace.toString());
-			switchKeyspace(policyName);
-			_currentSession.execute("CREATE TABLE hasdata (data text,location text,PRIMARY KEY (data))");
+			_defaultSession.execute("CREATE KEYSPACE " + policyName
+					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
-		catch (AlreadyExistsException e) {
-			// don't worry.. about a thing.
-		}
+		catch (AlreadyExistsException e) {}
 
+		Session newSession = _cluster.connect(policyName);
+
+		// Create all tables
+		for (String tbl : _tables) {
+			try {
+				newSession.execute(tbl);
+			} catch (AlreadyExistsException e) {}
+		}
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -248,10 +321,9 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * 		i.e. if the provided location was added or removed.
 	 */
 	private boolean adjustPolicyKeyspace(String name, IPLocation location, boolean add) {
-		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
-		ResultSet rows = _currentSession.execute("SELECT strategy_options " + "FROM system.schema_keyspaces "
+		ResultSet rows = _defaultSession.execute("SELECT strategy_options FROM system.schema_keyspaces "
 				+ "WHERE keyspace_name = '" + name + "'");
 
 		// (2) We build the set of locations that are currently known within the keyspace
@@ -282,12 +354,10 @@ class CassandraDistributionManager implements IDistributionManager {
 		query.append("}");
 
 		// (4) We execute the query
-		_currentSession.execute(query.toString());
+		_defaultSession.execute(query.toString());
 
 		return true;
 	}
-
-
 
 	@Override
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
@@ -315,18 +385,19 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
+				/*
+				 * TODO: These three tasks can be parallelized(?!?)
+				 */
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
+
 			}
 			else {
 				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");
 			}
 		}
 	}
-
-
-
 
 	private Set<XmlPolicy> getAllPolicies(Set<IData> data) {
 		if (data == null || data.size() == 0) {
@@ -340,5 +411,106 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 
 		return policies;
+	}
+
+
+	@Override
+	public void update(IResponse response) {
+		if (!(response instanceof DistributedPdpResponse)) {
+			return;
+		}
+
+		DistributedPdpResponse res = (DistributedPdpResponse) response;
+
+		StringBuilder batchJob = new StringBuilder(512);
+		batchJob.append("BEGIN UNLOGGED BATCH ");
+
+		for (EventMatchOperator event : res.getEventMatches()) {
+			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
+
+			batchJob.append("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+					+ " (opid, location, time) VALUES ("
+					+ "'" + event.getFullId() + "',"
+					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ "now()"
+					+ ") USING TTL " + event.getTTL() / 1000 + ";");
+		}
+
+
+		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
+			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
+
+			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+					+ " (opid, location, time) VALUES ("
+					+ "'" + sbo.getFullId() + "',"
+					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ "now()"
+					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
+		}
+
+		batchJob.append(" APPLY BATCH;");
+
+		_defaultSession.execute(batchJob.toString());
+
+
+
+//			for (IOperatorState state : res.getOperatorStateChanges()) {
+//				IOperator operator = state.getOperator();
+//
+//				_logger.info("UPDATING CASSANDRA STATE: {}, {}", operator, state);
+//
+//				String policyName = operator.getMechanism().getPolicyName().toLowerCase();
+//
+//				if (!_insertedOperators.contains(operator.getFullId())) {
+//					_insertedOperators.add(operator.getFullId());
+//					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
+//							+ " (id, value, immutable, subevertrue) VALUES ("
+//							+ "'" + operator.getFullId() + "',"
+//							+ state.value() + ","
+//							+ state.isImmutable() + ","
+//							+ state.isSubEverTrue()
+//							+ ");");
+//				}
+//				else {
+//					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
+//							+ " SET value = " + state.value() + ","
+//							+ " immutable = " + state.isImmutable() + ","
+//							+ " subevertrue = " + state.isSubEverTrue()
+//							+ " WHERE id = '" + operator.getFullId() + "';");
+//				}
+//			}
+	}
+
+
+	@Override
+	public boolean wasTrueSince(LiteralOperator operator, long since) {
+		_logger.debug("wasTrueSince({}, {})", operator, since);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+						+ " WHERE opid = '" + operator.getFullId() + "'"
+						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
+						+ " LIMIT 1;");
+		if (operator.isPositive()) {
+			return !rs.isExhausted();
+		}
+		else {
+			return rs.isExhausted();
+		}
+	}
+
+
+	@Override
+	public boolean wasTrueInBetween(LiteralOperator operator, long from, long to) {
+		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
+				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
+				+ " LIMIT 1;");
+		if (operator.isPositive()) {
+			return !rs.isExhausted();
+		}
+		else {
+			return rs.isExhausted();
+		}
 	}
 }

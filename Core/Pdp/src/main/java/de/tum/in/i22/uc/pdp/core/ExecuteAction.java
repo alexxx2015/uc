@@ -20,11 +20,11 @@ public class ExecuteAction implements Serializable {
 	private final String _name;
 	private final Map<String,String> _parameters = new HashMap<>();
 	private final String _processor;
-	private final String _id;
+	private final String _pxpId;
 
-	private ExecuteAction(String name, String id, Collection<ParameterType> params, String processor) {
+	private ExecuteAction(String name, String pxpId, Collection<ParameterType> params, String processor) {
 		_name = name;
-		_id = id;
+		_pxpId = pxpId;
 		_processor = processor;
 
 		for (ParameterType param : params) {
@@ -54,15 +54,15 @@ public class ExecuteAction implements Serializable {
 		return _processor;
 	}
 
-	public String getId() {
-		return _id;
+	public String getPxpId() {
+		return _pxpId;
 	}
 
 	@Override
 	public String toString() {
 		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_name", _name)
-				.add("_id", _id)
+				.add("_pxpId", _pxpId)
 				.add("_processor", _processor)
 				.add("_parameters", _parameters)
 				.toString();

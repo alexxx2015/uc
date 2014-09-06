@@ -8,9 +8,9 @@ import de.tum.in.i22.uc.cm.processing.dummy.IDummyProcessor;
 /**
  * A abstract processor. Taking two interfaces to two other processors as an
  * argument.
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
 public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor<?, ?>> {
 	protected I1 _iface1;
@@ -43,6 +43,6 @@ public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor
 			_distributionManager = distributionManager;
 		}
 	}
-	
+
 	public abstract void stop();
 }

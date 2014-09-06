@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
 
 class ActionDescriptionStore {
 	/**
@@ -25,15 +24,15 @@ class ActionDescriptionStore {
 		_mechanismMap = Collections.synchronizedMap(new HashMap<String, List<Mechanism>>());
 	}
 
-	void addEventMatch(EventMatch e) {
-		List<EventMatch> eventMatchList = _eventMatchMap.get(e.getAction());
-		if (eventMatchList == null) {
-			eventMatchList = Collections.synchronizedList(new LinkedList<EventMatch>());
-		}
-		eventMatchList.add(e);
-
-		_eventMatchMap.put(e.getAction(), eventMatchList);
-	}
+//	void addEventMatch(EventMatch e) {
+//		List<EventMatch> eventMatchList = _eventMatchMap.get(e.getAction());
+//		if (eventMatchList == null) {
+//			eventMatchList = Collections.synchronizedList(new LinkedList<EventMatch>());
+//		}
+//		eventMatchList.add(e);
+//
+//		_eventMatchMap.put(e.getAction(), eventMatchList);
+//	}
 
 	void addMechanism(Mechanism m) {
 		List<Mechanism> mechanismList = _mechanismMap.get(m.getTriggerEvent().getAction());

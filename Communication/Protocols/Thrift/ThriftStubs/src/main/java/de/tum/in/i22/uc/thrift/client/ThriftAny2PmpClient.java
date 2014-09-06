@@ -14,7 +14,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
@@ -83,12 +82,6 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	public void disconnect() {
 		_connector.disconnect();
 		_impl = null;
-	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-		return _impl.informRemoteDataFlow(srcLocation, dstLocation, dataflow);
 	}
 
 	@Override

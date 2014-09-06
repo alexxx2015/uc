@@ -7,13 +7,15 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**
  * Class representing a cell name
- * 
+ *
  * @author Enrico Lovat
- * 
+ *
  */
 public class CellName extends NameBasic {
-	private static final String cs = Settings.getInstance()
-			.getExcelCoordinatesSeparator();
+	private static final String cs = Settings.getInstance().getExcelCoordinatesSeparator();
+
+	public static final String PREFIX = "EXCEL-";
+
 	private String workbook = "";
 	private String worksheet = "";
 	private int row = -1;

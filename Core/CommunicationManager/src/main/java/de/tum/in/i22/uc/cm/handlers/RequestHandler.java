@@ -73,7 +73,6 @@ import de.tum.in.i22.uc.pmp.requests.DeployPolicyRawXmlPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
@@ -505,13 +504,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IData newInitialRepresentation(IName containerName) {
 		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
-		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

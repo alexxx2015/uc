@@ -42,25 +42,6 @@ public class SimplifiedTemporalLogicBasic
 	}
 
 
-	// I doubt that these setters are necessary. Use an appropriate constructor instead.
-	@Deprecated
-	public void setDataEventMap(IDataEventMap dataEventMap) {
-		_dataEventMap = dataEventMap;
-	}
-
-	// I doubt that these setters are necessary. Use an appropriate constructor instead.
-	@Deprecated
-	public void setFormula(IOslFormula formula) {
-		_formula = formula;
-	}
-
-	// I doubt that these setters are necessary. Use an appropriate constructor instead.
-	@Deprecated
-	public void setStateEventMap(IStateEventMap stateEventMap) {
-		_stateEventMap = stateEventMap;
-	}
-
-
 	@Override
 	public boolean equals(Object obj) {
 		boolean isEqual = false;

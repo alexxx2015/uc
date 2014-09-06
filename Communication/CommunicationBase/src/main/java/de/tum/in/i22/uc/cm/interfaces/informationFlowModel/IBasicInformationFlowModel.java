@@ -21,7 +21,7 @@ public interface IBasicInformationFlowModel {
 	 * Removes the given container completely by deleting associated names,
 	 * aliases, and data.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param cont
 	 *            the container to be removed.
@@ -31,7 +31,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Removes all data from the specified container
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param container
 	 *            the container of which the data is to be removed.
@@ -42,7 +42,7 @@ public interface IBasicInformationFlowModel {
 	 * Removes all data from the container identified by the given container
 	 * name.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param containerName
 	 *            a name of the container that is to be emptied.
@@ -62,7 +62,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Removes the alias from fromContainer to toContainer.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param fromContainer
 	 *            the container of which the alias is outgoing
@@ -76,7 +76,7 @@ public interface IBasicInformationFlowModel {
 	 * Returns an immutable view onto the set of all aliases *from* the
 	 * specified container.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param container
 	 *            the container whose outgoing aliases will be returned.
@@ -115,7 +115,7 @@ public interface IBasicInformationFlowModel {
 	 * Returns an immutable view onto the set of all aliases *to* the specified
 	 * container.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param container
 	 *            the container whose incoming aliases will be returned.
@@ -138,7 +138,7 @@ public interface IBasicInformationFlowModel {
 	 * Adds the given data to the given container. If data or container is null,
 	 * nothing will happen.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param data
 	 *            the data to add
@@ -150,7 +150,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Removes the given data from the given container.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param data
 	 *            the data to remove
@@ -164,7 +164,7 @@ public interface IBasicInformationFlowModel {
 	 * Returns an immutable view onto the set of data within the given
 	 * container. In doubt, returns an empty set; never null.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param container
 	 *            the container of which we want to get the data
@@ -177,7 +177,7 @@ public interface IBasicInformationFlowModel {
 	 * Returns the data contained in the container identified by the given name,
 	 * cf. {@link #getData(IContainer)}.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param containerName
 	 *            a name of the container of which the containing data will be
@@ -210,7 +210,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Returns all containers in which the specified data is in
 	 *
-	 * ~ Double checked, 2014/04/10. FK.
+	 * 2014/04/10. FK.
 	 *
 	 * @param data
 	 *            the data whose containers are returned.
@@ -222,7 +222,7 @@ public interface IBasicInformationFlowModel {
 	 * Returns all containers of the specified type in which the specified data
 	 * is in.
 	 *
-	 * ~ Double checked, 2014/04/11. FK.
+	 * 2014/04/11. FK.
 	 *
 	 * @param data
 	 *            the data whose containers are returned.
@@ -242,17 +242,16 @@ public interface IBasicInformationFlowModel {
 	 * name/container mapping is overwritten. If this was the last name for that
 	 * container, the corresponding container is deleted.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * Calling this method is equivalent to calling
+	 * {@link IBasicInformationFlowModel#addName(name, container, true)}.
 	 *
-	 * Deprecated. The new method has a boolean parameter that states whether
-	 * the unreferenced container should indeed be deleted or not.
+	 * 2014/09/05. FK.
 	 *
 	 * @param name
 	 *            the new name for the given container.
 	 * @param container
 	 *            the container for which the new name applies.
 	 */
-	@Deprecated
 	public abstract void addName(IName name, IContainer container);
 
 	/**
@@ -277,7 +276,7 @@ public interface IBasicInformationFlowModel {
 	 * Adds an additional name, newName, for the container that is already
 	 * identified by another name, oldName.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param oldName
 	 *            a name identifying an already existing container
@@ -318,7 +317,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Returns an unmodifiable view onto all containers.
 	 *
-	 * ~ Double checked, 2014/03/30. FK.
+	 * 2014/03/30. FK.
 	 *
 	 * @return an unmodifiable view onto all containers.
 	 */
@@ -327,7 +326,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Returns an unmodifiable view onto all names.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @return an unmodifiable view onto all names.
 	 */
@@ -336,7 +335,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Returns an unmodifiable view onto all names of the specified type.
 	 *
-	 * ~ Double checked, 2014/04/1. FK.
+	 * 2014/04/1. FK.
 	 *
 	 * @param the
 	 *            type of the names to be returned.
@@ -347,7 +346,7 @@ public interface IBasicInformationFlowModel {
 	/**
 	 * Returns an unmodifiable view onto all names for the given container.
 	 *
-	 * ~ Double checked, 2014/03/14. FK.
+	 * 2014/03/14. FK.
 	 *
 	 * @param container
 	 *            the container whose names are returned.
@@ -370,7 +369,7 @@ public interface IBasicInformationFlowModel {
 	 * Get all names of the specified container. It is ensured that all names
 	 * within the result are of the specified type.
 	 *
-	 * ~ Double checked, 2014/04/11. FK.
+	 * 2014/04/11. FK.
 	 *
 	 * @param cont
 	 *            the {@link IContainer} whose {@link IName}s will be returned

@@ -4,5 +4,5 @@ import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaEx
 
 
 public interface IStateBasedPredicate {
-	public Boolean evaluate() throws InvalidStateBasedFormulaException;
+	public boolean evaluate() throws InvalidStateBasedFormulaException;
 }

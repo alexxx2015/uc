@@ -25,6 +25,7 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 
 public class PdpHandler extends PdpProcessor {
 
@@ -87,21 +88,30 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		_lpdp.notifyEvent(event);
+		IResponse res = _lpdp.notifyEvent(event);
 		if (event.isActual()) {
 			getPip().update(event);
+		}
+
+		/*
+		 * FIXME: It seems that as of now PolicyDecisionPoint
+		 * handles all events as being actual events. This needs
+		 * to be changed. Updating the distributed state must then
+		 * only be performed if the event is actual.
+		 */
+		if (res instanceof DistributedPdpResponse) {
+			_distributionManager.update(res);
 		}
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
 		if (event == null) {
-			return new ResponseBasic(new StatusBasic(EStatus.ERROR,
-					"null event received"), null, null);
+			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		IResponse res = _lpdp.notifyEvent(event).getResponse();
+		IResponse res = _lpdp.notifyEvent(event);
 
-		/**
+		/*
 		 * (1) If the event is actual, we update the PIP in any case
 		 *
 		 * (2) If the event is *not* actual AND if the event was allowed by the
@@ -112,11 +122,19 @@ public class PdpHandler extends PdpProcessor {
 
 		if (event.isActual()) {
 			getPip().update(event);
-		} else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW)
-				&& event.allowImpliesActual()) {
-			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(),
-					true);
+		} else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && event.allowImpliesActual()) {
+			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
 			notifyEventAsync(ev2);
+		}
+
+		/*
+		 * FIXME: It seems that as of now PolicyDecisionPoint
+		 * handles all events as being actual events. This needs
+		 * to be changed. Updating the distributed state must then
+		 * only be performed if the event is actual.
+		 */
+		if (res instanceof DistributedPdpResponse) {
+			_distributionManager.update(res);
 		}
 
 		return res;
@@ -127,9 +145,8 @@ public class PdpHandler extends PdpProcessor {
 		super.init(iface1, iface2, distributionManager);
 
 		IPdp2Pip pip = getPip();
-		_logger.debug("initializing PDP. Pip reference is "
-				+ (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip, _pxpManager);
+		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
+		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
 	}
 
 	@Override

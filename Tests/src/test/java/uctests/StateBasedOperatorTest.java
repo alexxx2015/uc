@@ -18,10 +18,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
-public class StateBasedOperatorTest extends GenericTest{
+public class StateBasedOperatorTest extends GenericTest {
 
-	private static Logger _logger = LoggerFactory
-			.getLogger(StateBasedOperatorTest.class);
+	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperatorTest.class);
 
 	@Before
 	public void deployPolicy() throws Exception {
@@ -31,10 +30,10 @@ public class StateBasedOperatorTest extends GenericTest{
 		_logger.debug("deploying policy " + path + "...");
 		_logger.debug("deploying policy " + path + " result : "
 				+ status);
-		
+
 		_logger.debug(pip.toString());
 	}
-	
+
 	@Test
 	public void testIsNotIn() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
@@ -56,7 +55,7 @@ public class StateBasedOperatorTest extends GenericTest{
 		pip.initialRepresentation(new NameBasic("secondContainer"),
 				pip.getDataInContainer(new NameBasic("initialContainer")));
 
-		// 2: send the event. This time param name and parm value match but
+		// 2: send the event. This time param name and param value match but
 		// condition is false
 		IResponse response2 = pdp.notifyEventSync(event);
 		_logger.debug("2: Received response as reply to " + event + ":"
@@ -66,7 +65,7 @@ public class StateBasedOperatorTest extends GenericTest{
 				.getEStatus());
 
 		deployNewEventAndEmptyInitialContainer();
-		
+
 		// 3: send the event. This time param name and parm value match and
 		// condition should be true. thus the event should be inhibited
 		IResponse response4 = pdp.notifyEventSync(event);
@@ -163,5 +162,5 @@ public class StateBasedOperatorTest extends GenericTest{
 				.getEStatus());
 	}
 
-	
+
 }

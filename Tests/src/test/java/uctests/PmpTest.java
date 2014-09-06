@@ -44,9 +44,9 @@ public class PmpTest extends GenericTest{
 //			e.printStackTrace();
 //		}
 
-		log.info(box.getIfModel());
+		log.info(pip.toString());
 		pip.initialRepresentation(new NameBasic ("secondContainer"),pip.getDataInContainer(new NameBasic("initialContainer")));
-		log.info(box.getIfModel());
+		log.info(pip.toString());
 
 		log.info("policy deployed. let's test it");
 

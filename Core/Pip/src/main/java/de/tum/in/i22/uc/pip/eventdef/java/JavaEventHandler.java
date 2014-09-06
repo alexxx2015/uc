@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -22,7 +23,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected static Map<String, String[]> iFlow = new HashMap<String, String[]>();
 
 	protected static Map<String, Set<IContainer>> containersByPid = new HashMap<String, Set<IContainer>>();
-	
+
 
 	protected static Map<String, String> contextToObject = new HashMap<String, String>();
 
@@ -45,7 +46,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _srcPrefix = "source";
 	protected final String _snkPrefix = "sink";
 
-	
+
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
 				+ (type.equals(EScopeType.JBC_GENERIC_LOAD) ? "source" : "sink")
@@ -63,7 +64,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	/*
 	 * For this generic action the scope is only one and the "delimiter"
 	 * (start/end) is given as a parameter
-	 * 
+	 *
 	 * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
 	 */
 	@Override
@@ -88,12 +89,12 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			// opening already handled at step 2 of executeEvent in
 			// BaseEventHandler
 			// openScope(scope);
-			res.add(new Pair<EScopeState, IScope>(EScopeState.OPEN, scope));
+			res.add(Pair.of(EScopeState.OPEN, scope));
 		} else if (delimiter.equals(_closeDelimiter)) {
 			// closing already handled at step 4 of executeEvent in
 			// BaseEventHandler
 			// closeScope(scope);
-			res.add(new Pair<EScopeState, IScope>(EScopeState.CLOSE, scope));
+			res.add(Pair.of(EScopeState.CLOSE, scope));
 		}
 
 		return res;
@@ -146,7 +147,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
 		Set<IContainer> set = containersByPid.get(pid);
 		if (set!=null) for (IContainer c : set) _informationFlowModel.remove(c);
-		
+
 //		String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
 //		for (String entry : iFlow.keySet()) {
 //			String[] fields = entry.split(_otherDelim);

@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 
@@ -45,6 +47,14 @@ public class AttributeBasic implements IAttribute {
 	@Override
 	public int hashCode() {
 		return Objects.hash(_name, _value);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(getClass())
+				.add("_name", _name)
+				.add("_value", _value)
+				.toString();
 	}
 
 

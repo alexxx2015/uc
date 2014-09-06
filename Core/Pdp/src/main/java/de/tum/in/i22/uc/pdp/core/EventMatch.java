@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.mechanisms.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.xsd.EventMatchingOperatorType;
 import de.tum.in.i22.uc.pdp.xsd.ParamMatchType;
 
@@ -26,8 +26,8 @@ public class EventMatch extends EventMatchingOperatorType {
 	}
 
 	@Override
-	public void init(Mechanism mech) {
-		super.init(mech);
+	protected void init(Mechanism mech, Operator parent, long ttl) {
+		super.init(mech, parent, ttl);
 	}
 
 	public boolean matches(IEvent ev) {
@@ -66,16 +66,18 @@ public class EventMatch extends EventMatchingOperatorType {
 		return false;
 	}
 
-	@Override
-	public boolean evaluate(IEvent curEvent) {
-		throw new UnsupportedOperationException("Operator evaluation was triggered for EventMatch instead of EventMatchOperator?!");
-	}
+//	@Override
+//	protected boolean localEvaluation(IEvent curEvent) {
+//		throw new UnsupportedOperationException("Operator localEvaluation was triggered for EventMatch instead of EventMatchOperator?!");
+//	}
+
+
 
 	@Override
 	public String toString() {
 		return com.google.common.base.MoreObjects.toStringHelper(getClass())
 				.add("action", action)
-				.add("isTry", isTryEvent())
+				.add("isActual", !isTryEvent())
 				.add("params", getParams())
 				.toString();
 	}
