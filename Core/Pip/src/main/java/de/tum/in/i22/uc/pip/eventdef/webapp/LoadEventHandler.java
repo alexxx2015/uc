@@ -37,11 +37,11 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 		}
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("app", "IFSWebApp");
+		attributes.put("app", "InternalFileSharing");
 		attributes.put("filename", filename);
 		//add PID
 		
-		return new ScopeBasic("IFSWebApp loading file " + filename,
+		return new ScopeBasic("InternalFileSharing loading file " + filename,
 				EScopeType.LOAD_FILE, attributes);
 	}
 
