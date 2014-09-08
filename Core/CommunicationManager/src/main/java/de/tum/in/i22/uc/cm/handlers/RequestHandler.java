@@ -295,9 +295,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public void stop() {
 		_requestQueueManager.stop();
-		this._pdp.stop();
-		this._pip.stop();
-		this._pmp.stop();
 	}
 
 

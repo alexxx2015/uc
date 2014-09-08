@@ -180,12 +180,6 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public IData getDataFromId(String id) {
 		return _impl.getDataFromId(id);
 	}

@@ -106,25 +106,16 @@ class RequestQueueManager implements Runnable {
 	}
 
 	private class PoisonPillProcessor extends Processor<PoisonPillProcessor, PoisonPillProcessor>{
-
 		public PoisonPillProcessor() {
 			super(null);
 		}
-
-		@Override
-		public void stop() {
-			// TODO Auto-generated method stub
-			
-		}
-
 	}
-	private class PoisonPillRequest extends Request<Object, PoisonPillProcessor>{
 
+	private class PoisonPillRequest extends Request<Object, PoisonPillProcessor>{
 		@Override
 		public Object process(PoisonPillProcessor processor) {
-			run=false;
+			run = false;
 			return null;
 		}
-
 	}
 }

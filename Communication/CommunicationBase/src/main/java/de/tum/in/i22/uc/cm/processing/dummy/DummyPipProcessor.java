@@ -197,12 +197,6 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		_logger.error("PipProcessor DUMMY Implementation");
 		_logger.error("flattenStructure method invoked");
 		return null;
-		}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

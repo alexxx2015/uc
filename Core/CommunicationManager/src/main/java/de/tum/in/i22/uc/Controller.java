@@ -131,7 +131,6 @@ public class Controller implements IRequestHandler  {
 			_anyServer.stop();
 		if(_requestHandler != null)
 			_requestHandler.stop();
-		//System.exit(0);
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {

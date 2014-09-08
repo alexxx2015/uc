@@ -81,8 +81,7 @@ public class PmpHandler extends PmpProcessor {
 
 	private PolicyType xmlToPolicy(String xml) {
 		PolicyType curPolicy = null;
-		_logger.debug("XMLtoPolicy");
-		_logger.trace("Policy to be converted: " + xml);
+		_logger.debug("xmlToPolicy: " + xml);
 		InputStream inp = new ByteArrayInputStream(xml.getBytes());
 		try {
 			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -376,12 +375,6 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public Map<String, Set<String>> listMechanismsPmp() {
 		return getPdp().listMechanisms();
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -261,12 +261,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			response = decision.toResponse();
 		}
 
-
-
-
-
-
-
 		// prepare for next
 		_eventMatches.clear();
 		_stateBasedOperatorChanges.clear();

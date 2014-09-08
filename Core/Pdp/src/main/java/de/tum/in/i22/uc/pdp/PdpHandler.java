@@ -31,7 +31,7 @@ public class PdpHandler extends PdpProcessor {
 
 	private static Logger _logger = LoggerFactory.getLogger(PdpHandler.class);
 
-	private PolicyDecisionPoint _lpdp;
+	private PolicyDecisionPoint _pdp;
 
 	private final PxpManager _pxpManager;
 
@@ -50,35 +50,35 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public IStatus revokePolicy(String policyName) {
-		_lpdp.revokePolicy(policyName);
+		_pdp.revokePolicy(policyName);
 		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		// TODO: sanitize inputs
-		boolean b = _lpdp.revokeMechanism(policyName, mechName);
+		boolean b = _pdp.revokeMechanism(policyName, mechName);
 		return b == true ? new StatusBasic(EStatus.OKAY) : new StatusBasic(
 				EStatus.ERROR, "revokeMechanism failed");
 	}
 
 	@Override
 	public IStatus deployPolicyURI(String policyFilePath) {
-		return _lpdp.deployPolicyURI(policyFilePath) ? new StatusBasic(
+		return _pdp.deployPolicyURI(policyFilePath) ? new StatusBasic(
 				EStatus.OKAY) : new StatusBasic(EStatus.ERROR,
 						"deploy policy failed");
 	}
 
 	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
-		return _lpdp.deployPolicyXML(XMLPolicy)
+		return _pdp.deployPolicyXML(XMLPolicy)
 				? new StatusBasic(EStatus.OKAY)
 				: new StatusBasic(EStatus.ERROR, "deploy policy failed");
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanisms() {
-		return _lpdp.listDeployedMechanisms();
+		return _pdp.listDeployedMechanisms();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		IResponse res = _lpdp.notifyEvent(event);
+		IResponse res = _pdp.notifyEvent(event);
 		if (event.isActual()) {
 			getPip().update(event);
 		}
@@ -109,7 +109,7 @@ public class PdpHandler extends PdpProcessor {
 		if (event == null) {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		IResponse res = _lpdp.notifyEvent(event);
+		IResponse res = _pdp.notifyEvent(event);
 
 		/*
 		 * (1) If the event is actual, we update the PIP in any case
@@ -146,7 +146,7 @@ public class PdpHandler extends PdpProcessor {
 
 		IPdp2Pip pip = getPip();
 		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
-		_lpdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
+		_pdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
 	}
 
 	@Override
@@ -157,10 +157,5 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public IResponse processEventSync(IEvent pepEvent) {
 		return notifyEventSync(pepEvent);
-	}
-
-	@Override
-	public void stop() {
-		_lpdp.stop();
 	}
 }
