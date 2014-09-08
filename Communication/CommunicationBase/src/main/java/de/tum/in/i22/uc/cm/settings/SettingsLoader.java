@@ -189,7 +189,5 @@ public class SettingsLoader {
 		public Class<T> getType() {
 			return _type;
 		}
-
 	}
-
 }

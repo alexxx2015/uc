@@ -62,12 +62,6 @@ public class PdpHandler extends PdpProcessor {
 				EStatus.ERROR, "revokeMechanism failed");
 	}
 
-//	@Override
-//	public IStatus deployPolicyURI(String policyFilePath) {
-//		return _pdp.deployPolicyURI(policyFilePath) ? new StatusBasic(
-//				EStatus.OKAY) : new StatusBasic(EStatus.ERROR, "deploy policy failed");
-//	}
-
 	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _pdp.deployPolicyXML(XMLPolicy)

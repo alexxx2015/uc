@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -73,16 +72,6 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "PRIMARY KEY (policy));");
 	};
 
-
-	/*
-	 * IMPORTANT:
-	 * Cassandra 2.1.0-rc6 causes some trouble with upper/lowercase
-	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
-	 *  which was afterwards not found by a lookup with name 'testPolicy')
-	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
-	 *
-	 */
-
 	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
 	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
 
@@ -97,10 +86,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	private boolean _initialized = false;
 
 	public CassandraDistributionManager() {
-		/*
-		 * FIXME make ConsistencyLevel configurable from Settings.
-		 */
-		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
+		QueryOptions options = new QueryOptions().setConsistencyLevel(Settings.getInstance().getDistributionConsistencyLevel());
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
@@ -146,10 +132,6 @@ class CassandraDistributionManager implements IDistributionManager {
 			 *     then the policy is sent to the remote PMP.
 			 * (3) if remote deployment of the policy fails, then the given location
 			 *     is removed from the policy's keyspace
-			 */
-
-			/**
-			 * FIXME: There might be potential to parallelize policy transfer
 			 */
 
 			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
@@ -349,9 +331,6 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
-				/*
-				 * TODO: These three tasks can be parallelized(?!?)
-				 */
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));

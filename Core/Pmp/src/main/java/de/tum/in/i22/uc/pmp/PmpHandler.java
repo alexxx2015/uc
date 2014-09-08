@@ -16,7 +16,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -79,49 +78,37 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	private PolicyType xmlToPolicy(String xml) {
-		PolicyType curPolicy = null;
 		_logger.debug("xmlToPolicy: " + xml);
+
+		PolicyType policy = null;
 		InputStream inp = new ByteArrayInputStream(xml.getBytes());
+
 		try {
-			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
-			Unmarshaller u = jc.createUnmarshaller();
-
-			JAXBElement<?> poElement = (JAXBElement<?>) u.unmarshal(inp);
-
-			curPolicy = (PolicyType) poElement.getValue();
-
-			_logger.debug("curPolicy [name=" + curPolicy.getName() + ", "
-					+ curPolicy.toString());
-
-		} catch (UnmarshalException e) {
-			_logger.error("Syntax error in policy: " + e.getMessage());
+			Unmarshaller u = JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller();
+			policy = (PolicyType) ((JAXBElement<?>) u.unmarshal(inp)).getValue();
 		} catch (JAXBException | ClassCastException e) {
-			e.printStackTrace();
+			_logger.error(e.getMessage());
 		}
-		return curPolicy;
+
+		_logger.debug("curPolicy [name=" + policy.getName() + ", " + policy.toString());
+		return policy;
 	}
 
 	private String policyToXML(PolicyType policy) {
-		String result = "";
-		_logger.debug("PolicyToXML conversion...");
-		ObjectFactory of = new ObjectFactory();
-		JAXBElement<PolicyType> pol = of.createPolicy(policy);
+		_logger.debug("PolicyToXML({}) invoked.", policy);
+
+		StringWriter res = new StringWriter();
+
 		try {
-			JAXBContext jc = JAXBContext.newInstance(JAXB_CONTEXT);
-			Marshaller m = jc.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			StringWriter res = new StringWriter();
-			m.marshal(pol, res);
-
-			result = res.toString();
-
-			_logger.trace("converted policy: " + result);
-
+			Marshaller m = JAXBContext.newInstance(JAXB_CONTEXT).createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.marshal(new ObjectFactory().createPolicy(policy), res);
 		} catch (JAXBException | ClassCastException e) {
-			e.printStackTrace();
+			_logger.error(e.getMessage());
 		}
 
-		return result;
+		_logger.trace("converted policy: " + res.toString());
+		return res.toString();
 	}
 
 
