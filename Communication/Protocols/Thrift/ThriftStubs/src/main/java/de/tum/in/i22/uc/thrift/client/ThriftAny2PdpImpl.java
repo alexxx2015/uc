@@ -65,18 +65,6 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 	}
 
 	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		_logger.debug("deploy policy (Pdp client)");
-		try {
-			return ThriftConverter.fromThrift(_handle.deployPolicyURI(policyFilePath));
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		_logger.debug("deploy policy (Pdp client)");
 		try {

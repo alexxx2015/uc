@@ -306,7 +306,7 @@ public class SceneGenerator {
 				fc.setInitialDirectory(new File("/home/alex/Policies"));
 				File f = fc.showOpenDialog(SceneGenerator.stage);
 				if (f != null) {
-					controller.deployPolicyURI(f.getAbsolutePath());
+					controller.deployPolicyURIPmp(f.getAbsolutePath());
 					updateDeployedPolicies(controller.listMechanisms());
 				}
 			}

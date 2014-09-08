@@ -67,14 +67,6 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		// TODO Auto-generated method stub
-		_logger.error("PdpProcessor DUMMY Implementation");
-		_logger.error("deployPolicyURI method invoked");
-		return null;
-	}
-
-	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");

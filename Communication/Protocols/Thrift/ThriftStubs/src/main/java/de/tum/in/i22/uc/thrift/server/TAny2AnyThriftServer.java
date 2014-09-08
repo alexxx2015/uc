@@ -78,11 +78,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus deployPolicyURI(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public Map<String, Set<String>> listMechanisms() throws TException {
 		return _pdpServer.listMechanisms();
 	}
@@ -181,23 +176,23 @@ TAny2Any.Iface {
 
 	@Override
 	public TStatus revokePolicyPmp(String policyName) throws TException {
-		return _pdpServer.revokePolicy(policyName);
+		return _pmpServer.revokePolicyPmp(policyName);
 	}
 
 	@Override
 	public TStatus revokeMechanismPmp(String policyName, String mechName)
 			throws TException {
-		return _pdpServer.revokeMechanism(policyName, mechName);
+		return _pmpServer.revokeMechanismPmp(policyName, mechName);
 	}
 
 	@Override
 	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
+		return _pmpServer.deployPolicyURIPmp(policyFilePath);
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanismsPmp() throws TException {
-		return _pdpServer.listMechanisms();
+		return _pmpServer.listMechanismsPmp();
 	}
 
 	@Override

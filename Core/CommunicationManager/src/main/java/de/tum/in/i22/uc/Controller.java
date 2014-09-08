@@ -300,11 +300,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		return _requestHandler.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _requestHandler.deployPolicyXML(XMLPolicy);
 	}

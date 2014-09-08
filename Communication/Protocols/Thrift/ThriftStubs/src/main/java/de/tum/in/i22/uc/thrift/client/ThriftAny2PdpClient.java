@@ -113,11 +113,6 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	}
 
 	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		return _impl.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _impl.deployPolicyXML(XMLPolicy);
 	}

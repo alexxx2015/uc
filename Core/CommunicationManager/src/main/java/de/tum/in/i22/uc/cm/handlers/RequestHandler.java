@@ -39,7 +39,6 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.ListMechanismsPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
@@ -327,13 +326,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		RevokeMechanismPdpRequest request = new RevokeMechanismPdpRequest(policyName, mechName);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		DeployPolicyURIPdpRequest request = new DeployPolicyURIPdpRequest(policyFilePath);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

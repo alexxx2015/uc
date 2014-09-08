@@ -23,6 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -66,11 +67,17 @@ public class ThriftTest extends GenericTest {
 		Any2PdpClient clientPdp = thriftClientFactory
 				.createAny2PdpClient(new IPLocation("localhost",
 						PDP_SERVER_PORT));
+
+		Any2PmpClient clientPmp = thriftClientFactory
+				.createAny2PmpClient(new IPLocation("localhost",
+						PMP_SERVER_PORT));
+
 		boolean connected = false;
 		int attempts = 0;
 		while (!connected && attempts < 10) {
 			try {
 				clientPdp.connect();
+				clientPmp.connect();
 				connected = true;
 			} catch (IOException e) {
 				_logger.debug("Connection failed. Trying again (attempts num. "
@@ -89,8 +96,7 @@ public class ThriftTest extends GenericTest {
 		/*
 		 * Deploy policy
 		 */
-		IStatus ret = clientPdp
-				.deployPolicyURI("src/test/resources/testTUM.xml");
+		IStatus ret = clientPmp.deployPolicyURIPmp("src/test/resources/testTUM.xml");
 		_logger.info("deploy policy: " + ret);
 		_logger.info("Deployed Mechanisms: " + clientPdp.listMechanisms());
 
@@ -173,22 +179,6 @@ public class ThriftTest extends GenericTest {
 		mechanisms = clientPdp.listMechanisms();
 		Assert.assertEquals(Maps.newHashMap(), mechanisms);
 		Assert.assertEquals(0, mechanisms.size());
-
-		_logger.info(""+x++);
-
-		/*
-		 * deploy a mechanism
-		 */
-		status = clientPdp.deployPolicyURI(policyFile);
-		Assert.assertEquals(EStatus.OKAY, status.getEStatus());
-
-		_logger.info(""+x++);
-
-		/*
-		 * list all mechanisms. Expected size of list is now 1.
-		 */
-		mechanisms = clientPdp.listMechanisms();
-		Assert.assertEquals(1, mechanisms.size());
 
 		_logger.info(""+x++);
 
