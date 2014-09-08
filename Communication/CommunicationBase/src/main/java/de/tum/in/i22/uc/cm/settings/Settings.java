@@ -95,8 +95,6 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
-
-
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 	private static final String PROP_NAME_excelOcbName = "excelOcbName";
@@ -112,6 +110,9 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
 	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+
+	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
+	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -239,6 +240,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
 		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
+
+		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
+		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -257,23 +261,23 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
-			Class<E> cls) {
-		E loadedValue = defaultValue;
-
-		boolean success = false;
-
-		try {
-			loadedValue = E.valueOf(cls, (String) _props.get(propName));
-			if (loadedValue != null) {
-				success = true;
-			}
-		} catch (Exception e) {
-			success = false;
-		}
-
-		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
-	}
+//	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
+//			Class<E> cls) {
+//		E loadedValue = defaultValue;
+//
+//		boolean success = false;
+//
+//		try {
+//			loadedValue = E.valueOf(cls, (String) _props.get(propName));
+//			if (loadedValue != null) {
+//				success = true;
+//			}
+//		} catch (Exception e) {
+//			success = false;
+//		}
+//
+//		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
+//	}
 
 	/**
 	 * Gets the property with the specified name (a string), splits its value using the specified
@@ -564,5 +568,13 @@ public class Settings extends SettingsLoader {
 
 	public Set<String> getPmpInitialPolicies() {
 		return getValue(PROP_NAME_pmpInitialPolicies);
+	}
+
+	public String getPdpJaxbContext() {
+		return getValue(PROP_NAME_pdpJaxbContext);
+	}
+
+	public String getPmpJaxbContext() {
+		return getValue(PROP_NAME_pmpJaxbContext);
 	}
 }

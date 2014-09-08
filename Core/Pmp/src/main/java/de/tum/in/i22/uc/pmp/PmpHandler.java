@@ -65,7 +65,7 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
-	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pmp.xsd";
+	private static final String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
 
 	private IPmp2Ptp _ptp;
 

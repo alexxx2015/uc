@@ -31,7 +31,7 @@ public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 	@Override
 	public boolean tick() {
 		// TODO: evalOperator evaluation NYI; forward to external evaluation engine
-		throw new UnsupportedOperationException("tick() EvalOperator. Not yet implemented.");
+		return false;
 	}
 
 	@Override
@@ -42,12 +42,14 @@ public class EvalOperator extends EvalOperatorType implements LiteralOperator {
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
-		throw new UnsupportedOperationException("EvalOperator. Not yet implemented.");
+		// TODO: Implement
+		return;
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
-		throw new UnsupportedOperationException("EvalOperator. Not yet implemented.");
+		// TODO: Implement
+		return;
 	}
 }

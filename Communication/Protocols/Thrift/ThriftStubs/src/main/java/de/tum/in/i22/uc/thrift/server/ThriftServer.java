@@ -20,9 +20,7 @@ import org.slf4j.LoggerFactory;
 class ThriftServer implements IThriftServer {
 	protected static Logger _logger = LoggerFactory.getLogger(ThriftServer.class);
 
-	private TServer _server = null;
-
-	private boolean _started = false;
+	private final TServer _server;
 
 	/**
 	 * Creates a new multithreaded {@link ThriftServer},
@@ -40,17 +38,15 @@ class ThriftServer implements IThriftServer {
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
 		_logger.info("ThriftServer listening on port: " + port);
-	}	
+	}
 
 	@Override
 	public void stop() {
-		_started=false;
 		_server.stop();
 	}
 
 	@Override
-	public void run() {  
-		_started = true;
+	public void run() {
 		_server.serve();
 	}
 
@@ -62,6 +58,6 @@ class ThriftServer implements IThriftServer {
 	 */
 	@Override
 	public boolean started() {
-		return _started;
+		return _server.isServing();
 	}
 }

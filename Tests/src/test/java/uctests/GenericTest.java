@@ -43,8 +43,6 @@ public abstract class GenericTest {
 	protected static int PMP_SERVER_PORT = 40012;
 	protected static int ANY_SERVER_PORT = 40013;
 
-	protected static boolean initialized = false;
-
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		_logger.debug("\n\n NEW TEST CLASS START \n");
@@ -70,7 +68,6 @@ public abstract class GenericTest {
 		pdp = box;
 		pip = box;
 		box.start();
-		initialized = true;
 	}
 
 	@AfterClass
@@ -83,7 +80,7 @@ public abstract class GenericTest {
 
 	@Before
 	public void setUp() throws Exception {
-		while (!initialized) {
+		while (!box.isStarted()) {
 			Thread.sleep(1000);
 		}
 

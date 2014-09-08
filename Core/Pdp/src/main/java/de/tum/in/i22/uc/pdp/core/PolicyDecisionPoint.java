@@ -46,7 +46,7 @@ import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 public class PolicyDecisionPoint extends Observable implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
-	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pdp.xsd";
+	private static final String JAXB_CONTEXT = Settings.getInstance().getPdpJaxbContext();
 
 	private final IPdp2Pip _pip;
 

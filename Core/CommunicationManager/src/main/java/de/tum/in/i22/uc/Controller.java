@@ -91,6 +91,7 @@ public class Controller implements IRequestHandler  {
 				_logger.info("... waiting ...");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				_logger.info(e.getMessage());
 			}
 		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
@@ -98,8 +99,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		if (Settings.getInstance() == null)
-			return false;
 		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer
 				.started())
 				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer
