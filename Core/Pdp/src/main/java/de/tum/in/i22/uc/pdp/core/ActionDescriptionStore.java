@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -69,8 +70,8 @@ class ActionDescriptionStore {
 	 * @param eventAction
 	 * @return
 	 */
-	List<Mechanism> getMechanismList(String eventAction) {
-		List<Mechanism> result = new LinkedList<Mechanism>();
+	Collection<Mechanism> getMechanismList(String eventAction) {
+		Collection<Mechanism> result = new LinkedList<Mechanism>();
 
 		List<Mechanism> matchingEvent = _mechanismMap.get(eventAction);
 		if (matchingEvent != null) {

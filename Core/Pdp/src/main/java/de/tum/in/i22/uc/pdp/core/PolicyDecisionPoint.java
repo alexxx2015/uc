@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -202,30 +203,69 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	public IResponse notifyEvent(IEvent event) {
 		_logger.info("notifyEvent: {}", event);
 
-		Decision d = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
+		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 		IResponse response;
 
+		Collection<Mechanism> mechanisms = _actionDescriptionStore.getMechanismList(event.getName());
 
+		if (event.isActual()) {
+			/*
+			 * Notify the event to all Observers,
+			 * i.e. StateBasedOperators and EventMatchOperators
+			 */
+			setChanged();
+			notifyObservers(event);
 
-		/*
-		 * Notify the event to all Observers,
-		 * i.e. StateBasedOperators and EventMatchOperators
-		 */
-		setChanged();
-		notifyObservers(event);
+			for (Mechanism mech : mechanisms) {
+				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
+				mech.startSimulation();
+				mech.notifyEvent(event, decision);
+				mech.stopSimulation();
+			}
 
-
-		for (Mechanism mech : _actionDescriptionStore.getMechanismList(event.getName())) {
-			_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
-			mech.notifyEvent(event, d);
-		}
-
-		if (_stateBasedOperatorChanges.isEmpty() && _eventMatches.isEmpty()) {
-			response = d.toResponse();
+			if (_stateBasedOperatorChanges.isEmpty() && _eventMatches.isEmpty()) {
+				response = decision.toResponse();
+			}
+			else {
+				response = new DistributedPdpResponse(decision.toResponse(), _eventMatches, _stateBasedOperatorChanges);
+			}
 		}
 		else {
-			response = new DistributedPdpResponse(d.toResponse(), _eventMatches, _stateBasedOperatorChanges);
+			/*
+			 * If it is an desired event, start mechanism's simulation
+			 * before signaling the observers, such that this signalling
+			 * can be undone.
+			 */
+			for (Mechanism mech : mechanisms) {
+				mech.startSimulation();
+			}
+
+			/*
+			 * Notify the event to all Observers,
+			 * i.e. StateBasedOperators and EventMatchOperators
+			 */
+			setChanged();
+			notifyObservers(event);
+
+			for (Mechanism mech : mechanisms) {
+				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
+				mech.notifyEvent(event, decision);
+				mech.stopSimulation();
+			}
+
+			/*
+			 * If it is an desired event, we ignore eventMatches and
+			 * statesBasedOperatorChanges that have happened, because
+			 * the event did (or the state change) did not actually happen).
+			 */
+			response = decision.toResponse();
 		}
+
+
+
+
+
+
 
 		// prepare for next
 		_eventMatches.clear();
