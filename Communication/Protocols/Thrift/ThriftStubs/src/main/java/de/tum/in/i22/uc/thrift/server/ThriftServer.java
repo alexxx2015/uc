@@ -37,7 +37,7 @@ class ThriftServer implements IThriftServer {
 
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-		_logger.info("ThriftServer listening on port: " + port);
+		_logger.info("ThriftServer [{}] listening on port {}.", processor.getClass().toString().substring(processor.getClass().toString().lastIndexOf('.') + 1), port);
 	}
 
 	@Override

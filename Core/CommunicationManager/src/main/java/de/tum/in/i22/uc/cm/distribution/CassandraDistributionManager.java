@@ -112,6 +112,11 @@ class CassandraDistributionManager implements IDistributionManager {
 		createPolicyKeyspace(policy);
 	}
 
+	@Override
+	public void unregisterPolicy(String policyName, IPLocation location) {
+		adjustPolicyKeyspace(policyName, location, false);
+	}
+
 
 	/**
 	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}

@@ -35,6 +35,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
@@ -271,7 +272,21 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus revokePolicyPmp(String policyName) {
-		return getPdp().revokePolicy(policyName);
+		_logger.debug("revokePolicyPmp({}) invoked.", policyName);
+
+		IStatus status;
+
+		if (_deployedPolicies.remove(policyName)) {
+			_distributionManager.unregisterPolicy(policyName, IPLocation.localIpLocation);
+			status = getPdp().revokePolicy(policyName);
+		}
+		else {
+			status = new StatusBasic(EStatus.OKAY);
+		}
+
+		_logger.debug("revokePolicyPmp({}) result: {}", policyName, status);
+
+		return status;
 	}
 
 	@Override

@@ -30,4 +30,6 @@ public interface IDistributionManager {
 	boolean wasTrueSince(LiteralOperator operator, long since);
 
 	boolean wasTrueInBetween(LiteralOperator operator, long from, long to);
+
+	void unregisterPolicy(String policyName, IPLocation location);
 }
