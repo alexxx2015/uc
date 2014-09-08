@@ -26,12 +26,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -39,6 +37,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
@@ -139,17 +138,6 @@ public class PmpHandler extends PmpProcessor {
 			if (ir.isSetContainer()) {
 				for (ContainerType c : ir.getContainer()) {
 
-					String name = c.getName();
-					IName contName;
-
-					//TODO: make it generic
-					if (name.startsWith(CellName.PREFIX)) {
-						contName = new CellName(name.substring(name.indexOf('-')+1));
-					}
-					else {
-						contName = new NameBasic(name);
-					}
-
 					if (c.isSetDataId()) {
 						Set<IData> dataSet = new HashSet<IData>();
 						for (String dataId : c.getDataId()) {
@@ -158,10 +146,11 @@ public class PmpHandler extends PmpProcessor {
 							}
 						}
 
+						IName contName = MessageFactory.createName(c.getName());
 						IStatus status = getPip().initialRepresentation(contName, dataSet);
+
 						if (status.isStatus(EStatus.ERROR)) {
-							_logger.error("impossible to initialize representation for container " + contName + " with data id(s) " + dataSet);
-							_logger.error(status.getErrorMessage());
+							_logger.error("impossible to initialize representation for container " + contName + " with data id(s) " + dataSet + ": " + status.getErrorMessage());
 							throw new RuntimeException(status.getErrorMessage());
 						}
 					}
@@ -216,15 +205,7 @@ public class PmpHandler extends PmpProcessor {
 				if (p.getType().equals(_DATAUSAGE)) {
 					String value = p.getValue();
 					String dataIds = p.getDataID();
-					IName contName;
-
-					//TODO: make it generic
-					if (value.startsWith(CellName.PREFIX)){
-						contName = new CellName(value.substring(value.indexOf('-')+1));
-					}
-					else {
-						contName = new NameBasic(value);
-					}
+					IName contName = MessageFactory.createName(value);
 
 					if (dataIds != null) {
 						// in this case there was a data id within the policy.
@@ -316,7 +297,7 @@ public class PmpHandler extends PmpProcessor {
 		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
 
 		// Convert the string xml to a PolicyType
-		final PolicyType policy = xmlToPolicy(xml);
+		PolicyType policy = xmlToPolicy(xml);
 
 		if (_deployedPolicies.add(policy.getName())) {
 
@@ -327,7 +308,7 @@ public class PmpHandler extends PmpProcessor {
 			Pair<PolicyType,Set<IData>> convertedPolicy = convertDatausageParameters(policy);
 
 			// create an XmlPolicy out of the converted policy; the policy's name remains the same
-			XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()));
+			final XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()));
 
 			// map all data IDs to the new XmlPolicy
 			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
@@ -341,7 +322,7 @@ public class PmpHandler extends PmpProcessor {
 				new Thread() {
 					@Override
 					public void run() {
-						_distributionManager.registerPolicy(policy.getName());
+						_distributionManager.registerPolicy(convertedXmlPolicy);
 					}
 				}.start();
 			}

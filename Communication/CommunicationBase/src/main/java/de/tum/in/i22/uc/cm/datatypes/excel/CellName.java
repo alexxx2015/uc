@@ -21,7 +21,7 @@ public class CellName extends NameBasic {
 	private int row = -1;
 	private int col = -1;
 
-	public CellName(String cellName) {
+	private CellName(String cellName) {
 		super(cellName);
 		Assert.assertNotNull(cellName);
 		Assert.assertNotEquals(cellName, "");
@@ -42,6 +42,15 @@ public class CellName extends NameBasic {
 		this.worksheet = worksheet;
 		this.row = row;
 		this.col = col;
+	}
+
+	public static CellName create(String name) {
+		if (name.startsWith(CellName.PREFIX)) {
+			return new CellName(name.substring(name.indexOf('-') + 1));
+		}
+		else {
+			return new CellName(name);
+		}
 	}
 
 	public String getWorkbook() {

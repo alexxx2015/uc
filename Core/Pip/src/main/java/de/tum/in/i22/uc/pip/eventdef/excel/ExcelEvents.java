@@ -4,16 +4,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Map.Entry;
-
-import javax.management.RuntimeErrorException;
-
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.excel.OfficeClipboardName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
@@ -34,11 +29,11 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 		String[] cells = target.split(ls);
 		Set<CellName> res = new HashSet<CellName>();
 		for (String s : cells) {
-			res.add(new CellName(s));
+			res.add(CellName.create(s));
 		}
 		return res;
 	}
-	
+
 	@Override
 	public void reset(){
 		super.reset();
@@ -77,9 +72,9 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 			arr[ocb.getPos()] = ocb;
 		}
 
-		for (int i = 0; i < arr.length; i++) {
-			IContainer tmpCont = _informationFlowModel.getContainer(arr[i]);
-			_informationFlowModel.addName(arr[i], cont, false);
+		for (OfficeClipboardName element : arr) {
+			IContainer tmpCont = _informationFlowModel.getContainer(element);
+			_informationFlowModel.addName(element, cont, false);
 			cont = tmpCont;
 		}
 		OfficeClipboardName newPos = OfficeClipboardName.create(ocbName,
@@ -166,15 +161,16 @@ public abstract class ExcelEvents extends AbstractScopeEventHandler {
 	static protected class SortCellName implements Comparator<CellName> {
 		static boolean revertColSort=false;
 		static boolean revertRowSort=false;
-		
+
 		public static void setRevertColSort( boolean sorting){
 			revertColSort=sorting;
 		}
-		
+
 		public static void setRevertRowSort( boolean sorting){
 			revertRowSort=sorting;
 		}
 
+		@Override
 		public int compare(CellName c1, CellName c2) {
 			if ((c1 == null) || (c2 == null))
 				throw new RuntimeException("impossible to compare null values");

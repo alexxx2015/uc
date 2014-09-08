@@ -5,12 +5,15 @@ import java.util.Map;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.excel.CellName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
 /**
@@ -76,5 +79,14 @@ public class MessageFactory implements IMessageFactory {
 	public PxpSpec createPxpSpec() {
 		// TODO Auto-generated method stub
 		return new PxpSpec(null,0,null,null);
+	}
+
+	public static IName createName(String name) {
+		if (name.startsWith(CellName.PREFIX)){
+			return CellName.create(name);
+		}
+		else {
+			return new NameBasic(name);
+		}
 	}
 }
