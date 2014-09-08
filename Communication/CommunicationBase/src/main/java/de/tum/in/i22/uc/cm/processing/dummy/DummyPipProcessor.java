@@ -35,7 +35,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
@@ -111,50 +110,10 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		// TODO Auto-generated method stub
-		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("hasAllData method invoked");
-		return false;
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		// TODO Auto-generated method stub
-		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("hasAnyData method invoked");
-		return false;
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		// TODO Auto-generated method stub
-		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("hasAllContainers method invoked");
-		return false;
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		// TODO Auto-generated method stub
-		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("hasAnyContainer method invoked");
-		return false;
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		// TODO Auto-generated method stub
 		_logger.error("PipProcessor DUMMY Implementation");
 		_logger.error("initialRepresentation method invoked");
-		return null;
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		// TODO Auto-generated method stub
-		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("whoHasData method invoked");
 		return null;
 	}
 

@@ -54,10 +54,6 @@ import de.tum.in.i22.uc.pip.requests.GetDataFromIdPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetStructureOfPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAllContainersPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAllDataPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
@@ -66,7 +62,6 @@ import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
-import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyRawXmlPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
@@ -449,34 +444,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		HasAllDataPipRequest request = new HasAllDataPipRequest(data);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		HasAnyDataPipRequest request = new HasAnyDataPipRequest(data);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> names) {
-		HasAllContainersPipRequest request = new HasAllContainersPipRequest(names);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> names) {
-		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(names);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
 	public IStatus update(IEvent event) {
 		UpdatePipRequest request = new UpdatePipRequest(event);
 		_requestQueueManager.addRequest(request, this);
@@ -493,13 +460,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IData newInitialRepresentation(IName containerName) {
 		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

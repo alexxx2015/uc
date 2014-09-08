@@ -24,7 +24,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -357,33 +356,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		return _requestHandler.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		return _requestHandler.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		return _requestHandler.hasAllContainers(container);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		return _requestHandler.hasAnyContainer(container);
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _requestHandler.initialRepresentation(containerName, data);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _requestHandler.whoHasData(data, recursionDepth);
 	}
 
 	@Override

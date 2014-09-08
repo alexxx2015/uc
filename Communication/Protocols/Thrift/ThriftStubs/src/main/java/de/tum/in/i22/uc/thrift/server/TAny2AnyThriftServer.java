@@ -94,26 +94,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public boolean hasAllData(Set<TData> data) throws TException {
-		return _pipServer.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<TData> data) throws TException {
-		return _pipServer.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<TName> names) throws TException {
-		return _pipServer.hasAllContainers(names);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<TName> names) throws TException {
-		return _pipServer.hasAnyContainer(names);
-	}
-
-	@Override
 	public TStatus update(TEvent event) throws TException {
 		return _pipServer.update(event);
 	}
@@ -166,12 +146,6 @@ TAny2Any.Iface {
 	public TStatus executeSync(List<TEvent> eventList) throws TException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
-			throws TException {
-		return _pipServer.whoHasData(data, recursionDepth);
 	}
 
 	@Override
