@@ -274,12 +274,4 @@ TAny2Any.Iface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

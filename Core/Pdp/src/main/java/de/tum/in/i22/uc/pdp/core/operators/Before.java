@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +19,10 @@ public class Before extends BeforeType {
 
 	private CircularArray<Boolean> _stateCircArray;
 
+	private final Deque<CircularArray<Boolean>> _backupStateCircArray;
+
 	public Before() {
+		_backupStateCircArray = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -52,29 +58,6 @@ public class Before extends BeforeType {
 		return "BEFORE(" + _timeAmount + ", " + op + " )";
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		// before = at (currentTime - interval) operand was true
-//		_logger.debug("circularArray: {}", _stateCircArray);
-//
-//		// Look at the first entry of the array. The retrieved value
-//		// corresponds to the result of the evaluation at this point in time.
-//		boolean result = _stateCircArray.peek();
-//
-//		if (ev == null) {
-//			// If we are evaluating at the end of a timestep, then
-//			// (1) remove the first entry
-//			// (2) evaluate the internal operand at this point in time
-//			//     and push the result to the array
-//			_stateCircArray.pop();
-//			_stateCircArray.push(op.evaluate(null));
-//
-//			_logger.debug("circularArray: {}", _stateCircArray);
-//		}
-//
-//		return result;
-//	}
-
 	@Override
 	public boolean tick() {
 		// before = at (currentTime - interval) operand was true
@@ -90,19 +73,17 @@ public class Before extends BeforeType {
 		return _valueAtLastTick;
 	}
 
-	private CircularArray<Boolean> _backupStateCircArray;
-
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupStateCircArray = _stateCircArray.clone();
+		_backupStateCircArray.addFirst(_stateCircArray.clone());
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_stateCircArray = _backupStateCircArray;
+		_stateCircArray = _backupStateCircArray.getFirst();
 	}
 }

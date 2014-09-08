@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,9 +33,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	 */
 	private boolean _valueSinceLastTick;
 
-	private boolean _backupValueSinceLastTick;
+	private final Deque<Boolean> _backupValueSinceLastTick;
 
 	public StateBasedOperator() {
+		_backupValueSinceLastTick = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -60,65 +63,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 				.add("param3", param3)
 				.toString();
 	}
-//
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		IPdp2Pip pip = _pdp.getPip();
-//		String separator = Settings.getInstance().getSeparator1();
-//
-//		String p = operator + separator + param1 + separator + param2 + separator + param3;
-//
-//		boolean result;
-//
-//		if (ev == null) {
-//			/*
-//			 * We are evaluating at the end of a timestep
-//			 */
-//			result = pip.evaluatePredicateCurrentState(p);
-//		}
-//		else {
-//			/*
-//			 * We are evaluating in the presence of a given event
-//			 */
-//			result = pip.evaluatePredicateSimulatingNextState(ev, p);
-//		}
-//
-//
-//		if (result == isPositive()) {
-//			/*
-//			 * There are two situations in which this condition may turn true:
-//			 * a) a 'positive' state based operator's state turned true.
-//			 * b) a 'non-positive' state based operator's state turned false.
-//			 *
-//			 * In both cases we want to signal the state change to our observers.
-//			 */
-//			setChanged();
-//			notifyObservers();
-//		}
-//
-//		return result;
-//	}
-//
-//	@Override
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		boolean result = resultLocalEval;
-//
-//		if (resultLocalEval != isPositive()) {
-//			/*
-//			 * There are two situations in which this condition may turn true:
-//			 * a) the operator's state is locally satisfied and this does
-//			 *    _not_ imply global satisfaction (e.g. isNotIn)
-//			 * b) the operator's state is locally violated and this does
-//			 *    _not_ imply global violation (e.g. isCombinedWith)
-//			 *
-//			 * In both cases we ask the DistributionManager what the remote state
-//			 * of those operators is.
-//			 */
-//			result = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
-//		}
-//
-//		return result;
-//	}
 
 	@Override
 	public boolean tick() {
@@ -159,13 +103,13 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
-		_backupValueSinceLastTick = _valueSinceLastTick;
+		_backupValueSinceLastTick.addFirst(_valueSinceLastTick);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
-		_valueSinceLastTick = _backupValueSinceLastTick;
+		_valueSinceLastTick = _backupValueSinceLastTick.getFirst();
 	}
 
 	@Override

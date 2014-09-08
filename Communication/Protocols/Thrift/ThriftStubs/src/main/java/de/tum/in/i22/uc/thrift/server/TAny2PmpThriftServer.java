@@ -8,10 +8,8 @@ import org.apache.thrift.TException;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
@@ -99,12 +97,5 @@ TAny2Pmp.Iface {
 	public TPtpResponse updateDomainModel(String requestId, Map<String, String> parameters, TXmlPolicy xmlDomainModel)
 			throws TException {
 		return ThriftConverter.toThrift(_handler.updateDomainModel(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
-	}
-
-	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

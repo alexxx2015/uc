@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +20,10 @@ public class During extends DuringType {
 
 	private long _stateCounter;
 
-	private long _backupStateCounter;
+	private final Deque<Long> _backupStateCounter;
 
 	public During() {
+		_backupStateCounter = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -50,40 +54,6 @@ public class During extends DuringType {
 	public String toString() {
 		return "DURING(" + timeAmount + "," + op + " )";
 	}
-
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		_logger.trace("Current state counter: {}", _stateCounter);
-//
-//		if (ev == null) {
-//			/*
-//			 * We are updating at the end of a timestep
-//			 */
-//
-//			if (op.evaluate(null)) {
-//				/*
-//				 * Subformula evaluated to true.
-//				 * Decrement the counter if it is still positive.
-//				 */
-//				if (_stateCounter > 0) {
-//					_stateCounter--;
-//				}
-//				_logger.debug("Subformula evaluated to true. Decrementing counter to {}.", _stateCounter);
-//			}
-//			else {
-//				/*
-//				 * Subformula evaluated to false.
-//				 * Reset the counter to the initial value.
-//				 */
-//				_stateCounter = _initialCounterValue;
-//				_logger.debug("Subformula evaluated to false. Resetting counter to {}.", _initialCounterValue);
-//
-//			}
-//		}
-//
-//		// The result is true, if the counter reaches 0.
-//		return (_stateCounter == 0);
-//	}
 
 	@Override
 	public boolean tick() {
@@ -119,13 +89,13 @@ public class During extends DuringType {
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupStateCounter = _stateCounter;
+		_backupStateCounter.addFirst(_stateCounter);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_stateCounter = _backupStateCounter;
+		_stateCounter = _backupStateCounter.getFirst();
 	}
 }

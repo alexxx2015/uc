@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 import java.util.Observable;
 
@@ -48,12 +50,12 @@ public abstract class Operator extends Observable implements IOperator {
 
 	private boolean _initialized;
 
-	private boolean _isSimulating;
+	private final Deque<Boolean> _backupValueAtLastTick;
 
 	public Operator() {
 		_valueAtLastTick = false;
 		_initialized = false;
-		_isSimulating = false;
+		_backupValueAtLastTick = new ArrayDeque<>(2);
 	}
 
 	public final void init(Mechanism mechanism) {
@@ -128,29 +130,6 @@ public abstract class Operator extends Observable implements IOperator {
 		return _mechanism;
 	}
 
-//	@Override
-//	public final boolean evaluate(IEvent ev) {
-//		boolean result = localEvaluation(ev);
-//
-//		if (Settings.getInstance().getDistributionEnabled()) {
-//			result = distributedEvaluation(result, ev);
-//			_logger.debug("distributedEvaluation({}): {}", this, result);
-//		}
-//		else {
-//			_logger.debug("localEvaluation({}): {}", this, result);
-//		}
-//
-//		return result;
-//	}
-//
-//	protected boolean localEvaluation(IEvent ev) {
-//		throw new UnsupportedOperationException("Calling localEvaluation() is only allowed on subtypes of " + Operator.class);
-//	}
-//
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		return resultLocalEval;
-//	}
-
 	public boolean tick() {
 		throw new UnsupportedOperationException("Calling tick() is only allowed on subtypes of " + Operator.class);
 	}
@@ -182,25 +161,14 @@ public abstract class Operator extends Observable implements IOperator {
 		return _valueAtLastTick;
 	}
 
-	private boolean _backupValueAtLastTick;
-
 	public void startSimulation() {
-		if (_isSimulating) {
-			throw new IllegalStateException("Already simulating. Nested simulation not yet implemented.");
-		}
-		_isSimulating = true;
-		_backupValueAtLastTick = _valueAtLastTick;
+		_backupValueAtLastTick.addFirst(_valueAtLastTick);
 	}
 
 	public void stopSimulation() {
-		if (!_isSimulating) {
+		if (_backupValueAtLastTick.isEmpty()) {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
-		_isSimulating = false;
-		_valueAtLastTick = _backupValueAtLastTick;
-	}
-
-	public boolean isSimulating() {
-		return _isSimulating;
+		_valueAtLastTick = _backupValueAtLastTick.getFirst();
 	}
 }

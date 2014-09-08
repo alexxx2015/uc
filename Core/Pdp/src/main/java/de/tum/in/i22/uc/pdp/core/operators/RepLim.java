@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +19,12 @@ public class RepLim extends RepLimType {
 	private long _stateCounter = 0;
 	private CircularArray<Boolean> _stateCircArray;
 
-	private long _backupStateCounter;
-	private CircularArray<Boolean> _backupStateCircArray;
+	private final Deque<Long> _backupStateCounter;
+	private final Deque<CircularArray<Boolean>> _backupStateCircArray;
 
 	public RepLim() {
+		_backupStateCircArray = new ArrayDeque<>(2);
+		_backupStateCounter = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -46,35 +51,6 @@ public class RepLim extends RepLimType {
 	public String toString() {
 		return "REPLIM(" + timeAmount + ", " + op + " )";
 	}
-
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		_logger.debug("circularArray: {}", _stateCircArray);
-//
-//		boolean result = (_stateCounter >= lowerLimit && _stateCounter <= upperLimit);
-//
-//		if (ev == null) {
-//			/*
-//			 * We are evaluating at the end of a timestep
-//			 */
-//
-//			if (_stateCircArray.pop()) {
-//				_stateCounter--;
-//				_logger.debug("Oldest value was true. Removing it. Therefore also decrementing counter to {}.", _stateCounter);
-//			}
-//
-//			boolean operandState = op.evaluate(null);
-//			if (operandState) {
-//				_stateCounter++;
-//				_logger.debug("Current value is true. Therefore incrementing counter to {}.", _stateCounter);
-//			}
-//
-//			_stateCircArray.push(operandState);
-//			_logger.debug("circularArray: {}", _stateCircArray);
-//		}
-//
-//		return result;
-//	}
 
 	@Override
 	public boolean tick() {
@@ -103,15 +79,15 @@ public class RepLim extends RepLimType {
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupStateCircArray = _stateCircArray.clone();
-		_backupStateCounter = _stateCounter;
+		_backupStateCircArray.addFirst(_stateCircArray.clone());
+		_backupStateCounter.addFirst(_stateCounter);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_stateCircArray = _backupStateCircArray;
-		_stateCounter = _backupStateCounter;
+		_stateCircArray = _backupStateCircArray.getFirst();
+		_stateCounter = _backupStateCounter.getFirst();
 	}
 }

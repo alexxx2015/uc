@@ -36,7 +36,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	private long _timestep = 0;
 	private final EventMatch _triggerEvent;
 	private final ICondition _condition;
-	protected AuthorizationAction _authorizationAction = null;
+	protected AuthorizationAction _authorizationAction;
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
@@ -147,7 +147,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		if (difference < 0) { // Aborting update because the timestep has not
 			// yet passed
 			_logger.trace("[{}] Timestep remaining {} -> timestep has not yet passed", _name, difference);
-			_logger.trace("##############################################################################################################");
+			_logger.trace("##################################################");
 			return false;
 		}
 
@@ -162,12 +162,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		}
 
 		_timestep++;
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+		_logger.debug("//////////////////////////////////////////////////////");
 		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
 
 		boolean conditionValue = _condition.tick();
 		_logger.debug("Condition evaluated to: " + conditionValue);
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+		_logger.debug("//////////////////////////////////////////////////////");
 
 		setChanged();
 		notifyObservers(END_OF_TIMESTEP);

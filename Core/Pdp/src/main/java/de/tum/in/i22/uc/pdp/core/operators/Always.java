@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +16,10 @@ public class Always extends AlwaysType {
 
 	private boolean _immutable = false;
 
-	private boolean _backupImmutable;
+	private final Deque<Boolean> _backupImmutable;
 
 	public Always() {
+		_backupImmutable = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -34,22 +38,6 @@ public class Always extends AlwaysType {
 	public String toString() {
 		return "ALWAYS (" + op + ")";
 	}
-
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		// If immutable, then there is nothing to do. State remains as-is.
-//		if (!_immutable) {
-//			_value = op.evaluate(ev);
-//
-//			// if state turns false, then the formula will always be violated from now on.
-//			if (!_value && ev == null) {
-//				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
-//				_immutable = true;
-//			}
-//		}
-//
-//		return _value;
-//	}
 
 	@Override
 	public boolean tick() {
@@ -72,13 +60,13 @@ public class Always extends AlwaysType {
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable = _immutable;
+		_backupImmutable.addFirst(_immutable);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable;
+		_immutable = _backupImmutable.getFirst();
 	}
 }

@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +16,12 @@ public class RepMax extends RepMaxType {
 	private boolean _immutable = false;
 	private long _stateCounter = 0;
 
-	private boolean _backupImmutable;
-	private long _backupStateCounter;
+	private final Deque<Boolean> _backupImmutable;
+	private final Deque<Long> _backupStateCounter;
 
 	public RepMax() {
+		_backupImmutable = new ArrayDeque<>(2);
+		_backupStateCounter = new ArrayDeque<>(2);
 	}
 
 	@Override
@@ -35,33 +40,6 @@ public class RepMax extends RepMaxType {
 	public String toString() {
 		return "REPMAX(" + getLimit() + "," + op + ")";
 	}
-
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		if (!_immutable) {
-//			if (ev != null && op.evaluate(ev)) {
-//				/*
-//				 * Evaluating in the presence of an event
-//				 * and the operator evaluated to true
-//				 */
-//				_stateCounter++;
-//				_logger.debug("Subformula was true. Incrementing counter to {}.", _stateCounter);
-//			}
-//
-//			_value = (_stateCounter <= limit);
-//
-//			if (ev == null && !_value) {
-//				/*
-//				 * Evaluating at the end of a timestep and
-//				 * the counter reached its limit.
-//				 */
-//				_logger.debug("[REPMAX] Activating immutability");
-//				_immutable = true;
-//			}
-//		}
-//
-//		return _value;
-//	}
 
 	@Override
 	public boolean tick() {
@@ -88,15 +66,15 @@ public class RepMax extends RepMaxType {
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable = _immutable;
-		_backupStateCounter = _stateCounter;
+		_backupImmutable.addFirst(_immutable);
+		_backupStateCounter.addFirst(_stateCounter);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable;
-		_stateCounter = _backupStateCounter;
+		_immutable = _backupImmutable.getFirst();
+		_stateCounter = _backupStateCounter.getFirst();
 	}
 }

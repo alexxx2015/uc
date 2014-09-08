@@ -66,12 +66,6 @@ public class EventMatch extends EventMatchingOperatorType {
 		return false;
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent curEvent) {
-//		throw new UnsupportedOperationException("Operator localEvaluation was triggered for EventMatch instead of EventMatchOperator?!");
-//	}
-
-
 
 	@Override
 	public String toString() {

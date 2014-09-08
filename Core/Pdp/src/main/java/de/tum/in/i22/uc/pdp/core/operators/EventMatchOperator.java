@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,13 +20,15 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 
 	private boolean _didHappenSinceLastTick = false;
 
+	private final Deque<Boolean> _backupDidHappenSinceLastTick;
+
 	public EventMatchOperator() {
+		_backupDidHappenSinceLastTick = new ArrayDeque<>(2);
 	}
 
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
-//		_pdp.addEventMatch(this);
 		_pdp.addObserver(this);
 	}
 
@@ -32,68 +36,6 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 	protected int initId(int id) {
 		return setId(id + 1);
 	}
-
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		boolean result;
-//
-//		if (ev == null) {
-//			/*
-//			 * We are evaluating at the end of a timestep.
-//			 * Hence, the result to be returned is the state that has
-//			 * been accumulated during this timestep.
-//			 * Also, we prepare for the
-//			 * next timestep by resetting the state to false, indicating
-//			 * that the event did not yet happen.
-//			 */
-//			result = _value;
-//			_value = false;
-//		}
-//		else {
-//			/*
-//			 * We are evaluating in the presence of an event.
-//			 * If the given event matches, we set the internal state
-//			 * to true, implying that the event indicated by this object
-//			 * has happened at least once during this timestep.
-//			 *
-//			 * In fact, we only need to evaluate whether the specified event
-//			 * matches, if the current state is false. Otherwise, a matching
-//			 * event happened earlier within this timestep and the state is true anyway.
-//			 */
-//			if (!_value && ev.isActual() && matches(ev)) {
-//				_value = true;
-//
-//				setChanged();
-//				notifyObservers();
-//			}
-//			result = _value;
-//		}
-//
-//		return result;
-//	}
-//
-//	@Override
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		boolean result = resultLocalEval;
-//
-//		if (!resultLocalEval) {
-//			/*
-//			 * The event did not happen locally. Therefore, ask the DistributionManager
-//			 * whether the event happened remotely. If so, the result is true.
-//			 * If we are evaluating in the presence of an event, i.e. _not_ at the end
-//			 * of a timestep, we set the state value to true for further lookups.
-//			 */
-//			if (_pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate())) {
-//				result = true;
-//
-//				if (ev != null) {
-//					_value = true;
-//				}
-//			}
-//		}
-//
-//		return result;
-//	}
 
 	@Override
 	public boolean tick() {
@@ -115,18 +57,16 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 		return true;
 	}
 
-	private boolean _backupDidHappenSinceLastTick;
-
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
-		_backupDidHappenSinceLastTick = _didHappenSinceLastTick;
+		_backupDidHappenSinceLastTick.addFirst(_didHappenSinceLastTick);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
-		_didHappenSinceLastTick = _backupDidHappenSinceLastTick;
+		_didHappenSinceLastTick = _backupDidHappenSinceLastTick.getFirst();
 	}
 
 	@Override
