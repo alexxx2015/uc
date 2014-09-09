@@ -40,7 +40,8 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("app", "InternalFileSharing");
 		attributes.put("filename", filename);
-		//add PID
+		attributes.put("processName", "InternalFileSharing");
+		
 		return new ScopeBasic("InternalFileSharing loading file " + filename,
 				EScopeType.LOAD_FILE, attributes);
 	}

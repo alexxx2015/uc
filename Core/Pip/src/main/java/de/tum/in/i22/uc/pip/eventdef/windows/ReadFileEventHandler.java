@@ -152,13 +152,12 @@ public class ReadFileEventHandler extends WindowsEvents {
 
 		// TEST 2 : IFSWebApp LOADING THIS FILE?
 		// If so behave as OUT
-
-		if (processName.equalsIgnoreCase("IFSWebApp")) {
+		if (processName.equalsIgnoreCase("InternalFileSharing")) {
 			attributes = new HashMap<String, Object>();
-			attributes.put("app", "IFSWebApp");
+			attributes.put("app", "InternalFileSharing");
 			//put(process ID)
 			attributes.put("filename", filename);
-			scopeToCheck = new ScopeBasic("IFSWebApp loading file " + filename, type,
+			scopeToCheck = new ScopeBasic("InternalFileSharing loading file " + filename, type,
 					attributes);
 
 			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
