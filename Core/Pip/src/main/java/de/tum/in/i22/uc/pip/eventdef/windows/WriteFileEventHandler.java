@@ -156,20 +156,20 @@ public class WriteFileEventHandler extends WindowsEvents {
 
 		// TEST 2 : IFSWebApp SAVING THIS FILE?
 		// If so behave as IN
-		if (processName.equalsIgnoreCase("IFSWebApp")) {
+		if (processName.equalsIgnoreCase("InternalFileSharing")) {
 			type = EScopeType.LOAD_FILE;
 			attributes = new HashMap<String, Object>();
-			attributes.put("app", "IFSWebApp");
+			attributes.put("app", "InternalFileSharing");
 			attributes.put("filename", filename);
-			scopeToCheck = new ScopeBasic("TB saving file " + filename, type,
+			scopeToCheck = new ScopeBasic("InternalFileSharing saving file " + filename, type,
 					attributes);
 			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		}
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. IFSWebApp is saving to file " + filename);
+			_logger.debug("Test2 succeeded. InternalFileSharing is saving to file " + filename);
 			return Pair.of(EBehavior.IN, existingScope);
 		} else {
-			_logger.debug("Test2 failed. IFSWebApp is NOT saving to file " + filename);
+			_logger.debug("Test2 failed. InternalFileSharing is NOT saving to file " + filename);
 		}
 
 		// TEST 3 : GENERIC JBC APP WRITING TO THIS FILE?
