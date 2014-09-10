@@ -12,14 +12,14 @@ public class State implements DeepCloneable<State> {
 		_values = new Object[NO_ENTRIES];
 	}
 
-	enum StateVariable {
-		IMMUTABLE,
-		COUNTER,
-		VALUE_AT_LAST_TICK,
-		ALWAYS_A,
-		ALWAYS_A_SINCE_LAST_B,
-		SINCE_LAST_TICK,
-		CIRC_ARRAY
+	public enum StateVariable {
+		IMMUTABLE,				// usually: type boolean
+		VALUE_AT_LAST_TICK,		// usually: type boolean
+		ALWAYS_A,				// usually: type boolean
+		ALWAYS_A_SINCE_LAST_B,	// usually: type boolean
+		SINCE_LAST_TICK,		// usually: type boolean
+		COUNTER,				// usually: type long
+		CIRC_ARRAY				// usually: type CircularArray
 	}
 
 	<T> void set(StateVariable sv, T value) {
@@ -27,21 +27,9 @@ public class State implements DeepCloneable<State> {
 	}
 
 	@SuppressWarnings("unchecked")
-	<T> T get(StateVariable sv) {
+	public <T> T get(StateVariable sv) {
 		return (T) _values[sv.ordinal()];
 	}
-
-//	@Override
-//	protected State clone() {
-//		State clone;
-//		try {
-//			clone = (State) super.clone();
-//		} catch (CloneNotSupportedException e) {
-//			clone = new State();
-//		}
-//		clone._values = _values.clone();
-//		return clone;
-//	}
 
 	@Override
 	public State deepClone() {

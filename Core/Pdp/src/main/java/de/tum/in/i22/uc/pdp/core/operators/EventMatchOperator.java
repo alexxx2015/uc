@@ -76,7 +76,7 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 
 				if (sinceLastTick) {
 					setChanged();
-					notifyObservers();
+					notifyObservers(_state);
 					_state.set(StateVariable.SINCE_LAST_TICK, true);
 				}
 			}

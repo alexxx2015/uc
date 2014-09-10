@@ -34,8 +34,7 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -62,8 +61,8 @@ class CassandraDistributionManager implements IDistributionManager {
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_OP_OBSERVED + " ("
 						+ "opid text,"
-						+ "location text,"
 						+ "time timeuuid,"
+						+ "location text,"
 						+ "PRIMARY KEY (opid,time)) "
 						+ "WITH CLUSTERING ORDER BY (time DESC);");
 		_tables.add(
@@ -373,28 +372,28 @@ class CassandraDistributionManager implements IDistributionManager {
 		StringBuilder batchJob = new StringBuilder(512);
 		batchJob.append("BEGIN UNLOGGED BATCH ");
 
-		for (EventMatchOperator event : res.getEventMatches()) {
-			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
+		for (Operator op : res.getChangedOperators()) {
+			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", op.getFullId());
 
-			batchJob.append("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
-					+ "'" + event.getFullId() + "',"
+					+ "'" + op.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
 					+ "now()"
-					+ ") USING TTL " + event.getTTL() / 1000 + ";");
+					+ ") USING TTL " + op.getTTL() / 1000 + ";");
 		}
 
 
-		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
-			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
-
-			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
-					+ " (opid, location, time) VALUES ("
-					+ "'" + sbo.getFullId() + "',"
-					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-					+ "now()"
-					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
-		}
+//		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
+//			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
+//
+//			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+//					+ " (opid, location, time) VALUES ("
+//					+ "'" + sbo.getFullId() + "',"
+//					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+//					+ "now()"
+//					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
+//		}
 
 		batchJob.append(" APPLY BATCH;");
 

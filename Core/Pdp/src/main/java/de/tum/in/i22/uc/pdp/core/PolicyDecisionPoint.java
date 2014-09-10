@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +35,8 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
+import de.tum.in.i22.uc.pdp.core.operators.State;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
@@ -61,9 +60,11 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final PxpManager _pxpManager;
 
-	private final List<EventMatchOperator> _eventMatches;
+//	private final List<EventMatchOperator> _eventMatches;
 
-	private final List<StateBasedOperator> _stateBasedOperatorChanges;
+//	private final List<StateBasedOperator> _stateBasedOperatorChanges;
+
+	private final List<Operator> _changedOperators;
 
 	private final IDistributionManager _distributionManager;
 
@@ -75,8 +76,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_pip = pip;
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
-		_stateBasedOperatorChanges = new LinkedList<>();
-		_eventMatches = new LinkedList<>();
+//		_stateBasedOperatorChanges = new LinkedList<>();
+//		_eventMatches = new LinkedList<>();
+		_changedOperators = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 	}
@@ -223,11 +225,13 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 				mech.stopSimulation();
 			}
 
-			if (_stateBasedOperatorChanges.isEmpty() && _eventMatches.isEmpty()) {
+//			if (_stateBasedOperatorChanges.isEmpty() && _eventMatches.isEmpty()) {
+			if (_changedOperators.isEmpty()) {
 				response = decision.toResponse();
 			}
 			else {
-				response = new DistributedPdpResponse(decision.toResponse(), _eventMatches, _stateBasedOperatorChanges);
+//				response = new DistributedPdpResponse(decision.toResponse(), _eventMatches, _stateBasedOperatorChanges);
+				response = new DistributedPdpResponse(decision.toResponse(), _changedOperators);
 			}
 		}
 		else {
@@ -262,8 +266,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		}
 
 		// prepare for next
-		_eventMatches.clear();
-		_stateBasedOperatorChanges.clear();
+//		_eventMatches.clear();
+//		_stateBasedOperatorChanges.clear();
+		_changedOperators.clear();
 
 		return response;
 	}
@@ -310,21 +315,22 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof EventMatchOperator) {
-			_logger.info("Got update about EventMatchOperator: {}.", o);
-			_eventMatches.add((EventMatchOperator) o);
+		if ((o instanceof Operator) && (arg instanceof State)) {
+			_logger.info("Got update about Operator: {}. New state: {}.", o, arg);
+//			_eventMatches.add((EventMatchOperator) o);
+			_changedOperators.add((Operator) o);
 		}
-		else if (o instanceof StateBasedOperator) {
-			_logger.info("Got update about StateBasedOperator: {}.", o);
-			_stateBasedOperatorChanges.add((StateBasedOperator) o);
-		}
+//		else if (o instanceof StateBasedOperator) {
+//			_logger.info("Got update about StateBasedOperator: {}.", o);
+//			_stateBasedOperatorChanges.add((StateBasedOperator) o);
+//		}
 		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
-			if (!_stateBasedOperatorChanges.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), Collections.<EventMatchOperator> emptyList(), _stateBasedOperatorChanges));
+			if (!_changedOperators.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
+				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), _changedOperators));
 			}
 
 			// Prepare for next
-			_stateBasedOperatorChanges.clear();
+			_changedOperators.clear();
 		}
 	}
 

@@ -133,7 +133,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 					 * Notify our observers.
 					 */
 					setChanged();
-					notifyObservers();
+					notifyObservers(_state);
 				}
 			}
 
