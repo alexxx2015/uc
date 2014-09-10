@@ -1,12 +1,10 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.SinceType;
 
 public class Since extends SinceType {
@@ -15,15 +13,9 @@ public class Since extends SinceType {
 	private Operator op1;
 	private Operator op2;
 
-	private boolean _alwaysASinceLastB = false;
-	private boolean _alwaysA = true;
-
-	private final Deque<Boolean> _backupAlwaysASinceLastB;
-	private final Deque<Boolean> _backupAlwaysA;
-
 	public Since() {
-		_backupAlwaysASinceLastB = new ArrayDeque<>(2);
-		_backupAlwaysA = new ArrayDeque<>(2);
+		_state.set(StateVariable.ALWAYS_A, true);
+		_state.set(StateVariable.ALWAYS_A_SINCE_LAST_B, false);
 	}
 
 	@Override
@@ -54,34 +46,40 @@ public class Since extends SinceType {
 		boolean stateA = op1.tick();
 		boolean stateB = op2.tick();
 
+		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean alwaysASinceLastB = _state.get(StateVariable.ALWAYS_A_SINCE_LAST_B);
+
 		if (!stateA) {
-			_alwaysA = false;
+			_state.set(StateVariable.ALWAYS_A, false);
 		}
 
-		if (_alwaysA) {
-			_valueAtLastTick = true;
-			_logger.debug("A was always true. Result: {}.", _valueAtLastTick);
+		if (_state.get(StateVariable.ALWAYS_A)) {
+			valueAtLastTick = true;
+			_logger.debug("A was always true. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 		}
 		else {
 			if (stateB) {
-				_valueAtLastTick = true;
-				_alwaysASinceLastB = true;
-				_logger.debug("B is happening at this timestep. Result: {}.", _valueAtLastTick);
+				valueAtLastTick = true;
+				alwaysASinceLastB = true;
+				_logger.debug("B is happening at this timestep. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 			}
 			else {
-				if (stateA && _alwaysASinceLastB) {
-					_valueAtLastTick = true;
-					_logger.debug("A was always true since last B happened. Result: {}.", _valueAtLastTick);
+				if (stateA && alwaysASinceLastB) {
+					valueAtLastTick = true;
+					_logger.debug("A was always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 				else {
-					_valueAtLastTick = false;
-					_alwaysASinceLastB = false;
-					_logger.debug("A was NOT always true since last B happened. Result: {}.", _valueAtLastTick);
+					valueAtLastTick = false;
+					alwaysASinceLastB = false;
+					_logger.debug("A was NOT always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 			}
 		}
 
-		return _valueAtLastTick;
+		_state.set(StateVariable.ALWAYS_A_SINCE_LAST_B, alwaysASinceLastB);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+
+		return valueAtLastTick;
 	}
 
 	@Override
@@ -89,8 +87,6 @@ public class Since extends SinceType {
 		super.startSimulation();
 		op1.startSimulation();
 		op2.startSimulation();
-		_backupAlwaysA.addFirst(_alwaysA);
-		_backupAlwaysASinceLastB.addFirst(_alwaysASinceLastB);
 	}
 
 	@Override
@@ -98,7 +94,5 @@ public class Since extends SinceType {
 		super.stopSimulation();
 		op1.stopSimulation();
 		op2.stopSimulation();
-		_alwaysA = _backupAlwaysA.getFirst();
-		_alwaysASinceLastB = _backupAlwaysASinceLastB.getFirst();
 	}
 }

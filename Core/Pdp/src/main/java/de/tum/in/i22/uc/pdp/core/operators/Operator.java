@@ -14,15 +14,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 
 public abstract class Operator extends Observable implements IOperator {
 	protected static final Logger _logger = LoggerFactory.getLogger(Operator.class);
 
 	protected PolicyDecisionPoint _pdp;
-//	private OperatorState _state;
 	protected IMechanism _mechanism;
-
-	protected boolean _valueAtLastTick;
 
 	/**
 	 * The parent operator, or null for the root node.
@@ -50,12 +48,15 @@ public abstract class Operator extends Observable implements IOperator {
 
 	private boolean _initialized;
 
-	private final Deque<Boolean> _backupValueAtLastTick;
+	private final Deque<State> _backupStates;
+
+	protected State _state;
 
 	public Operator() {
-		_valueAtLastTick = false;
+		_state = new State();
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 		_initialized = false;
-		_backupValueAtLastTick = new ArrayDeque<>(2);
+		_backupStates = new ArrayDeque<>(2);
 	}
 
 	public final void init(Mechanism mechanism) {
@@ -77,8 +78,6 @@ public abstract class Operator extends Observable implements IOperator {
 		_mechanism = mech;
 		_parent = parent;
 		_ttl = ttl;
-
-//		_state = new OperatorState(this);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
 			this.addObserver(_pdp);
@@ -158,17 +157,21 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	public final boolean getValueAtLastTick() {
-		return _valueAtLastTick;
+		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
 	public void startSimulation() {
-		_backupValueAtLastTick.addFirst(_valueAtLastTick);
+		_backupStates.addFirst(_state.deepClone());
 	}
 
 	public void stopSimulation() {
-		if (_backupValueAtLastTick.isEmpty()) {
+		if (_backupStates.isEmpty()) {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
-		_valueAtLastTick = _backupValueAtLastTick.getFirst();
+		_state = _backupStates.getFirst();
+	}
+
+	public final State getState() {
+		return _state;
 	}
 }

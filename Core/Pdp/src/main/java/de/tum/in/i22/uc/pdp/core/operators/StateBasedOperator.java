@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,6 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
 public class StateBasedOperator extends StateBasedOperatorType implements LiteralOperator, Observer  {
@@ -26,17 +25,9 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 	protected String predicate;
 
-	/*
-	 * Stores whether this operator's value has changed since
-	 * the last tick(). The value might change because
-	 * an event occurs that makes the operator true.
-	 */
-	private boolean _valueSinceLastTick;
-
-	private final Deque<Boolean> _backupValueSinceLastTick;
-
 	public StateBasedOperator() {
-		_backupValueSinceLastTick = new ArrayDeque<>(2);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
@@ -46,7 +37,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 		String sep = Settings.getInstance().getSeparator1();
 		predicate = operator + sep + param1 + sep + param2 + sep + param3;
-		_valueSinceLastTick = _valueAtLastTick;
 	}
 
 	@Override
@@ -66,15 +56,17 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 
 	@Override
 	public boolean tick() {
+		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-		if (_valueSinceLastTick == _valueAtLastTick) {
+		if (sinceLastTick == valueAtLastTick) {
 			/*
 			 * The value was not changed or looked up during the last timestep via
 			 * on occurring event. Look up the value instantly.
 			 */
-			_valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
+			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
 
-			if (_valueAtLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
+			if (valueAtLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
 				/*
 				 * If the value has changed, notify our observers.
 				 * In particular remote entities.
@@ -84,32 +76,33 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 			}
 		}
 		else {
-			_valueAtLastTick = _valueSinceLastTick;
+			valueAtLastTick = sinceLastTick;
 		}
 
-		if (_valueAtLastTick != isPositive() && Settings.getInstance().getDistributionEnabled()) {
+		if (valueAtLastTick != isPositive() && Settings.getInstance().getDistributionEnabled()) {
 			/*
 			 * Last resort: The StateBasedOperator might have changed its state remotely.
 			 */
-			_valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 		}
 
 		// initialize for next timestep
-		_valueSinceLastTick = _valueAtLastTick;
+		sinceLastTick = valueAtLastTick;
 
-		return _valueAtLastTick;
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+
+		return valueAtLastTick;
 	}
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
-		_backupValueSinceLastTick.addFirst(_valueSinceLastTick);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
-		_valueSinceLastTick = _backupValueSinceLastTick.getFirst();
 	}
 
 	@Override
@@ -128,10 +121,13 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
-			if (_valueSinceLastTick == _valueAtLastTick) {
-				_valueSinceLastTick = _pdp.getPip().evaluatePredicateSimulatingNextState((IEvent) arg, predicate);
 
-				if (_valueSinceLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
+			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+
+			if (sinceLastTick == (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK)) {
+				sinceLastTick = _pdp.getPip().evaluatePredicateSimulatingNextState((IEvent) arg, predicate);
+
+				if (sinceLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
 					/*
 					 * The value of the operator has changed!
 					 * Notify our observers.
@@ -140,7 +136,9 @@ public class StateBasedOperator extends StateBasedOperatorType implements Litera
 					notifyObservers();
 				}
 			}
-			_logger.debug("Updating [{}] with event {}. Result: {}.", predicate, ((IEvent) arg).getName(), _valueSinceLastTick);
+
+			_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+			_logger.debug("Updating [{}] with event {}. Result: {}.", predicate, ((IEvent) arg).getName(), sinceLastTick);
 		}
 	}
 }

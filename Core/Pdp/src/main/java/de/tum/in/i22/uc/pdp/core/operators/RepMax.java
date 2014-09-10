@@ -1,27 +1,19 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.RepMaxType;
 
 public class RepMax extends RepMaxType {
 	private static Logger _logger = LoggerFactory.getLogger(RepMax.class);
 	private Operator op;
 
-	private boolean _immutable = false;
-	private long _stateCounter = 0;
-
-	private final Deque<Boolean> _backupImmutable;
-	private final Deque<Long> _backupStateCounter;
-
 	public RepMax() {
-		_backupImmutable = new ArrayDeque<>(2);
-		_backupStateCounter = new ArrayDeque<>(2);
+		_state.set(StateVariable.IMMUTABLE, false);
+		_state.set(StateVariable.COUNTER, 0);
 	}
 
 	@Override
@@ -43,38 +35,40 @@ public class RepMax extends RepMaxType {
 
 	@Override
 	public boolean tick() {
-		if (_immutable) {
+		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
+			long counter = _state.get(StateVariable.COUNTER);
+
 			if (op.tick()) {
-				_stateCounter++;
-				_logger.debug("Subformula was true. Incrementing counter to {}.", _stateCounter);
+				counter++;
+				_logger.debug("Subformula was true. Incrementing counter to {}.", counter);
 			}
 
-			_valueAtLastTick = (_stateCounter <= limit);
+			boolean valueAtLastTick = (counter <= limit);
 
-			if (!_valueAtLastTick) {
+			if (!valueAtLastTick) {
 				_logger.debug("[REPMAX] Activating immutability");
-				_immutable = true;
+				_state.set(StateVariable.IMMUTABLE, true);
 			}
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+			_state.set(StateVariable.COUNTER, counter);
+
+			return valueAtLastTick;
 		}
-		return _valueAtLastTick;
 	}
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable.addFirst(_immutable);
-		_backupStateCounter.addFirst(_stateCounter);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable.getFirst();
-		_stateCounter = _backupStateCounter.getFirst();
 	}
 }

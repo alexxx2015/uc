@@ -3,12 +3,17 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CircularArray<T> {
+import de.tum.in.i22.uc.cm.datatypes.interfaces.DeepCloneable;
+
+public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 	private static Logger _logger = LoggerFactory.getLogger(CircularArray.class);
 	private T values[] = null;
 
 	private int first = 0;
 	private int next = 0;
+
+	private CircularArray() {
+	}
 
 	@SuppressWarnings("unchecked")
 	public CircularArray(int size) {
@@ -89,27 +94,53 @@ public class CircularArray<T> {
 		return str;
 	}
 
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public CircularArray<T> clone() {
+//		CircularArray<T> cloned = null;
+//		try {
+//			cloned = (CircularArray<T>) super.clone();
+//		} catch (CloneNotSupportedException e) {
+//		}
+//
+//		if (cloned == null) {
+//			cloned = new CircularArray<>(this.values.length);
+//		}
+//
+//		cloned.values = (T[]) new Object[this.values.length];
+//		cloned.first = this.first;
+//		cloned.next = this.next;
+//
+//		for (int i = 0; i < this.values.length; i++) {
+//			cloned.values[i] = this.values[i];
+//		}
+//
+//		return cloned;
+//	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public CircularArray<T> clone() {
-		CircularArray<T> cloned = null;
+	public CircularArray<T> deepClone() {
+		CircularArray<T> clone;
 		try {
-			cloned = (CircularArray<T>) super.clone();
+			clone = (CircularArray<T>) super.clone();
 		} catch (CloneNotSupportedException e) {
+			clone = new CircularArray<>();
 		}
 
-		if (cloned == null) {
-			cloned = new CircularArray<>(this.values.length);
-		}
-
-		cloned.values = (T[]) new Object[this.values.length];
-		cloned.first = this.first;
-		cloned.next = this.next;
+		clone.values = (T[]) new Object[values.length];
+		clone.first = this.first;
+		clone.next = this.next;
 
 		for (int i = 0; i < this.values.length; i++) {
-			cloned.values[i] = this.values[i];
+			if (values[i] instanceof DeepCloneable<?>) {
+				clone.values[i] = (T) ((DeepCloneable<?>) values[i]).deepClone();
+			}
+			else {
+				clone.values[i] = values[i];
+			}
 		}
 
-		return cloned;
+		return clone;
 	}
 }

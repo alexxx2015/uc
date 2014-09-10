@@ -1,12 +1,10 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AlwaysType;
 
 public class Always extends AlwaysType {
@@ -14,12 +12,8 @@ public class Always extends AlwaysType {
 
 	private Operator op;
 
-	private boolean _immutable = false;
-
-	private final Deque<Boolean> _backupImmutable;
-
 	public Always() {
-		_backupImmutable = new ArrayDeque<>(2);
+		_state.set(StateVariable.IMMUTABLE, false);
 	}
 
 	@Override
@@ -41,32 +35,31 @@ public class Always extends AlwaysType {
 
 	@Override
 	public boolean tick() {
-		if (_immutable) {
+		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
-			_valueAtLastTick = op.tick();
+			boolean _valueAtLastTick = op.tick();
 
 			if (!_valueAtLastTick) {
 				_logger.debug("ALWAYS: activating IMMUTABILITY");
-				_immutable = true;
+				_state.set(StateVariable.IMMUTABLE, true);
 			}
-		}
 
-		return _valueAtLastTick;
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, _valueAtLastTick);
+			return _valueAtLastTick;
+		}
 	}
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable.addFirst(_immutable);
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable.getFirst();
 	}
 }

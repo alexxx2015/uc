@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
 public class OSLNot extends NotType {
@@ -56,10 +57,12 @@ public class OSLNot extends NotType {
 
 	@Override
 	public boolean tick() {
-		_valueAtLastTick = !op.tick();
+		boolean valueAtLastTick = !op.tick();
 
-		_logger.info("op: {}. Result: {}", !_valueAtLastTick, _valueAtLastTick);
-		return _valueAtLastTick;
+		_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
 	}
 
 	@Override

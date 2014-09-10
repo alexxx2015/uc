@@ -5,13 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
 public class OSLTrue extends TrueType implements LiteralOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OSLTrue.class);
 
 	public OSLTrue() {
-		_valueAtLastTick = true;
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, true);
 	}
 
 	@Override
