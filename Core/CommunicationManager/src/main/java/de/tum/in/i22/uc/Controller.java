@@ -240,6 +240,12 @@ public class Controller implements IRequestHandler  {
 					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
+			Settings.getInstance()
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
+		}
 	}
 
 	protected static void lock() {
