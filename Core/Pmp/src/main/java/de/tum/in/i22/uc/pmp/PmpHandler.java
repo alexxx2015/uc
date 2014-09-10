@@ -112,7 +112,6 @@ public class PmpHandler extends PmpProcessor {
 		return res.toString();
 	}
 
-
 	/**
 	 * Initializes the initial representations specified
 	 * within the given policy.
