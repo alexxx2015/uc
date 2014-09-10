@@ -1,6 +1,5 @@
 package uctests;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,9 +29,6 @@ import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class ThriftTest extends GenericTest {
-
-	private static final String policyFile = "target" + File.separator
-			+ "test-classes" + File.separator + "testTUM.xml";
 
 	private static Logger _logger = LoggerFactory.getLogger(ThriftTest.class);
 
@@ -140,7 +136,6 @@ public class ThriftTest extends GenericTest {
 
 		int x = 0;
 		IResponse response;
-		IStatus status;
 		Map<String, Set<String>> mechanisms;
 
 		Map<String, String> map = new HashMap<>();
