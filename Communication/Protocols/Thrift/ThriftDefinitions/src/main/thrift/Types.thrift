@@ -83,7 +83,11 @@ struct TName {
 
 struct TXmlPolicy {
 	1: required string name,
-	2: required string xml
+	2: required string xml,
+	3: string description,
+	4: string templateId,	
+	5: string templateXml,
+	6: string policyClass
 }
 
 struct TPtpResponse {

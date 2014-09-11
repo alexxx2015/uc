@@ -29,8 +29,10 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 
 	private IScope buildScope() {
 		String filename;
+		String processId;
 		try {
 			filename = getParameterValue("filename");
+			processId = getParameterValue("PID");
 
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
@@ -40,7 +42,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("app", "InternalFileSharing");
 		attributes.put("filename", filename);
-		attributes.put("processName", "InternalFileSharing");
+		attributes.put("PID", processId);
 		
 		return new ScopeBasic("InternalFileSharing loading file " + filename,
 				EScopeType.LOAD_FILE, attributes);

@@ -2,7 +2,6 @@ package de.tum.in.i22.policyeditor.deployment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +16,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 
 public class DeploymentController {
 
@@ -80,6 +78,7 @@ public class DeploymentController {
 			parameters.put("policy_description", policy.getDescription());
 			parameters.put("template_id", policy.getId());
 			
+			//generate a policy name
 			String policyName = "p"+policy.getId();
 			String xmlRepresentation = policy.getInstance();
 			XmlPolicy xmlPolicy = new XmlPolicy(policyName, xmlRepresentation);
@@ -93,6 +92,14 @@ public class DeploymentController {
 		
 		this.getDeployedPolicies(dataClass);
 		
+	}
+	
+	private List<String> getDeployedPolicies(){
+		List<String> deployed = new ArrayList<String>();
+		
+		//Map<String, List<String>> mapList = clientPmp.listMechanisms();
+				
+		return deployed;
 	}
 	
 }

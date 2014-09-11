@@ -16,6 +16,11 @@ public class XmlPolicy {
 	private final String _name;
 	private final String _xml;
 
+	private String _description;
+	private String _templateId;
+	private String _templateXml;
+	private String _dataClass;
+	
 	public XmlPolicy(String name, String xml) {
 		if (name == null || xml == null) {
 			throw new RuntimeException("Parameters might not be null.");
@@ -25,12 +30,53 @@ public class XmlPolicy {
 		_xml = xml;
 	}
 
+	public XmlPolicy(String name, String xml, String description, String templateId, String templateXml, String dataClass) {
+		this(name,xml);
+		_description = description;
+		_templateId = templateId;
+		_templateXml = templateXml;
+		_dataClass = dataClass;
+	}
+	
 	public String getName() {
 		return _name;
 	}
 
 	public String getXml() {
 		return _xml;
+	}
+
+	
+	public String getDescription() {
+		return _description;
+	}
+
+	public void setDescription(String description) {
+		this._description = description;
+	}
+
+	public String getTemplateId() {
+		return _templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this._templateId = templateId;
+	}
+
+	public String getTemplateXml() {
+		return _templateXml;
+	}
+
+	public void setTemplateXml(String templateXml) {
+		this._templateXml = templateXml;
+	}
+
+	public String get_dataClass() {
+		return _dataClass;
+	}
+
+	public void set_dataClass(String dataClass) {
+		this._dataClass = dataClass;
 	}
 
 	@Override

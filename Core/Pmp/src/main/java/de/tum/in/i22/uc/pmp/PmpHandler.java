@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,7 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pmp.policies.PolicyManager;
 import de.tum.in.i22.uc.pmp.xsd.ComparisonOperatorTypes;
 import de.tum.in.i22.uc.pmp.xsd.ContainerType;
 import de.tum.in.i22.uc.pmp.xsd.InitialRepresentationType;
@@ -68,14 +70,17 @@ public class PmpHandler extends PmpProcessor {
 	private static final String JAXB_CONTEXT = "de.tum.in.i22.uc.pmp.xsd";
 
 	private IPmp2Ptp _ptp;
-
+	private PolicyManager _pm;
+	
 	private final Set<String> _deployedPolicies;
 
+	
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
+		_pm = new PolicyManager();
 		_deployedPolicies = new HashSet<>();
 	}
 
@@ -385,8 +390,7 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
+	public IStatus specifyPolicyFor(Set<IContainer> representations,			String dataClass) {
 		// TODO Here goes Prachi & Cipri's code
 		_logger.debug("Here goes Prachi's and Cipri's code");
 		_logger.debug("the String value for the dataClass that matches any dataclass is " + Settings.getInstance().getPolicySpecificationStarDataClass());
@@ -403,6 +407,14 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 
+		String policyname = xmlPolicy.getName();
+		String policyTemplate = xmlPolicy.getXml();
+		
+		parameters.get("policy_template");
+		parameters.get("policy_class");
+		parameters.get("policy_description");
+		parameters.get("template_id");
+		
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
 		if(translationResponse.getStatus().equals(EStatus.ERROR))
 			return translationResponse;

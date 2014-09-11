@@ -150,12 +150,12 @@ public class ReadFileEventHandler extends WindowsEvents {
 			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
 		}
 
-		// TEST 2 : IFSWebApp LOADING THIS FILE?
+		// TEST 2 : InternalFileSharing LOADING THIS FILE?
 		// If so behave as OUT
-		if (processName.equalsIgnoreCase("InternalFileSharing")) {
+		if (processName.equalsIgnoreCase("java.exe")) {
 			attributes = new HashMap<String, Object>();
 			attributes.put("app", "InternalFileSharing");
-			//put(process ID)
+			attributes.put("PID", pid);
 			attributes.put("filename", filename);
 			scopeToCheck = new ScopeBasic("InternalFileSharing loading file " + filename, type,
 					attributes);
@@ -164,10 +164,10 @@ public class ReadFileEventHandler extends WindowsEvents {
 		}
 
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. IFSWebApp is loading to file " + filename);
+			_logger.debug("Test2 succeeded. InternalFileSharing is loading to file " + filename);
 			return Pair.of(EBehavior.OUT, existingScope);
 		} else {
-			_logger.debug("Test2 failed. IFSWebApp is NOT loading to file " + filename);
+			_logger.debug("Test2 failed. InternalFileSharing is NOT loading to file " + filename);
 		}
 
 		// TEST 3 : GENERIC JBC APP READING THIS FILE?

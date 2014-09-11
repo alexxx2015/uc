@@ -28,6 +28,10 @@ public class PolicyTemplate {
 		classes = new String[0];
 	}
 	
+	/**
+	 * This the id of the template from the configuration file.
+	 * @return
+	 */
 	public String getId() {
 		return id;
 	}
@@ -40,18 +44,28 @@ public class PolicyTemplate {
 	public void setClasses(String[] classes){
 		this.classes = classes;
 	}
+	/**
+	 * Returns the natural language description of the policy.
+	 * @return
+	 */
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	/** The template of the policy with the #param_tags# in place.
+	 * @return
+	 */
 	public String getTemplate() {
 		return template;
 	}
 	public void setTemplate(String template) {
 		this.template = template;
 	}
+	/** The instantiated template with all the parameter tags replaced.
+	 * @return
+	 */
 	public String getInstance() {
 		return instance;
 	}
@@ -88,6 +102,10 @@ public class PolicyTemplate {
 		this.classes = new String[]{policyClass};
 	}
 	
+	/**
+	 * Returs the data class of the policy.
+	 * @return
+	 */
 	public String getDataClass(){
 		if(this.classes.length > 0)
 			return this.classes[0];

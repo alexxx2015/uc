@@ -295,13 +295,7 @@ public class PolicyTemplatesEditor {
 		//TODO: talk with the PMP. call getDeployedPolicies();
 	}
 	
-	private List<String> getDeployedPolicies(){
-		List<String> deployed = new ArrayList<String>();
-		
-		//Map<String, List<String>> mapList = clientPmp.listMechanisms();
-				
-		return deployed;
-	}
+	
 	
 	
 }

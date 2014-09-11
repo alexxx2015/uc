@@ -154,12 +154,13 @@ public class WriteFileEventHandler extends WindowsEvents {
 			_logger.debug("Test1 failed. TB is NOT saving to file " + filename);
 		}
 
-		// TEST 2 : IFSWebApp SAVING THIS FILE?
+		// TEST 2 : InternalFileSharing SAVING THIS FILE?
 		// If so behave as IN
-		if (processName.equalsIgnoreCase("InternalFileSharing")) {
+		if (processName.equalsIgnoreCase("java.exe")) {
 			type = EScopeType.LOAD_FILE;
 			attributes = new HashMap<String, Object>();
 			attributes.put("app", "InternalFileSharing");
+			attributes.put("PID", pid);
 			attributes.put("filename", filename);
 			scopeToCheck = new ScopeBasic("InternalFileSharing saving file " + filename, type,
 					attributes);

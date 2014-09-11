@@ -42,7 +42,7 @@ public class PtEditorHandler implements IAny2PtEditor {
 	@Override
 	public IStatus specifyPolicyFor(Set<IContainer> representations, String dataClass) {
 		
-		boolean connected = initializePMP();
+		boolean connected = initializePMPconnection();
 		if(!connected)
 			return new StatusBasic(EStatus.ERROR);
 		
@@ -53,7 +53,7 @@ public class PtEditorHandler implements IAny2PtEditor {
 		return new StatusBasic(EStatus.OKAY);
 	}
 
-	private boolean initializePMP(){
+	private boolean initializePMPconnection(){
 		
 		String host = defaultPmp2PdpIp;
 		int port = defaultPmp2PdpPort;
@@ -61,7 +61,7 @@ public class PtEditorHandler implements IAny2PtEditor {
 			Config config = new Config();
 			String portString=config.getProperty("policyManagementPort");
 			port = Integer.parseInt(portString);
-			String hostString = config.getProperty("policyManagemtnHost");
+			String hostString = config.getProperty("policyManagementHost");
 			host = hostString;
 		} catch (Exception e) {
 		}
@@ -80,7 +80,8 @@ public class PtEditorHandler implements IAny2PtEditor {
 	}
 	
 	/*
-	 ********************************************************** 
+	 * This Editor listener must be started manually.
+	 ************************************************* 
 	 */
 	
 	public static void main(String[] args){
