@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AlwaysType;
 
 public class Always extends AlwaysType {
@@ -11,11 +12,8 @@ public class Always extends AlwaysType {
 
 	private Operator op;
 
-	private boolean _immutable = false;
-
-	private boolean _backupImmutable;
-
 	public Always() {
+		_state.set(StateVariable.IMMUTABLE, false);
 	}
 
 	@Override
@@ -35,50 +33,33 @@ public class Always extends AlwaysType {
 		return "ALWAYS (" + op + ")";
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		// If immutable, then there is nothing to do. State remains as-is.
-//		if (!_immutable) {
-//			_value = op.evaluate(ev);
-//
-//			// if state turns false, then the formula will always be violated from now on.
-//			if (!_value && ev == null) {
-//				_logger.debug("evaluating ALWAYS: activating IMMUTABILITY");
-//				_immutable = true;
-//			}
-//		}
-//
-//		return _value;
-//	}
-
 	@Override
 	public boolean tick() {
-		if (_immutable) {
+		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
-			_valueAtLastTick = op.tick();
+			boolean _valueAtLastTick = op.tick();
 
 			if (!_valueAtLastTick) {
 				_logger.debug("ALWAYS: activating IMMUTABILITY");
-				_immutable = true;
+				_state.set(StateVariable.IMMUTABLE, true);
 			}
-		}
 
-		return _valueAtLastTick;
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, _valueAtLastTick);
+			return _valueAtLastTick;
+		}
 	}
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable = _immutable;
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable;
 	}
 }

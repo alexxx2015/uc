@@ -16,7 +16,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
@@ -130,26 +129,6 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		return _impl.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		return _impl.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		return _impl.hasAllContainers(container);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		return _impl.hasAnyContainer(container);
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _impl.initialRepresentation(containerName, data);
 	}
@@ -157,11 +136,6 @@ class ThriftAny2PipClient extends Any2PipClient {
 	@Override
 	public IData newInitialRepresentation(IName containerName) {
 		return _impl.newInitialRepresentation(containerName);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _impl.whoHasData(data, recursionDepth);
 	}
 
 	@Override
@@ -177,12 +151,6 @@ class ThriftAny2PipClient extends Any2PipClient {
 	@Override
 	public Set<IData> flattenStructure(IData data) {
 		return _impl.flattenStructure(data);
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

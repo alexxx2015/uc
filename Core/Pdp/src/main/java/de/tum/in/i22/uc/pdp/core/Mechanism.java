@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -35,11 +37,13 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	private long _timestepSize = 0;
 	private long _timestep = 0;
 	private final EventMatch _triggerEvent;
-	private final ICondition _condition;
-	protected AuthorizationAction _authorizationAction = null;
+	private Condition _condition;
+	protected AuthorizationAction _authorizationAction;
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
+
+	private final Deque<Condition> _backupCondition;
 
 	/**
 	 * The name of the policy to which this {@link Mechanism} belongs.
@@ -65,6 +69,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		_condition = new Condition(mech.getCondition(), this);
 		_executeAsyncActions = new LinkedList<ExecuteAction>();
+
+		_backupCondition = new ArrayDeque<>(2);
 
 		_logger.debug("Processing executeAsyncActions");
 		// Processing synchronous executeActions for allow
@@ -123,11 +129,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		if (_triggerEvent.matches(event)) {
 			_logger.info("Trigger event matches -> evaluating condition");
 
-			_condition.startSimulation();
-			boolean conditionVal = _condition.tick();
-			_condition.stopSimulation();
-
-			if (conditionVal) {
+			if (_condition.tick()) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
 				d.processMechanism(this, event);
 			} else {
@@ -136,6 +138,18 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		}
 
 		return d;
+	}
+
+	public void startSimulation() {
+		_condition.startSimulation();
+		_backupCondition.addFirst(_condition);
+	}
+
+	public void stopSimulation() {
+		if (_backupCondition.isEmpty()) {
+			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
+		}
+		_condition = _backupCondition.getFirst();
 	}
 
 
@@ -147,7 +161,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		if (difference < 0) { // Aborting update because the timestep has not
 			// yet passed
 			_logger.trace("[{}] Timestep remaining {} -> timestep has not yet passed", _name, difference);
-			_logger.trace("##############################################################################################################");
+			_logger.trace("##################################################");
 			return false;
 		}
 
@@ -162,12 +176,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		}
 
 		_timestep++;
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+		_logger.debug("//////////////////////////////////////////////////////");
 		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
 
 		boolean conditionValue = _condition.tick();
 		_logger.debug("Condition evaluated to: " + conditionValue);
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+		_logger.debug("//////////////////////////////////////////////////////");
 
 		setChanged();
 		notifyObservers(END_OF_TIMESTEP);

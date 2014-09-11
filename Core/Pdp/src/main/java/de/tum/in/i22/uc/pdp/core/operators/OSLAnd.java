@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
 public class OSLAnd extends AndType {
@@ -51,10 +52,12 @@ public class OSLAnd extends AndType {
 		boolean op1state = op1.tick();
 		boolean op2state = op2.tick();
 
-		_valueAtLastTick = op1state && op2state;
+		boolean valueAtLastTick = op1state && op2state;
 
-		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, _valueAtLastTick);
-		return _valueAtLastTick;
+		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
 	}
 
 

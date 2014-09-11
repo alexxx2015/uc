@@ -13,7 +13,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -67,33 +66,8 @@ class ThriftPip2PipClient extends Pip2PipClient {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		return _impl.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		return _impl.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		return _impl.hasAllContainers(container);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		return _impl.hasAnyContainer(container);
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _impl.initialRepresentation(containerName, data);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _impl.whoHasData(data, recursionDepth);
 	}
 
 	@Override

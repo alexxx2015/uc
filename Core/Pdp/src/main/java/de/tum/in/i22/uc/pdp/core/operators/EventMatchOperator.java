@@ -12,19 +12,19 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 
 public class EventMatchOperator extends EventMatch implements LiteralOperator, Observer {
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
 
-	private boolean _didHappenSinceLastTick = false;
-
 	public EventMatchOperator() {
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
-//		_pdp.addEventMatch(this);
 		_pdp.addObserver(this);
 	}
 
@@ -33,81 +33,21 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 		return setId(id + 1);
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		boolean result;
-//
-//		if (ev == null) {
-//			/*
-//			 * We are evaluating at the end of a timestep.
-//			 * Hence, the result to be returned is the state that has
-//			 * been accumulated during this timestep.
-//			 * Also, we prepare for the
-//			 * next timestep by resetting the state to false, indicating
-//			 * that the event did not yet happen.
-//			 */
-//			result = _value;
-//			_value = false;
-//		}
-//		else {
-//			/*
-//			 * We are evaluating in the presence of an event.
-//			 * If the given event matches, we set the internal state
-//			 * to true, implying that the event indicated by this object
-//			 * has happened at least once during this timestep.
-//			 *
-//			 * In fact, we only need to evaluate whether the specified event
-//			 * matches, if the current state is false. Otherwise, a matching
-//			 * event happened earlier within this timestep and the state is true anyway.
-//			 */
-//			if (!_value && ev.isActual() && matches(ev)) {
-//				_value = true;
-//
-//				setChanged();
-//				notifyObservers();
-//			}
-//			result = _value;
-//		}
-//
-//		return result;
-//	}
-//
-//	@Override
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		boolean result = resultLocalEval;
-//
-//		if (!resultLocalEval) {
-//			/*
-//			 * The event did not happen locally. Therefore, ask the DistributionManager
-//			 * whether the event happened remotely. If so, the result is true.
-//			 * If we are evaluating in the presence of an event, i.e. _not_ at the end
-//			 * of a timestep, we set the state value to true for further lookups.
-//			 */
-//			if (_pdp.getDistributionManager().wasTrueSince(this, _mechanism.getLastUpdate())) {
-//				result = true;
-//
-//				if (ev != null) {
-//					_value = true;
-//				}
-//			}
-//		}
-//
-//		return result;
-//	}
-
 	@Override
 	public boolean tick() {
-		_valueAtLastTick = _didHappenSinceLastTick;
-		_didHappenSinceLastTick = false;
+		boolean valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-		if (!_valueAtLastTick && Settings.getInstance().getDistributionEnabled()) {
+		if (!valueAtLastTick && Settings.getInstance().getDistributionEnabled()) {
 			/*
 			 * Last resort: The event might have happened remotely
 			 */
-			_valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 		}
 
-		return _valueAtLastTick;
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
+
+		return valueAtLastTick;
 	}
 
 	@Override
@@ -115,32 +55,32 @@ public class EventMatchOperator extends EventMatch implements LiteralOperator, O
 		return true;
 	}
 
-	private boolean _backupDidHappenSinceLastTick;
-
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
-		_backupDidHappenSinceLastTick = _didHappenSinceLastTick;
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
-		_didHappenSinceLastTick = _backupDidHappenSinceLastTick;
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
-			if (!_didHappenSinceLastTick) {
-				_didHappenSinceLastTick = matches((IEvent) arg);
 
-				if (_didHappenSinceLastTick) {
+			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+
+			if (!sinceLastTick) {
+				sinceLastTick =  matches((IEvent) arg);
+
+				if (sinceLastTick) {
 					setChanged();
-					notifyObservers();
+					notifyObservers(_state);
+					_state.set(StateVariable.SINCE_LAST_TICK, true);
 				}
 			}
-			_logger.debug("Updating with event {}. Result: {}.", arg, _didHappenSinceLastTick);
+			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
 	}
 }

@@ -2,7 +2,6 @@ package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +22,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
@@ -195,37 +193,6 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		Set<IData> all = new HashSet<>();
-		for (IContainer c : _ifModel.getAllContainers()) {
-			all.addAll(_ifModel.getData(c));
-		}
-		return all.containsAll(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		for (IContainer c : _ifModel.getAllContainers()) {
-			if (_ifModel.getData(c).contains(data)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> containers) {
-		// TODO
-		return false;
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> containers) {
-		// TODO
-		return false;
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		_logger.debug("initialRepresentation(" + containerName + "," + data
 				+ ")");
@@ -260,12 +227,6 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		//		return _distributedPipManager.whoHasData(data, recursionDepth);
-		return Collections.emptySet();
-	}
-
-	@Override
 	public String toString() {
 		return _ifModelManager.niceString();
 	}
@@ -283,12 +244,6 @@ public class PipHandler extends PipProcessor {
 	@Override
 	public Set<IData> flattenStructure(IData data) {
 		return _ifModelManager.flattenStructure(data);
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

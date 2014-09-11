@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -35,8 +34,7 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -46,12 +44,8 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
 	private static final String TABLE_NAME_DATA = "hasdata";
-//	private static final String TABLE_NAME_ISSUES_EVENTS = "issueevents";
-//	private static final String TABLE_NAME_EVENTS_HAPPENED = "eventshappened";
-//	private static final String TABLE_NAME_STATES = "operatorstates";
-//	private static final String TABLE_NAME_STATES_COUNTER = "operatorstates_counter";
-//	private static final String TABLE_NAME_STATEBASED_OP_TRUE = "statebasedoptrue";
 	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
+	private static final String TABLE_NAME_POLICY = "policy";
 
 
 	private static final List<String> _tables;
@@ -67,58 +61,15 @@ class CassandraDistributionManager implements IDistributionManager {
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_OP_OBSERVED + " ("
 						+ "opid text,"
-						+ "location text,"
 						+ "time timeuuid,"
+						+ "location text,"
 						+ "PRIMARY KEY (opid,time)) "
 						+ "WITH CLUSTERING ORDER BY (time DESC);");
-//		_tables.add(
-//				"CREATE TABLE " + TABLE_NAME_ISSUES_EVENTS + " ("
-//						+ "event text,"
-//						+ "locations set<text>,"
-//						+ "PRIMARY KEY (event)"
-//						+ ");");
-//		_tables.add(
-//				"CREATE TABLE " + TABLE_NAME_EVENTS_HAPPENED + " ("
-//						+ "eventid text,"
-//						+ "location text,"
-//						+ "time timeuuid,"
-//						+ "PRIMARY KEY (location,time)"
-//						+ ") "
-//						+ "WITH CLUSTERING ORDER BY (time DESC);");
-//		_tables.add(
-//				"CREATE TABLE " + TABLE_NAME_STATEBASED_OP_TRUE + " ("
-//						+ "opid text,"
-//						+ "location text,"
-//						+ "time timeuuid,"
-//						+ "PRIMARY KEY (location,time)"
-//						+ ") "
-//						+ "WITH CLUSTERING ORDER BY (time DESC);");
-//		_tables.add(
-//				"CREATE TABLE " + TABLE_NAME_STATES + " ("
-//						+ "id text,"
-//						+ "value boolean,"
-//						+ "immutable boolean,"
-//						+ "subevertrue boolean,"
-//						+ "circarray list<text>,"
-//						+ "PRIMARY KEY (id)"
-//						+ ");");
-//		_tables.add(
-//				"CREATE TABLE " + TABLE_NAME_STATES_COUNTER + " ("
-//						+ "id text,"
-//						+ "counter counter,"
-//						+ "PRIMARY KEY (id)"
-//						+ ");");
+		_tables.add(
+				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
+						+ "policy text,"
+						+ "PRIMARY KEY (policy));");
 	};
-
-
-	/*
-	 * IMPORTANT:
-	 * Cassandra 2.1.0-rc6 causes some trouble with upper/lowercase
-	 * (Inserting a keyspace named 'testPolicy' resulted in keyspace named 'testpolicy',
-	 *  which was afterwards not found by a lookup with name 'testPolicy')
-	 * Therefore, make all tables, namespaces, column names, etc. lowercase.
-	 *
-	 */
 
 	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
 	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
@@ -134,10 +85,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	private boolean _initialized = false;
 
 	public CassandraDistributionManager() {
-		/*
-		 * FIXME make ConsistencyLevel configurable from Settings.
-		 */
-		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.ALL);
+		QueryOptions options = new QueryOptions().setConsistencyLevel(Settings.getInstance().getDistributionConsistencyLevel());
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_defaultSession = _cluster.connect();
@@ -159,8 +107,13 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void registerPolicy(String policyName) {
-		createPolicyKeyspace(policyName.toLowerCase());
+	public void registerPolicy(XmlPolicy policy) {
+		createPolicyKeyspace(policy);
+	}
+
+	@Override
+	public void unregisterPolicy(String policyName, IPLocation location) {
+		adjustPolicyKeyspace(policyName, location, false);
 	}
 
 
@@ -185,13 +138,7 @@ class CassandraDistributionManager implements IDistributionManager {
 			 *     is removed from the policy's keyspace
 			 */
 
-			String policyName = policy.getName().toLowerCase();
-
-			/**
-			 * FIXME: There might be potential to parallelize policy transfer
-			 */
-
-			if (adjustPolicyKeyspace(policyName, pmpLocation, true)) {
+			if (adjustPolicyKeyspace(policy.getName(), pmpLocation, true)) {
 				boolean success = true;
 
 				// if the location was not yet part of the keyspace, then we need to
@@ -212,7 +159,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				// If remote deployment of the policy fails,
 				// then we remove the location from the keyspace
 				if (!success) {
-					adjustPolicyKeyspace(policyName, pmpLocation, false);
+					adjustPolicyKeyspace(policy.getName(), pmpLocation, false);
 				}
 
 				/*
@@ -240,7 +187,6 @@ class CassandraDistributionManager implements IDistributionManager {
 			String dataID = d.getId();
 
 			for (XmlPolicy p : _pmp.getPolicies(d)) {
-				String policyName = p.getName().toLowerCase();
 
 				/*
 				 * FIXME: The below statements may fail because the
@@ -248,16 +194,16 @@ class CassandraDistributionManager implements IDistributionManager {
 				 */
 
 				// Check whether there already exists an entry for this dataID ...
-				if (_defaultSession.execute("SELECT data from " + policyName + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+				if (_defaultSession.execute("SELECT data from " + p.getName() + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
 					// ... if not, insert the corresponding row
-					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_DATA
+					_defaultSession.execute("INSERT INTO " + p.getName() + "." + TABLE_NAME_DATA
 							+ " (data, locations) VALUES ('" + dataID + "',{'"
 							+ IPLocation.localIpLocation.getHost() + "','"
 							+ dstLocation.getHost() + "'})");
 				}
 				else {
 					// ... otherwise add the additional location to the existing row
-					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
+					_defaultSession.execute("UPDATE " + p.getName() + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
 							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
 				}
 			}
@@ -290,14 +236,16 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pipConnectionManager.release(remotePip);
 	}
 
-	private void createPolicyKeyspace(String policyName) {
+	private void createPolicyKeyspace(XmlPolicy policy) {
 		try {
-			_defaultSession.execute("CREATE KEYSPACE " + policyName
+			_defaultSession.execute("CREATE KEYSPACE " + policy.getName()
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
-		catch (AlreadyExistsException e) {}
+		catch (AlreadyExistsException e) {
+			return;
+		}
 
-		Session newSession = _cluster.connect(policyName);
+		Session newSession = _cluster.connect(policy.getName());
 
 		// Create all tables
 		for (String tbl : _tables) {
@@ -305,6 +253,8 @@ class CassandraDistributionManager implements IDistributionManager {
 				newSession.execute(tbl);
 			} catch (AlreadyExistsException e) {}
 		}
+
+		newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policy) VALUES ('" + policy.getXml() + "');");
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -385,9 +335,6 @@ class CassandraDistributionManager implements IDistributionManager {
 				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
 				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
 
-				/*
-				 * TODO: These three tasks can be parallelized(?!?)
-				 */
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
@@ -425,60 +372,32 @@ class CassandraDistributionManager implements IDistributionManager {
 		StringBuilder batchJob = new StringBuilder(512);
 		batchJob.append("BEGIN UNLOGGED BATCH ");
 
-		for (EventMatchOperator event : res.getEventMatches()) {
-			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", event.getFullId());
+		for (Operator op : res.getChangedOperators()) {
+			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", op.getFullId());
 
-			batchJob.append("INSERT INTO " + event.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
-					+ "'" + event.getFullId() + "',"
+					+ "'" + op.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
 					+ "now()"
-					+ ") USING TTL " + event.getTTL() / 1000 + ";");
+					+ ") USING TTL " + op.getTTL() / 1000 + ";");
 		}
 
 
-		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
-			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
-
-			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
-					+ " (opid, location, time) VALUES ("
-					+ "'" + sbo.getFullId() + "',"
-					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-					+ "now()"
-					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
-		}
+//		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
+//			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
+//
+//			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+//					+ " (opid, location, time) VALUES ("
+//					+ "'" + sbo.getFullId() + "',"
+//					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+//					+ "now()"
+//					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
+//		}
 
 		batchJob.append(" APPLY BATCH;");
 
 		_defaultSession.execute(batchJob.toString());
-
-
-
-//			for (IOperatorState state : res.getOperatorStateChanges()) {
-//				IOperator operator = state.getOperator();
-//
-//				_logger.info("UPDATING CASSANDRA STATE: {}, {}", operator, state);
-//
-//				String policyName = operator.getMechanism().getPolicyName().toLowerCase();
-//
-//				if (!_insertedOperators.contains(operator.getFullId())) {
-//					_insertedOperators.add(operator.getFullId());
-//					_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_STATES
-//							+ " (id, value, immutable, subevertrue) VALUES ("
-//							+ "'" + operator.getFullId() + "',"
-//							+ state.value() + ","
-//							+ state.isImmutable() + ","
-//							+ state.isSubEverTrue()
-//							+ ");");
-//				}
-//				else {
-//					_defaultSession.execute("UPDATE " + policyName + "." + TABLE_NAME_STATES
-//							+ " SET value = " + state.value() + ","
-//							+ " immutable = " + state.isImmutable() + ","
-//							+ " subevertrue = " + state.isSubEverTrue()
-//							+ " WHERE id = '" + operator.getFullId() + "';");
-//				}
-//			}
 	}
 
 

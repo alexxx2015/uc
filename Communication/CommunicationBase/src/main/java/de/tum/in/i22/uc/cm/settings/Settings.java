@@ -21,6 +21,8 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
+import com.datastax.driver.core.ConsistencyLevel;
+
 /**
  *
  * @author Florian Kelbert
@@ -69,17 +71,6 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
-	public static final String PROP_NAME_communicationProtocol = "communicationProtocol";
-
-	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
-
-	public static final String PROP_NAME_distributionStrategy = "distributionStrategy";
-	public static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
-
-	public static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
-
-	public static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
-
 	public static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
 
 	public static final String PROP_NAME_starEvent = "starEvent";
@@ -94,8 +85,6 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showFullIFModel = "showFullIFModel";
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
-
-
 
 	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
@@ -112,6 +101,15 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
 	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+
+	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
+	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
+
+	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
+	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
+	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
+	public static final String PROP_NAME_distributionConsistencyLevel = "distributionConsistencyLevel";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -202,12 +200,10 @@ public class Settings extends SettingsLoader {
 		});
 
 		loadSetting(PROP_NAME_distributionEnabled, false);
-
-		loadSetting(PROP_NAME_pipDistributionMaxConnections, 5);
-
-		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
-
-		loadSetting(PROP_NAME_pmpDistributionMaxConnections, 5);
+		loadSetting(PROP_NAME_distributionMaxPipConnections, 5);
+		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
+		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
+		loadSetting(PROP_NAME_distributionConsistencyLevel, ConsistencyLevel.ALL, ConsistencyLevel.class);
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 
@@ -239,6 +235,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
 		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
+
+		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
+		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -257,8 +256,7 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
-			Class<E> cls) {
+	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue, Class<E> cls) {
 		E loadedValue = defaultValue;
 
 		boolean success = false;
@@ -397,10 +395,6 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_anyListenerEnabled);
 	}
 
-	public boolean getDistributionEnabled() {
-		return getValue(PROP_NAME_distributionEnabled);
-	}
-
 	public String getPipEventHandlerPackage() {
 		return getValue(PROP_NAME_pipEventHandlerPackage);
 	}
@@ -442,16 +436,24 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}
 
-	public int getPipDistributionMaxConnections() {
-		return getValue(PROP_NAME_pipDistributionMaxConnections);
+	public int getDistributionMaxPipConnections() {
+		return getValue(PROP_NAME_distributionMaxPipConnections);
 	}
 
-	public int getPdpDistributionMaxConnections() {
-		return getValue(PROP_NAME_pdpDistributionMaxConnections);
+	public boolean getDistributionEnabled() {
+		return getValue(PROP_NAME_distributionEnabled);
 	}
 
-	public int getPmpDistributionMaxConnections() {
-		return getValue(PROP_NAME_pmpDistributionMaxConnections);
+	public int getDistributionMaxPdpConnections() {
+		return getValue(PROP_NAME_distributionMaxPdpConnections);
+	}
+
+	public int getDistributionMaxPmpConnections() {
+		return getValue(PROP_NAME_distributionMaxPmpConnections);
+	}
+
+	public ConsistencyLevel getDistributionConsistencyLevel() {
+		return getValue(PROP_NAME_distributionConsistencyLevel);
 	}
 
 	public int getConnectionAttemptInterval() {
@@ -564,5 +566,13 @@ public class Settings extends SettingsLoader {
 
 	public Set<String> getPmpInitialPolicies() {
 		return getValue(PROP_NAME_pmpInitialPolicies);
+	}
+
+	public String getPdpJaxbContext() {
+		return getValue(PROP_NAME_pdpJaxbContext);
+	}
+
+	public String getPmpJaxbContext() {
+		return getValue(PROP_NAME_pmpJaxbContext);
 	}
 }

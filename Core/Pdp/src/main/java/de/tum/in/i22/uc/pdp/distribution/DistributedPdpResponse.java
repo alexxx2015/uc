@@ -6,8 +6,7 @@ import java.util.List;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
+import de.tum.in.i22.uc.pdp.core.operators.Operator;
 
 /**
  * This class wraps an IResponse and adds additional functions
@@ -19,8 +18,9 @@ import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 public class DistributedPdpResponse implements IResponse {
 
 	private final IResponse _response;
-	private final List<EventMatchOperator> _eventMatches;
-	private final List<StateBasedOperator> _stateBasedOperatorTrue;
+//	private final List<EventMatchOperator> _eventMatches;
+//	private final List<StateBasedOperator> _stateBasedOperatorTrue;
+	private final List<Operator> _changedOperators;
 
 	/**
 	 * Creates a new {@link DistributedPdpResponse} instance by wrapping the specified
@@ -30,19 +30,24 @@ public class DistributedPdpResponse implements IResponse {
 	 * @param _stateBasedOperatorTrue
 	 * @param operatorStateChanges
 	 */
-	public DistributedPdpResponse(IResponse response, List<EventMatchOperator> eventMatches, List<StateBasedOperator> stateBasedOperatorTrue) {
+	public DistributedPdpResponse(IResponse response, List<Operator> changedOperators) {
 		_response = response;
 
-		_eventMatches = new LinkedList<>(eventMatches);
-		_stateBasedOperatorTrue = new LinkedList<>(stateBasedOperatorTrue);
+//		_eventMatches = new LinkedList<>(eventMatches);
+//		_stateBasedOperatorTrue = new LinkedList<>(stateBasedOperatorTrue);
+		_changedOperators = new LinkedList<>(changedOperators);
 	}
 
-	public List<EventMatchOperator> getEventMatches() {
-		return _eventMatches;
-	}
+//	public List<EventMatchOperator> getEventMatches() {
+//		return _eventMatches;
+//	}
+//
+//	public List<StateBasedOperator> getStateBasedOperatorTrue() {
+//		return _stateBasedOperatorTrue;
+//	}
 
-	public List<StateBasedOperator> getStateBasedOperatorTrue() {
-		return _stateBasedOperatorTrue;
+	public List<Operator> getChangedOperators() {
+		return _changedOperators;
 	}
 
 	/**

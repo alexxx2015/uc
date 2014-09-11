@@ -28,7 +28,7 @@ public class PrintEventHandler extends ExcelEvents {
 			throw new RuntimeException("impossible to print empty target");
 
 		IContainer src = _informationFlowModel
-				.getContainer(new CellName(target));
+				.getContainer(CellName.create(target));
 		IContainer dst = _informationFlowModel.getContainer(new NameBasic(
 				"printer"));
 

@@ -14,7 +14,7 @@ public class SettingsLoader {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(SettingsLoader.class);
 
-	protected Map<String, Entry<?>> _settings;
+	protected Map<String, Object> _settings;
 
 	protected Properties _props;
 
@@ -105,7 +105,7 @@ public class SettingsLoader {
 					+ "].");
 			returnValue = defaultValue;
 		}
-		_settings.put(propName, putValue(returnValue));
+		_settings.put(propName, returnValue);
 		return returnValue;
 	}
 
@@ -157,39 +157,11 @@ public class SettingsLoader {
 	}
 
 	public <T> void setProperty(String propName, T value) {
-		_settings.put(propName, new Entry<T>(value.getClass(), value));
+		_settings.put(propName, value);
 	}
 
-	protected Entry<Object> putValue(Object obj) {
-		return new Entry<Object>(obj.getClass(), obj);
-	}
-
+	@SuppressWarnings("unchecked")
 	protected <T> T getValue(String propName) {
-		@SuppressWarnings("unchecked")
-		Entry<T> e = (Entry<T>) _settings.get(propName);
-		if (e == null)
-			return null;
-		return e.getValue();
+		return (T) _settings.get(propName);
 	}
-
-	protected class Entry<T> {
-		private Class<T> _type;
-		private T _value;
-
-		@SuppressWarnings("unchecked")
-		public Entry(Class<? extends Object> type, T value) {
-			_type = (Class<T>) type;
-			_value = value;
-		}
-
-		public T getValue() {
-			return _value;
-		}
-
-		public Class<T> getType() {
-			return _type;
-		}
-
-	}
-
 }

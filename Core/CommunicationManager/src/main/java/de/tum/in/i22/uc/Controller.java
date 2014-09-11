@@ -24,7 +24,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -91,6 +90,7 @@ public class Controller implements IRequestHandler  {
 				_logger.info("... waiting ...");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				_logger.info(e.getMessage());
 			}
 		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
@@ -98,8 +98,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		if (Settings.getInstance() == null)
-			return false;
 		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer
 				.started())
 				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer
@@ -132,7 +130,6 @@ public class Controller implements IRequestHandler  {
 			_anyServer.stop();
 		if(_requestHandler != null)
 			_requestHandler.stop();
-		//System.exit(0);
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
@@ -243,6 +240,12 @@ public class Controller implements IRequestHandler  {
 					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
+			Settings.getInstance()
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
+		}
 	}
 
 	protected static void lock() {
@@ -299,11 +302,6 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		return _requestHandler.revokeMechanism(policyName, mechName);
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		return _requestHandler.deployPolicyURI(policyFilePath);
 	}
 
 	@Override
@@ -364,33 +362,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		return _requestHandler.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		return _requestHandler.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		return _requestHandler.hasAllContainers(container);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		return _requestHandler.hasAnyContainer(container);
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _requestHandler.initialRepresentation(containerName, data);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _requestHandler.whoHasData(data, recursionDepth);
 	}
 
 	@Override

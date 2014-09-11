@@ -71,7 +71,7 @@ public class PdpTest extends GenericTest{
 		Assert.assertNotNull(response1);
 		Assert.assertNotNull(response2);
 	}
-	
+
 
 
 	@Test
@@ -100,125 +100,125 @@ public class PdpTest extends GenericTest{
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
 		pmp.deployPolicyURIPmp("src/test/resources/ExamplePolicies/prachis-policy.xml");
-		
+
 		Map<String,String> map = new HashMap<String,String>();
-	
+
 		map.put("object","city");
 		map.put("name", "");
 		map.put("scope", "539e9b555235f");
 		map.put("class", "customPolicy");
 		map.put("id", "city");
-			
+
 		IEvent event = mf.createDesiredEvent("cmd_copy", map);
-		
+
 		IResponse response = pdp.notifyEventSync(event);
 
 		Assert.assertNotNull(response);
 	}
 
-	
-	
+
+
 	@Test
 	public void testExcel() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 
 		Map<String,String> map = new HashMap<String,String>();
-		
+
 		map.put("PEP", "excel");
 		map.put("Target","wb1!ws1!3!4");
 		map.put("allowImpliesActual", "true");
-		
-		
 
-		pip.initialRepresentation(new CellName("wb2!ws2!4!4"), Collections.singleton((IData)(new DataBasic("D44"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!4!5"), Collections.singleton((IData)(new DataBasic("D45"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!4!6"), Collections.singleton((IData)(new DataBasic("D46"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!4!7"), Collections.singleton((IData)(new DataBasic("D47"))));
 
-		pip.initialRepresentation(new CellName("wb2!ws2!5!4"), Collections.singleton((IData)(new DataBasic("D54"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!5!5"), Collections.singleton((IData)(new DataBasic("D55"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!5!6"), Collections.singleton((IData)(new DataBasic("D56"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!5!7"), Collections.singleton((IData)(new DataBasic("D57"))));
 
-		pip.initialRepresentation(new CellName("wb2!ws2!6!4"), Collections.singleton((IData)(new DataBasic("D64"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!6!5"), Collections.singleton((IData)(new DataBasic("D65"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!6!6"), Collections.singleton((IData)(new DataBasic("D66"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!6!7"), Collections.singleton((IData)(new DataBasic("D67"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!4!4"), Collections.singleton((IData)(new DataBasic("D44"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!4!5"), Collections.singleton((IData)(new DataBasic("D45"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!4!6"), Collections.singleton((IData)(new DataBasic("D46"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!4!7"), Collections.singleton((IData)(new DataBasic("D47"))));
 
-		pip.initialRepresentation(new CellName("wb2!ws2!7!4"), Collections.singleton((IData)(new DataBasic("D74"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!7!5"), Collections.singleton((IData)(new DataBasic("D75"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!7!6"), Collections.singleton((IData)(new DataBasic("D76"))));
-		pip.initialRepresentation(new CellName("wb2!ws2!7!7"), Collections.singleton((IData)(new DataBasic("D77"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!5!4"), Collections.singleton((IData)(new DataBasic("D54"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!5!5"), Collections.singleton((IData)(new DataBasic("D55"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!5!6"), Collections.singleton((IData)(new DataBasic("D56"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!5!7"), Collections.singleton((IData)(new DataBasic("D57"))));
 
-		pip.newInitialRepresentation(new CellName("wb1!ws1!3!3"));
-		pip.newInitialRepresentation(new CellName("wb1!ws1!3!4"));
-		pip.newInitialRepresentation(new CellName("wb1!ws1!3!5"));
-		
+		pip.initialRepresentation(CellName.create("wb2!ws2!6!4"), Collections.singleton((IData)(new DataBasic("D64"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!6!5"), Collections.singleton((IData)(new DataBasic("D65"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!6!6"), Collections.singleton((IData)(new DataBasic("D66"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!6!7"), Collections.singleton((IData)(new DataBasic("D67"))));
+
+		pip.initialRepresentation(CellName.create("wb2!ws2!7!4"), Collections.singleton((IData)(new DataBasic("D74"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!7!5"), Collections.singleton((IData)(new DataBasic("D75"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!7!6"), Collections.singleton((IData)(new DataBasic("D76"))));
+		pip.initialRepresentation(CellName.create("wb2!ws2!7!7"), Collections.singleton((IData)(new DataBasic("D77"))));
+
+		pip.newInitialRepresentation(CellName.create("wb1!ws1!3!3"));
+		pip.newInitialRepresentation(CellName.create("wb1!ws1!3!4"));
+		pip.newInitialRepresentation(CellName.create("wb1!ws1!3!5"));
+
 		pip.newInitialRepresentation(new NameBasic("SystemClipboard(Excel)"));
-		
-			
+
+
 		IEvent event = new EventBasic("Print", map);
 		IResponse response = pdp.notifyEventSync(event);
-				
+
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("Target","wb1!ws1!3!4*wb1!ws1!3!3");
 		map.put("allowImpliesActual", "true");
-		
+
 		event = new EventBasic("CopyInternal", map);
 
 		response = pdp.notifyEventSync(event);
 
 		response = pdp.notifyEventSync(event);
-		
+
 
 //		map = new HashMap<String,String>();
 //		map.put("PEP", "excel");
 //		map.put("Target","wb1!ws1!2!1*wb1!ws1!1!1");
 //		map.put("allowImpliesActual", "true");
-//		
+//
 //		event = new EventBasic("CopyInternal", map);
 //
 //		response = pdp.notifyEventSync(event);
 //
 //		response = pdp.notifyEventSync(event);
 
-		
-		
+
+
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("Target","wb1!ws1!5!5*wb1!ws1!4!6");
 		map.put("allowImpliesActual", "true");
-		
+
 		event = new EventBasic("Paste", map);
 
 		response = pdp.notifyEventSync(event);
 
 
-		
-		
+
+
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("Target","wb1!ws1!8!1*wb1!ws1!8!8");
 		map.put("position","2");
 		map.put("allowImpliesActual", "true");
-		
+
 		event = new EventBasic("PasteNOcb", map);
 
 		response = pdp.notifyEventSync(event);
-		
+
 
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("position","5");
 		map.put("allowImpliesActual", "true");
-		
+
 		event = new EventBasic("DeleteNOcb", map);
 
 		response = pdp.notifyEventSync(event);
 
 
-		
+
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("srcCoordinate","wb2!ws2!4!4");
@@ -226,81 +226,81 @@ public class PdpTest extends GenericTest{
 		map.put("ColCount","4");
 		map.put("srcWorkbookName", "wb2");
 		map.put("srcSheetName", "ws2");
-		map.put("RowDiff", "5");		
+		map.put("RowDiff", "5");
 		map.put("ColDiff", "5");
 		map.put("destWorkbookName", "wb3");
-		map.put("destSheetName", "ws3");		
+		map.put("destSheetName", "ws3");
 		map.put("allowImpliesActual", "true");
-		
-		
+
+
 		event = new EventBasic("DragAndDrop", map);
 
 		response = pdp.notifyEventSync(event);
 
-		
-		
-//		
+
+
+//
 //		map = new HashMap<String,String>();
 //		map.put("PEP", "excel");
 //		map.put("workbookName","wb1");
 //		map.put("sheetName","ws1");
 //		map.put("RowNumber","4");
-//		
+//
 //		event = new EventBasic("DeleteRow", map);
 //
 //		response = pdp.notifyEventSync(event);
-//		
-//		
-		
-		
-		
+//
+//
+
+
+
 //		map = new HashMap<String,String>();
 //		map.put("PEP", "excel");
 //		map.put("workbookName","wb2");
 //		map.put("sheetName","ws2");
 //		map.put("RowNumber","6");
 //		map.put("allowImpliesActual", "true");
-//		
+//
 //		event = new EventBasic("DeleteRow", map);
 //
 //		response = pdp.notifyEventSync(event);
-//		
+//
 //		response = pdp.notifyEventSync(event);
-//		
+//
 //		response = pdp.notifyEventSync(event);
-//		
-		
+//
+
 //		map = new HashMap<String,String>();
 //		map.put("PEP", "excel");
 //		map.put("workbookName","wb2");
 //		map.put("sheetName","ws2");
 //		map.put("ColNumber","5");
 //		map.put("allowImpliesActual", "true");
-//		
+//
 //		event = new EventBasic("InsertColumn", map);
 //
 //		response = pdp.notifyEventSync(event);
-//		
-//		
-//		
+//
+//
+//
 //		Assert.assertNotNull(response);
-		
+
 		map = new HashMap<String,String>();
 		map.put("PEP", "excel");
 		map.put("targetWb","wb3");
 		map.put("externalFile","extF1");
 		map.put("allowImpliesActual", "true");
-		
+
 		event = new EventBasic("Save", map);
 
 		response = pdp.notifyEventSync(event);
-		
 
-		
+
+
 		Assert.assertNotNull(response);
-		
-		
-		
+
+
+
 	}
 
 	/**

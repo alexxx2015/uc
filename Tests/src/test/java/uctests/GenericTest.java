@@ -38,16 +38,24 @@ public abstract class GenericTest {
 	protected final static int PMP_LISTENER_PORT_NUM = 50008;
 	protected final static int PEP_LISTENER_PORT_NUM = 50009;
 
-	protected static int PDP_SERVER_PORT = 40010;
-	protected static int PIP_SERVER_PORT = 40011;
-	protected static int PMP_SERVER_PORT = 40012;
-	protected static int ANY_SERVER_PORT = 40013;
-
-	protected static boolean initialized = false;
+	protected static int PDP_SERVER_PORT = 10010;
+	protected static int PIP_SERVER_PORT = 10011;
+	protected static int PMP_SERVER_PORT = 10012;
+	protected static int ANY_SERVER_PORT = 10013;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		_logger.debug("\n\n NEW TEST CLASS START \n");
+
+		/*
+		 * Increase server ports for next run:
+		 * avoids ports being already in use.
+		 */
+		PDP_SERVER_PORT += 10;
+		PIP_SERVER_PORT += 10;
+		PMP_SERVER_PORT += 10;
+		ANY_SERVER_PORT += 10;
+
 		mf = MessageFactoryCreator.createMessageFactory();
 		thriftClientFactory = new ThriftClientFactory();
 		thriftServerFactory = new ThriftServerFactory();
@@ -69,8 +77,11 @@ public abstract class GenericTest {
 		pmp = box;
 		pdp = box;
 		pip = box;
-		box.start();
-		initialized = true;
+
+		while (!box.start()) {
+			_logger.debug("Waiting for Controller to start. Retrying in 1s.");
+			Thread.sleep(1000);
+		}
 	}
 
 	@AfterClass
@@ -83,7 +94,7 @@ public abstract class GenericTest {
 
 	@Before
 	public void setUp() throws Exception {
-		while (!initialized) {
+		while (!box.isStarted()) {
 			Thread.sleep(1000);
 		}
 

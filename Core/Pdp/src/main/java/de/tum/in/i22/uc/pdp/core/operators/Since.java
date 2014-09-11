@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.SinceType;
 
 public class Since extends SinceType {
@@ -12,13 +13,9 @@ public class Since extends SinceType {
 	private Operator op1;
 	private Operator op2;
 
-	private boolean _alwaysASinceLastB = false;
-	private boolean _alwaysA = true;
-
-	private boolean _backupAlwaysASinceLastB;
-	private boolean _backupAlwaysA;
-
 	public Since() {
+		_state.set(StateVariable.ALWAYS_A, true);
+		_state.set(StateVariable.ALWAYS_A_SINCE_LAST_B, false);
 	}
 
 	@Override
@@ -43,105 +40,46 @@ public class Since extends SinceType {
 		return "SINCE (" + op1 + ", " + op2 + " )";
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) { // A occurs, SINCE is satisfied
-//												// (LTL doesn't state anything
-//												// about B in the timestep when
-//												// A happens)
-//		boolean operand1state = op1.evaluate(ev);
-//		boolean operand2state = op2.evaluate(ev);
-//
-//		if (operand1state) {
-//			_logger.debug("[SINCE] Subformula A satisfied this timestep => TRUE");
-//			_value = true;
-//		} else {
-//			if (!_immutable) {
-//				/*
-//				 * until now B occurred every following timestep
-//				 */
-//
-//				if (_A_wasTrue) {
-//					_logger.debug("[SINCE] Subformula A was satisfied any previous timestep");
-//
-//					_value = operand2state;
-//					_logger.debug("[SINCE] Subformula B is " + (operand2state ? "" : "NOT") + " satisfied this timestep.");
-//				} else {
-//					_logger.debug("[SINCE] Subformula A NOT satisfied this timestep or any previous timestep");
-//					_logger.debug("[SINCE] Not yet immutable; check (ALWAYS B) part of since");
-//
-//					_value = operand2state;
-//					_logger.debug("[SINCE] Subformula B is " + (operand2state ? "" : "NOT") + " satisfied this timestep.");
-//				}
-//			}
-//		}
-//
-//		if (ev == null) {
-//			if (!_value) {
-//				if (!_immutable) { // immutable until next occurence
-//												// of subformula A
-//					_logger.debug("[SINCE] Evaluating current state value was FALSE =>  activating IMMUTABILITY");
-//					_immutable = true;
-//				}
-//			}
-//
-//			if (operand1state) {
-//				_logger.debug("[SINCE] Subformula A satisfied this timestep.");
-//				_A_wasTrue = true;
-//				if (_immutable) {
-//					_logger.debug("[SINCE] Deactivating immutability");
-//					_immutable = false;
-//				}
-//			}
-//
-//			if (!_subEverTrue && !operand2state) {
-//				_logger.debug("[SINCE] Subformula B was previously always satisfied, but NOT this timestep => 2nd part of since can never be satisfied any more");
-//				_logger.debug("[SINCE] Setting subEverFalse flag and activating immutability");
-//				_subEverTrue = true; // intention here subformula was
-//												// ever FALSE (in contrast to
-//												// name...)
-//				_immutable = true;
-//			}
-//		}
-//
-//		return _value;
-//	}
-
-
-
 	@Override
 	public boolean tick() {
 		// A since B
 		boolean stateA = op1.tick();
 		boolean stateB = op2.tick();
 
+		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean alwaysASinceLastB = _state.get(StateVariable.ALWAYS_A_SINCE_LAST_B);
+
 		if (!stateA) {
-			_alwaysA = false;
+			_state.set(StateVariable.ALWAYS_A, false);
 		}
 
-		if (_alwaysA) {
-			_valueAtLastTick = true;
-			_logger.debug("A was always true. Result: {}.", _valueAtLastTick);
+		if (_state.get(StateVariable.ALWAYS_A)) {
+			valueAtLastTick = true;
+			_logger.debug("A was always true. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 		}
 		else {
 			if (stateB) {
-				_valueAtLastTick = true;
-				_alwaysASinceLastB = true;
-				_logger.debug("B is happening at this timestep. Result: {}.", _valueAtLastTick);
+				valueAtLastTick = true;
+				alwaysASinceLastB = true;
+				_logger.debug("B is happening at this timestep. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 			}
 			else {
-				if (stateA && _alwaysASinceLastB) {
-					_valueAtLastTick = true;
-					_logger.debug("A was always true since last B happened. Result: {}.", _valueAtLastTick);
+				if (stateA && alwaysASinceLastB) {
+					valueAtLastTick = true;
+					_logger.debug("A was always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 				else {
-					_valueAtLastTick = false;
-					_alwaysASinceLastB = false;
-					_logger.debug("A was NOT always true since last B happened. Result: {}.", _valueAtLastTick);
+					valueAtLastTick = false;
+					alwaysASinceLastB = false;
+					_logger.debug("A was NOT always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 			}
 		}
 
-		return _valueAtLastTick;
+		_state.set(StateVariable.ALWAYS_A_SINCE_LAST_B, alwaysASinceLastB);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+
+		return valueAtLastTick;
 	}
 
 	@Override
@@ -149,8 +87,6 @@ public class Since extends SinceType {
 		super.startSimulation();
 		op1.startSimulation();
 		op2.startSimulation();
-		_backupAlwaysA = _alwaysA;
-		_backupAlwaysASinceLastB = _alwaysASinceLastB;
 	}
 
 	@Override
@@ -158,7 +94,5 @@ public class Since extends SinceType {
 		super.stopSimulation();
 		op1.stopSimulation();
 		op2.stopSimulation();
-		_alwaysA = _backupAlwaysA;
-		_alwaysASinceLastB = _backupAlwaysASinceLastB;
 	}
 }

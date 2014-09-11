@@ -4,19 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.RepMaxType;
 
 public class RepMax extends RepMaxType {
 	private static Logger _logger = LoggerFactory.getLogger(RepMax.class);
 	private Operator op;
 
-	private boolean _immutable = false;
-	private long _stateCounter = 0;
-
-	private boolean _backupImmutable;
-	private long _backupStateCounter;
-
 	public RepMax() {
+		_state.set(StateVariable.IMMUTABLE, false);
+		_state.set(StateVariable.COUNTER, 0);
 	}
 
 	@Override
@@ -36,67 +33,42 @@ public class RepMax extends RepMaxType {
 		return "REPMAX(" + getLimit() + "," + op + ")";
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		if (!_immutable) {
-//			if (ev != null && op.evaluate(ev)) {
-//				/*
-//				 * Evaluating in the presence of an event
-//				 * and the operator evaluated to true
-//				 */
-//				_stateCounter++;
-//				_logger.debug("Subformula was true. Incrementing counter to {}.", _stateCounter);
-//			}
-//
-//			_value = (_stateCounter <= limit);
-//
-//			if (ev == null && !_value) {
-//				/*
-//				 * Evaluating at the end of a timestep and
-//				 * the counter reached its limit.
-//				 */
-//				_logger.debug("[REPMAX] Activating immutability");
-//				_immutable = true;
-//			}
-//		}
-//
-//		return _value;
-//	}
-
 	@Override
 	public boolean tick() {
-		if (_immutable) {
+		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
+			long counter = _state.get(StateVariable.COUNTER);
+
 			if (op.tick()) {
-				_stateCounter++;
-				_logger.debug("Subformula was true. Incrementing counter to {}.", _stateCounter);
+				counter++;
+				_logger.debug("Subformula was true. Incrementing counter to {}.", counter);
 			}
 
-			_valueAtLastTick = (_stateCounter <= limit);
+			boolean valueAtLastTick = (counter <= limit);
 
-			if (!_valueAtLastTick) {
+			if (!valueAtLastTick) {
 				_logger.debug("[REPMAX] Activating immutability");
-				_immutable = true;
+				_state.set(StateVariable.IMMUTABLE, true);
 			}
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+			_state.set(StateVariable.COUNTER, counter);
+
+			return valueAtLastTick;
 		}
-		return _valueAtLastTick;
 	}
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupImmutable = _immutable;
-		_backupStateCounter = _stateCounter;
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_immutable = _backupImmutable;
-		_stateCounter = _backupStateCounter;
 	}
 }

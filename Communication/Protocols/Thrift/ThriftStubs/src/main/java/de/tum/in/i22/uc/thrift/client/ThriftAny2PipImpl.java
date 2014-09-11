@@ -16,7 +16,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -110,46 +109,6 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 	}
 
-
-	@Override
-	public boolean hasAllData(Set<IData> data) {
-		try {
-			return _handle.hasAllData(ThriftConverter.toThriftDataSet(data));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		try {
-			return _handle.hasAnyData(ThriftConverter.toThriftDataSet(data));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAllContainers(Set<IName> containers) {
-		try {
-			return _handle.hasAllContainers(ThriftConverter.toThriftNameSet(containers));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> containers) {
-		try {
-			return _handle.hasAnyContainer(ThriftConverter.toThriftNameSet(containers));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		try {
@@ -173,15 +132,6 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		// TODO Auto-generated method stub
 		// not yet supported by thrift interface
 		return null;
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		try {
-			return ThriftConverter.fromThriftLocationSet(_handle.whoHasData(ThriftConverter.toThriftDataSet(data), recursionDepth));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
 	}
 
 	@Override

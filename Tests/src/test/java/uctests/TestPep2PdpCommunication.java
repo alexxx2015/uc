@@ -55,7 +55,7 @@ public class TestPep2PdpCommunication extends GenericTest{
 	@Test
 	public void testDeployPolicyFile() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
-		IStatus status=pdp.deployPolicyURI("src/test/resources/testTUM.xml");
+		IStatus status=pmp.deployPolicyURIPmp("src/test/resources/testTUM.xml");
 		_logger.debug(status.toString());
 
 	}
@@ -84,7 +84,7 @@ public class TestPep2PdpCommunication extends GenericTest{
 			testNotifyTwoEvents();
 		}
 	}
-	
+
 	@Test
 	public void testNotifyStarEvent() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());

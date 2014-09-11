@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.BeforeType;
 
 public class Before extends BeforeType {
@@ -13,8 +14,6 @@ public class Before extends BeforeType {
 	private TimeAmount _timeAmount;
 
 	private Operator op;
-
-	private CircularArray<Boolean> _stateCircArray;
 
 	public Before() {
 	}
@@ -34,10 +33,12 @@ public class Before extends BeforeType {
 			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
 		}
 
-		_stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
+		CircularArray<Boolean> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
-			_stateCircArray.set(false, a);
+			stateCircArray.set(false, a);
 		}
+
+		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
 
 		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + 2 * mech.getTimestepSize()));
 	}
@@ -52,57 +53,36 @@ public class Before extends BeforeType {
 		return "BEFORE(" + _timeAmount + ", " + op + " )";
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent ev) {
-//		// before = at (currentTime - interval) operand was true
-//		_logger.debug("circularArray: {}", _stateCircArray);
-//
-//		// Look at the first entry of the array. The retrieved value
-//		// corresponds to the result of the evaluation at this point in time.
-//		boolean result = _stateCircArray.peek();
-//
-//		if (ev == null) {
-//			// If we are evaluating at the end of a timestep, then
-//			// (1) remove the first entry
-//			// (2) evaluate the internal operand at this point in time
-//			//     and push the result to the array
-//			_stateCircArray.pop();
-//			_stateCircArray.push(op.evaluate(null));
-//
-//			_logger.debug("circularArray: {}", _stateCircArray);
-//		}
-//
-//		return result;
-//	}
-
 	@Override
 	public boolean tick() {
+		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
+
 		// before = at (currentTime - interval) operand was true
-		_logger.debug("circularArray: {}", _stateCircArray);
+		_logger.debug("circularArray: {}", circArray);
 
 		// Retrieve the first entry of the array. The retrieved value
 		// corresponds to the result of the tick().
-		_valueAtLastTick = _stateCircArray.pop();
-		_stateCircArray.push(op.tick());
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, circArray.pop());
+		circArray.push(op.tick());
 
-		_logger.debug("Value [{}] was popped from circularArray. Result: {}. New circularArray: {}", _valueAtLastTick, _valueAtLastTick, _stateCircArray);
+		_logger.debug("Value [{}] was popped from circularArray. Result: {}. New circularArray: {}", _state.get(StateVariable.VALUE_AT_LAST_TICK), _state.get(StateVariable.VALUE_AT_LAST_TICK), circArray);
 
-		return _valueAtLastTick;
+		// TODO: Setting circArray is actually not necessary,
+		// as we work on the original instance anyway
+		_state.set(StateVariable.CIRC_ARRAY, circArray);
+
+		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
-
-	private CircularArray<Boolean> _backupStateCircArray;
 
 	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		op.startSimulation();
-		_backupStateCircArray = _stateCircArray.clone();
 	}
 
 	@Override
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
-		_stateCircArray = _backupStateCircArray;
 	}
 }

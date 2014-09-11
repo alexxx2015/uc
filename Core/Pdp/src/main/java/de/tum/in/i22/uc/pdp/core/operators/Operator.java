@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 import java.util.Observable;
 
@@ -12,15 +14,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 
 public abstract class Operator extends Observable implements IOperator {
 	protected static final Logger _logger = LoggerFactory.getLogger(Operator.class);
 
 	protected PolicyDecisionPoint _pdp;
-//	private OperatorState _state;
 	protected IMechanism _mechanism;
-
-	protected boolean _valueAtLastTick;
 
 	/**
 	 * The parent operator, or null for the root node.
@@ -48,12 +48,15 @@ public abstract class Operator extends Observable implements IOperator {
 
 	private boolean _initialized;
 
-	private boolean _isSimulating;
+	private final Deque<State> _backupStates;
+
+	protected State _state;
 
 	public Operator() {
-		_valueAtLastTick = false;
+		_state = new State();
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 		_initialized = false;
-		_isSimulating = false;
+		_backupStates = new ArrayDeque<>(2);
 	}
 
 	public final void init(Mechanism mechanism) {
@@ -75,8 +78,6 @@ public abstract class Operator extends Observable implements IOperator {
 		_mechanism = mech;
 		_parent = parent;
 		_ttl = ttl;
-
-//		_state = new OperatorState(this);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
 			this.addObserver(_pdp);
@@ -128,29 +129,6 @@ public abstract class Operator extends Observable implements IOperator {
 		return _mechanism;
 	}
 
-//	@Override
-//	public final boolean evaluate(IEvent ev) {
-//		boolean result = localEvaluation(ev);
-//
-//		if (Settings.getInstance().getDistributionEnabled()) {
-//			result = distributedEvaluation(result, ev);
-//			_logger.debug("distributedEvaluation({}): {}", this, result);
-//		}
-//		else {
-//			_logger.debug("localEvaluation({}): {}", this, result);
-//		}
-//
-//		return result;
-//	}
-//
-//	protected boolean localEvaluation(IEvent ev) {
-//		throw new UnsupportedOperationException("Calling localEvaluation() is only allowed on subtypes of " + Operator.class);
-//	}
-//
-//	protected boolean distributedEvaluation(boolean resultLocalEval, IEvent ev) {
-//		return resultLocalEval;
-//	}
-
 	public boolean tick() {
 		throw new UnsupportedOperationException("Calling tick() is only allowed on subtypes of " + Operator.class);
 	}
@@ -179,28 +157,21 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	public final boolean getValueAtLastTick() {
-		return _valueAtLastTick;
+		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
-	private boolean _backupValueAtLastTick;
-
 	public void startSimulation() {
-		if (_isSimulating) {
-			throw new IllegalStateException("Already simulating. Nested simulation not yet implemented.");
-		}
-		_isSimulating = true;
-		_backupValueAtLastTick = _valueAtLastTick;
+		_backupStates.addFirst(_state.deepClone());
 	}
 
 	public void stopSimulation() {
-		if (!_isSimulating) {
+		if (_backupStates.isEmpty()) {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
-		_isSimulating = false;
-		_valueAtLastTick = _backupValueAtLastTick;
+		_state = _backupStates.getFirst();
 	}
 
-	public boolean isSimulating() {
-		return _isSimulating;
+	public final State getState() {
+		return _state;
 	}
 }

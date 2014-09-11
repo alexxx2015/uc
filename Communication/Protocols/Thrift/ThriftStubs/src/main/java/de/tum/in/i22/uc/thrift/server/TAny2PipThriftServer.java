@@ -24,9 +24,9 @@ import de.tum.in.i22.uc.thrift.types.TStatus;
 
 /**
  * Use {@link ThriftServerFactory} to create an instance.
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
 class TAny2PipThriftServer extends ThriftServerHandler implements
 TAny2Pip.Iface {
@@ -56,34 +56,6 @@ TAny2Pip.Iface {
 		IName name = ThriftConverter.fromThrift(containerName);
 		IData _data = _handler.newInitialRepresentation(name);
 		return ThriftConverter.toThrift(_data);
-	}
-
-	@Override
-	public boolean hasAllData(Set<TData> data) throws TException {
-		_logger.debug("TAny2Pip: hasAllData");
-		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		return _handler.hasAllData(d);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<TData> data) throws TException {
-		_logger.debug("TAny2Pip: hasAnyData");
-		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		return _handler.hasAnyData(d);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<TName> names) throws TException {
-		_logger.debug("TAny2Pip: hasAllContainers");
-		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
-		return _handler.hasAllContainers(c);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<TName> names) throws TException {
-		_logger.debug("TAny2Pip: hasAnyContainer");
-		Set<IName> c = ThriftConverter.fromThriftNameSet(names);
-		return _handler.hasAnyContainer(c);
 	}
 
 	@Override
@@ -147,14 +119,6 @@ TAny2Pip.Iface {
 	public boolean isSimulating() throws TException {
 		_logger.debug("TAny2Pip: isSimulating");
 		return _handler.isSimulating();
-	}
-
-	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
-			throws TException {
-		_logger.debug("TAny2Pip: whoHasData");
-		return ThriftConverter.toThriftLocationSet(_handler.whoHasData(
-				ThriftConverter.fromThriftDataSet(data), recursionDepth));
 	}
 
 	@Override

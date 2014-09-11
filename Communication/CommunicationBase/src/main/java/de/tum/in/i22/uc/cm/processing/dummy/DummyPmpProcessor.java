@@ -108,12 +108,6 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public IStatus specifyPolicyFor(Set<IContainer> representations,
 			String dataClass) {
 		// TODO Auto-generated method stub

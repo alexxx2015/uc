@@ -78,11 +78,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus deployPolicyURI(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public Map<String, Set<String>> listMechanisms() throws TException {
 		return _pdpServer.listMechanisms();
 	}
@@ -96,26 +91,6 @@ TAny2Any.Iface {
 	@Override
 	public TData newInitialRepresentation(TName container) throws TException {
 		return _pipServer.newInitialRepresentation(container);
-	}
-
-	@Override
-	public boolean hasAllData(Set<TData> data) throws TException {
-		return _pipServer.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<TData> data) throws TException {
-		return _pipServer.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<TName> names) throws TException {
-		return _pipServer.hasAllContainers(names);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<TName> names) throws TException {
-		return _pipServer.hasAnyContainer(names);
 	}
 
 	@Override
@@ -174,30 +149,24 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
-			throws TException {
-		return _pipServer.whoHasData(data, recursionDepth);
-	}
-
-	@Override
 	public TStatus revokePolicyPmp(String policyName) throws TException {
-		return _pdpServer.revokePolicy(policyName);
+		return _pmpServer.revokePolicyPmp(policyName);
 	}
 
 	@Override
 	public TStatus revokeMechanismPmp(String policyName, String mechName)
 			throws TException {
-		return _pdpServer.revokeMechanism(policyName, mechName);
+		return _pmpServer.revokeMechanismPmp(policyName, mechName);
 	}
 
 	@Override
 	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
+		return _pmpServer.deployPolicyURIPmp(policyFilePath);
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanismsPmp() throws TException {
-		return _pdpServer.listMechanisms();
+		return _pmpServer.listMechanismsPmp();
 	}
 
 	@Override
@@ -274,12 +243,4 @@ TAny2Any.Iface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

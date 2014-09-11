@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
@@ -19,13 +20,16 @@ public interface IDistributionManager {
 
 	/**
 	 * Method to be invoked whenever a new policy name ought to be managed.
-	 * @param policyName the name of the policy to be managed.
+	 *
+	 * @param policy the policy to be managed.
 	 */
-	public void registerPolicy(String policyName);
+	public void registerPolicy(XmlPolicy policy);
 
 	void update(IResponse res);
 
 	boolean wasTrueSince(LiteralOperator operator, long since);
 
 	boolean wasTrueInBetween(LiteralOperator operator, long from, long to);
+
+	void unregisterPolicy(String policyName, IPLocation location);
 }

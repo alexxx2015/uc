@@ -3,9 +3,11 @@ package de.tum.in.i22.uc.cm.processing.dummy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -30,7 +32,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void registerPolicy(String policyName) {
+	public void registerPolicy(XmlPolicy policy) {
 		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
@@ -55,6 +57,12 @@ public class DummyDistributionManager implements IDistributionManager {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("wasObservedInBetween method invoked");
 		return true;
+	}
+
+	@Override
+	public void unregisterPolicy(String policyName, IPLocation location) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("unregisterPolicy method invoked");
 	}
 
 }

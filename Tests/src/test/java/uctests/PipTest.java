@@ -59,7 +59,7 @@ public class PipTest extends GenericTest {
 	@Test
 	public void testNotifyActualEvent() {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
-		IEvent event = new EventBasic("x", Collections.EMPTY_MAP);
+		IEvent event = new EventBasic("x", Collections.<String, String> emptyMap());
 		IStatus status = pip.update(event);
 		_logger.debug("Received status: " + status);
 		Assert.assertNotNull(status);
@@ -79,7 +79,7 @@ public class PipTest extends GenericTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void structureThriftTest() {
 		IPLocation pipLocation = new IPLocation("localhost", PIP_SERVER_PORT);
@@ -94,43 +94,43 @@ public class PipTest extends GenericTest {
 
 		/*
 		 * Create new structure
-		 * 
+		 *
 		 * lbl1 --> A, B
-		 * 
+		 *
 		 * lbl2 --> C
-		 * 
+		 *
 		 * lbl3 --> empty
-		 * 
+		 *
 		 * lbl4 --> A, B, C
 		 */
 
 		HashMap<String,Set<IData>> map= new HashMap<String,Set<IData>>();
-		
+
 		IData a = mf.createData();
 		IData b = mf.createData();
 		IData c = mf.createData();
-		
+
 		HashSet<IData> set1= new HashSet<IData>();
 		HashSet<IData> set2= new HashSet<IData>();
 		HashSet<IData> set3= new HashSet<IData>();
-		
+
 		set1.add(a);
 		set1.add(b);
 		set2.add(c);
 		set3.add(a);
 		set3.add(b);
 		set3.add(c);
-		
+
 		map.put("lbl1", set1);
 		map.put("lbl2", set2);
 		map.put("lbl3", new HashSet<IData>());
 		map.put("lbl4", set3);
-		
+
 		Map<String,Set<IData>> res=toPip.getStructureOf(a);
 		Assert.assertNotNull(res);
 		Assert.assertEquals(res.size(),0);
-		
-		
+
+
 		IData structData = toPip.newStructuredData(map);
 		Assert.assertNotNull(structData);
 
@@ -145,14 +145,14 @@ public class PipTest extends GenericTest {
 		Assert.assertEquals(res.get("lbl1").contains(a), true);
 		Assert.assertEquals(res.get("lbl1").contains(b), true);
 		Assert.assertEquals(res.get("lbl1").contains(c), false);
-		
-		
+
+
 		Set<IData> flat= toPip.flattenStructure(a);
 		Assert.assertNotNull(flat);
 		Assert.assertEquals(flat.contains(a), true);
 		Assert.assertEquals(flat.contains(b), false);
 		Assert.assertEquals(flat.contains(c), false);
-		
+
 		flat= toPip.flattenStructure(structData);
 		Assert.assertNotNull(flat);
 		Assert.assertEquals(flat.contains(a), true);
@@ -160,20 +160,20 @@ public class PipTest extends GenericTest {
 		Assert.assertEquals(flat.contains(c), true);
 		Assert.assertEquals(flat.contains(structData), true);
 
-	
+
 		HashSet<IData> set4= new HashSet<IData>();
 		HashSet<IData> set5= new HashSet<IData>();
-		
+
 		set4.add(a);
 		set4.add(structData);
 		set5.add(b);
 		set5.add(structData);
-				
+
 		HashMap<String,Set<IData>> map2= new HashMap<String,Set<IData>>();
 		map2.put("lbl1",set4);
 		map2.put("lbl2",set5);
 		IData structData2 = toPip.newStructuredData(map2);
-		
+
 		flat= toPip.flattenStructure(structData2);
 		Assert.assertNotNull(flat);
 		Assert.assertEquals(flat.contains(a), true);

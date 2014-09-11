@@ -125,11 +125,6 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public IStatus specifyPolicyFor(Set<IContainer> representations,
 			String dataClass) {
 		return _impl.specifyPolicyFor(representations, dataClass);
