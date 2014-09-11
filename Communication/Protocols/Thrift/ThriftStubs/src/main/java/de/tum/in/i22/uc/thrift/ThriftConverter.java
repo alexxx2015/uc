@@ -470,11 +470,12 @@ public final class ThriftConverter {
 	}
 
 	public static TXmlPolicy toThrift(XmlPolicy xmlPolicy) {
-		return new TXmlPolicy(xmlPolicy.getName(), xmlPolicy.getXml());
+		return new TXmlPolicy(xmlPolicy.getName(), xmlPolicy.getXml(), xmlPolicy.getDescription(),
+				xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(), xmlPolicy.getDataClass());
 	}
 
 	public static XmlPolicy fromThrift(TXmlPolicy xMLPolicy) {
-		return new XmlPolicy(xMLPolicy.name, xMLPolicy.xml);
+		return new XmlPolicy(xMLPolicy.name, xMLPolicy.xml, xMLPolicy.description, xMLPolicy.templateId, xMLPolicy.templateXml, xMLPolicy.dataClass);
 	}
 
 	public static Set<XmlPolicy> fromThriftPolicySet(Set<TXmlPolicy> policies) {
@@ -496,7 +497,7 @@ public final class ThriftConverter {
 
 		Set<TXmlPolicy> result = new HashSet<>();
 		for (XmlPolicy p : policies) {
-			result.add(new TXmlPolicy(p.getName(), p.getXml()));
+			result.add(new TXmlPolicy(p.getName(), p.getXml(), p.getDescription(), p.getTemplateId(), p.getTemplateXml(), p.getDataClass()));
 		}
 		return result;
 	}

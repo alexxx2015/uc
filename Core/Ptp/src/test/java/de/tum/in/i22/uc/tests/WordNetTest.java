@@ -22,7 +22,7 @@ import rita.wordnet.jwnl.wndata.relationship.RelationshipList;
 public class WordNetTest {
 
 	private static RiWordNet wordnet;	
-	private static final boolean TESTS_ENABLED = true;
+	private static final boolean TESTS_ENABLED = false;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -69,7 +69,7 @@ public class WordNetTest {
 		}
 		long start = System.currentTimeMillis();
 		
-		for(int i = 0; i<10000; i++){
+		for(int i = 0; i<10; i++){
 			computeSimilarity(null,null);
 		}
 		

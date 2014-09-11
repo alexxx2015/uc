@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -69,9 +68,9 @@ public class PmpHandler extends PmpProcessor {
 	private static final String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
 
 	private IPmp2Ptp _ptp;
-	private PolicyManager _pm;
+	private PolicyManager _policymanager;
 	
-	private final Set<String> _deployedPolicies;
+	//private final Set<String> _deployedPolicies;
 
 	
 	public PmpHandler() {
@@ -79,8 +78,7 @@ public class PmpHandler extends PmpProcessor {
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
 		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
-		_pm = new PolicyManager();
-		_deployedPolicies = new HashSet<>();
+		_policymanager = new PolicyManager();
 	}
 
 	private PolicyType xmlToPolicy(String xml) {
@@ -280,7 +278,7 @@ public class PmpHandler extends PmpProcessor {
 
 		IStatus status;
 
-		if (_deployedPolicies.remove(policyName)) {
+		if (this._policymanager.removePolicy(policyName)) {
 			_distributionManager.unregisterPolicy(policyName, IPLocation.localIpLocation);
 			status = getPdp().revokePolicy(policyName);
 		}
@@ -304,8 +302,9 @@ public class PmpHandler extends PmpProcessor {
 
 		// Convert the string xml to a PolicyType
 		PolicyType policy = xmlToPolicy(xml);
-
-		if (_deployedPolicies.add(policy.getName())) {
+		
+		XmlPolicy p = new XmlPolicy(policy.getName(), xml);
+		if (this._policymanager.addPolicy(p)) {
 
 			// Initialize the initial representations specified in the policy
 			initInitialRepresentations(policy);
@@ -392,11 +391,6 @@ public class PmpHandler extends PmpProcessor {
 
 		String policyname = xmlPolicy.getName();
 		String policyTemplate = xmlPolicy.getXml();
-		
-		parameters.get("policy_template");
-		parameters.get("policy_class");
-		parameters.get("policy_description");
-		parameters.get("template_id");
 		
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
 		if(translationResponse.getStatus().equals(EStatus.ERROR))

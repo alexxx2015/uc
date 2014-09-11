@@ -28,13 +28,17 @@ public class XmlPolicy {
 
 		_name = name;
 		_xml = xml;
+		_description = "";
+		_templateId = "";
+		_templateXml = "";
+		_dataClass = "";
 	}
-
-	public XmlPolicy(String name, String xml, String description, String templateId, String templateXml, String dataClass) {
+	
+	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass) {
 		this(name,xml);
 		_description = description;
 		_templateId = templateId;
-		_templateXml = templateXml;
+		_templateXml = templateXML;
 		_dataClass = dataClass;
 	}
 	
@@ -52,6 +56,8 @@ public class XmlPolicy {
 	}
 
 	public void setDescription(String description) {
+		if(description == null)
+			description = "";
 		this._description = description;
 	}
 
@@ -60,6 +66,8 @@ public class XmlPolicy {
 	}
 
 	public void setTemplateId(String templateId) {
+		if(templateId == null)
+			templateId = "";
 		this._templateId = templateId;
 	}
 
@@ -68,14 +76,18 @@ public class XmlPolicy {
 	}
 
 	public void setTemplateXml(String templateXml) {
+		if(templateXml == null)
+			templateXml = "";
 		this._templateXml = templateXml;
 	}
 
-	public String get_dataClass() {
+	public String getDataClass() {
 		return _dataClass;
 	}
 
-	public void set_dataClass(String dataClass) {
+	public void setDataClass(String dataClass) {
+		if(dataClass == null)
+			dataClass = "";
 		this._dataClass = dataClass;
 	}
 

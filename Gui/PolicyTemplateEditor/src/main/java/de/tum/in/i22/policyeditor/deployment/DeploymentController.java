@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
-import de.tum.in.i22.policyeditor.model.UserClass;
 import de.tum.in.i22.policyeditor.model.UserObject;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -63,8 +62,7 @@ public class DeploymentController {
 			container = new UserObject(containerName);	
 		}
 		
-		UserClass dataClassObj = new UserClass(dataClass);
-		int policyInstanceId = 0;
+		//UserClass dataClassObj = new UserClass(dataClass);
 		for (PolicyTemplate policy : policies) {
 			
 			policy.instantiatePolicyClass();
@@ -73,25 +71,28 @@ public class DeploymentController {
 			_logger.info(policy.toStringExtended());
 									
 			Map<String, String> parameters = new HashMap<>();
-			parameters.put("policy_template", policy.getTemplate());
-			parameters.put("policy_class", policy.getDataClass());
-			parameters.put("policy_description", policy.getDescription());
-			parameters.put("template_id", policy.getId());
 			
 			//generate a policy name
 			String policyName = "p"+policy.getId();
 			String xmlRepresentation = policy.getInstance();
+			String pDescription = policy.getDescription();
+			String pTemplateId = policy.getId();
+			String pTemplate = policy.getTemplate();
+			String pDataClass = policy.getDataClass();
+						
 			XmlPolicy xmlPolicy = new XmlPolicy(policyName, xmlRepresentation);
+			xmlPolicy.setDescription(pDescription);
+			xmlPolicy.setTemplateId(pTemplateId);
+			xmlPolicy.setTemplateXml(pTemplate);
+			xmlPolicy.setDataClass(pDataClass);
 			
-			String requestId = policy.getId() +"_"+policyInstanceId;
+			String requestId = policyName;
 			IPtpResponse response = clientPmp.translatePolicy(requestId, parameters, xmlPolicy);
 			String msg = "policy: " + response.getStatus().getEStatus() +" "+ requestId + " "+ policy.getClearDescription();
 			_logger.info(msg);
-			policyInstanceId ++;
 		}
 		
 		this.getDeployedPolicies(dataClass);
-		
 	}
 	
 	private List<String> getDeployedPolicies(){

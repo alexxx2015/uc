@@ -87,7 +87,7 @@ struct TXmlPolicy {
 	3: string description,
 	4: string templateId,	
 	5: string templateXml,
-	6: string policyClass
+	6: string dataClass
 }
 
 struct TPtpResponse {

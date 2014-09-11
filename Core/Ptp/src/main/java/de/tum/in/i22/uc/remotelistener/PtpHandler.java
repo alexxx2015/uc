@@ -40,12 +40,12 @@ public class PtpHandler implements IPmp2Ptp {
 		
 		String policy = xmlPolicy.getXml();
 		
-		String mechanismId = parameters.get("policy_id");
+		String mechanismId = xmlPolicy.getName();
 		if(mechanismId == null){
-			mechanismId = "p"+policiesTranslatedTotalCounter++;
+			mechanismId = "t"+policiesTranslatedTotalCounter++;
 		}
 		else{
-			mechanismId += "_p"+policiesTranslatedTotalCounter++;
+			mechanismId += "_t"+policiesTranslatedTotalCounter++;
 		}
 		parameters.put("policy_id", mechanismId);
 		

@@ -45,7 +45,7 @@ public class PolicyTemplate {
 		this.classes = classes;
 	}
 	/**
-	 * Returns the natural language description of the policy.
+	 * Returns the natural language description of the policy with the param. markers.
 	 * @return
 	 */
 	public String getDescription() {
@@ -84,6 +84,10 @@ public class PolicyTemplate {
 		return false;
 	}
 	
+	/**
+	 * Returs the natural language description with all the param. markers removed.
+	 * @return
+	 */
 	public String getClearDescription(){
 		String clear = PolicyTemplateParser.filterData(description);
 		return clear;		

@@ -240,6 +240,11 @@ public class PolicyTemplateParser {
 	    return result;
 	}
 	
+	/**
+	 * Remove the parameter tags.
+	 * @param input
+	 * @return
+	 */
 	public static String filterData(String input){    
 	    String str = input;
 	    String result = "";
