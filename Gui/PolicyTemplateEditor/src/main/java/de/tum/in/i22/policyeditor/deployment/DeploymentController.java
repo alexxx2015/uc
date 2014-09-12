@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,21 +27,6 @@ public class DeploymentController {
 	
 	public DeploymentController(Any2PmpClient clientPmp2) {
 		this.clientPmp = clientPmp2;
-	}
-
-	public List<PolicyTemplate> getDeployedPolicies(String dataClass){
-		List<PolicyTemplate> deployedPolicies = new ArrayList<PolicyTemplate>();
-		
-		Map<String, Set<String>> mechanisms = clientPmp.listMechanismsPmp();
-		
-		for(String key : mechanisms.keySet()){
-			Set<String> mechanism = mechanisms.get(key);
-			_logger.debug(key);
-			_logger.debug(mechanism.toString());
-		}
-		
-				
-		return deployedPolicies;
 	}
 	
 	public void closeConnection(){
@@ -100,15 +86,32 @@ public class DeploymentController {
 			_logger.info(msg);
 		}
 		
-		this.getDeployedPolicies(dataClass);
+		
 	}
 	
-	private List<String> getDeployedPolicies(){
-		List<String> deployed = new ArrayList<String>();
-		
+	public List<PolicyTemplate>  getDeployedPolicies(String dataClass){
+		List<PolicyTemplate> deployedPolicies = new ArrayList<PolicyTemplate>();
+		String logMsg = "";
 		//Map<String, List<String>> mapList = clientPmp.listMechanisms();
-				
-		return deployed;
+		Set<XmlPolicy> policies = clientPmp.listPoliciesPmp();
+		logMsg += "PMP list policies: "+ policies;
+		_logger.info(logMsg);
+		for (Iterator<XmlPolicy> iterator = policies.iterator(); iterator.hasNext();) {
+			XmlPolicy xmlPolicy = (XmlPolicy) iterator.next();
+			String dClass = xmlPolicy.getDataClass();
+			if(!dClass.equals(dataClass))
+				continue;
+			String id = xmlPolicy.getTemplateId();
+			String name = xmlPolicy.getName();
+			String description= xmlPolicy.getDescription();
+			String template = xmlPolicy.getTemplateXml();
+			PolicyTemplate pTemplate = new PolicyTemplate(id, new String[]{dClass}, description, template);
+			pTemplate.setName(name);
+			
+			deployedPolicies.add(pTemplate);
+		}
+		
+		return deployedPolicies;
 	}
 	
 }

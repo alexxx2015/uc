@@ -13,10 +13,6 @@ import javax.swing.JList;
 import de.tum.in.i22.policyeditor.logger.EditorLogger;
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
 import de.tum.in.i22.policyeditor.model.PolicyTemplateParser;
-import de.tum.in.i22.policyeditor.model.UserAction;
-import de.tum.in.i22.policyeditor.model.UserNumber;
-import de.tum.in.i22.policyeditor.model.UserSubject;
-import de.tum.in.i22.policyeditor.model.UserTime;
 
 public class CheckableItem {
 	 private String str;
@@ -25,13 +21,15 @@ public class CheckableItem {
 	 
 	 private boolean onInstanceList;
 	 
-	 private JList changeListener;
+	 private JList<CheckableItem> changeListener;
 	 private ArrayList<Component> components;
 	 
 	 private static EditorLogger logger = EditorLogger.instance();
 	 
 	 public CheckableItem(String str) {
 	   this.str = str;
+	   components = new ArrayList<Component>();
+	   this.policy = new PolicyTemplate();
 	   isSelected = false;
 	   onInstanceList = false;
 	 }
@@ -95,6 +93,9 @@ public class CheckableItem {
 	
 	 
 	 private void addSaveButton(){
+		 if(components.size() == 1)
+			 return;
+		 
 			final JButton saveButton = new JButton("Save");
 			final CheckableItem self = this;
 			saveButton.addActionListener(new ActionListener() {
@@ -117,7 +118,7 @@ public class CheckableItem {
 			components.add(saveButton);
 	}
 	 
-	 public void registerListener(JList installedList){
+	 public void registerListener(JList<CheckableItem> installedList){
 		 this.changeListener = installedList;
 	 }
 	 
@@ -126,7 +127,7 @@ public class CheckableItem {
 			 CheckableItem clone = this.clone();
 			 clone.policy.setDescription(description);
 			 clone.setOnInstanceList();
-			 DefaultListModel model =  (DefaultListModel) this.changeListener.getModel();
+			 DefaultListModel<CheckableItem> model =  (DefaultListModel<CheckableItem>) this.changeListener.getModel();
 			 model.addElement(clone);
 		 }
 		 else {

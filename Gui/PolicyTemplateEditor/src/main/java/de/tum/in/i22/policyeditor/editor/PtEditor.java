@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -39,13 +37,16 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.policyeditor.deployment.DeploymentController;
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import javax.swing.BoxLayout;
+import java.awt.GridLayout;
+import javax.swing.border.EtchedBorder;
 
 
 /**
  * @author Cipri
- *
+ * Policy Templates Editor GUI
  */
-public class PolicyTemplatesEditor {
+public class PtEditor {
 
 	private JFrame frmTemplatePolicyEditor;
 	private final DeploymentController deploymentController;
@@ -53,13 +54,13 @@ public class PolicyTemplatesEditor {
 	private String policyClass;
 	private Set<IContainer> representations;
 	
-	private static final Logger _logger = LoggerFactory.getLogger(PolicyTemplatesEditor.class); 
+	private static final Logger _logger = LoggerFactory.getLogger(PtEditor.class); 
 
 	/**
 	 * Create the application.
 	 * @param representations2 
 	 */
-	public PolicyTemplatesEditor(DeploymentController deploymentController, Set<IContainer> representations2, String policyClass) {
+	public PtEditor(DeploymentController deploymentController, Set<IContainer> representations2, String policyClass) {
 		this.deploymentController = deploymentController;
 		this.policyClass = policyClass;
 		this.representations = representations2;
@@ -73,7 +74,7 @@ public class PolicyTemplatesEditor {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					ToolTipManager.sharedInstance().setInitialDelay(500);
 			        ToolTipManager.sharedInstance().setDismissDelay(1500);
-			        final PolicyTemplatesEditor window = new PolicyTemplatesEditor(deploymentController, representations2, dataClass);
+			        final PtEditor window = new PtEditor(deploymentController, representations2, dataClass);
 					window.frmTemplatePolicyEditor.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -155,11 +156,11 @@ public class PolicyTemplatesEditor {
 		lblTemplates.setToolTipText("Click on Policy to edit template");
 		templatesButtons.add(lblTemplates);
 		
-		final JList installedList = new JList();
-		final DefaultListModel installedListModel = new DefaultListModel();
+		final JList<CheckableItem> installedList = new JList<CheckableItem>();
+		final DefaultListModel<CheckableItem> installedListModel = new DefaultListModel<CheckableItem>();
 		installedList.setModel(installedListModel);
-		final JList templatesList = new JList();
-		DefaultListModel templatesListModel = new DefaultListModel();
+		final JList<CheckableItem> templatesList = new JList<CheckableItem>();
+		DefaultListModel<CheckableItem> templatesListModel = new DefaultListModel<CheckableItem>();
 		templatesList.setModel(templatesListModel);
 		
 		TemplateListRenderer renderer = new TemplateListRenderer();
@@ -172,11 +173,20 @@ public class PolicyTemplatesEditor {
 		templatesPanel.setLayout(gl_templatesPanel);
 		templatesList.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
+				/* TEMPLATE SELECTED HANDLER */
 				int index = templatesList.locationToIndex(e.getPoint());
-				CheckableItem item = (CheckableItem) templatesList.getModel().getElementAt(index);
-				if(item == null)
+				
+				CheckableItem item = null;
+				try {
+					item = templatesList.getModel().getElementAt(index);
+				} catch (Exception ex){}
+				_logger.info("Templated selected item: "+ item);
+				if(item == null){
+					editorPanel.removeAll();
+					editorPanel.updateUI();
 					return;
-			
+				}
+				
 				editorPanel.removeAll();
 				List<Component> components = item.getPolicyEditorComponents();
 	            for (Component component : components) {
@@ -187,7 +197,7 @@ public class PolicyTemplatesEditor {
 			
 		});
 		
-		JPanel installedPanel = new JPanel();
+		final JPanel installedPanel = new JPanel();
 		installedPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Installed Policies", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		splitPane.setRightComponent(installedPanel);
 		
@@ -197,23 +207,35 @@ public class PolicyTemplatesEditor {
 		JScrollPane installedScrollPane = new JScrollPane();
 		
 		JPanel installedButtonPanel = new JPanel();
+		installedButtonPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		
 		JButton btnDeployPolicies = new JButton("Deploy policies");
 		btnDeployPolicies.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListModel model = installedList.getModel();
+				/* DEPOLY POLICIES HANDLER */
+				
+				//group policies to deploy
+				ListModel<CheckableItem> model = installedList.getModel();
 				int policiesCounter = model.getSize();
-				ArrayList<PolicyTemplate> policies = new ArrayList<PolicyTemplate>();
+				List<PolicyTemplate> policies = new ArrayList<PolicyTemplate>();
 				for(int i=0; i<policiesCounter; i++){
-					CheckableItem item = (CheckableItem) model.getElementAt(i);
+					CheckableItem item = model.getElementAt(i);
 					if(item.isSelected()){
 						PolicyTemplate policy = item.getPolicy();
 						policies.add(policy);
 					}
 				}
 				deploymentController.deployPolicies(representations, policyClass, policies);
+				
+				//refresh the view with the deployed policies
+				//loadPolicyInstalled(installedList);
+				installedList.removeAll();
+				installedList.updateUI();
+//				installedPanel.removeAll();
+//				installedPanel.updateUI();				
 			}
 		});
+		installedButtonPanel.setLayout(new GridLayout(0, 2, 0, 0));
 		installedButtonPanel.add(btnDeployPolicies);
 		GroupLayout gl_installedPanel = new GroupLayout(installedPanel);
 		gl_installedPanel.setHorizontalGroup(
@@ -232,6 +254,18 @@ public class PolicyTemplatesEditor {
 					.addComponent(installedButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 		);
 		
+		JButton btnRefreshPolicies = new JButton("Refresh policies");
+		btnRefreshPolicies.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* REFRESH POLICIES HANDLER */
+				installedList.removeAll();
+				installedList.updateUI();
+				loadPolicyInstalled(installedList);
+				editorPanel.updateUI();
+			}
+		});
+		installedButtonPanel.add(btnRefreshPolicies);
+		
 		CheckListRenderer checkListenderer = new CheckListRenderer();
 		
 		installedScrollPane.setViewportView(installedList);
@@ -245,9 +279,16 @@ public class PolicyTemplatesEditor {
 		installedList.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int index = installedList.locationToIndex(e.getPoint());
-				CheckableItem item = (CheckableItem) installedList.getModel().getElementAt(index);
-				if(item == null)
+				CheckableItem item = null;
+				try {
+					item = installedList.getModel().getElementAt(index);
+				} catch (Exception ex){}
+				_logger.info("Installed selected item: "+ item);
+				if(item == null){
+					editorPanel.removeAll();
+					editorPanel.updateUI();
 					return;
+				}
 				item.registerListener(installedList);		
 				if (e.getClickCount() == 2) {
 					List<Component> components = item.getPolicyEditorComponents();
@@ -267,37 +308,43 @@ public class PolicyTemplatesEditor {
 		frmTemplatePolicyEditor.getContentPane().setLayout(groupLayout);
 		
 		loadPolicyTemplates(templatesList, installedList);
-		loadPolicyInstalled(installedList);
+		//loadPolicyInstalled(installedList);
 	}
 	
-	private void loadPolicyTemplates(JList templatesList, JList installedList){
+	private void loadPolicyTemplates(JList<CheckableItem> templatesList, JList<CheckableItem> installedList){
 		CheckList checkList = new CheckList(policyClass); 
 		CheckableItem[] items = checkList.getItems();
-		DefaultListModel model = (DefaultListModel) templatesList.getModel();
+		DefaultListModel<CheckableItem> model = (DefaultListModel<CheckableItem>) templatesList.getModel();
 		for (int i = 0; i < items.length; i++) {
 			CheckableItem checkableItem = items[i];
 			checkableItem.registerListener(installedList);
 			model.addElement(checkableItem);
 		}
+		//add dummy element for the white space
+		CheckableItem checkableItem = new CheckableItem("");
+		checkableItem.registerListener(installedList);
+		model.addElement(checkableItem);
+		
 		templatesList.updateUI();
 	}
 	
-	private void loadPolicyInstalled(JList installedList){
+	private void loadPolicyInstalled(JList<CheckableItem> installedList){
+		List<PolicyTemplate> policies = this.deploymentController.getDeployedPolicies(policyClass);
 		CheckList checkList = new CheckList(installedList);
+		for(PolicyTemplate p : policies){
+			checkList.addPolicy(p);
+		}
+		
 		CheckableItem[] items = checkList.getItems();
-		DefaultListModel model = (DefaultListModel) installedList.getModel();
+		DefaultListModel<CheckableItem> model = (DefaultListModel<CheckableItem>) installedList.getModel();
+		model.clear();
 		for (int i = 0; i < items.length; i++) {
 			CheckableItem checkableItem = items[i];
+			checkableItem.setSelected(true);
+			checkableItem.setOnInstanceList();
 			model.addElement(checkableItem);
 		}
-		installedList.updateUI();
-		
-		//TODO: talk with the PMP. call getDeployedPolicies();
 	}
-	
-	
-	
-	
 }
 
 

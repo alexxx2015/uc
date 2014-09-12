@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -248,8 +250,12 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public Set<XmlPolicy> listPoliciesPmp() {
-		Set<XmlPolicy> res = new HashSet<>();
-		
+		Set<XmlPolicy> res = new HashSet<XmlPolicy>();
+		Collection<XmlPolicy> c = this._policymanager.getPolicies();
+		for (Iterator<XmlPolicy> iterator = c.iterator(); iterator.hasNext();) {
+			XmlPolicy xmlPolicy = (XmlPolicy) iterator.next();
+			res.add(xmlPolicy);
+		}
 		return Collections.unmodifiableSet(res);
 	}
 	

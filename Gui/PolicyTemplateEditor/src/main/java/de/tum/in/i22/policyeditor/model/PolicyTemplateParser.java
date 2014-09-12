@@ -45,7 +45,8 @@ public class PolicyTemplateParser {
 	        }
 	        if(mark != "")
 	            result.add(mark);
-	        str = str.substring(min + mark.length());
+	        if(min + mark.length() > 0)
+	        	str = str.substring(min + mark.length());
 	    }
 	    
 	    return result;

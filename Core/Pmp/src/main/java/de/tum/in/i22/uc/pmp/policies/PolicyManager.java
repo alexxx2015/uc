@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pmp.policies;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,11 @@ public class PolicyManager {
 		if(name == null)
 			return null;
 		XmlPolicy p = this.policies.get(name);
+		return p;
+	}
+	
+	public Collection<XmlPolicy> getPolicies(){
+		Collection<XmlPolicy> p = this.policies.values();
 		return p;
 	}
 	

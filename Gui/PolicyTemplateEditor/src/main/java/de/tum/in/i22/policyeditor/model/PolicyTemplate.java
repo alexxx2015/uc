@@ -3,12 +3,8 @@ package de.tum.in.i22.policyeditor.model;
 
 import java.awt.Component;
 
-import de.tum.in.i22.policyeditor.logger.EditorLogger;
-
 public class PolicyTemplate {
 
-	private static EditorLogger logger = EditorLogger.instance();
-	
 	/*
 	 * The names defined here must match the names used in the json config file
 	 * in order for the loader to work correctly. 
@@ -36,7 +32,7 @@ public class PolicyTemplate {
 		this.templateId = "";
 		this.description = "";
 		this.template = "";
-		classes = new String[0];
+		classes = new String[]{""};
 	}
 	
 	/**
@@ -231,6 +227,7 @@ public class PolicyTemplate {
 		clone.templateId = templateId;
 		clone.instance = instance;
 		clone.template = template;
+		clone.policyName = policyName;
 		return clone;
 	}
 	

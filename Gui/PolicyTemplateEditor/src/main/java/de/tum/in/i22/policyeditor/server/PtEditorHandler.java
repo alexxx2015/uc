@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.policyeditor.deployment.DeploymentController;
-import de.tum.in.i22.policyeditor.editor.PolicyTemplatesEditor;
+import de.tum.in.i22.policyeditor.editor.PtEditor;
 import de.tum.in.i22.policyeditor.util.Config;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -47,7 +47,7 @@ public class PtEditorHandler implements IAny2PtEditor {
 		
 		DeploymentController deploymentController = new DeploymentController(clientPmp);
 		
-		PolicyTemplatesEditor.startEditor(deploymentController, representations, dataClass);
+		PtEditor.startEditor(deploymentController, representations, dataClass);
 		
 		return new StatusBasic(EStatus.OKAY);
 	}

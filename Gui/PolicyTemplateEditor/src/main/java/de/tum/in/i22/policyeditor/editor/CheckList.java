@@ -22,9 +22,9 @@ class CheckList {
 		initialize(policyClass);
 	}
 	
-	private JList changeListener ;
+	private JList<CheckableItem> changeListener ;
 	
-	public CheckList(JList list){
+	public CheckList(JList<CheckableItem> list){
 		items = new  ArrayList<CheckableItem>();
 		changeListener = list;
 	}
@@ -57,10 +57,20 @@ class CheckList {
 		 return items;
 	}
 
+	public void addPolicy(PolicyTemplate policy){
+		CheckableItem item = new CheckableItem(policy);
+		item.registerListener(changeListener);
+		items.add( item );
+	}
+	
 	public CheckableItem[] getItems(){
 		int size = items.size();
 		CheckableItem[] result = new CheckableItem[size];
 		return items.toArray(result);
+	}
+	
+	public void clear(){
+		items.clear();
 	}
 	
 }
