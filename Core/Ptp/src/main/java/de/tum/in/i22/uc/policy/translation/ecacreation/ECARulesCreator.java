@@ -355,7 +355,7 @@ public class ECARulesCreator implements Filter{
 	 */
 	private PreventiveMechanismType getMechanismType(ECARule rule, int iSubformula){
 		PreventiveMechanismType mechanism=new PreventiveMechanismType();
-		String sMechanism="Mechanism_"+ecaTemplateId+"_"+String.valueOf(iSubformula+1)+"_"+rule.getType()+"_"+policyObjectId;
+		String sMechanism="Mechanism_"+String.valueOf(iSubformula+1)+"_"+rule.getType()+"_"+policyObjectId;
 		/* used to uniquely identify a policy */
 		String policyId = policyParams.get("policy_id");
 		sMechanism = policyId +"_"+ sMechanism;

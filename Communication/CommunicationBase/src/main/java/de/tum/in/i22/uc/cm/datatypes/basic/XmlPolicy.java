@@ -10,15 +10,28 @@ import java.util.Objects;
  * passing around strings).
  *
  * @author Florian Kelbert
- *
+ * extended by Ciprian Lucaci
  */
 public class XmlPolicy {
-	private final String _name;
-	private final String _xml;
+	private String _name;
+	private String _xml;
 
+	/**
+	 * The natural language description with all the param. markers removed.
+	 */
 	private String _description;
+	/**
+	 * Id of the template from the configuration file or database of templates.
+	 */
 	private String _templateId;
+	/**
+	 * Each policy can have a template which is translated by the PTP 
+	 * and instantiated by actual values and ECA rules.
+	 */
 	private String _templateXml;
+	/**
+	 * Each policy is applied to a particular data class.
+	 */
 	private String _dataClass;
 	
 	public XmlPolicy(String name, String xml) {
@@ -45,12 +58,21 @@ public class XmlPolicy {
 	public String getName() {
 		return _name;
 	}
-
+	public void setName(String name){
+		if(name == null)
+			name = "";
+		this._name = name;
+	}
+	
 	public String getXml() {
 		return _xml;
 	}
-
-	
+	public void setXml(String xml){
+		if(xml == null)
+			xml = "";
+		this._xml = xml;
+	}
+		
 	public String getDescription() {
 		return _description;
 	}
@@ -109,5 +131,10 @@ public class XmlPolicy {
 	@Override
 	public String toString() {
 		return _name;
+	}
+	
+	public XmlPolicy clone(){
+		XmlPolicy clone = new XmlPolicy(_name, _xml, _description, _templateId, _templateXml, _dataClass);
+		return clone;
 	}
 }

@@ -22,6 +22,11 @@ import rita.wordnet.jwnl.wndata.relationship.RelationshipList;
 public class WordNetTest {
 
 	private static RiWordNet wordnet;	
+	/**
+	 * The tests are disabled because they were used only to asses 
+	 * the functionality of the external library.
+	 * - speed, accuracy etc.
+	 */
 	private static final boolean TESTS_ENABLED = false;
 	
 	@BeforeClass

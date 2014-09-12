@@ -16,6 +16,11 @@ import de.tum.in.i22.uc.adaptation.model.DomainModel;
 public class AdaptationEngineTest {
 
 	private ModelLoader modelHandler;
+	/**
+	 * The tests were used only in development.
+	 * The tests could potentially affect configuration files unless
+	 * only test files are correctly specified.
+	 */
 	private static final boolean TESTS_ENABLED = false;
 	
 	private static String MODELS4TEST_DIR = "src/test/resources/models4test/DataContainerModels/";
@@ -111,6 +116,10 @@ public class AdaptationEngineTest {
 	
 	@Test
 	public void testStoreContainersXML(){
+		if(!TESTS_ENABLED){
+			assertTrue("AdaptationEngineTest disabled", true);
+			return;
+		}
 		modelHandler = new ModelLoader();
 		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
 		String destination = MODELS4TEST_DIR + "DataContainerDestination.xml";
@@ -121,6 +130,10 @@ public class AdaptationEngineTest {
 	
 	@Test
 	public void testMergeAndStoreContainersXML(){
+		if(!TESTS_ENABLED){
+			assertTrue("AdaptationEngineTest disabled", true);
+			return;
+		}
 		modelHandler = new ModelLoader();
 		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
 		String newFile = MODELS4TEST_DIR + "DataContainerNew.xml";

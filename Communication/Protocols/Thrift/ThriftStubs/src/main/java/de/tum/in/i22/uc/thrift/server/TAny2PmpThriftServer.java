@@ -98,4 +98,10 @@ TAny2Pmp.Iface {
 			throws TException {
 		return ThriftConverter.toThrift(_handler.updateDomainModel(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
 	}
+
+	@Override
+	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
+		Set<XmlPolicy> policies = _handler.listPoliciesPmp();
+		return ThriftConverter.toThriftPoliciesSet(policies);
+	}
 }

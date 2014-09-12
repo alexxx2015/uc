@@ -40,17 +40,15 @@ public class PtpHandler implements IPmp2Ptp {
 		
 		String policy = xmlPolicy.getXml();
 		
-		String mechanismId = xmlPolicy.getName();
-		if(mechanismId == null){
-			mechanismId = "t"+policiesTranslatedTotalCounter++;
+		String policyId = xmlPolicy.getName();
+		if(policyId == null || policyId.equals("")){
+			policyId = "pTranslated"+policiesTranslatedTotalCounter++;
+			xmlPolicy.setName(policyId);
 		}
-		else{
-			mechanismId += "_t"+policiesTranslatedTotalCounter++;
-		}
-		parameters.put("policy_id", mechanismId);
 		
+		parameters.put("policy_id", policyId);
+		parameters.put("template_id", xmlPolicy.getTemplateId());
 		String message = "" + "Req: "+requestId +"translateg policy: \n" + policy;
-		System.out.println(message);
 		_logger.info(message);
 		
 		String outputPolicy = parameters.get("template_id")+"_"+parameters.get("object_instance")+"_"+"policytranslated.xml";
@@ -85,9 +83,9 @@ public class PtpHandler implements IPmp2Ptp {
 		outputPolicy = addTimeStepToPolicy(outputPolicy);
 		outputPolicy = replaceEventually(outputPolicy);
 		
-		XmlPolicy translatedXmlPolicy = new XmlPolicy(mechanismId+"_"+xmlPolicy.getName(), outputPolicy);
-		IPtpResponse response = new PtpResponseBasic(translationStatus, translatedXmlPolicy);
+		xmlPolicy.setXml(outputPolicy);
 		
+		IPtpResponse response = new PtpResponseBasic(translationStatus, xmlPolicy);
 		return response;
 	}
 
@@ -121,12 +119,13 @@ public class PtpHandler implements IPmp2Ptp {
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 			String logMsg = "eventually: xml value parsing error";
-			System.out.println( logMsg );
+			//System.out.println( logMsg );
+			_logger.error(logMsg, e);
 			return logMsg;
 		}
 		
 		int eventuallyCounter = nodeList.getLength();
-		System.out.println("eventuallyCounter: "+ eventuallyCounter);
+		//System.out.println("eventuallyCounter: "+ eventuallyCounter);
 		for (int i = 0; i < eventuallyCounter; i++) {
 			Node n = nodeList.item(i);
 			if(n.getNodeType() != Node.ELEMENT_NODE)

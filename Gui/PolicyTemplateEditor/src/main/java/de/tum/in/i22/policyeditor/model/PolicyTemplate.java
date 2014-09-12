@@ -9,22 +9,33 @@ public class PolicyTemplate {
 
 	private static EditorLogger logger = EditorLogger.instance();
 	
-	private String id;
+	/*
+	 * The names defined here must match the names used in the json config file
+	 * in order for the loader to work correctly. 
+	 */
+	
+	private String templateId;
+	private String policyName;
 	private String[] classes;
 	private String description;
 	private String template;
 	private String instance;
 	
 	public PolicyTemplate(String id, String[] classes, String description, String template){
-		this.id = id;
+		this.templateId = id;
 		this.classes = classes;
 		this.description = description;
 		this.template = template;
 		instance = "";
+		policyName = "";
 	}
 	
 	public PolicyTemplate(){
 		instance = "";
+		policyName = "";
+		this.templateId = "";
+		this.description = "";
+		this.template = "";
 		classes = new String[0];
 	}
 	
@@ -32,11 +43,11 @@ public class PolicyTemplate {
 	 * This the id of the template from the configuration file.
 	 * @return
 	 */
-	public String getId() {
-		return id;
+	public String getTemplateId() {
+		return templateId;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setTemplateId(String id) {
+		this.templateId = id;
 	}
 	public String[] getClasses(){
 		return classes;
@@ -44,6 +55,23 @@ public class PolicyTemplate {
 	public void setClasses(String[] classes){
 		this.classes = classes;
 	}
+	
+	/**
+	 * Sets the name of the policy used by the PMP to identify a unique policy.
+	 * The name must be unique for each policy.
+	 * @param name
+	 */
+	public void setName(String name){
+		this.policyName = name;
+	}
+	
+	/** Returns the name of the policy used by the PMP to identify a unique policy.
+	 * @return
+	 */
+	public String getName(){
+		return this.policyName;
+	}
+	
 	/**
 	 * Returns the natural language description of the policy with the param. markers.
 	 * @return
@@ -94,11 +122,11 @@ public class PolicyTemplate {
 	}
 	
 	public String toString(){
-		return "["+id+"]"+description;
+		return "["+templateId+"]"+description;
 	}
 	
 	public String toStringExtended(){
-		return "["+id+"]"+description + " "+"["+getDataClass()+"]"
+		return "["+templateId+"]"+description + " "+"["+getDataClass()+"]"
 				+ "\n" + instance;
 	}
 	
@@ -193,14 +221,14 @@ public class PolicyTemplate {
 		if(! (object instanceof PolicyTemplate))
 			return false;
 		PolicyTemplate o = (PolicyTemplate) object;
-		return this.id.equals(o.id);
+		return this.templateId.equals(o.templateId);
 	}
 	
 	public PolicyTemplate clone(){
 		PolicyTemplate clone = new PolicyTemplate();
 		clone.classes = classes;
 		clone.description = description;
-		clone.id = id;
+		clone.templateId = templateId;
 		clone.instance = instance;
 		clone.template = template;
 		return clone;

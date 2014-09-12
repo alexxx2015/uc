@@ -102,4 +102,9 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 		return _impl.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		return _impl.listPoliciesPmp();
+	}
+
 }

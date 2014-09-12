@@ -24,7 +24,10 @@ import de.tum.in.i22.uc.thrift.server.TAny2PtEditorThriftServer;
 
 public class PtEditorTest {
 
-	private static final boolean TESTS_ENABLED = true;
+	/**
+	 * 
+	 */
+	private static final boolean TESTS_ENABLED = false;
 	private static Logger _logger = LoggerFactory.getLogger(PtEditorTest.class);
 	
 	private static IAny2PtEditor clientEditor;
@@ -79,6 +82,5 @@ public class PtEditorTest {
 		}
 		return representations;
 	}
-	
 	
 }

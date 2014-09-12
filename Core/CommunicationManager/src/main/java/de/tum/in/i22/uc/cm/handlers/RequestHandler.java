@@ -68,6 +68,7 @@ import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ListPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.SpecifyPolicyForPmpRequest;
@@ -546,6 +547,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		UpdateDomainModelPmpRequest request = new UpdateDomainModelPmpRequest(requestId, parameters, xmlDomainModel);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		ListPoliciesPmpRequest request = new ListPoliciesPmpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

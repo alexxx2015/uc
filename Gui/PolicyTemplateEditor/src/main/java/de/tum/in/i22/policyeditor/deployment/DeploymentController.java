@@ -1,6 +1,8 @@
 package de.tum.in.i22.policyeditor.deployment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,11 +74,17 @@ public class DeploymentController {
 									
 			Map<String, String> parameters = new HashMap<>();
 			
-			//generate a policy name
-			String policyName = "p"+policy.getId();
+			String policyName = policy.getName();
+			if(policyName.equals("")){
+				//generate a policy name
+				Calendar cal = Calendar.getInstance();
+				String timestamp = cal.get(Calendar.YEAR)+""+cal.get(Calendar.MONTH)+""+cal.get(Calendar.DAY_OF_MONTH)
+						+"-"+ cal.get(Calendar.HOUR_OF_DAY)+cal.get(Calendar.MINUTE)+""+cal.get(Calendar.SECOND); 
+				policyName = timestamp+"#"+policy.getTemplateId();
+			}
 			String xmlRepresentation = policy.getInstance();
 			String pDescription = policy.getDescription();
-			String pTemplateId = policy.getId();
+			String pTemplateId = policy.getTemplateId();
 			String pTemplate = policy.getTemplate();
 			String pDataClass = policy.getDataClass();
 						

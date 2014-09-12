@@ -130,4 +130,10 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		return null;
 	}
 
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

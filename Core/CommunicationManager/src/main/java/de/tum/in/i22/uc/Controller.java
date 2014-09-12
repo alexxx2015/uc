@@ -462,4 +462,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		return _requestHandler.listPoliciesPmp();
+	}
+
 }

@@ -33,8 +33,8 @@ public class TemplatesLoader {
 	class PolicyComparator implements Comparator<PolicyTemplate> {
 		@Override
 		public int compare(PolicyTemplate arg0, PolicyTemplate arg1) {
-			String id0 = arg0.getId();
-			String id1 = arg1.getId();
+			String id0 = arg0.getTemplateId();
+			String id1 = arg1.getTemplateId();
 			return id0.compareTo(id1);
 		}
 	}

@@ -485,7 +485,7 @@ public final class ThriftConverter {
 
 		Set<XmlPolicy> result = new HashSet<>();
 		for (TXmlPolicy p : policies) {
-			result.add(new XmlPolicy(p.name, p.xml));
+			result.add(new XmlPolicy(p.name, p.xml, p.description, p.templateId, p.templateXml, p.dataClass));
 		}
 		return result;
 	}

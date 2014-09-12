@@ -7,7 +7,9 @@ import java.util.Set;
 
 import org.apache.thrift.TException;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
+import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -232,15 +234,19 @@ TAny2Any.Iface {
 	public TPtpResponse translatePolicy(String requestId,
 			Map<String, String> parameters, TXmlPolicy xmlPolicy)
 			throws TException {
-		// TODO Auto-generated method stub
-		return null;
+		return _pmpServer.translatePolicy(requestId, parameters, xmlPolicy);
 	}
 
 	@Override
 	public TPtpResponse updateDomainModel(String requestId,
 			Map<String, String> parameters, TXmlPolicy xmlDomainModel)
 			throws TException {
-		// TODO Auto-generated method stub
-		return null;
+		return _pmpServer.updateDomainModel(requestId, parameters, xmlDomainModel);
+	}
+
+	@Override
+	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
+		Set<TXmlPolicy> policies = _pmpServer.listPoliciesPmp();
+		return policies;
 	}
 }
