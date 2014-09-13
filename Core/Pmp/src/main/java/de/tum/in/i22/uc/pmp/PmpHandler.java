@@ -407,14 +407,17 @@ public class PmpHandler extends PmpProcessor {
 
 		String policyname = xmlPolicy.getName();
 		String policyTemplate = xmlPolicy.getXml();
+		String log = "TranslatePolicy request: " + policyname + " "+ policyTemplate;
+		_logger.info(log);
 		
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
 		if(translationResponse.getStatus().equals(EStatus.ERROR))
 			return translationResponse;
-
+		log = "Translated policy status: "+translationResponse.getStatus().getEStatus()+" " + policyname + " "+ policyTemplate;
+		_logger.info(log);
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
 
-		IStatus revocationStatus = this.revokePolicyPmp(translatedPolicy.getName());
+		this.revokePolicyPmp(translatedPolicy.getName());
 		
 		IStatus deploymentStatus = this.deployPolicyXMLPmp(translatedPolicy);
 

@@ -2,7 +2,6 @@ package de.tum.in.i22.policyeditor.deployment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +16,7 @@ import de.tum.in.i22.policyeditor.model.UserObject;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 
 public class DeploymentController {
@@ -108,10 +108,26 @@ public class DeploymentController {
 			PolicyTemplate pTemplate = new PolicyTemplate(id, new String[]{dClass}, description, template);
 			pTemplate.setName(name);
 			
+			logMsg = "Deployed Policy: "+name +" "+ xmlPolicy.getXml();
+			_logger.info(logMsg);
 			deployedPolicies.add(pTemplate);
 		}
 		
 		return deployedPolicies;
+	}
+
+	public void revokePolicies(Set<IContainer> representations,	String policyClass, List<PolicyTemplate> policies) {
+		String log = "";
+		for(PolicyTemplate p : policies){
+			String policyName = p.getName();
+			if(p.equals(""))
+				continue;
+			
+			IStatus status = clientPmp.revokePolicyPmp(policyName);
+			log = "Revoked policy: " + status.getEStatus() + " " + policyName;
+			_logger.info(log);
+		}
+		
 	}
 	
 }

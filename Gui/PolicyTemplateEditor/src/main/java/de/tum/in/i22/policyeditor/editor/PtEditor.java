@@ -40,6 +40,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import javax.swing.BoxLayout;
 import java.awt.GridLayout;
 import javax.swing.border.EtchedBorder;
+import java.awt.BorderLayout;
+import javax.swing.border.CompoundBorder;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Color;
+import java.awt.Font;
 
 
 /**
@@ -207,9 +214,27 @@ public class PtEditor {
 		JScrollPane installedScrollPane = new JScrollPane();
 		
 		JPanel installedButtonPanel = new JPanel();
-		installedButtonPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		installedButtonPanel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		GroupLayout gl_installedPanel = new GroupLayout(installedPanel);
+		gl_installedPanel.setHorizontalGroup(
+			gl_installedPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_installedPanel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(installedButtonPanel, GroupLayout.PREFERRED_SIZE, 424, Short.MAX_VALUE)
+					.addContainerGap())
+				.addComponent(installedScrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+		);
+		gl_installedPanel.setVerticalGroup(
+			gl_installedPanel.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_installedPanel.createSequentialGroup()
+					.addComponent(installedScrollPane, GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(installedButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+		);
 		
 		JButton btnDeployPolicies = new JButton("Deploy policies");
+		btnDeployPolicies.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnDeployPolicies.setForeground(new Color(0, 153, 0));
 		btnDeployPolicies.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* DEPOLY POLICIES HANDLER */
@@ -228,31 +253,13 @@ public class PtEditor {
 				deploymentController.deployPolicies(representations, policyClass, policies);
 				
 				//refresh the view with the deployed policies
-				//loadPolicyInstalled(installedList);
+				loadPolicyInstalled(installedList);
 				installedList.removeAll();
 				installedList.updateUI();
-//				installedPanel.removeAll();
-//				installedPanel.updateUI();				
 			}
 		});
-		installedButtonPanel.setLayout(new GridLayout(0, 2, 0, 0));
+		installedButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		installedButtonPanel.add(btnDeployPolicies);
-		GroupLayout gl_installedPanel = new GroupLayout(installedPanel);
-		gl_installedPanel.setHorizontalGroup(
-			gl_installedPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_installedPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(installedButtonPanel, GroupLayout.PREFERRED_SIZE, 424, Short.MAX_VALUE)
-					.addContainerGap())
-				.addComponent(installedScrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
-		);
-		gl_installedPanel.setVerticalGroup(
-			gl_installedPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_installedPanel.createSequentialGroup()
-					.addComponent(installedScrollPane, GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(installedButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-		);
 		
 		JButton btnRefreshPolicies = new JButton("Refresh policies");
 		btnRefreshPolicies.addActionListener(new ActionListener() {
@@ -265,6 +272,34 @@ public class PtEditor {
 			}
 		});
 		installedButtonPanel.add(btnRefreshPolicies);
+		
+		JButton btnRevokePolicies = new JButton("Revoke policies");
+		btnRevokePolicies.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/* REVOKE POLICIES HANDLER */
+				
+				//group policies to deploy
+				ListModel<CheckableItem> model = installedList.getModel();
+				int policiesCounter = model.getSize();
+				List<PolicyTemplate> policies = new ArrayList<PolicyTemplate>();
+				for(int i=0; i<policiesCounter; i++){
+					CheckableItem item = model.getElementAt(i);
+					if(item.isSelected()){
+						PolicyTemplate policy = item.getPolicy();
+						policies.add(policy);
+					}
+				}
+				deploymentController.revokePolicies(representations, policyClass, policies);
+				
+				//refresh the view with the deployed policies
+				loadPolicyInstalled(installedList);
+				installedList.removeAll();
+				installedList.updateUI();
+			}
+		});
+		btnRevokePolicies.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnRevokePolicies.setForeground(new Color(204, 0, 0));
+		installedButtonPanel.add(btnRevokePolicies);
 		
 		CheckListRenderer checkListenderer = new CheckListRenderer();
 		
@@ -308,7 +343,7 @@ public class PtEditor {
 		frmTemplatePolicyEditor.getContentPane().setLayout(groupLayout);
 		
 		loadPolicyTemplates(templatesList, installedList);
-		//loadPolicyInstalled(installedList);
+		loadPolicyInstalled(installedList);
 	}
 	
 	private void loadPolicyTemplates(JList<CheckableItem> templatesList, JList<CheckableItem> installedList){
@@ -335,14 +370,13 @@ public class PtEditor {
 			checkList.addPolicy(p);
 		}
 		
-		CheckableItem[] items = checkList.getItems();
 		DefaultListModel<CheckableItem> model = (DefaultListModel<CheckableItem>) installedList.getModel();
 		model.clear();
+		
+		CheckableItem[] items = checkList.getItems();
 		for (int i = 0; i < items.length; i++) {
 			CheckableItem checkableItem = items[i];
-			checkableItem.setSelected(true);
-			checkableItem.setOnInstanceList();
-			model.addElement(checkableItem);
+			checkableItem.instantiatePolicy(null);
 		}
 	}
 }

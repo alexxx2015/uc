@@ -1,9 +1,14 @@
 package de.tum.in.i22.policyeditor.model;
 
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 public class UserNumber extends JSpinner{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4397512059014471847L;
 	public static final String NUMBER = "#NUNO[number]NU#";
 	public static final String START = "#NUNO[";
 	public static final String END = "]NU#";
@@ -12,13 +17,17 @@ public class UserNumber extends JSpinner{
 	private int order;
 	
 	public UserNumber(String selectedNumber, int order) {
-		super();
+		super(new SpinnerNumberModel(1, 1, 9999, 1)); //default value,lower bound,upper bound,increment by);
 		this.order = order;
 		try{
 			int value = Integer.parseInt(selectedNumber);
+			if(value <= 0)
+				value = 1;
 			this.setValue(value);
 		}
-		catch(IllegalArgumentException e){}
+		catch(IllegalArgumentException e){
+			this.setValue(1);
+		}
 	}
 	
 	public String getStringRepresentation(){

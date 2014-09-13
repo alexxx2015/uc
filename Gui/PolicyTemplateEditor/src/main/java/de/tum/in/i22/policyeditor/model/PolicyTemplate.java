@@ -113,8 +113,11 @@ public class PolicyTemplate {
 	 * @return
 	 */
 	public String getClearDescription(){
+		String id = this.policyName.equals("") ? "id" : this.policyName;
+		String result = "["+id+"]";
 		String clear = PolicyTemplateParser.filterData(description);
-		return clear;		
+		result += " " + clear;
+		return result;		
 	}
 	
 	public String toString(){

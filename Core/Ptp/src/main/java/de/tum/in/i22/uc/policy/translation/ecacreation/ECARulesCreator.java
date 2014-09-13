@@ -158,7 +158,6 @@ public class ECARulesCreator implements Filter{
 		minimizeExpression(alSubformula);
 		
 		if(ecaTemplateId.length() != 0){
-			//ECARulesAutomation.launch(alSubformula);
 			ECARulesAutomation ecaGenerator = new ECARulesAutomation(policyParams, alSubformula);
 			ecaGenerator.transform();
 		}
@@ -557,6 +556,9 @@ public class ECARulesCreator implements Filter{
 				}
 				else if(oConditionType instanceof EventMatchingOperatorType){
 					conditionType.setEventMatch((EventMatchingOperatorType) oConditionType);
+				}
+				else if(oConditionType instanceof StateBasedOperatorType){
+					conditionType.setStateBasedFormula((StateBasedOperatorType) oConditionType);
 				}
 				else if(oConditionType instanceof TimeBoundedUnaryOperatorType.RepLim)
 					conditionType.setRepLim((TimeBoundedUnaryOperatorType.RepLim) oConditionType);

@@ -6,13 +6,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
-public class CheckListRenderer extends JCheckBox implements ListCellRenderer {
+public class CheckListRenderer extends JCheckBox implements ListCellRenderer<Object> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2918917362297069493L;
 	private final Color HOVER_COLOR = new Color(135, 206,250);
 	private int hoverIndex = -1;
 	private MouseAdapter handler;
@@ -23,7 +26,7 @@ public class CheckListRenderer extends JCheckBox implements ListCellRenderer {
 	   this.setOpaque(true);
 	 }
 	
-	 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
+	 public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean hasFocus) {
 		if(value == null)
 			return this;
 		setEnabled(list.isEnabled());
@@ -39,7 +42,7 @@ public class CheckListRenderer extends JCheckBox implements ListCellRenderer {
 		return this;
 	 }
 	 
-	 public MouseAdapter getHandler(JList list) {
+	 public MouseAdapter getHandler(JList<?> list) {
 		    if (handler == null) {
 		      handler = new HoverMouseHandler(list);
 		    }
@@ -48,9 +51,9 @@ public class CheckListRenderer extends JCheckBox implements ListCellRenderer {
 	 
 	 class HoverMouseHandler extends MouseAdapter {
 
-		    private final JList list;
+		    private final JList<?> list;
 
-		    public HoverMouseHandler(JList list) {
+		    public HoverMouseHandler(JList<?> list) {
 		      this.list = list;
 		    }
 

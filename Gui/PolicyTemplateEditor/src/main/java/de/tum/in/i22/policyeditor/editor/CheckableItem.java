@@ -97,26 +97,36 @@ public class CheckableItem {
 			 return;
 		 
 			final JButton saveButton = new JButton("Save");
-			final CheckableItem self = this;
 			saveButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					String data = "";
-					String instanceData = policy.getTemplate();
-					policy.setInstance(instanceData);
-					for(Component c: components){
-						c.setEnabled(false);
-						if(c.equals(saveButton))
-							continue;
-						policy.instantiatePolicyAttributes(c);
-						data += c.toString();
-					}
-					String description = data;
-					logger.infoLog("Policy edited and saved: " + data, null);
-					notifyEvent(description);
+					instantiatePolicy(saveButton);
 				}
 			});
 			components.add(saveButton);
 	}
+	 
+	 public void instantiatePolicy(Component saveButton){
+		 String data = "";
+			String instanceData = policy.getTemplate();
+			policy.setInstance(instanceData);
+			
+			if(components.size()==0){
+				this.getPolicyEditorComponents();
+			}
+			
+			for(Component c: components){
+				c.setEnabled(false);
+				if(c.equals(saveButton) )
+					continue;
+				if(c instanceof JButton)
+					continue;
+				policy.instantiatePolicyAttributes(c);
+				data += c.toString();
+			}
+			String description = data;
+			logger.infoLog("Policy edited and saved: " + data, null);
+			notifyEvent(description);
+	 }
 	 
 	 public void registerListener(JList<CheckableItem> installedList){
 		 this.changeListener = installedList;
@@ -127,6 +137,9 @@ public class CheckableItem {
 			 CheckableItem clone = this.clone();
 			 clone.policy.setDescription(description);
 			 clone.setOnInstanceList();
+			 clone.changeListener = this.changeListener;
+			 if(!clone.getPolicy().getName().equals(""))
+				 clone.setSelected(true);
 			 DefaultListModel<CheckableItem> model =  (DefaultListModel<CheckableItem>) this.changeListener.getModel();
 			 model.addElement(clone);
 		 }

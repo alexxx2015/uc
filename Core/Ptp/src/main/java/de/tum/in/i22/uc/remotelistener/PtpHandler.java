@@ -38,30 +38,43 @@ public class PtpHandler implements IPmp2Ptp {
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		
-		String policy = xmlPolicy.getXml();
+		IStatus translationStatus = new StatusBasic(EStatus.ERROR);
 		
+		String policy = xmlPolicy.getXml();
 		String policyId = xmlPolicy.getName();
 		if(policyId == null || policyId.equals("")){
 			policyId = "pTranslated"+policiesTranslatedTotalCounter++;
 			xmlPolicy.setName(policyId);
 		}
 		
-		parameters.put("policy_id", policyId);
-		parameters.put("template_id", xmlPolicy.getTemplateId());
 		String message = "" + "Req: "+requestId +"translateg policy: \n" + policy;
 		_logger.info(message);
+		
+		if(policy == null || policy.equals("")){
+			_logger.info("Invalid policy!");
+			IPtpResponse response = new PtpResponseBasic(translationStatus, xmlPolicy);
+			return response;
+		}
+		
+		parameters.put("policy_id", policyId);
+		parameters.put("template_id", xmlPolicy.getTemplateId());
 		
 		String outputPolicy = parameters.get("template_id")+"_"+parameters.get("object_instance")+"_"+"policytranslated.xml";
 		
 		TranslationController translationController ;
 		translationController = new TranslationController(policy, parameters);
 		FilterStatus status ;
-		IStatus translationStatus = new StatusBasic(EStatus.ERROR);
+		
 		try{
 			translationController.filter();
 			status = translationController.getFilterStatus();
-			outputPolicy = translationController.getFinalOutput();
-			message = "Translation successful: " + translationController.getMessage();			
+			outputPolicy = translationController.getFinalOutput();			
+			
+			outputPolicy = addTimeStepToPolicy(outputPolicy);
+			outputPolicy = replaceEventually(outputPolicy);
+			message = "Translation successful: " + translationController.getMessage();	
+			
+			xmlPolicy.setXml(outputPolicy);
 		} catch (Exception ex){
 			status = FilterStatus.FAILURE;
 			message = translationController.getMessage();
@@ -79,11 +92,6 @@ public class PtpHandler implements IPmp2Ptp {
 			translationStatus = new StatusBasic(EStatus.ERROR, message);
 			outputPolicy = "";
 		}
-		
-		outputPolicy = addTimeStepToPolicy(outputPolicy);
-		outputPolicy = replaceEventually(outputPolicy);
-		
-		xmlPolicy.setXml(outputPolicy);
 		
 		IPtpResponse response = new PtpResponseBasic(translationStatus, xmlPolicy);
 		return response;
