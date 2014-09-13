@@ -86,10 +86,10 @@ public class PtEditorHandler implements IAny2PtEditor {
 	public static void main(String[] args){
 		PtEditorHandler editorHandler = new PtEditorHandler();
 		
-		String dataClass = "picture";
+		String dataClass = "city";
 		Set<IContainer> representations = new HashSet<>();
 		
-		ContainerBasic container = new ContainerBasic("container1");
+		ContainerBasic container = new ContainerBasic("C:\\Users\\uc\\Desktop\\TestFiles\\DoNotOpen.txt");
 		representations.add(container);
 		
 		editorHandler.specifyPolicyFor(representations, dataClass);

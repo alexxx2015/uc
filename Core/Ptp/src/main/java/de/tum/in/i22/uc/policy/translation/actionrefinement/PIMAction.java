@@ -55,6 +55,13 @@ public class PIMAction extends Event {
 		//Do we have an action with the given name in our model file?
 		String sExpression="//pimactions[@name='"+resource.getExtraInformation().toString()+"']";
 		nodePIMAction=ActionRefinement.processXpathExpression(sExpression).item(0);
+		
+		if(nodePIMAction==null){
+			//check for synonyms of that data
+			sExpression="//pimactions[contains(@synonym,'"+resource.getDataClass()+"']";
+			nodePIMAction=ActionRefinement.processXpathExpression(sExpression).item(0);
+		}
+		
 		if(nodePIMAction!=null){
 			
 			//we now have a match but do we have a matching data?

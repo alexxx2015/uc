@@ -93,7 +93,16 @@ public class DeploymentController {
 		List<PolicyTemplate> deployedPolicies = new ArrayList<PolicyTemplate>();
 		String logMsg = "";
 		//Map<String, List<String>> mapList = clientPmp.listMechanisms();
-		Set<XmlPolicy> policies = clientPmp.listPoliciesPmp();
+		if(clientPmp == null)
+			return deployedPolicies;
+		Set<XmlPolicy> policies = null;
+		try {
+		 policies = clientPmp.listPoliciesPmp();
+		}
+		catch (Exception ex){
+			_logger.error("clientPMP list policies error");
+			return deployedPolicies;
+		}
 		logMsg += "PMP list policies: "+ policies;
 		_logger.info(logMsg);
 		for (Iterator<XmlPolicy> iterator = policies.iterator(); iterator.hasNext();) {

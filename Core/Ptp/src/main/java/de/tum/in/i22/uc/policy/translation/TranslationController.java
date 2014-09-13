@@ -1,21 +1,17 @@
 package de.tum.in.i22.uc.policy.translation;
 
 import java.io.StringReader;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMResult;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import de.tum.in.i22.uc.policy.translation.ecacreation.ECARulesCreator;
 import de.tum.in.i22.uc.policy.translation.futuretopast.FutureToPast;
-import de.tum.in.i22.uc.utilities.PublicMethods;
 
 /**
  * 09 April 2012
