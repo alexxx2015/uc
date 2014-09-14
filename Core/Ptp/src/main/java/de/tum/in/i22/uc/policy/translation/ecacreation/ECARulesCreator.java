@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.policy.translation.ecacreation;
 
 import java.awt.Container;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -163,7 +162,7 @@ public class ECARulesCreator implements Filter{
 		}
 		else {
 			//3. Launch the ECA UI to configure ECA rules
-			ECARulesCreatorView.launch(alSubformula, oContainer);
+			ECARulesCreatorView.launch(alSubformula, new JDialog());
 			if(ECARulesCreatorView.isUserCancelled()){
 				fStatus=FilterStatus.FAILURE;
 				sMessage="- ECA rules creation was cancelled.";

@@ -3,6 +3,7 @@ package uctests;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,19 +20,26 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PtpTest {
 
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	private static Logger _logger = LoggerFactory.getLogger(PtpTest.class);
 	private static Pmp2PmpClient clientPmp;
+	
+	private static final String ptpProjectLocation = ".."+File.separator+"Core"+File.separator+"Ptp";
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if(!TESTS_ENABLED){
 			return;
 		}
+		
+		
+		Settings.getInstance().loadSetting(Settings.PROP_NAME_ptpProjectLocation, ptpProjectLocation);
+		
 		/*
 		 * Start PMP server.
 		 * Start PDP.
@@ -70,11 +78,11 @@ public class PtpTest {
 			assertTrue("TranslationServerTest disabled", true);
 			return;
 		}
-		String file = "src/test/resources/policies4test/" +"102_no_copy.xml";
+		String file = ptpProjectLocation +File.separator + "src"+File.separator+"test"+File.separator+"resources"+File.separator+"policies4test"+File.separator +"102_no_copy.xml";
 		String policy = loadTestPolicy(file);
 		
 		Map<String,String> parameters = new HashMap<String,String>();
-		parameters.put("template_id", "102");
+		//parameters.put("template_id", "102");
 		parameters.put("object_instance", "test_object");
 		
 		IPtpResponse translatedPolicy = translatePolicy(1, parameters, policy);
@@ -115,6 +123,10 @@ public class PtpTest {
 	private static IPtpResponse translatePolicy(int id, Map<String,String> parameters, String policy){
 		String requestId = "test_"+id+"_translate_policy";		
 		XmlPolicy xmlPolicy = new XmlPolicy("policy_before_translation", policy);
+		String templateId = parameters.get("template_id");
+		if(templateId != null)
+			xmlPolicy.setTemplateId(templateId);
+		
 		String logMsg = requestId +"\n" + policy;
 		_logger.debug(logMsg);
 		IPtpResponse response = clientPmp.translatePolicy(requestId, parameters, xmlPolicy);

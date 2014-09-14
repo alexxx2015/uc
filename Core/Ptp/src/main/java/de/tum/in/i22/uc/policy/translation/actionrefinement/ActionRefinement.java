@@ -192,6 +192,8 @@ public class ActionRefinement implements Filter{
 		try{
 			//open event declaration file
 			String sEventDeclFile=config.getProperty("eventDecl");
+			String usrDir = config.getUserDir();
+			sEventDeclFile = usrDir + File.separator + sEventDeclFile;
 			Document xmlDocXpath=ActionRefinement.openXmlInput(sEventDeclFile, "file");
 			//Try to find our action
 			XPathFactory factory=XPathFactory.newInstance();
@@ -510,7 +512,10 @@ public class ActionRefinement implements Filter{
 	 */
 	public static NodeList processXpathExpression(String expression){
 		NodeList nodeList=null;		
-		Document xmlDocXpath=ActionRefinement.openXmlInput(config.getProperty("domainmodel"), "file");
+		String domainFile = config.getProperty("domainmodel");
+		String usrDir = config.getUserDir();
+		domainFile = usrDir + File.separator + domainFile;
+		Document xmlDocXpath=ActionRefinement.openXmlInput(domainFile, "file");
 		XPathFactory factory=XPathFactory.newInstance();
 		XPath xpath=factory.newXPath();
 		try {

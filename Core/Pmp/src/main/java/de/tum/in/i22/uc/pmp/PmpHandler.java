@@ -411,7 +411,7 @@ public class PmpHandler extends PmpProcessor {
 		_logger.info(log);
 		
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
-		if(translationResponse.getStatus().equals(EStatus.ERROR))
+		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
 			return translationResponse;
 		log = "Translated policy status: "+translationResponse.getStatus().getEStatus()+" " + policyname + " "+ policyTemplate;
 		_logger.info(log);

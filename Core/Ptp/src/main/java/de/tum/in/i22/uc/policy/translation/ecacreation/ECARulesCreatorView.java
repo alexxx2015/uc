@@ -75,9 +75,7 @@ public class ECARulesCreatorView extends JDialog {
 	 */
 //	public static void main(String[] args) {
 //		try {
-//			ECARulesCreatorView dialog = new ECARulesCreatorView(null);
-//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//			dialog.setVisible(true);
+//			ECARulesCreatorView.launch(new ArrayList<Subformula>(), new JDialog());
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
@@ -179,6 +177,8 @@ public static void launch(ArrayList<Subformula> subformulas, Container container
 	 */
 	@SuppressWarnings("rawtypes")
 	private void populateUI(){
+		if(alSubformula.size() == 0)
+			return;
 		Subformula curSubformula=alSubformula.get(iCurrentSubformula-1);
 		controller.setCurrentSubformula(curSubformula);
 		ECARule ecaRule=controller.getECARule();
@@ -835,6 +835,8 @@ public static void launch(ArrayList<Subformula> subformulas, Container container
 					public void actionPerformed(ActionEvent ae) {
 						//store the radio button selections for
 						//trigger event and condition
+						if(alSubformula.size()==0)
+							return;
 						controller.setCurrentSubformula(alSubformula.get(iCurrentSubformula-1));						
 						controller.setButtonForTriggerEvent(getSelectedEventButton());
 						controller.setButtonForCondition(getSelectedConditionButton());	

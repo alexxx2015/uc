@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -105,12 +106,17 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
 	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
 
+	public static final String PROP_NAME_ptpProjectLocation = "ptpProjectLocation";
+	public static final String PROP_NAME_ptEditorProjectLocation = "ptEditorProjectLocation";
+	
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
 	public static final String PROP_NAME_distributionConsistencyLevel = "distributionConsistencyLevel";
 
+	
+	
 	private Settings() {
 		_settings = new HashMap<>();
 
@@ -238,6 +244,9 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
 		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
+		
+		loadSetting(PROP_NAME_ptpProjectLocation, ".."+File.separator+"Ptp");
+		loadSetting(PROP_NAME_ptEditorProjectLocation, ".."+File.separator+"Gui"+File.separator+"PolicyTemplateEditor");
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -574,5 +583,13 @@ public class Settings extends SettingsLoader {
 
 	public String getPmpJaxbContext() {
 		return getValue(PROP_NAME_pmpJaxbContext);
+	}
+	
+	public String getPtpProjectLocation(){
+		return getValue(PROP_NAME_ptpProjectLocation);
+	}
+	
+	public String getPtEditorProjectLocation(){
+		return getValue(PROP_NAME_ptEditorProjectLocation);
 	}
 }

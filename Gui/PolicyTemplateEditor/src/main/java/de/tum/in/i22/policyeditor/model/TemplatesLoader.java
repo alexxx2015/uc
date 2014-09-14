@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import de.tum.in.i22.policyeditor.logger.EditorLogger;
 import de.tum.in.i22.policyeditor.util.PublicMethods;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**
  * @author Cipri
@@ -64,8 +65,12 @@ public class TemplatesLoader {
 	}
 	
 	public static TemplatesLoader loadPolicyTemplates() {
-		logger.debugLog(System.getProperty("user.dir"), null);
-		String templatesFile = System.getProperty("user.dir")+File.separator+"src"
+		logger.debugLog(Settings.getInstance().getPtEditorProjectLocation(), null);
+		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
+		String usrDir = System.getProperty("user.dir");
+		if(usrDir.contains("PolicyTemplateEditor"))
+			defaultSetting = usrDir;
+		String templatesFile = defaultSetting+File.separator+"src"
 						+File.separator
 						+"main"+File.separator
 						+"resources"+File.separator
@@ -93,7 +98,11 @@ public class TemplatesLoader {
 	}
 			
 	private static void loadActionTemplates(){
-		String actionsFile = System.getProperty("user.dir")+File.separator+"src"
+		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
+		String usrDir = System.getProperty("user.dir");
+		if(usrDir.contains("PolicyTemplateEditor"))
+			defaultSetting = usrDir;
+		String actionsFile =defaultSetting+File.separator+"src"
 				+File.separator
 				+"main"+File.separator
 				+"resources"+File.separator
@@ -123,7 +132,11 @@ public class TemplatesLoader {
 	}
 	
 	private static void loadSubjectTemplates(){
-		String subjectsFile = System.getProperty("user.dir")+File.separator+"src"
+		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
+		String usrDir = System.getProperty("user.dir");
+		if(usrDir.contains("PolicyTemplateEditor"))
+			defaultSetting = usrDir;
+		String subjectsFile = defaultSetting+File.separator+"src"
 				+File.separator
 				+"main"+File.separator
 				+"resources"+File.separator

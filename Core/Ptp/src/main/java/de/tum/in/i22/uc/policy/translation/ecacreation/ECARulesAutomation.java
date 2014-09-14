@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.policy.translation.ecacreation;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class ECARulesAutomation {
 	private Map<String,String> policyParams;
 	// represents access configuration file of properties
 	private static Config config;
-
 	/** The already generated subformulas are used here.
 	 * @param policyParams2
 	 * @param subformulas
@@ -37,12 +37,12 @@ public class ECARulesAutomation {
 		ecaTemplate = null;
 		this.policyParams = policyParams2;
 		try {
-			String usr = System.getProperty("user.dir");
 			config = new Config();
 		} catch (IOException e) {
 			e.printStackTrace();
 			config = null;
 		}
+		
 	}
 
 	public boolean transform() {
@@ -202,8 +202,9 @@ public class ECARulesAutomation {
 	private boolean loadECATemplates() {
 		if (config == null)
 			return false;
-		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
 		
+		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
+		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
 		String json = "";
 		try {
 			json = PublicMethods.readFile(ecaRulesFile, StandardCharsets.UTF_8);

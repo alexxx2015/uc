@@ -13,6 +13,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+
+import de.tum.in.i22.uc.cm.settings.Settings;
  
 public class Config 
 {
@@ -20,8 +22,12 @@ public class Config
    public Config() throws IOException
    {
 	configFile = new java.util.Properties();
+	String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
+	String usrDir = System.getProperty("user.dir");
+	if(usrDir.contains("PolicyTemplateEditor"))
+		defaultSetting = usrDir;
 	try {	
-		String configPath = System.getProperty("user.dir")+File.separator+"src"
+		String configPath = defaultSetting+File.separator+"src"
 				+File.separator
 				+"main"+File.separator
 				+"resources"+File.separator
