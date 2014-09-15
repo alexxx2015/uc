@@ -19,6 +19,15 @@ public class ActionTransformerModel {
 		SEQ
 	}
 	
+	/**
+	 *
+	 */
+	public static enum AuthorizationType{
+		READ,
+		ADD,
+		MODIFY
+	}
+	
 	private String name;
 	/**
 	 * After merging, there can be the same action with multiple similar names.

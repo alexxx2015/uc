@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.policy.translation.Config;
+import de.tum.in.i22.uc.utilities.PtpLogger;
 
 /**
  * @author Cipri
@@ -16,12 +14,13 @@ import de.tum.in.i22.uc.policy.translation.Config;
 public class TranslationEngine_TcpServer {
 	
 	private ServerSocket serverSocket;
-	private static final Logger logger = LoggerFactory.getLogger(TranslationEngine_TcpServer.class);
+	private PtpLogger logger; 	
 	
 	public static final int TE_Default_PORT = 50001 ;
 	private static int TE_PORT = 0;
 	
 	public TranslationEngine_TcpServer(){
+		logger = PtpLogger.translationLoggerInstance();
 	}
 	
 	public static int getPort(){
@@ -67,7 +66,7 @@ public class TranslationEngine_TcpServer {
 		 try {
 			serverSocket = new ServerSocket(port);
 			String msg = "TranslationListener listening at port: " + port;
-			logger.info(msg);
+			logger.infoLog(msg, null);
 			while(true){
 	            try {
 	            	Socket client = serverSocket.accept();                
@@ -76,14 +75,14 @@ public class TranslationEngine_TcpServer {
 	            } catch (IOException e) {
 	            	String message = "error accepting request";
 	            	e.printStackTrace();
-	            	logger.error(message, e);
+	            	logger.errorLog(message, e);
 	            }
 	        }
 			
 		} catch (IOException e) {
 			String message = "error starting server port";
         	e.printStackTrace();
-        	logger.error(message, e);
+        	logger.errorLog(message, e);
 		}
 	}
 	

@@ -2,10 +2,8 @@ package de.tum.in.i22.uc.adaptation.engine;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rita.RiWordNet;
+import de.tum.in.i22.uc.utilities.PtpLogger;
 
 public class WordnetEngine {
 
@@ -17,11 +15,12 @@ public class WordnetEngine {
 	public static final float VERY_SIMILAR_DISTANCE = 0.2f;
 	public static final float EQUAL_DISTANCE = 0.0f;
 	
-	private static final Logger logger = LoggerFactory.getLogger(WordnetEngine.class);
+	private PtpLogger logger ;
 	
 	private WordnetEngine(){
 		String file = "src/main/resources/" ;
 		wordnet = new RiWordNet(file);
+		logger = PtpLogger.adaptationLoggerInstance();
 	}
 	
 	public static WordnetEngine getInstance(){
@@ -42,7 +41,7 @@ public class WordnetEngine {
 		String pos = wordnet.getBestPos(conceptA); 
 		float distance = wordnet.getDistance(conceptA, conceptB, pos);
 		String msg ="distance: "+ conceptA +"-"+ conceptB +": "+ distance;
-		logger.info(msg);
+		logger.infoLog(msg, null);
 		if(distance > MAX_ALLOWED_DISTANCE)
 			return 1.0f;
 		return distance;
@@ -62,7 +61,7 @@ public class WordnetEngine {
 		for(String conceptB : concepts){
 			float distance = wordnet.getDistance(conceptA, conceptB, pos);
 			String msg ="similarity: "+ conceptA +"-"+ conceptB +": "+ distance;
-			logger.info(msg);
+			logger.infoLog(msg, null);
 			if(distance < maxDistance)
 				maxDistance = distance;
 		}

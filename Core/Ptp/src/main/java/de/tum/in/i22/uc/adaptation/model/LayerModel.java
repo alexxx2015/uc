@@ -109,20 +109,19 @@ public class LayerModel {
 		}
 
 		String actionsString = "";
-		//if(this.type.equals(LayerType.PIM)){
+		if(this.type.equals(LayerType.PIM)){
 			for(ActionTransformerModel ac : this.actionTransformers){
 				actionsString += "\n" + ac.toString();
 			}
-		
-		
+		}
 		
 		String systemString = "";
 		for(SystemModel system : this.systems){
 			systemString += "\n" + system.toString();
 		}
-		result += "\n"+ this.indentation+"DATA/CONTAINER" + dataString;
-		result += "\n"+ this.indentation+"ACTION/TRANSFORMER" + actionsString;
-		result += "\n"+ this.indentation+"SYSTEMS"+ systemString;
+		result += dataString;
+		result += actionsString;
+		result += systemString;
 		return result;
 	}
 	

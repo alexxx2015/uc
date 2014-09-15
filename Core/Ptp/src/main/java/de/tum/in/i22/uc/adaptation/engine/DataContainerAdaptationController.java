@@ -2,12 +2,11 @@ package de.tum.in.i22.uc.adaptation.engine;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
+import de.tum.in.i22.uc.utilities.PtpLogger;
 
 /**
  * @author Cipri
@@ -27,7 +26,7 @@ import de.tum.in.i22.uc.adaptation.model.LayerModel;
  */
 public class DataContainerAdaptationController {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataContainerAdaptationController.class);
+	private PtpLogger logger ;
 	
 	/**
 	 * The Base Domain Model.
@@ -46,6 +45,7 @@ public class DataContainerAdaptationController {
 		this.baseDm = baseDM;
 		this.newDm = newDM;
 		this.wordnetEngine = WordnetEngine.getInstance();
+		this.logger = PtpLogger.adaptationLoggerInstance();
 	}
 	
 	/**
@@ -343,7 +343,7 @@ public class DataContainerAdaptationController {
 				newDc.setName(existsDC.getName());
 				newDc.addSynonym(newName);
 				String logMsg = "similiratity found: (base-new) " + existsDC.getName() +"-"+ newName;
-				logger.info(logMsg);
+				logger.infoLog(logMsg, null);
 			}
 				
 			for(String alias : newDc.getSynonyms()){
