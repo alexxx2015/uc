@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -71,10 +69,7 @@ public class PmpHandler extends PmpProcessor {
 
 	private IPmp2Ptp _ptp;
 	private PolicyManager _policymanager;
-	
-	//private final Set<String> _deployedPolicies;
 
-	
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
 		init(new DummyPipProcessor(), new DummyPdpProcessor());
@@ -250,15 +245,9 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public Set<XmlPolicy> listPoliciesPmp() {
-		Set<XmlPolicy> res = new HashSet<XmlPolicy>();
-		Collection<XmlPolicy> c = this._policymanager.getPolicies();
-		for (Iterator<XmlPolicy> iterator = c.iterator(); iterator.hasNext();) {
-			XmlPolicy xmlPolicy = (XmlPolicy) iterator.next();
-			res.add(xmlPolicy);
-		}
-		return Collections.unmodifiableSet(res);
+		return new HashSet<>(_policymanager.getPolicies());
 	}
-	
+
 	/**
 	 * Tokenizes the specified string at whitespaces, interprets the tokens as
 	 * data ids, and returns the corresponding set of {@link IData} objects
@@ -291,7 +280,7 @@ public class PmpHandler extends PmpProcessor {
 
 		IStatus status;
 
-		if (this._policymanager.removePolicy(policyName)) {
+		if (_policymanager.removePolicy(policyName)) {
 			_distributionManager.unregisterPolicy(policyName, IPLocation.localIpLocation);
 			status = getPdp().revokePolicy(policyName);
 		}
@@ -331,12 +320,12 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
-		
+
 		String xml = xmlPolicy.getXml();
 		// Convert the string xml to a PolicyType
 		PolicyType policy = xmlToPolicy(xml);
-		
-		if (this._policymanager.addPolicy(xmlPolicy)) {
+
+		if (_policymanager.addPolicy(xmlPolicy)) {
 
 			// Initialize the initial representations specified in the policy
 			initInitialRepresentations(policy);
@@ -345,8 +334,8 @@ public class PmpHandler extends PmpProcessor {
 			Pair<PolicyType,Set<IData>> convertedPolicy = convertDatausageParameters(policy);
 
 			// create an XmlPolicy out of the converted policy; the policy's name remains the same
-			final XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()), 
-														xmlPolicy.getDescription(), xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(), 
+			final XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()),
+														xmlPolicy.getDescription(), xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(),
 														xmlPolicy.getDataClass());
 
 			// map all data IDs to the new XmlPolicy
@@ -373,7 +362,7 @@ public class PmpHandler extends PmpProcessor {
 			_logger.debug("Policy was deployed before. Not deploying again.");
 			return new StatusBasic(EStatus.OKAY);
 		}
-		
+
 	}
 
 	@Override
@@ -381,14 +370,14 @@ public class PmpHandler extends PmpProcessor {
 		return getPdp().listMechanisms();
 	}
 
-	
+
 	public void stop() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	
+
 	public IStatus specifyPolicyFor(Set<IContainer> representations, String dataClass) {
 		// TODO Here goes Prachi & Cipri's code
 		_logger.debug("Here goes Prachi's and Cipri's code");
@@ -409,7 +398,7 @@ public class PmpHandler extends PmpProcessor {
 		String policyTemplate = xmlPolicy.getXml();
 		String log = "TranslatePolicy request: " + policyname + " "+ policyTemplate;
 		_logger.info(log);
-		
+
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
 		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
 			return translationResponse;
@@ -417,9 +406,9 @@ public class PmpHandler extends PmpProcessor {
 		_logger.info(log);
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
 
-		this.revokePolicyPmp(translatedPolicy.getName());
-		
-		IStatus deploymentStatus = this.deployPolicyXMLPmp(translatedPolicy);
+		revokePolicyPmp(translatedPolicy.getName());
+
+		IStatus deploymentStatus = deployPolicyXMLPmp(translatedPolicy);
 
 		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy);
 		return deploymentResponse;
@@ -430,5 +419,5 @@ public class PmpHandler extends PmpProcessor {
 		return _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 
-	
+
 }
