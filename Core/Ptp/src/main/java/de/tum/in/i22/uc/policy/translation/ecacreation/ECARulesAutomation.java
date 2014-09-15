@@ -207,7 +207,7 @@ public class ECARulesAutomation {
 		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
 		String json = "";
 		try {
-			json = PublicMethods.readFile(ecaRulesFile, StandardCharsets.UTF_8);
+			json = PublicMethods.readFile(ecaRulesFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
