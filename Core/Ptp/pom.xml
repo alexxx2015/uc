@@ -31,6 +31,13 @@
 			<version>1.0</version>
 			<systemPath>${basedir}${file.separator}lib${file.separator}rita.support.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>core1.0</groupId>
+			<artifactId>core1.0</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${basedir}${file.separator}lib${file.separator}core1.0.jar</systemPath>
+		</dependency>
 		
 		
 		<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 

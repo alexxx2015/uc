@@ -23,15 +23,21 @@ public class DataContainerModel {
 	 */
 	private ArrayList<String> synonyms;
 	
-	private LayerType type ;
+	private LayerType layerType ;
 	/**
 	 * This is used for the XPath processing.
 	 */
 	private int xmlPosition;
+	/**
+	 * Used for pretty printing on console.
+	 */
 	private String indentationLevel ;
 	
 	private ArrayList<DataContainerModel> refinements;
 	
+	/**
+	 * Associations are also known as inner-links in the paper.
+	 */
 	private Map<AssociationType, ArrayList<DataContainerModel>> associations;
 	
 	private LayerModel parentLayer;
@@ -40,7 +46,7 @@ public class DataContainerModel {
 	
 	public DataContainerModel(String name, LayerType type){
 		this.name = name;
-		this.type = type;
+		this.layerType = type;
 		this.xmlPosition = -1;
 		this.isMerged = false;
 		this.refinements = new ArrayList<>();
@@ -64,7 +70,7 @@ public class DataContainerModel {
 	}
 	
 	public LayerType getLayerType(){
-		return this.type;
+		return this.layerType;
 	}
 	
 	public ArrayList<DataContainerModel> getRefinements(){
@@ -74,6 +80,7 @@ public class DataContainerModel {
 	public DataContainerModel getRefinementByName(String name){
 		if(name==null)
 			return null;
+		//no need for synonyms because the refinement is either at PSM or ISM level
 		for(DataContainerModel ref : this.refinements){
 			if(ref.name.equals(name))
 				return ref;
@@ -217,7 +224,7 @@ public class DataContainerModel {
 	
 	public String toString(){
 		String result ="";
-		result += this.indentationLevel+ name + " "+this.synonyms +" - "+ type.name();
+		result += this.indentationLevel+ name + " "+this.synonyms +" - "+ layerType.name();
 		
 		String aggregations = "\n	"+this.indentationLevel +"aggregations:";
 		boolean existsAggregation = false;
@@ -244,7 +251,7 @@ public class DataContainerModel {
 			return null;
 		Element element = null;
 		String layerType = "";
-		switch (this.type) {
+		switch (this.layerType) {
 		case PIM:			
 			layerType = "pimdata";
 			element = doc.createElement(layerType);
@@ -374,6 +381,7 @@ public class DataContainerModel {
 	 * 
 	 * The type must be the same.
 	 * If the name is equal or there is a match between the name and the synonyms.
+	 * This is used also by the a list when it verifies if an element is contained.
 	 */
 	public boolean equals(Object o){
 		if (o == null)
@@ -381,7 +389,7 @@ public class DataContainerModel {
 		if (!(o instanceof DataContainerModel))
 			return false;
 		DataContainerModel obj = (DataContainerModel) o;
-		if(!this.type.equals(obj.type))
+		if(!this.layerType.equals(obj.layerType))
 			return false; 
 		if(this.name.equals(obj.name))
 			return true;

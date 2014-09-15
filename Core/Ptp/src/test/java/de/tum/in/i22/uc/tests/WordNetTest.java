@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -9,8 +10,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.tum.in.i22.uc.policy.translation.Config;
 import rita.RiWordNet;
 import rita.wordnet.jwnl.JWNLException;
+import rita.wordnet.jwnl.dictionary.Dictionary;
 import rita.wordnet.jwnl.wndata.IndexWord;
 import rita.wordnet.jwnl.wndata.PointerType;
 import rita.wordnet.jwnl.wndata.relationship.AsymmetricRelationship;
@@ -27,14 +30,36 @@ public class WordNetTest {
 	 * the functionality of the external library.
 	 * - speed, accuracy etc.
 	 */
-	private static final boolean TESTS_ENABLED = false;
+	 
+	 /**
+	 * If the wordnet tests fail or it does not work correctly,
+     * it is because the files habe been modified when you pushed to git.
+	 * Please restore the dict files from http://wordnet.princeton.edu/wordnet/download/current-version/#win
+	 *	The source of the problem is the following: 
+	 *  warning: LF will be replaced by CRLF in Core/Ptp/src/main/resources/dict/verb.exc.
+	 *	The file will have its original line endings in your working directory.	 
+	 */
+	 
+	private static final boolean TESTS_ENABLED = true;
+	
+	private static final String NOUN_POS = "n";
+	private static final String VERB_POS = "v";
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if(!TESTS_ENABLED){
 			return;
 		}
-		String file = "src/main/resources/" + "dict" ;
+		String file = "" ;
+		
+		Config conf = new Config();
+		String userDir = conf.getUserDir();
+		file = userDir + File.separator+ File.separator+ "src" 
+				+ File.separator + "main"
+				+ File.separator +"resources"
+				+ File.separator + "dict" ;
+		
+		System.out.println("RitWordnet dict: "+ file);
 		wordnet = new RiWordNet(file);
 	}
 
@@ -51,19 +76,37 @@ public class WordNetTest {
 			assertTrue("WordNetTest disabled", true);
 			return;
 		}
-		computeSimilarity("photo", "picture");
-		computeSimilarity("photo", "car");
-		computeSimilarity("photo", "child");
-		computeSimilarity("picture", "album");
-		computeSimilarity("document", "file");
-		computeSimilarity("directory", "folder");
-		computeSimilarity("copy", "replica");
-		computeSimilarity("picture", "photo");
 		
-		computeSimilarity("parent", "child");
-		computeSimilarity("file", "directory");
-		computeSimilarity("file", "folder");
-		computeSimilarity("document", "folder");
+		System.out.println("\nNOUNS");
+		computeSimilarity("photo", "picture", NOUN_POS);
+		computeSimilarity("photo", "car", NOUN_POS);
+		computeSimilarity("photo", "child", NOUN_POS);
+		computeSimilarity("picture", "album", NOUN_POS);
+		computeSimilarity("document", "file", NOUN_POS);
+		computeSimilarity("directory", "folder", NOUN_POS);
+		computeSimilarity("copy", "replica", NOUN_POS);
+		computeSimilarity("picture", "photo", NOUN_POS);
+		computeSimilarity("city", "residence", NOUN_POS);
+		computeSimilarity("city", "town", NOUN_POS);
+		computeSimilarity("home", "residence", NOUN_POS);		
+		computeSimilarity("parent", "child", NOUN_POS);
+		computeSimilarity("file", "directory", NOUN_POS);
+		computeSimilarity("file", "folder", NOUN_POS);
+		computeSimilarity("document", "folder", NOUN_POS);
+		
+		computeSimilarity("picture1", "photo1", NOUN_POS);
+		
+		System.out.println("\nVERBS");
+		computeSimilarity("copy", "duplicate", VERB_POS);
+		computeSimilarity("duplicate", "copy", VERB_POS);
+		computeSimilarity("move", "relocate", VERB_POS);
+		computeSimilarity("relocate", "move", VERB_POS);
+		computeSimilarity("delete", "remove", VERB_POS);
+		computeSimilarity("send", "distribute", VERB_POS);
+		computeSimilarity("copy", "distribute", VERB_POS);
+		computeSimilarity("print", "distribute", VERB_POS);
+		computeSimilarity("shred", "delete", VERB_POS);
+		computeSimilarity("shred", "destroy", VERB_POS);
 	}
 
 	@Test
@@ -75,23 +118,27 @@ public class WordNetTest {
 		long start = System.currentTimeMillis();
 		
 		for(int i = 0; i<10; i++){
-			computeSimilarity(null,null);
+			computeSimilarity(null,null,"n");
+			computeSimilarity(null,null,"v");
 		}
 		
 		long end = System.currentTimeMillis();
 		System.out.println((end-start)/1000 + " seconds");
 	}
 	
-	public float computeSimilarity(String wordA, String wordB) {
+	public float computeSimilarity(String wordA, String wordB, String pos) {
 		String conceptA = wordA;
 		String conceptB = wordB;
 		if(wordA == null)
 			conceptA = wordnet.getRandomWord("n");
 		if(wordB == null)
-			conceptB = wordnet.getRandomWord("n");;
-		String pos = wordnet.getBestPos(conceptA); 
+			conceptB = wordnet.getRandomWord("n");		
+		String bestPos = wordnet.getBestPos(conceptA);
 		float distance = wordnet.getDistance(conceptA, conceptB, pos);
-		String result = conceptA +"-"+ conceptB +": "+ distance;
+		float distance2 = 1.0f;
+		if(bestPos != null)
+			distance2 = wordnet.getDistance(conceptA, conceptB, bestPos);
+		String result = conceptA +"-"+ conceptB +": "+ distance + "("+pos+") : "+ distance2 +"("+ bestPos+")" ;
 		System.out.println(result);
 		return distance;
 	}
@@ -123,6 +170,9 @@ public class WordNetTest {
 			assertTrue("WordNetTest disabled", true);
 			return;
 		}
+		
+		Dictionary dict = wordnet.jwnlDict;
+		
 		// Get a random noun
 		String word = wordnet.getRandomWord("n");
 		// Get max 15 synonyms

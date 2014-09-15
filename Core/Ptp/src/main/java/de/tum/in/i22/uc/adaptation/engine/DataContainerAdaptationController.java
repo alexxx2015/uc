@@ -53,7 +53,7 @@ public class DataContainerAdaptationController {
 	 * STEP 0: merge domain models: Data and Containers
 	 * @throws DomainMergeException
 	 */
-	public void mergeDomainModels() throws DomainMergeException{
+	public void mergeDomainModels() {
 		// see STEP 1
 		mergeDCAssociations(baseDm, newDm);	
 		// see STEP 2
@@ -68,13 +68,16 @@ public class DataContainerAdaptationController {
 
 	/**
 	 * ---------------------------------------------------------------------------
-	 *  STEP 1: merge PSM, ISM container associations
+	 * <br>
+	 *  STEP 1: merge PSM, ISM container associations / inner links
+	 *  <br>
 	 *	---------------------------------------------------------------------------
+	 * <br>
 	 *	New Containers are added to the BaseDomainModel.
 	 *	New Associations between Containers are added to the BaseDomainModel.
 	 *	The comparison is only a string matching for Containers. (see assumption)
 	 *	<p>
-	 *	At this step only the inner refinement, associations are merged.
+	 *	At this step only the inner refinement, associations (inner links) are merged.
 	 *	If the new model defines new containers, these containers are added.
 	 *	If the new model defines new associations at the same level for a container, these associations are added.
 	 *	<p>

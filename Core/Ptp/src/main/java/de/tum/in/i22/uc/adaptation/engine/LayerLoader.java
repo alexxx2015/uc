@@ -153,7 +153,8 @@ public class LayerLoader {
 		if(systems == null)
 			return;
 		int systemsCounter = systems.getLength();
-		int systemsIndex = 0;
+		/*use this map for the inner associations*/
+		HashMap<SystemModel, Node> systemNodesMap = new HashMap<SystemModel,Node>();
 		for(int i=0; i<systemsCounter; i++){
 			Node node = systems.item(i);
 			if(node.getNodeType() != Node.ELEMENT_NODE)
@@ -162,26 +163,48 @@ public class LayerLoader {
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 			SystemModel system = new SystemModel(name, layer.getType());
 			system.setParenLayer(layer);
-			system.setXmlPosition(systemsIndex);
-			systemsIndex ++;
+			systemNodesMap.put(system, node);
 			
 			switch(layer.getType()){
 				case PIM:
 					break;
 				case PSM:
 					addPsmSystemTransformers(system,node);
-					addPsmSystemCrossRefinement(system,node);
 					break;
 				case ISM: 
 					addIsmSystemTransformers(system,node);
-					addIsmSystemCrossRefinement(system,node);
 				default:
 					break;
 			}
 			
 			layer.addSystem(system);
 		}
+		
+		/* do the inner refinement and cross*/
+		for(SystemModel sys : systemNodesMap.keySet()){
+			Node node = systemNodesMap.get(sys);
+			String name = node.getAttributes().getNamedItem("name").getNodeValue();
+			logger.debug(layer.getType()+" inner/cross ref :"+ name);
+			switch(layer.getType()){
+			case PIM:
+				break;
+			case PSM:
+				addPsmSystemInnerAssociation(sys, node);
+				addPsmSystemCrossRefinement(sys, node);
+				break;
+			case ISM:
+				addIsmSystemInnerAssociation(sys, node);
+				addIsmSystemCrossRefinement(sys, node);
+			default:
+				break;
+			}
+		}
+		
 	}
+	
+
+	
+	
 	
 
 	/**************************************************************
@@ -301,6 +324,11 @@ public class LayerLoader {
 		
 	}
 	
+	/**
+	 * Inner Links 
+	 * @param pimContainer
+	 * @param node
+	 */
 	private void addPimContainerInnerRefinement(DataContainerModel pimContainer, Node node){
 		//applies at PIM
 		NodeList children = node.getChildNodes();
@@ -484,20 +512,39 @@ public class LayerLoader {
 		}
 	}
 	
+	
+	/**
+	 * See metamodel: PSM system - systemassociation attribute
+	 * @param sys
+	 * @param node
+	 */
+	private void addPsmSystemInnerAssociation(SystemModel sys, Node node) {
+		Node sysAssociations = node.getAttributes().getNamedItem("systemassociation");
+		if(sysAssociations==null){
+			return;
+		}
+		String systemsData = sysAssociations.getNodeValue();
+		String[] systems = systemsData.split(" ");
+		for(int i =0; i<systems.length; i++){
+			String element = systems[i].trim();
+			element = element.replace("//@psms/@psmsystems.", "");
+			int position = Integer.parseInt(element);
+			SystemModel system = layer.getSystemAtPosition(position);
+			sys.addAssociation(system);
+		}
+		
+	}
+	
 	/**************************************************************
-	 * ISM level operations
+	 * ISM level
+	 * every element has the attributes defined in the doc/metamodel.png
 	 * */
-	
-	private void addIsmSystemCrossRefinement(SystemModel system, Node node) {
-		// There is no cross refmnt in the model for ISM
-	}
-	
-	private void addIsmTransformerCrossRefinement(ActionTransformerModel ismTransformer, Node node){
-		// There is no cross refmnt in the model for ISM
-		// see ./doc/metamodel.png
-		// rezolved at: addIsmTransformerInnerRefinement with the attribute ismRefmnt
-	}
-	
+			
+	/**
+	 * See doc/metamodel.png: ISM element transformer - attribute ismRefmnt
+	 * @param ismTransformer
+	 * @param node
+	 */
 	private void addIsmTransformerInnerRefinement(ActionTransformerModel ismTransformer, Node node){
 		Node ismTransformerRefinement = node.getAttributes().getNamedItem("ismRefmnt");
 		if(ismTransformerRefinement == null)
@@ -513,6 +560,24 @@ public class LayerLoader {
 		}
 	}
 	
+	/**
+	 * There is no cross refmnt in the model for ISM
+	 * see ./doc/metamodel.png
+	 * if needed can be added with addIsmTransformerInnerRefinement with the attribute ismRefmnt
+	 * @param ismTransformer
+	 * @param node
+	 */
+	private void addIsmTransformerCrossRefinement(ActionTransformerModel ismTransformer, Node node){
+		// There is no cross refmnt in the model for ISM
+		// see ./doc/metamodel.png
+		// if needed can be added with addIsmTransformerInnerRefinement with the attribute ismRefmnt
+	}
+	
+	/**
+	 * See doc/metamodel.png: ISM element transformer - attribute outputimplecontainer
+	 * @param transformer
+	 * @param node
+	 */
 	private void addIsmTransformerOutputContainers(ActionTransformerModel transformer, Node node) {
 		Node ismParamData = node.getAttributes().getNamedItem("outputimplecontainer");
 		if(ismParamData == null)
@@ -528,6 +593,11 @@ public class LayerLoader {
 		}
 	}
 
+	/**
+	 * See doc/metamodel.png: ISM element transformer - attribute inputimplecontainer
+	 * @param transformer
+	 * @param node
+	 */
 	private void addIsmTransformerInputContainers(ActionTransformerModel transformer, Node node) {
 		Node ismParamData = node.getAttributes().getNamedItem("inputimplecontainer");
 		if(ismParamData == null)
@@ -543,6 +613,11 @@ public class LayerLoader {
 		}
 	}
 	
+	/**
+	 * See doc/metamodel.png: ISM element implecontaiener - attribute implecontainerassociation
+	 * @param ismContainer
+	 * @param node
+	 */
 	private void addIsmContainerInnerRefinement(DataContainerModel ismContainer, Node node){
 		Node ismAssociation = node.getAttributes().getNamedItem("implecontainerassociation");
 		if(ismAssociation==null){
@@ -559,6 +634,20 @@ public class LayerLoader {
 		}
 	}
 
+	/**
+	 * See metamodel: element implecontainer - no cross association
+	 * @param container
+	 * @param node
+	 */
+	private void addIsmContainerCrossRefinement(DataContainerModel container, Node node) {
+		// ISM container - no cross layer refinement in the model
+	}
+	
+	/**
+	 * See doc/metamodel.png: ISM element implesystem - attribute implesystemtransformers
+	 * @param system
+	 * @param node
+	 */
 	private void addIsmSystemTransformers(SystemModel system, Node node) {
 		Node ismTransformers = node.getAttributes().getNamedItem("implesystemtransformers");
 		if(ismTransformers==null){
@@ -576,8 +665,35 @@ public class LayerLoader {
 		}
 	}
 	
-	private void addIsmContainerCrossRefinement(DataContainerModel container, Node node) {
-		// ISM container - no cross layer refinement in the model
+	/**
+	 * See doc/metamodel.png: ISM element implesystem - implesystemassociation attribute
+	 * @param sys
+	 * @param node
+	 */
+	private void addIsmSystemInnerAssociation(SystemModel sys, Node node) {
+		Node sysAssociations = node.getAttributes().getNamedItem("implesystemassociation");
+		if(sysAssociations==null){
+			return;
+		}
+		String systemsData = sysAssociations.getNodeValue();
+		String[] systems = systemsData.split(" ");
+		for(int i =0; i<systems.length; i++){
+			String element = systems[i].trim();
+			element = element.replace("//@isms/@ismsystems.", "");
+			int position = Integer.parseInt(element);
+			SystemModel system = layer.getSystemAtPosition(position);
+			sys.addAssociation(system);
+		}
+	}
+	
+	/**
+	 * See doc/metamodel.png: ISM element implesystem
+	 * There is no cross refmnt in the model for ISM system
+	 * @param system
+	 * @param node
+	 */
+	private void addIsmSystemCrossRefinement(SystemModel system, Node node) {
+		// There is no cross refmnt in the model for ISM
 	}
 	
 }

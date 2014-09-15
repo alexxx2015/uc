@@ -40,7 +40,9 @@ public class WordnetEngine {
 	 */
 	public float getDistance(String conceptA, String conceptB){
 		String pos = wordnet.getBestPos(conceptA); 
-		float distance = wordnet.getDistance(conceptA, conceptB, pos);
+		float distance = 1.0f;
+		if(pos != null)
+			distance = wordnet.getDistance(conceptA, conceptB, pos);
 		String msg ="distance: "+ conceptA +"-"+ conceptB +": "+ distance;
 		logger.info(msg);
 		if(distance > MAX_ALLOWED_DISTANCE)
@@ -59,6 +61,8 @@ public class WordnetEngine {
 	public float getBestDistance(String conceptA, ArrayList<String> concepts){
 		String pos = wordnet.getBestPos(conceptA); 
 		float maxDistance = MAX_ALLOWED_DISTANCE;
+		if(pos==null)
+			return 1.0f;
 		for(String conceptB : concepts){
 			float distance = wordnet.getDistance(conceptA, conceptB, pos);
 			String msg ="similarity: "+ conceptA +"-"+ conceptB +": "+ distance;

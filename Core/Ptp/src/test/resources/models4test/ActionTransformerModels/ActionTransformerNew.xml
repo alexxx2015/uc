@@ -34,8 +34,8 @@
 		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.4" name="unixDir"/>
 
 		<ismtransformers name="copy_cmd" seq="0" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
-		<ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.4"/>
-		<ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.2"/>
+		<ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.4 //@isms/@ismcontainers.5"/>		
+		<ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.2 //@isms/@ismcontainers.1"/>		
 		<ismtransformers name="write" seq="3" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.4"/>
 		<ismtransformers name="close" seq="4" inputimplecontainer="//@isms/@ismcontainers.4"/>
 		<ismtransformers name="getImage" seq="0" inputimplecontainer="//@isms/@ismcontainers.3" outputimplecontainer="//@isms/@ismcontainers.1"/>

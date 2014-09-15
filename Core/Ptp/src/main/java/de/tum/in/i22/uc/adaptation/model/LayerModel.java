@@ -37,14 +37,31 @@ public class LayerModel {
 		return null;
 	}
 	
+	/**
+	 * Returns a list with all the Data or Container elements defined at this layer.
+	 * @return
+	 */
 	public ArrayList<DataContainerModel> getDataContainers(){
 		return this.dataContainers;
+	}
+	
+	/**
+	 * Returns a list with all the Action or Transformer elements
+	 * defined at this layer regardless of the system.
+	 * @return
+	 */
+	public ArrayList<ActionTransformerModel> getActionTransformers() {
+		return this.actionTransformers;
 	}
 	
 	public LayerModel getRefinementLayer(){
 		return this.refinedAs;
 	}
 	
+	/**
+	 * Set the name of the layer.
+	 * @param name
+	 */
 	public void setName(String name){
 		this.name = name;
 	}
@@ -57,10 +74,18 @@ public class LayerModel {
 		return this.type;
 	}
 	
+	/**
+	 * Set the refinement layer of the current layer.
+	 * @param refinedAs
+	 */
 	public void setRefinedAs(LayerModel refinedAs){
 		this.refinedAs = refinedAs;
 	}
 	
+	/**
+	 * Add a Data or Container element to the list of elements defined at this level.
+	 * @param dataContainer
+	 */
 	public void addDataContainer(DataContainerModel dataContainer){
 		if(dataContainer == null){
 			return;
@@ -70,14 +95,50 @@ public class LayerModel {
 		this.dataContainers.add(dataContainer);
 	}
 	
+	/**
+	 * Add an Action or a Transformer element to the list of elements defined at this level.
+	 * @param actionTransformer
+	 */
 	public void addActionTransformer(ActionTransformerModel actionTransformer){
+		if(actionTransformer == null){
+			return;
+		}
+		int index = this.actionTransformers.size();
+		actionTransformer.setXmlPosition(index);
 		this.actionTransformers.add(actionTransformer);
 	}
 	
+	/**
+	 * Add a System element defined at this layer.
+	 * System elements cannot be added at the PIM layer.
+	 * @param system
+	 */
 	public void addSystem(SystemModel system){
+		if(system == null){
+			return;
+		}
+		if(this.type.equals(LayerType.PIM))
+			return;
+		int index = this.systems.size();
+		system.setXmlPosition(index);
 		this.systems.add(system);
 	}
 	
+	/**
+	 * Returns all the systems defined at this level.
+	 * @return
+	 */
+	public ArrayList<SystemModel> getSystems(){
+		return this.systems;
+	}
+	
+	/**
+	 * Returns an element at the position defined in the domain model.
+	 * The position in the list is equivalent with the position 
+	 * used by XPATH to access an element in the XML file.
+	 * @param position
+	 * @return
+	 */
 	public DataContainerModel getContainerAtPosition(int position){
 		if(position >= this.dataContainers.size())
 			return null;
@@ -85,6 +146,13 @@ public class LayerModel {
 		return result;
 	}
 	
+	/**
+	 * Returns an element at the position defined in the domain model.
+	 * The position in the list is equivalent with the position 
+	 * used by XPATH to access an element in the XML file.
+	 * @param position
+	 * @return
+	 */
 	public ActionTransformerModel getTransformerAtPosition(int position){
 		if(position >= this.actionTransformers.size())
 			return null;
@@ -92,6 +160,13 @@ public class LayerModel {
 		return result;
 	}
 	
+	/**
+	 * Returns an element at the position defined in the domain model.
+	 * The position in the list is equivalent with the position 
+	 * used by XPATH to access an element in the XML file.
+	 * @param position
+	 * @return
+	 */
 	public SystemModel getSystemAtPosition(int position){
 		if(position >= this.systems.size())
 			return null;
@@ -113,8 +188,6 @@ public class LayerModel {
 			for(ActionTransformerModel ac : this.actionTransformers){
 				actionsString += "\n" + ac.toString();
 			}
-		
-		
 		
 		String systemString = "";
 		for(SystemModel system : this.systems){
@@ -168,4 +241,13 @@ public class LayerModel {
 		for(DataContainerModel dc : dataContainers)
 			dc.trimRefinements();
 	}
+
+	
+	/**
+	 * 
+	 */
+	public void filterActionTransformerSequences(){
+		//TODO: add filtering. remove redundant sequences.
+	}
+	
 }
