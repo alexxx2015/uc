@@ -24,7 +24,7 @@ public class Config
 	configFile = new java.util.Properties();
 	String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
 	String usrDir = System.getProperty("user.dir");
-	if(usrDir.contains("PolicyTemplateEditor"))
+	if(usrDir.endsWith("PolicyTemplateEditor"))
 		defaultSetting = usrDir;
 	try {	
 		String configPath = defaultSetting+File.separator+"src"

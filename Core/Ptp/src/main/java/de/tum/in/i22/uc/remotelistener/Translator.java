@@ -10,9 +10,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tum.in.i22.uc.policy.translation.TranslationController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.policy.translation.Filter.FilterStatus;
-import de.tum.in.i22.uc.utilities.PtpLogger;
+import de.tum.in.i22.uc.policy.translation.TranslationController;
 
 /**
  * @author Cipri
@@ -21,13 +23,12 @@ import de.tum.in.i22.uc.utilities.PtpLogger;
 public class Translator implements Runnable {
 
 	private Socket clientSocket ;
-	private PtpLogger logger ;
+	private static final Logger logger = LoggerFactory.getLogger(Translator.class);
 	private OutputStream output;
 	private InputStream input;
 	
 	public Translator(Socket client) {
 		this.clientSocket = client;
-		logger = PtpLogger.translationLoggerInstance();
 	}
 
 	@Override
@@ -37,12 +38,12 @@ public class Translator implements Runnable {
 			input = clientSocket.getInputStream();
 		} catch (IOException e){
 			e.printStackTrace();
-			logger.errorLog("exception", e);
+			logger.error("exception", e);
 			try {
 				clientSocket.close();
 			} catch (IOException e2) {
 				e2.printStackTrace();
-				logger.errorLog("exception", e2);
+				logger.error("exception", e2);
 			}
 			return;
 		}
@@ -59,7 +60,7 @@ public class Translator implements Runnable {
 				Message msg = new Message(data);
 				String logMsg = "received "+ (new Date()) +" :" + msg.toString();
 				System.out.println(logMsg);
-				logger.infoLog(logMsg, null);
+				logger.info(logMsg);
 				
 				String header = msg.header();
 				if(header.equals(TranslationProtocol.POLICY_IN)){				
@@ -77,18 +78,18 @@ public class Translator implements Runnable {
 				String msgText = msg.toString();
 				logMsg = "sent: " + msgText;
 				send(msgText.getBytes());
-				logger.infoLog(logMsg, null);
+				logger.info(logMsg);
 				System.out.println(logMsg);		
 										
 			} catch (IOException e) {
 				e.printStackTrace();
-				logger.errorLog("exception", e);
+				logger.error("exception", e);
 				
 				try {
 					clientSocket.close();
 				} catch (IOException e2) {
 					e2.printStackTrace();
-					logger.errorLog("exception", e2);
+					logger.error("exception", e2);
 				}
 				break;			
 			}
@@ -103,7 +104,7 @@ public class Translator implements Runnable {
 		String[] params = msg.param().split("<#>");
 		
 		String message = "Start translating policy: " + inputPolicy;
-		logger.infoLog(message, null);
+		logger.info(message);
 		
 		String outputPolicy = params[0]+"_"+params[1]+"_"+"policytranslated.xml";
 		Map<String,String> params2 = new HashMap<String,String>();
@@ -121,17 +122,17 @@ public class Translator implements Runnable {
 		} catch (Exception ex){
 			status = FilterStatus.FAILURE;
 			System.out.println(ex.getLocalizedMessage());
-			logger.errorLog("translation exception", ex);
+			logger.error("translation exception", ex);
 		}		
 		
 		//System.out.println(outputPolicy);
 		if(status == FilterStatus.SUCCESS){			
-			logger.infoLog(message, null);
+			logger.info(message);
 			msg = new Message(TranslationProtocol.RESULT_OK, msg.param(), outputPolicy);	
 		}
 		else{
 			message = "Translation failed: " + status.name();
-			logger.errorLog(message, null);
+			logger.error(message);
 			msg = new Message(TranslationProtocol.RESULT_ERROR, msg.param(), "NULL");
 		}
 		

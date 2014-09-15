@@ -8,9 +8,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,12 +39,18 @@ import org.xml.sax.SAXException;
 
 
 
+
+
 //import de.tum.in.i22.uc.blocks.controller.Config;
 import de.tum.in.i22.uc.policy.translation.ecacreation.SubformulaEvent;
 
 
 public class PublicMethods {
 
+	public static String readFile(String path) throws IOException {
+		return readFile(path, StandardCharsets.UTF_8);
+	}
+	
 	public static String readFile(String path, Charset encoding) throws IOException {
 	  byte[] encoded = Files.readAllBytes(Paths.get(path));
 	  return encoding.decode(ByteBuffer.wrap(encoded)).toString();
@@ -51,6 +59,29 @@ public class PublicMethods {
 	public static void writeFile(String path, String data) throws IOException {
 		String msg = data;
 		Files.write(Paths.get(path), msg.getBytes());
+	}
+	
+	/**
+	 * timestamp format YYYYMMDD-HHMMSS
+	 * @return
+	 */
+	public static String timestamp(){
+		//generate a timestamp
+		Calendar cal = Calendar.getInstance();
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int hour = cal.get(Calendar.HOUR_OF_DAY) ;
+		int min = cal.get(Calendar.MINUTE) ;
+		int sec = cal.get(Calendar.SECOND);
+		String timestamp = year
+				+""+(month<10?"0"+month:month)
+				+""+(day<10?"0"+day:day)
+				+"-" 
+				+""+(day<10?"0"+hour:hour)
+				+""+(day<10?"0"+min:min)
+				+""+(day<10?"0"+sec:sec);
+		return timestamp;
 	}
 	
 	/**
