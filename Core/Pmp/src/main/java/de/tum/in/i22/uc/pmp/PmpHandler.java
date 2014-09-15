@@ -342,17 +342,17 @@ public class PmpHandler extends PmpProcessor {
 			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
 
 			if (Settings.getInstance().getDistributionEnabled()) {
-				/*
-				 * As registering the policy for remote
-				 * purposes might take a while, we start
-				 * the registration process in a new thread and go on.
-				 */
-				new Thread() {
-					@Override
-					public void run() {
+//				/*
+//				 * As registering the policy for remote
+//				 * purposes might take a while, we start
+//				 * the registration process in a new thread and go on.
+//				 */
+//				new Thread() {
+//					@Override
+//					public void run() {
 						_distributionManager.registerPolicy(convertedXmlPolicy);
-					}
-				}.start();
+//					}
+//				}.start();
 			}
 
 			// finally, deploy at the PDP

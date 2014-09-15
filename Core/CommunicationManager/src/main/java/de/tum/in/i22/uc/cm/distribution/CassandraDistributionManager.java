@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.cm.distribution;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -9,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +92,17 @@ class CassandraDistributionManager implements IDistributionManager {
 	public CassandraDistributionManager() {
 		QueryOptions options = new QueryOptions().setConsistencyLevel(Settings.getInstance().getDistributionConsistencyLevel());
 
-		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
+		InetAddress addr = null;
+		try {
+			addr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			_logger.error("Unable to retrieve hostname: {}.", e.getMessage());
+			throw new RuntimeException(e);
+		}
+
+
+//		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
+		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint(addr.getHostAddress()).build();
 		_defaultSession = _cluster.connect();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
@@ -237,24 +252,45 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	private void createPolicyKeyspace(XmlPolicy policy) {
+
+		String keyspaceName = policy.getName().toLowerCase();
+
 		try {
-			_defaultSession.execute("CREATE KEYSPACE " + policy.getName()
+			_defaultSession.execute("CREATE KEYSPACE " + keyspaceName
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
 		catch (AlreadyExistsException e) {
 			return;
 		}
 
-		Session newSession = _cluster.connect(policy.getName());
+		final Session newSession = _cluster.connect(keyspaceName);
+
+		ExecutorService es = Executors.newCachedThreadPool();
 
 		// Create all tables
-		for (String tbl : _tables) {
-			try {
-				newSession.execute(tbl);
-			} catch (AlreadyExistsException e) {}
+		for (final String tbl : _tables) {
+				es.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							newSession.execute(tbl);
+						} catch (AlreadyExistsException e) {}
+					}
+				});
+		}
+		try {
+			es.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
-		newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policy) VALUES ('" + policy.getXml() + "');");
+		try {
+			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policy) VALUES ('" + policy.getXml() + "');");
+		}
+		catch (Exception e) {
+			_logger.error("Error inserting policy {}: {}.", policy.getName(), e.getMessage());
+		}
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -271,6 +307,8 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * 		i.e. if the provided location was added or removed.
 	 */
 	private boolean adjustPolicyKeyspace(String name, IPLocation location, boolean add) {
+
+		name = name.toLowerCase();
 
 		// (1) We retrieve the current information about the keyspace
 		ResultSet rows = _defaultSession.execute("SELECT strategy_options FROM system.schema_keyspaces "

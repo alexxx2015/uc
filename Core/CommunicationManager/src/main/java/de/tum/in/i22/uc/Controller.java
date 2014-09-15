@@ -3,6 +3,7 @@ package de.tum.in.i22.uc;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,12 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
+
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -98,14 +102,11 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer
-				.started())
-				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer
-				.started())
-				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer
-				.started())
-				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer
-				.started());
+		System.out.println("Calling isStarted: " + _pdpServer + "," + _pipServer+ "," +  _pmpServer+ "," +  _anyServer+ "," +  _pdpServer.started() + "," + _pipServer.started() + "," +  _pmpServer.started() + "," +  _anyServer.started());
+		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer.started())
+				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
+				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())
+				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started());
 	}
 
 	/**
@@ -113,7 +114,20 @@ public class Controller implements IRequestHandler  {
 	 */
 	private void deployInitialPolicies() {
 		for (String uri : Settings.getInstance().getPmpInitialPolicies()) {
-			IStatus status = deployPolicyURIPmp(uri);
+			IStatus status;
+
+			/*
+			 * Just calling deployPolicyURIPmp(uri)
+			 * is _not_ OK, since this might be a remote
+			 * method invocation and the URI would be resolved remotely.
+			 * Instead, read the file locally and deploy as follows: -FK-
+			 */
+			try {
+				status = deployPolicyRawXMLPmp(Files.toString(new File(uri), Charset.defaultCharset()));
+			} catch (Exception e) {
+				status = new StatusBasic(EStatus.ERROR, e.getMessage());
+			}
+
 			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully." : "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
 		}
 	}

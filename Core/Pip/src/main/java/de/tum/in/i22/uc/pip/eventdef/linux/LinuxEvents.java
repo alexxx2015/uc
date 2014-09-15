@@ -19,7 +19,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
@@ -93,11 +92,15 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 
 		_informationFlowModel.removeName(name);
 
-		if (cont instanceof SocketContainer) {
-			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
-				shutdownSocket((SocketContainer) cont, Shut.RDWR);
-			}
-		}
+		/*
+		 * Don't do this as of now: The container might have been shared with
+		 * child processes. But: we need to do some cleanup at some point. To be fixed.
+		 */
+//		if (cont instanceof SocketContainer) {
+//			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
+//				shutdownSocket((SocketContainer) cont, Shut.RDWR);
+//			}
+//		}
 	}
 
 	void shutdownSocket(SocketContainer cont, Shut how) {

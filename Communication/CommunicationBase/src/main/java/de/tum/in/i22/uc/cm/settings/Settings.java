@@ -19,7 +19,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.distribution.Location.ELocation;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
 import com.datastax.driver.core.ConsistencyLevel;
@@ -46,6 +45,10 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 
 	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
+
+	public static final String PROP_NAME_pdpListenerEnabled = "pdpListenerEnabled";
+	public static final String PROP_NAME_pmpListenerEnabled = "pmpListenerEnabled";
+	public static final String PROP_NAME_pipListenerEnabled = "pipListenerEnabled";
 	public static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
 
 	public static final String PROP_NAME_pdpLocation = "pdpLocation";
@@ -108,15 +111,15 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_ptpProjectLocation = "ptpProjectLocation";
 	public static final String PROP_NAME_ptEditorProjectLocation = "ptEditorProjectLocation";
-	
+
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
 	public static final String PROP_NAME_distributionConsistencyLevel = "distributionConsistencyLevel";
 
-	
-	
+
+
 	private Settings() {
 		_settings = new HashMap<>();
 
@@ -170,6 +173,10 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_anyListenerPort, 21004);
 
 		loadSetting(PROP_NAME_pxpListenerPort, 30003);
+
+		loadSetting(PROP_NAME_pdpListenerEnabled, true);
+		loadSetting(PROP_NAME_pmpListenerEnabled, true);
+		loadSetting(PROP_NAME_pipListenerEnabled, true);
 		loadSetting(PROP_NAME_anyListenerEnabled, true);
 
 		loadSetting(PROP_NAME_pdpLocation, LocalLocation.getInstance());
@@ -244,7 +251,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
 		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
-		
+
 		loadSetting(PROP_NAME_ptpProjectLocation, ".."+File.separator+"Ptp");
 		loadSetting(PROP_NAME_ptEditorProjectLocation, ".."+File.separator+"Gui"+File.separator+"PolicyTemplateEditor");
 	}
@@ -386,18 +393,15 @@ public class Settings extends SettingsLoader {
 	}
 
 	public boolean isPmpListenerEnabled() {
-		Location l = getValue(PROP_NAME_pmpLocation);
-		return l == null ? false : l.getLocation() == ELocation.LOCAL;
+		return getValue(PROP_NAME_pmpListenerEnabled);
 	}
 
 	public boolean isPipListenerEnabled() {
-		Location l = getValue(PROP_NAME_pipLocation);
-		return l == null ? false : l.getLocation() == ELocation.LOCAL;
+		return getValue(PROP_NAME_pipListenerEnabled);
 	}
 
 	public boolean isPdpListenerEnabled() {
-		Location l = getValue(PROP_NAME_pdpLocation);
-		return l == null ? false : l.getLocation() == ELocation.LOCAL;
+		return getValue(PROP_NAME_pdpListenerEnabled);
 	}
 
 	public boolean isAnyListenerEnabled() {
@@ -584,11 +588,11 @@ public class Settings extends SettingsLoader {
 	public String getPmpJaxbContext() {
 		return getValue(PROP_NAME_pmpJaxbContext);
 	}
-	
+
 	public String getPtpProjectLocation(){
 		return getValue(PROP_NAME_ptpProjectLocation);
 	}
-	
+
 	public String getPtEditorProjectLocation(){
 		return getValue(PROP_NAME_ptEditorProjectLocation);
 	}
