@@ -40,12 +40,6 @@ public final class InformationFlowModelManager implements
 		_simulating = false;
 		_basicIfModel = new BasicInformationFlowModel();
 
-		DummyInformationFlowModel dummy = new DummyInformationFlowModel(null);
-
-		for (EInformationFlowModel eifm : EInformationFlowModel.values()) {
-			_ifModelExtensions.put(eifm, dummy);
-		}
-
 		for (EInformationFlowModel eifm : Settings.getInstance()
 				.getEnabledInformationFlowModels()) {
 			switch (eifm) {
@@ -351,11 +345,6 @@ public final class InformationFlowModelManager implements
 	@Override
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
 		return _basicIfModel.getAllNames(cont, type);
-	}
-
-	@Override
-	public List<IName> getAllNamingsFrom(IContainer pid) {
-		return _basicIfModel.getAllNamingsFrom(pid);
 	}
 
 	@Override

@@ -380,11 +380,6 @@ public interface IBasicInformationFlowModel {
 	public abstract <T extends IName> List<T> getAllNames(IContainer cont,
 			Class<T> type);
 
-	/**
-	 * Returns all representations that correspond to the process with pid.
-	 *
-	 */
-	public abstract List<IName> getAllNamingsFrom(IContainer pid);
 
 	public abstract String niceString();
 

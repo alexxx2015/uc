@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -238,12 +237,6 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	@Override
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
 		_logger.error("Method getAllNames() not implemented.");
-		return null;
-	}
-
-	@Override
-	public List<IName> getAllNamingsFrom(IContainer pid) {
-		_logger.error("Method getAllNamingsFrom() not implemented.");
 		return null;
 	}
 

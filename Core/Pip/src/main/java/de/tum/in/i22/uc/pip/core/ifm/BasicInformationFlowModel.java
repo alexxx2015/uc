@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -72,7 +71,7 @@ public final class BasicInformationFlowModel implements
 
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
-	 * 
+	 *
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
 	void push() {
@@ -95,7 +94,7 @@ public final class BasicInformationFlowModel implements
 
 	/**
 	 * Simulation step: pop. Restore a previously pushed IF state, if any.
-	 * 
+	 *
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
 	void pop() {
@@ -112,7 +111,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IData)
@@ -128,7 +127,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -160,7 +159,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -175,7 +174,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -189,7 +188,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -214,7 +213,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IName,
@@ -232,7 +231,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAlias(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -257,7 +256,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesFrom
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -275,7 +274,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
 	 * getAliasTransitiveReflexiveClosure
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -294,7 +293,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesFrom
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -306,7 +305,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesTo
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -335,7 +334,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesTo
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -358,7 +357,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
 	 * getAliasTransitiveClosure
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -382,7 +381,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IData,
@@ -399,7 +398,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeData(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IData,
@@ -422,7 +421,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -439,7 +438,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName)
@@ -458,7 +457,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IName,
@@ -476,7 +475,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -504,7 +503,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively
 	 * (java.util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -521,7 +520,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively
 	 * (java.util.Collection,
@@ -542,7 +541,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IData)
@@ -567,9 +566,9 @@ public final class BasicInformationFlowModel implements
 	/**
 	 * Returns all containers of the specified type in which the specified data
 	 * is in.
-	 * 
+	 *
 	 * ~ Double checked, 2014/04/11. FK.
-	 * 
+	 *
 	 * @param data
 	 *            the data whose containers are returned.
 	 * @return The set of containers containing the specified data.
@@ -577,7 +576,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IData, java.lang.Class)
@@ -605,7 +604,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(java
 	 * .util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -629,7 +628,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -659,7 +658,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -672,7 +671,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -692,7 +691,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName, boolean)
@@ -714,7 +713,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -727,7 +726,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -742,7 +741,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllContainers
 	 * ()
@@ -755,7 +754,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames()
 	 */
@@ -766,7 +765,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * java.lang.Class)
@@ -786,7 +785,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -806,7 +805,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IName, java.lang.Class)
@@ -826,7 +825,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, java.lang.Class)
@@ -846,31 +845,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNamingsFrom
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
-	@Override
-	/*
-	 * TODO This method seems odd. Moreover, it is layer-specific and should
-	 * thus not go into this class. Fix, delete, move, ... -FK-
-	 */
-	@Deprecated
-	public List<IName> getAllNamingsFrom(IContainer pid) {
-		List<IName> result = new LinkedList<>();
-
-		for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-			if (entry.getKey().getName().equals(pid))
-				result.add(entry.getKey());
-		}
-
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#niceString()
 	 */
@@ -1037,7 +1012,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#toString()
 	 */
 	@Override
@@ -1064,7 +1039,7 @@ public final class BasicInformationFlowModel implements
 				union.addAll(set);
 			}
 			for (IData d : union){
-				if (d.getId().equals(id)) return d; 
+				if (d.getId().equals(id)) return d;
 			}
 		}
 		return null;
