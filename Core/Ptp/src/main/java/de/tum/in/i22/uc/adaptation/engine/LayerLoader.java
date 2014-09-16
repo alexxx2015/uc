@@ -15,7 +15,8 @@ import de.tum.in.i22.uc.adaptation.model.SystemModel;
 
 /**
  * @author Cipri
- *
+ * This class creates the domain model objects
+ * by extracting the data specified in the xml domain model.
  */
 public class LayerLoader {
 	
@@ -132,7 +133,7 @@ public class LayerLoader {
 			logger.debug(layer.getType()+" inner/cross ref :"+ name);
 			switch(layer.getType()){
 			case PIM:
-				addPimActionInnerRefinement(at, node);
+				addPimActionInnerAssociation(at, node);
 				addPimActionCrossRefinement(at, node);
 				break;
 			case PSM:
@@ -149,6 +150,11 @@ public class LayerLoader {
 		
 	}
 	
+	/**
+	 * Process the list of PSM or ISM systems.
+	 * Add them to the corresponding layer.
+	 * @param systems
+	 */
 	public void addSystems(NodeList systems) {
 		if(systems == null)
 			return;
@@ -161,6 +167,7 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
+			logger.debug(layer.getType()+" Loading system: "+ name);
 			SystemModel system = new SystemModel(name, layer.getType());
 			system.setParenLayer(layer);
 			systemNodesMap.put(system, node);
@@ -201,10 +208,6 @@ public class LayerLoader {
 		}
 		
 	}
-	
-
-	
-	
 	
 
 	/**************************************************************
@@ -316,12 +319,20 @@ public class LayerLoader {
 		}
 	}
 	
-	private void addPimActionInnerRefinement(ActionTransformerModel pimAction, Node node){
+	private void addPimActionInnerAssociation(ActionTransformerModel pimAction, Node node){
 		Node pimActionAssociation = node.getAttributes().getNamedItem("actionassociation");
 		if(pimActionAssociation == null)
 			return;
 		//TODO: I don't know how the association for the actions looks like. Is it a child node or an attribute?
-		
+		String associationData = pimActionAssociation.getNodeValue();
+		String[] associations = associationData.split(" ");
+		for(int i =0; i<associations.length; i++){
+			String element = associations[i].trim();
+			element = element.replace("//@pims/@pimactions.", "");
+			int position = Integer.parseInt(element);
+			ActionTransformerModel association = layer.getTransformerAtPosition(position);
+			pimAction.addAssociationLink(association);
+		}
 	}
 	
 	/**
@@ -370,91 +381,35 @@ public class LayerLoader {
 	}
 	
 	/**************************************************************
-	 * PSM level operations
+	 * PSM level 
 	 * */
 	
-	private void addPsmTransformerOutputContainers(ActionTransformerModel transformer, Node node) {
-		Node psmParamData = node.getAttributes().getNamedItem("outputcontainer");
-		if(psmParamData == null)
+	/**
+	 * See doc/metamodel.png: PSM Container element - containerassociation attribute
+	 * @param psmContainer
+	 * @param node
+	 */
+	private void addPsmContainerInnerRefinement(DataContainerModel psmContainer, Node node){
+		//applies at PSM
+		Node psmAssociation = node.getAttributes().getNamedItem("containersassociation");
+		if(psmAssociation == null)
 			return;
-		String psmParamDataValues = psmParamData.getNodeValue();
-		String[] params = psmParamDataValues.split(" ");
-		for(int i =0; i<params.length; i++){
-			String element = params[i].trim();
+		String associationData = psmAssociation.getNodeValue();
+		String[] associations = associationData.split(" ");
+		for(int i =0; i<associations.length; i++){
+			String element = associations[i].trim();
 			element = element.replace("//@psms/@psmcontainers.", "");
 			int position = Integer.parseInt(element);
-			DataContainerModel pData = layer.getContainerAtPosition(position);
-			transformer.addOutputParam(pData);
-		}
-	}
-
-	private void addPsmTransformerInputContainers(ActionTransformerModel transformer, Node node) {
-		Node psmParamData = node.getAttributes().getNamedItem("inputcontainer");
-		if(psmParamData == null)
-			return;
-		String psmParamDataValues = psmParamData.getNodeValue();
-		String[] params = psmParamDataValues.split(" ");
-		for(int i =0; i<params.length; i++){
-			String element = params[i].trim();
-			element = element.replace("//@psms/@psmcontainers.", "");
-			int position = Integer.parseInt(element);
-			DataContainerModel pData = layer.getContainerAtPosition(position);
-			transformer.addInputParam(pData);
+			DataContainerModel association = layer.getContainerAtPosition(position);
+			psmContainer.addAssociation(association);
 		}
 	}
 	
-	private void addPsmSystemCrossRefinement(SystemModel system, Node node) {
-		Node psmSystemRefinement = node.getAttributes().getNamedItem("sysimplementedas");
-		if(psmSystemRefinement == null)
-			return;
-		String implementedAsData = psmSystemRefinement.getNodeValue();
-		String[] refinements = implementedAsData.split(" ");
-		for(int i =0; i<refinements.length; i++){
-			String element = refinements[i].trim();
-			element = element.replace("//@isms/@ismsystems.", "");
-			int position = Integer.parseInt(element);
-			SystemModel refinement = layer.getRefinementLayer().getSystemAtPosition(position);
-			system.addRefinement(refinement);
-		}
-	}
-	
-	private void addPsmTransformerCrossRefinement(ActionTransformerModel psmTransformer, Node node){
-		Node psmTransformerRefinement = node.getAttributes().getNamedItem("crossPsmRefmnt");
-		if(psmTransformerRefinement == null)
-			return;
-		String implementedAsData = psmTransformerRefinement.getNodeValue();
-		String[] refinements = implementedAsData.split(" ");
-		for(int i =0; i<refinements.length; i++){
-			String element = refinements[i].trim();
-			if(element.contains("//@psms/@psmtransformers.")){
-				element = element.replace("//@psms/@psmtransformers.", "");
-				int position = Integer.parseInt(element);
-				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-				psmTransformer.addRefinement(refinement);
-			} else if(element.contains("//@isms/@ismtransformers.")){
-				element = element.replace("//@isms/@ismtransformers.", "");
-				int position = Integer.parseInt(element);
-				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
-				psmTransformer.addRefinement(refinement);
-			}
-		}
-	}
-	
-	private void addPsmTransformerInnerRefinement(ActionTransformerModel psmTransformer, Node node){
-		Node psmTransformerRefinement = node.getAttributes().getNamedItem("psmRefmnt");
-		if(psmTransformerRefinement == null)
-			return;
-		String implementedAsData = psmTransformerRefinement.getNodeValue();
-		String[] refinements = implementedAsData.split(" ");
-		for(int i =0; i<refinements.length; i++){
-			String element = refinements[i].trim();
-			element = element.replace("//@psms/@psmtransformers.", "");
-			int position = Integer.parseInt(element);
-			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-			psmTransformer.addRefinement(refinement);
-		}
-	}
-	
+	/**
+	 * See doc/metamodel.png: PSM Container element - contimplementedas attribute
+	 * @param psmContainer
+	 * @param node
+	 */
 	private void addPsmContainerCrossRefinement(DataContainerModel psmContainer, Node node){
 		//applies at PSM
 		Node psmImplementedAs = node.getAttributes().getNamedItem("contimplementedas");
@@ -479,22 +434,126 @@ public class LayerLoader {
 		}
 	}
 	
-	private void addPsmContainerInnerRefinement(DataContainerModel psmContainer, Node node){
-		//applies at PSM
-		Node psmAssociation = node.getAttributes().getNamedItem("containersassociation");
-		if(psmAssociation == null)
+	/**
+	 * See doc/metamodel.png: PSM Transformer element - outputcontainer attribute 
+	 * @param transformer
+	 * @param node
+	 */
+	private void addPsmTransformerOutputContainers(ActionTransformerModel transformer, Node node) {
+		Node psmParamData = node.getAttributes().getNamedItem("outputcontainer");
+		if(psmParamData == null)
 			return;
-		String associationData = psmAssociation.getNodeValue();
-		String[] associations = associationData.split(" ");
-		for(int i =0; i<associations.length; i++){
-			String element = associations[i].trim();
+		String psmParamDataValues = psmParamData.getNodeValue();
+		String[] params = psmParamDataValues.split(" ");
+		for(int i =0; i<params.length; i++){
+			String element = params[i].trim();
 			element = element.replace("//@psms/@psmcontainers.", "");
 			int position = Integer.parseInt(element);
-			DataContainerModel association = layer.getContainerAtPosition(position);
-			psmContainer.addAssociation(association);
+			DataContainerModel pData = layer.getContainerAtPosition(position);
+			transformer.addOutputParam(pData);
+		}
+	}
+
+	/**
+	 * See doc/metamodel.png: PSM Transformer element - inputcontainer attribute 
+	 * @param transformer
+	 * @param node
+	 */
+	private void addPsmTransformerInputContainers(ActionTransformerModel transformer, Node node) {
+		Node psmParamData = node.getAttributes().getNamedItem("inputcontainer");
+		if(psmParamData == null)
+			return;
+		String psmParamDataValues = psmParamData.getNodeValue();
+		String[] params = psmParamDataValues.split(" ");
+		for(int i =0; i<params.length; i++){
+			String element = params[i].trim();
+			element = element.replace("//@psms/@psmcontainers.", "");
+			int position = Integer.parseInt(element);
+			DataContainerModel pData = layer.getContainerAtPosition(position);
+			transformer.addInputParam(pData);
 		}
 	}
 	
+	/**
+	 * See doc/metamodel.png: PSM Transformer element - crossPsmRefmnt attribute 
+	 * @param psmTransformer
+	 * @param node
+	 */
+	private void addPsmTransformerCrossRefinement(ActionTransformerModel psmTransformer, Node node){
+		Node psmTransformerRefinement = node.getAttributes().getNamedItem("crossPsmRefmnt");
+		if(psmTransformerRefinement == null)
+			return;
+		String implementedAsData = psmTransformerRefinement.getNodeValue();
+		String[] refinements = implementedAsData.split(" ");
+		for(int i =0; i<refinements.length; i++){
+			String element = refinements[i].trim();
+			if(element.contains("//@psms/@psmtransformers.")){
+				element = element.replace("//@psms/@psmtransformers.", "");
+				int position = Integer.parseInt(element);
+				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
+				psmTransformer.addRefinement(refinement);
+			} else if(element.contains("//@isms/@ismtransformers.")){
+				element = element.replace("//@isms/@ismtransformers.", "");
+				int position = Integer.parseInt(element);
+				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
+				psmTransformer.addRefinement(refinement);
+			}
+		}
+	}
+	
+	/**
+	 * See doc/metamodel.png: PSM Transformer element - psmRefmnt attribute 
+	 * @param psmTransformer
+	 * @param node
+	 */
+	private void addPsmTransformerInnerRefinement(ActionTransformerModel psmTransformer, Node node){
+		Node psmTransformerRefinement = node.getAttributes().getNamedItem("psmRefmnt");
+		if(psmTransformerRefinement == null)
+			return;
+		String implementedAsData = psmTransformerRefinement.getNodeValue();
+		String[] refinements = implementedAsData.split(" ");
+		for(int i =0; i<refinements.length; i++){
+			String element = refinements[i].trim();
+			element = element.replace("//@psms/@psmtransformers.", "");
+			int position = Integer.parseInt(element);
+			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
+			psmTransformer.addRefinement(refinement);
+		}
+	}
+	
+	/**
+	 * See doc/metamodel.png: PSM system element - sysimplementedas attribute
+	 * @param system
+	 * @param node
+	 */
+	private void addPsmSystemCrossRefinement(SystemModel system, Node node) {
+		Node psmSystemRefinement = node.getAttributes().getNamedItem("sysimplementedas");
+		if(psmSystemRefinement == null)
+			return;
+		String implementedAsData = psmSystemRefinement.getNodeValue();
+		String[] refinements = implementedAsData.split(" ");
+		for(int i =0; i<refinements.length; i++){
+			String element = refinements[i].trim();
+			if(element.contains("//@isms/@ismsystems.")){
+				element = element.replace("//@isms/@ismsystems.", "");
+				int position = Integer.parseInt(element);
+				SystemModel refinement = layer.getRefinementLayer().getSystemAtPosition(position);
+				system.addRefinement(refinement);
+			}
+			else if(element.contains("//@psms/@psmsystems.")){
+				element = element.replace("//@psms/@psmsystems.", ""); //for the case when we have inner refinement
+				int position = Integer.parseInt(element);
+				SystemModel refinement = layer.getSystemAtPosition(position);
+				system.addRefinement(refinement);
+			}
+		}
+	}
+	
+	/**
+	 * See doc/metamodel.png: PSM system element - systemtransformers attribute
+	 * @param system
+	 * @param node
+	 */
 	private void addPsmSystemTransformers(SystemModel system, Node node) {
 		Node psmTransformers = node.getAttributes().getNamedItem("systemtransformers");
 		if(psmTransformers==null){
@@ -514,7 +573,7 @@ public class LayerLoader {
 	
 	
 	/**
-	 * See metamodel: PSM system - systemassociation attribute
+	 * See doc/metamodel.png: PSM system - systemassociation attribute
 	 * @param sys
 	 * @param node
 	 */
@@ -540,6 +599,37 @@ public class LayerLoader {
 	 * every element has the attributes defined in the doc/metamodel.png
 	 * */
 			
+
+	/**
+	 * See doc/metamodel.png: ISM element implecontaiener - attribute implecontainerassociation
+	 * @param ismContainer
+	 * @param node
+	 */
+	private void addIsmContainerInnerRefinement(DataContainerModel ismContainer, Node node){
+		Node ismAssociation = node.getAttributes().getNamedItem("implecontainerassociation");
+		if(ismAssociation==null){
+			return;
+		}
+		String associationData = ismAssociation.getNodeValue();
+		String[] associatons = associationData.split(" ");
+		for(int i =0; i<associatons.length; i++){
+			String element = associatons[i].trim();
+			element = element.replace("//@isms/@ismcontainers.", "");
+			int position = Integer.parseInt(element);
+			DataContainerModel refinement = layer.getContainerAtPosition(position);
+			ismContainer.addAssociation(refinement);
+		}
+	}
+
+	/**
+	 * See metamodel: element implecontainer - no cross association
+	 * @param container
+	 * @param node
+	 */
+	private void addIsmContainerCrossRefinement(DataContainerModel container, Node node) {
+		// ISM container - no cross layer refinement in the model
+	}
+	
 	/**
 	 * See doc/metamodel.png: ISM element transformer - attribute ismRefmnt
 	 * @param ismTransformer
@@ -613,35 +703,6 @@ public class LayerLoader {
 		}
 	}
 	
-	/**
-	 * See doc/metamodel.png: ISM element implecontaiener - attribute implecontainerassociation
-	 * @param ismContainer
-	 * @param node
-	 */
-	private void addIsmContainerInnerRefinement(DataContainerModel ismContainer, Node node){
-		Node ismAssociation = node.getAttributes().getNamedItem("implecontainerassociation");
-		if(ismAssociation==null){
-			return;
-		}
-		String associationData = ismAssociation.getNodeValue();
-		String[] associatons = associationData.split(" ");
-		for(int i =0; i<associatons.length; i++){
-			String element = associatons[i].trim();
-			element = element.replace("//@isms/@ismcontainers.", "");
-			int position = Integer.parseInt(element);
-			DataContainerModel refinement = layer.getContainerAtPosition(position);
-			ismContainer.addAssociation(refinement);
-		}
-	}
-
-	/**
-	 * See metamodel: element implecontainer - no cross association
-	 * @param container
-	 * @param node
-	 */
-	private void addIsmContainerCrossRefinement(DataContainerModel container, Node node) {
-		// ISM container - no cross layer refinement in the model
-	}
 	
 	/**
 	 * See doc/metamodel.png: ISM element implesystem - attribute implesystemtransformers

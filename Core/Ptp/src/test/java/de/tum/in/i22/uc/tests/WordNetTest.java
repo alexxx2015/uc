@@ -34,7 +34,7 @@ public class WordNetTest {
 	 /**
 	 * If the wordnet tests fail or it does not work correctly,
      * it is because the files habe been modified when you pushed to git.
-	 * Please restore the dict files from http://wordnet.princeton.edu/wordnet/download/current-version/#win
+	 * Please restore all ./java/main/resources/dict files from http://wordnet.princeton.edu/wordnet/download/current-version/#win
 	 *	The source of the problem is the following: 
 	 *  warning: LF will be replaced by CRLF in Core/Ptp/src/main/resources/dict/verb.exc.
 	 *	The file will have its original line endings in your working directory.	 
@@ -71,6 +71,16 @@ public class WordNetTest {
 	}
 
 	@Test
+	public void testWordEngine(){
+		if(!TESTS_ENABLED){
+			assertTrue("WordNetTest disabled", true);
+			return;
+		}
+		float val = computeSimilarity("photo", "picture", NOUN_POS);
+		assertTrue("The dictionary files have been corrupted. See commentary at the beggining of the test calss.", val == 0.0f);
+	}
+	
+	@Test
 	public void testWordsSimilarity() throws JWNLException {
 		if(!TESTS_ENABLED){
 			assertTrue("WordNetTest disabled", true);
@@ -99,6 +109,10 @@ public class WordNetTest {
 		System.out.println("\nVERBS");
 		computeSimilarity("copy", "duplicate", VERB_POS);
 		computeSimilarity("duplicate", "copy", VERB_POS);
+		computeSimilarity("replicate", "duplicate", VERB_POS);
+		computeSimilarity("duplicate", "replicate", VERB_POS);
+		computeSimilarity("replicate", "copy", VERB_POS);
+		computeSimilarity("copy", "replicate", VERB_POS);
 		computeSimilarity("move", "relocate", VERB_POS);
 		computeSimilarity("relocate", "move", VERB_POS);
 		computeSimilarity("delete", "remove", VERB_POS);

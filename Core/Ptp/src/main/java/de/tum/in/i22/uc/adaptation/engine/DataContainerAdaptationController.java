@@ -29,6 +29,22 @@ public class DataContainerAdaptationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataContainerAdaptationController.class);
 	
+	private static int updatedElementsCounter = 0;
+	
+	/**
+	 * Used for detecting changes in the base domain model.
+	 * Additionally, can be used for performance analysis and
+	 * 
+	 * @return
+	 */
+	public static int getUpdatedElements(){
+		return updatedElementsCounter;
+	}
+	
+	private static void incrementUpdateCounter(){
+		updatedElementsCounter++;
+	}
+	
 	/**
 	 * The Base Domain Model.
 	 * The results of the adaptation will be stored here.
@@ -134,6 +150,7 @@ public class DataContainerAdaptationController {
 			existsDC = new DataContainerModel(newDc.getName(), newDc.getLayerType());
 			existsDC.setParenLayer(baseLayer);
 			baseLayer.addDataContainer(existsDC);
+			incrementUpdateCounter();
 		}
 
 		//add associations links
@@ -143,6 +160,7 @@ public class DataContainerAdaptationController {
 				DataContainerModel toAdd = baseLayer.getDataContainer(assoc.getName());
 				//adds the new link
 				existsDC.addAssociation(toAdd);
+				incrementUpdateCounter();
 			}
 		}
 		
@@ -224,6 +242,7 @@ public class DataContainerAdaptationController {
 					baseDcRef = baseDm.getLayer(baseDc.getLayerType()).getRefinementLayer().getDataContainer(newRef.getName());
 				}
 				baseDc.addRefinement(baseDcRef);
+				incrementUpdateCounter();
 			}
 		}
 	}
@@ -315,7 +334,7 @@ public class DataContainerAdaptationController {
 					existsDC = baseDc;					
 					relationRatioMax = relationRatio;
 					break;
-				} else if (relationRatio < WordnetEngine.VERY_SIMILAR_DISTANCE){
+				} else if (relationRatio < WordnetEngine.SIMILAR_NOUN_MAX_DISTANCE){
 					//do nothing - container already exists in the base
 					if(relationRatio < relationRatioMax){
 						existsDC = baseDc;
@@ -337,6 +356,7 @@ public class DataContainerAdaptationController {
 				existsDC.addSynonym(newAlias);
 			}
 			basePIM.addDataContainer(existsDC);
+			incrementUpdateCounter();
 		}
 		else {
 			if(!existsDC.getName().equals(newDc.getName())){
@@ -351,6 +371,7 @@ public class DataContainerAdaptationController {
 				
 			for(String alias : newDc.getSynonyms()){
 				existsDC.addSynonym(alias);
+				incrementUpdateCounter();
 			}
 		}
 		
@@ -360,6 +381,7 @@ public class DataContainerAdaptationController {
 			if(baseRef == null){
 				DataContainerModel toAdd = basePIM.getRefinementLayer().getDataContainer(ref.getName());
 				existsDC.addRefinement(toAdd);
+				incrementUpdateCounter();
 			}
 		}
 		
@@ -369,6 +391,7 @@ public class DataContainerAdaptationController {
 			if(link == null){
 				DataContainerModel toAdd = basePIM.getDataContainer(newAggreg.getName());
 				existsDC.addAggregation(toAdd);
+				incrementUpdateCounter();
 			}
 		}
 		
@@ -377,6 +400,7 @@ public class DataContainerAdaptationController {
 			if(link == null){
 				DataContainerModel toAdd = basePIM.getDataContainer(newComp.getName());
 				existsDC.addComposition(toAdd);
+				incrementUpdateCounter();
 			}
 		}
 		

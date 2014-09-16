@@ -19,6 +19,22 @@ public class SystemAdaptationController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SystemAdaptationController.class);
 	
+	private static int updatedElementsCounter = 0;
+	
+	/**
+	 * Used for detecting changes in the base domain model.
+	 * Additionally, can be used for performance analysis and
+	 * 
+	 * @return
+	 */
+	public static int getUpdatedElements(){
+		return updatedElementsCounter;
+	}
+	
+	private static void incrementUpdateCounter(){
+		updatedElementsCounter++;
+	}
+	
 	/**
 	 * The New Domain Model which possibly contains new definitions. 
 	 */

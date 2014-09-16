@@ -33,6 +33,42 @@ public class LayerModel {
 		for(DataContainerModel dc : this.dataContainers){
 			if(dc.getName().equals(name))
 				return dc;
+			if(dc.alsoKnownAs(name))
+				return dc;
+		}
+		return null;
+	}
+	
+	public DataContainerModel getDataContainer(DataContainerModel dc){
+		for(DataContainerModel d : this.dataContainers){
+			if(d.equals(dc))
+				return d;
+		}
+		return null;
+	}
+	
+	public ActionTransformerModel getActionTransformer(String name){
+		for(ActionTransformerModel at : this.actionTransformers){
+			if(at.getName().equals(name))
+				return at;
+			if(at.alsoKnownAs(name))
+				return at;
+		}
+		return null;
+	}
+	
+	public ActionTransformerModel getActionTransformer(ActionTransformerModel newAt){
+		for(ActionTransformerModel at : this.actionTransformers){
+			if(at.equals(newAt))
+				return at;
+		}
+		return null;
+	}
+	
+	public SystemModel getSystem(String name){
+		for(SystemModel sys : this.systems){
+			if(sys.getName().equals(name))
+				return sys;
 		}
 		return null;
 	}
@@ -193,9 +229,9 @@ public class LayerModel {
 		for(SystemModel system : this.systems){
 			systemString += "\n" + system.toString();
 		}
-		result += "\n"+ this.indentation+"DATA/CONTAINER" + dataString;
-		result += "\n"+ this.indentation+"ACTION/TRANSFORMER" + actionsString;
-		result += "\n"+ this.indentation+"SYSTEMS"+ systemString;
+		result += "\n"+ this.indentation+"	DATA/CONTAINER" + dataString;
+		result += "\n"+ this.indentation+"	ACTION/TRANSFORMER" + actionsString;
+		result += "\n"+ this.indentation+"	SYSTEMS"+ systemString;
 		return result;
 	}
 	

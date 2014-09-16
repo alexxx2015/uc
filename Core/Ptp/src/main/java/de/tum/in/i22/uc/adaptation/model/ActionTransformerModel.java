@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.tum.in.i22.uc.adaptation.model.DataContainerModel.AssociationType;
 import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 /**
@@ -47,6 +46,8 @@ public class ActionTransformerModel {
 	
 	private ArrayList<ActionTransformerModel> refinements;
 	
+	private ArrayList<ActionTransformerModel> associations;
+	
 	/**
 	 * PIM - equivalent of paramData
 	 */
@@ -63,14 +64,16 @@ public class ActionTransformerModel {
 	public ActionTransformerModel(String name, LayerType type){
 		this.name = name;
 		this.layerType = type;
-		refinements = new ArrayList<>();
-		inputParams = new ArrayList<>();
-		outputParams = new ArrayList<>();
-		synonyms = new ArrayList<String>();
+		this.refinements = new ArrayList<>();
+		this.inputParams = new ArrayList<>();
+		this.outputParams = new ArrayList<>();
+		this.associations = new ArrayList<>();
+		this.synonyms = new ArrayList<String>();
 		this.indentationLevel = "";
 		this.xmlPosition = -1;
 		this.isMerged = false;
 		this.parentSystem = null;
+		this.refinementType = RefinementType.SET;
 	}
 	
 	public String getName(){
@@ -133,6 +136,34 @@ public class ActionTransformerModel {
 		this.parentSystem = system;
 	}
 	
+	public void addAssociationLink(ActionTransformerModel act){
+		if(act==null)
+			return;
+		this.associations.add(act);
+	}
+	
+	public ArrayList<ActionTransformerModel> getAssociationLinks(){
+		return this.associations;
+	}
+	
+	public ActionTransformerModel getAssociationByName(String name){
+		for(ActionTransformerModel a : this.associations){
+			if(a.name.equals(name))
+				return a;
+			if(a.alsoKnownAs(name))
+				return a;
+		}
+		return null;
+	}
+	
+	public ActionTransformerModel getAssociationLink(ActionTransformerModel assoc){
+		for(ActionTransformerModel a : this.associations){
+			if(a.equals(assoc))
+				return a;
+		}
+		return null;
+	}
+	
 	public SystemModel getParentSystem(){
 		return this.parentSystem;
 	}
@@ -147,10 +178,14 @@ public class ActionTransformerModel {
 		this.refinements.add(refinedAs);
 	}
 	
+	/**
+	 * Note: No need for synonyms because the refinement is either at PSM or ISM level
+	 * @param name
+	 * @return
+	 */
 	public ActionTransformerModel getRefinementByName(String name){
 		if(name==null)
-			return null;
-		//no need for synonyms because the refinement is either at PSM or ISM level
+			return null;		
 		for(ActionTransformerModel ref : this.refinements){
 			if(ref.name.equals(name))
 				return ref;
@@ -192,7 +227,8 @@ public class ActionTransformerModel {
 	
 	public String toString(){
 		String result ="";
-		result += this.indentationLevel+name +" - "+ layerType.name()+" ref: "+ this.refinementType.name();
+		String systemName = this.parentSystem == null ? null : this.parentSystem.getName();
+		result += this.indentationLevel+name +" - "+ layerType.name()+" ref: "+ this.refinementType.name() +" sys: "+ systemName;
 		String refinedAs = "";
 		for(ActionTransformerModel ref : this.refinements){
 			refinedAs += " "+ ref.name +"-"+ ref.layerType.name(); 
@@ -201,6 +237,13 @@ public class ActionTransformerModel {
 		return result;
 	}
 
+	public String toStringShort(){
+		String result ="";
+		String systemName = this.parentSystem == null ? null : this.parentSystem.getName();
+		result += name +" {"+ layerType.name()+" "+ this.refinementType.name() +" sys:"+ systemName +"}";
+		return result;
+	}
+	
 	public Element getXmlNode(Document doc){
 		if(doc == null)
 			return null;
@@ -348,8 +391,9 @@ public class ActionTransformerModel {
 		boolean systemOk = false;
 		if(parentSystem==null && obj.parentSystem==null)
 			systemOk = true;
-		else if(!this.parentSystem.equals(obj.parentSystem))
-			systemOk = true;
+		else 
+			if(this.parentSystem.equals(obj.parentSystem))
+				systemOk = true;
 		if(!systemOk)
 			return false;
 		
@@ -369,5 +413,41 @@ public class ActionTransformerModel {
 	
 	public boolean isMerged() {
 		return isMerged;
+	}
+	
+	/**
+	 * Empty the list of refinement elements.
+	 */
+	public void resetRefinement(){
+		this.refinements.clear();
+	}
+
+
+	/**
+	 * The Action/Transformer element contains as input param 
+	 * the container element sent as parameter to the method.
+	 * @param dc
+	 * @return
+	 */
+	public boolean hasInputParam(DataContainerModel dc) {
+		for(DataContainerModel in : this.inputParams){
+			if(in.equals(dc))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * The Transformer element contains as output param 
+	 * the container element sent as parameter to the method.
+	 * @param dc
+	 * @return
+	 */
+	public boolean hasOutputParam(DataContainerModel dc) {
+		for(DataContainerModel in : this.outputParams){
+			if(in.equals(dc))
+				return true;
+		}
+		return false;
 	}
 }

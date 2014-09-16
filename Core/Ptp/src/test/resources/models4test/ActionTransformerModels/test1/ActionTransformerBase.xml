@@ -47,6 +47,6 @@
 		
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.0" name="firefox"/>
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.5" name="x11"/>
-		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4" name="unix"/>
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.6" name="unix"/>
 	</isms>
 </metamodelv4:domain>

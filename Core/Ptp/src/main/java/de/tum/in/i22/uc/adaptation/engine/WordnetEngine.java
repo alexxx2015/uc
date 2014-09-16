@@ -14,7 +14,8 @@ public class WordnetEngine {
 	private static RiWordNet wordnet;
 	
 	public static final float MAX_ALLOWED_DISTANCE = 0.4f;
-	public static final float VERY_SIMILAR_DISTANCE = 0.2f;
+	public static final float SIMILAR_NOUN_MAX_DISTANCE = 0.2f;
+	public static final float SIMILAR_VERB_MAX_DISTANCE = 0.3f;
 	public static final float EQUAL_DISTANCE = 0.0f;
 	
 	private static final Logger logger = LoggerFactory.getLogger(WordnetEngine.class);

@@ -10,7 +10,7 @@
 		<pimdata storedin="//@psms/@psmcontainers.5" name="album">		
 			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.1"/>
 		</pimdata>
-		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.3 //@psms/@psmcontainers.2 //@psms/@psmcontainers.4 //@psms/@psmcontainers.1" name="photo"/>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.3 //@psms/@psmcontainers.2 //@psms/@psmcontainers.4 //@psms/@psmcontainers.1" name="picture"/>
 	</pims>
 
 	<psms name="SNS_PSM">
@@ -24,6 +24,7 @@
 
 		<!-- extended new inputcontainer new outputcontainer -->
 		<psmtransformers name="copy_paste" seq="0" outputcontainer="//@psms/@psmcontainers.1 //@psms/@psmcontainers.5" inputcontainer="//@psms/@psmcontainers.0 //@psms/@psmcontainers.4" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
+		<!-- new transformer - same name but different system -->
 		<psmtransformers name="screenshot" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.3" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
 		<psmtransformers name="copyFile" seq="0" refType="seqRefmnt" outputcontainer="//@psms/@psmcontainers.4" inputcontainer="//@psms/@psmcontainers.4" crossPsmRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
 		<!-- new transformer -->

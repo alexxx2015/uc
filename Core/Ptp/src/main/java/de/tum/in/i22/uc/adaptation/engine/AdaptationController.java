@@ -36,18 +36,25 @@ public class AdaptationController {
 	/**
 	 * Merges the BaseDomainModel and the NewDomainModel.
 	 * The BaseDomainModel will be the updated model.
+	 * @return updated elements or links between elements
 	 * @throws DomainMergeException
 	 */
-	public void mergeDomainModels() throws DomainMergeException{
+	public int mergeDomainModels() throws DomainMergeException{
+		int totalUpdates = 0;
 		
 		DataContainerAdaptationController dcController = new DataContainerAdaptationController(baseDomainModel, newDomainModel);
 		dcController.mergeDomainModels();
+		totalUpdates += DataContainerAdaptationController.getUpdatedElements();
 		
 		ActionTransformerAdaptationController atController = new ActionTransformerAdaptationController(baseDomainModel, newDomainModel);
 		atController.mergeDomainModels();
+		totalUpdates += ActionTransformerAdaptationController.getUpdatedElements();
 		
 		SystemAdaptationController sysController = new SystemAdaptationController(baseDomainModel, newDomainModel);
 		sysController.mergeDomainModels();
+		totalUpdates += SystemAdaptationController.getUpdatedElements();
+		
+		return totalUpdates;
 	}
 	
 }

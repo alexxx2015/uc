@@ -124,4 +124,8 @@ public class SystemModel {
 					;
 		return result;
 	}
+
+	public String getName() {
+		return this.name;
+	}
 }

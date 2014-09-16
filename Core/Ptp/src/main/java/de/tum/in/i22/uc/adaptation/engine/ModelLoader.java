@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.adaptation.engine;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Calendar;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,7 +42,7 @@ public class ModelLoader {
 		}	
 	}
 	
-	public DomainModel loadBaseDomainModel(){
+	public DomainModel loadBaseDomainModel() throws InvalidDomainModelFormatException{
 		String domainModelFile=config.getProperty("domainmodel");
 		String userDir = config.getUserDir();
 		domainModelFile = userDir + File.separator + domainModelFile;
@@ -51,14 +50,14 @@ public class ModelLoader {
 		return this.domainModel;
 	}
 	
-	public DomainModel loadDomainModel(String file){
+	public DomainModel loadDomainModel(String file) throws InvalidDomainModelFormatException{
 		String domainModelFile=file;
 		loadDomainModel(domainModelFile, "file");
 		return this.domainModel;
 	}
 	
 
-	public DomainModel createDomainModel(String xmlModel){
+	public DomainModel createDomainModel(String xmlModel) throws InvalidDomainModelFormatException{
 		String domainModelFile=xmlModel;
 		loadDomainModel(domainModelFile, "string");
 		return this.domainModel;
@@ -96,7 +95,7 @@ public class ModelLoader {
 		backupBaseDomainModel(domainModelFile);
 	}
 	
-	private DomainModel loadDomainModel(String source, String sourceType){
+	private DomainModel loadDomainModel(String source, String sourceType) throws InvalidDomainModelFormatException{
 		this.domainModel = new DomainModel(source);
 		DomainModel result = this.domainModel;  
 		
@@ -156,7 +155,8 @@ public class ModelLoader {
 			addSystems(psmSystemList, ismSystemList);
 		}
 		catch( Exception ex ){
-			ex.printStackTrace();
+			logger.error("Trying to load domain model", ex);
+			throw new InvalidDomainModelFormatException(ex.getMessage());
 		}
 		
 		String logMsg = "Loaded DomainModel: \n" + this.domainModel.toString() +"\n";
@@ -212,10 +212,11 @@ public class ModelLoader {
 	 * @param destination
 	 * @param domain
 	 */
-	public void storeXmlDomainModel(String destination, DomainModel domain){
+	public void storeXmlDomainModel(String destination, DomainModel domain) throws InvalidDomainModelFormatException{
 		try{
 			String domainModelFile=destination;
-			Document xmlDocXpath=openXmlInput(domainModelFile, "file");
+			Document xmlDocXpath= null; 
+			xmlDocXpath = openXmlInput(domainModelFile, "file");
 			
 			XPathFactory factory=XPathFactory.newInstance();
 			XPath xpath=factory.newXPath();
@@ -261,7 +262,8 @@ public class ModelLoader {
 			PublicMethods.writeFile(destination, xmlData);
 		}
 		catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("Trying to load domain model", ex);
+			throw new InvalidDomainModelFormatException(ex.getMessage());
 		}
 		
 		
@@ -274,30 +276,24 @@ public class ModelLoader {
 	 * @param input
 	 * @param type
 	 * @return Returns an xml document
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
+	 * @throws SAXException 
 	 */
-	private static Document openXmlInput(String input, String type){
+	private static Document openXmlInput(String input, String type) throws ParserConfigurationException, SAXException, IOException{
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc=null;
 			
-			try {
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				InputSource inputSource;
-				if(type.equalsIgnoreCase("string"))
-				 {
-					inputSource = new InputSource(new StringReader(input));
-					doc = builder.parse(inputSource);
-				 }
-				else if(type.equalsIgnoreCase("file"))
-					doc=builder.parse(new File(input));		
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			InputSource inputSource;
+			if(type.equalsIgnoreCase("string"))
+			 {
+				inputSource = new InputSource(new StringReader(input));
+				doc = builder.parse(inputSource);
+			 }
+			else if(type.equalsIgnoreCase("file"))
+				doc=builder.parse(new File(input));		
 							
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
 			Node root1 = doc.getFirstChild();
 			PublicMethods.removeWhitespaceNodes(root1);
 			Node root2 = doc.getParentNode();
