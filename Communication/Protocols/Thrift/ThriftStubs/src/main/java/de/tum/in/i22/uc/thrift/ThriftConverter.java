@@ -32,6 +32,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.thrift.types.TAttribute;
 import de.tum.in.i22.uc.thrift.types.TAttributeName;
@@ -156,6 +157,11 @@ public final class ThriftConverter {
 		if (location == null || location.equals("")) {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
+
+		if (location.equals(LocalLocation.local)) {
+			return IPLocation.localIpLocation;
+		}
+
 		return new IPLocation(location);
 	}
 
@@ -308,12 +314,9 @@ public final class ThriftConverter {
 		TPtpResponse res = new TPtpResponse(toThrift(r.getPolicy()), toThrift(r.getStatus()));
 		return res;
 	}
-	
+
 	public static String toThrift(Location location) {
-		if (location == null) {
-			return "";
-		}
-		return location.asString();
+		return location == null ? "" : location.asString();
 	}
 
 	public static TStatus toThrift(IStatus s) {

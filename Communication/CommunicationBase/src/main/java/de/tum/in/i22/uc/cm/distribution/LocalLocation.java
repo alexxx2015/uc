@@ -8,7 +8,7 @@ package de.tum.in.i22.uc.cm.distribution;
  */
 public class LocalLocation extends Location {
 
-	private static final String local = "local";
+	public static final String local = "local";
 
 	private static LocalLocation _instance;
 

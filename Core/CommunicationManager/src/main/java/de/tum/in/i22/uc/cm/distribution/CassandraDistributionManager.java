@@ -51,6 +51,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final String TABLE_NAME_DATA = "hasdata";
 	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
 	private static final String TABLE_NAME_POLICY = "policy";
+	private static final String TABLE_NAME_RESPONSIBILITY = "responsibility";
 
 
 	private static final List<String> _tables;
@@ -100,8 +101,6 @@ class CassandraDistributionManager implements IDistributionManager {
 			throw new RuntimeException(e);
 		}
 
-
-//		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint("localhost").build();
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint(addr.getHostAddress()).build();
 		_defaultSession = _cluster.connect();
 		_pmpConnectionManager = new ConnectionManager<>(5);

@@ -45,6 +45,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_pipListenerPort = "pipListenerPort";
 	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 
+	public static final String PROP_NAME_pepListenerPort = "pepListenerPort";
 	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
 	public static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
 
@@ -170,6 +171,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_anyListenerPort, 21004);
 
 		loadSetting(PROP_NAME_pxpListenerPort, 30003);
+		loadSetting(PROP_NAME_pepListenerPort, 30005);
 
 		loadSetting(PROP_NAME_anyListenerEnabled, true);
 
@@ -372,6 +374,10 @@ public class Settings extends SettingsLoader {
 
 	public int getPipListenerPort() {
 		return getValue(PROP_NAME_pipListenerPort);
+	}
+
+	public int getPepListenerPort() {
+		return getValue(PROP_NAME_pepListenerPort);
 	}
 
 	public int getPdpListenerPort() {

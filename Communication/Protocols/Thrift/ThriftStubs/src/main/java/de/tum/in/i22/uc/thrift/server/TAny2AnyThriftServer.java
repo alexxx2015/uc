@@ -7,9 +7,7 @@ import java.util.Set;
 
 import org.apache.thrift.TException;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
-import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;

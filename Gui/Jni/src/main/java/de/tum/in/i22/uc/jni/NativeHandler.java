@@ -10,25 +10,54 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.Controller;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IPep2Pdp;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
+import de.tum.in.i22.uc.thrift.server.IThriftServer;
+import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 /**
  * This class will be used via JNI to dispatch events.
  * @author Florian Kelbert
  *
  */
-public class NativeHandler extends Controller {
+public class NativeHandler extends Controller implements IAny2Pep {
 	private static Logger _logger = LoggerFactory.getLogger(NativeHandler.class);
 
 	private static NativeHandler _instance;
 
+	/**
+	 * The location of our PDP.
+	 */
+	private final IPLocation _pdplocation;
+
+	/**
+	 * The connection to our PDP.
+	 */
 	private IPep2Pdp _pep2pdp;
+
+	private final IThriftServer _pepServer;
 
 	private NativeHandler(String[] args) {
 		super(args);
+
+		if (Settings.getInstance().getPdpLocation() instanceof LocalLocation) {
+			_pdplocation = IPLocation.localIpLocation;
+		}
+		else {
+			_pdplocation = (IPLocation) Settings.getInstance().getPdpLocation();
+		}
+
+		_pepServer = ThriftServerFactory.createPepThriftServer(
+				Settings.getInstance().getPepListenerPort(), this);
+
+		if (_pepServer != null) {
+			new Thread(_pepServer).start();
+		}
 	}
 
 	public static void main(String[] args) {
@@ -99,6 +128,11 @@ public class NativeHandler extends Controller {
 		}
 
 		return true;
+	}
+
+	@Override
+	public IPLocation getResponsiblePdpLocation() {
+		return _pdplocation;
 	}
 }
 
