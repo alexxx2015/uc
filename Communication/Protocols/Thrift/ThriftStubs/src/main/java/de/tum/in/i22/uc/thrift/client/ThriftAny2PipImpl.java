@@ -20,6 +20,7 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.thrift.types.TData;
+import de.tum.in.i22.uc.thrift.types.TStatus;
 
 class ThriftAny2PipImpl implements IAny2Pip {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipImpl.class);
@@ -112,7 +113,10 @@ class ThriftAny2PipImpl implements IAny2Pip {
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		try {
-			return ThriftConverter.fromThrift(_handle.initialRepresentation(ThriftConverter.toThrift(containerName), ThriftConverter.toThriftDataSet(data)));
+			_logger.debug("initialRepresentation: {}, {}, {}, {}.", containerName, data, ThriftConverter.toThrift(containerName), ThriftConverter.toThriftDataSet(data));
+			TStatus status = _handle.initialRepresentation(ThriftConverter.toThrift(containerName), ThriftConverter.toThriftDataSet(data));
+			_logger.debug("Status: {}.", status);
+			return ThriftConverter.fromThrift(status);
 		} catch (TException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

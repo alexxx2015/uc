@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 
 /**
@@ -11,7 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
  */
 public class SocketName extends NameBasic {
 
-	static final String PREFIX_SOCKET = "SOCK_";
+	public static final String PREFIX = "SOCK_";
 
 	private final String _localIP;
 	private final int _localPort;
@@ -28,13 +30,30 @@ public class SocketName extends NameBasic {
 	}
 
 	public static SocketName create(String localIP, int localPort, String remoteIP, int remotePort) {
-//		if (Network.LOCAL_IP_ADDRESSES.contains(localIP) || Network.LOCAL_IP_ADDRESSES.contains(remoteIP)) {
-//			return new SocketName(localIP, localPort, remoteIP, remotePort,
-//					PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
-//		}
-
 		return new SocketName(localIP, localPort, remoteIP, remotePort,
-				PREFIX_SOCKET + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
+				PREFIX + localIP + ":" + localPort + "_" + remoteIP + ":" + remotePort);
+	}
+
+	public static SocketName create(String s) {
+		if (!s.startsWith(PREFIX)) {
+			throw new IllegalArgumentException("Invalid SocketName format.");
+		}
+
+		s = s.substring(PREFIX.length());
+
+		String[] parts = s.split("_");
+		if (parts.length != 2) {
+			throw new IllegalArgumentException("Invalid SocketName format.");
+		}
+
+		String[] local = parts[0].split(":");
+		String[] remote = parts[1].split(":");
+
+		if (local.length != 2 || remote.length != 2) {
+			throw new IllegalArgumentException("Invalid SocketName format.");
+		}
+
+		return SocketName.create(local[0], Integer.parseInt(local[1]), remote[0], Integer.parseInt(remote[1]));
 	}
 
 	public String getLocalIP() {
@@ -55,7 +74,7 @@ public class SocketName extends NameBasic {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_localIP", _localIP)
 				.add("_localPort", _localPort)
 				.add("_remoteIP", _remoteIP)

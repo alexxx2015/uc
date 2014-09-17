@@ -22,6 +22,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
@@ -195,8 +196,12 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		_logger.debug("initialRepresentation(" + containerName + "," + data
-				+ ")");
+		_logger.debug("initialRepresentation(" + containerName + "," + data + ")");
+
+		/*
+		 * Convert to a 'more' proper IName object.
+		 */
+		containerName = MessageFactory.createName(containerName.getName());
 
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {

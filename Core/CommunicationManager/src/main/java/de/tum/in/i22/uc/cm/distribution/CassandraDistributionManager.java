@@ -35,7 +35,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
-import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -81,8 +80,8 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "PRIMARY KEY (policy));");
 	};
 
-	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
-	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
+//	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
+//	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
 
 	private final Session _defaultSession;
 
@@ -114,8 +113,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint(addr.getHostAddress()).build();
 		_defaultSession = _cluster.connect();
-		_pmpConnectionManager = new ConnectionManager<>(5);
-		_pipConnectionManager = new ConnectionManager<>(5);
+//		_pmpConnectionManager = new ConnectionManager<>(5);
+//		_pipConnectionManager = new ConnectionManager<>(5);
 		_responsiblePdps = new HashMap<>();
 		try {
 			_hostname = InetAddress.getLocalHost().getHostName();
@@ -176,13 +175,16 @@ class CassandraDistributionManager implements IDistributionManager {
 				// if the location was not yet part of the keyspace, then we need to
 				// deploy the policy at the remote location
 				try {
-					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
+//					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
+					Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
+					remotePmp.connect();
 
 					if (!remotePmp.deployPolicyRawXMLPmp(policy.getXml()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
 
-					_pmpConnectionManager.release(remotePmp);
+//					_pmpConnectionManager.release(remotePmp);
+					remotePmp.disconnect();
 				} catch (IOException e) {
 					success = false;
 					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
@@ -267,7 +269,9 @@ class CassandraDistributionManager implements IDistributionManager {
 		Pip2PipClient remotePip = null;
 
 		try {
-			remotePip = _pipConnectionManager.obtain(new ThriftClientFactory().createPip2PipClient(pipLocation));
+//			remotePip = _pipConnectionManager.obtain(new ThriftClientFactory().createPip2PipClient(pipLocation));
+			remotePip = new ThriftClientFactory().createPip2PipClient(pipLocation);
+			remotePip.connect();
 		} catch (IOException e) {
 			_logger.error("Unable to perform remote data transfer with [" + pipLocation + "]");
 			return;
@@ -275,7 +279,9 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		remotePip.initialRepresentation(socketName, data);
 
-		_pipConnectionManager.release(remotePip);
+		remotePip.disconnect();
+
+//		_pipConnectionManager.release(remotePip);
 	}
 
 	private void createPolicyKeyspace(XmlPolicy policy) {
