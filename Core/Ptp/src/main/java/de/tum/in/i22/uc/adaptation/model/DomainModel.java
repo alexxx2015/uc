@@ -26,6 +26,9 @@ public class DomainModel {
 		pimLayer.setRefinedAs(psmLayer);
 		psmLayer.setRefinedAs(ismLayer);
 		ismLayer.setRefinedAs(ismLayer);
+		pimLayer.setParentDomainModel(this);
+		psmLayer.setParentDomainModel(this);
+		ismLayer.setParentDomainModel(this);
 	}
 	
 	public void setName(String name){
@@ -54,18 +57,21 @@ public class DomainModel {
 	}
 	public void setPimLayer(LayerModel pimLayer) {
 		this.pimLayer = pimLayer;
+		pimLayer.setParentDomainModel(this);
 	}
 	public LayerModel getPsmLayer() {
 		return psmLayer;
 	}
 	public void setPsmLayer(LayerModel psmLayer) {
 		this.psmLayer = psmLayer;
+		psmLayer.setParentDomainModel(this);
 	}
 	public LayerModel getIsmLayer() {
-		return ismLayer;
+		return ismLayer;		
 	}
 	public void setIsmLayer(LayerModel ismLayer) {
 		this.ismLayer = ismLayer;
+		ismLayer.setParentDomainModel(this);
 	}
 	
 	public String toString(){

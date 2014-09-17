@@ -400,8 +400,28 @@ public class DataContainerModel {
 		return false;
 	}
 	
-	public void trimRefinements(){
+	@Override
+	public int hashCode() {
+		String unique = name + "#"+ this.layerType.name();
+		return unique.hashCode();
+	}
+	
+	/**
+	 *
+	 * There can be cases where there is a redundant implementation link which needs to be removed.
+	 * <p>For example: Base model had a container "domElement" refined as "img" at the lower level.
+	 *  The New model has the same container "domElement" refined at the same level with "media".	 *  
+	 *  "Media" is refined at the same level as "img" and "img" is refined at the lower level with "img".
+	 *  <p>
+	 *  Before the filtering, "domElement" is refined as [ "img"-lower, "media"-same = ["img"-same"="img"-lower"]].
+	 *  The problem is that "img"-lower is contained twice in the refinement.
+	 *  After refinement only the refinement from "media" is left.
+	 *
+	 * @return number of removed elements
+	 */
+	public int trimRefinements(){
 		boolean removed = true;
+		int removedCounter = 0;
 		DataContainerModel toRemove = null;
 		while(removed){
 			removed = false;
@@ -422,9 +442,10 @@ public class DataContainerModel {
 				this.refinements.remove(toRemove);
 				toRemove = null;
 				removed = true;
+				removedCounter++;
 			}
-			
 		}
+		return removedCounter;
 	}
 	
 	private boolean containsRefinement(DataContainerModel ref){

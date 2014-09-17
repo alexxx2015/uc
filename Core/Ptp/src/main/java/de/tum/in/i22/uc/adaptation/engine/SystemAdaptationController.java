@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.adaptation.model.SystemModel;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class SystemAdaptationController {
 
@@ -52,45 +54,146 @@ public class SystemAdaptationController {
 	 */
 	public void mergeDomainModels() throws DomainMergeException{
 		
-		// see STAGE 1
-		mergeInnerLinks(baseDm, newDm);
-		// see STAGE 2
-		mergeCrossLinks(baseDm, newDm);
+		mergeLayer(baseDm.getIsmLayer(), newDm.getIsmLayer());
 		
+		mergeLayer(baseDm.getPsmLayer(), newDm.getPsmLayer());
 	}
 
-	private void mergeInnerLinks(DomainModel baseDm, DomainModel newDm) {
-		mergeInnerLinksLayer(baseDm.getIsmLayer(), newDm.getIsmLayer());
-		mergeCrossLinksLayer(baseDm.getIsmLayer(), newDm.getIsmLayer());
-		
-		mergeInnerLinksLayer(baseDm.getPsmLayer(), newDm.getPsmLayer());
-		mergeCrossLinksLayer(baseDm.getPsmLayer(), newDm.getPsmLayer());
-	}
-	
-	
 
-	private void mergeInnerLinksLayer(LayerModel baseLayer, LayerModel newLayer) {
+	private void mergeLayer(LayerModel baseLayer, LayerModel newLayer) {
 		ArrayList<SystemModel> systems = newLayer.getSystems();
 		for(SystemModel newS : systems){
 			addNewSystemToBase(newS, baseLayer);
 		}
 		
+		baseLayer.filterSystemRefinements();
 	}
 	
-	
-	private void addNewSystemToBase(SystemModel newS, LayerModel baseLayer) {
+	/**
+	 * See ./doc/ paper - Algorithm2
+	 * @param newS
+	 * @param baseLayer
+	 * @throws DomainMergeException
+	 */
+	private void addNewSystemToBase(SystemModel newSys, LayerModel baseLayer) {
+		if(newSys.isMerged())
+			return;
+		
+		//if the element is at a different level, then return
+		if(!newSys.getLayerType().equals(baseLayer.getType()))
+			return;
+		
+		for(SystemModel innerLink : newSys.getAssociations()){
+			addNewSystemToBase(innerLink, baseLayer);
+		}
+		
+		logger.debug("Try ADD NewSystem: "+ newSys.toStringShort()+ " To Base: "+ baseLayer.getType());
+		SystemModel baseSys = searchEquivalent(newSys, baseLayer);
+		if(baseSys == null){
+			logger.debug("created NewSystem: " + newSys.toStringShort());
+			baseSys = new SystemModel(newSys.getName(), newSys.getLayerType());
+			baseSys.setParenLayer(baseLayer);
+			/* The parent system will be updated when the systems are merged.
+			 * Each transformer must have a parent system.
+			 */
+			//baseAt.setParentSystem(newAt.getParentSystem());
+			baseLayer.addSystem(newSys);		
+			incrementUpdateCounter();
+		}
+		else{
+			logger.debug("Equivalent found: base "+ newSys.toStringShort());
+		}
+		
+		mergeRefinement(newSys, baseSys);
+		
+		updateAssociations(newSys, baseSys);
+		
+		updateSystemForTransformers(baseSys, baseLayer);
+		
+		newSys.markAsMerged();
+		logger.debug("ADD Success: "+ newSys.toString());
 		
 	}
 
-	private void mergeCrossLinksLayer(LayerModel psmLayer, LayerModel psmLayer2) {
-		// TODO Auto-generated method stub
+	
+	private void updateSystemForTransformers(SystemModel baseSys, LayerModel baseLayer) {
+		for(ActionTransformerModel at : baseLayer.getActionTransformers()){
+			if(at.getParentSystem().equals(baseSys)){
+				/* this seems redundant but it is not.
+				 * the systems are compared only by name, not by object.
+				 * when you added a transformer from a new system, 
+				 * the system object remained from the new model.
+				 * now you update that object. */
+				at.setParentSystem(baseSys);
+			}
+		}
 		
 	}
-	
-	private void mergeCrossLinks(DomainModel baseDm, DomainModel newDm) {
-		// TODO Auto-generated method stub
-		
+
+	/**
+	 * See doc/metamodel.png
+	 * <br> PIM - no system element 
+	 * <br> PSM - systemassociation attribute
+	 * <br> ISM - implesystemassociation attribute
+	 * @param newAt
+	 * @param baseAt
+	 */
+	private void updateAssociations(SystemModel newSys, SystemModel baseSys){
+		for(SystemModel assoc : newSys.getAssociations()){
+			SystemModel baseAssoc = newSys.getAssociationLink(assoc);
+			if(baseAssoc == null){
+				baseAssoc = baseDm.getLayer(baseSys.getLayerType()).getSystem(assoc);
+				baseSys.addAssociationLink(baseAssoc);
+				incrementUpdateCounter();
+				logger.debug("UPDATE association: base "+ baseSys.toString() + " EXTENDED with "+ baseAssoc);
+			}
+		}
+	}
+
+	/**
+	 * All the refinement elements of the newSys are added to the refinement of the baseSys. 
+	 * @param newSys.SET refinement
+	 * @param baseSys.SET refinement
+	 */
+	private void mergeRefinement(SystemModel newSys,	SystemModel baseSys) {
+		logger.debug("Merge Set2Set - new: "+ newSys.toStringShort() +" base: "+ baseSys.toStringShort());
+		for(SystemModel ref : newSys.getRefinements()){
+			SystemModel baseRef = baseSys.getRefinement(ref);
+			if(baseRef == null){
+				if(ref.getLayerType().equals(baseSys.getLayerType())){
+					LayerModel refLayer = baseDm.getLayer(baseSys.getLayerType());
+					baseRef = refLayer.getSystem(ref);					
+				}
+				else{
+					LayerModel refLayer = baseDm.getLayer(baseSys.getLayerType()).getRefinementLayer();
+					baseRef = refLayer.getSystem(ref);
+				}				
+				logger.debug("Merge Set2Set EXTENDED base "+ baseSys.toStringShort() + "  WITH "+ baseRef.toStringShort());
+				baseSys.addRefinement(baseRef);
+				incrementUpdateCounter();
+			}			
+		}
 	}
 	
+	/**
+	 * Implements the equivalence relation between two systems.
+	 * @param newSys
+	 * @param baseLayer
+	 * @return baseSystem equivalent from base 
+	 * <br> null if not found
+	 */
+	private SystemModel searchEquivalent(SystemModel newSys, LayerModel baseLayer) {
+		for(SystemModel baseE : baseLayer.getSystems()){
+			logger.debug("Search equivalent - base: " + baseE.toStringShort() + " new: "+ newSys.toStringShort());
+			//a redundant safety type check
+			if(!baseE.getLayerType().equals(newSys.getLayerType()))
+				continue;
+			
+			if(baseE.getName().equals(newSys.getName()))
+				return baseE;
+		}
+		// if nothing was found, the result is null
+		return null;
+	}
 	
 }

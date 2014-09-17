@@ -564,7 +564,10 @@ public class LayerLoader {
 		for(int i =0; i<systems.length; i++){
 			String element = systems[i].trim();
 			element = element.replace("//@psms/@psmtransformers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for system: "+system.toStringShort(), ex);}
 			ActionTransformerModel transformer = layer.getTransformerAtPosition(position);
 			system.addOperation(transformer);
 			transformer.setParentSystem(system);
@@ -587,9 +590,12 @@ public class LayerLoader {
 		for(int i =0; i<systems.length; i++){
 			String element = systems[i].trim();
 			element = element.replace("//@psms/@psmsystems.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for system: "+sys.toStringShort(), ex);}
 			SystemModel system = layer.getSystemAtPosition(position);
-			sys.addAssociation(system);
+			sys.addAssociationLink(system);
 		}
 		
 	}
@@ -615,7 +621,10 @@ public class LayerLoader {
 		for(int i =0; i<associatons.length; i++){
 			String element = associatons[i].trim();
 			element = element.replace("//@isms/@ismcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for ismContainer: "+ismContainer.toString(), ex);}
 			DataContainerModel refinement = layer.getContainerAtPosition(position);
 			ismContainer.addAssociation(refinement);
 		}
@@ -644,7 +653,10 @@ public class LayerLoader {
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@isms/@ismtransformers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for transformer: "+ismTransformer.toStringShort(), ex);}
 			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
 			ismTransformer.addRefinement(refinement);
 		}
@@ -677,7 +689,10 @@ public class LayerLoader {
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@isms/@ismcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for transformer: "+transformer.toStringShort(), ex);}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addOutputParam(pData);
 		}
@@ -697,7 +712,10 @@ public class LayerLoader {
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@isms/@ismcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for transformer: "+transformer.toStringShort(), ex);}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addInputParam(pData);
 		}
@@ -719,7 +737,10 @@ public class LayerLoader {
 		for(int i =0; i<systems.length; i++){
 			String element = systems[i].trim();
 			element = element.replace("//@isms/@ismtransformers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){logger.error("Invalid definition for system: "+system.toStringShort(), ex);}
 			ActionTransformerModel transformer = layer.getTransformerAtPosition(position);
 			system.addOperation(transformer);
 			transformer.setParentSystem(system);
@@ -743,7 +764,7 @@ public class LayerLoader {
 			element = element.replace("//@isms/@ismsystems.", "");
 			int position = Integer.parseInt(element);
 			SystemModel system = layer.getSystemAtPosition(position);
-			sys.addAssociation(system);
+			sys.addAssociationLink(system);
 		}
 	}
 	

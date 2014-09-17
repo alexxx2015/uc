@@ -20,6 +20,7 @@ public class LayerModel {
 	private ArrayList<ActionTransformerModel> actionTransformers;
 	
 	private LayerModel refinedAs;
+	private DomainModel parentDomainModel; 
 	
 	public LayerModel(String name, LayerType type){
 		this.name = name;
@@ -27,6 +28,11 @@ public class LayerModel {
 		systems = new ArrayList<>();
 		dataContainers = new ArrayList<>();
 		actionTransformers = new ArrayList<>();
+		this.parentDomainModel = null;
+	}
+	
+	public void setParentDomainModel(DomainModel dm){
+		this.parentDomainModel = dm;
 	}
 	
 	public DataContainerModel getDataContainer(String name){
@@ -65,9 +71,9 @@ public class LayerModel {
 		return null;
 	}
 	
-	public SystemModel getSystem(String name){
+	public SystemModel getSystem(SystemModel system){
 		for(SystemModel sys : this.systems){
-			if(sys.getName().equals(name))
+			if(sys.equals(system))
 				return sys;
 		}
 		return null;
@@ -260,6 +266,16 @@ public class LayerModel {
 			element.appendChild(container);
 		}
 		
+		for(ActionTransformerModel at : this.actionTransformers){
+			Element container = at.getXmlNode(doc);
+			element.appendChild(container);
+		}
+		
+		for(SystemModel sys : this.systems){
+			Element container = sys.getXmlNode(doc);
+			element.appendChild(container);
+		}
+		
 		return element;
 	}
 	
@@ -278,12 +294,14 @@ public class LayerModel {
 			dc.trimRefinements();
 	}
 
-	
-	/**
-	 * 
-	 */
-	public void filterActionTransformerSequences(){
-		//TODO: add filtering. remove redundant sequences.
+	public void filterSystemRefinements(){
+		for(SystemModel sys : systems)
+			sys.trimRefinements();
+	}
+
+	public void filterActionTransformerSequences() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<metamodelv4:domain xmlns:metamodelv4="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="photo" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.3 //@psms/@psmcontainers.5 //@psms/@psmcontainers.4 //@psms/@psmcontainers.2 " synonym="picture "/>
+<pimdata name="album" storedin="//@psms/@psmcontainers.1 " synonym="">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+<pimaction actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.3 //@pims/@pimdata.0 //@pims/@pimdata.1 " actionassociation="//@pims/@pimaction.1 " name="duplicate" paramData="" synonym="replicate copy "/>
+<pimaction actionRefmnt="//@psms/@psmtransformers.2 //@psms/@psmtransformers.4 //@psms/@psmtransformers.3 //@pims/@pimdata.0 //@pims/@pimdata.1 " name="copy1" paramData="" synonym=""/>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.4 " name="file"/>
+<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.5 " name="directory"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="clipboard"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.0 " name="domEle"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.2 " name="processMem"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="window"/>
+<psmtransformer name="copy_paste"/>
+<psmtransformer name="copyFile"/>
+<psmtransformer name="screenshot"/>
+<psmtransformer name="copy_paste"/>
+<psmtransformer name="screenshot_smart"/>
+<psmtransformer name="copy_paste1"/>
+<psmtransformer name="copy_paste2"/>
+<psmsystems name="webBrowser" sysimplementedas="//@isms/@ismsystems.0 //@isms/@ismsystems.6 " systemtransformers="//@psms/@psmtransformers.0 "/>
+<psmsystems name="fileSystem" sysimplementedas="//@isms/@ismsystems.2 " systemtransformers="//@psms/@psmtransformers.2 "/>
+<psmsystems name="windowsSys" sysimplementedas="//@isms/@ismsystems.1 " systemtransformers="//@psms/@psmtransformers.1 "/>
+<psmsystems name="windowsSysOld" sysimplementedas="//@isms/@ismsystems.3 " systemtransformers="//@psms/@psmtransformers.0 "/>
+<psmsystems name="mac_extenstion" sysimplementedas="//@isms/@ismsystems.4 " systemtransformers="//@psms/@psmtransformers.5 "/>
+<psmsystems name="mac" sysimplementedas="//@isms/@ismsystems.5 " systemassociation="//@psms/@psmsystems.4 " systemtransformers="//@psms/@psmtransformers.4 "/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="htmlEle"/>
+<ismcontainers name="xclipboard"/>
+<ismcontainers name="procMem"/>
+<ismcontainers name="drawable"/>
+<ismcontainers name="unixfile"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.4 " name="unixDir"/>
+<ismtransformer name="copy_cmd"/>
+<ismtransformer name="open"/>
+<ismtransformer name="read"/>
+<ismtransformer name="write"/>
+<ismtransformer name="close"/>
+<ismtransformer name="getImage"/>
+<ismtransformer name="copy_seq"/>
+<ismtransformer name="copy_cmd"/>
+<ismtransformer name="copy_cmd_new"/>
+<ismtransformer name="close_mac"/>
+<ismtransformer name="extend_mac"/>
+<ismtransformer name="read_chrome"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 " name="firefox"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.5 " name="x11"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.6 " name="unix"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 " name="x12"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.8 " name="ios_extension"/>
+<ismsystems implesystemassociation="//@isms/@ismsystems.4 " implesystemtransformers="//@isms/@ismtransformers.7 " name="ios"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.9 " name="chrome"/>
+</isms>
+</metamodelv4:domain>

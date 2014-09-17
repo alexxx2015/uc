@@ -179,7 +179,8 @@ public class ActionTransformerModel {
 	}
 	
 	/**
-	 * Note: No need for synonyms because the refinement is either at PSM or ISM level
+	 * Note: No need for synonyms because the refinement is either at PSM or ISM level.
+	 * There is no inner refinement for actions defined at PIM.
 	 * @param name
 	 * @return
 	 */
@@ -188,6 +189,16 @@ public class ActionTransformerModel {
 			return null;		
 		for(ActionTransformerModel ref : this.refinements){
 			if(ref.name.equals(name))
+				return ref;
+		}
+		return null;
+	}
+	
+	public ActionTransformerModel getRefinement(ActionTransformerModel a){
+		if(a==null)
+			return null;		
+		for(ActionTransformerModel ref : this.refinements){
+			if(ref.equals(a))
 				return ref;
 		}
 		return null;
@@ -275,64 +286,49 @@ public class ActionTransformerModel {
 		return element;
 	}
 	
-	private void addPimActionAttributes(Element data){
-//		//process synonyms
-//		String synonymName = "synonym";
-//		String synonymValue ="";
-//		for(String syn : this.synonyms){
-//			synonymValue += syn + " ";
-//		}
-//		data.setAttribute(synonymName, synonymValue);
-//		
-//		String associationNodeName = "dataAssoLinks";
-//		String associationTypeName = "assoType";
-//		
-//		//process aggregations
-//		Element aggregation = data.getOwnerDocument().createElement(associationNodeName);
-//		String associationType = "isAggregationOf";
-//		aggregation.setAttribute(associationTypeName, associationType);
-//		String associationDataName = "targetAssoData";
-//		String associationData = "";
-//		boolean existsAssociation = false;
-//		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
-//			associationData += "//@pims/@pimdata." + assoc.xmlPosition +" ";
-//			existsAssociation = true;
-//		}
-//		if(existsAssociation){
-//			aggregation.setAttribute(associationDataName, associationData);
-//			data.appendChild(aggregation);
-//		}
-//		
-//		// process compositions
-//		Element composition = data.getOwnerDocument().createElement(associationNodeName);
-//		associationType = "isCompositionOf";
-//		composition.setAttribute(associationTypeName, associationType);
-//		String compostionData = "";
-//		boolean existsComposition = false;
-//		for(DataContainerModel assoc : this.associations.get(AssociationType.COMPOSITION)){
-//			compostionData += "//@pims/@pimdata." + assoc.xmlPosition +" ";
-//			existsComposition = true;
-//		}
-//		if(existsComposition){
-//			composition.setAttribute(associationDataName, compostionData);
-//			data.appendChild(composition);
-//		}
-//		
-//		//process refinements
-//		String refinementAttribute = "storedin";
-//		String refinementData = "";
-//		boolean existsRefinement = false;
-//		for(DataContainerModel ref : this.refinements){
-//			String refLevel = "";
-//			if(ref.getLayerType().equals(LayerType.PIM))
-//				refLevel = "//@pims/@pimdata.";
-//			else if(ref.getLayerType().equals(LayerType.PSM))
-//				refLevel = "//@psms/@psmcontainers.";
-//			refinementData += refLevel + ref.xmlPosition +" ";
-//			existsRefinement = true;
-//		}
-//		if(existsRefinement)
-//			data.setAttribute(refinementAttribute, refinementData);
+	private void addPimActionAttributes(Element action){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
+		}
+		
+		String associationAttribute = "actionassociation";
+		String associationData = "";
+		boolean existsAssociation = false;
+		for(ActionTransformerModel assoc : this.associations){
+			associationData += "//@pims/@pimaction." + assoc.xmlPosition +" ";
+			existsAssociation = true;
+		}
+	
+		//process refinements
+		String refinementAttribute = "actionRefmnt";
+		String refinementData = "";
+		boolean existsRefinement = false;
+		for(ActionTransformerModel ref : this.refinements){
+			String refLevel = "//@psms/@psmtransformers.";
+			refinementData += refLevel + ref.xmlPosition +" ";
+			existsRefinement = true;
+		}
+
+		//process parameters
+		String paramAttribute = "paramData";
+		String paramData = "";
+		boolean existsParam = false;
+		for(DataContainerModel p : this.inputParams){
+			String refLevel = "//@pims/@pimdata.";
+			refinementData += refLevel + p.getXmlPosition() +" ";
+			existsParam = true;
+		}
+		
+		action.setAttribute(synonymName, synonymValue);
+		if(existsParam)
+			action.setAttribute(paramAttribute, paramData);
+		if(existsRefinement)
+			action.setAttribute(refinementAttribute, refinementData);
+		if(existsAssociation)
+			action.setAttribute(associationAttribute, associationData);
 	}
 	
 	private void addPsmTransformerAttributes(Element container){
@@ -375,6 +371,10 @@ public class ActionTransformerModel {
 //			container.setAttribute(associationAttribute, associationData);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 * Checks the name, synonym and system.
+	 */
 	public boolean equals(Object o){
 		if (o == null)
 			return false;
@@ -407,6 +407,12 @@ public class ActionTransformerModel {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		String unique = name + "#"+ layerType.name()+"#"+ (this.parentSystem==null ? "" : this.parentSystem.getName());
+		return unique.hashCode();
+	}
+	
 	public void markAsMerged(){
 		this.isMerged = true;
 	}

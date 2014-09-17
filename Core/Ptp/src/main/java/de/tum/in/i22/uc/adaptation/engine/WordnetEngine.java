@@ -29,7 +29,23 @@ public class WordnetEngine {
 		if(_instance!=null)
 			return _instance;
 		_instance = new WordnetEngine();
+		_instance.testDictionaries();
 		return _instance;
+	}
+	
+	/**
+	 * Test dictionaries.
+	 * If the wordnet tests fail or it does not work correctly,
+     * it is because the files have been modified when you pushed to git.
+	 * Please restore all ./java/main/resources/dict files from http://wordnet.princeton.edu/wordnet/download/current-version/#win
+	 *	The source of the problem is the following: 
+	 *  warning: LF will be replaced by CRLF in Core/Ptp/src/main/resources/dict/verb.exc.
+	 *	The file will have its original line endings in your working directory.	 
+	 */
+	private void testDictionaries(){
+		float val = getDistance("picture", "photo");
+		if(val == 1.0f)
+			throw new RuntimeException("Wordnet Dictionaries are corrupted. See ./doc/wordnet_READ_THIS.txt for more details");
 	}
 	
 	/** 
