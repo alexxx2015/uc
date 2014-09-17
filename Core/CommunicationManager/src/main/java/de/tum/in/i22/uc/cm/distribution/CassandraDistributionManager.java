@@ -396,29 +396,12 @@ class CassandraDistributionManager implements IDistributionManager {
 				SocketContainer dstSocket = dst.getKey();
 				Set<IData> data = dst.getValue();
 
-//				IPLocation pdpLocation = getResponsibleIPLocation((IPLocation) dstSocket);
-//				_logger.debug("Retrieving pdpLocation for {}: {}.", dstSocket, pdpLocation);
-//
-//				// If we did not get a proper result, we try to contact the
-//				// given dstLocation
-//				if (pdpLocation == null) {
-//					pdpLocation = (IPLocation) dstSocket;
-//				}
-
-//				if (pdpLocation.getLocation() != ELocation.LOCAL && !pdpLocation.getHost().equals(_hostname)) {
-//					IPLocation pipLocation = new IPLocation(pdpLocation.getHost(), Settings.getInstance().getPipListenerPort());
-//					IPLocation pmpLocation = new IPLocation(pdpLocation.getHost(), Settings.getInstance().getPmpListenerPort());
-//
-//					doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
-//					doCrossSystemDataTrackingCoarse(data, pipLocation);
-//					doCrossSystemDataTrackingFine(pipLocation, flows.get(dstSocket));
 				IPLocation pipLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPipListenerPort());
 				IPLocation pmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPmpListenerPort());
 
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
-//				}
 			}
 		}
 	}
