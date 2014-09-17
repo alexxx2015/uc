@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.cm.pip.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 
 public interface IEventHandler {
@@ -21,4 +22,6 @@ public interface IEventHandler {
 	 * the object can be reused.
 	 */
 	public void reset();
+
+	public void setDistributionManager(IDistributionManager _distributionManager);
 }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
@@ -19,6 +20,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	protected IEvent _event;
 
 	protected IInformationFlowModel _informationFlowModel;
+	protected IDistributionManager _distributionManager;
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
@@ -66,6 +68,15 @@ public abstract class BaseEventHandler implements IEventHandler {
 		_informationFlowModel = ifm;
 	}
 
+
+	@Override
+	public void setDistributionManager(IDistributionManager distributionManager) {
+		if (_distributionManager != null) {
+			throw new RuntimeException("DistributionManager already set. Can only be set once.");
+		}
+		_distributionManager = distributionManager;
+	}
+
 	protected final String getParameterValue(String key) throws ParameterNotFoundException {
 		String value = _event.getParameters().get(key);
 
@@ -79,5 +90,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	public void reset(){
 		_event = null;
 		_informationFlowModel = null;
+		_distributionManager = null;
 	}
 }

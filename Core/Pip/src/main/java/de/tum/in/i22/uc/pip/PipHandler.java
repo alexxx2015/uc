@@ -123,6 +123,7 @@ public class PipHandler extends PipProcessor {
 
 		eventHandler.setEvent(event);
 		eventHandler.setInformationFlowModel(_ifModelManager);
+		eventHandler.setDistributionManager(_distributionManager);
 
 		_logger.info("Executing PipHandler for " + event);
 		status = eventHandler.performUpdate();

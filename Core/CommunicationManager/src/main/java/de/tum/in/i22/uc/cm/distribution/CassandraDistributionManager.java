@@ -6,10 +6,12 @@ import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,14 +26,17 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
+import com.datastax.driver.core.exceptions.UnavailableException;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
@@ -52,7 +57,6 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
 	private static final String TABLE_NAME_POLICY = "policy";
 	private static final String TABLE_NAME_RESPONSIBILITY = "responsibility";
-
 
 	private static final List<String> _tables;
 
@@ -90,6 +94,13 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	private boolean _initialized = false;
 
+	private String _hostname;
+
+	/**
+	 * Maps the IP of a PEP to its responsible PDP.
+	 */
+	private final Map<String, IPLocation> _responsiblePdps;
+
 	public CassandraDistributionManager() {
 		QueryOptions options = new QueryOptions().setConsistencyLevel(Settings.getInstance().getDistributionConsistencyLevel());
 
@@ -105,6 +116,13 @@ class CassandraDistributionManager implements IDistributionManager {
 		_defaultSession = _cluster.connect();
 		_pmpConnectionManager = new ConnectionManager<>(5);
 		_pipConnectionManager = new ConnectionManager<>(5);
+		_responsiblePdps = new HashMap<>();
+		try {
+			_hostname = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			_hostname = "";
+			_logger.warn("Unable to retrieve hostname.");
+		}
 	}
 
 
@@ -207,18 +225,28 @@ class CassandraDistributionManager implements IDistributionManager {
 				 * keyspace and tables might not have been created yet. Handle this.
 				 */
 
-				// Check whether there already exists an entry for this dataID ...
-				if (_defaultSession.execute("SELECT data from " + p.getName() + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
-					// ... if not, insert the corresponding row
-					_defaultSession.execute("INSERT INTO " + p.getName() + "." + TABLE_NAME_DATA
-							+ " (data, locations) VALUES ('" + dataID + "',{'"
-							+ IPLocation.localIpLocation.getHost() + "','"
-							+ dstLocation.getHost() + "'})");
-				}
-				else {
-					// ... otherwise add the additional location to the existing row
-					_defaultSession.execute("UPDATE " + p.getName() + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
-							+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
+				boolean done = false;
+
+				while (!done) {
+					try {
+						// Check whether there already exists an entry for this dataID ...
+						if (_defaultSession.execute("SELECT data from " + p.getName() + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+							// ... if not, insert the corresponding row
+							_defaultSession.execute("INSERT INTO " + p.getName() + "." + TABLE_NAME_DATA
+									+ " (data, locations) VALUES ('" + dataID + "',{'"
+									+ IPLocation.localIpLocation.getHost() + "','"
+									+ dstLocation.getHost() + "'})");
+						}
+						else {
+							// ... otherwise add the additional location to the existing row
+							_defaultSession.execute("UPDATE " + p.getName() + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
+									+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
+						}
+						done = true;
+					}
+					catch (UnavailableException e) {
+						_logger.warn("Cannot execute query: {}.", e.getMessage());
+					}
 				}
 			}
 		}
@@ -233,7 +261,9 @@ class CassandraDistributionManager implements IDistributionManager {
 	 * @param pipLocation the location to which the data flow occurred.
 	 * @param flows maps the destination container name to set of data it is receiving
 	 */
-	private void doCrossSystemDataTrackingFine(IPLocation pipLocation, Map<IName, Set<IData>> flows) {
+	private void doCrossSystemDataTrackingFine(IPLocation pipLocation, SocketName socketName, Set<IData> data) {
+		_logger.debug("doCrossSystemDataTrackingFine invoked: {}, {}, {}.", pipLocation, socketName, data);
+
 		Pip2PipClient remotePip = null;
 
 		try {
@@ -243,9 +273,7 @@ class CassandraDistributionManager implements IDistributionManager {
 			return;
 		}
 
-		for (IName name : flows.keySet()) {
-			remotePip.initialRepresentation(name, flows.get(name));
-		}
+		remotePip.initialRepresentation(socketName, data);
 
 		_pipConnectionManager.release(remotePip);
 	}
@@ -350,38 +378,45 @@ class CassandraDistributionManager implements IDistributionManager {
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
 
-		Map<Location, Map<IName, Set<IData>>> flows = dataflow.getFlows();
+		Map<SocketContainer, Map<SocketContainer, Set<IData>>> flows = dataflow.getFlows();
 
-		Location srcLocation = dataflow.getSrcLocation();
+		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
+			SocketContainer srcSocket = flow.getKey();
 
-		if (srcLocation instanceof LocalLocation) {
-			srcLocation = IPLocation.localIpLocation;
-		}
-		else if (!(srcLocation instanceof IPLocation)) {
-			_logger.warn("Source location [" + srcLocation + "] is not an IPLocation. Not performing remote data flow.");
-			return;
-		}
+			Map<SocketContainer, Set<IData>> dsts = flow.getValue();
 
-		for (Location dstLocation : flows.keySet()) {
-			if (dstLocation instanceof IPLocation) {
-				Set<IData> data = new HashSet<>();
-				for (Set<IData> d : flows.get(dstLocation).values()) {
-					data.addAll(d);
-				}
+			for (Entry<SocketContainer, Set<IData>> dst : dsts.entrySet()) {
 
-				IPLocation pipLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPipListenerPort());
-				IPLocation pmpLocation = new IPLocation(((IPLocation) dstLocation).getHost(), Settings.getInstance().getPmpListenerPort());
+				SocketContainer dstSocket = dst.getKey();
+				Set<IData> data = dst.getValue();
+
+//				IPLocation pdpLocation = getResponsibleIPLocation((IPLocation) dstSocket);
+//				_logger.debug("Retrieving pdpLocation for {}: {}.", dstSocket, pdpLocation);
+//
+//				// If we did not get a proper result, we try to contact the
+//				// given dstLocation
+//				if (pdpLocation == null) {
+//					pdpLocation = (IPLocation) dstSocket;
+//				}
+
+//				if (pdpLocation.getLocation() != ELocation.LOCAL && !pdpLocation.getHost().equals(_hostname)) {
+//					IPLocation pipLocation = new IPLocation(pdpLocation.getHost(), Settings.getInstance().getPipListenerPort());
+//					IPLocation pmpLocation = new IPLocation(pdpLocation.getHost(), Settings.getInstance().getPmpListenerPort());
+//
+//					doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
+//					doCrossSystemDataTrackingCoarse(data, pipLocation);
+//					doCrossSystemDataTrackingFine(pipLocation, flows.get(dstSocket));
+				IPLocation pipLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPipListenerPort());
+				IPLocation pmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPmpListenerPort());
 
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
-				doCrossSystemDataTrackingFine(pipLocation, flows.get(dstLocation));
-
-			}
-			else {
-				_logger.warn("Destination location [" + dstLocation + "] is not an IPLocation.");
+				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
+//				}
 			}
 		}
 	}
+
 
 	private Set<XmlPolicy> getAllPolicies(Set<IData> data) {
 		if (data == null || data.size() == 0) {
@@ -420,18 +455,6 @@ class CassandraDistributionManager implements IDistributionManager {
 					+ ") USING TTL " + op.getTTL() / 1000 + ";");
 		}
 
-
-//		for (StateBasedOperator sbo : res.getStateBasedOperatorTrue()) {
-//			_logger.info("UPDATING CASSANDRA STATE: state based operator signaled: {}", sbo.getFullId());
-//
-//			batchJob.append("INSERT INTO " + sbo.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
-//					+ " (opid, location, time) VALUES ("
-//					+ "'" + sbo.getFullId() + "',"
-//					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-//					+ "now()"
-//					+ ") USING TTL " + sbo.getTTL() / 1000 + ";");
-//		}
-
 		batchJob.append(" APPLY BATCH;");
 
 		_defaultSession.execute(batchJob.toString());
@@ -468,5 +491,30 @@ class CassandraDistributionManager implements IDistributionManager {
 		else {
 			return rs.isExhausted();
 		}
+	}
+
+
+	@Override
+	public IPLocation getResponsibleLocation(String ip) {
+		IPLocation result = _responsiblePdps.get(ip);
+
+		if (result == null) {
+			IPLocation loc = new IPLocation(ip, Settings.getInstance().getPepListenerPort());
+			Pdp2PepClient pdp2pep = new ThriftClientFactory().createPdp2PepClient(loc);
+			try {
+				pdp2pep.connect();
+				_logger.debug("Asking remotely for PdpLocation at {}.", loc);
+				result = pdp2pep.getResponsiblePdpLocation();
+				pdp2pep.disconnect();
+			} catch (IOException e) {
+				result = new IPLocation(ip);
+				_logger.warn("Unable to connect to {}.", loc);
+				_logger.warn("Assuming a responsible location of {}.", ip);
+			}
+		}
+
+		_responsiblePdps.put(ip, result);
+
+		return result;
 	}
 }

@@ -5,17 +5,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
-import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 
-public class ConnectEventHandler extends BaseEventHandler {
+public class ConnectEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -29,7 +27,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		IName localSocketName = null;
 		SocketName remoteSocketName = null;
 		SocketContainer localConnectingSocket = null;
-		IContainer remoteAcceptedSocket = null;
+		SocketContainer remoteAcceptedSocket = null;
 		String socketname;
 
 		try {
@@ -67,9 +65,12 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
-		remoteAcceptedSocket = _informationFlowModel.getContainer(remoteSocketName);
+		remoteAcceptedSocket = (SocketContainer) _informationFlowModel.getContainer(remoteSocketName);
 
-		if (remoteAcceptedSocket != null && localIP.equals(remoteIP)) {
+		IPLocation remoteResponsibleLocation = _distributionManager.getResponsibleLocation(remoteIP);
+
+
+		if (remoteAcceptedSocket != null && sameResponsibleLocation(remoteResponsibleLocation, IPLocation.localIpLocation)) {
 			// server is local AND
 			// accept() happened before connect(); it created a temporary container.
 			// Compensate for this. We can identify this temporary container by 'localSocketName'.
@@ -89,18 +90,18 @@ public class ConnectEventHandler extends BaseEventHandler {
 
 			// remove temporary container
 			_informationFlowModel.remove(tmpContainer);
+
+			remoteAcceptedSocket.setSocketName(remoteSocketName);
 		}
 		else {
 			if (remoteAcceptedSocket == null) {
-				if (localIP.equals(remoteIP)) {
+				if (sameResponsibleLocation(remoteResponsibleLocation, IPLocation.localIpLocation)) {
 					// server is local and connect() happens before accept().
-					remoteAcceptedSocket = new SocketContainer(domain, type);
+					remoteAcceptedSocket = new SocketContainer(domain, type, IPLocation.localIpLocation, remoteSocketName);
 				}
 				else {
 					// server is remote.
-
-					remoteAcceptedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-							new IPLocation(remoteIP, remotePort));
+					remoteAcceptedSocket = new SocketContainer(domain, type, remoteResponsibleLocation, remoteSocketName);
 				}
 
 				// assign the remote name
@@ -126,11 +127,10 @@ public class ConnectEventHandler extends BaseEventHandler {
 		// Also, we do not do this if there already exists a proxy remote socket container
 		// with the same name, as this means that two ip addresses are used locally and
 		// the existing container was already created by accept()
-		if (!(_informationFlowModel.getContainer(localSocketName) instanceof RemoteSocketContainer)) {
+		if (!(_informationFlowModel.getContainer(localSocketName) instanceof SocketContainer)) {
 			// f[(p,(sn(e),(a,x))) <- c];
 			_informationFlowModel.addName(localSocketName, localConnectingSocket);
 		}
-
 
 		return STATUS_OKAY;
 	}

@@ -195,17 +195,13 @@ public interface IBasicInformationFlowModel {
 	 * @return true if both containers existed and data (possibly none, if
 	 *         fromContainer was empty) was copied.
 	 */
-	public abstract boolean copyData(IName srcContainerName,
-			IName dstContainerName);
+	public abstract boolean copyData(IName srcContainerName, IName dstContainerName);
 
-	public abstract boolean copyData(IContainer srcContainer,
-			IContainer dstContainer);
+	public abstract boolean copyData(IContainer srcContainer, IContainer dstContainer);
 
-	public abstract void addDataTransitively(Collection<IData> data,
-			IName dstContainerName);
+	public abstract void addDataTransitively(Collection<IData> data, IName dstContainerName);
 
-	public abstract void addDataTransitively(Collection<IData> data,
-			IContainer dstContainer);
+	public abstract void addDataTransitively(Collection<IData> data, IContainer dstContainer);
 
 	/**
 	 * Returns all containers in which the specified data is in

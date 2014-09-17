@@ -19,28 +19,24 @@ public class DummyDistributionManager implements IDistributionManager {
 
 	@Override
 	public void init(PdpProcessor _pdp, PipProcessor _pip, PmpProcessor _pmp) {
-		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("init method invoked");
 	}
 
 	@Override
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
-		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("dataTransfer method invoked");
 	}
 
 	@Override
 	public void registerPolicy(XmlPolicy policy) {
-		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
 	}
 
 	@Override
 	public void update(IResponse response) {
-		// TODO Auto-generated method stub
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("update method invoked");
 	}
@@ -63,6 +59,13 @@ public class DummyDistributionManager implements IDistributionManager {
 	public void unregisterPolicy(String policyName, IPLocation location) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("unregisterPolicy method invoked");
+	}
+
+	@Override
+	public IPLocation getResponsibleLocation(String ip) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("getResponsibleLocation method invoked");
+		return IPLocation.localIpLocation;
 	}
 
 }
