@@ -14,16 +14,15 @@ import com.google.common.collect.Sets;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
-import de.tum.in.i22.uc.pip.core.ifm.BasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 /**
  * Visibility of this class and its methods has been developed carefully. Access
  * via {@link InformationFlowModelManager}.
- * 
+ *
  * @author Enrico Lovat
- * 
+ *
  */
 public final class StructuredInformationFlowModel extends
 		InformationFlowModelExtension implements
@@ -41,7 +40,7 @@ public final class StructuredInformationFlowModel extends
 	 * Basic constructor. Here we initialize the reference to the basic
 	 * information flow model and the tables to store the structured data
 	 * information.
-	 * @param informationFlowModelManager 
+	 * @param informationFlowModelManager
 	 */
 	public StructuredInformationFlowModel(InformationFlowModelManager informationFlowModelManager) {
 		super (informationFlowModelManager);
@@ -56,7 +55,7 @@ public final class StructuredInformationFlowModel extends
 
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
-	 * 
+	 *
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
 	@Override
@@ -81,7 +80,7 @@ public final class StructuredInformationFlowModel extends
 
 	/**
 	 * Simulation step: pop. Restore a previously pushed IF state, if any.
-	 * 
+	 *
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
 	@Override
@@ -99,10 +98,11 @@ public final class StructuredInformationFlowModel extends
 	 * which should be returned. The behavior is to add another entry in our
 	 * _structureMap table where a new IData is associated to the structure
 	 * given as parameter.
-	 * 
+	 *
 	 * The new data item associated to the structured is returned.
-	 * 
+	 *
 	 */
+	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
 		IData d = new DataBasic();
 		_logger.debug("new data [ " + d + " ] for structure created.");
@@ -127,6 +127,7 @@ public final class StructuredInformationFlowModel extends
 	 * associated to it. If no structure for it exists, then the
 	 * <code>null</code> value is returned.
 	 */
+	@Override
 	public Map<String, Set<IData>> getStructureOf(IData data) {
 		if (data == null) {
 			_logger.error("no structure for NULL. returning empty map");
@@ -148,11 +149,12 @@ public final class StructuredInformationFlowModel extends
 	 * This method receives a (structured) data item in input and returns the
 	 * list of all the structured and non-structured data-items it corresponds
 	 * to. If the initial item is not structured, this method returns only it.
-	 * 
+	 *
 	 * Because every structured data-item is freshly created, it is not possible
 	 * to have circular dependency that would lead to a loop.
-	 * 
+	 *
 	 */
+	@Override
 	public Set<IData> flattenStructure(IData data) {
 		if (data == null) {
 			_logger.debug("flattening null data is pointless. returning null");

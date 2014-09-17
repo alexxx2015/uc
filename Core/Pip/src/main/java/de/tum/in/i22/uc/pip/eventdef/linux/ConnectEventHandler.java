@@ -124,7 +124,7 @@ public class ConnectEventHandler extends BaseEventHandler {
 		// Assign the local socket container's name
 		// CAUTION: We can *not* do this before compensating the temporary container!
 		// Also, we do not do this if there already exists a proxy remote socket container
-		// with the same name, as this means that two ip addreses are used locally and
+		// with the same name, as this means that two ip addresses are used locally and
 		// the existing container was already created by accept()
 		if (!(_informationFlowModel.getContainer(localSocketName) instanceof RemoteSocketContainer)) {
 			// f[(p,(sn(e),(a,x))) <- c];
