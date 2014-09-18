@@ -108,31 +108,25 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		// TODO Auto-generated method stub
-		_logger.error("PmpProcessor DUMMY Implementation");
-		_logger.error("specifyPolicyFor method invoked");
-		return null;
-	}
-
-	@Override
 	public IPtpResponse translatePolicy(String requestId,
 			Map<String, String> parameters, XmlPolicy xmlPolicy) {
-		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("translatePolicy method invoked");
 		return null;
 	}
 
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,
 			Map<String, String> parameters, XmlPolicy xmlDomainModel) {
-		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("updateDomainModel method invoked");
 		return null;
 	}
 
 	@Override
 	public Set<XmlPolicy> listPoliciesPmp() {
-		// TODO Auto-generated method stub
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("listPoliciesPmp method invoked");
 		return null;
 	}
 

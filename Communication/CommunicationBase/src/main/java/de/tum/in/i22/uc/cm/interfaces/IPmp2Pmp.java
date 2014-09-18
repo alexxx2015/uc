@@ -54,7 +54,4 @@ public interface IPmp2Pmp extends IPmp2Ptp{
 	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(Types.TData data)")
 	public Set<XmlPolicy> getPolicies(IData data);
 
-	@AThriftMethod(signature="Types.TStatus specifyPolicyFor(1: set<Types.TContainer> representations, 2:string dataClass)")
-	public IStatus specifyPolicyFor(Set<IContainer> representations, String dataClass);
-
 }

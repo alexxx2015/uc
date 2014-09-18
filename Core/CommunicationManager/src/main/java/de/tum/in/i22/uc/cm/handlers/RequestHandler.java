@@ -71,7 +71,6 @@ import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.SpecifyPolicyForPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.TranslatePolicyPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.UpdateDomainModelPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
@@ -517,16 +516,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	public IResponse processEventSync(IEvent pepEvent) {
 		return this.notifyEventSync(pepEvent);
 	}
-
-
-	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		SpecifyPolicyForPmpRequest request = new SpecifyPolicyForPmpRequest(representations,dataClass);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
 
 	@Override
 	public IData getDataFromId(String id) {

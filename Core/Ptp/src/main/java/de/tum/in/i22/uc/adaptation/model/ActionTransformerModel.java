@@ -19,7 +19,7 @@ public class ActionTransformerModel {
 	 */
 	public static enum RefinementType{
 		SET,
-		SEQ
+		SEQ,
 	}
 	
 	private String name;
@@ -43,6 +43,7 @@ public class ActionTransformerModel {
 	private String indentationLevel ;
 	
 	private RefinementType refinementType;
+	private boolean innerLayerRefined;
 	
 	private ArrayList<ActionTransformerModel> refinements;
 	
@@ -61,6 +62,12 @@ public class ActionTransformerModel {
 	
 	private boolean isMerged ;
 	
+	/**
+	 * To be removed from the PTP implementation  and the DomainModel.
+	 */
+	@Deprecated
+	private int sequenceIndex;
+	
 	public ActionTransformerModel(String name, LayerType type){
 		this.name = name;
 		this.layerType = type;
@@ -74,6 +81,8 @@ public class ActionTransformerModel {
 		this.isMerged = false;
 		this.parentSystem = null;
 		this.refinementType = RefinementType.SET;
+		this.setSequenceIndex(0);
+		this.innerLayerRefined = false;
 	}
 	
 	public String getName(){
@@ -84,6 +93,24 @@ public class ActionTransformerModel {
 		this.name = name;
 	}
 	
+	/**
+	 * Planned to be removed from the PTP and the DomainModel.
+	 * @return the sequenceIndex
+	 */
+	@Deprecated
+	public int getSequenceIndex() {
+		return sequenceIndex;
+	}
+
+	/**
+	 * Planned to be removed from the PTP and the DomainModel.
+	 * @param sequenceIndex the sequenceIndex to set
+	 */
+	@Deprecated
+	public void setSequenceIndex(int sequenceIndex) {
+		this.sequenceIndex = sequenceIndex;
+	}
+
 	public LayerType getLayerType(){
 		return this.layerType;
 	}
@@ -100,6 +127,21 @@ public class ActionTransformerModel {
 		return this.refinementType;
 	}
 	
+	/**
+	 * @return the innerLayerRefined
+	 */
+	public boolean isInnerLayerRefined() {
+		return innerLayerRefined;
+	}
+
+	/**
+	 * The refinement is at the same layer.
+	 * @param innerLayerRefined the innerLayerRefined to set
+	 */
+	public void setInnerLayerRefined(boolean innerLayerRefined) {
+		this.innerLayerRefined = innerLayerRefined;
+	}
+
 	public void addSynonym(String name){
 		if(name==null)
 			return;
@@ -175,6 +217,10 @@ public class ActionTransformerModel {
 	public void addRefinement(ActionTransformerModel refinedAs){
 		if(refinedAs == null)
 			return;
+		if(this.refinementType.equals(RefinementType.SEQ)){
+			int index = this.refinements.size();
+			refinedAs.sequenceIndex = index;
+		}
 		this.refinements.add(refinedAs);
 	}
 	
@@ -271,12 +317,24 @@ public class ActionTransformerModel {
 			layerType = "psmtransformer";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			if (this.refinementType.equals(RefinementType.SEQ)){
+				element.setAttribute("refType", "seqRefmnt");
+			}
+			element.setAttribute("seq", ""+sequenceIndex);
+			//TODO: used only for reading/debugging
+			element.setAttribute("system", this.parentSystem.getName());
 			addPsmTransformerAttributes(element);
 			break;
 		case ISM:
 			layerType = "ismtransformer";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			if (this.refinementType.equals(RefinementType.SEQ)){
+				element.setAttribute("refType", "seqRefmnt");
+			}
+			//TODO: used only for reading/debugging
+			element.setAttribute("system", this.parentSystem.getName());
+			element.setAttribute("seq", ""+sequenceIndex);
 			addIsmTransformerAttributes(element);
 			break;
 		default:
@@ -318,7 +376,7 @@ public class ActionTransformerModel {
 		boolean existsParam = false;
 		for(DataContainerModel p : this.inputParams){
 			String refLevel = "//@pims/@pimdata.";
-			refinementData += refLevel + p.getXmlPosition() +" ";
+			paramData += refLevel + p.getXmlPosition() +" ";
 			existsParam = true;
 		}
 		
@@ -331,44 +389,91 @@ public class ActionTransformerModel {
 			action.setAttribute(associationAttribute, associationData);
 	}
 	
-	private void addPsmTransformerAttributes(Element container){
-//		String associationAttribute = "containersassociation";
-//		String associationData = "";
-//		boolean existsAssociation = false;
-//		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
-//			associationData += "//@psms/@psmcontainers." + assoc.xmlPosition +" ";
-//			existsAssociation = true;
-//		}
-//		if(existsAssociation)
-//			container.setAttribute(associationAttribute, associationData);
-//		
-//		String refinementAttribute = "contimplementedas";
-//		String refinementData = "";
-//		boolean existsRefinement = false;
-//		for(DataContainerModel ref : this.refinements){
-//			String refLevel = "";
-//			if(ref.getLayerType().equals(LayerType.PSM))
-//				refLevel = "//@psms/@psmcontainers.";
-//			else if(ref.getLayerType().equals(LayerType.ISM))
-//				refLevel = "//@isms/@ismcontainers.";
-//			refinementData += refLevel + ref.xmlPosition +" ";
-//			existsRefinement = true;
-//		}
-//		if(existsRefinement)
-//			container.setAttribute(refinementAttribute, refinementData);
+	private void addPsmTransformerAttributes(Element action){
+		//process inner refinements
+		String refinementInnerAttribute = "psmRefmnt";
+		String refinementInnerData = "";
+		boolean existsInnerRefinement = false;
+		for(ActionTransformerModel ref : this.refinements){
+			if(ref.layerType.equals(this.layerType)){
+				String refLevel = "//@psms/@psmtransformers.";
+				refinementInnerData += refLevel + ref.xmlPosition +" ";
+				existsInnerRefinement = true;
+			}
+		}
+		
+		//process cross refinements
+		String refinementCrossAttribute = "crossPsmRefmnt";
+		String refinementCrossData = "";
+		boolean existsCrossRefinement = false;
+		for(ActionTransformerModel ref : this.refinements){
+			if(!ref.layerType.equals(this.layerType)){
+				String refLevel = "//@psms/@psmtransformers.";
+				refinementCrossData += refLevel + ref.xmlPosition +" ";
+				existsCrossRefinement = true;
+			}
+		}
+		
+		//process input param
+		String inputParamAttribute = "inputcontainer";
+		String inputParamData = "";
+		for(DataContainerModel in : this.inputParams){
+				String refLevel = "//@psms/@psmcontainers.";
+				inputParamData += refLevel + in.getXmlPosition() +" ";
+		}
+		
+		//process output param
+		String outputParamAttribute = "outputcontainer";
+		String outputParamData = "";
+		for(DataContainerModel in : this.outputParams){
+				String refLevel = "//@psms/@psmcontainers.";
+				outputParamData += refLevel + in.getXmlPosition() +" ";
+		}		
+		
+		if(existsInnerRefinement)
+			action.setAttribute(refinementInnerAttribute, refinementInnerData);
+		if(existsCrossRefinement)
+			action.setAttribute(refinementCrossAttribute, refinementCrossData);
+		
+		action.setAttribute(inputParamAttribute, inputParamData);
+		action.setAttribute(outputParamAttribute, outputParamData);
 	}
 	
-	private void addIsmTransformerAttributes(Element container){
-		//TODO: be careful to the sequences and the position of the elements
-//		String associationAttribute = "implecontainerassociation";
-//		String associationData = "";
-//		boolean existsAssociation = false;
-//		for(DataContainerModel assoc : this.associations.get(AssociationType.AGGREGATION)){
-//			associationData += "//@isms/@ismcontainers." + assoc.xmlPosition +" ";
-//			existsAssociation = true;
-//		}
-//		if(existsAssociation)
-//			container.setAttribute(associationAttribute, associationData);
+	private void addIsmTransformerAttributes(Element action){
+		//process inner refinements
+		String refinementInnerAttribute = "ismRefmnt";
+		String refinementInnerData = "";
+		boolean existsInnerRefinement = false;
+		for(ActionTransformerModel ref : this.refinements){
+			if(ref.layerType.equals(this.layerType)){
+				String refLevel = "//@isms/@ismtransformers.";
+				refinementInnerData += refLevel + ref.xmlPosition +" ";
+				existsInnerRefinement = true;
+			}
+		}
+		
+		//there is no cross refinement at ISM
+		
+		//process input param
+		String inputParamAttribute = "inputimplecontainer";
+		String inputParamData = "";
+		for(DataContainerModel in : this.inputParams){
+				String refLevel = "//@isms/@ismcontainers.";
+				inputParamData += refLevel + in.getXmlPosition() +" ";
+		}
+		
+		//process output param
+		String outputParamAttribute = "outputimplecontainer";
+		String outputParamData = "";
+		for(DataContainerModel in : this.outputParams){
+				String refLevel = "//@isms/@ismcontainers.";
+				outputParamData += refLevel + in.getXmlPosition() +" ";
+		}	
+		
+		if(existsInnerRefinement)
+			action.setAttribute(refinementInnerAttribute, refinementInnerData);
+		action.setAttribute(inputParamAttribute, inputParamData);
+		action.setAttribute(outputParamAttribute, outputParamData);
 	}
 	
 	/* (non-Javadoc)

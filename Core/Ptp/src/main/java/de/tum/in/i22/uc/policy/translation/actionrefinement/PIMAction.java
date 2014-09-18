@@ -134,7 +134,9 @@ public class PIMAction extends Event {
 			
 					throw new ActionMatchingException(" Action {"+resource.getExtraInformation().toString()+"} exists but not for data {"+resource.getDataClass()+"}");
 				          
-	}
+		}
+		else
+			throw new ActionMatchingException(" Action {"+resource.getExtraInformation().toString()+"} does not exist");
 			
 		return action;
 	}

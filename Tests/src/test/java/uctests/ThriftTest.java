@@ -2,7 +2,6 @@ package uctests;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,45 +12,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
 public class ThriftTest extends GenericTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(ThriftTest.class);
-
-	@Test
-	public void testPmpSpecifyPolicyFor() throws Exception {
-		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
-
-		IContainer c1 = new ContainerBasic("container1");
-		IContainer c2 = new ContainerBasic("container2");
-		IContainer c3 = new ContainerBasic("container3");
-
-		Set<IContainer> representations = new HashSet<IContainer>();
-		representations.add(c1);
-		representations.add(c2);
-		representations.add(c3);
-
-		IStatus st= pmp.specifyPolicyFor(representations, "myDataClass");
-		Assert.assertEquals(st.getEStatus(), EStatus.OKAY);
-
-		st = pmp.specifyPolicyFor(representations, Settings.getInstance().getPolicySpecificationStarDataClass());
-		Assert.assertEquals(st.getEStatus(), EStatus.OKAY);
-
-	}
 
 	@Test
 	public void testDataContEventMatching() throws Exception {

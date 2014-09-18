@@ -24,6 +24,8 @@ public class DeploymentController {
 	private static final Logger _logger = LoggerFactory.getLogger(DeploymentController.class);
 		
 	private Any2PmpClient clientPmp;
+
+	private static int globalPolicyCounter = 0;
 	
 	public DeploymentController(Any2PmpClient clientPmp2) {
 		this.clientPmp = clientPmp2;
@@ -56,7 +58,7 @@ public class DeploymentController {
 			policy.instantiatePolicyClass();
 			policy.instantiatePolicyObject(container);
 			
-			_logger.info(policy.toStringExtended());
+			//_logger.info(policy.toStringExtended());
 									
 			Map<String, String> parameters = new HashMap<>();
 			
@@ -65,7 +67,7 @@ public class DeploymentController {
 				//generate a policy name
 				Calendar cal = Calendar.getInstance();
 				String timestamp = cal.get(Calendar.YEAR)+""+cal.get(Calendar.MONTH)+""+cal.get(Calendar.DAY_OF_MONTH)
-						+"-"+ cal.get(Calendar.HOUR_OF_DAY)+cal.get(Calendar.MINUTE)+""+cal.get(Calendar.SECOND); 
+						+"-"+ cal.get(Calendar.HOUR_OF_DAY)+cal.get(Calendar.MINUTE)+""+cal.get(Calendar.SECOND)+""+globalPolicyCounter++; 
 				policyName = timestamp+"#"+policy.getTemplateId();
 			}
 			String xmlRepresentation = policy.getInstance();
@@ -73,7 +75,8 @@ public class DeploymentController {
 			String pTemplateId = policy.getTemplateId();
 			String pTemplate = policy.getTemplate();
 			String pDataClass = policy.getDataClass();
-						
+			
+			
 			XmlPolicy xmlPolicy = new XmlPolicy(policyName, xmlRepresentation);
 			xmlPolicy.setDescription(pDescription);
 			xmlPolicy.setTemplateId(pTemplateId);
@@ -81,6 +84,8 @@ public class DeploymentController {
 			xmlPolicy.setDataClass(pDataClass);
 			
 			String requestId = policyName;
+			_logger.debug("translate and deploy: "+ policyName +"\n"+xmlRepresentation);
+			System.err.println(xmlRepresentation);
 			IPtpResponse response = clientPmp.translatePolicy(requestId, parameters, xmlPolicy);
 			String msg = "policy: " + response.getStatus().getEStatus() +" "+ requestId + " "+ policy.getClearDescription();
 			_logger.info(msg);

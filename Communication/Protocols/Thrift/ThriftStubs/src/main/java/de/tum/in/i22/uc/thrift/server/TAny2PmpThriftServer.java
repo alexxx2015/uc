@@ -1,19 +1,16 @@
 package de.tum.in.i22.uc.thrift.server;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
-import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
@@ -75,16 +72,6 @@ TAny2Pmp.Iface {
 	public Set<TXmlPolicy> getPolicies(TData data) throws TException {
 		Set<XmlPolicy> policies = _handler.getPolicies(ThriftConverter.fromThrift(data));
 		return ThriftConverter.toThriftPoliciesSet(policies);
-	}
-
-	@Override
-	public TStatus specifyPolicyFor(Set<TContainer> representations,
-			String dataClass) throws TException {
-		Set<IContainer> representationsI = new HashSet<IContainer>();
-		for (TContainer cont : representations)
-			representationsI.add(ThriftConverter.fromThrift(cont));
-		return ThriftConverter.toThrift(_handler.specifyPolicyFor(
-				representationsI, dataClass));
 	}
 
 	@Override

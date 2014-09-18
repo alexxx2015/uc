@@ -2,7 +2,6 @@ package de.tum.in.i22.uc.policy.translation.ecacreation;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -25,6 +24,8 @@ public class ECARulesAutomation {
 	private String ecaTemplateId;
 	private ECARuleTemplate ecaTemplate;
 	private Map<String,String> policyParams;
+	
+	private ECATemplates loadedTemplates;
 	// represents access configuration file of properties
 	private static Config config;
 	/** The already generated subformulas are used here.
@@ -35,6 +36,7 @@ public class ECARulesAutomation {
 		allSubformulas = subformulas;
 		ecaTemplateId = policyParams2.get("template_id");
 		ecaTemplate = null;
+		loadedTemplates = null;
 		this.policyParams = policyParams2;
 		try {
 			config = new Config();
@@ -203,19 +205,23 @@ public class ECARulesAutomation {
 		if (config == null)
 			return false;
 		
-		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
-		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
-		String json = "";
-		try {
-			json = PublicMethods.readFile(ecaRulesFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		if(loadedTemplates == null){
+			String ecaRulesFile = config.getProperty("ecaRulesTemplates");
+			ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
+			String json = "";
+			try {
+				json = PublicMethods.readFile(ecaRulesFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
 
-		Gson gson = new Gson();
-		ECATemplates templates = gson.fromJson(json, ECATemplates.class);
-		ECATemplate template = templates.getTemplate(ecaTemplateId);
+			Gson gson = new Gson();
+			ECATemplates templates = gson.fromJson(json, ECATemplates.class);
+			loadedTemplates = templates;
+		}
+		
+		ECATemplate template = loadedTemplates.getTemplate(ecaTemplateId);
 		if (template.getDataset().length <= 0)
 			return false;
 		//it's not dead code!

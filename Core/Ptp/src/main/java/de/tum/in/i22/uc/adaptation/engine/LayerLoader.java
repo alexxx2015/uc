@@ -80,8 +80,9 @@ public class LayerLoader {
 	 * Process the list of PIM actions or PSM, ISM transformers.
 	 * Add them to the corresponding layer.
 	 * @param transformers
+	 * @throws InvalidDomainModelFormatException 
 	 */
-	public void addTransformers(NodeList transformers) {
+	public void addTransformers(NodeList transformers) throws InvalidDomainModelFormatException {
 		if(transformers == null)
 			return;
 		int transformersCounter = transformers.getLength();
@@ -478,11 +479,22 @@ public class LayerLoader {
 	 * See doc/metamodel.png: PSM Transformer element - crossPsmRefmnt attribute 
 	 * @param psmTransformer
 	 * @param node
+	 * @throws InvalidDomainModelFormatException 
 	 */
-	private void addPsmTransformerCrossRefinement(ActionTransformerModel psmTransformer, Node node){
+	private void addPsmTransformerCrossRefinement(ActionTransformerModel psmTransformer, Node node) throws InvalidDomainModelFormatException{
 		Node psmTransformerRefinement = node.getAttributes().getNamedItem("crossPsmRefmnt");
 		if(psmTransformerRefinement == null)
 			return;
+		if(psmTransformer.getRefinementType().equals(RefinementType.SEQ)){
+			String errorMsg = "A sequence refinement cannot have cross refinement to another layer";
+			errorMsg += "\n"+ psmTransformer.toString();
+			throw new InvalidDomainModelFormatException(errorMsg);
+		}
+		if(!psmTransformer.getRefinements().isEmpty()){
+			String errorMsg = "A transformer should not have inner and cross refinement attributes at the same time";
+			errorMsg += "\n"+ psmTransformer.toString();
+			throw new InvalidDomainModelFormatException(errorMsg);
+		}
 		String implementedAsData = psmTransformerRefinement.getNodeValue();
 		String[] refinements = implementedAsData.split(" ");
 		for(int i =0; i<refinements.length; i++){
@@ -505,13 +517,21 @@ public class LayerLoader {
 	 * See doc/metamodel.png: PSM Transformer element - psmRefmnt attribute 
 	 * @param psmTransformer
 	 * @param node
+	 * @throws InvalidDomainModelFormatException 
 	 */
-	private void addPsmTransformerInnerRefinement(ActionTransformerModel psmTransformer, Node node){
+	private void addPsmTransformerInnerRefinement(ActionTransformerModel psmTransformer, Node node) throws InvalidDomainModelFormatException{
 		Node psmTransformerRefinement = node.getAttributes().getNamedItem("psmRefmnt");
 		if(psmTransformerRefinement == null)
 			return;
+		if(!psmTransformer.getRefinements().isEmpty()){
+			String errorMsg = "A transformer should not have inner and cross refinement attributes at the same time";
+			errorMsg += "\n"+ psmTransformer.toString();
+			throw new InvalidDomainModelFormatException(errorMsg);
+		}
 		String implementedAsData = psmTransformerRefinement.getNodeValue();
 		String[] refinements = implementedAsData.split(" ");
+		if(refinements.length > 0)
+			psmTransformer.setInnerLayerRefined(true);
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@psms/@psmtransformers.", "");
@@ -650,6 +670,8 @@ public class LayerLoader {
 			return;
 		String implementedAsData = ismTransformerRefinement.getNodeValue();
 		String[] refinements = implementedAsData.split(" ");
+		if(refinements.length > 0)
+			ismTransformer.setInnerLayerRefined(true);
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@isms/@ismtransformers.", "");

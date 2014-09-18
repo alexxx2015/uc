@@ -88,11 +88,6 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,String dataClass) {
-		return _impl.specifyPolicyFor(representations, dataClass);
-	}
-
-	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		return _impl.translatePolicy(requestId, parameters, xmlPolicy);
 	}

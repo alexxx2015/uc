@@ -31,7 +31,7 @@ public class PtEditorHandler implements IAny2PtEditor {
 	private static ThriftClientFactory thriftClientFactory = new ThriftClientFactory();
 	private Any2PmpClient clientPmp;
 	private String defaultPmp2PdpIp = "localhost";
-	private int defaultPmp2PdpPort = 20001;
+	private int defaultPmp2PdpPort = 21001;
 	
 	
 	public PtEditorHandler(){

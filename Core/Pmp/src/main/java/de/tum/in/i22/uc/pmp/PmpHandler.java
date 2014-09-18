@@ -376,17 +376,6 @@ public class PmpHandler extends PmpProcessor {
 
 	}
 
-	@Override
-
-	public IStatus specifyPolicyFor(Set<IContainer> representations, String dataClass) {
-		// TODO Here goes Prachi & Cipri's code
-		_logger.debug("Here goes Prachi's and Cipri's code");
-		_logger.debug("the String value for the dataClass that matches any dataclass is " + Settings.getInstance().getPolicySpecificationStarDataClass());
-
-		_logger.debug("specifyPolicyFor method invoked for containers " + representations + " and dataclass " + dataClass);
-		if (representations==null||"".equals(dataClass)) return new StatusBasic(EStatus.ERROR);
-		return new StatusBasic(EStatus.OKAY);
-	}
 
 	/**
 	 * Policies are translated and then deployed on the PDP.

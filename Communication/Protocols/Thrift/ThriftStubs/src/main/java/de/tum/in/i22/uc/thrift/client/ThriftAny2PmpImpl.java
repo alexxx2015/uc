@@ -106,18 +106,6 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		Set<TContainer> representationsT = new HashSet<TContainer>();
-		for (IContainer cont : representations) representationsT.add(ThriftConverter.toThrift(cont));
-		try {
-			return ThriftConverter.fromThrift(_handle.specifyPolicyFor(representationsT, dataClass));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	@Override
 	public IPtpResponse translatePolicy(String requestId,Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		if((requestId == null) || parameters==null || xmlPolicy==null){
 			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));

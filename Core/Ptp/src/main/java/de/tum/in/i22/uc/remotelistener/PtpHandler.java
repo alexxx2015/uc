@@ -14,6 +14,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.tum.in.i22.uc.adaptation.engine.AdaptationController;
+import de.tum.in.i22.uc.adaptation.engine.DomainMergeException;
+import de.tum.in.i22.uc.adaptation.engine.InvalidDomainModelFormatException;
+import de.tum.in.i22.uc.adaptation.engine.ModelLoader;
+import de.tum.in.i22.uc.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
@@ -30,6 +35,12 @@ public class PtpHandler implements IPmp2Ptp {
 	private static final Logger _logger = LoggerFactory.getLogger(PtpHandler.class);
 	
 	private int policiesTranslatedTotalCounter = 0;
+	
+	private AdaptationController adaptationEngine ;
+	
+	public PtpHandler(){
+		this.adaptationEngine = new AdaptationController();
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp#translatePolicy(java.lang.String, java.util.Map, de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy)
@@ -101,20 +112,79 @@ public class PtpHandler implements IPmp2Ptp {
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		_logger.info("updateDomainModel: " + requestId + " "+ xmlDomainModel.toString());
 		
+		DomainModel baseDm = null;
+		try {
+			baseDm = loadBaseDomainModel();
+		} catch (InvalidDomainModelFormatException e) {
+			_logger.error("Loading base domain failed.", e);
+			StatusBasic adaptationStatus = new StatusBasic(EStatus.ERROR, "Loading base domain failed. See logs for further details.");
+			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel);
+			return response;
+		}
+		DomainModel newDm = null;
+		try {
+			newDm = loadNewDomainModel(xmlDomainModel);
+		} catch (InvalidDomainModelFormatException e) {
+			_logger.error("Loading new domain failed.", e);
+			StatusBasic adaptationStatus = new StatusBasic(EStatus.ERROR, "Loading new domain failed. See logs for further details.");
+			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel);
+			return response;
+		}
 		
-		StatusBasic adaptationStatus = new StatusBasic(EStatus.OKAY, "adaptation success");
-		XmlPolicy adaptedXmlDomainModel = new XmlPolicy(xmlDomainModel.getName()+"_adapted", "");
+		adaptationEngine.setBaseDomainModel(baseDm);
+		adaptationEngine.setNewDomainModel(newDm);
+		int updates = 0;
+		try {
+			updates = adaptationEngine.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			_logger.error("Merging domains failed.", e);
+			StatusBasic adaptationStatus = new StatusBasic(EStatus.ERROR, "Merging domains failed. See logs for further details.");
+			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel);
+			return response;
+		}
+		
+		ModelLoader modelHandler = new ModelLoader();
+		modelHandler.backupBaseDomainModel();
+		String xmlMergedDomain = "";
+		try {
+			xmlMergedDomain = modelHandler.storeXmlBaseDomainModel(baseDm);
+		} catch (InvalidDomainModelFormatException e) {
+			_logger.error("Merging domains failed.", e);
+			StatusBasic adaptationStatus = new StatusBasic(EStatus.ERROR, "Storing merged domain failed. See logs for further details.");
+			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel);
+			return response;
+		}
+		
+		StatusBasic adaptationStatus = new StatusBasic(EStatus.OKAY, "Adaptation success. Elements updated: "+ updates);
+		XmlPolicy adaptedXmlDomainModel = new XmlPolicy(xmlDomainModel.getName(), "");
 		
 		IPtpResponse response = new PtpResponseBasic(adaptationStatus, adaptedXmlDomainModel);
 		return response;
 	}
 
+	
+	private DomainModel loadNewDomainModel(XmlPolicy xmlDomainModel) throws InvalidDomainModelFormatException {
+		String xmlString = xmlDomainModel.getXml();
+		ModelLoader modelHandler = new ModelLoader();
+		DomainModel newDM = null;
+		newDM = modelHandler.createDomainModel(xmlString);
+		return newDM;
+	}
+
+	private DomainModel loadBaseDomainModel() throws InvalidDomainModelFormatException{
+		ModelLoader modelHandler = new ModelLoader();
+		DomainModel baseDM = null;
+		baseDM = modelHandler.loadBaseDomainModel();
+		return baseDM;
+	}
+	
+	
 	/**
 	 * The syntax of eventually has changed.
 	 * @param xml
 	 * @return
 	 */
-	private String replaceEventually(String xml){
+	private static String replaceEventually(String xml){
  		Document doc = PublicMethods.openXmlInput(xml, "string");
  		if(doc==null)
  			return xml;
@@ -127,7 +197,6 @@ public class PtpHandler implements IPmp2Ptp {
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 			String logMsg = "eventually: xml value parsing error";
-			//System.out.println( logMsg );
 			_logger.error(logMsg, e);
 			return logMsg;
 		}
@@ -182,7 +251,7 @@ public class PtpHandler implements IPmp2Ptp {
 	 * @param policy
 	 * @return
 	 */
-	private String addTimeStepToPolicy(String policy){
+	private static String addTimeStepToPolicy(String policy){
 		if(policy == null)
 			return "";
 		if(policy.length()==0)

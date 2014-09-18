@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<metamodelv4:domain xmlns:metamodelv4="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="photo" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.3 //@psms/@psmcontainers.5 //@psms/@psmcontainers.4 //@psms/@psmcontainers.2 " synonym="picture "/>
+<pimdata name="album" storedin="//@psms/@psmcontainers.1 " synonym="">
+<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+</pimdata>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.4 " name="file"/>
+<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.5 " name="directory"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="clipboard"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.0 " name="domEle"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.2 " name="processMem"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="window"/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="htmlEle"/>
+<ismcontainers name="xclipboard"/>
+<ismcontainers name="procMem"/>
+<ismcontainers name="drawable"/>
+<ismcontainers name="unixfile"/>
+<ismcontainers implecontainerassociation="//@isms/@ismcontainers.4 " name="unixDir"/>
+</isms>
+</metamodelv4:domain>

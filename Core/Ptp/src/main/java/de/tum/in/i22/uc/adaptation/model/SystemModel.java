@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.tum.in.i22.uc.adaptation.model.DataContainerModel.AssociationType;
 import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class SystemModel {

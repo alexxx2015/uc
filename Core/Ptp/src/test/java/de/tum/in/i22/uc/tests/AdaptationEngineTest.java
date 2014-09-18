@@ -1,15 +1,12 @@
 package de.tum.in.i22.uc.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
-import org.eclipse.persistence.jpa.jpql.Assert.AssertException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,7 +28,7 @@ public class AdaptationEngineTest {
 	 * The tests could potentially affect configuration files unless
 	 * only test files are correctly specified.
 	 */
-	private static final boolean TESTS_ENABLED = true;
+	private static final boolean TESTS_ENABLED = false;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdaptationEngineTest.class);
 	
@@ -250,16 +247,19 @@ public class AdaptationEngineTest {
 		int pimData = baseDM.getPimLayer().getDataContainers().size();
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertTrue(pimData == 2);
-		assertTrue(psmContainers == 6);
-		assertTrue(ismContainers == 6);
+		assertEquals(2,pimData);
+		assertEquals(6,psmContainers);
+		assertEquals(6,ismContainers);
 		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();		
-		assertTrue(pimAction == 2);
-		assertTrue(psmTransformers == 6);
-		assertTrue(ismTransformers == 8);
-		
+		assertEquals(2,pimAction);
+		assertEquals(6,psmTransformers);
+		assertEquals(9,ismTransformers);
+		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+		int ismSystems = baseDM.getIsmLayer().getSystems().size();		
+		assertEquals(3, psmSystems);
+		assertEquals(3, ismSystems);
 	}
 	
 	
@@ -302,6 +302,7 @@ public class AdaptationEngineTest {
 		try {
 			updatedElements = ac.mergeDomainModels();
 		} catch (DomainMergeException e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 		
@@ -317,15 +318,19 @@ public class AdaptationEngineTest {
 		int pimData = baseDM.getPimLayer().getDataContainers().size();
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertTrue(pimData == 2);
-		assertTrue(psmContainers == 6);
-		assertTrue(ismContainers == 6);
+		assertEquals(2,pimData);
+		assertEquals(6,psmContainers);
+		assertEquals(6,ismContainers);
 		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();		
-		assertTrue(pimAction == 2);
-		assertTrue(psmTransformers == 5);
-		assertTrue(ismTransformers == 8);
+		assertEquals(2,pimAction);
+		assertEquals(6,psmTransformers);
+		assertEquals(8,ismTransformers);
+		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+		int ismSystems = baseDM.getIsmLayer().getSystems().size();		
+		assertEquals(3, psmSystems);
+		assertEquals(3, ismSystems);
 		
 	}
 	

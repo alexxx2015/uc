@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.language.RefinedSoundex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,11 +120,12 @@ public class ActionTransformerAdaptationController {
 			baseAt = new ActionTransformerModel(newAt.getName(), newAt.getLayerType());
 			baseAt.setParenLayer(baseLayer);
 			baseAt.setRefinementType(newAt.getRefinementType());
+			baseAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
 			/* The parent system will be updated when the systems are merged.
 			 * Each transformer must have a parent system.
 			 */
-			baseAt.setParentSystem(newAt.getParentSystem());
-			baseLayer.addActionTransformer(baseAt);		
+			baseAt.setParentSystem(newAt.getParentSystem());			
+			baseLayer.addActionTransformer(baseAt);			
 			incrementUpdateCounter();
 		}
 		else{
@@ -141,13 +143,64 @@ public class ActionTransformerAdaptationController {
 		
 	}
 
+	/**
+	 * This is the case when a transformer from the newDM is inner SET refined
+	 * while the same transformer in the baseDM is cross refined.
+	 * Then, the new transformer is renamed and the base transformer is added to its refinements.
+	 * @param newAt
+	 * @param baseAt
+	 * @param baseLayer
+	 * @return
+	 */
+	private ActionTransformerModel modifyNewActionTransformer(ActionTransformerModel newAt, ActionTransformerModel baseAt, LayerModel baseLayer) {
+		logger.debug("created NewTransformer: " + newAt.toStringShort());
+		String newName = newAt.getName()+"#NewSet";
+		ActionTransformerModel renamedAt = new ActionTransformerModel(newName, newAt.getLayerType());
+		renamedAt.setParenLayer(baseLayer);
+		renamedAt.setRefinementType(newAt.getRefinementType());
+		renamedAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
+		/* The parent system will be updated when the systems are merged.
+		 * Each transformer must have a parent system.
+		 */
+		renamedAt.setParentSystem(newAt.getParentSystem());			
+		baseLayer.addActionTransformer(renamedAt);
+		renamedAt.addRefinement(baseAt);
+		mergeSet2Set(newAt, renamedAt);
+		return renamedAt;
+	}
+
 	/** 
 	 * Update Inner/Cross Set/Seq refinement
 	 * @param newAt
 	 * @param baseAt
+	 * @throws DomainMergeException 
 	 */
-	private void mergeRefinement(ActionTransformerModel newAt, ActionTransformerModel baseAt) {
+	private void mergeRefinement(ActionTransformerModel newAt, ActionTransformerModel baseAt) throws DomainMergeException {
 		logger.debug("Try MERGE refinement - base: " + baseAt.toStringShort() + " new: "+ newAt.toStringShort());
+		
+		if(newAt.isInnerLayerRefined()){
+			if(baseAt.isInnerLayerRefined() == false){
+				/* This is the case when a transformer from the newDM is inner refined
+				 * while the same transformer in the baseDM is cross refined.
+				 */
+				String message = "Conflicting definition between base and new for transformer: "+ newAt.toStringShort();
+				message += "\nThe transformer is only an intermediate. Please rename.";
+				message += "\nPlease rename this new intermediate transformer in the new domain model.";
+				throw new DomainMergeException(message);
+			}
+		}
+		else {
+			if(baseAt.isInnerLayerRefined() == true){
+				/*This is the case when a transformer from the baseDM is inner refined
+				 * 
+				 * */
+				String newName = baseAt.getName()+"_"+baseAt.getRefinementType().name();
+				newAt.setName(newName);
+			}
+		}
+		
+		
+		
 		if(newAt.getRefinementType().equals(RefinementType.SET)){
 			if(baseAt.getRefinementType().equals(RefinementType.SET)){
 				mergeSet2Set(newAt, baseAt);

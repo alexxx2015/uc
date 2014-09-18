@@ -180,7 +180,7 @@ public class ModelLoader {
 		pimLoader.addContainers(pimData);
 	}
 	
-	private void addActionTransformers(NodeList pimActionList, NodeList psmTransformerList, NodeList ismTransformerList) {
+	private void addActionTransformers(NodeList pimActionList, NodeList psmTransformerList, NodeList ismTransformerList) throws InvalidDomainModelFormatException {
 		LayerModel ism = this.domainModel.getIsmLayer();
 		LayerLoader ismLoader = new LayerLoader(ism);
 		ismLoader.addTransformers(ismTransformerList);
@@ -204,6 +204,14 @@ public class ModelLoader {
 		psmLoader.addSystems(psmSystemList);
 	}
 
+	public String storeXmlBaseDomainModel(DomainModel baseDm) throws InvalidDomainModelFormatException{
+		String domainModelFile=config.getProperty("domainmodel");
+		String userDir = config.getUserDir();
+		domainModelFile = userDir + File.separator + domainModelFile;
+		String mergedDomain = this.storeXmlDomainModel(domainModelFile, baseDm);
+		return mergedDomain;
+	}
+	
 	/**
 	 * The Adaptation Engine assumes there is a template of the Domain Model already stored.
 	 * A template means a file with no data, containers, actions, transformers, systems.
@@ -211,8 +219,9 @@ public class ModelLoader {
 	 * If the destination already contains some nodes, these will be updated.
 	 * @param destination
 	 * @param domain
+	 * @return 
 	 */
-	public void storeXmlDomainModel(String destination, DomainModel domain) throws InvalidDomainModelFormatException{
+	public String storeXmlDomainModel(String destination, DomainModel domain) throws InvalidDomainModelFormatException{
 		try{
 			String domainModelFile=destination;
 			Document xmlDocXpath= null; 
@@ -260,14 +269,12 @@ public class ModelLoader {
 							+ xmlData +"\n";
 			logger.info(logMsg);
 			PublicMethods.writeFile(destination, xmlData);
+			return xmlData;
 		}
 		catch (Exception ex){
 			logger.error("Trying to load domain model", ex);
 			throw new InvalidDomainModelFormatException(ex.getMessage());
 		}
-		
-		
-		
 	}
 	
 	/**

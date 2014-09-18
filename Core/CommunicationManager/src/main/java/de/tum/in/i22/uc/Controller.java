@@ -442,12 +442,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		return _requestHandler.specifyPolicyFor(representations, dataClass);
-	}
-
-	@Override
 	public IData getDataFromId(String id) {
 		return _requestHandler.getDataFromId(id);
 	}
