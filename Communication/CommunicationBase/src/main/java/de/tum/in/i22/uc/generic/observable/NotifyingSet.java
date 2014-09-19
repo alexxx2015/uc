@@ -1,59 +1,75 @@
 package de.tum.in.i22.uc.generic.observable;
 
-import java.util.Map;
-import java.util.Observable;
+import java.util.Collection;
 import java.util.Observer;
+import java.util.Set;
 
-import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.ForwardingSet;
 
 /**
- * Note: Observable/Observer related code has been taken from:
- * http://www.docjar.com/projects/openjdk-7-java.html
- *
- * The problem here was that it is not possible to extend both
- * {@link ForwardingMap} and {@link Observable}.
+ * A set that notifies registered {@link Observer}s
+ * about changes to the set.
  *
  * @author Florian Kelbert
  *
- * @param <K>
- * @param <V>
+ * @param <E>
+ *
  */
-public class ObservableMap<K, V> extends ForwardingMap<K, V> implements IMyObservable {
-	private IMyObservable _observable;
-	private final Map<K, V> _delegate;
+public class NotifyingSet<E> extends ForwardingSet<E> implements IMyObservable {
+	private final IMyObservable _observable;
+	private final Set<E> _delegate;
 
-	public ObservableMap(Map<K, V> delegate) {
+	public NotifyingSet(Set<E> delegate, Observer o) {
 		_delegate = delegate;
 		_observable = new MyObservable();
+		_observable.addObserver(o);
 	}
 
 	@Override
-	protected Map<K, V> delegate() {
+	protected Set<E> delegate() {
 		return _delegate;
+	}
+
+	@Override
+	public boolean add(E element) {
+		setChanged();
+		notifyObservers();
+		return super.add(element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends E> collection) {
+		setChanged();
+		notifyObservers();
+		return super.addAll(collection);
 	}
 
 	@Override
 	public void clear() {
 		setChanged();
+		notifyObservers();
 		super.clear();
 	}
 
 	@Override
-	public V put(K key, V value) {
+	public boolean remove(Object object) {
 		setChanged();
-		return super.put(key, value);
-	}
-
-	@Override
-	public void putAll(Map<? extends K, ? extends V> map) {
-		setChanged();
-		super.putAll(map);
-	}
-
-	@Override
-	public V remove(Object object) {
-		setChanged();
+		notifyObservers();
 		return super.remove(object);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> collection) {
+		setChanged();
+		notifyObservers();
+		return super.removeAll(collection);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> collection) {
+		setChanged();
+		notifyObservers();
+		return super.retainAll(collection);
 	}
 
 	@Override

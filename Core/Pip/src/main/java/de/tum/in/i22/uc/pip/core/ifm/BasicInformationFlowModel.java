@@ -25,12 +25,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.generic.observable.NotifyingMap;
+import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 
 /**
  * Information flow model Singleton.
  */
-public final class BasicInformationFlowModel implements
-		IBasicInformationFlowModel {
+public final class BasicInformationFlowModel extends InformationFlowModel implements IBasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(BasicInformationFlowModel.class);
 
@@ -52,9 +53,10 @@ public final class BasicInformationFlowModel implements
 	 */
 	@Override
 	public void reset() {
-		_containerToDataMap = new HashMap<>();
-		_aliasesMap = new HashMap<>();
-		_namingMap = new HashMap<>();
+		super.reset();
+		_containerToDataMap = new NotifyingMap<>(new HashMap<IContainer, Set<IData>>(), _observer);
+		_aliasesMap = new NotifyingMap<>(new HashMap<IContainer, Set<IContainer>>(), _observer);
+		_namingMap = new NotifyingMap<>(new HashMap<IName, IContainer>(), _observer);
 
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
@@ -69,21 +71,22 @@ public final class BasicInformationFlowModel implements
 	@Override
 	public
 	IStatus startSimulation() {
+		super.startSimulation();
 		_logger.info("Pushing current PIP state.");
 
-		_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
+		_containerToDataMapBackup = new NotifyingMap<>(new HashMap<IContainer, Set<IData>>(), _observer);
 		for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
-			Set<IData> s = new HashSet<IData>(e.getValue());
+			Set<IData> s = new NotifyingSet<>(new HashSet<>(e.getValue()), _observer);
 			_containerToDataMapBackup.put(e.getKey(), s);
 		}
 
-		_aliasesMapBackup = new HashMap<>();
+		_aliasesMapBackup = new NotifyingMap<>(new HashMap<IContainer, Set<IContainer>>(), _observer);
 		for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
-			Set<IContainer> s = new HashSet<IContainer>(e.getValue());
+			Set<IContainer> s = new NotifyingSet<>(new HashSet<>(e.getValue()), _observer);
 			_aliasesMapBackup.put(e.getKey(), s);
 		}
 
-		_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
+		_namingSetBackup = new NotifyingMap<>(new HashMap<IName, IContainer>(_namingMap), _observer);
 
 		return new StatusBasic(EStatus.OKAY);
 	}
@@ -95,6 +98,7 @@ public final class BasicInformationFlowModel implements
 	 */
 	@Override
 	public IStatus stopSimulation() {
+		super.stopSimulation();
 		_logger.info("Popping current PIP state.");
 
 		_containerToDataMap = _containerToDataMapBackup;
@@ -144,7 +148,7 @@ public final class BasicInformationFlowModel implements
 
 	private void removeAllNames(IContainer cont) {
 		if (cont != null) {
-			Set<IName> toRemove = new HashSet<IName>();
+			Set<IName> toRemove = new HashSet<>();
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 				if (cont.equals(entry.getValue())) {
 					toRemove.add(entry.getKey());
@@ -204,7 +208,7 @@ public final class BasicInformationFlowModel implements
 
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
-			aliases = new HashSet<>();
+			aliases = new NotifyingSet<>(new HashSet<IContainer>(), _observer);
 			_aliasesMap.put(fromContainer, aliases);
 		}
 		aliases.add(toContainer);
@@ -492,7 +496,7 @@ public final class BasicInformationFlowModel implements
 		if (srcData != null) {
 			Set<IData> dstData = _containerToDataMap.get(dstContainer);
 			if (dstData == null) {
-				dstData = new HashSet<IData>();
+				dstData = new NotifyingSet<>(new HashSet<IData>(), _observer);
 				_containerToDataMap.put(dstContainer, dstData);
 			}
 			dstData.addAll(srcData);
@@ -616,7 +620,7 @@ public final class BasicInformationFlowModel implements
 
 		Set<IData> dstData = _containerToDataMap.get(container);
 		if (dstData == null) {
-			dstData = new HashSet<IData>();
+			dstData = new NotifyingSet<>(new HashSet<IData>(), _observer);
 			_containerToDataMap.put(container, dstData);
 		}
 
@@ -1042,12 +1046,6 @@ public final class BasicInformationFlowModel implements
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public boolean hasChanged() {
-
-		return false;
 	}
 
 	@Override

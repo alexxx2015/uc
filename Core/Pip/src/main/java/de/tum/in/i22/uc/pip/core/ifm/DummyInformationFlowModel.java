@@ -346,4 +346,9 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 		_logger.error("Method hasChanged() not implemented.");
 		return false;
 	}
+
+	@Override
+	public void clearChanged() {
+		_logger.error("Method clearChanged() not implemented.");
+	}
 }

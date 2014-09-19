@@ -8,6 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -20,6 +22,7 @@ import de.tum.in.i22.uc.cm.pip.ifm.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
+import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
@@ -31,8 +34,7 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
  * @author Florian Kelbert
  *
  */
-public final class ScopeInformationFlowModel extends
-		InformationFlowModelExtension implements IScopeInformationFlowModel {
+public final class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(ScopeInformationFlowModel.class);
 
@@ -45,7 +47,7 @@ public final class ScopeInformationFlowModel extends
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_scopeSet", _scopeSet).toString();
 	}
 
@@ -58,7 +60,7 @@ public final class ScopeInformationFlowModel extends
 	public ScopeInformationFlowModel(
 			InformationFlowModelManager informationFlowModelManager) {
 		super(informationFlowModelManager);
-		_scopeSet = new HashSet<IScope>();
+		_scopeSet = new NotifyingSet<>(new HashSet<IScope>(), _observer);
 		_scopeSetBackup = null;
 
 	}
@@ -72,7 +74,8 @@ public final class ScopeInformationFlowModel extends
 	 */
 	@Override
 	public void reset() {
-		_scopeSet = new HashSet<>();
+		super.reset();
+		_scopeSet = new NotifyingSet<>(new HashSet<IScope>(), _observer);
 		_scopeSetBackup = null;
 	}
 
@@ -85,9 +88,10 @@ public final class ScopeInformationFlowModel extends
 	 */
 	@Override
 	public IStatus startSimulation() {
+		super.startSimulation();
 		_logger.info("Pushing current PIP state...");
 		if (_scopeSet != null) {
-			_scopeSetBackup = new HashSet<IScope>(_scopeSet);
+			_scopeSetBackup = new NotifyingSet<>(new HashSet<IScope>(_scopeSet), _observer);
 		}
 
 		return new StatusBasic(EStatus.OKAY);
@@ -102,6 +106,7 @@ public final class ScopeInformationFlowModel extends
 	 */
 	@Override
 	public IStatus stopSimulation() {
+		super.stopSimulation();
 		_logger.info("Popping current PIP state...");
 		_scopeSet = _scopeSetBackup;
 		_scopeSetBackup = null;
@@ -253,13 +258,7 @@ public final class ScopeInformationFlowModel extends
 	}
 
 	@Override
-	public boolean hasChanged() {
-		return false;
-	}
-
-	@Override
 	public boolean isSimulating() {
 		return _scopeSetBackup != null;
 	}
-
 }

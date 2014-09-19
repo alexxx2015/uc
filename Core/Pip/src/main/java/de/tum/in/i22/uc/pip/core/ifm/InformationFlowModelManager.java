@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -412,6 +413,22 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 
 	@Override
 	public boolean hasChanged() {
-		return false;
+		boolean changed = _basicIfModel.hasChanged();
+
+		Iterator<InformationFlowModelExtension> it = _ifModelExtensions.values().iterator();
+		while (!changed && it.hasNext()) {
+			changed = it.next().hasChanged();
+		}
+
+		return changed;
+	}
+
+	@Override
+	public void clearChanged() {
+		_basicIfModel.clearChanged();
+
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+			ifme.clearChanged();
+		}
 	}
 }

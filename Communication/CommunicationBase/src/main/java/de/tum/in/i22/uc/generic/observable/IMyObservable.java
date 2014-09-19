@@ -31,5 +31,5 @@ interface IMyObservable {
 
 	public void notifyObservers(Object arg);
 
-	public void setChanged();
+	void setChanged();
 }

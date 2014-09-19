@@ -17,6 +17,8 @@ public interface IInformationFlowModel {
 	 */
 	boolean hasChanged();
 
+	void clearChanged();
+
 	IStatus startSimulation();
 
 	IStatus stopSimulation();

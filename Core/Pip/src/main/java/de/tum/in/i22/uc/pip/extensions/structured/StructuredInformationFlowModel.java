@@ -9,6 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
@@ -17,6 +18,8 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.ifm.IStructuredInformationFlowModel;
+import de.tum.in.i22.uc.generic.observable.NotifyingMap;
+import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
@@ -52,7 +55,8 @@ public final class StructuredInformationFlowModel extends
 
 	@Override
 	public void reset() {
-		_structureMap = new HashMap<IData, Map<String, Set<IData>>>();
+		super.reset();
+		_structureMap = new NotifyingMap<>(new HashMap<IData, Map<String, Set<IData>>>(), _observer);
 		_structureBackup = null;
 	}
 
@@ -63,17 +67,18 @@ public final class StructuredInformationFlowModel extends
 	 */
 	@Override
 	public IStatus startSimulation() {
+		super.startSimulation();
 		_logger.info("Pushing current PIP state...");
 		if (_structureMap != null) {
-			_structureBackup = new HashMap<IData, Map<String, Set<IData>>>();
+			_structureBackup = new NotifyingMap<>(new HashMap<IData, Map<String, Set<IData>>>(), _observer);
 			for (IData d : _structureMap.keySet()) {
 				Map<String, Set<IData>> m = _structureMap.get(d);
-				Map<String, Set<IData>> mbackup = new HashMap<String, Set<IData>>();
+				Map<String, Set<IData>> mbackup = new NotifyingMap<>(new HashMap<String, Set<IData>>(), _observer);
 				if (m != null) {
 					for (String s : m.keySet()) {
 						Set<IData> set= mbackup.get(d);
-						if (set==null) set = new HashSet<IData>();
-						mbackup.put(s, new HashSet<IData>(set));
+						if (set==null) set = new NotifyingSet<>(new HashSet<IData>(), _observer);
+						mbackup.put(s, new NotifyingSet<>(new HashSet<IData>(set), _observer));
 					}
 				}
 				_structureBackup.put(d, mbackup);
@@ -90,6 +95,8 @@ public final class StructuredInformationFlowModel extends
 	 */
 	@Override
 	public IStatus stopSimulation() {
+		super.stopSimulation();
+
 		_logger.info("Popping current PIP state...");
 		if (_structureBackup != null) {
 			_structureMap = _structureBackup;
@@ -245,13 +252,8 @@ public final class StructuredInformationFlowModel extends
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_structure", _structureMap).toString();
-	}
-
-	@Override
-	public boolean hasChanged() {
-		return false;
 	}
 
 	@Override

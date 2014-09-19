@@ -33,8 +33,8 @@ public class TestEventEventHandler extends BaseEventHandler {
 		// updateIF.jar in the test folder.
 		// This event is used to delete an initial representation in the pdp
 		// test.s
+/*
 
-		/*
 		_logger.debug("TestEventEventHandler. Trying to empty initial container");
 		_logger.debug("As of now, initial container contains the following ["
 				+ _informationFlowModel.getData(new NameBasic("initialContainer")));
@@ -43,7 +43,7 @@ public class TestEventEventHandler extends BaseEventHandler {
 
 		_logger.debug("After emptying it, initial container contains the following ["
 				+ _informationFlowModel.getData(new NameBasic("initialContainer")));
-		*/
+*/
 
 		//
 		return _messageFactory.createStatus(EStatus.OKAY);
