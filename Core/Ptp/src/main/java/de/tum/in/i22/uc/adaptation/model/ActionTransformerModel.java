@@ -142,13 +142,14 @@ public class ActionTransformerModel {
 		this.innerLayerRefined = innerLayerRefined;
 	}
 
-	public void addSynonym(String name){
+	public boolean addSynonym(String name){
 		if(name==null)
-			return;
+			return false;
 		if(this.name.equals(name))
-			return;
+			return false;
 		if(!this.synonyms.contains(name))
-			this.synonyms.add(name);
+			return this.synonyms.add(name);
+		return false;
 	}
 	
 	public boolean alsoKnownAs(String synonym){
@@ -308,13 +309,14 @@ public class ActionTransformerModel {
 		String layerType = "";
 		switch (this.layerType) {
 		case PIM:			
-			layerType = "pimaction";
+			layerType = "pimactions";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addPimActionAttributes(element);
 			break;
 		case PSM:
-			layerType = "psmtransformer";
+			layerType = "psmtransformers";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
 			if (this.refinementType.equals(RefinementType.SEQ)){
@@ -323,10 +325,11 @@ public class ActionTransformerModel {
 			element.setAttribute("seq", ""+sequenceIndex);
 			//TODO: used only for reading/debugging
 			element.setAttribute("system", this.parentSystem.getName());
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addPsmTransformerAttributes(element);
 			break;
 		case ISM:
-			layerType = "ismtransformer";
+			layerType = "ismtransformers";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
 			if (this.refinementType.equals(RefinementType.SEQ)){
@@ -334,6 +337,7 @@ public class ActionTransformerModel {
 			}
 			//TODO: used only for reading/debugging
 			element.setAttribute("system", this.parentSystem.getName());
+			element.setAttribute("pos", ""+this.xmlPosition);
 			element.setAttribute("seq", ""+sequenceIndex);
 			addIsmTransformerAttributes(element);
 			break;
@@ -356,7 +360,7 @@ public class ActionTransformerModel {
 		String associationData = "";
 		boolean existsAssociation = false;
 		for(ActionTransformerModel assoc : this.associations){
-			associationData += "//@pims/@pimaction." + assoc.xmlPosition +" ";
+			associationData += "//@pims/@pimactions." + assoc.xmlPosition +" ";
 			existsAssociation = true;
 		}
 	
@@ -408,7 +412,7 @@ public class ActionTransformerModel {
 		boolean existsCrossRefinement = false;
 		for(ActionTransformerModel ref : this.refinements){
 			if(!ref.layerType.equals(this.layerType)){
-				String refLevel = "//@psms/@psmtransformers.";
+				String refLevel = "//@isms/@ismtransformers.";
 				refinementCrossData += refLevel + ref.xmlPosition +" ";
 				existsCrossRefinement = true;
 			}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="city" storedin="" synonym=""/>
+<pimdata name="country" storedin="" synonym=""/>
+<pimdata name="state" storedin="" synonym=""/>
+<pimdata name="zipcode" storedin="" synonym=""/>
+<pimdata name="picture" storedin="" synonym="photo "/>
+<pimactions actionRefmnt="" name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " synonym=""/>
+<pimactions actionRefmnt="" name="copy" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 " synonym="replicate duplicate "/>
+<pimactions actionRefmnt="" name="print" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " synonym=""/>
+<pimactions actionRefmnt="" name="save" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " synonym=""/>
+<pimactions actionRefmnt="" name="distribute" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.4 " synonym=""/>
+<pimactions actionRefmnt="" name="pay" paramData="//@pims/@pimdata.4 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " synonym=""/>
+<pimactions actionRefmnt="" name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " synonym=""/>
+<pimactions actionRefmnt="" name="permit" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " synonym=""/>
+<pimactions actionRefmnt="" name="modify" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " synonym=""/>
+</pims>
+<psms name="SNS_PSM">
+</psms>
+<isms name="SNS_ISM">
+</isms>
+</de.tum.in.i22.uc.metamodel:domain>

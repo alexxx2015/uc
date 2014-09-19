@@ -25,7 +25,7 @@ public class ECARulesAutomation {
 	private ECARuleTemplate ecaTemplate;
 	private Map<String,String> policyParams;
 	
-	private ECATemplates loadedTemplates;
+	private static ECATemplates loadedTemplates = null;
 	// represents access configuration file of properties
 	private static Config config;
 	/** The already generated subformulas are used here.
@@ -205,20 +205,9 @@ public class ECARulesAutomation {
 		if (config == null)
 			return false;
 		
-		if(loadedTemplates == null){
-			String ecaRulesFile = config.getProperty("ecaRulesTemplates");
-			ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
-			String json = "";
-			try {
-				json = PublicMethods.readFile(ecaRulesFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-
-			Gson gson = new Gson();
-			ECATemplates templates = gson.fromJson(json, ECATemplates.class);
-			loadedTemplates = templates;
+		if(!loadTemplatesFromFile()){
+			System.out.println(">Templates config failed to load.");
+			return false;
 		}
 		
 		ECATemplate template = loadedTemplates.getTemplate(ecaTemplateId);
@@ -236,4 +225,24 @@ public class ECARulesAutomation {
 		return true;
 	}
 
+	private static boolean loadTemplatesFromFile(){
+		if(loadedTemplates != null){
+			return true;
+		}
+		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
+		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
+		String json = "";
+		try {
+			json = PublicMethods.readFile(ecaRulesFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		Gson gson = new Gson();
+		ECATemplates templates = gson.fromJson(json, ECATemplates.class);
+		loadedTemplates = templates;
+		return true;
+	}
+	
 }

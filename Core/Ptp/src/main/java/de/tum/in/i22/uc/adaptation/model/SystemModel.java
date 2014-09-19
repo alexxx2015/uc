@@ -94,7 +94,12 @@ public class SystemModel {
 	public void addOperation(ActionTransformerModel operation){
 		if(operation == null)
 			return;
+		operation.setParentSystem(this);
 		operations.add(operation);
+	}
+	
+	public ArrayList<ActionTransformerModel> getOperations(){
+		return this.operations;
 	}
 	
 	public String toString(){
@@ -128,12 +133,14 @@ public class SystemModel {
 			layerType = "psmsystems";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addPsmSystemAttributes(element);
 			break;
 		case ISM:
 			layerType = "ismsystems";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addIsmSystemAttributes(element);
 			break;
 		default:
@@ -186,8 +193,8 @@ public class SystemModel {
 		String transformersAttribute = "implesystemtransformers";
 		String transformersData = "";
 		boolean existsTransformers = false;
-		for(ActionTransformerModel assoc : this.operations){
-			transformersData += "//@isms/@ismtransformers." + assoc.getXmlPosition() +" ";
+		for(ActionTransformerModel op : this.operations){
+			transformersData += "//@isms/@ismtransformers." + op.getXmlPosition()+" ";
 			existsTransformers = true;
 		}
 		
@@ -293,6 +300,14 @@ public class SystemModel {
 		for(SystemModel r : this.refinements){
 			result = r.containsRefinement(ref);
 			if(result)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean containsOperation(ActionTransformerModel at) {
+		for(ActionTransformerModel op : this.operations){
+			if(op.equals(at))
 				return true;
 		}
 		return false;

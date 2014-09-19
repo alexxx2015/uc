@@ -9,7 +9,6 @@ import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.adaptation.model.SystemModel;
-import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 
 public class SystemAdaptationController {
 
@@ -53,7 +52,7 @@ public class SystemAdaptationController {
 	 * @throws DomainMergeException
 	 */
 	public void mergeDomainModels() throws DomainMergeException{
-		
+		updatedElementsCounter = 0;
 		mergeLayer(baseDm.getIsmLayer(), newDm.getIsmLayer());
 		
 		mergeLayer(baseDm.getPsmLayer(), newDm.getPsmLayer());
@@ -87,48 +86,61 @@ public class SystemAdaptationController {
 			addNewSystemToBase(innerLink, baseLayer);
 		}
 		
-		logger.debug("Try ADD NewSystem: "+ newSys.toStringShort()+ " To Base: "+ baseLayer.getType());
+		//logger.info("Try ADD NewSystem: "+ newSys.toStringShort()+ " To Base: "+ baseLayer.getType());
 		SystemModel baseSys = searchEquivalent(newSys, baseLayer);
 		if(baseSys == null){
-			logger.debug("created NewSystem: " + newSys.toStringShort());
+			//logger.debug("created NewSystem: " + newSys.toStringShort());
 			baseSys = new SystemModel(newSys.getName(), newSys.getLayerType());
 			baseSys.setParenLayer(baseLayer);
 			/* The parent system will be updated when the systems are merged.
 			 * Each transformer must have a parent system.
 			 */
 			//baseAt.setParentSystem(newAt.getParentSystem());
-			baseLayer.addSystem(newSys);		
+			baseLayer.addSystem(baseSys);		
 			incrementUpdateCounter();
 		}
 		else{
-			logger.debug("Equivalent found: base "+ newSys.toStringShort());
+			//logger.debug("Equivalent found: base "+ newSys.toStringShort());
 		}
 		
 		mergeRefinement(newSys, baseSys);
-		
+		mergeTransformers(newSys, baseSys);
 		updateAssociations(newSys, baseSys);
 		
-		updateSystemForTransformers(baseSys, baseLayer);
+		//updateSystemForTransformers(baseSys, baseLayer);
 		
 		newSys.markAsMerged();
-		logger.debug("ADD Success: "+ newSys.toString());
+		//logger.debug("ADD Success: "+ newSys.toString());
 		
 	}
 
 	
-	private void updateSystemForTransformers(SystemModel baseSys, LayerModel baseLayer) {
-		for(ActionTransformerModel at : baseLayer.getActionTransformers()){
-			if(at.getParentSystem().equals(baseSys)){
-				/* this seems redundant but it is not.
-				 * the systems are compared only by name, not by object.
-				 * when you added a transformer from a new system, 
-				 * the system object remained from the new model.
-				 * now you update that object. */
-				at.setParentSystem(baseSys);
+	private void mergeTransformers(SystemModel newSys, SystemModel baseSys) {
+		for(ActionTransformerModel at : newSys.getOperations()){
+			if(!baseSys.containsOperation(at)){
+				ActionTransformerModel baseAt = baseDm.getLayer(baseSys.getLayerType()).getActionTransformer(at);
+				baseSys.addOperation(baseAt);
 			}
 		}
-		
 	}
+//
+//	private void updateSystemForTransformers(SystemModel baseSys, LayerModel baseLayer) {
+//		for(ActionTransformerModel at : baseLayer.getActionTransformers()){
+//			if(at.getParentSystem().equals(baseSys)){
+//				/* this seems redundant but it is not.
+//				 * the systems are compared only by name, not by object.
+//				 * when you added a transformer from a new system, 
+//				 * the system object remained from the new model.
+//				 * it also might be the case that a new seq/set was created before,
+//				 * but the system was not merged yet.
+//				 * now you update that object. */
+//				at.setParentSystem(baseSys);
+//				if(!baseSys.containsOperation(at))
+//					baseSys.addOperation(at);
+//			}
+//		}
+//		
+//	}
 
 	/**
 	 * See doc/metamodel.png
@@ -145,7 +157,7 @@ public class SystemAdaptationController {
 				baseAssoc = baseDm.getLayer(baseSys.getLayerType()).getSystem(assoc);
 				baseSys.addAssociationLink(baseAssoc);
 				incrementUpdateCounter();
-				logger.debug("UPDATE association: base "+ baseSys.toString() + " EXTENDED with "+ baseAssoc);
+				//logger.debug("UPDATE association: base "+ baseSys.toString() + " EXTENDED with "+ baseAssoc);
 			}
 		}
 	}
@@ -156,7 +168,7 @@ public class SystemAdaptationController {
 	 * @param baseSys.SET refinement
 	 */
 	private void mergeRefinement(SystemModel newSys,	SystemModel baseSys) {
-		logger.debug("Merge Set2Set - new: "+ newSys.toStringShort() +" base: "+ baseSys.toStringShort());
+		//logger.debug("Merge Set2Set - new: "+ newSys.toStringShort() +" base: "+ baseSys.toStringShort());
 		for(SystemModel ref : newSys.getRefinements()){
 			SystemModel baseRef = baseSys.getRefinement(ref);
 			if(baseRef == null){
@@ -168,7 +180,7 @@ public class SystemAdaptationController {
 					LayerModel refLayer = baseDm.getLayer(baseSys.getLayerType()).getRefinementLayer();
 					baseRef = refLayer.getSystem(ref);
 				}				
-				logger.debug("Merge Set2Set EXTENDED base "+ baseSys.toStringShort() + "  WITH "+ baseRef.toStringShort());
+				//logger.debug("Merge Set2Set EXTENDED base "+ baseSys.toStringShort() + "  WITH "+ baseRef.toStringShort());
 				baseSys.addRefinement(baseRef);
 				incrementUpdateCounter();
 			}			

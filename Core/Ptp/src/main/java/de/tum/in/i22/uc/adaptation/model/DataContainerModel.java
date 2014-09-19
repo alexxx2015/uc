@@ -256,18 +256,21 @@ public class DataContainerModel {
 			layerType = "pimdata";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addPimDataAttributes(element);
 			break;
 		case PSM:
 			layerType = "psmcontainers";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addPsmContainerAttributes(element);
 			break;
 		case ISM:
 			layerType = "ismcontainers";
 			element = doc.createElement(layerType);
 			element.setAttribute("name", this.name);
+			element.setAttribute("pos", ""+this.xmlPosition);
 			addIsmContainerAttributes(element);
 			break;
 		default:

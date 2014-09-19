@@ -44,7 +44,7 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
-			logger.info(layer.getType()+" Loading data/container: "+ name);
+			//logger.info(layer.getType()+" Loading data/container: "+ name);
 			DataContainerModel container = new DataContainerModel(name, layer.getType());
 			container.setParenLayer(layer);
 			addPimContainerSynonyms(container, node);
@@ -94,7 +94,7 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
-			logger.debug(layer.getType()+" Loading action/transformer: "+ name);
+			//logger.debug(layer.getType()+" Loading action/transformer: "+ name);
 			RefinementType refType = RefinementType.SET;
 			try{
 				String refTypeAttr = "";
@@ -131,7 +131,7 @@ public class LayerLoader {
 		for(ActionTransformerModel at : transformersNodesMap.keySet()){
 			Node node = transformersNodesMap.get(at);
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
-			logger.debug(layer.getType()+" inner/cross ref :"+ name);
+			//logger.debug(layer.getType()+" inner/cross ref :"+ name);
 			switch(layer.getType()){
 			case PIM:
 				addPimActionInnerAssociation(at, node);
@@ -168,7 +168,7 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
-			logger.debug(layer.getType()+" Loading system: "+ name);
+			//logger.debug(layer.getType()+" Loading system: "+ name);
 			SystemModel system = new SystemModel(name, layer.getType());
 			system.setParenLayer(layer);
 			systemNodesMap.put(system, node);
@@ -192,7 +192,7 @@ public class LayerLoader {
 		for(SystemModel sys : systemNodesMap.keySet()){
 			Node node = systemNodesMap.get(sys);
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
-			logger.debug(layer.getType()+" inner/cross ref :"+ name);
+			//logger.debug(layer.getType()+" inner/cross ref :"+ name);
 			switch(layer.getType()){
 			case PIM:
 				break;
@@ -590,7 +590,6 @@ public class LayerLoader {
 			} catch(Exception ex){logger.error("Invalid definition for system: "+system.toStringShort(), ex);}
 			ActionTransformerModel transformer = layer.getTransformerAtPosition(position);
 			system.addOperation(transformer);
-			transformer.setParentSystem(system);
 		}
 	}
 	
@@ -765,7 +764,6 @@ public class LayerLoader {
 			} catch(Exception ex){logger.error("Invalid definition for system: "+system.toStringShort(), ex);}
 			ActionTransformerModel transformer = layer.getTransformerAtPosition(position);
 			system.addOperation(transformer);
-			transformer.setParentSystem(system);
 		}
 	}
 	

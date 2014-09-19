@@ -78,9 +78,9 @@ public class PublicMethods {
 				+""+(month<10?"0"+month:month)
 				+""+(day<10?"0"+day:day)
 				+"-" 
-				+""+(day<10?"0"+hour:hour)
-				+""+(day<10?"0"+min:min)
-				+""+(day<10?"0"+sec:sec);
+				+""+(hour<10?"0"+hour:hour)
+				+""+(min<10?"0"+min:min)
+				+""+(sec<10?"0"+sec:sec);
 		return timestamp;
 	}
 	

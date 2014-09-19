@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
 <pims name="SNS_PIM">
-<pimdata name="city" pos="0" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=" "/>
-<pimdata name="country" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=" "/>
-<pimdata name="state" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=" "/>
-<pimdata name="zipcode" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=" "/>
+<pimdata name="city" pos="0" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="country" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="state" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="zipcode" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
 <pimdata name="picture" pos="4" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym="photo "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.7 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="0" synonym=" "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.7 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="0" synonym=""/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.3 //@psms/@psmtransformers.4 //@psms/@psmtransformers.5 " name="copy" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 " pos="1" synonym="replicate duplicate "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.9 //@psms/@psmtransformers.10 " name="print" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="2" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="save" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="3" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.2 //@psms/@psmtransformers.8 //@psms/@psmtransformers.11 " name="distribute" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.4 " pos="4" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="pay" paramData="//@pims/@pimdata.4 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="5" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="6" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="permit" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="7" synonym=" "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="modify" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="8" synonym=" "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.9 //@psms/@psmtransformers.10 " name="print" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="2" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="save" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="3" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.2 //@psms/@psmtransformers.8 //@psms/@psmtransformers.11 " name="distribute" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.4 " pos="4" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="pay" paramData="//@pims/@pimdata.4 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="5" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="6" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="permit" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="7" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="modify" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="8" synonym=""/>
 </pims>
 <psms name="SNS_PSM">
 <psmcontainers contimplementedas="//@isms/@ismcontainers.0 //@isms/@ismcontainers.1 //@isms/@ismcontainers.5 " name="domElement" pos="0"/>

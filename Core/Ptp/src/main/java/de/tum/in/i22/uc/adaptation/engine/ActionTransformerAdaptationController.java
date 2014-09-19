@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
 import de.tum.in.i22.uc.adaptation.model.LayerModel;
+import de.tum.in.i22.uc.adaptation.model.SystemModel;
 import de.tum.in.i22.uc.utilities.PublicMethods;
 /**
  * @author Cipri
@@ -66,20 +67,21 @@ public class ActionTransformerAdaptationController {
 	 * @throws DomainMergeException
 	 */
 	public void mergeDomainModels() throws DomainMergeException{
+		updatedElementsCounter = 0;
 		//Merge ISM
 		mergeInnerLinksLayer(baseDm.getIsmLayer(), newDm.getIsmLayer());
 		baseDm.getIsmLayer().filterActionTransformerSequences();
-		logger.debug("ISM transformers merging complete");
+		//logger.debug("ISM transformers merging complete");
 
 		//Merge PSM
 		mergeInnerLinksLayer(baseDm.getPsmLayer(), newDm.getPsmLayer());
 		baseDm.getPsmLayer().filterActionTransformerSequences();
-		logger.debug("PSM transformers merging complete");
+		//logger.debug("PSM transformers merging complete");
 		
 		//Merge PIM
 		mergeInnerLinksLayer(baseDm.getPimLayer(), newDm.getPimLayer());
 		baseDm.getPimLayer().filterActionTransformerSequences();
-		logger.debug("PIM actions merging complete");
+		//logger.debug("PIM actions merging complete");
 	}
 
 
@@ -113,23 +115,29 @@ public class ActionTransformerAdaptationController {
 			addNewTransformerToBase(innerLink, baseLayer);
 		}
 		
-		logger.debug("Try ADD NewTransformer: "+ newAt.toStringShort()+ " To Base: "+ baseLayer.getType());
+		logger.info("Try ADD NewTransformer: "+ newAt.toStringShort()+ " To Base: "+ baseLayer.getType());
 		ActionTransformerModel baseAt = searchEquivalent(newAt, baseLayer);
 		if(baseAt == null){
-			logger.debug("created NewTransformer: " + newAt.toStringShort());
+			logger.info("created NewTransformer: " + newAt.toStringShort());
 			baseAt = new ActionTransformerModel(newAt.getName(), newAt.getLayerType());
 			baseAt.setParenLayer(baseLayer);
 			baseAt.setRefinementType(newAt.getRefinementType());
 			baseAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
-			/* The parent system will be updated when the systems are merged.
-			 * Each transformer must have a parent system.
-			 */
-			baseAt.setParentSystem(newAt.getParentSystem());			
+			
+			SystemModel baseSystem = baseLayer.getSystem(newAt.getParentSystem());
+			if(baseSystem == null){
+				/* The base system was not present before.
+				 * It will be updated when the systems are merged.
+				 * Each transformer must have a parent system.
+				 */
+				baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+			}
+			baseSystem.addOperation(baseAt);		
 			baseLayer.addActionTransformer(baseAt);			
 			incrementUpdateCounter();
 		}
 		else{
-			logger.debug("Equivalent found: base "+ baseAt.toStringShort());
+			logger.info("Equivalent found: base "+ baseAt.toStringShort());
 		}
 		
 		mergeRefinement(newAt, baseAt);
@@ -139,7 +147,7 @@ public class ActionTransformerAdaptationController {
 		updateAssociations(newAt, baseAt);
 		
 		newAt.markAsMerged();
-		logger.debug("ADD Success: "+ newAt.toString());
+		//logger.debug("ADD Success: "+ newAt.toString());
 		
 	}
 
@@ -153,7 +161,7 @@ public class ActionTransformerAdaptationController {
 	 * @return
 	 */
 	private ActionTransformerModel modifyNewActionTransformer(ActionTransformerModel newAt, ActionTransformerModel baseAt, LayerModel baseLayer) {
-		logger.debug("created NewTransformer: " + newAt.toStringShort());
+		//logger.debug("created NewTransformer: " + newAt.toStringShort());
 		String newName = newAt.getName()+"#NewSet";
 		ActionTransformerModel renamedAt = new ActionTransformerModel(newName, newAt.getLayerType());
 		renamedAt.setParenLayer(baseLayer);
@@ -176,7 +184,7 @@ public class ActionTransformerAdaptationController {
 	 * @throws DomainMergeException 
 	 */
 	private void mergeRefinement(ActionTransformerModel newAt, ActionTransformerModel baseAt) throws DomainMergeException {
-		logger.debug("Try MERGE refinement - base: " + baseAt.toStringShort() + " new: "+ newAt.toStringShort());
+		//logger.debug("Try MERGE refinement - base: " + baseAt.toStringShort() + " new: "+ newAt.toStringShort());
 		
 		if(newAt.isInnerLayerRefined()){
 			if(baseAt.isInnerLayerRefined() == false){
@@ -239,7 +247,15 @@ public class ActionTransformerAdaptationController {
 			newAt.setName(sequenceName);
 			//copy new sequence to base
 			ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
-			seq.setParentSystem(baseAt.getParentSystem());
+			SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
+			if(baseSystem == null){
+				/* The base system was not present before.
+				 * It will be updated when the systems are merged.
+				 * Each transformer must have a parent system.
+				 */
+				baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+			}
+			baseSystem.addOperation(seq);
 			seq.setRefinementType(RefinementType.SEQ);
 			for(ActionTransformerModel ref : newAt.getRefinements()){
 				ActionTransformerModel baseRef = null;
@@ -275,7 +291,15 @@ public class ActionTransformerAdaptationController {
 		newAt.setName(sequenceName);
 		//copy object
 		ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
-		seq.setParentSystem(baseAt.getParentSystem());
+		SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
+		if(baseSystem == null){
+			/* The base system was not present before.
+			 * It will be updated when the systems are merged.
+			 * Each transformer must have a parent system.
+			 */
+			baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+		}
+		baseSystem.addOperation(seq);
 		seq.setRefinementType(RefinementType.SEQ);
 		for(ActionTransformerModel ref : newAt.getRefinements()){
 			ActionTransformerModel baseRef = baseAt.getRefinementByName(ref.getName());
@@ -315,7 +339,15 @@ public class ActionTransformerAdaptationController {
 		//create new sequence
 		String sequenceName = baseAt.getName()+"#"+PublicMethods.timestamp();
 		ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
-		seq.setParentSystem(baseAt.getParentSystem());
+		SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
+		if(baseSystem == null){
+			/* The base system was not present before.
+			 * It will be updated when the systems are merged.
+			 * Each transformer must have a parent system.
+			 */
+			baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+		}
+		baseSystem.addOperation(seq);
 		seq.setRefinementType(RefinementType.SEQ);
 		for(ActionTransformerModel ref : baseAt.getRefinements()){
 			seq.addRefinement(ref);
@@ -338,7 +370,7 @@ public class ActionTransformerAdaptationController {
 	 * @param baseAt.SET
 	 */
 	private void mergeSet2Set(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
-		logger.debug("Merge Set2Set - new: "+ newAt.toStringShort() +" base: "+ baseAt.toStringShort());
+		//logger.debug("Merge Set2Set - new: "+ newAt.toStringShort() +" base: "+ baseAt.toStringShort());
 		for(ActionTransformerModel ref : newAt.getRefinements()){
 			ActionTransformerModel baseRef = baseAt.getRefinement(ref);
 			if(baseRef == null){
@@ -370,8 +402,8 @@ public class ActionTransformerAdaptationController {
 		}
 			
 		for(String alias : newAt.getSynonyms()){
-			baseAt.addSynonym(alias);
-			incrementUpdateCounter();
+			if(baseAt.addSynonym(alias))
+				incrementUpdateCounter();
 		}
 	}
 	
@@ -431,7 +463,7 @@ public class ActionTransformerAdaptationController {
 					throw new DomainMergeException("Please define a parent system for new element: "+ newAt.toString());
 		}
 		for(ActionTransformerModel baseE : baseLayer.getActionTransformers()){
-			logger.debug("Search equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
+			//logger.debug("Search equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
 			//a redundant safety type check
 			if(!baseE.getLayerType().equals(newAt.getLayerType()))
 				continue;
@@ -483,7 +515,7 @@ public class ActionTransformerAdaptationController {
 		float relationRatioMax = WordnetEngine.MAX_ALLOWED_DISTANCE; 
 		float relationRatio = relationRatioMax;
 		for(ActionTransformerModel baseE : baseLayer.getActionTransformers()){
-			logger.debug("Search wordnet equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
+			//logger.debug("Search wordnet equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
 			//try to find some similarity between the concepts.
 			relationRatio = wordnetEngine.getDistance(newAt.getName(), baseE.getName());
 			//search in the aliases only if there was no direct match between the names

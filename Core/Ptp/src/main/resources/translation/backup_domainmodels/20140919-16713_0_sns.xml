@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<de.tum.in.i22.uc.metamodel:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0">
+  <pims name="SNS_PIM">
+   
+  </pims>
+  <psms name="SNS_PSM">
+    
+  </psms>
+  <isms name="SNS_ISM">
+    
+  </isms>
+</de.tum.in.i22.uc.metamodel:domain>

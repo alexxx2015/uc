@@ -70,6 +70,7 @@ public class DataContainerAdaptationController {
 	 * @throws DomainMergeException
 	 */
 	public void mergeDomainModels() {
+		updatedElementsCounter = 0;
 		// see STEP 1
 		mergeDCAssociations(baseDm, newDm);	
 		// see STEP 2

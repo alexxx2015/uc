@@ -58,7 +58,7 @@ public class PIMAction extends Event {
 		
 		if(nodePIMAction==null){
 			//check for synonyms of that data
-			sExpression="//pimactions[contains(@synonym,'"+resource.getDataClass()+"']";
+			sExpression="//pimactions[contains(@synonym,'"+resource.getExtraInformation().toString()+"')]";
 			nodePIMAction=ActionRefinement.processXpathExpression(sExpression).item(0);
 		}
 		
@@ -71,7 +71,7 @@ public class PIMAction extends Event {
 			
 			//check for synonyms of that data
 			if(nodePIMData==null){
-				sExpression="//pimdata[contains(@synonym,'"+resource.getDataClass()+"']";
+				sExpression="//pimdata[contains(@synonym,'"+resource.getDataClass()+"')]";
 				nodePIMData=ActionRefinement.processXpathExpression(sExpression).item(0);
 			}
 			
@@ -187,7 +187,8 @@ public class PIMAction extends Event {
 			for(int i=0; i<sArrTransformer.length; ++i){
 				
 				//2nd step: refine xpath expression
-				String sExpression=ActionRefinement.getNewXPathAddress(sArrTransformer[i]);				
+				String sExpression=ActionRefinement.getNewXPathAddress(sArrTransformer[i]);
+				String s = "";
 				Node nodeTransformer=ActionRefinement.processXpathExpression(sExpression).item(0);
 				//3rd step: prepare fields for transformer
 				String sName=nodeTransformer.getAttributes().getNamedItem("name").getNodeValue();

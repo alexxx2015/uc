@@ -1,8 +1,12 @@
 package de.tum.in.i22.uc.pmp.policies;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 
@@ -18,7 +22,7 @@ public class PolicyManager {
 	private Map<String, XmlPolicy> _policies;
 
 	public PolicyManager(){
-		_policies = new HashMap<String, XmlPolicy>();
+		_policies = new ConcurrentHashMap<String, XmlPolicy>(50);
 	}
 
 	/**
@@ -62,8 +66,20 @@ public class PolicyManager {
 		return _policies.get(name);
 	}
 
-	public Collection<XmlPolicy> getPolicies(){
-		return _policies.values();
+	/**
+	 * Returns a snapshot of the store values.
+	 * iterates over the elements and creates a list with the values.
+	 * @return
+	 */
+	public List<XmlPolicy> getPolicies(){
+		List<XmlPolicy> values = new ArrayList<>();
+		
+		Iterator<Entry<String, XmlPolicy>> iterator = _policies.entrySet().iterator();
+		while(iterator.hasNext()){
+			XmlPolicy p = iterator.next().getValue();
+			values.add(p);
+		}
+		return values;
 	}
 
 }

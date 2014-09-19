@@ -1,10 +1,13 @@
 package de.tum.in.i22.uc.adaptation.engine;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.policy.translation.Config;
 import rita.RiWordNet;
 
 public class WordnetEngine {
@@ -21,7 +24,14 @@ public class WordnetEngine {
 	private static final Logger logger = LoggerFactory.getLogger(WordnetEngine.class);
 	
 	private WordnetEngine(){
-		String file = "src/main/resources/" ;
+		Config config = null;
+		try {
+			config = new Config();
+		} catch (IOException e) {
+			logger.error("Config loading failed", e);
+		}
+		String userDir = config.getUserDir();
+		String file = userDir + File.separator + "src" + File.separator +"main"+ File.separator+"resources" + File.separator ;
 		wordnet = new RiWordNet(file);
 	}
 	
@@ -61,7 +71,7 @@ public class WordnetEngine {
 		if(pos != null)
 			distance = wordnet.getDistance(conceptA, conceptB, pos);
 		String msg ="distance: "+ conceptA +"-"+ conceptB +": "+ distance;
-		logger.info(msg);
+		//logger.info(msg);
 		if(distance > MAX_ALLOWED_DISTANCE)
 			return 1.0f;
 		return distance;
@@ -83,7 +93,7 @@ public class WordnetEngine {
 		for(String conceptB : concepts){
 			float distance = wordnet.getDistance(conceptA, conceptB, pos);
 			String msg ="similarity: "+ conceptA +"-"+ conceptB +": "+ distance;
-			logger.info(msg);
+			//logger.info(msg);
 			if(distance < maxDistance)
 				maxDistance = distance;
 		}

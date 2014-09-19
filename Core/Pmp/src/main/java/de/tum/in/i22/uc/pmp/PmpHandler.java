@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -39,6 +42,7 @@ import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
+import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
@@ -384,7 +388,7 @@ public class PmpHandler extends PmpProcessor {
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 
 		String policyname = xmlPolicy.getName();
-		String policyTemplate = xmlPolicy.getXml();
+		String policyTemplate = xmlPolicy.getTemplateXml();
 		String log = "TranslatePolicy request: " + policyname + " "+ policyTemplate;
 		_logger.info(log);
 
@@ -398,14 +402,29 @@ public class PmpHandler extends PmpProcessor {
 		revokePolicyPmp(translatedPolicy.getName());
 
 		IStatus deploymentStatus = deployPolicyXMLPmp(translatedPolicy);
-
+		
 		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy);
 		return deploymentResponse;
+		//return translationResponse;
 	}
 
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
-		return _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
+		IPtpResponse updateResponse = _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
+		
+		if(!updateResponse.getStatus().getEStatus().equals(EStatus.OKAY)){
+			return updateResponse;
+		}
+		
+		//retranslate all policies
+		Map<String,String> param = new HashMap<String, String>();
+		List<XmlPolicy> policies = this._policymanager.getPolicies();
+		for(XmlPolicy p : policies){
+			String requestIdentifier = p.getName();
+			this.translatePolicy(requestIdentifier, param, p);
+		}
+		_logger.info("UpdateDomainModel response: "+ updateResponse.getStatus());
+		return updateResponse;
 	}
 
 

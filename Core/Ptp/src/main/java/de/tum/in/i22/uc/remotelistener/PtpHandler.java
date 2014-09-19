@@ -51,7 +51,7 @@ public class PtpHandler implements IPmp2Ptp {
 		
 		IStatus translationStatus = new StatusBasic(EStatus.ERROR);
 		
-		String policy = xmlPolicy.getXml();
+		String policy = xmlPolicy.getTemplateXml();
 		String policyId = xmlPolicy.getName();
 		if(policyId == null || policyId.equals("")){
 			policyId = "pTranslated"+policiesTranslatedTotalCounter++;
@@ -80,8 +80,10 @@ public class PtpHandler implements IPmp2Ptp {
 			translationController.filter();
 			status = translationController.getFilterStatus();
 			outputPolicy = translationController.getFinalOutput();			
-			
-			outputPolicy = addTimeStepToPolicy(outputPolicy);
+			//TODO: remove hardcoding
+			String timestepType = "SECONDS";
+			String timestepValue ="60";
+			outputPolicy = addTimeStepToPolicy(outputPolicy, timestepType, timestepValue);
 			outputPolicy = replaceEventually(outputPolicy);
 			message = "Translation successful: " + translationController.getMessage();	
 			
@@ -133,7 +135,7 @@ public class PtpHandler implements IPmp2Ptp {
 		
 		adaptationEngine.setBaseDomainModel(baseDm);
 		adaptationEngine.setNewDomainModel(newDm);
-		int updates = 0;
+		int updates = -1;
 		try {
 			updates = adaptationEngine.mergeDomainModels();
 		} catch (DomainMergeException e) {
@@ -158,7 +160,7 @@ public class PtpHandler implements IPmp2Ptp {
 		StatusBasic adaptationStatus = new StatusBasic(EStatus.OKAY, "Adaptation success. Elements updated: "+ updates);
 		XmlPolicy adaptedXmlDomainModel = new XmlPolicy(xmlDomainModel.getName(), "");
 		
-		IPtpResponse response = new PtpResponseBasic(adaptationStatus, adaptedXmlDomainModel);
+		IPtpResponse response = new PtpResponseBasic(adaptationStatus, adaptedXmlDomainModel);		
 		return response;
 	}
 
@@ -249,13 +251,16 @@ public class PtpHandler implements IPmp2Ptp {
 	 * This method adds a default timestep node.
 	 * Without it, the deployment fails.
 	 * @param policy
+	 * @param timestepType SECONDS MINUTES HOURS DAYS MONTHS YEARS
+	 * @param timestepValue number
 	 * @return
 	 */
-	private static String addTimeStepToPolicy(String policy){
+	private static String addTimeStepToPolicy(String policy, String timestepType, String timestepValue){
 		if(policy == null)
 			return "";
 		if(policy.length()==0)
 			return "";
+
 		Document doc = PublicMethods.openXmlInput(policy, "string");
 		if(doc==null)
 			return policy;
@@ -271,8 +276,8 @@ public class PtpHandler implements IPmp2Ptp {
 			for(int i=0; i<mechsCounter; i++){
 				Node n = mechanisms.item(i);
 				Element timestep = doc.createElement("timestep");
-				timestep.setAttribute("amount", "60");
-				timestep.setAttribute("unit", "SECONDS");
+				timestep.setAttribute("amount", timestepValue);
+				timestep.setAttribute("unit", timestepType);
 				n.appendChild(timestep);
 			}
 		} catch (XPathExpressionException e) {

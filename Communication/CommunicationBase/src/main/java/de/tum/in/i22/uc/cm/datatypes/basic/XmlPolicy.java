@@ -10,7 +10,7 @@ import java.util.Objects;
  * passing around strings).
  *
  * @author Florian Kelbert
- * extended by Ciprian Lucaci
+ * <br>extended by Ciprian Lucaci
  */
 public class XmlPolicy {
 	private String _name;
