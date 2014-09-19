@@ -12,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
@@ -59,7 +62,7 @@ public final class StructuredInformationFlowModel extends
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
 	@Override
-	public void push() {
+	public IStatus startSimulation() {
 		_logger.info("Pushing current PIP state...");
 		if (_structureMap != null) {
 			_structureBackup = new HashMap<IData, Map<String, Set<IData>>>();
@@ -76,6 +79,8 @@ public final class StructuredInformationFlowModel extends
 				_structureBackup.put(d, mbackup);
 			}
 		}
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/**
@@ -84,12 +89,14 @@ public final class StructuredInformationFlowModel extends
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
 	@Override
-	public void pop() {
+	public IStatus stopSimulation() {
 		_logger.info("Popping current PIP state...");
 		if (_structureBackup != null) {
 			_structureMap = _structureBackup;
 			_structureBackup = null;
 		}
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/**
@@ -240,6 +247,16 @@ public final class StructuredInformationFlowModel extends
 	public String toString() {
 		return com.google.common.base.MoreObjects.toStringHelper(this)
 				.add("_structure", _structureMap).toString();
+	}
+
+	@Override
+	public boolean hasChanged() {
+		return false;
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return _structureBackup != null;
 	}
 
 }

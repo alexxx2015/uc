@@ -21,7 +21,7 @@ public class Within extends WithinType {
 		 * The Within Operator evaluates to true,
 		 * if this counter has a value larger than 0.
 		 */
-		_state.set(StateVariable.COUNTER, 0);
+		_state.set(StateVariable.COUNTER, 0L);
 	}
 
 	@Override

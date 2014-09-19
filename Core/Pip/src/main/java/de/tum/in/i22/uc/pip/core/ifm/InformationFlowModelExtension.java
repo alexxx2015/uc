@@ -2,7 +2,8 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
 
 
 /**
@@ -12,13 +13,13 @@ import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel
  */
 public abstract class InformationFlowModelExtension {
 
-	protected abstract void reset();
-	protected abstract void push();
-	protected abstract void pop();
+	protected abstract IStatus startSimulation();
+	protected abstract IStatus stopSimulation();
 	protected abstract String niceString();
+	protected abstract void reset();
 
-	protected IInformationFlowModel _ifModel;
-	
+	protected IAnyInformationFlowModel _ifModel;
+
 	protected InformationFlowModelExtension(
 			InformationFlowModelManager informationFlowModelManager) {
 		_ifModel=informationFlowModelManager;

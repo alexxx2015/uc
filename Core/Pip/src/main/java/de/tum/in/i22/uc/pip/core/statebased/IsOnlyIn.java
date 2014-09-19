@@ -8,13 +8,13 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
 
 public class IsOnlyIn extends StateBasedPredicate {
 	private final String _param1;
 	private final String _param2;
 
-	public IsOnlyIn(String predicate, String param1, String param2, IInformationFlowModel ifm) {
+	public IsOnlyIn(String predicate, String param1, String param2, IAnyInformationFlowModel ifm) {
 		super(predicate, ifm);
 		_param1 = (param1 == null ? "" : param1);
 		_param2 = (param2 == null ? "" : param2);

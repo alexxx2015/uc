@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
 
@@ -19,7 +19,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	protected IEvent _event;
 
-	protected IInformationFlowModel _informationFlowModel;
+	protected IAnyInformationFlowModel _informationFlowModel;
 	protected IDistributionManager _distributionManager;
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
@@ -60,7 +60,7 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public final void setInformationFlowModel(IInformationFlowModel ifm) {
+	public final void setInformationFlowModel(IAnyInformationFlowModel ifm) {
 		if (_informationFlowModel != null) {
 			throw new RuntimeException("Information Flow Model already set. Can only be set once.");
 		}

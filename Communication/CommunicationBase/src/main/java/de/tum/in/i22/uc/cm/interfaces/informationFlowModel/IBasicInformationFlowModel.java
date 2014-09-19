@@ -8,14 +8,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
-public interface IBasicInformationFlowModel {
+public interface IBasicInformationFlowModel extends IInformationFlowModel {
 
 	/**
 	 * Removes data object.
 	 *
 	 * @param data
 	 */
-	public abstract void remove(IData data);
+	void remove(IData data);
 
 	/**
 	 * Removes the given container completely by deleting associated names,
@@ -26,7 +26,7 @@ public interface IBasicInformationFlowModel {
 	 * @param cont
 	 *            the container to be removed.
 	 */
-	public abstract void remove(IContainer cont);
+	void remove(IContainer cont);
 
 	/**
 	 * Removes all data from the specified container
@@ -36,7 +36,7 @@ public interface IBasicInformationFlowModel {
 	 * @param container
 	 *            the container of which the data is to be removed.
 	 */
-	public abstract void emptyContainer(IContainer container);
+	void emptyContainer(IContainer container);
 
 	/**
 	 * Removes all data from the container identified by the given container
@@ -47,17 +47,17 @@ public interface IBasicInformationFlowModel {
 	 * @param containerName
 	 *            a name of the container that is to be emptied.
 	 */
-	public abstract void emptyContainer(IName containerName);
+	void emptyContainer(IName containerName);
 
 	/**
 	 * Adds an alias relation from one container to another.
 	 *
 	 * @return
 	 */
-	public abstract void addAlias(IContainer fromContainer,
+	void addAlias(IContainer fromContainer,
 			IContainer toContainer);
 
-	public abstract void addAlias(IName fromContainerName, IName toContainerName);
+	void addAlias(IName fromContainerName, IName toContainerName);
 
 	/**
 	 * Removes the alias from fromContainer to toContainer.
@@ -69,7 +69,7 @@ public interface IBasicInformationFlowModel {
 	 * @param toContainer
 	 *            the container of which the alias is incoming
 	 */
-	public abstract void removeAlias(IContainer fromContainer,
+	void removeAlias(IContainer fromContainer,
 			IContainer toContainer);
 
 	/**
@@ -83,7 +83,7 @@ public interface IBasicInformationFlowModel {
 	 * @return An immutable view onto the set of all aliases *from* the
 	 *         specified container.
 	 */
-	public abstract Collection<IContainer> getAliasesFrom(IContainer container);
+	Collection<IContainer> getAliasesFrom(IContainer container);
 
 	/**
 	 * Returns the reflexive, transitive closure of the alias function for
@@ -92,7 +92,7 @@ public interface IBasicInformationFlowModel {
 	 * @param containerId
 	 * @return
 	 */
-	public abstract Set<IContainer> getAliasTransitiveReflexiveClosure(
+	Set<IContainer> getAliasTransitiveReflexiveClosure(
 			IContainer container);
 
 	/**
@@ -101,7 +101,7 @@ public interface IBasicInformationFlowModel {
 	 * @param fromContainerId
 	 * @return
 	 */
-	public abstract void removeAllAliasesFrom(IContainer fromContainer);
+	void removeAllAliasesFrom(IContainer fromContainer);
 
 	/**
 	 * Removes all aliases that end in the container with the given id.
@@ -109,7 +109,7 @@ public interface IBasicInformationFlowModel {
 	 * @param toContainerId
 	 * @return
 	 */
-	public abstract void removeAllAliasesTo(IContainer toContainer);
+	void removeAllAliasesTo(IContainer toContainer);
 
 	/**
 	 * Returns an immutable view onto the set of all aliases *to* the specified
@@ -122,7 +122,7 @@ public interface IBasicInformationFlowModel {
 	 * @return An immutable view onto the set of all aliases *to* the specified
 	 *         container.
 	 */
-	public abstract Set<IContainer> getAliasesTo(IContainer container);
+	Set<IContainer> getAliasesTo(IContainer container);
 
 	/**
 	 * Returns the non-reflexive transitive alias closure of the specified
@@ -131,7 +131,7 @@ public interface IBasicInformationFlowModel {
 	 * @param container
 	 * @return
 	 */
-	public abstract Set<IContainer> getAliasTransitiveClosure(
+	Set<IContainer> getAliasTransitiveClosure(
 			IContainer container);
 
 	/**
@@ -145,7 +145,7 @@ public interface IBasicInformationFlowModel {
 	 * @param container
 	 *            to which container the data is added.
 	 */
-	public abstract void addData(IData data, IContainer container);
+	void addData(IData data, IContainer container);
 
 	/**
 	 * Removes the given data from the given container.
@@ -158,7 +158,7 @@ public interface IBasicInformationFlowModel {
 	 *            the container from which the data will be removed
 	 * @return true, if the data has been removed
 	 */
-	public abstract void removeData(IData data, IContainer container);
+	void removeData(IData data, IContainer container);
 
 	/**
 	 * Returns an immutable view onto the set of data within the given
@@ -171,7 +171,7 @@ public interface IBasicInformationFlowModel {
 	 * @return an immutable view onto the set of data items stored in the given
 	 *         container
 	 */
-	public abstract Set<IData> getData(IContainer container);
+	Set<IData> getData(IContainer container);
 
 	/**
 	 * Returns the data contained in the container identified by the given name,
@@ -184,7 +184,7 @@ public interface IBasicInformationFlowModel {
 	 *            returned.
 	 * @return an immutable view onto the set of data within the container
 	 */
-	public abstract Set<IData> getData(IName containerName);
+	Set<IData> getData(IName containerName);
 
 	/**
 	 * Copies all data contained in the container identified by srcContainerName
@@ -195,13 +195,13 @@ public interface IBasicInformationFlowModel {
 	 * @return true if both containers existed and data (possibly none, if
 	 *         fromContainer was empty) was copied.
 	 */
-	public abstract boolean copyData(IName srcContainerName, IName dstContainerName);
+	boolean copyData(IName srcContainerName, IName dstContainerName);
 
-	public abstract boolean copyData(IContainer srcContainer, IContainer dstContainer);
+	boolean copyData(IContainer srcContainer, IContainer dstContainer);
 
-	public abstract void addDataTransitively(Collection<IData> data, IName dstContainerName);
+	void addDataTransitively(Collection<IData> data, IName dstContainerName);
 
-	public abstract void addDataTransitively(Collection<IData> data, IContainer dstContainer);
+	void addDataTransitively(Collection<IData> data, IContainer dstContainer);
 
 	/**
 	 * Returns all containers in which the specified data is in
@@ -212,7 +212,7 @@ public interface IBasicInformationFlowModel {
 	 *            the data whose containers are returned.
 	 * @return The set of containers containing the specified data.
 	 */
-	public abstract Set<IContainer> getContainers(IData data);
+	Set<IContainer> getContainers(IData data);
 
 	/**
 	 * Returns all containers of the specified type in which the specified data
@@ -226,10 +226,10 @@ public interface IBasicInformationFlowModel {
 	 *            the type of the container to be returned
 	 * @return all containers of type <T> containing the specified data.
 	 */
-	public abstract <T extends IContainer> Set<T> getContainers(IData data,
+	<T extends IContainer> Set<T> getContainers(IData data,
 			Class<T> type);
 
-	public abstract void addData(Collection<IData> data, IContainer container);
+	void addData(Collection<IData> data, IContainer container);
 
 	/**
 	 * Makes the given name point to the given container.
@@ -248,7 +248,7 @@ public interface IBasicInformationFlowModel {
 	 * @param container
 	 *            the container for which the new name applies.
 	 */
-	public abstract void addName(IName name, IContainer container);
+	void addName(IName name, IContainer container);
 
 	/**
 	 * Makes the given name point to the given container.
@@ -265,7 +265,7 @@ public interface IBasicInformationFlowModel {
 	 * @param container
 	 *            the container for which the new name applies.
 	 */
-	public abstract void addName(IName name, IContainer container,
+	void addName(IName name, IContainer container,
 			boolean deleteUnreferencedContainer);
 
 	/**
@@ -280,7 +280,7 @@ public interface IBasicInformationFlowModel {
 	 *            the additional new name for the container identified by
 	 *            oldName.
 	 */
-	public abstract void addName(IName oldName, IName newName);
+	void addName(IName oldName, IName newName);
 
 	/**
 	 * Removes the name. If the name is the last one for the container, the
@@ -289,7 +289,7 @@ public interface IBasicInformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public abstract void removeName(IName name);
+	void removeName(IName name);
 
 	/**
 	 * Removes the name. If the name is the last and deleteUnreferencedContainer
@@ -299,7 +299,7 @@ public interface IBasicInformationFlowModel {
 	 * @param deleteUnreferencedContainer
 	 * @return
 	 */
-	public abstract void removeName(IName name,
+	void removeName(IName name,
 			boolean deleteUnreferencedContainer);
 
 	/**
@@ -308,7 +308,7 @@ public interface IBasicInformationFlowModel {
 	 * @param name
 	 * @return
 	 */
-	public abstract IContainer getContainer(IName name);
+	IContainer getContainer(IName name);
 
 	/**
 	 * Returns an unmodifiable view onto all containers.
@@ -317,7 +317,7 @@ public interface IBasicInformationFlowModel {
 	 *
 	 * @return an unmodifiable view onto all containers.
 	 */
-	public abstract Set<IContainer> getAllContainers();
+	Set<IContainer> getAllContainers();
 
 	/**
 	 * Returns an unmodifiable view onto all names.
@@ -326,7 +326,7 @@ public interface IBasicInformationFlowModel {
 	 *
 	 * @return an unmodifiable view onto all names.
 	 */
-	public abstract Collection<IName> getAllNames();
+	Collection<IName> getAllNames();
 
 	/**
 	 * Returns an unmodifiable view onto all names of the specified type.
@@ -337,7 +337,7 @@ public interface IBasicInformationFlowModel {
 	 *            type of the names to be returned.
 	 * @return an unmodifiable view onto all names of the specified type.
 	 */
-	public abstract <T extends IName> Collection<T> getAllNames(Class<T> type);
+	<T extends IName> Collection<T> getAllNames(Class<T> type);
 
 	/**
 	 * Returns an unmodifiable view onto all names for the given container.
@@ -348,7 +348,7 @@ public interface IBasicInformationFlowModel {
 	 *            the container whose names are returned.
 	 * @return an unmodifiable view onto all names for the given container
 	 */
-	public abstract Collection<IName> getAllNames(IContainer container);
+	Collection<IName> getAllNames(IContainer container);
 
 	/**
 	 * Get all names of the container identified by the given containerName. It
@@ -358,7 +358,7 @@ public interface IBasicInformationFlowModel {
 	 * @param type
 	 * @return
 	 */
-	public abstract <T extends IName> List<T> getAllNames(IName containerName,
+	<T extends IName> List<T> getAllNames(IName containerName,
 			Class<T> type);
 
 	/**
@@ -373,15 +373,9 @@ public interface IBasicInformationFlowModel {
 	 *            the type of the {@link IName}s to be returned
 	 * @return all names of type <T> of the specified container
 	 */
-	public abstract <T extends IName> List<T> getAllNames(IContainer cont,
+	<T extends IName> List<T> getAllNames(IContainer cont,
 			Class<T> type);
 
 
-	public abstract String niceString();
-
-	@Override
-	public abstract String toString();
-
-	public IData getDataFromId(String id);
-
+	IData getDataFromId(String id);
 }

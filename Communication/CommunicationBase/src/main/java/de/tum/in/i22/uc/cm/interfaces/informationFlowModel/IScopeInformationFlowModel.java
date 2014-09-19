@@ -10,27 +10,7 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
-public interface IScopeInformationFlowModel {
-
-	@Override
-	public abstract String toString();
-
-	public abstract void reset();
-
-	/**
-	 * Simulation step: push. Stores the current IF state, if not already stored
-	 *
-	 * @return true if the state has been successfully pushed, false otherwise
-	 */
-	public abstract void push();
-
-	/**
-	 * Simulation step: pop. Restore a previously pushed IF state, if any.
-	 *
-	 * @return true if the state has been successfully restored, false otherwise
-	 */
-	public abstract void pop();
-
+public interface IScopeInformationFlowModel extends IInformationFlowModel {
 	/**
 	 * opens a new scope.
 	 *
@@ -39,7 +19,7 @@ public interface IScopeInformationFlowModel {
 	 * @return true if the scope is not already opened. false otherwise.
 	 *
 	 */
-	public abstract boolean openScope(IScope scope);
+	boolean openScope(IScope scope);
 
 	/**
 	 * Close a specific scope.
@@ -49,7 +29,7 @@ public interface IScopeInformationFlowModel {
 	 * @return true if the scope is successfully closed. false otherwise.
 	 *
 	 */
-	public abstract boolean closeScope(IScope scope);
+	boolean closeScope(IScope scope);
 
 	/**
 	 * Checks whether a specific scope has been opened. Note that the scope can
@@ -60,7 +40,7 @@ public interface IScopeInformationFlowModel {
 	 * @return true if the scope is in the set. false otherwise.
 	 *
 	 */
-	public abstract boolean isScopeOpened(IScope scope);
+	boolean isScopeOpened(IScope scope);
 
 	/**
 	 * Returns the only element that should match the (possibly under-specified)
@@ -78,7 +58,7 @@ public interface IScopeInformationFlowModel {
 	 *         match is found.
 	 *
 	 */
-	public abstract IScope getOpenedScope(IScope scope);
+	IScope getOpenedScope(IScope scope);
 
 	/**
 	 * XBehav function described in the Cross-layer paper. Returns the behavior
@@ -91,7 +71,7 @@ public interface IScopeInformationFlowModel {
 	 *         respective scope
 	 *
 	 */
-	public abstract Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler);
+	Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler);
 
 	/**
 	 * XDelim function described in the Cross-layer paper.Given an event returns
@@ -102,7 +82,7 @@ public interface IScopeInformationFlowModel {
 	 * @return the set of scopes modified by it, together with the modifier
 	 *         (open or close)
 	 */
-	public abstract Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler);
+	Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler);
 
 	/**
 	 * XAlias function described in the Cross-layer paper. Given an event
@@ -113,8 +93,5 @@ public interface IScopeInformationFlowModel {
 	 *
 	 * @return the new cross-layer alias function
 	 */
-	public abstract Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler);
-
-	public abstract String niceString();
-
+	Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler);
 }

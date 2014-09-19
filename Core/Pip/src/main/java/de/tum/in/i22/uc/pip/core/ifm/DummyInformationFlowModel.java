@@ -9,19 +9,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
-import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
-public class DummyInformationFlowModel extends InformationFlowModelExtension
-		implements IInformationFlowModel {
+public class DummyInformationFlowModel extends InformationFlowModelExtension implements IAnyInformationFlowModel {
 	protected DummyInformationFlowModel(
 			InformationFlowModelManager informationFlowModelManager) {
 		super(informationFlowModelManager);
@@ -241,15 +241,15 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	}
 
 	@Override
-	public void push() {
-		_logger.error("Method push() not implemented.");
-
+	public IStatus startSimulation() {
+		_logger.error("Method startSimulation() not implemented.");
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
-	public void pop() {
-		_logger.error("Method pop() not implemented.");
-
+	public IStatus stopSimulation() {
+		_logger.error("Method stopSimulation() not implemented.");
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
@@ -277,33 +277,14 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 	}
 
 	@Override
-	public boolean isEnabled(EInformationFlowModel ifm) {
-		_logger.error("Method isEnabled() not implemented.");
-		return false;
-	}
-
-	@Override
 	public boolean isSimulating() {
 		_logger.error("Method isSimulating() not implemented.");
 		return false;
 	}
 
 	@Override
-	public IStatus startSimulation() {
-		_logger.error("Method startSimulation() not implemented.");
-		return null;
-	}
-
-	@Override
-	public IStatus stopSimulation() {
-		_logger.error("Method stopSimulation() not implemented.");
-		return null;
-	}
-
-	@Override
 	public void reset() {
 		_logger.error("Method reset() not implemented.");
-
 	}
 
 	@Override
@@ -360,4 +341,9 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension
 		return null;
 	}
 
+	@Override
+	public boolean hasChanged() {
+		_logger.error("Method hasChanged() not implemented.");
+		return false;
+	}
 }

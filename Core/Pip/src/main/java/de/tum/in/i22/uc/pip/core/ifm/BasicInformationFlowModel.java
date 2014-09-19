@@ -17,9 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
@@ -47,7 +50,8 @@ public final class BasicInformationFlowModel implements
 	/**
 	 * Resets the information flow model to its initial (empty) state.
 	 */
-	void reset() {
+	@Override
+	public void reset() {
 		_containerToDataMap = new HashMap<>();
 		_aliasesMap = new HashMap<>();
 		_namingMap = new HashMap<>();
@@ -62,7 +66,9 @@ public final class BasicInformationFlowModel implements
 	 *
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
-	void push() {
+	@Override
+	public
+	IStatus startSimulation() {
 		_logger.info("Pushing current PIP state.");
 
 		_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
@@ -78,6 +84,8 @@ public final class BasicInformationFlowModel implements
 		}
 
 		_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/**
@@ -85,7 +93,8 @@ public final class BasicInformationFlowModel implements
 	 *
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
-	void pop() {
+	@Override
+	public IStatus stopSimulation() {
 		_logger.info("Popping current PIP state.");
 
 		_containerToDataMap = _containerToDataMapBackup;
@@ -95,6 +104,8 @@ public final class BasicInformationFlowModel implements
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/*
@@ -1033,4 +1044,14 @@ public final class BasicInformationFlowModel implements
 		return null;
 	}
 
+	@Override
+	public boolean hasChanged() {
+
+		return false;
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return _containerToDataMapBackup != null;
+	}
 }

@@ -14,8 +14,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
@@ -24,8 +24,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 
-public final class InformationFlowModelManager implements
-		IInformationFlowModel, IBasicInformationFlowModel {
+public final class InformationFlowModelManager implements IAnyInformationFlowModel {
 	private final Map<EInformationFlowModel, InformationFlowModelExtension> _ifModelExtensions;
 
 	private final BasicInformationFlowModel _basicIfModel;
@@ -63,14 +62,6 @@ public final class InformationFlowModelManager implements
 		return _basicIfModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.
-	 * in.i22.uc.cm.pip.EInformationFlowModel)
-	 */
-	@Override
 	public boolean isEnabled(EInformationFlowModel ifm) {
 		return _ifModelExtensions.containsKey(ifm);
 	}
@@ -104,9 +95,9 @@ public final class InformationFlowModelManager implements
 		}
 		_simulating = true;
 
-		_basicIfModel.push();
+		_basicIfModel.startSimulation();
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			ifme.push();
+			ifme.startSimulation();
 		}
 
 		return new StatusBasic(EStatus.OKAY);
@@ -124,9 +115,9 @@ public final class InformationFlowModelManager implements
 		}
 		_simulating = false;
 
-		_basicIfModel.pop();
+		_basicIfModel.stopSimulation();
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			ifme.pop();
+			ifme.stopSimulation();
 		}
 
 		return new StatusBasic(EStatus.OKAY);
@@ -348,16 +339,6 @@ public final class InformationFlowModelManager implements
 	}
 
 	@Override
-	public void push() {
-		_basicIfModel.push();
-	}
-
-	@Override
-	public void pop() {
-		_basicIfModel.pop();
-	}
-
-	@Override
 	public boolean openScope(IScope scope) {
 		return ((ScopeInformationFlowModel) _ifModelExtensions
 				.get(EInformationFlowModel.SCOPE)).openScope(scope);
@@ -429,4 +410,8 @@ public final class InformationFlowModelManager implements
 		return _basicIfModel.getDataFromId(id);
 	}
 
+	@Override
+	public boolean hasChanged() {
+		return false;
+	}
 }

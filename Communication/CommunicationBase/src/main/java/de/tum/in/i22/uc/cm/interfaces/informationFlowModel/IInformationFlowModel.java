@@ -1,22 +1,25 @@
 package de.tum.in.i22.uc.cm.interfaces.informationFlowModel;
 
+import java.util.Observable;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 
-public interface IInformationFlowModel extends IBasicInformationFlowModel, IScopeInformationFlowModel, IStructuredInformationFlowModel {
+public interface IInformationFlowModel {
+	void reset();
 
-	public abstract boolean isEnabled(EInformationFlowModel ifm);
+	String niceString();
 
-	public abstract boolean isSimulating();
+	/**
+	 * In correspondence with {@link Observable#hasChanged()}
+	 * and {@link IMyObservable#hasChanged()}.
+	 *
+	 * @return
+	 */
+	boolean hasChanged();
 
-	public abstract IStatus startSimulation();
+	IStatus startSimulation();
 
-	public abstract IStatus stopSimulation();
+	IStatus stopSimulation();
 
-	@Override
-	public abstract void reset();
-
-	@Override
-	public abstract String niceString();
-
+	boolean isSimulating();
 }
