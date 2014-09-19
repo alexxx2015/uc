@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class InformationFlowModelTest {

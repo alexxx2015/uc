@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
 public class IsOnlyIn extends StateBasedPredicate {
 	private final String _param1;

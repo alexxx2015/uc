@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IStructuredInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IStructuredInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 

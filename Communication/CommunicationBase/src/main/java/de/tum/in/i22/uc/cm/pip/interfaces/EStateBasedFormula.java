@@ -6,7 +6,7 @@ public enum EStateBasedFormula {
 	IS_COMBINED_WITH;
 
 	public static EStateBasedFormula from(String s) {
-		switch(s.toLowerCase()) {
+		switch(s.trim().toLowerCase()) {
 			case "isnotin":
 				return IS_NOT_IN;
 			case "isonlyin":

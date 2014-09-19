@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.interfaces.informationFlowModel;
+package de.tum.in.i22.uc.cm.pip.ifm;
 
 import java.util.Collection;
 import java.util.List;

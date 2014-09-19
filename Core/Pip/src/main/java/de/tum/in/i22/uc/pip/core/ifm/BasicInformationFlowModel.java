@@ -23,7 +23,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**

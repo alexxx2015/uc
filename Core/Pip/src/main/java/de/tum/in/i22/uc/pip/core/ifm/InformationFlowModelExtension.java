@@ -3,7 +3,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 import java.util.Objects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
 
 /**

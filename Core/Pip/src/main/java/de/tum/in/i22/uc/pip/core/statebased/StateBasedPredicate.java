@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pip.core.statebased;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.settings.Settings;

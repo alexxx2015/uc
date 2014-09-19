@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;

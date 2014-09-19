@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IAnyInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
 
