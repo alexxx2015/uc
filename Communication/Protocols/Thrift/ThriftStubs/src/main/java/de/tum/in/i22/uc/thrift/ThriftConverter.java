@@ -149,7 +149,7 @@ public final class ThriftConverter {
 		}
 
 		return new PtpResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
-				ThriftConverter.fromThrift(r.getPolicy()));
+				ThriftConverter.fromThrift(r.getPolicy()), r.getMessage());
 	}
 
 	public static Location fromThrift(String location) {
@@ -305,7 +305,7 @@ public final class ThriftConverter {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
-		TPtpResponse res = new TPtpResponse(toThrift(r.getPolicy()), toThrift(r.getStatus()));
+		TPtpResponse res = new TPtpResponse(toThrift(r.getPolicy()), toThrift(r.getStatus()), r.getMessage());
 		return res;
 	}
 	

@@ -10,7 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.uc.policy.translation.Config;
+import de.tum.in.i22.uc.ptp.utilities.Config;
 import rita.RiWordNet;
 import rita.wordnet.jwnl.JWNLException;
 import rita.wordnet.jwnl.dictionary.Dictionary;

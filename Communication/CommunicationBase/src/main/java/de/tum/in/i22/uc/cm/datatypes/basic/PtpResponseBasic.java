@@ -7,10 +7,14 @@ public class PtpResponseBasic implements IPtpResponse{
 
 	private IStatus status;
 	private XmlPolicy policy;
+	private String message;
 	
-	public PtpResponseBasic(IStatus status, XmlPolicy policy){
+	public PtpResponseBasic(IStatus status, XmlPolicy policy, String message){
 		this.status = status;
 		this.policy = policy;
+		if(message == null)
+			message = "";
+		this.message = message;
 	}
 	
 	@Override
@@ -29,6 +33,15 @@ public class PtpResponseBasic implements IPtpResponse{
 	@Override
 	public XmlPolicy getPolicy() {
 		return this.policy;
+	}
+
+	@Override
+	public String getMessage() {
+		return this.message;
+	}
+	
+	public void setMessage(String msg){
+		this.message = msg;
 	}
 
 }

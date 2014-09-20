@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +31,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -42,7 +40,6 @@ import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
-import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
@@ -55,7 +52,7 @@ import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pmp.xsd.ObjectFactory;
 import de.tum.in.i22.uc.pmp.xsd.ParamMatchType;
 import de.tum.in.i22.uc.pmp.xsd.PolicyType;
-import de.tum.in.i22.uc.remotelistener.PtpHandler;
+import de.tum.in.i22.uc.ptp.remotelistener.PtpHandler;
 
 public class PmpHandler extends PmpProcessor {
 	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
@@ -280,7 +277,6 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus revokePolicyPmp(String policyName) {
-		_logger.debug("revokePolicyPmp({}) invoked.", policyName);
 
 		IStatus status;
 
@@ -289,6 +285,7 @@ public class PmpHandler extends PmpProcessor {
 			status = getPdp().revokePolicy(policyName);
 		}
 		else {
+			_logger.debug("revokePolicyPmp({}) result: {}", policyName, "Not Found!");
 			status = new StatusBasic(EStatus.OKAY);
 		}
 
@@ -328,7 +325,10 @@ public class PmpHandler extends PmpProcessor {
 		String xml = xmlPolicy.getXml();
 		// Convert the string xml to a PolicyType
 		PolicyType policy = xmlToPolicy(xml);
-
+		//when you receive a raw xml policy, the object created is without a name.
+		String policyName = policy.getName();
+		xmlPolicy.setName(policyName);
+		
 		if (_policymanager.addPolicy(xmlPolicy)) {
 
 			// Initialize the initial representations specified in the policy
@@ -393,17 +393,22 @@ public class PmpHandler extends PmpProcessor {
 		_logger.info(log);
 
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
-		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
-			return translationResponse;
 		log = "Translated policy status: "+translationResponse.getStatus().getEStatus()+" " + policyname + " "+ policyTemplate;
 		_logger.info(log);
+		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
+			return translationResponse;
+		//debugging only
+//		if(translationResponse.getStatus().isStatus(EStatus.OKAY))
+//			return translationResponse;
+		
+		
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
 
 		revokePolicyPmp(translatedPolicy.getName());
 
 		IStatus deploymentStatus = deployPolicyXMLPmp(translatedPolicy);
 		
-		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy);
+		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy, deploymentStatus.getErrorMessage()+"");
 		return deploymentResponse;
 		//return translationResponse;
 	}
@@ -414,6 +419,12 @@ public class PmpHandler extends PmpProcessor {
 		
 		if(!updateResponse.getStatus().getEStatus().equals(EStatus.OKAY)){
 			return updateResponse;
+		}
+		
+		String MODE = parameters.get("PMP_MODE");
+		if(MODE != null){
+			if(MODE.equals("ADAPTATION_ONLY"))
+				return updateResponse;
 		}
 		
 		//retranslate all policies

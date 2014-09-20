@@ -25,7 +25,7 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PtpTest {
 
-	private static final boolean TESTS_ENABLED = true;
+	private static final boolean TESTS_ENABLED = false;
 	private static Logger _logger = LoggerFactory.getLogger(PtpTest.class);
 	private static Pmp2PmpClient clientPmp;
 	

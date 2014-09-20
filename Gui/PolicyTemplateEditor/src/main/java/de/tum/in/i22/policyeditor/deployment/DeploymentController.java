@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.policyeditor.model.PolicyTemplate;
+import de.tum.in.i22.policyeditor.model.TemplatesLoader;
 import de.tum.in.i22.policyeditor.model.UserObject;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -26,9 +27,13 @@ public class DeploymentController {
 	private Any2PmpClient clientPmp;
 
 	private static int globalPolicyCounter = 0;
+	private PolicyTemplate[] templatesArray;
 	
 	public DeploymentController(Any2PmpClient clientPmp2) {
+		
 		this.clientPmp = clientPmp2;
+		
+		templatesArray = TemplatesLoader.loadPolicyTemplates().getTemplates();
 	}
 	
 	public void closeConnection(){
@@ -74,13 +79,13 @@ public class DeploymentController {
 			String pDescription = policy.getDescription();
 			String pTemplateId = policy.getTemplateId();
 			String pTemplate = policy.getTemplate();
-			String pDataClass = policy.getDataClass();
+			String pDataClass = policy.getDataClass();			
 			
 			
 			XmlPolicy xmlPolicy = new XmlPolicy(policyName, xmlRepresentation);
 			xmlPolicy.setDescription(pDescription);
 			xmlPolicy.setTemplateId(pTemplateId);
-			xmlPolicy.setTemplateXml(pTemplate);
+			xmlPolicy.setTemplateXml(xmlRepresentation);
 			xmlPolicy.setDataClass(pDataClass);
 			
 			String requestId = policyName;
@@ -118,7 +123,7 @@ public class DeploymentController {
 			String id = xmlPolicy.getTemplateId();
 			String name = xmlPolicy.getName();
 			String description= xmlPolicy.getDescription();
-			String template = xmlPolicy.getTemplateXml();
+			String template = getXmlTemplate(id);
 			PolicyTemplate pTemplate = new PolicyTemplate(id, new String[]{dClass}, description, template);
 			pTemplate.setName(name);
 			
@@ -130,6 +135,14 @@ public class DeploymentController {
 		return deployedPolicies;
 	}
 
+	private String getXmlTemplate(String templateId){
+		for(PolicyTemplate t : templatesArray){
+			if(templateId.equals(t.getTemplateId()))
+					return t.getTemplate();
+		}
+		return "";
+	}
+	
 	public void revokePolicies(Set<IContainer> representations,	String policyClass, List<PolicyTemplate> policies) {
 		String log = "";
 		for(PolicyTemplate p : policies){

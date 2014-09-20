@@ -93,6 +93,7 @@ struct TXmlPolicy {
 struct TPtpResponse {
 	1: TXmlPolicy policy,
 	2: TStatus status,
+	3: string message
 }
 
 /*

@@ -108,7 +108,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	@Override
 	public IPtpResponse translatePolicy(String requestId,Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		if((requestId == null) || parameters==null || xmlPolicy==null){
-			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
+			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("", ""), "invalid param");
 			return response;
 		}
 
@@ -122,7 +122,7 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		if((requestId == null) || parameters==null || xmlDomainModel==null){
-			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("invalid param", ""));
+			IPtpResponse response = new PtpResponseBasic(new StatusBasic(EStatus.ERROR), new XmlPolicy("", ""), "invalid param");
 			return response;
 		}
 

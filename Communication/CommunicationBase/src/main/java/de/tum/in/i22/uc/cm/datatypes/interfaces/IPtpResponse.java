@@ -9,4 +9,5 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 public interface IPtpResponse {
 	public IStatus getStatus();
 	public XmlPolicy getPolicy();
+	public String getMessage();
 }
