@@ -1,20 +1,12 @@
-package de.tum.in.i22.uc.ptp.remotelistener;
+package de.tum.in.i22.uc.ptp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -28,8 +20,11 @@ import de.tum.in.i22.uc.ptp.adaptation.engine.DomainMergeException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.InvalidDomainModelFormatException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.ModelLoader;
 import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.ptp.policy.translation.TranslationController;
+import de.tum.in.i22.uc.ptp.policy.customization.FirefoxPepCompliance;
+import de.tum.in.i22.uc.ptp.policy.customization.GenericCompliance;
+import de.tum.in.i22.uc.ptp.policy.customization.WindowsPepCompliance;
 import de.tum.in.i22.uc.ptp.policy.translation.Filter.FilterStatus;
+import de.tum.in.i22.uc.ptp.policy.translation.TranslationController;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
 
 public class PtpHandler implements IPmp2Ptp {
@@ -46,12 +41,18 @@ public class PtpHandler implements IPmp2Ptp {
 	
 	/* (non-Javadoc)
 	 * @see de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp#translatePolicy(java.lang.String, java.util.Map, de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy)
-	 * paramters must have keys: template_id, object_instance
+	 * 
+	 * PARAMETERS must have KEYS: 
+	 * template_id - template used by the eca 
+	 * object_instance - value used to replace in the template the value of object=<objectInstance>
+	 * timestepType - SECONDS MINUTES ...
+	 * timestepValue - one number as a string: 60, 102, ...
 	 */
 	@Override
-	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> param, XmlPolicy xmlPolicy) {
 		
 		IStatus translationStatus = new StatusBasic(EStatus.ERROR);
+		Map<String, String> parameters = new HashMap<String, String>(param);
 		
 		String policy = xmlPolicy.getTemplateXml();
 		String policyId = xmlPolicy.getName();
@@ -72,7 +73,7 @@ public class PtpHandler implements IPmp2Ptp {
 		parameters.put("policy_id", policyId);
 		parameters.put("template_id", xmlPolicy.getTemplateId());
 		
-		String outputPolicy = parameters.get("template_id")+"_"+parameters.get("object_instance")+"_"+"policytranslated.xml";
+		String outputPolicy = "";
 		
 		TranslationController translationController ;
 		translationController = new TranslationController(policy, parameters);
@@ -82,11 +83,8 @@ public class PtpHandler implements IPmp2Ptp {
 			translationController.filter();
 			status = translationController.getFilterStatus();
 			outputPolicy = translationController.getFinalOutput();			
-			//TODO: remove hardcoding
-			String timestepType = "SECONDS";
-			String timestepValue ="60";
-			outputPolicy = addTimeStepToPolicy(outputPolicy, timestepType, timestepValue);
-			outputPolicy = replaceEventually(outputPolicy);
+			
+			outputPolicy = GenericCompliance.makeCompliant(outputPolicy, parameters);
 			message = "Translation successful: " + translationController.getMessage();	
 			
 			xmlPolicy.setXml(outputPolicy);
@@ -114,6 +112,9 @@ public class PtpHandler implements IPmp2Ptp {
 		return response;
 	}
 
+	
+	
+	
 	private void storePolicyForDebugging(String xml){
 		
 		String destination = System.getProperty("user.dir")
@@ -225,111 +226,5 @@ public class PtpHandler implements IPmp2Ptp {
 	}
 	
 	
-	/**
-	 * The syntax of eventually has changed.
-	 * @param xml
-	 * @return
-	 */
-	private static String replaceEventually(String xml){
- 		Document doc = PublicMethods.openXmlInput(xml, "string");
- 		if(doc==null)
- 			return xml;
-		String expression = "//eventually";
-		XPathFactory factory=XPathFactory.newInstance();
-		XPath xPath=factory.newXPath();
-		NodeList nodeList = null;
-		try {
-			nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-			String logMsg = "eventually: xml value parsing error";
-			_logger.error(logMsg, e);
-			return logMsg;
-		}
-		
-		int eventuallyCounter = nodeList.getLength();
-		//System.out.println("eventuallyCounter: "+ eventuallyCounter);
-		for (int i = 0; i < eventuallyCounter; i++) {
-			Node n = nodeList.item(i);
-			if(n.getNodeType() != Node.ELEMENT_NODE)
-				continue;
-			
-			Node parent = n.getParentNode();						
-			PublicMethods.removeWhitespaceNodes(parent);
-			
-			Element not1 = doc.createElement("not");
-			parent.appendChild(not1);
-			Element always = doc.createElement("always");
-			not1.appendChild(always);
-			Element not2 = doc.createElement("not");
-			always.appendChild(not2);
-			
-			NodeList children = n.getChildNodes();
-			int childrenLength = children.getLength();
-			for(int j=0; j<childrenLength; j++){
-				Node c = children.item(j);
-				if(c!=null)
-					not2.appendChild(c);
-				else{
-					Element empty = doc.createElement("empty");
-					not2.appendChild(empty);
-				}
-			}
-			
-			String pName = parent.getNodeName();
-			String pValue = parent.getNodeValue();
-			
-			String value = n.getNodeValue();
-			String name = n.getNodeName();
-			System.out.println(i + " " + name + " " + value + "[" + pName + " " + pValue + "]");
-			parent.removeChild(n);
-		}
-		
-		String result = "";
-		result = PublicMethods.convertDocumentToString(doc) + "";
-		return result;
-	}
-	
-	/**
-	 * The PDP expects a policy which has a "timestep" node with a value.
-	 * This method adds a default timestep node.
-	 * Without it, the deployment fails.
-	 * @param policy
-	 * @param timestepType SECONDS MINUTES HOURS DAYS MONTHS YEARS
-	 * @param timestepValue number
-	 * @return
-	 */
-	private static String addTimeStepToPolicy(String policy, String timestepType, String timestepValue){
-		if(policy == null)
-			return "";
-		if(policy.length()==0)
-			return "";
-
-		Document doc = PublicMethods.openXmlInput(policy, "string");
-		if(doc==null)
-			return policy;
-		XPathFactory factory=XPathFactory.newInstance();
-		XPath xpath=factory.newXPath();
-		
-		/* process name of the layers */
-		String nodeNames = "//preventiveMechanism";
-		NodeList mechanisms;
-		try {
-			mechanisms = (NodeList)xpath.evaluate(nodeNames, doc, XPathConstants.NODESET);
-			int mechsCounter = mechanisms.getLength();
-			for(int i=0; i<mechsCounter; i++){
-				Node n = mechanisms.item(i);
-				Element timestep = doc.createElement("timestep");
-				timestep.setAttribute("amount", timestepValue);
-				timestep.setAttribute("unit", timestepType);
-				n.appendChild(timestep);
-			}
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}
-		
-		policy = PublicMethods.convertDocumentToString(doc) + "";
-		return policy;
-	}
 	
 }

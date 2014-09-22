@@ -52,7 +52,7 @@ import de.tum.in.i22.uc.pmp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pmp.xsd.ObjectFactory;
 import de.tum.in.i22.uc.pmp.xsd.ParamMatchType;
 import de.tum.in.i22.uc.pmp.xsd.PolicyType;
-import de.tum.in.i22.uc.ptp.remotelistener.PtpHandler;
+import de.tum.in.i22.uc.ptp.PtpHandler;
 
 public class PmpHandler extends PmpProcessor {
 	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
@@ -383,6 +383,8 @@ public class PmpHandler extends PmpProcessor {
 
 	/**
 	 * Policies are translated and then deployed on the PDP.
+	 * If a policies submitted to be translated already exists,
+	 * it is revoked and deployed again.
 	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
@@ -392,25 +394,32 @@ public class PmpHandler extends PmpProcessor {
 		String log = "TranslatePolicy request: " + policyname + " "+ policyTemplate;
 		_logger.info(log);
 
-		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, parameters, xmlPolicy);
+		Map<String, String> policyParam = this._policymanager.getPolicyParam(xmlPolicy);
+		policyParam.putAll(parameters);
+		
+		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, policyParam, xmlPolicy);
 		log = "Translated policy status: "+translationResponse.getStatus().getEStatus()+" " + policyname + " "+ policyTemplate;
 		_logger.info(log);
 		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
 			return translationResponse;
-		//debugging only
-//		if(translationResponse.getStatus().isStatus(EStatus.OKAY))
-//			return translationResponse;
-		
+	
+		//TODO: used only for debugging - to be removed
+		String PMP_MODE =  parameters.get("PMP_MODE");
+		if(PMP_MODE == null)
+			PMP_MODE = "NORMAL";
+		if(PMP_MODE.equals("TRANSLATE_ONLY"))
+			return translationResponse;
 		
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
-
+		this._policymanager.addPolicyParam(xmlPolicy, policyParam);
+		
+		/* revoke the policy in case it was deployed before. */
 		revokePolicyPmp(translatedPolicy.getName());
 
 		IStatus deploymentStatus = deployPolicyXMLPmp(translatedPolicy);
 		
 		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy, deploymentStatus.getErrorMessage()+"");
 		return deploymentResponse;
-		//return translationResponse;
 	}
 
 	@Override
@@ -432,6 +441,7 @@ public class PmpHandler extends PmpProcessor {
 		List<XmlPolicy> policies = this._policymanager.getPolicies();
 		for(XmlPolicy p : policies){
 			String requestIdentifier = p.getName();
+			param = this._policymanager.getPolicyParam(p);
 			this.translatePolicy(requestIdentifier, param, p);
 		}
 		_logger.info("UpdateDomainModel response: "+ updateResponse.getStatus());

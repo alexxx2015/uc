@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pmp.policies;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +20,20 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 public class PolicyManager {
 
 	private Map<String, XmlPolicy> _policies;
-
+	/**
+	 * The parameters needed for each policy to retranslate and redeploy.
+	 * e.g. scope of the request; modifications to policy specific to application
+	 */
+	private Map<String, Map<String,String>> _params;
+	
 	public PolicyManager(){
 		_policies = new ConcurrentHashMap<String, XmlPolicy>(50);
+		_params = new ConcurrentHashMap<>(50);
 	}
 
 	/**
 	 * Adds a policy that was not before in the storage.
-	 *
+	 * <br> Adds a policy on the PMP's list of deployed policies. 
 	 * @param p
 	 * @return true if it is unique. false if already exists.
 	 */
@@ -43,6 +49,45 @@ public class PolicyManager {
 		return true;
 	}
 
+	/**
+	 * Adds instantiation parameters for a policy.
+	 * If the parameters were already stored, they are replaced with ones as argument.
+	 * @param p
+	 * @param param
+	 * @return
+	 */
+	public boolean addPolicyParam(XmlPolicy p, Map<String, String> param){
+		if(p == null || param == null ){
+			return false;
+		}
+		String policyName = p.getName();
+		this._params.put(policyName, param);
+		return true;
+	}
+	
+	/**
+	 * Returns the parameters for a particular policy.
+	 * <br> The policy is identified by its unique name.
+	 * If the policy is null or it does not have parameters,
+	 * it returns an empty parameters map. 
+	 * @param p
+	 * @return
+	 */
+	public Map<String, String> getPolicyParam(XmlPolicy p){
+		if(p==null){
+			return new HashMap<String,String>();
+		}
+		String policyName = p.getName();
+		Map<String, String> par = this._params.get(policyName);
+		if(par==null)
+			return new HashMap<String,String>();
+		return par;
+	}
+	
+	/**
+	 * Remove the policy from the PMP's list
+	 * @param p
+	 */
 	public void replacePolicy(XmlPolicy p){
 		if (p == null) {
 			return;

@@ -17,9 +17,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.uc.ptp.remotelistener.TranslationEngine;
-import de.tum.in.i22.uc.ptp.remotelistener.TranslationEngine_ThriftServer;
-import de.tum.in.i22.uc.ptp.remotelistener.TranslationException;
+import de.tum.in.i22.uc.ptp.oldhandler.TranslationEngine;
+import de.tum.in.i22.uc.ptp.oldhandler.TranslationEngine_ThriftServer;
+import de.tum.in.i22.uc.ptp.oldhandler.TranslationException;
 
 public class TranslationServerTest {
 

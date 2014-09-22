@@ -113,7 +113,7 @@ public class PublicMethods {
 	 * @param xmlStr
 	 * @return doc
 	 */
-	public Document convertStringToDocument(String xmlStr) {
+	public static Document convertStringToDocument(String xmlStr) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
         DocumentBuilder builder;  
         try 
