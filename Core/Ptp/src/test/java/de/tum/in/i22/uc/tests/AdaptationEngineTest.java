@@ -28,7 +28,7 @@ public class AdaptationEngineTest {
 	 * The tests could potentially affect configuration files unless
 	 * only test files are correctly specified.
 	 */
-	private static final boolean TESTS_ENABLED = true;
+	private static final boolean TESTS_ENABLED = false;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdaptationEngineTest.class);
 	
