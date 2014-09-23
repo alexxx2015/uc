@@ -25,6 +25,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,6 +35,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import de.tum.in.i22.uc.ptp.PtpHandler;
 import de.tum.in.i22.uc.ptp.policy.translation.Filter;
 import de.tum.in.i22.uc.ptp.policy.translation.TranslationController;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
@@ -42,6 +45,8 @@ import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
  *
  */
 public class FutureToPast implements Filter{
+	
+	private static final Logger _logger = LoggerFactory.getLogger(FutureToPast.class);
 	
 	/**
 	 * Status of pipe and filter operation
@@ -147,8 +152,8 @@ public class FutureToPast implements Filter{
 		catch (Exception e) {
 			
 			fStatus=FilterStatus.FAILURE;
-			sMessage="- Future-to-past was unsuccessful.";
-			//e.printStackTrace();
+			sMessage="- Future-to-past was unsuccessful." ;
+			_logger.error(sMessage, e);
 		}
 				
 	}

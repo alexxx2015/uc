@@ -90,7 +90,6 @@ public class DeploymentController {
 			
 			String requestId = policyName;
 			_logger.debug("translate and deploy: "+ policyName +"\n"+xmlRepresentation);
-			System.err.println(xmlRepresentation);
 			IPtpResponse response = clientPmp.translatePolicy(requestId, parameters, xmlPolicy);
 			String msg = "policy: " + response.getStatus().getEStatus() +" "+ requestId + " "+ policy.getClearDescription();
 			_logger.info(msg);

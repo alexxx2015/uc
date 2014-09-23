@@ -20,9 +20,7 @@ import de.tum.in.i22.uc.ptp.adaptation.engine.DomainMergeException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.InvalidDomainModelFormatException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.ModelLoader;
 import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.ptp.policy.customization.FirefoxPepCompliance;
 import de.tum.in.i22.uc.ptp.policy.customization.GenericCompliance;
-import de.tum.in.i22.uc.ptp.policy.customization.WindowsPepCompliance;
 import de.tum.in.i22.uc.ptp.policy.translation.Filter.FilterStatus;
 import de.tum.in.i22.uc.ptp.policy.translation.TranslationController;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
@@ -61,7 +59,7 @@ public class PtpHandler implements IPmp2Ptp {
 			xmlPolicy.setName(policyId);
 		}
 		
-		String message = "" + "Req: "+requestId +"translateg policy: \n" + policy;
+		String message = "" + "Req: "+requestId +" templateId: "+ xmlPolicy.getTemplateId() +" translate policy: \n" + policy;
 		_logger.info(message);
 		
 		if(policy == null || policy.equals("")){
@@ -83,10 +81,8 @@ public class PtpHandler implements IPmp2Ptp {
 			translationController.filter();
 			status = translationController.getFilterStatus();
 			outputPolicy = translationController.getFinalOutput();			
-			
-			outputPolicy = GenericCompliance.makeCompliant(outputPolicy, parameters);
+		
 			message = "Translation successful: " + translationController.getMessage();	
-			
 			xmlPolicy.setXml(outputPolicy);
 		} catch (Exception ex){
 			status = FilterStatus.FAILURE;
@@ -105,6 +101,17 @@ public class PtpHandler implements IPmp2Ptp {
 			translationStatus = new StatusBasic(EStatus.ERROR, message);
 			outputPolicy = "";
 		}
+		
+		if(status == FilterStatus.SUCCESS){	
+			outputPolicy = GenericCompliance.makeCompliant(xmlPolicy, parameters);
+			if(outputPolicy.equals("")){
+				translationStatus = new StatusBasic(EStatus.ERROR, message);
+			}
+			else{
+				xmlPolicy.setXml(outputPolicy);
+			}
+		}
+		
 		
 		//storePolicyForDebugging(xmlPolicy.getXml());
 		

@@ -11,6 +11,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -21,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
 
 /**
@@ -35,43 +37,76 @@ public class GenericCompliance {
 	/**
 	 * <br> Add timesteps to policy
 	 * <br> Change "eventually" to not.always.not
+	 * @param xmlPolicy 
 	 * @param xml
 	 * @param parameters
 	 * @return
 	 */
-	public static String makeCompliant(String xml, Map<String, String> parameters){
+	public static String makeCompliant(XmlPolicy xmlPolicy, Map<String, String> parameters){
+		String xml = xmlPolicy.getXml();
+		if(xml == null)
+			return "";
+		if(xml.length()==0)
+			return "";
+		
+		Document doc = PublicMethods.openXmlInput(xml, "string");
 		
 		//generic compliance
 		String timestepType = parameters.get("timestepType");
 		String timestepValue = parameters.get("timestepValue");
-		xml = addTimeStepToPolicy(xml, timestepType, timestepValue);
-		xml = replaceEventually(xml);
+		addTimeStepToPolicy(doc, timestepType, timestepValue);
+		replaceEventually(doc);
+		addDescription(doc, xmlPolicy.getDescription());
 		
 		//specific compliance
-		xml = makePolicyCompliantToPep(xml, parameters);
+		makePolicyCompliantToPep(doc, parameters);
 		
+		xml = PublicMethods.convertDocumentToString(doc);
 		return xml;
 	}
 	
 	
-	private static String makePolicyCompliantToPep(String policyXML, Map<String, String> parameters){
-		String result = policyXML;
+	private static void addDescription(Document doc, String description) {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = null;
+		try {
+			expr = xpath.compile("//policy");
+		} catch (XPathExpressionException e) {
+			_logger.error("add description to policy",e);
+			return;
+		}
+		Node policyNode = null;
+		try {
+			policyNode = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0);
+		} catch (XPathExpressionException e) {
+			_logger.error("add description to policy",e);
+			return;
+		}
+		
+		Element descriptionNode = doc.createElement("description");
+		descriptionNode.setTextContent(description);
+		policyNode.appendChild(descriptionNode);
+		
+	}
+
+
+	private static void makePolicyCompliantToPep(Document doc, Map<String, String> parameters){
 		
 		String pepType = parameters.get("pep");
 		if(pepType == null){
-			return result;
+			return ;
 		}
 		
 		if(pepType.equals(FirefoxPepCompliance.id)){
-			FirefoxPepCompliance ff = new FirefoxPepCompliance(policyXML, parameters);
-			result = ff.getCompliantPolicy();
+			FirefoxPepCompliance ff = new FirefoxPepCompliance(doc, parameters);
+			ff.makeCompliantPolicy();
 		}
 		else if (pepType.equals(WindowsPepCompliance.id)){
-			WindowsPepCompliance win = new WindowsPepCompliance(policyXML, parameters);
-			result = win.getCompliantPolicy();
+			WindowsPepCompliance win = new WindowsPepCompliance(doc, parameters);
+			win.getCompliantPolicy();
 		}
 		
-		return result;
 	}
 	
 	/**
@@ -79,10 +114,10 @@ public class GenericCompliance {
 	 * @param xml
 	 * @return
 	 */
-	private static String replaceEventually(String xml){
- 		Document doc = PublicMethods.openXmlInput(xml, "string");
- 		if(doc==null)
- 			return xml;
+	private static void replaceEventually(Document doc){
+		if(doc == null)
+			return ;
+		
 		String expression = "//eventually";
 		XPathFactory factory=XPathFactory.newInstance();
 		XPath xPath=factory.newXPath();
@@ -90,10 +125,9 @@ public class GenericCompliance {
 		try {
 			nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
 			String logMsg = "eventually: xml value parsing error";
 			_logger.error(logMsg, e);
-			return logMsg;
+			return ;
 		}
 		
 		int eventuallyCounter = nodeList.getLength();
@@ -125,18 +159,15 @@ public class GenericCompliance {
 				}
 			}
 			
-			String pName = parent.getNodeName();
-			String pValue = parent.getNodeValue();
-			
-			String value = n.getNodeValue();
-			String name = n.getNodeName();
-			System.out.println(i + " " + name + " " + value + "[" + pName + " " + pValue + "]");
+//			String pName = parent.getNodeName();
+//			String pValue = parent.getNodeValue();
+//			
+//			String value = n.getNodeValue();
+//			String name = n.getNodeName();
+//			System.out.println(i + " " + name + " " + value + "[" + pName + " " + pValue + "]");
 			parent.removeChild(n);
 		}
 		
-		String result = "";
-		result = PublicMethods.convertDocumentToString(doc) + "";
-		return result;
 	}
 	
 	/**
@@ -144,25 +175,20 @@ public class GenericCompliance {
 	 * This method adds a default timestep node.
 	 * Without it, the deployment fails.
 	 * <br> default: SECONDS 60
-	 * @param policy
+	 * @param doc2
 	 * @param timestepType SECONDS MINUTES HOURS DAYS MONTHS YEARS
 	 * @param timestepValue number
 	 * @return
 	 */
-	private static String addTimeStepToPolicy(String policy, String timestepType, String timestepValue){
-		if(policy == null)
-			return "";
-		if(policy.length()==0)
-			return "";
+	private static void addTimeStepToPolicy(Document doc, String timestepType, String timestepValue){
+		if(doc == null)
+			return ;
 
 		if(timestepType == null)
 			timestepType = "SECONDS";
 		if(timestepValue == null)
 			timestepValue ="60";
 		
-		Document doc = PublicMethods.openXmlInput(policy, "string");
-		if(doc==null)
-			return policy;
 		XPathFactory factory=XPathFactory.newInstance();
 		XPath xpath=factory.newXPath();
 		
@@ -182,9 +208,6 @@ public class GenericCompliance {
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
-		
-		policy = PublicMethods.convertDocumentToString(doc) + "";
-		return policy;
 	}
 	
 	

@@ -1,21 +1,17 @@
 package de.tum.in.i22.uc.ptp.adaptation.engine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import org.apache.commons.codec.language.RefinedSoundex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel;
+import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel.RefinementType;
 import de.tum.in.i22.uc.ptp.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
+import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel.LayerType;
 import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.SystemModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel.RefinementType;
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel.LayerType;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
 /**
  * @author Cipri
