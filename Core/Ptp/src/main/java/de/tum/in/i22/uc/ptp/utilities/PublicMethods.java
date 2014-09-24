@@ -8,9 +8,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,23 +34,16 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/utilities/PublicMethods.java
-=======
-
-
-
-
-
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/utilities/PublicMethods.java
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/utilities/PublicMethods.java
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/utilities/PublicMethods.java
 //import de.tum.in.i22.uc.blocks.controller.Config;
 import de.tum.in.i22.uc.ptp.policy.translation.ecacreation.SubformulaEvent;
 
 
 public class PublicMethods {
 
+	public static String readFile(String path) throws IOException {
+		return readFile(path, StandardCharsets.UTF_8);
+	}
+	
 	public static String readFile(String path, Charset encoding) throws IOException {
 	  byte[] encoded = Files.readAllBytes(Paths.get(path));
 	  return encoding.decode(ByteBuffer.wrap(encoded)).toString();
@@ -60,8 +55,6 @@ public class PublicMethods {
 	}
 	
 	/**
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/utilities/PublicMethods.java
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/utilities/PublicMethods.java
 	 * timestamp format YYYYMMDD-HHMMSS
 	 * @return
 	 */
@@ -85,10 +78,6 @@ public class PublicMethods {
 	}
 	
 	/**
-=======
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/utilities/PublicMethods.java
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/utilities/PublicMethods.java
 	 * removes duplicates from a string list
 	 * 
 	 */

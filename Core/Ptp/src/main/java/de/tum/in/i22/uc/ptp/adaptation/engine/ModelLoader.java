@@ -11,26 +11,19 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/ModelLoader.java
 import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.ptp.utilities.Config;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
-=======
-import de.tum.in.i22.uc.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.adaptation.model.LayerModel;
-import de.tum.in.i22.uc.policy.translation.Config;
-import de.tum.in.i22.uc.utilities.PtpLogger;
-import de.tum.in.i22.uc.utilities.PublicMethods;
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/ModelLoader.java
 
 public class ModelLoader {
 
@@ -38,18 +31,21 @@ public class ModelLoader {
 	
 	private DomainModel domainModel;
 	
-	private PtpLogger logger;
+	private static final Logger logger = LoggerFactory.getLogger(ModelLoader.class);
+	
+	private static int backupCounter = 0;
 	
 	public ModelLoader(){
 		try {
 			config = new Config();
-			logger = PtpLogger.adaptationLoggerInstance();
 		} catch (IOException e) {
 		}	
 	}
 	
 	public DomainModel loadBaseDomainModel() throws InvalidDomainModelFormatException{
 		String domainModelFile=config.getProperty("domainmodel");
+		String userDir = config.getUserDir();
+		domainModelFile = userDir + File.separator + domainModelFile;
 		loadDomainModel(domainModelFile, "file");		
 		return this.domainModel;
 	}
@@ -67,12 +63,39 @@ public class ModelLoader {
 		return this.domainModel;
 	}
 	
+	/**
+	 * Perform a backup of the existing base domain model.
+	 * The backup is stored in the location defined in config.cfg
+	 * @param fileDomainModelSource
+	 */
+	public void backupBaseDomainModel(String fileDomainModelSource){
+		String domainmodelbackupDestination = config.getProperty("domainmodelbackup");
+		String userDir = config.getUserDir();
+		domainmodelbackupDestination = userDir + File.separator + domainmodelbackupDestination;
+		String data = "";
+		String timestamp = PublicMethods.timestamp()+"_"+backupCounter++;
+		domainmodelbackupDestination += File.separator + timestamp +"_sns.xml";
+		try {
+			data = PublicMethods.readFile(fileDomainModelSource);
+			PublicMethods.writeFile(domainmodelbackupDestination, data);
+		} catch (IOException e) {
+			logger.error("BaseDomainModel backup failed", e);
+		}
+		logger.info("BaseDomainModel backup successful: "+ domainmodelbackupDestination);
+	}
 	
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/ModelLoader.java
+	/**
+	 * Perform a backup of the existing base domain model.
+	 * The backup is stored in the location defined in config.cfg
+	 */
+	public void backupBaseDomainModel(){
+		String domainModelFile=config.getProperty("domainmodel");
+		String userDir = config.getUserDir();
+		domainModelFile = userDir + File.separator + domainModelFile;
+		backupBaseDomainModel(domainModelFile);
+	}
+	
 	private DomainModel loadDomainModel(String source, String sourceType) throws InvalidDomainModelFormatException{
-=======
-	private DomainModel loadDomainModel(String source, String sourceType){
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/ModelLoader.java
 		this.domainModel = new DomainModel(source);
 		DomainModel result = this.domainModel;  
 		
@@ -137,7 +160,7 @@ public class ModelLoader {
 		}
 		
 		String logMsg = "Loaded DomainModel: \n" + this.domainModel.toString() +"\n";
-		logger.infoLog(logMsg, null);
+		logger.info(logMsg);
 		
 		return result;
 	}
@@ -244,7 +267,7 @@ public class ModelLoader {
 			String logMsg = ">>>Adaptation Complete: DomainModel: \n"
 							+ "\n###############################\n" 
 							+ xmlData +"\n";
-			logger.infoLog(logMsg, null);
+			logger.info(logMsg);
 			PublicMethods.writeFile(destination, xmlData);
 			return xmlData;
 		}

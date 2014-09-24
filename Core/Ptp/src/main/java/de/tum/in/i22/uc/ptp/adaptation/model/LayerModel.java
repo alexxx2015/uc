@@ -238,28 +238,18 @@ public class LayerModel {
 		}
 
 		String actionsString = "";
-		if(this.type.equals(LayerType.PIM)){
+		//if(this.type.equals(LayerType.PIM)){
 			for(ActionTransformerModel ac : this.actionTransformers){
 				actionsString += "\n" + ac.toString();
 			}
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/model/LayerModel.java
-=======
-		}
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/model/LayerModel.java
 		
 		String systemString = "";
 		for(SystemModel system : this.systems){
 			systemString += "\n" + system.toString();
 		}
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/model/LayerModel.java
 		result += "\n"+ this.indentation+"	DATA/CONTAINER" + dataString;
 		result += "\n"+ this.indentation+"	ACTION/TRANSFORMER" + actionsString;
 		result += "\n"+ this.indentation+"	SYSTEMS"+ systemString;
-=======
-		result += dataString;
-		result += actionsString;
-		result += systemString;
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/model/LayerModel.java
 		return result;
 	}
 	

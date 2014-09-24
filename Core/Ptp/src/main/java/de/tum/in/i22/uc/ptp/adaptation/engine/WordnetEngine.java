@@ -4,15 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/WordnetEngine.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.ptp.utilities.Config;
-=======
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/WordnetEngine.java
 import rita.RiWordNet;
-import de.tum.in.i22.uc.utilities.PtpLogger;
 
 public class WordnetEngine {
 
@@ -25,7 +21,7 @@ public class WordnetEngine {
 	public static final float SIMILAR_VERB_MAX_DISTANCE = 0.3f;
 	public static final float EQUAL_DISTANCE = 0.0f;
 	
-	private PtpLogger logger ;
+	private static final Logger logger = LoggerFactory.getLogger(WordnetEngine.class);
 	
 	private WordnetEngine(){
 		Config config = null;
@@ -37,7 +33,6 @@ public class WordnetEngine {
 		String userDir = config.getUserDir();
 		String file = userDir + File.separator + "src" + File.separator +"main"+ File.separator+"resources" + File.separator ;
 		wordnet = new RiWordNet(file);
-		logger = PtpLogger.adaptationLoggerInstance();
 	}
 	
 	public static WordnetEngine getInstance(){
@@ -76,11 +71,7 @@ public class WordnetEngine {
 		if(pos != null)
 			distance = wordnet.getDistance(conceptA, conceptB, pos);
 		String msg ="distance: "+ conceptA +"-"+ conceptB +": "+ distance;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/WordnetEngine.java
 		//logger.info(msg);
-=======
-		logger.infoLog(msg, null);
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/WordnetEngine.java
 		if(distance > MAX_ALLOWED_DISTANCE)
 			return 1.0f;
 		return distance;
@@ -102,11 +93,7 @@ public class WordnetEngine {
 		for(String conceptB : concepts){
 			float distance = wordnet.getDistance(conceptA, conceptB, pos);
 			String msg ="similarity: "+ conceptA +"-"+ conceptB +": "+ distance;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/WordnetEngine.java
 			//logger.info(msg);
-=======
-			logger.infoLog(msg, null);
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/WordnetEngine.java
 			if(distance < maxDistance)
 				maxDistance = distance;
 		}

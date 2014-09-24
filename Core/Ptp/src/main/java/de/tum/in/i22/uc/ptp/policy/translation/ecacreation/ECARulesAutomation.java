@@ -205,18 +205,8 @@ public class ECARulesAutomation {
 		if (config == null)
 			return false;
 		
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/policy/translation/ecacreation/ECARulesAutomation.java
 		if(!loadTemplatesFromFile()){
 			System.out.println(">Templates config failed to load.");
-=======
-		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
-		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
-		String json = "";
-		try {
-			json = PublicMethods.readFile(ecaRulesFile, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			e.printStackTrace();
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/policy/translation/ecacreation/ECARulesAutomation.java
 			return false;
 		}
 		

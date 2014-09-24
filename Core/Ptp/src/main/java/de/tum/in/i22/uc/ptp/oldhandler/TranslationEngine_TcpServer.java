@@ -4,20 +4,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_TcpServer.java
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_TcpServer.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.ptp.utilities.Config;
-=======
-import de.tum.in.i22.uc.policy.translation.Config;
-import de.tum.in.i22.uc.utilities.PtpLogger;
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_TcpServer.java
-=======
-import de.tum.in.i22.uc.policy.translation.Config;
-import de.tum.in.i22.uc.utilities.PtpLogger;
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_TcpServer.java
 
 /**
  * @author Cipri
@@ -26,13 +16,12 @@ import de.tum.in.i22.uc.utilities.PtpLogger;
 public class TranslationEngine_TcpServer {
 	
 	private ServerSocket serverSocket;
-	private PtpLogger logger; 	
+	private static final Logger logger = LoggerFactory.getLogger(TranslationEngine_TcpServer.class);
 	
 	public static final int TE_Default_PORT = 50001 ;
 	private static int TE_PORT = 0;
 	
 	public TranslationEngine_TcpServer(){
-		logger = PtpLogger.translationLoggerInstance();
 	}
 	
 	public static int getPort(){
@@ -78,7 +67,7 @@ public class TranslationEngine_TcpServer {
 		 try {
 			serverSocket = new ServerSocket(port);
 			String msg = "TranslationListener listening at port: " + port;
-			logger.infoLog(msg, null);
+			logger.info(msg);
 			while(true){
 	            try {
 	            	Socket client = serverSocket.accept();                
@@ -87,14 +76,14 @@ public class TranslationEngine_TcpServer {
 	            } catch (IOException e) {
 	            	String message = "error accepting request";
 	            	e.printStackTrace();
-	            	logger.errorLog(message, e);
+	            	logger.error(message, e);
 	            }
 	        }
 			
 		} catch (IOException e) {
 			String message = "error starting server port";
         	e.printStackTrace();
-        	logger.errorLog(message, e);
+        	logger.error(message, e);
 		}
 	}
 	

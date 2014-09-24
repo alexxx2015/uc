@@ -9,27 +9,18 @@ import org.apache.thrift.server.TServer.Args;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_ThriftServer.java
 import de.tum.in.i22.uc.ptp.policy.translation.TranslationController;
 import de.tum.in.i22.uc.ptp.policy.translation.Filter.FilterStatus;
 import de.tum.in.i22.uc.ptp.utilities.Config;
-=======
-import de.tum.in.i22.uc.policy.translation.Config;
-import de.tum.in.i22.uc.policy.translation.Filter.FilterStatus;
-import de.tum.in.i22.uc.policy.translation.TranslationController;
-import de.tum.in.i22.uc.utilities.PtpLogger;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_ThriftServer.java
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_ThriftServer.java
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_ThriftServer.java
 
 class TranslationEngineHandler implements TranslationEngine.Iface {
 
-	private PtpLogger logger ;
+	private static final Logger logger = LoggerFactory.getLogger(TranslationEngineHandler.class);
 	
 	public TranslationEngineHandler(){
-		this.logger = PtpLogger.translationLoggerInstance();
 	}
 	
 	@Override
@@ -39,7 +30,7 @@ class TranslationEngineHandler implements TranslationEngine.Iface {
 		String separator = "\n\n============="+ timestamp +"===============\n";
 		String message = separator + "Req: "+requestId +"translateg policy: \n" + policy;
 		System.out.println(message);
-		logger.infoLog(message, null);
+		logger.info(message);
 		
 		String outputPolicy = parameters.get("template_id")+"_"+parameters.get("object_instance")+"_"+"policytranslated.xml";
 		
@@ -55,15 +46,15 @@ class TranslationEngineHandler implements TranslationEngine.Iface {
 			status = FilterStatus.FAILURE;
 			message = translationController.getMessage();
 			System.out.println(message);
-			logger.errorLog("translation exception", ex);
+			logger.error("translation exception", ex);
 		}		
 		
 		if(status == FilterStatus.SUCCESS){			
-			logger.infoLog(message, null);
+			logger.info(message);
 		}
 		else{
 			message += "\nTranslation failed: " + status.name();
-			logger.errorLog(message, null);
+			logger.error(message);
 			throw new TranslationException(101, message);
 		}
 		

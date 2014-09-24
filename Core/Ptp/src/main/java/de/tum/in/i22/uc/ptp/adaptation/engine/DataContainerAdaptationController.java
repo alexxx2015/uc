@@ -2,26 +2,12 @@ package de.tum.in.i22.uc.ptp.adaptation.engine;
 
 import java.util.ArrayList;
 
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/DataContainerAdaptationController.java
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/DataContainerAdaptationController.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.ptp.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
-=======
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/DataContainerAdaptationController.java
-import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
-import de.tum.in.i22.uc.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
-import de.tum.in.i22.uc.adaptation.model.LayerModel;
-import de.tum.in.i22.uc.utilities.PtpLogger;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/DataContainerAdaptationController.java
->>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/DataContainerAdaptationController.java
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/DataContainerAdaptationController.java
 
 /**
  * @author Cipri
@@ -41,8 +27,7 @@ import de.tum.in.i22.uc.utilities.PtpLogger;
  */
 public class DataContainerAdaptationController {
 
-	private PtpLogger logger ;
-<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/DataContainerAdaptationController.java
+	private static final Logger logger = LoggerFactory.getLogger(DataContainerAdaptationController.class);
 	
 	private static int updatedElementsCounter = 0;
 	
@@ -59,8 +44,6 @@ public class DataContainerAdaptationController {
 	private static void incrementUpdateCounter(){
 		updatedElementsCounter++;
 	}
-=======
->>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/DataContainerAdaptationController.java
 	
 	/**
 	 * The Base Domain Model.
@@ -79,7 +62,6 @@ public class DataContainerAdaptationController {
 		this.baseDm = baseDM;
 		this.newDm = newDM;
 		this.wordnetEngine = WordnetEngine.getInstance();
-		this.logger = PtpLogger.adaptationLoggerInstance();
 	}
 	
 	/**
@@ -385,7 +367,7 @@ public class DataContainerAdaptationController {
 				newDc.setName(existsDC.getName());
 				newDc.addSynonym(newName);
 				String logMsg = "similiratity found: (base-new) " + existsDC.getName() +"-"+ newName;
-				logger.infoLog(logMsg, null);
+				logger.info(logMsg);
 			}
 				
 			for(String alias : newDc.getSynonyms()){
