@@ -19,7 +19,10 @@ import de.tum.in.i22.uc.policy.translation.Config;
 import de.tum.in.i22.uc.policy.translation.Filter.FilterStatus;
 import de.tum.in.i22.uc.policy.translation.TranslationController;
 import de.tum.in.i22.uc.utilities.PtpLogger;
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_ThriftServer.java
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_ThriftServer.java
+=======
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_ThriftServer.java
 
 class TranslationEngineHandler implements TranslationEngine.Iface {
 

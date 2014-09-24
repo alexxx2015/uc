@@ -68,7 +68,11 @@ public class ModelLoader {
 	}
 	
 	
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/ModelLoader.java
 	private DomainModel loadDomainModel(String source, String sourceType) throws InvalidDomainModelFormatException{
+=======
+	private DomainModel loadDomainModel(String source, String sourceType){
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/ModelLoader.java
 		this.domainModel = new DomainModel(source);
 		DomainModel result = this.domainModel;  
 		

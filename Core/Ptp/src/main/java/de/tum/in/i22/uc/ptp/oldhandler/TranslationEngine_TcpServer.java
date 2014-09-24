@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 <<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_TcpServer.java
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/oldhandler/TranslationEngine_TcpServer.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,10 @@ import de.tum.in.i22.uc.ptp.utilities.Config;
 import de.tum.in.i22.uc.policy.translation.Config;
 import de.tum.in.i22.uc.utilities.PtpLogger;
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_TcpServer.java
+=======
+import de.tum.in.i22.uc.policy.translation.Config;
+import de.tum.in.i22.uc.utilities.PtpLogger;
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/remotelistener/TranslationEngine_TcpServer.java
 
 /**
  * @author Cipri

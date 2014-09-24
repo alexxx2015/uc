@@ -51,9 +51,12 @@ public class LayerLoader {
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 <<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			//logger.info(layer.getType()+" Loading data/container: "+ name);
 =======
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
+=======
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			DataContainerModel container = new DataContainerModel(name, layer.getType());
 			container.setParenLayer(layer);
 			addPimContainerSynonyms(container, node);
@@ -104,10 +107,14 @@ public class LayerLoader {
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 <<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			//logger.debug(layer.getType()+" Loading action/transformer: "+ name);
 =======
 			
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
+=======
+			
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			RefinementType refType = RefinementType.SET;
 			try{
 				String refTypeAttr = "";
@@ -143,11 +150,15 @@ public class LayerLoader {
 		for(ActionTransformerModel at : transformersNodesMap.keySet()){
 			Node node = transformersNodesMap.get(at);
 <<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 			//logger.debug(layer.getType()+" inner/cross ref :"+ name);
 =======
 
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
+=======
+
+>>>>>>> remotes/origin/dev-fk:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			switch(layer.getType()){
 			case PIM:
 				addPimActionInnerAssociation(at, node);

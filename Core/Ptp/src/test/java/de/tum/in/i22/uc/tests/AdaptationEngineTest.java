@@ -23,7 +23,10 @@ import de.tum.in.i22.uc.adaptation.engine.AdaptationController;
 import de.tum.in.i22.uc.adaptation.engine.DomainMergeException;
 import de.tum.in.i22.uc.adaptation.engine.ModelLoader;
 import de.tum.in.i22.uc.adaptation.model.DomainModel;
+<<<<<<< HEAD
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
+=======
+>>>>>>> remotes/origin/dev-fk
 
 public class AdaptationEngineTest {
 
@@ -34,6 +37,7 @@ public class AdaptationEngineTest {
 	 * only test files are correctly specified.
 	 */
 	private static final boolean TESTS_ENABLED = false;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdaptationEngineTest.class);
@@ -63,6 +67,10 @@ public class AdaptationEngineTest {
 	
 	private static String MODELS4TEST_DIR = "src/test/resources/models4test/DataContainerModels/";
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
+=======
+	
+	private static String MODELS4TEST_DIR = "src/test/resources/models4test/DataContainerModels/";
+>>>>>>> remotes/origin/dev-fk
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -90,6 +98,7 @@ public class AdaptationEngineTest {
 
 	@Test
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public void testLoadFileActionTransformerDomainModelBase() {
 		if(!TESTS_ENABLED){
 			assertTrue("AdaptationEngineTest disabled", true);
@@ -111,12 +120,15 @@ public class AdaptationEngineTest {
 	@Test
 =======
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
+=======
+>>>>>>> remotes/origin/dev-fk
 	public void testLoadFileDomainModel0() {
 		if(!TESTS_ENABLED){
 			assertTrue("AdaptationEngineTest disabled", true);
 			return;
 		}
 		modelHandler = new ModelLoader();
+<<<<<<< HEAD
 <<<<<<< HEAD
 		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR + File.separator+  "BaseDomainModel0.xml";
 		DomainModel base = null;
@@ -126,6 +138,8 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 =======
+=======
+>>>>>>> remotes/origin/dev-fk
 		String file = MODELS4TEST_DIR + "BaseDomainModel0.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
@@ -140,6 +154,7 @@ public class AdaptationEngineTest {
 		}
 		modelHandler = new ModelLoader();
 <<<<<<< HEAD
+<<<<<<< HEAD
 		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "BaseDomainModel1.xml";
 		DomainModel base = null;
 		try {
@@ -148,6 +163,8 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 =======
+=======
+>>>>>>> remotes/origin/dev-fk
 		String file = MODELS4TEST_DIR + "BaseDomainModel1.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
@@ -162,6 +179,7 @@ public class AdaptationEngineTest {
 		}
 		modelHandler = new ModelLoader();
 <<<<<<< HEAD
+<<<<<<< HEAD
 		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "BaseDomainModel2.xml";
 		DomainModel base = null;
 		try {
@@ -170,6 +188,8 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 =======
+=======
+>>>>>>> remotes/origin/dev-fk
 		String file = MODELS4TEST_DIR + "BaseDomainModel2.xml";
 		DomainModel base = modelHandler.loadDomainModel(file);
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
@@ -183,6 +203,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
+<<<<<<< HEAD
 <<<<<<< HEAD
 		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
 		DomainModel baseDM = null;
@@ -256,6 +277,8 @@ public class AdaptationEngineTest {
 		
 		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "ActionTransformerDestination.xml";
 =======
+=======
+>>>>>>> remotes/origin/dev-fk
 		String file = MODELS4TEST_DIR + "DataContainerBase.xml";
 		DomainModel baseDM = modelHandler.loadDomainModel(file);
 
@@ -438,6 +461,7 @@ public class AdaptationEngineTest {
 		
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * The domain models used are in ./src/test/resources/models4test/SystemModels/test1/
 	 * Please do not change those files in order for the test to pass!
@@ -763,11 +787,16 @@ public class AdaptationEngineTest {
 	@Test
 <<<<<<< HEAD
 	public void testStoreTransformersXML(){
+=======
+	@Test
+	public void testStoreContainersXML(){
+>>>>>>> remotes/origin/dev-fk
 		if(!TESTS_ENABLED){
 			assertTrue("AdaptationEngineTest disabled", true);
 			return;
 		}
 		modelHandler = new ModelLoader();
+<<<<<<< HEAD
 		String baseFile = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerBase.xml";
 		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerDestination.xml";
 		DomainModel baseDM = null;
@@ -776,6 +805,11 @@ public class AdaptationEngineTest {
 		} catch (InvalidDomainModelFormatException e1) {
 			fail(e1.getMessage());
 		}
+=======
+		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
+		String destination = MODELS4TEST_DIR + "DataContainerDestination.xml";
+		DomainModel baseDM = modelHandler.loadDomainModel(baseFile);
+>>>>>>> remotes/origin/dev-fk
 		
 		try {
 			modelHandler.storeXmlDomainModel(destination, baseDM);
@@ -785,6 +819,7 @@ public class AdaptationEngineTest {
 	}
 	
 	@Test
+<<<<<<< HEAD
 =======
 >>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264
 	public void testStoreContainersXML(){
@@ -816,12 +851,15 @@ public class AdaptationEngineTest {
 	}
 	
 	@Test
+=======
+>>>>>>> remotes/origin/dev-fk
 	public void testMergeAndStoreContainersXML(){
 		if(!TESTS_ENABLED){
 			assertTrue("AdaptationEngineTest disabled", true);
 			return;
 		}
 		modelHandler = new ModelLoader();
+<<<<<<< HEAD
 <<<<<<< HEAD
 		String baseFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
 		String newFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
@@ -839,6 +877,8 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 =======
+=======
+>>>>>>> remotes/origin/dev-fk
 		String baseFile = MODELS4TEST_DIR + "DataContainerBase.xml";
 		String newFile = MODELS4TEST_DIR + "DataContainerNew.xml";
 		String destination = MODELS4TEST_DIR + "DataContainerDestination.xml";
