@@ -107,8 +107,8 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
 	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
 
-	public static final String PROP_NAME_ptpProjectLocation = "ptpProjectLocation";
-	public static final String PROP_NAME_ptEditorProjectLocation = "ptEditorProjectLocation";
+	public static final String PROP_NAME_ptpResources = "ptpResources";
+	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
 
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
@@ -248,8 +248,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
 		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
 
-		loadSetting(PROP_NAME_ptpProjectLocation, ".."+File.separator+"Ptp");
-		loadSetting(PROP_NAME_ptEditorProjectLocation, ".."+File.separator+"Gui"+File.separator+"PolicyTemplateEditor");
+		loadSetting(PROP_NAME_ptpResources, ".");
+		loadSetting(PROP_NAME_ptEditorResources, ".");
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -592,11 +592,11 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pmpJaxbContext);
 	}
 
-	public String getPtpProjectLocation(){
-		return getValue(PROP_NAME_ptpProjectLocation);
+	public String getPtpResources(){
+		return getValue(PROP_NAME_ptpResources);
 	}
 
-	public String getPtEditorProjectLocation(){
-		return getValue(PROP_NAME_ptEditorProjectLocation);
+	public String getPtEditorResources(){
+		return getValue(PROP_NAME_ptEditorResources);
 	}
 }

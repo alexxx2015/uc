@@ -152,13 +152,16 @@ public class DataContainerModel {
 	 * Adds a synonym of the name of the element.
 	 * @param synonym
 	 */
-	public void addSynonym(String synonym){
+	public boolean addSynonym(String synonym){
 		if(synonym == null)
-			return;
+			return false;
+		if(synonym.equals(""))
+			return false;
 		if(this.name.equals(synonym))
-			return;
+			return false;
 		if(!this.synonyms.contains(synonym))
-			this.synonyms.add(synonym);
+			return this.synonyms.add(synonym);
+		return false;
 	}
 	
 	public boolean alsoKnownAs(String synonym){

@@ -12,50 +12,40 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
  
 public class Config 
 {
    Properties configFile;
-   
-   private String userDir = "";
+   private static final Logger logger = LoggerFactory.getLogger(Config.class);
+	
+   private String resourcesDir = "";
    
    public Config() throws IOException
    {
 	configFile = new java.util.Properties();
 	
-	String defaultSetting = Settings.getInstance().getPtpProjectLocation();
-	String usrDir = System.getProperty("user.dir");
-	if(usrDir.contains("Ptp"))
-		defaultSetting = usrDir;
-	else
-		defaultSetting = usrDir + File.separator + defaultSetting;
-	userDir = defaultSetting;
-	defaultSetting += File.separator+"src"+File.separator+"main"
-					+File.separator+"resources"
-					+File.separator+"translation"
-					+File.separator+"config.cfg";
+	String defaultSetting = Settings.getInstance().getPtpResources();
+	String userDir = System.getProperty("user.dir");
+	this.resourcesDir = userDir + File.separator + defaultSetting;
+	defaultSetting = resourcesDir 
+						+ File.separator+"translation"
+						+File.separator+"config.cfg";
 	try {	
         configFile.load(new FileInputStream(defaultSetting));		
 	}
 	catch(FileNotFoundException eta){
-		System.out.println("user directory: " + System.getProperty("user.dir"));
-		System.out.println("error: "+eta.getLocalizedMessage());
+		logger.error("PTP resources load error.", eta);
 	}
    }
  
    public Config(String configurationPath) throws IOException
    {
-	configFile = new java.util.Properties();
-	String defaultSetting = Settings.getInstance().getPtpProjectLocation();
-	String usrDir = System.getProperty("user.dir");
-	if(usrDir.contains("Ptp"))
-		defaultSetting = usrDir;
-	else
-		defaultSetting = usrDir + File.separator + defaultSetting;
-	userDir = defaultSetting;
 	try {	
         configFile.load(new FileInputStream(configurationPath));		
 	}
@@ -70,22 +60,26 @@ public class Config
 	return value;
    }
    
-   public String getUserDir(){
-	   String value = userDir;
+   public String getResourcesDir(){
+	   String value = resourcesDir;
 	   return value ;
    }
    
-   public static void main(String[] args){
-	   try {
-		Config cfg = new Config();
-		String file = cfg.getProperty("domainmodel");
-		System.out.println(file);
-		
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	   
+   public String getTranslationDir(){
+	   String value = resourcesDir + File.separator + "translation";
+	   return value;
    }
+//   public static void main(String[] args){
+//	   try {
+//			Config cfg = new Config();
+//			String file = cfg.getProperty("domainmodel");
+//			System.out.println(file);
+//		
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	   
+//   }
 
 }
 

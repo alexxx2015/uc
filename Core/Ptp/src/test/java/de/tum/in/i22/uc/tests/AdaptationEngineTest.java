@@ -28,36 +28,26 @@ public class AdaptationEngineTest {
 	 * The tests could potentially affect configuration files unless
 	 * only test files are correctly specified.
 	 */
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdaptationEngineTest.class);
 	
-	private static String DataContainer_MODELS4TEST_DIR = "src"
-			+File.separator+"test"+File.separator+"resources"
-			+File.separator+"models4test"
-			+File.separator+"DataContainerModels";
+	private static String MODELS4TEST_DIR = "models4test";
 	
-	private static String ActionTransformer_MODELS4TEST_DIR = "src"
-			+File.separator+"test"+File.separator+"resources"
-			+File.separator+"models4test"
-			+File.separator+"ActionTransformerModels";
+	private static String DataContainer_MODELS4TEST_DIR = MODELS4TEST_DIR + File.separator + "DataContainerModels";
 	
-	private static String System_MODELS4TEST_DIR = "src"
-			+File.separator+"test"+File.separator+"resources"
-			+File.separator+"models4test"
-			+File.separator+"SystemModels";
+	private static String ActionTransformer_MODELS4TEST_DIR = MODELS4TEST_DIR + File.separator + "ActionTransformerModels";
 	
-	private static String Dummy_MODELS4TEST_DIR = "src"
-			+File.separator+"test"+File.separator+"resources"
-			+File.separator+"models4test"
-			+File.separator+"DummyModels";
+	private static String System_MODELS4TEST_DIR = MODELS4TEST_DIR + File.separator +"SystemModels";
 	
-	private static String userDir = "";
+	private static String Dummy_MODELS4TEST_DIR = MODELS4TEST_DIR + File.separator + "DummyModels";
+	
+	private static String resourcesDir = "";
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Config config = new Config();
-		userDir = config.getUserDir();
+		resourcesDir = config.getResourcesDir();
 	}
 
 	@AfterClass
@@ -77,79 +67,31 @@ public class AdaptationEngineTest {
 		} catch (InvalidDomainModelFormatException e1) {
 			fail(e1.getMessage());
 		}
-		assertNotNull(base);
+		int loadedElements = base.getElementsSize();
+		logger.info("Load Base Model: " + loadedElements);
+		assertTrue(loadedElements > 0);
 	}
 
 	@Test
-	public void testLoadFileActionTransformerDomainModelBase() {
+	public void testLoadModelFromFile() {
 		if(!TESTS_ENABLED){
 			assertTrue("AdaptationEngineTest disabled", true);
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+ ActionTransformer_MODELS4TEST_DIR + File.separator+  "ActionTransformerBase.xml";
+		String file = resourcesDir + File.separator+ MODELS4TEST_DIR + File.separator+  "BaseDomainModel1.xml";
 		DomainModel base = null;
 		try {
 			base = modelHandler.loadDomainModel(file);
 		} catch (InvalidDomainModelFormatException e1) {
 			fail(e1.getMessage());
 		}
-		assertNotNull(base);
-		System.out.println("=============LOADING RESULT===========");
-		System.out.println(base);
+		int loadedElements = base.getElementsSize();
+		assertTrue(loadedElements > 0);
+		logger.info("Load Model from: " + file +" " + loadedElements);
+		
 	}
 	
-	@Test
-	public void testLoadFileDomainModel0() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR + File.separator+  "BaseDomainModel0.xml";
-		DomainModel base = null;
-		try {
-			base = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-		assertNotNull(base);
-	}
-	
-	
-	@Test
-	public void testLoadFileDomainModel1() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "BaseDomainModel1.xml";
-		DomainModel base = null;
-		try {
-			base = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-		assertNotNull(base);
-	}
-	
-	@Test
-	public void testLoadFileDomainModel2() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "BaseDomainModel2.xml";
-		DomainModel base = null;
-		try {
-			base = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-		assertNotNull(base);
-	}
 	
 	@Test		
 	public void testMergeDataContainers1() {
@@ -158,7 +100,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+		String file = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -166,7 +108,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
+		file = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -181,7 +123,6 @@ public class AdaptationEngineTest {
 		try {
 			updatedElements = ac.mergeDomainModels();
 		} catch (DomainMergeException e) {
-			e.printStackTrace();
 			fail(e.getMessage());
 		}
 		
@@ -192,9 +133,9 @@ public class AdaptationEngineTest {
 		int pimData = baseDM.getPimLayer().getDataContainers().size();
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertTrue(pimData == 4);
-		assertTrue(psmContainers == 2);
-		assertTrue(ismContainers == 6);
+		assertEquals("data", 4, pimData);
+		assertEquals("ism containers", 3, psmContainers);
+		assertEquals("psm containers", 7, ismContainers);
 	}
 	
 	/**
@@ -212,23 +153,18 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "ActionTransformerBase.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e2) {
-			fail(e2.getMessage());
-		}
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+						File.separator+  "ActionTransformerBase.xml";
+		DomainModel baseDM = loadDomainModel(file, modelHandler);
 
-		file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "ActionTransformerNew.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+						File.separator+  "ActionTransformerNew.xml";
+		DomainModel newDM = loadDomainModel(file, modelHandler);
 		
-		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "ActionTransformerDestination.xml";
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+						File.separator+  "ActionTransformerDestination.xml";
+		
+		
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -252,21 +188,44 @@ public class AdaptationEngineTest {
 		int pimData = baseDM.getPimLayer().getDataContainers().size();
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertEquals(2,pimData);
-		assertEquals(6,psmContainers);
-		assertEquals(6,ismContainers);
+		assertEquals("data",2,pimData);
+		assertEquals("psm containers", 6,psmContainers);
+		assertEquals("ism containers", 6,ismContainers);
 		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();		
-		assertEquals(2,pimAction);
-		assertEquals(6,psmTransformers);
-		assertEquals(9,ismTransformers);
+		assertEquals("actions", 2,pimAction);
+		assertEquals("psm transformers", 7,psmTransformers);
+		assertEquals("ism transformers", 10,ismTransformers);
 		int psmSystems = baseDM.getPsmLayer().getSystems().size();
 		int ismSystems = baseDM.getIsmLayer().getSystems().size();		
-		assertEquals(3, psmSystems);
-		assertEquals(3, ismSystems);
+		assertEquals("psm systems", 3, psmSystems);
+		assertEquals("ism systems", 3, ismSystems);
+		
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+				File.separator+  "ActionTransformerExpected.xml";
+		
+		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+		ac.setNewDomainModel(expectedDM);
+		int updatedElementsMerged = 0;
+		try {
+			updatedElementsMerged = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+		assertEquals("update-expected match", 0, updatedElementsMerged);
 	}
 	
+	
+	private DomainModel loadDomainModel(String file, ModelLoader modelHandler){
+		DomainModel expectedDM = null;
+		try {
+			expectedDM = modelHandler.loadDomainModel(file);
+		} catch (InvalidDomainModelFormatException e1) {
+			fail(e1.getMessage());
+		}
+		return expectedDM;
+	}
 	
 	/**
 	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test2
@@ -282,7 +241,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerBase.xml";
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -290,7 +249,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerNew.xml";
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -298,7 +257,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerDestination.xml";
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -353,7 +312,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerBase.xml";
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -361,7 +320,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerNew.xml";
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -369,7 +328,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerDestination.xml";
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -421,7 +380,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemBase.xml";
+		String file = resourcesDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -429,7 +388,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemNew.xml";
+		file = resourcesDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -437,7 +396,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemDestination.xml";
+		String destination = resourcesDir + File.separator+  System_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "SystemDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -494,7 +453,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyBase.xml";
+		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -502,7 +461,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyNew.xml";
+		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -510,7 +469,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyDestination.xml";
+		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -567,7 +526,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyBase.xml";
+		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyBase.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -575,7 +534,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyNew.xml";
+		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyNew.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -583,7 +542,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String expectedFile = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyExpected.xml";
+		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyExpected.xml";
 		DomainModel exptectedDM = null;
 		try {
 			exptectedDM = modelHandler.loadDomainModel(expectedFile);
@@ -591,7 +550,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
+		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -655,7 +614,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "BaseDomain.xml";
+		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "BaseDomain.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(file);
@@ -663,7 +622,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 
-		file = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "NewDomain.xml";
+		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "NewDomain.xml";
 		DomainModel newDM = null;
 		try {
 			newDM = modelHandler.loadDomainModel(file);
@@ -671,7 +630,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String expectedFile = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset"+File.separator+  "DestinationDomain.xml";
+		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset"+File.separator+  "DestinationDomain.xml";
 		DomainModel exptectedDM = null;
 		try {
 			exptectedDM = modelHandler.loadDomainModel(expectedFile);
@@ -679,7 +638,7 @@ public class AdaptationEngineTest {
 			fail(e1.getMessage());
 		}
 		
-		String destination = userDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
+		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
 		
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -734,8 +693,8 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String baseFile = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerBase.xml";
-		String destination = userDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerDestination.xml";
+		String baseFile = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerBase.xml";
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerDestination.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(baseFile);
@@ -757,8 +716,8 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String baseFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
-		String destination = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
+		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(baseFile);
@@ -780,7 +739,7 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String baseFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
 		modelHandler.backupBaseDomainModel();
 		modelHandler.backupBaseDomainModel(baseFile);
 	}
@@ -792,9 +751,9 @@ public class AdaptationEngineTest {
 			return;
 		}
 		modelHandler = new ModelLoader();
-		String baseFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
-		String newFile = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
-		String destination = userDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
+		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+		String newFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
+		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
 		DomainModel baseDM = null;
 		try {
 			baseDM = modelHandler.loadDomainModel(baseFile);

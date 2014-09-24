@@ -371,8 +371,8 @@ public class DataContainerAdaptationController {
 			}
 				
 			for(String alias : newDc.getSynonyms()){
-				existsDC.addSynonym(alias);
-				incrementUpdateCounter();
+				if(existsDC.addSynonym(alias))
+					incrementUpdateCounter();
 			}
 		}
 		

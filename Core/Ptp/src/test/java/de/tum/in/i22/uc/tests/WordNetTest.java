@@ -53,7 +53,7 @@ public class WordNetTest {
 		String file = "" ;
 		
 		Config conf = new Config();
-		String userDir = conf.getUserDir();
+		String userDir = conf.getResourcesDir();
 		file = userDir + File.separator+ File.separator+ "src" 
 				+ File.separator + "main"
 				+ File.separator +"resources"

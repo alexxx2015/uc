@@ -39,12 +39,13 @@ public class ModelLoader {
 		try {
 			config = new Config();
 		} catch (IOException e) {
+			logger.error("Model Loader config error", e);
 		}	
 	}
 	
 	public DomainModel loadBaseDomainModel() throws InvalidDomainModelFormatException{
 		String domainModelFile=config.getProperty("domainmodel");
-		String userDir = config.getUserDir();
+		String userDir = config.getTranslationDir();
 		domainModelFile = userDir + File.separator + domainModelFile;
 		loadDomainModel(domainModelFile, "file");		
 		return this.domainModel;
@@ -70,7 +71,7 @@ public class ModelLoader {
 	 */
 	public void backupBaseDomainModel(String fileDomainModelSource){
 		String domainmodelbackupDestination = config.getProperty("domainmodelbackup");
-		String userDir = config.getUserDir();
+		String userDir = config.getTranslationDir();
 		domainmodelbackupDestination = userDir + File.separator + domainmodelbackupDestination;
 		String data = "";
 		String timestamp = PublicMethods.timestamp()+"_"+backupCounter++;
@@ -90,8 +91,8 @@ public class ModelLoader {
 	 */
 	public void backupBaseDomainModel(){
 		String domainModelFile=config.getProperty("domainmodel");
-		String userDir = config.getUserDir();
-		domainModelFile = userDir + File.separator + domainModelFile;
+		String translationDir = config.getTranslationDir();
+		domainModelFile = translationDir + File.separator + domainModelFile;
 		backupBaseDomainModel(domainModelFile);
 	}
 	
@@ -159,7 +160,7 @@ public class ModelLoader {
 			throw new InvalidDomainModelFormatException(ex.getMessage());
 		}
 		
-		String logMsg = "Loaded DomainModel: \n" + this.domainModel.toString() +"\n";
+		String logMsg = "Loaded " + this.domainModel.toString() +"\n";
 		logger.info(logMsg);
 		
 		return result;
@@ -206,7 +207,7 @@ public class ModelLoader {
 
 	public String storeXmlBaseDomainModel(DomainModel baseDm) throws InvalidDomainModelFormatException{
 		String domainModelFile=config.getProperty("domainmodel");
-		String userDir = config.getUserDir();
+		String userDir = config.getTranslationDir();
 		domainModelFile = userDir + File.separator + domainModelFile;
 		String mergedDomain = this.storeXmlDomainModel(domainModelFile, baseDm);
 		return mergedDomain;
@@ -264,10 +265,9 @@ public class ModelLoader {
 			layerRoot.appendChild(ismXML);
 			
 			String xmlData = PublicMethods.prettyPrint(xmlDocXpath);
-			String logMsg = ">>>Adaptation Complete: DomainModel: \n"
-							+ "\n###############################\n" 
-							+ xmlData +"\n";
+			String logMsg = ">>>Adaptation Complete";
 			logger.info(logMsg);
+
 			PublicMethods.writeFile(destination, xmlData);
 			return xmlData;
 		}

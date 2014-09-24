@@ -246,7 +246,12 @@ public class LayerLoader {
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@pims/@pimdata.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			action.addInputParam(pData);
 		}
@@ -263,13 +268,23 @@ public class LayerLoader {
 			if(element.contains("//@pims/@pimactions.")){
 				//refinement at the same layer
 				element = element.replace("//@pims/@pimactions.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
 				pimAction.addRefinement(refinement);
 			}
 			else if(element.contains("//@psms/@psmtransformers.")){
 				element = element.replace("//@psms/@psmtransformers.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
 				pimAction.addRefinement(refinement);
 			}
@@ -307,13 +322,23 @@ public class LayerLoader {
 			String element = refinements[i].trim();
 			if(element.contains("//@pims/@pimdata.")){
 				element = element.replace("//@pims/@pimdata.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel refinement = layer.getContainerAtPosition(position);
 				pimData.addRefinement(refinement);
 			}
 			else if (element.contains("//@psms/@psmcontainers.")){
 				element = element.replace("//@psms/@psmcontainers.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel refinement = layer.getRefinementLayer().getContainerAtPosition(position);
 				pimData.addRefinement(refinement);
 			}
@@ -330,7 +355,12 @@ public class LayerLoader {
 		for(int i =0; i<associations.length; i++){
 			String element = associations[i].trim();
 			element = element.replace("//@pims/@pimactions.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			ActionTransformerModel association = layer.getTransformerAtPosition(position);
 			pimAction.addAssociationLink(association);
 		}
@@ -365,14 +395,24 @@ public class LayerLoader {
 			if(associationType.equals("isAggregationOf")){
 				String element = targetAssoction.trim();
 				element = element.replace("//@pims/@pimdata.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel association = layer.getContainerAtPosition(position);
 				pimContainer.addAggregation(association);
 			}
 			else if(associationType.equals("isCompositionOf")){
 				String element = targetAssoction.trim();
 				element = element.replace("//@pims/@pimdata.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel association = layer.getContainerAtPosition(position);
 				pimContainer.addComposition(association);
 			}
@@ -400,7 +440,12 @@ public class LayerLoader {
 		for(int i =0; i<associations.length; i++){
 			String element = associations[i].trim();
 			element = element.replace("//@psms/@psmcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			DataContainerModel association = layer.getContainerAtPosition(position);
 			psmContainer.addAssociation(association);
 		}
@@ -422,13 +467,23 @@ public class LayerLoader {
 			String element = refinements[i].trim();
 			if(element.contains("//@isms/@ismcontainers.")){
 				element = element.replace("//@isms/@ismcontainers.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel refinement = layer.getRefinementLayer().getContainerAtPosition(position);
 				psmContainer.addRefinement(refinement);
 			}
 			else if(element.contains("//@psms/@psmcontainers.")){
 				element = element.replace("//@psms/@psmcontainers.", ""); //for the case when we have inner refinement
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				DataContainerModel refinement = layer.getContainerAtPosition(position);
 				psmContainer.addRefinement(refinement);
 			}
@@ -449,7 +504,12 @@ public class LayerLoader {
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@psms/@psmcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addOutputParam(pData);
 		}
@@ -469,7 +529,12 @@ public class LayerLoader {
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@psms/@psmcontainers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addInputParam(pData);
 		}
@@ -501,12 +566,22 @@ public class LayerLoader {
 			String element = refinements[i].trim();
 			if(element.contains("//@psms/@psmtransformers.")){
 				element = element.replace("//@psms/@psmtransformers.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
 				psmTransformer.addRefinement(refinement);
 			} else if(element.contains("//@isms/@ismtransformers.")){
 				element = element.replace("//@isms/@ismtransformers.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					continue;
+				}
 				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
 				psmTransformer.addRefinement(refinement);
 			}
@@ -535,7 +610,12 @@ public class LayerLoader {
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@psms/@psmtransformers.", "");
-			int position = Integer.parseInt(element);
+			int position = 0 ;
+			try{
+				position = Integer.parseInt(element);
+			} catch(Exception ex){
+				continue;
+			}
 			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
 			psmTransformer.addRefinement(refinement);
 		}
@@ -556,7 +636,13 @@ public class LayerLoader {
 			String element = refinements[i].trim();
 			if(element.contains("//@isms/@ismsystems.")){
 				element = element.replace("//@isms/@ismsystems.", "");
-				int position = Integer.parseInt(element);
+				int position = 0 ;
+				try{
+					position = Integer.parseInt(element);
+				} catch(Exception ex){
+					logger.error("Invalid definition for system: "+system.toStringShort(), ex);
+					continue;
+				}
 				SystemModel refinement = layer.getRefinementLayer().getSystemAtPosition(position);
 				system.addRefinement(refinement);
 			}
@@ -587,7 +673,10 @@ public class LayerLoader {
 			int position = 0 ;
 			try{
 				position = Integer.parseInt(element);
-			} catch(Exception ex){logger.error("Invalid definition for system: "+system.toStringShort(), ex);}
+			} catch(Exception ex){
+				logger.error("Invalid definition for system: "+system.toStringShort(), ex);
+				continue;
+			}
 			ActionTransformerModel transformer = layer.getTransformerAtPosition(position);
 			system.addOperation(transformer);
 		}
@@ -706,14 +795,16 @@ public class LayerLoader {
 		if(ismParamData == null)
 			return;
 		String ismParamDataValues = ismParamData.getNodeValue();
-		String[] params = ismParamDataValues.split(" ");
+		String[] params = ismParamDataValues.trim().split(" ");
 		for(int i =0; i<params.length; i++){
 			String element = params[i].trim();
 			element = element.replace("//@isms/@ismcontainers.", "");
 			int position = 0 ;
 			try{
 				position = Integer.parseInt(element);
-			} catch(Exception ex){logger.error("Invalid definition for transformer: "+transformer.toStringShort(), ex);}
+			} catch(NumberFormatException ex){
+				continue;
+			}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addOutputParam(pData);
 		}
@@ -736,7 +827,9 @@ public class LayerLoader {
 			int position = 0 ;
 			try{
 				position = Integer.parseInt(element);
-			} catch(Exception ex){logger.error("Invalid definition for transformer: "+transformer.toStringShort(), ex);}
+			} catch(NumberFormatException ex){
+				continue;
+			}
 			DataContainerModel pData = layer.getContainerAtPosition(position);
 			transformer.addInputParam(pData);
 		}

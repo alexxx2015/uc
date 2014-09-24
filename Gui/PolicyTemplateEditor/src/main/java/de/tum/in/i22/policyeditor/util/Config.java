@@ -22,16 +22,10 @@ public class Config
    public Config() throws IOException
    {
 	configFile = new java.util.Properties();
-	String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
-	String usrDir = System.getProperty("user.dir");
-	if(usrDir.contains("PolicyTemplateEditor"))
-		defaultSetting = usrDir;
+	String defaultSetting = Settings.getInstance().getPtEditorResources();
+	
 	try {	
-		String configPath = defaultSetting+File.separator+"src"
-				+File.separator
-				+"main"+File.separator
-				+"resources"+File.separator
-				+ "config.cfg";
+		String configPath = defaultSetting + File.separator	+ "config.cfg";
         configFile.load(new FileInputStream(configPath));		
 	}
 	catch(FileNotFoundException eta){

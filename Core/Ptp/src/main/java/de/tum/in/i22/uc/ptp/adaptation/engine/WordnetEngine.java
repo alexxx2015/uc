@@ -30,8 +30,8 @@ public class WordnetEngine {
 		} catch (IOException e) {
 			logger.error("Config loading failed", e);
 		}
-		String userDir = config.getUserDir();
-		String file = userDir + File.separator + "src" + File.separator +"main"+ File.separator+"resources" + File.separator ;
+		String userDir = config.getResourcesDir();
+		String file = userDir + File.separator ;
 		wordnet = new RiWordNet(file);
 	}
 	

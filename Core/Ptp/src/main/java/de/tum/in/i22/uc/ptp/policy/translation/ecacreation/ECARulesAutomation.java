@@ -230,7 +230,7 @@ public class ECARulesAutomation {
 			return true;
 		}
 		String ecaRulesFile = config.getProperty("ecaRulesTemplates");
-		ecaRulesFile = config.getUserDir() + File.separator + ecaRulesFile;
+		ecaRulesFile = config.getTranslationDir() + File.separator + ecaRulesFile;
 		String json = "";
 		try {
 			json = PublicMethods.readFile(ecaRulesFile);

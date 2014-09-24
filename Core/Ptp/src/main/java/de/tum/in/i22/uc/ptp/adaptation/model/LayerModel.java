@@ -230,7 +230,7 @@ public class LayerModel {
 	
 	public String toString(){
 		String result ="";
-		result += this.indentation + name + ":" +type.name();
+		result += this.indentation + name + ":" +type.name() +" "+ this.getElementsSize();
 		
 		String dataString = "";
 		for(DataContainerModel data : this.dataContainers){
@@ -247,9 +247,9 @@ public class LayerModel {
 		for(SystemModel system : this.systems){
 			systemString += "\n" + system.toString();
 		}
-		result += "\n"+ this.indentation+"	DATA/CONTAINER" + dataString;
-		result += "\n"+ this.indentation+"	ACTION/TRANSFORMER" + actionsString;
-		result += "\n"+ this.indentation+"	SYSTEMS"+ systemString;
+		result += "\n"+ this.indentation+"	DATA/CONTAINER" +" " + this.dataContainers.size() + dataString;
+		result += "\n"+ this.indentation+"	ACTION/TRANSFORMER" +" "+ this.actionTransformers.size() + actionsString;
+		result += "\n"+ this.indentation+"	SYSTEMS"+ " "+ this.systems.size()+ systemString;
 		return result;
 	}
 	

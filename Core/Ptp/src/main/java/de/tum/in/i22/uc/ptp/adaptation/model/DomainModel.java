@@ -87,7 +87,7 @@ public class DomainModel {
 	}
 	
 	public String toString(){
-		String result ="DomainModel: " + this.name;
+		String result ="DomainModel: " + this.name + " " + this.getElementsSize();
 		result +="\n";
 		String pimString = "\n"+this.pimLayer.toString();
 		String psmString = "\n"+this.psmLayer.toString();

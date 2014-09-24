@@ -145,6 +145,8 @@ public class ActionTransformerModel {
 	public boolean addSynonym(String name){
 		if(name==null)
 			return false;
+		if(name.equals(""))
+			return false;
 		if(this.name.equals(name))
 			return false;
 		if(!this.synonyms.contains(name))
@@ -286,7 +288,7 @@ public class ActionTransformerModel {
 	public String toString(){
 		String result ="";
 		String systemName = this.parentSystem == null ? null : this.parentSystem.getName();
-		result += this.indentationLevel+name +" - "+ layerType.name()+" ref: "+ this.refinementType.name() +" sys: "+ systemName;
+		result += this.indentationLevel+name +" "+this.getSignature()+" ref: "+ this.refinementType.name() +" sys: "+ systemName;
 		String refinedAs = "";
 		for(ActionTransformerModel ref : this.refinements){
 			refinedAs += " "+ ref.name +"-"+ ref.layerType.name(); 
@@ -295,6 +297,20 @@ public class ActionTransformerModel {
 		return result;
 	}
 
+	private String getSignature(){
+		String sig = "[ ";
+		for(DataContainerModel in : inputParams){
+			sig += in.getName() +" ";
+		}
+		sig +="]";
+		sig +="->[ ";
+		for(DataContainerModel in : outputParams){
+			sig += in.getName() +" ";
+		}
+		sig +="]";
+		return sig;
+	}
+	
 	public String toStringShort(){
 		String result ="";
 		String systemName = this.parentSystem == null ? null : this.parentSystem.getName();
@@ -564,5 +580,9 @@ public class ActionTransformerModel {
 				return true;
 		}
 		return false;
+	}
+
+	public void resetOutputParam() {
+		this.outputParams.clear();
 	}
 }

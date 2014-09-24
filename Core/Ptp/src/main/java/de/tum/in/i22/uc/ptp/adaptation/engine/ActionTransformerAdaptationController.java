@@ -88,7 +88,6 @@ public class ActionTransformerAdaptationController {
 		}
 	}
 
-	
 	/**
 	 * See ./doc/ paper - Algorithm2
 	 * @param newAt
@@ -120,16 +119,19 @@ public class ActionTransformerAdaptationController {
 			baseAt.setRefinementType(newAt.getRefinementType());
 			baseAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
 			
-			SystemModel baseSystem = baseLayer.getSystem(newAt.getParentSystem());
-			if(baseSystem == null){
-				/* The base system was not present before.
-				 * It will be updated when the systems are merged.
-				 * Each transformer must have a parent system.
-				 */
-				baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+			if(!baseAt.getLayerType().equals(LayerType.PIM)){
+				SystemModel baseSystem = baseLayer.getSystem(newAt.getParentSystem());
+				if(baseSystem == null){
+					/* The base system was not present before.
+					 * It will be updated when the systems are merged.
+					 * Each transformer must have a parent system.
+					 */
+					baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+				}
+				baseSystem.addOperation(baseAt);		
+				incrementUpdateCounter();
 			}
-			baseSystem.addOperation(baseAt);		
-			baseLayer.addActionTransformer(baseAt);			
+			baseLayer.addActionTransformer(baseAt);
 			incrementUpdateCounter();
 		}
 		else{
@@ -202,8 +204,6 @@ public class ActionTransformerAdaptationController {
 				newAt.setName(newName);
 			}
 		}
-		
-		
 		
 		if(newAt.getRefinementType().equals(RefinementType.SET)){
 			if(baseAt.getRefinementType().equals(RefinementType.SET)){
@@ -404,23 +404,31 @@ public class ActionTransformerAdaptationController {
 	}
 	
 	private void updateInputAndOutputContainers(ActionTransformerModel newAt, ActionTransformerModel baseAt){
-		//input params
-		for(DataContainerModel dc : newAt.getInputParams()){
-			boolean exists = baseAt.hasInputParam(dc);
-			if(exists)
-				continue;
-			DataContainerModel in = baseDm.getLayer(newAt.getLayerType()).getDataContainer(dc);
-			baseAt.addInputParam(in);
-			incrementUpdateCounter();
+		/*input params - this applies only at PIM
+		 * at PSM, ISM - the signature is already equal
+		 * or it is a newly created transformer.
+		*/
+		if(newAt.getLayerType().equals(LayerType.PIM)  
+				|| newAt.getInputParams().size()!=baseAt.getInputParams().size()){
+			for(DataContainerModel dc : newAt.getInputParams()){
+				boolean exists = baseAt.hasInputParam(dc);
+				if(exists)
+					continue;
+				DataContainerModel in = baseDm.getLayer(newAt.getLayerType()).getDataContainer(dc);
+				baseAt.addInputParam(in);
+				incrementUpdateCounter();
+			}
 		}
-		//output
-		for(DataContainerModel dc : newAt.getOutputParams()){
-			boolean exists = baseAt.hasOutputParam(dc);
-			if(exists)
-				continue;
-			DataContainerModel out = baseDm.getLayer(newAt.getLayerType()).getDataContainer(dc);
-			baseAt.addOutputParam(out);
-			incrementUpdateCounter();
+		else{
+			/* applies at PSM and ISM
+			 * replace the output param of base with new
+			 * */
+			baseAt.resetOutputParam();
+			for(DataContainerModel dc : newAt.getOutputParams()){
+				DataContainerModel out = baseDm.getLayer(newAt.getLayerType()).getDataContainer(dc);
+				baseAt.addOutputParam(out);
+				//incrementUpdateCounter();
+			}
 		}
 	}
 	
@@ -445,7 +453,11 @@ public class ActionTransformerAdaptationController {
 	}
 	
 	/**
-	 * Implements the equivalence relation between two transformers or two data elements.
+	 * Implements the equivalence relation between two transformers or two action elements.
+	 * <br> equivalent name
+	 * <br> equivalent systems - PSM, ISM
+	 * <br> equivalent signature - PSM, ISM
+	 * <br> equivalent synonyms
 	 * @param newAt
 	 * @param baseLayer
 	 * @return
@@ -460,10 +472,8 @@ public class ActionTransformerAdaptationController {
 		}
 		for(ActionTransformerModel baseE : baseLayer.getActionTransformers()){
 			//logger.debug("Search equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
-			//a redundant safety type check
-			if(!baseE.getLayerType().equals(newAt.getLayerType()))
-				continue;
-			
+
+			/* Applies at all three layers */
 			boolean nameCheck = false;
 			if(baseE.getName().equals(newAt.getName()))
 				nameCheck = true;
@@ -471,41 +481,43 @@ public class ActionTransformerAdaptationController {
 				nameCheck = true;
 			else if(newAt.alsoKnownAs(baseE.getName()))
 				nameCheck = true;
-				
-		/*
-		 * If a sequence does not have a parent system, merging uncertainties arise.
-		 * Transformers from different systems can have the same names.
-		 * In the baseDM copyFile for OS and in the newDM copyFile for Browser.
-		 * If these transformers are refined by sequences and the sequences have the same name
-		 * and we don't associate a sequence with a particular system, 
-		 * then we don't know which sequence from which system should we update.
-		 * It is unreasonable to apply the same sequence to all of them.
-		 * The solution is to specify a system also for sequences.
-		 * e.g. copyFile - for OS, copyFile - for VM.
-		 * according to the definition these two are different because they pertain to different systems.
-		 *    
-		 */
+		
+			/* Applies at only PSM and ISM layers */
 			if(!baseE.getLayerType().equals(LayerType.PIM)){
 				if(baseE.getParentSystem()==null)
 					throw new DomainMergeException("Please define a parent system for base element: "+ baseE.toString());
 			
+				//check system
+				boolean systemCheck = false;
 				if(baseE.getParentSystem().equals(newAt.getParentSystem())){
 					if(nameCheck){
-						baseEquivalent = baseE;
-						break;
+						systemCheck = true;
 					}
 				}
+				
+				//check signature
+				boolean signatureCheck = false;
+				if(nameCheck && systemCheck){
+					signatureCheck = checkMethodSignature(newAt, baseE);
+					if(signatureCheck){
+						baseEquivalent = baseE;
+					}
+				}
+			}
+			else if (nameCheck){
+				//means that a PIM action was found
+				baseEquivalent = baseE;
 			}
 			
 		}
 		
 		if(!baseLayer.getType().equals(LayerType.PIM))
-			return baseEquivalent;
+			return baseEquivalent; //this remains null if nothing was found
 
 		/* applies only at PIM level
 		 * */
 		if(baseEquivalent != null)
-			return baseEquivalent;
+			return baseEquivalent; //means that a PIM action was found
 		
 		//find the closest match - wordnet
 		float relationRatioMax = WordnetEngine.MAX_ALLOWED_DISTANCE; 
@@ -548,6 +560,34 @@ public class ActionTransformerAdaptationController {
 	
 
 	
+
+	/**
+	 * Checks the signature of the compared transformers.
+	 * <br> Two transformers have the same signature if:
+	 * <br> - they have the same number of input elements AND
+	 * <br> - they have the same input params in the same order
+	 * <br> The output parameters are replaced from new to the base in case of a match.
+	 * The replacement is done at the merging.
+	 * @param newAt
+	 * @param baseE
+	 * @return boolean - true for same signature, false for different signature
+	 */
+	private boolean checkMethodSignature(ActionTransformerModel newAt, ActionTransformerModel baseE) {
+
+		ArrayList<DataContainerModel> newSignature = newAt.getInputParams();
+		ArrayList<DataContainerModel> baseSignature = baseE.getInputParams();
+		if(newSignature.size()!=baseSignature.size()){
+			return false;
+		}
+		for(int i=0; i<newSignature.size(); i++){
+			DataContainerModel newIn = newSignature.get(i);
+			DataContainerModel baseIn = baseSignature.get(i);
+			if(!newIn.equals(baseIn))
+				return false;
+		}
+		
+		return true;
+	}
 
 	/**
 	 * The sequences sent as parameters are first minimized.

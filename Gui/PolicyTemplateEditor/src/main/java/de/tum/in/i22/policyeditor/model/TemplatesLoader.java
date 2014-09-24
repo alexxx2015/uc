@@ -65,15 +65,10 @@ public class TemplatesLoader {
 	}
 	
 	public static TemplatesLoader loadPolicyTemplates() {
-		logger.debugLog(Settings.getInstance().getPtEditorProjectLocation(), null);
-		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
-		String usrDir = System.getProperty("user.dir");
-		if(usrDir.contains("PolicyTemplateEditor"))
-			defaultSetting = usrDir;
-		String templatesFile = defaultSetting+File.separator+"src"
-						+File.separator
-						+"main"+File.separator
-						+"resources"+File.separator
+		logger.debugLog(Settings.getInstance().getPtEditorResources(), null);
+		String defaultSetting = Settings.getInstance().getPtEditorResources();
+		
+		String templatesFile = defaultSetting+File.separator
 						+"templates.cfg"; 
 		
 		TemplatesLoader templates = new TemplatesLoader();
@@ -98,14 +93,9 @@ public class TemplatesLoader {
 	}
 			
 	private static void loadActionTemplates(){
-		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
-		String usrDir = System.getProperty("user.dir");
-		if(usrDir.contains("PolicyTemplateEditor"))
-			defaultSetting = usrDir;
-		String actionsFile =defaultSetting+File.separator+"src"
-				+File.separator
-				+"main"+File.separator
-				+"resources"+File.separator
+		String defaultSetting = Settings.getInstance().getPtEditorResources();
+		
+		String actionsFile =defaultSetting+File.separator
 				+"actions.cfg";
 		String file = "";
 		try {
@@ -132,14 +122,9 @@ public class TemplatesLoader {
 	}
 	
 	private static void loadSubjectTemplates(){
-		String defaultSetting = Settings.getInstance().getPtEditorProjectLocation();
-		String usrDir = System.getProperty("user.dir");
-		if(usrDir.contains("PolicyTemplateEditor"))
-			defaultSetting = usrDir;
-		String subjectsFile = defaultSetting+File.separator+"src"
-				+File.separator
-				+"main"+File.separator
-				+"resources"+File.separator
+		String defaultSetting = Settings.getInstance().getPtEditorResources();
+		
+		String subjectsFile = defaultSetting+File.separator
 				+"subjects.cfg";
 		String file = "";
 		try {

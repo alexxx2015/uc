@@ -38,7 +38,7 @@ public class PtpTest {
 		}
 		
 		
-		Settings.getInstance().loadSetting(Settings.PROP_NAME_ptpProjectLocation, ptpProjectLocation);
+		Settings.getInstance().loadSetting(Settings.PROP_NAME_ptpResources, ptpProjectLocation);
 		
 		/*
 		 * Start PMP server.

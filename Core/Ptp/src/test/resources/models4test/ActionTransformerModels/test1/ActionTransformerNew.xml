@@ -22,7 +22,7 @@
 		<psmcontainers contimplementedas="//@isms/@ismcontainers.4" name="file"/>
 		<psmcontainers containersassociation="//@psms/@psmcontainers.4" contimplementedas="//@isms/@ismcontainers.5" name="directory"/>
 
-		<!-- extended new inputcontainer new outputcontainer -->
+		<!-- extended new inputcontainer new outputcontainer different signature-->
 		<psmtransformers name="copy_paste" seq="0" outputcontainer="//@psms/@psmcontainers.1 //@psms/@psmcontainers.5" inputcontainer="//@psms/@psmcontainers.0 //@psms/@psmcontainers.4" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
 		<!-- new transformer - same name but different system -->
 		<psmtransformers name="screenshot" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.3" crossPsmRefmnt="//@isms/@ismtransformers.5"/>

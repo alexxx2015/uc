@@ -15,13 +15,7 @@
 		<psmtransformers name="copy_paste" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
 		<psmtransformers name="copyFile" seq="0" outputcontainer="//@psms/@psmcontainers.0" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.6 "/>
 		<psmtransformers name="screenshot" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
-		<!--
-		<psmtransformers name="copyFile0" seq="0" outputcontainer="//@psms/@psmcontainers.0" inputcontainer="//@psms/@psmcontainers.0" psmRefmnt="//@psms/@psmtransformers.3 "/>
-		<psmtransformers name="copy_seq" seq="0" refType="seqRefmnt" outputcontainer="//@psms/@psmcontainers.4" inputcontainer="//@psms/@psmcontainers.4" psmRefmnt="//@psms/@psmtransformers.4 //@psms/@psmtransformers.5"/>
 		
-		<psmtransformers name="copyFile1" seq="1" outputcontainer="//@psms/@psmcontainers.0" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.6 "/>
-		<psmtransformers name="screenshot1" seq="2" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
-		-->
 		<psmsystems systemtransformers="//@psms/@psmtransformers.0" sysimplementedas="//@isms/@ismsystems.0" name="webBrowser"/>
 		<psmsystems systemtransformers="//@psms/@psmtransformers.2" sysimplementedas="//@isms/@ismsystems.2" name="fileSystem"/>
 		<psmsystems systemtransformers="//@psms/@psmtransformers.1" sysimplementedas="//@isms/@ismsystems.1" name="winowSys"/>
