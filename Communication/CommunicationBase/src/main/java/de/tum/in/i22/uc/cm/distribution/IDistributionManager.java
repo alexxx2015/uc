@@ -32,4 +32,6 @@ public interface IDistributionManager {
 	boolean wasTrueInBetween(LiteralOperator operator, long from, long to);
 
 	void unregisterPolicy(String policyName, IPLocation location);
+
+	IPLocation getResponsibleLocation(String ip);
 }

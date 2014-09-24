@@ -89,7 +89,7 @@ public class IPLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return _host.hashCode() ^ _port;
+		return Objects.hash(_host, _port);
 	}
 
 	public String getHost() {

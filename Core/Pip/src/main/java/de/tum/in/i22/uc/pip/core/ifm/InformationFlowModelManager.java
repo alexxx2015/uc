@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,9 +15,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
@@ -24,8 +25,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.extensions.crosslayer.ScopeInformationFlowModel;
 import de.tum.in.i22.uc.pip.extensions.structured.StructuredInformationFlowModel;
 
-public final class InformationFlowModelManager implements
-		IInformationFlowModel, IBasicInformationFlowModel {
+public final class InformationFlowModelManager implements IAnyInformationFlowModel {
 	private final Map<EInformationFlowModel, InformationFlowModelExtension> _ifModelExtensions;
 
 	private final BasicInformationFlowModel _basicIfModel;
@@ -39,12 +39,6 @@ public final class InformationFlowModelManager implements
 		_ifModelExtensions = new HashMap<>();
 		_simulating = false;
 		_basicIfModel = new BasicInformationFlowModel();
-
-		DummyInformationFlowModel dummy = new DummyInformationFlowModel(null);
-
-		for (EInformationFlowModel eifm : EInformationFlowModel.values()) {
-			_ifModelExtensions.put(eifm, dummy);
-		}
 
 		for (EInformationFlowModel eifm : Settings.getInstance()
 				.getEnabledInformationFlowModels()) {
@@ -69,14 +63,6 @@ public final class InformationFlowModelManager implements
 		return _basicIfModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IInformationFlowModel#isEnabled(de.tum.
-	 * in.i22.uc.cm.pip.EInformationFlowModel)
-	 */
-	@Override
 	public boolean isEnabled(EInformationFlowModel ifm) {
 		return _ifModelExtensions.containsKey(ifm);
 	}
@@ -110,9 +96,9 @@ public final class InformationFlowModelManager implements
 		}
 		_simulating = true;
 
-		_basicIfModel.push();
+		_basicIfModel.startSimulation();
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			ifme.push();
+			ifme.startSimulation();
 		}
 
 		return new StatusBasic(EStatus.OKAY);
@@ -130,9 +116,9 @@ public final class InformationFlowModelManager implements
 		}
 		_simulating = false;
 
-		_basicIfModel.pop();
+		_basicIfModel.stopSimulation();
 		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
-			ifme.pop();
+			ifme.stopSimulation();
 		}
 
 		return new StatusBasic(EStatus.OKAY);
@@ -354,21 +340,6 @@ public final class InformationFlowModelManager implements
 	}
 
 	@Override
-	public List<IName> getAllNamingsFrom(IContainer pid) {
-		return _basicIfModel.getAllNamingsFrom(pid);
-	}
-
-	@Override
-	public void push() {
-		_basicIfModel.push();
-	}
-
-	@Override
-	public void pop() {
-		_basicIfModel.pop();
-	}
-
-	@Override
 	public boolean openScope(IScope scope) {
 		return ((ScopeInformationFlowModel) _ifModelExtensions
 				.get(EInformationFlowModel.SCOPE)).openScope(scope);
@@ -440,4 +411,24 @@ public final class InformationFlowModelManager implements
 		return _basicIfModel.getDataFromId(id);
 	}
 
+	@Override
+	public boolean hasChanged() {
+		boolean changed = _basicIfModel.hasChanged();
+
+		Iterator<InformationFlowModelExtension> it = _ifModelExtensions.values().iterator();
+		while (!changed && it.hasNext()) {
+			changed = it.next().hasChanged();
+		}
+
+		return changed;
+	}
+
+	@Override
+	public void clearChanged() {
+		_basicIfModel.clearChanged();
+
+		for (InformationFlowModelExtension ifme : _ifModelExtensions.values()) {
+			ifme.clearChanged();
+		}
+	}
 }

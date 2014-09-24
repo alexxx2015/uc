@@ -7,6 +7,7 @@ import de.tum.in.i22.uc.cm.datatypes.linux.OSInternalName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -33,7 +34,7 @@ public class SocketEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		SocketContainer sc = new SocketContainer(Domain.from(domain), Type.from(type));
+		SocketContainer sc = new SocketContainer(Domain.from(domain), Type.from(type), IPLocation.localIpLocation);
 
 		// file descriptor name
 		_informationFlowModel.addName(FiledescrName.create(host, pid, fd), sc);

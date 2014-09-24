@@ -2,16 +2,23 @@ package de.tum.in.i22.uc.ptp.adaptation.engine;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.DataContainerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.SystemModel;
 import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel.RefinementType;
+=======
+import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel;
+import de.tum.in.i22.uc.adaptation.model.DataContainerModel;
+import de.tum.in.i22.uc.adaptation.model.ActionTransformerModel.RefinementType;
+import de.tum.in.i22.uc.adaptation.model.DomainModel.LayerType;
+import de.tum.in.i22.uc.adaptation.model.LayerModel;
+import de.tum.in.i22.uc.adaptation.model.SystemModel;
+>>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 
 /**
  * @author Cipri
@@ -21,7 +28,6 @@ import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel.RefinementTy
 public class LayerLoader {
 	
 	private LayerModel layer ;
-	private static final Logger logger = LoggerFactory.getLogger(LayerLoader.class);
 	
 	public LayerLoader (LayerModel layer){
 		this.layer = layer;
@@ -44,7 +50,10 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			//logger.info(layer.getType()+" Loading data/container: "+ name);
+=======
+>>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			DataContainerModel container = new DataContainerModel(name, layer.getType());
 			container.setParenLayer(layer);
 			addPimContainerSynonyms(container, node);
@@ -94,7 +103,11 @@ public class LayerLoader {
 				continue;
 			
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			//logger.debug(layer.getType()+" Loading action/transformer: "+ name);
+=======
+			
+>>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			RefinementType refType = RefinementType.SET;
 			try{
 				String refTypeAttr = "";
@@ -108,10 +121,9 @@ public class LayerLoader {
 			actionTransformer.setRefinementType(refType);
 			transformersNodesMap.put(actionTransformer, node);
 			
-			
+			addPimActionSynonyms(actionTransformer, node);
 			switch(layer.getType()){
 				case PIM:
-					addPimActionSynonyms(actionTransformer, node);
 					addPimActionParamData(actionTransformer, node);
 					break;
 				case PSM:
@@ -130,8 +142,12 @@ public class LayerLoader {
 		/* do the inner refinement and cross*/
 		for(ActionTransformerModel at : transformersNodesMap.keySet()){
 			Node node = transformersNodesMap.get(at);
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 			//logger.debug(layer.getType()+" inner/cross ref :"+ name);
+=======
+
+>>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 			switch(layer.getType()){
 			case PIM:
 				addPimActionInnerAssociation(at, node);
@@ -619,6 +635,7 @@ public class LayerLoader {
 		
 	}
 	
+<<<<<<< HEAD:Core/Ptp/src/main/java/de/tum/in/i22/uc/ptp/adaptation/engine/LayerLoader.java
 	/**************************************************************
 	 * ISM level
 	 * every element has the attributes defined in the doc/metamodel.png
@@ -656,6 +673,11 @@ public class LayerLoader {
 	 */
 	private void addIsmContainerCrossRefinement(DataContainerModel container, Node node) {
 		// ISM container - no cross layer refinement in the model
+=======
+	private void addIsmTransformerCrossRefinement(ActionTransformerModel ismTransformer, Node node){
+		// There is no cross refmnt in the model for ISM
+		// rezolved at: addIsmTransformerInnerRefinement with the attribute ismRefmnt
+>>>>>>> 34241d9247322206d6bbc20a064b95ba0d3a6264:Core/Ptp/src/main/java/de/tum/in/i22/uc/adaptation/engine/LayerLoader.java
 	}
 	
 	/**

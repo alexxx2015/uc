@@ -28,7 +28,7 @@ public class Config
 	
 	String defaultSetting = Settings.getInstance().getPtpProjectLocation();
 	String usrDir = System.getProperty("user.dir");
-	if(usrDir.endsWith("Ptp"))
+	if(usrDir.contains("Ptp"))
 		defaultSetting = usrDir;
 	else
 		defaultSetting = usrDir + File.separator + defaultSetting;
@@ -70,11 +70,6 @@ public class Config
 	return value;
    }
    
-   /**
-    * The system user directory property can change depending on the actual process which uses this component.
-    * This method returns the actual path to the location of this project. 
-    * @return
-    */
    public String getUserDir(){
 	   String value = userDir;
 	   return value ;

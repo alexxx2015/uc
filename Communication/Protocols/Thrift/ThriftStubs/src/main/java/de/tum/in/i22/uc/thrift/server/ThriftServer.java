@@ -22,6 +22,8 @@ class ThriftServer implements IThriftServer {
 
 	private final TServer _server;
 
+	private int _port;
+
 	/**
 	 * Creates a new multithreaded {@link ThriftServer},
 	 * listening on the specified port and implementing the specified processor.
@@ -36,6 +38,7 @@ class ThriftServer implements IThriftServer {
 		TServerTransport serverTransport = new TServerSocket(port);
 
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+		_port = port;
 
 		_logger.info("ThriftServer [{}] listening on port {}.", processor.getClass().toString().substring(processor.getClass().toString().lastIndexOf('.') + 1), port);
 	}
@@ -58,6 +61,7 @@ class ThriftServer implements IThriftServer {
 	 */
 	@Override
 	public boolean started() {
+		_logger.info("Server on port {}: {}.", _port, _server.isServing() ? "OK" : "FAIL");
 		return _server.isServing();
 	}
 }

@@ -11,7 +11,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -138,7 +138,7 @@ public abstract class BinDftEventHandler extends AbstractScopeEventHandler {
 	 */
 
 	public static void killProcess(String pid,
-			IInformationFlowModel _informationFlowModel) {
+			IAnyInformationFlowModel _informationFlowModel) {
 		if ((pid == null) || (pid.equals(""))) {
 			_logger.error("Impossible to kill process with null PID");
 			return;

@@ -17,18 +17,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.generic.observable.NotifyingMap;
+import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 
 /**
  * Information flow model Singleton.
  */
-public final class BasicInformationFlowModel implements
-		IBasicInformationFlowModel {
+public final class BasicInformationFlowModel extends InformationFlowModel implements IBasicInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(BasicInformationFlowModel.class);
 
@@ -45,25 +48,15 @@ public final class BasicInformationFlowModel implements
 		reset();
 	}
 
-	private void cleanUp() {
-		// FIXME: properly synchronize
-		if (_containerToDataMap != null) {
-			for (IContainer cont : _containerToDataMap.keySet()) {
-				Set<IData> dataSet = _containerToDataMap.get(cont);
-				if ((dataSet == null) || (dataSet.size() == 0)) {
-					remove(cont);
-				}
-			}
-		}
-	}
-
 	/**
 	 * Resets the information flow model to its initial (empty) state.
 	 */
-	void reset() {
-		_containerToDataMap = new HashMap<>();
-		_aliasesMap = new HashMap<>();
-		_namingMap = new HashMap<>();
+	@Override
+	public void reset() {
+		super.reset();
+		_containerToDataMap = new NotifyingMap<>(new HashMap<IContainer, Set<IData>>(), _observer);
+		_aliasesMap = new NotifyingMap<>(new HashMap<IContainer, Set<IContainer>>(), _observer);
+		_namingMap = new NotifyingMap<>(new HashMap<IName, IContainer>(), _observer);
 
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
@@ -72,33 +65,40 @@ public final class BasicInformationFlowModel implements
 
 	/**
 	 * Simulation step: push. Stores the current IF state, if not already stored
-	 * 
+	 *
 	 * @return true if the state has been successfully pushed, false otherwise
 	 */
-	void push() {
+	@Override
+	public
+	IStatus startSimulation() {
+		super.startSimulation();
 		_logger.info("Pushing current PIP state.");
 
-		_containerToDataMapBackup = new HashMap<IContainer, Set<IData>>();
+		_containerToDataMapBackup = new NotifyingMap<>(new HashMap<IContainer, Set<IData>>(), _observer);
 		for (Entry<IContainer, Set<IData>> e : _containerToDataMap.entrySet()) {
-			Set<IData> s = new HashSet<IData>(e.getValue());
+			Set<IData> s = new NotifyingSet<>(new HashSet<>(e.getValue()), _observer);
 			_containerToDataMapBackup.put(e.getKey(), s);
 		}
 
-		_aliasesMapBackup = new HashMap<>();
+		_aliasesMapBackup = new NotifyingMap<>(new HashMap<IContainer, Set<IContainer>>(), _observer);
 		for (Entry<IContainer, Set<IContainer>> e : _aliasesMap.entrySet()) {
-			Set<IContainer> s = new HashSet<IContainer>(e.getValue());
+			Set<IContainer> s = new NotifyingSet<>(new HashSet<>(e.getValue()), _observer);
 			_aliasesMapBackup.put(e.getKey(), s);
 		}
 
-		_namingSetBackup = new HashMap<IName, IContainer>(_namingMap);
+		_namingSetBackup = new NotifyingMap<>(new HashMap<IName, IContainer>(_namingMap), _observer);
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/**
 	 * Simulation step: pop. Restore a previously pushed IF state, if any.
-	 * 
+	 *
 	 * @return true if the state has been successfully restored, false otherwise
 	 */
-	void pop() {
+	@Override
+	public IStatus stopSimulation() {
+		super.stopSimulation();
 		_logger.info("Popping current PIP state.");
 
 		_containerToDataMap = _containerToDataMapBackup;
@@ -108,11 +108,13 @@ public final class BasicInformationFlowModel implements
 		_containerToDataMapBackup = null;
 		_aliasesMapBackup = null;
 		_namingSetBackup = null;
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IData)
@@ -128,7 +130,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#remove(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -146,7 +148,7 @@ public final class BasicInformationFlowModel implements
 
 	private void removeAllNames(IContainer cont) {
 		if (cont != null) {
-			Set<IName> toRemove = new HashSet<IName>();
+			Set<IName> toRemove = new HashSet<>();
 			for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
 				if (cont.equals(entry.getValue())) {
 					toRemove.add(entry.getKey());
@@ -160,7 +162,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -175,7 +177,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -189,7 +191,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -206,7 +208,7 @@ public final class BasicInformationFlowModel implements
 
 		Set<IContainer> aliases = _aliasesMap.get(fromContainer);
 		if (aliases == null) {
-			aliases = new HashSet<>();
+			aliases = new NotifyingSet<>(new HashSet<IContainer>(), _observer);
 			_aliasesMap.put(fromContainer, aliases);
 		}
 		aliases.add(toContainer);
@@ -214,7 +216,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IName,
@@ -232,7 +234,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAlias(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -257,7 +259,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesFrom
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -275,7 +277,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
 	 * getAliasTransitiveReflexiveClosure
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -294,7 +296,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesFrom
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -306,7 +308,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesTo
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -335,7 +337,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesTo
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -358,7 +360,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
 	 * getAliasTransitiveClosure
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -382,7 +384,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IData,
@@ -399,7 +401,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeData(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IData,
@@ -422,7 +424,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -439,7 +441,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getData(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName)
@@ -458,7 +460,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IName,
@@ -476,7 +478,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#copyData(de.
 	 * tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
@@ -494,7 +496,7 @@ public final class BasicInformationFlowModel implements
 		if (srcData != null) {
 			Set<IData> dstData = _containerToDataMap.get(dstContainer);
 			if (dstData == null) {
-				dstData = new HashSet<IData>();
+				dstData = new NotifyingSet<>(new HashSet<IData>(), _observer);
 				_containerToDataMap.put(dstContainer, dstData);
 			}
 			dstData.addAll(srcData);
@@ -504,7 +506,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively
 	 * (java.util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -521,7 +523,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively
 	 * (java.util.Collection,
@@ -542,7 +544,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IData)
@@ -567,9 +569,9 @@ public final class BasicInformationFlowModel implements
 	/**
 	 * Returns all containers of the specified type in which the specified data
 	 * is in.
-	 * 
+	 *
 	 * ~ Double checked, 2014/04/11. FK.
-	 * 
+	 *
 	 * @param data
 	 *            the data whose containers are returned.
 	 * @return The set of containers containing the specified data.
@@ -577,7 +579,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IData, java.lang.Class)
@@ -605,7 +607,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addData(java
 	 * .util.Collection, de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -618,7 +620,7 @@ public final class BasicInformationFlowModel implements
 
 		Set<IData> dstData = _containerToDataMap.get(container);
 		if (dstData == null) {
-			dstData = new HashSet<IData>();
+			dstData = new NotifyingSet<>(new HashSet<IData>(), _observer);
 			_containerToDataMap.put(container, dstData);
 		}
 
@@ -629,7 +631,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -659,7 +661,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -672,7 +674,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addName(de.tum
 	 * .in.i22.uc.cm.datatypes.interfaces.IName,
@@ -692,7 +694,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName, boolean)
@@ -714,7 +716,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeName(de
 	 * .tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -727,7 +729,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainer
 	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
@@ -742,7 +744,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllContainers
 	 * ()
@@ -755,7 +757,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames()
 	 */
@@ -766,7 +768,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * java.lang.Class)
@@ -786,7 +788,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
@@ -806,7 +808,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IName, java.lang.Class)
@@ -826,7 +828,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
 	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, java.lang.Class)
@@ -846,31 +848,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNamingsFrom
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
-	@Override
-	/*
-	 * TODO This method seems odd. Moreover, it is layer-specific and should
-	 * thus not go into this class. Fix, delete, move, ... -FK-
-	 */
-	@Deprecated
-	public List<IName> getAllNamingsFrom(IContainer pid) {
-		List<IName> result = new LinkedList<>();
-
-		for (Entry<IName, IContainer> entry : _namingMap.entrySet()) {
-			if (entry.getKey().getName().equals(pid))
-				result.add(entry.getKey());
-		}
-
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#niceString()
 	 */
@@ -1037,7 +1015,7 @@ public final class BasicInformationFlowModel implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#toString()
 	 */
 	@Override
@@ -1064,10 +1042,14 @@ public final class BasicInformationFlowModel implements
 				union.addAll(set);
 			}
 			for (IData d : union){
-				if (d.getId().equals(id)) return d; 
+				if (d.getId().equals(id)) return d;
 			}
 		}
 		return null;
 	}
 
+	@Override
+	public boolean isSimulating() {
+		return _containerToDataMapBackup != null;
+	}
 }

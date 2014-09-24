@@ -1,13 +1,13 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.OSInternalName;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
@@ -38,20 +38,15 @@ public class SocketpairEventHandler extends BaseEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		IContainer sock1Container = new SocketContainer(Domain.from(domain), Type.from(type));
-		IContainer sock2Container = new SocketContainer(Domain.from(domain), Type.from(type));
+		SocketContainer sock1Container = new SocketContainer(Domain.from(domain), Type.from(type), IPLocation.localIpLocation);
+		SocketContainer sock2Container = new SocketContainer(Domain.from(domain), Type.from(type), IPLocation.localIpLocation);
 
-		if (sock1Container != null && sock2Container != null) {
-			_informationFlowModel.addName(FiledescrName.create(host, pid, fd1), sock1Container);
-			_informationFlowModel.addName(FiledescrName.create(host, pid, fd2), sock2Container);
-			_informationFlowModel.addName(OSInternalName.create(host, socketname1), sock1Container);
-			_informationFlowModel.addName(OSInternalName.create(host, socketname2), sock2Container);
-			_informationFlowModel.addAlias(sock1Container, sock2Container);
-			_informationFlowModel.addAlias(sock2Container, sock1Container);
-		}
-		else {
-			_logger.error("Unable to create socket containers.");
-		}
+		_informationFlowModel.addName(FiledescrName.create(host, pid, fd1), sock1Container);
+		_informationFlowModel.addName(FiledescrName.create(host, pid, fd2), sock2Container);
+		_informationFlowModel.addName(OSInternalName.create(host, socketname1), sock1Container);
+		_informationFlowModel.addName(OSInternalName.create(host, socketname2), sock2Container);
+		_informationFlowModel.addAlias(sock1Container, sock2Container);
+		_informationFlowModel.addAlias(sock2Container, sock1Container);
 
 		return STATUS_OKAY;
 	}

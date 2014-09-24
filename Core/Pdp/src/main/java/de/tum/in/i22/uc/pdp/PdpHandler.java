@@ -82,16 +82,11 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public void notifyEventAsync(IEvent event) {
 		IResponse res = _pdp.notifyEvent(event);
+
 		if (event.isActual()) {
 			getPip().update(event);
 		}
 
-		/*
-		 * FIXME: It seems that as of now PolicyDecisionPoint
-		 * handles all events as being actual events. This needs
-		 * to be changed. Updating the distributed state must then
-		 * only be performed if the event is actual.
-		 */
 		if (res instanceof DistributedPdpResponse) {
 			_distributionManager.update(res);
 		}
@@ -115,17 +110,11 @@ public class PdpHandler extends PdpProcessor {
 
 		if (event.isActual()) {
 			getPip().update(event);
-		} else if (res.getAuthorizationAction().isStatus(EStatus.ALLOW) && event.allowImpliesActual()) {
+		} else if (res.isAuthorizationAction(EStatus.ALLOW) && event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
 			notifyEventAsync(ev2);
 		}
 
-		/*
-		 * FIXME: It seems that as of now PolicyDecisionPoint
-		 * handles all events as being actual events. This needs
-		 * to be changed. Updating the distributed state must then
-		 * only be performed if the event is actual.
-		 */
 		if (res instanceof DistributedPdpResponse) {
 			_distributionManager.update(res);
 		}

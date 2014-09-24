@@ -15,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 
 /**
  * MessageFactory
@@ -82,7 +83,10 @@ public class MessageFactory implements IMessageFactory {
 	}
 
 	public static IName createName(String name) {
-		if (name.startsWith(CellName.PREFIX)){
+		if (name.startsWith(SocketName.PREFIX)){
+			return SocketName.create(name);
+		}
+		else if (name.startsWith(CellName.PREFIX)){
 			return CellName.create(name);
 		}
 		else {

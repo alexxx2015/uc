@@ -123,17 +123,22 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_interrupted = true;
 	}
 
-	public synchronized Decision notifyEvent(IEvent event, Decision d) {
+	public Decision notifyEvent(IEvent event, Decision d) {
 		_logger.debug("updating mechanism [{}]", _name);
 
 		if (_triggerEvent.matches(event)) {
 			_logger.info("Trigger event matches -> evaluating condition");
 
-			if (_condition.tick()) {
-				_logger.info("Condition satisfied; merging mechanism into decision");
-				d.processMechanism(this, event);
-			} else {
-				_logger.info("Condition NOT satisfied");
+			/*
+			 * synchronize with tick()
+			 */
+			synchronized(this) {
+				if (_condition.tick()) {
+					_logger.info("Condition satisfied; merging mechanism into decision");
+					d.processMechanism(this, event);
+				} else {
+					_logger.info("Condition NOT satisfied");
+				}
 			}
 		}
 
@@ -153,7 +158,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 
-	private synchronized boolean mechanismUpdate() {
+	private boolean tick() {
 		long now = System.currentTimeMillis();
 		long elapsedLastUpdate = now - _lastUpdate;
 		long difference = elapsedLastUpdate - _timestepSize;
@@ -179,7 +184,14 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_logger.debug("//////////////////////////////////////////////////////");
 		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
 
-		boolean conditionValue = _condition.tick();
+
+		/*
+		 * synchronize with notifyEvent()
+		 */
+		boolean conditionValue;
+		synchronized(this) {
+			conditionValue = _condition.tick();
+		}
 		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("//////////////////////////////////////////////////////");
 
@@ -203,8 +215,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		while (!_interrupted) {
 			try {
-				boolean mechanismValue = mechanismUpdate();
-				if (mechanismValue) {
+				if (tick()) {
 					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
 					for (ExecuteAction execAction : getExecuteAsyncActions()) {
 						if (execAction.getProcessor().equals("pep"))

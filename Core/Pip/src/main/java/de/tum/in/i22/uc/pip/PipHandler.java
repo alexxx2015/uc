@@ -8,6 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
@@ -22,7 +24,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.factories.MessageFactory;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -98,11 +101,15 @@ public class PipHandler extends PipProcessor {
 		return _ifModel.getData(containerName);
 	}
 
+	private Stopwatch _stopwatchUpdate = Stopwatch.createUnstarted();
+	private Stopwatch _stopwatchUpdateSimulating = Stopwatch.createUnstarted();
+
 	@Override
 	public IStatus update(IEvent event) {
-		String eventName = event.getName();
+//		_stopwatchUpdate.start();
+
 		IEventHandler eventHandler = null;
-		IStatus status;
+		IStatus status = null;
 
 		/*
 		 * Get the event handler and perform the information flow update
@@ -112,32 +119,37 @@ public class PipHandler extends PipProcessor {
 		try {
 			eventHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
-			return new StatusBasic(EStatus.ERROR,
-					"Could not instantiate event handler for " + eventName + ", "
-							+ e.getMessage());
+			_logger.error("Could not instantiate event handler for " + event.getName() + ", " + e.getMessage());
+			eventHandler = null;
 		}
 
 		if (eventHandler == null) {
-			return new StatusBasic(EStatus.ERROR);
+			_logger.error("EventHandler is null. Unable to update PIP state,");
+			status = new StatusBasic(EStatus.ERROR);
 		}
+		else {
+			eventHandler.setEvent(event);
+			eventHandler.setInformationFlowModel(_ifModelManager);
+			eventHandler.setDistributionManager(_distributionManager);
 
-		eventHandler.setEvent(event);
-		eventHandler.setInformationFlowModel(_ifModelManager);
+			_logger.info("Executing PipHandler for " + event);
+			status = eventHandler.performUpdate();
 
-		_logger.info("Executing PipHandler for " + event);
-		status = eventHandler.performUpdate();
+			/*
+			 * The returned status will tell us whether we have to do some more
+			 * work, namely remote data flow tracking and policy shipment
+			 */
+			if (!isSimulating() && status instanceof DistributedPipStatus) {
+				_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
+			}
 
-		/*
-		 * The returned status will tell us whether we have to do some more
-		 * work, namely remote data flow tracking and policy shipment
-		 */
-		if (!isSimulating() && status instanceof DistributedPipStatus) {
-			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
+			if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
+				_logger.debug(this.toString());
+			}
 		}
-
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
-			_logger.debug(this.toString());
-		}
+//
+//		_stopwatchUpdate.stop();
+//		System.out.println("Total time in update: " + _stopwatchUpdate.toString());
 
 		return status;
 	}
@@ -194,8 +206,12 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		_logger.debug("initialRepresentation(" + containerName + "," + data
-				+ ")");
+		_logger.debug("initialRepresentation(" + containerName + "," + data + ")");
+
+		/*
+		 * Convert to a 'more' proper IName object.
+		 */
+		containerName = MessageFactory.createName(containerName.getName());
 
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {

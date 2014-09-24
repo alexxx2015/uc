@@ -26,8 +26,6 @@ public abstract class Location implements IName {
 		return _location;
 	}
 
-
-
 	public enum ELocation {
 		LOCAL,
 		IP;

@@ -6,16 +6,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.OSInternalName;
-import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Domain;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer.Type;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
-public class AcceptEventHandler extends BaseEventHandler {
+public class AcceptEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
@@ -31,7 +29,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 		IName localSocketName = null;
 		SocketName remoteSocketName = null;
 		IContainer localAcceptedSocket = null;
-		IContainer remoteConnectedSocket = null;
+		SocketContainer remoteConnectedSocket = null;
 
 		try {
 			host = getParameterValue("host");
@@ -72,17 +70,17 @@ public class AcceptEventHandler extends BaseEventHandler {
 		// remote_socket_name := ((a,x),sn(e))
 		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
+		IPLocation remoteResponsibleLocation = _distributionManager.getResponsibleLocation(remoteIP);
 
-		if (!localIP.equals(remoteIP)) {
+		if (!sameResponsibleLocation(remoteResponsibleLocation, IPLocation.localIpLocation)) {
 			// client is remote
 
 			// create a 'proxy' container and name it.
-			remoteConnectedSocket = new RemoteSocketContainer(remoteSocketName, domain, type,
-					new IPLocation(remoteIP, remotePort));
+			remoteConnectedSocket = new SocketContainer(domain, type, remoteResponsibleLocation, remoteSocketName);
 			_informationFlowModel.addName(remoteSocketName, remoteConnectedSocket);
 
 			// create new local container c and name it, f[(p,(sn(e),(a,x))) <- c]
-			localAcceptedSocket = new SocketContainer(domain, type);
+			localAcceptedSocket = new SocketContainer(domain, type, IPLocation.localIpLocation);
 			_informationFlowModel.addName(localSocketName, localAcceptedSocket);
 
 			// add alias on both directions
@@ -100,7 +98,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 				// accept() happens before connect().
 
 				// create new container c and name it, f[(p,(sn(e),(a,x))) <- c]
-				localAcceptedSocket = new SocketContainer(domain, type);
+				localAcceptedSocket = new SocketContainer(domain, type, IPLocation.localIpLocation);
 				_informationFlowModel.addName(localSocketName, localAcceptedSocket);
 
 				/*
@@ -114,7 +112,7 @@ public class AcceptEventHandler extends BaseEventHandler {
 				 * The container can be identified upon connect() using the socket name that
 				 * is called 'remoteSocketName' and that will be called 'localSocketName' upon connect().
 				 */
-				remoteConnectedSocket = new SocketContainer(domain, type);
+				remoteConnectedSocket = new SocketContainer(domain, type, IPLocation.localIpLocation, remoteSocketName);
 				_informationFlowModel.addName(remoteSocketName, remoteConnectedSocket);
 
 				// add aliases in both directions

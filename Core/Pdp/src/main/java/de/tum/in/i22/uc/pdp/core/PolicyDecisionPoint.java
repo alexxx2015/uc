@@ -225,12 +225,10 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 				mech.stopSimulation();
 			}
 
-//			if (_stateBasedOperatorChanges.isEmpty() && _eventMatches.isEmpty()) {
 			if (_changedOperators.isEmpty()) {
 				response = decision.toResponse();
 			}
 			else {
-//				response = new DistributedPdpResponse(decision.toResponse(), _eventMatches, _stateBasedOperatorChanges);
 				response = new DistributedPdpResponse(decision.toResponse(), _changedOperators);
 			}
 		}
@@ -266,8 +264,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		}
 
 		// prepare for next
-//		_eventMatches.clear();
-//		_stateBasedOperatorChanges.clear();
 		_changedOperators.clear();
 
 		return response;

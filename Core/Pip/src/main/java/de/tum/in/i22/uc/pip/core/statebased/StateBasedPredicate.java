@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.pip.core.statebased;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -12,15 +12,15 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 	private final static String SEPARATOR1 = Settings.getInstance().getSeparator1();
 	protected final static String SEPARATOR2 = Settings.getInstance().getSeparator2();
 
-	protected final IInformationFlowModel _informationFlowModel;
+	protected final IAnyInformationFlowModel _informationFlowModel;
 
 
-	public StateBasedPredicate(String predicate, IInformationFlowModel informationFlowModel) {
+	public StateBasedPredicate(String predicate, IAnyInformationFlowModel informationFlowModel) {
 		_predicate = predicate;
 		_informationFlowModel = informationFlowModel;
 	}
 
-	public static IStateBasedPredicate create(String predicate, IInformationFlowModel ifm) throws InvalidStateBasedFormulaException {
+	public static IStateBasedPredicate create(String predicate, IAnyInformationFlowModel ifm) throws InvalidStateBasedFormulaException {
 		IStateBasedPredicate spredicate = null;
 
 		InvalidStateBasedFormulaException exc = new InvalidStateBasedFormulaException("Predicate {" + predicate + "} is invalid.");

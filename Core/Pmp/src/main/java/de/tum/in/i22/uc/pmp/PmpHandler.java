@@ -192,12 +192,14 @@ public class PmpHandler extends PmpProcessor {
 			for (ParamMatchType p : mech.getTrigger().getParams()) {
 				if (p.getType().equals(_DATAUSAGE)) {
 					String value = p.getValue();
-					String dataIds = p.getDataID();
+					String dataIds;
 					IName contName = MessageFactory.createName(value);
 
-					if (dataIds != null) {
+					if (p.isSetDataID()) {
 						// in this case there was a data id within the policy.
 						// Let's use it.
+
+						dataIds = p.getDataID();
 
 						Set<IData> dataSet = createDataSetFromParamValue(dataIds);
 						IStatus status = getPip().initialRepresentation(contName, dataSet);
@@ -346,17 +348,17 @@ public class PmpHandler extends PmpProcessor {
 			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
 
 			if (Settings.getInstance().getDistributionEnabled()) {
-				/*
-				 * As registering the policy for remote
-				 * purposes might take a while, we start
-				 * the registration process in a new thread and go on.
-				 */
-				new Thread() {
-					@Override
-					public void run() {
+//				/*
+//				 * As registering the policy for remote
+//				 * purposes might take a while, we start
+//				 * the registration process in a new thread and go on.
+//				 */
+//				new Thread() {
+//					@Override
+//					public void run() {
 						_distributionManager.registerPolicy(convertedXmlPolicy);
-					}
-				}.start();
+//					}
+//				}.start();
 			}
 
 			// finally, deploy at the PDP

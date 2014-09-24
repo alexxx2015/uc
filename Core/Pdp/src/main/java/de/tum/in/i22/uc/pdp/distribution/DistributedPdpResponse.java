@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.distribution;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -18,8 +19,6 @@ import de.tum.in.i22.uc.pdp.core.operators.Operator;
 public class DistributedPdpResponse implements IResponse {
 
 	private final IResponse _response;
-//	private final List<EventMatchOperator> _eventMatches;
-//	private final List<StateBasedOperator> _stateBasedOperatorTrue;
 	private final List<Operator> _changedOperators;
 
 	/**
@@ -32,19 +31,8 @@ public class DistributedPdpResponse implements IResponse {
 	 */
 	public DistributedPdpResponse(IResponse response, List<Operator> changedOperators) {
 		_response = response;
-
-//		_eventMatches = new LinkedList<>(eventMatches);
-//		_stateBasedOperatorTrue = new LinkedList<>(stateBasedOperatorTrue);
 		_changedOperators = new LinkedList<>(changedOperators);
 	}
-
-//	public List<EventMatchOperator> getEventMatches() {
-//		return _eventMatches;
-//	}
-//
-//	public List<StateBasedOperator> getStateBasedOperatorTrue() {
-//		return _stateBasedOperatorTrue;
-//	}
 
 	public List<Operator> getChangedOperators() {
 		return _changedOperators;
@@ -74,5 +62,10 @@ public class DistributedPdpResponse implements IResponse {
 	@Override
 	public IEvent getModifiedEvent() {
 		return _response.getModifiedEvent();
+	}
+
+	@Override
+	public boolean isAuthorizationAction(EStatus status) {
+		return _response.isAuthorizationAction(status);
 	}
 }
