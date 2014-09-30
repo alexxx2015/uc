@@ -114,6 +114,8 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
 	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+	
+	private static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -246,6 +248,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
 		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
+		
+		loadSetting(PROP_NAME_javaPipMonitor, false);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -581,4 +585,9 @@ public class Settings extends SettingsLoader {
 	public Set<String> getPmpInitialPolicies() {
 		return getValue(PROP_NAME_pmpInitialPolicies);
 	}
+	
+	public boolean getJavaPipMonitor() {
+		return getValue(PROP_NAME_javaPipMonitor);
+	}
+	
 }

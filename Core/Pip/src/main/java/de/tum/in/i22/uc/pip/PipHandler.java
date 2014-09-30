@@ -35,6 +35,7 @@ import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
+import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 
 public class PipHandler extends PipProcessor {
@@ -144,8 +145,17 @@ public class PipHandler extends PipProcessor {
 				&& status instanceof DistributedPipStatus) {
 
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
+		}else if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
+			IName contName = ((JavaPipStatus) status).getContName();
+			Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
+			
+			//send this information to the java pip monitor for update
+		
 		}
-
+		
+		
+		
+		
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 			_logger.debug(this.toString());
 		}
