@@ -265,4 +265,15 @@ TAny2Any.Iface {
 		return _pipServer.getDataFromId(id);
 	}
 
+	@Override
+	public TStatus addListener(String ip, int port, String id, String filter)
+			throws TException {
+		return _pipServer.addListener(ip, port, id, filter);
+	}
+
+	@Override
+	public TStatus setUpdateFrequency(int msec, String id) throws TException {
+		return _pipServer.setUpdateFrequency(msec,id);
+	}
+
 }

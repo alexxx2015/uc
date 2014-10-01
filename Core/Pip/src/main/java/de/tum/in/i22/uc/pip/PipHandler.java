@@ -37,6 +37,8 @@ import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
+import de.tum.in.i22.uc.pip.extensions.javapip.JavaPipManager;
+import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -52,6 +54,12 @@ public class PipHandler extends PipProcessor {
 	//	 * Manages everything related to distributed data flow tracking
 	//	 */
 	//	private final PipDistributionManager _distributedPipManager;
+	
+	/**
+	 * Manager for remote Java Pip
+	 */
+	private final JavaPipManager _javaPipManager;
+	
 
 	public PipHandler() {
 		this(new InformationFlowModelManager());
@@ -65,7 +73,11 @@ public class PipHandler extends PipProcessor {
 		//		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
-
+		
+		_javaPipManager = new JavaPipManager();
+		Thread tjpip= new Thread(_javaPipManager);
+		tjpip.start();
+		
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
 				null, true));
@@ -149,8 +161,6 @@ public class PipHandler extends PipProcessor {
 			IName contName = ((JavaPipStatus) status).getContName();
 			Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
 			
-			//send this information to the java pip monitor for update
-		
 		}
 		
 		
@@ -317,5 +327,15 @@ public class PipHandler extends PipProcessor {
 	public IData getDataFromId(String id) {
 		IData d=_ifModelManager.getDataFromId(id);
 		return (d==null)?new DataBasic("null"):d;
+	}
+
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		return _javaPipManager.addListener(ip, port, id, filter);
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		return _javaPipManager.setUpdateFrequency(msec, id);
 	}
 }

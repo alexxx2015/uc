@@ -62,8 +62,6 @@ public interface IPip2Pip {
 	@AThriftMethod(signature="set<string> whoHasData(1: set<Types.TData> data, 2: Types.int recursionDepth)")
 	public Set<Location> whoHasData(Set<IData> data, int recursionDepth);
 
-	
-	
 	/*
 	 * Structured dft methods
 	 */

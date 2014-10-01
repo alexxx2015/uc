@@ -230,4 +230,23 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 		return null;
 	}
+
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		try {
+			return ThriftConverter.fromThrift(_handle.addListener(ip, port, id, filter));
+		} catch (TException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		try {
+			return ThriftConverter.fromThrift(_handle.setUpdateFrequency(msec, id));
+		} catch (TException e) {
+			e.printStackTrace();
+		}		return null;
+	}
 }

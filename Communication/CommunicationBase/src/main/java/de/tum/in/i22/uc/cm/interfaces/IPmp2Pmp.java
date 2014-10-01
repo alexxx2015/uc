@@ -48,7 +48,7 @@ public interface IPmp2Pmp {
 	@AThriftMethod(signature="Types.TStatus deployPolicyRawXMLPmp(1: string xml)")
 	public IStatus deployPolicyRawXMLPmp(String xml);
 
-	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(Types.TData data)")
+	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(1: Types.TData data)")
 	public Set<XmlPolicy> getPolicies(IData data);
 
 	@AThriftMethod(signature="Types.TStatus specifyPolicyFor(1: set<Types.TContainer> representations, 2:string dataClass)")
