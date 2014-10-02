@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.thrift.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +46,8 @@ class ThriftPip2JPipClient extends Pip2JPipClient {
 	}
 
 	@Override
-	public void notifyAsync(IEvent updateEvent) {
-		_impl.notifyAsync(updateEvent);
+	public void notifyAsync(List<IEvent> eventList) {
+		_impl.notifyAsync(eventList);
 	}
 
 }

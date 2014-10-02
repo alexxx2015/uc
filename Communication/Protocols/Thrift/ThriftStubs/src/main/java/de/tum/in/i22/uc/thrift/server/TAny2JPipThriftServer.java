@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.server;
 
+import java.util.List;
+
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,8 @@ class TAny2JPipThriftServer extends ThriftServerHandler implements TPip2JPip.Ifa
 	private static Logger _logger = LoggerFactory.getLogger(TAny2JPipThriftServer.class);
 
 	@Override
-	public void notifyAsync(TEvent updateEvent) throws TException {
-		_logger.debug("Hi, I'm a JPip server!");
-		
+	public void notifyAsync(List<TEvent> eventList) throws TException {
+		_logger.debug("Hi, I'm a JPIP server");
 	}
+
 }

@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.thrift.client;
 
+import java.util.List;
+
 import org.apache.thrift.TException;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -16,9 +18,9 @@ class ThriftAny2JPipImpl implements IPip2JPip {
 	}
 
 	@Override
-	public void notifyAsync(IEvent updateEvent) {
+	public void notifyAsync(List<IEvent> eventList) {
 		try {
-			_handle.notifyAsync(ThriftConverter.toThrift(updateEvent));
+			_handle.notifyAsync(ThriftConverter.toThriftEventList(eventList));
 		} catch (TException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

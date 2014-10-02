@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,6 @@ import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
 import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.javapip.JavaPipManager;
-import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -158,13 +158,36 @@ public class PipHandler extends PipProcessor {
 
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 		}else if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
-			IName contName = ((JavaPipStatus) status).getContName();
-			Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
+			//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
+			
+			switch (event.getName()){
+			case "Source":
+			case "Sink":
+				IName contName = ((JavaPipStatus) status).getContName();
+				Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
+
+				String dataSetString = "";
+				for (IData d: dataSet){
+					dataSetString = dataSetString + " ";
+				}
+				
+				event.getParameters().put("JavaPipContName", contName.getName());
+				event.getParameters().put("JavaPipDataSet", dataSetString);
+								
+				try {
+					_javaPipManager.getMasterQueue().put(event);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			default:
+			}
+			
 			
 		}
 		
-		
-		
+			
 		
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 			_logger.debug(this.toString());
@@ -331,11 +354,41 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus addListener(String ip, int port, String id, String filter) {
-		return _javaPipManager.addListener(ip, port, id, filter);
+		//we use event objects to communicate with the updater thread manager
+		Map<String,String> pars = new HashMap<String,String>();
+		pars.put("ip", ip);
+		pars.put("port", ""+port);
+		pars.put("id", id);
+		pars.put("filter", filter);
+		
+		IEvent ev= new EventBasic("AddListener",pars);
+		
+		try {
+			_javaPipManager.getMasterQueue().put(ev);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	@Override
 	public IStatus setUpdateFrequency(int msec, String id) {
-		return _javaPipManager.setUpdateFrequency(msec, id);
+		//we use event objects to communicate with the updater thread manager
+		Map<String,String> pars = new HashMap<String,String>();
+		pars.put("msec", ""+msec);
+		pars.put("id", id);
+		
+		IEvent ev= new EventBasic("setUpdateFrequency",pars);
+		
+		try {
+			_javaPipManager.getMasterQueue().put(ev);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		return new StatusBasic(EStatus.OKAY);
 	}
 }
