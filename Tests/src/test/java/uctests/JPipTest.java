@@ -1,13 +1,8 @@
 package uctests;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -38,7 +31,17 @@ public class JPipTest extends GenericTest {
 		IThriftServer srv= ThriftServerFactory.createJPipThriftServer(port);
 		new Thread(srv).start();
 		
-		pip.addListener("localhost", port, id, " ");
+
+		ThriftClientFactory tcf = new ThriftClientFactory();
+		Any2PipClient client = tcf.createAny2PipClient(new IPLocation("localhost", port));
+		try {
+			client.connect();
+			client.addListener("localhost", port, id, " ");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+//		pip.addListener("localhost", port, id, " ");
 		
 		pip.setUpdateFrequency(2000, id);
 		
