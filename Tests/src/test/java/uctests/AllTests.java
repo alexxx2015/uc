@@ -27,7 +27,7 @@ import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 	StateBasedOperatorTest.class, TestConnectionManager.class,
 	TestPep2PdpCommunication.class, TestPmp2PdpCommunication.class,
 	TestPmp2PipCommunication.class, TestThriftPep.class, ThriftTest.class,
-	DistributionTest.class })
+	DistributionTest.class, JPipTest.class })
 public class AllTests extends GenericTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(AllTests.class);

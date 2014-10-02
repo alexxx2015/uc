@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.extensions.javapip;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +9,9 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -15,6 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2JPipClient;
+import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 /**
@@ -26,14 +31,17 @@ import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
  */
 
 public class JavaPipManager implements Runnable {
+	private static final Logger _logger = LoggerFactory
+			.getLogger(JavaPipManager.class);
+
 	private HashMap<String, String> _filter;
-	private HashMap<String, updaterThread> _pool;
+	private HashMap<String, UpdaterThread> _pool;
 
 	private BlockingQueue<IEvent> _masterQueue;
 
 	public JavaPipManager() {
 		_filter = new HashMap<String, String>();
-		_pool = new HashMap<String, updaterThread>();
+		_pool = new HashMap<String, UpdaterThread>();
 
 		_masterQueue = new LinkedBlockingQueue<>();
 	}
@@ -53,7 +61,7 @@ public class JavaPipManager implements Runnable {
 		// TODO: sanitize inputs
 
 		Location loc = new IPLocation(ip, port);
-		updaterThread newUpdater = new updaterThread(loc, filter);
+		UpdaterThread newUpdater = new UpdaterThread(loc, filter);
 
 		_pool.put(id, newUpdater);
 		_filter.put(id, filter);
@@ -84,7 +92,10 @@ public class JavaPipManager implements Runnable {
 		for (String id : _pool.keySet()){
 			if (eventMatchesFilter(ev, _filter.get(id))){
 				try {
-					_pool.get(id).getQueue().put(ev);
+					BlockingQueue<IEvent> q=_pool.get(id).getQueue();
+					synchronized (q) {
+						q.put(ev);	
+					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -100,15 +111,18 @@ public class JavaPipManager implements Runnable {
 		if (filter.startsWith("PID")){
 			return ev.getParameters().get("PID").equals(filter.split(":")[1]);
 		}
-		return false;
+		return true;
 	}
 
 	
 	
 	public void run() {
+		_logger.debug("Java Pip Manager Started");
 		try {
 			while (true) {
 				IEvent ev = (IEvent)_masterQueue.take();
+				_logger.debug("event ("+ev+") taken from the queue. new size="+_masterQueue.size());
+				
 				switch (ev.getName()){
 				case "AddListener": 
 					addListener(ev);
@@ -121,7 +135,7 @@ public class JavaPipManager implements Runnable {
 					updateQueues(ev);
 					break;
 				default:
-					throw new RuntimeException("Wrogn event sent to JAVA PIP MANAGER");
+					throw new RuntimeException("Wrong event sent to JAVA PIP MANAGER : "+ev);
 				}
 			}
 		} catch (InterruptedException ex) {
@@ -129,7 +143,10 @@ public class JavaPipManager implements Runnable {
 		}
 	}
 
-	protected class updaterThread implements Runnable {
+	protected class UpdaterThread implements Runnable {
+		private final Logger _logger = LoggerFactory
+				.getLogger(UpdaterThread.class);
+
 		private final BlockingQueue<IEvent> _queue;
 		private final Location _loc;
 		private final String _filter;
@@ -137,7 +154,7 @@ public class JavaPipManager implements Runnable {
 
 		private int _frequency = 100;
 
-		public updaterThread(Location loc, String filter) {
+		public UpdaterThread(Location loc, String filter) {
 			_queue = new LinkedBlockingQueue<IEvent>();
 			_loc = loc;
 			_filter = filter;
@@ -148,6 +165,8 @@ public class JavaPipManager implements Runnable {
 
 		@Override
 		public void run() {
+			_logger.debug("Updater ("+_loc.asString()+") Started");
+
 			while (true) {
 				Iterator<IEvent> i = _queue.iterator();
 				List<IEvent> eventList = new LinkedList<IEvent>();
@@ -171,6 +190,14 @@ public class JavaPipManager implements Runnable {
 		}
 
 		public void send(List<IEvent> eventList) {
+			if (eventList!=null && eventList.size()>0)
+				_logger.debug("Updater ("+_loc.asString()+") : list to be sent = " + eventList);
+				try {
+					_handle.connect();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			_handle.notifyAsync(eventList);
 		}
 

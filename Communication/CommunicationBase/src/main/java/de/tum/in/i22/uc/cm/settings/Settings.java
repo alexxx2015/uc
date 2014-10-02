@@ -249,7 +249,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
 		
-		loadSetting(PROP_NAME_javaPipMonitor, false);
+		loadSetting(PROP_NAME_javaPipMonitor, true);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {

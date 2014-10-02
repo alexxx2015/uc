@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,28 +158,39 @@ public class PipHandler extends PipProcessor {
 				&& status instanceof DistributedPipStatus) {
 
 			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
-		}else if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
-			//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
+		}else 
 			
+			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
+			//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
+			_logger.debug("JAVAPIPMANGER NOTIFICATION");
+
 			switch (event.getName()){
 			case "Source":
 			case "Sink":
 				IName contName = ((JavaPipStatus) status).getContName();
 				Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
 
+				if (dataSet==null || contName==null) break;
+				
 				String dataSetString = "";
 				for (IData d: dataSet){
 					dataSetString = dataSetString + " ";
 				}
 				
-				event.getParameters().put("JavaPipContName", contName.getName());
-				event.getParameters().put("JavaPipDataSet", dataSetString);
+				Map<String,String> map=new HashMap<String, String>();
+				map.putAll(event.getParameters());
+				map.put("JavaPipContName", contName.getName());
+				map.put("JavaPipDataSet", dataSetString);
+				IEvent e=new EventBasic(event.getName(), map, event.isActual(), event.getTimestamp());
 								
 				try {
-					_javaPipManager.getMasterQueue().put(event);
-				} catch (InterruptedException e) {
+					BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+					_logger.debug("("+e+") queue size before= " +q.size());
+					q.put(e);
+					_logger.debug("("+e+") queue size after= " +q.size());
+				} catch (InterruptedException ex) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ex.printStackTrace();
 				}
 				break;
 			default:
@@ -342,6 +354,7 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public void stop() {
+		
 		// TODO Auto-generated method stub
 
 	}
@@ -364,7 +377,10 @@ public class PipHandler extends PipProcessor {
 		IEvent ev= new EventBasic("AddListener",pars);
 		
 		try {
-			_javaPipManager.getMasterQueue().put(ev);
+			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+			_logger.debug("("+ev+") queue size before= " +q.size());
+			q.put(ev);
+			_logger.debug("("+ev+")queue size after= " +q.size());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -380,10 +396,13 @@ public class PipHandler extends PipProcessor {
 		pars.put("msec", ""+msec);
 		pars.put("id", id);
 		
-		IEvent ev= new EventBasic("setUpdateFrequency",pars);
+		IEvent ev= new EventBasic("SetUpdateFrequency",pars);
 		
 		try {
-			_javaPipManager.getMasterQueue().put(ev);
+			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+			_logger.debug("("+ev+") queue size before= " +q.size());
+			q.put(ev);
+			_logger.debug("("+ev+")queue size after= " +q.size());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
