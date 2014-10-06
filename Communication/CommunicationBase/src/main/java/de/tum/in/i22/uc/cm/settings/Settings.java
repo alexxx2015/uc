@@ -593,7 +593,15 @@ public class Settings extends SettingsLoader {
 	}
 
 	public String getPtpResources(){
-		return getValue(PROP_NAME_ptpResources);
+		String path = getValue(PROP_NAME_ptpResources);
+
+		// for Windows
+		path = path.replace("\\", File.separator);
+
+		// for Unix
+		path = path.replace("/", File.separator);
+
+		return path;
 	}
 
 	public String getPtEditorResources(){
