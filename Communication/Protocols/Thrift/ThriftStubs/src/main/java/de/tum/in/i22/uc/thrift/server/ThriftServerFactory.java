@@ -129,8 +129,10 @@ public class ThriftServerFactory {
 				new TPip2JPip.Processor<TAny2JPipThriftServer>(new TAny2JPipThriftServer()));
 	}
 	
-	
-	
+	public static <T extends TPip2JPip.Iface> IThriftServer createJPipThriftServer(int port, T jPipProcessor) {
+		return createThriftServer(port,
+				new TPip2JPip.Processor<T>(jPipProcessor));
+	}	
 	
 	
 	
