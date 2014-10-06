@@ -25,6 +25,6 @@
 //	 * @param dataflow the data that was transferred
 //	 * @return
 //	 */
-//	@AThriftMethod(signature="Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.int srcPort, 3: string dstAddress, 4: Types.int dstPort, 5: set<Types.TData> data)")
+//	@AThriftMethod(signature="Types.TStatus informRemoteDataFlow(1: string srcAddress, 2: Types.tint srcPort, 3: string dstAddress, 4: Types.tint dstPort, 5: set<Types.TData> data)")
 //	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow);
 //}
