@@ -94,7 +94,7 @@ public class PdpTest extends GenericTest{
 		Assert.assertNotNull(response);
 	}
 
-
+/*
 	@Test
 	public void testPrachisPolicy() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
@@ -115,8 +115,7 @@ public class PdpTest extends GenericTest{
 
 		Assert.assertNotNull(response);
 	}
-
-
+*/
 
 	@Test
 	public void testExcel() throws Exception {
