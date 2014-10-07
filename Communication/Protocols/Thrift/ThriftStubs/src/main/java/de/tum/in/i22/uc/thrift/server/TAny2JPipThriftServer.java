@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import de.tum.in.i22.uc.thrift.types.TPip2JPip;
  */
 class TAny2JPipThriftServer extends ThriftServerHandler implements TPip2JPip.Iface {
 	private static Logger _logger = LoggerFactory.getLogger(TAny2JPipThriftServer.class);
+	
+	private BlockingQueue<IEvent> queue;
 
 	@Override
 	public void notifyAsync(List<TEvent> eventList) throws TException {
