@@ -2,10 +2,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.Iterator;
-import static java.nio.file.StandardCopyOption.*;
 import java.util.Set;
 
 import javafx.animation.FadeTransition;
@@ -34,8 +33,6 @@ import com.ibm.wala.util.CancelException;
 import com.ibm.wala.util.graph.GraphIntegrity.UnsoundGraphException;
 
 import console.DialogConsoleEventHandler;
-import console.InputStreamHandler;
-import console.OutputStreamHandler;
 import edu.kit.joana.flowanalyzer.AnalysisXMLReader;
 import edu.kit.joana.flowanalyzer.AnalysisXMLReader.TestRunData;
 import edu.kit.joana.flowanalyzer.MyObjSensReportTestRuns;
@@ -193,13 +190,14 @@ public class MainEventHandler {
 			
 			ProcessBuilder pb = new ProcessBuilder();
 //			pb.command("/usr/bin/xterm","-e","java","-jar",programFile.getAbsolutePath());
-			if(this.btnInstExec.isScaleShape()){
+			if(this.btnInstExec.isSelected()){
 				//Check if workind directory exist
 				String workingdir = "/workingdir";
 				if(this.getClass().getResource(workingdir) == null){
 					Utility.moveJars2Workingdir(System.getProperty("user.dir")+workingdir);
 				}
-				pb.command("java","-javaagent:","-Xbootclasspath/a:"+Utility.generateClassPath(workingdir),"-jar",programFile.getAbsolutePath());
+				this.generateUcConfigFile(workingdir);
+				pb.command("java","-javaagent:uc-java-pep-0.0.1-SNAPSHOT.jar","-Xbootclasspath/a:"+Utility.generateClassPath(workingdir),"-classpath",Utility.generateClassPath(workingdir),"-jar",programFile.getAbsolutePath());
 			}else{
 				pb.command("java","-jar",programFile.getAbsolutePath());
 			}
@@ -210,7 +208,7 @@ public class MainEventHandler {
 				Field f = p.getClass().getDeclaredField("pid");//On windows this field is called "handle"
 				f.setAccessible(true);
 				int pid = f.getInt(p);
-				Main.jPipCommunicationManager.getClient().addListener(JavaPipCommunicationManager.SERVER_HOST, JavaPipCommunicationManager.SERVER_PORT, "JavaPip"," ");// "PID:"+pid);
+//				Main.jPipCommunicationManager.getClient().addListener(JavaPipCommunicationManager.SERVER_HOST, JavaPipCommunicationManager.SERVER_PORT, "JavaPip"," ");// "PID:"+pid);
 				DialogConsoleEventHandler dcev = DialogConsoleEventHandler.showDialog(btnRunExec.getScene().getWindow());
 				dcev.start(p);
 				
@@ -231,6 +229,38 @@ public class MainEventHandler {
 				e.printStackTrace();
 			}
 		}
+	}
+	private void generateUcConfigFile(String workingdir){
+		URL url = MainEventHandler.class.getResource(workingdir);
+		String filename = url.getFile()+"/uc.config";
+		File f = new File(filename);
+		try {
+			StringBuilder content = new StringBuilder();
+			content.append("PIP_HOST="+tfPipHost.getText()+"\n");
+			content.append("PIP_PORT="+tfPipPort.getText()+"\n");
+			content.append("PDP_HOST="+tfPdpHost.getText()+"\n");
+			content.append("PDP_PORT="+tfPdpPort.getText()+"\n");
+			content.append("PMP_HOST="+tfPmpHost.getText()+"\n");
+			content.append("PMP_PORT="+tfPmpPort.getText()+"\n");
+			content.append("ANALYSIS_REPORT="+tfAnalysisReport.getText()+"\n");
+			content.append("INSTRUMENTED_CLASS_PATH="+tfInstClasspath.getText()+"\n");
+			content.append("ENFORCEMENT="+cbEnf.isSelected()+"\n");
+			content.append("BLACKLIST="+tfBlacklist.getText()+"\n");
+			content.append("INSTRUMENTATION="+cbInst.isSelected()+"\n");
+			content.append("STATISTICS="+tfStatisticsfile.getText()+"\n");
+			content.append("TIMER_T1="+cbT1.isSelected());
+			content.append("TIMER_T2="+cbT2.isSelected());
+			content.append("TIMER_T3="+cbT3.isSelected());
+			content.append("TIMER_T4="+cbT4.isSelected());
+			content.append("TIMER_T5="+cbT5.isSelected());
+			
+			FileWriter fw = new FileWriter(f);
+			fw.write(content.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@FXML
