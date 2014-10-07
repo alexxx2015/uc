@@ -3,6 +3,7 @@
 !docs/
 !pom.xml
 !.gitignore
+!lib/
 /target
 /target
 /target
