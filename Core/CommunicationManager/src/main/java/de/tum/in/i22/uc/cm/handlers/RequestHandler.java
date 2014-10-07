@@ -46,7 +46,7 @@ import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
 import de.tum.in.i22.uc.pip.PipHandler;
-import de.tum.in.i22.uc.pip.requests.AddListenerPipRequest;
+import de.tum.in.i22.uc.pip.requests.AddJPIPListenerPipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
@@ -594,8 +594,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
-		AddListenerPipRequest request = new AddListenerPipRequest(ip, port, id, filter);
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
+		AddJPIPListenerPipRequest request = new AddJPIPListenerPipRequest(ip, port, id, filter);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

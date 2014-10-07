@@ -19,9 +19,9 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  */
 @AThriftService(name="TJPip2Pip")
 public interface IJPip2Pip {
-	@AThriftMethod(signature="Types.TStatus addListener(1:string ip, 2:i32 port, 3:string id, 4:string filter)")
-	public IStatus addListener(String ip, int port, String id, String filter);
+	@AThriftMethod(signature="Types.TStatus addJPIPListener(1: string ip, 2: Types.int port, 3:string id, 4:string filter)")
+	public IStatus addJPIPListener(String ip, int port, String id, String filter);
 	
-	@AThriftMethod(signature="Types.TStatus setUpdateFrequency(1:i32 msec, 2:string id)")
+	@AThriftMethod(signature="Types.TStatus setUpdateFrequency(1: Types.int msec, 2:string id)")
 	public IStatus setUpdateFrequency(int msec, String id);
 }

@@ -266,9 +266,9 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus addListener(String ip, int port, String id, String filter)
+	public TStatus addJPIPListener(String ip, int port, String id, String filter)
 			throws TException {
-		return _pipServer.addListener(ip, port, id, filter);
+		return _pipServer.addJPIPListener(ip, port, id, filter);
 	}
 
 	@Override

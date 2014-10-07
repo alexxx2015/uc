@@ -484,8 +484,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
-		return _requestHandler.addListener(ip, port, id, filter);
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
+		return _requestHandler.addJPIPListener(ip, port, id, filter);
 	}
 
 	@Override

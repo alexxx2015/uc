@@ -191,8 +191,8 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
-		return _impl.addListener(ip, port, id, filter);
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
+		return _impl.addJPIPListener(ip, port, id, filter);
 	}
 
 	@Override

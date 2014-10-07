@@ -6,6 +6,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
@@ -55,13 +56,23 @@ public class ThriftClientFactory implements IClientFactory {
 	}
 
 	@Override
+	public JPip2PipClient createJPip2PipClient(Location location) {
+		if (location instanceof IPLocation) {
+			return new ThriftJPip2PipClient((IPLocation) location);
+		}
+		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
+	}
+
+
+	@Override
 	public Pip2JPipClient createPip2JPipClient(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPip2JPipClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
-
+	
+	
 	@Override
 	public Pep2PipClient createPep2PipClient(Location location) {
 		if (location instanceof IPLocation) {
