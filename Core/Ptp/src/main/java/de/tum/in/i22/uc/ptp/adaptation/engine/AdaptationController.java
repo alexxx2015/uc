@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.ptp.adaptation.engine;
 
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel;
 
 public class AdaptationController {
 

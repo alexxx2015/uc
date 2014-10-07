@@ -13,11 +13,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel;
 import de.tum.in.i22.uc.ptp.adaptation.engine.AdaptationController;
 import de.tum.in.i22.uc.ptp.adaptation.engine.DomainMergeException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.InvalidDomainModelFormatException;
 import de.tum.in.i22.uc.ptp.adaptation.engine.ModelLoader;
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
 import de.tum.in.i22.uc.ptp.utilities.Config;
 
 public class AdaptationEngineTest {
