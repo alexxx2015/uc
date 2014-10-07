@@ -24,10 +24,10 @@
 <psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="externalCont" pos="4"/>
 <psmcontainers contimplementedas="//@isms/@ismcontainers.6 " name="memLoc" pos="5"/>
 <psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.0 " inputcontainer="//@psms/@psmcontainers.0 " name="saveEle" outputcontainer="//@psms/@psmcontainers.1 " pos="0" seq="0" system="WebBrowser"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 " inputcontainer="//@psms/@psmcontainers.1 " name="deleteFile" outputcontainer="//@psms/@psmcontainers.1 " pos="1" seq="0" system="OS"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.3 " inputcontainer="//@psms/@psmcontainers.1 " name="distributeFile" outputcontainer="//@psms/@psmcontainers.4 " pos="2" seq="0" system="OS"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.5 " inputcontainer="//@psms/@psmcontainers.1 " name="copyFile" outputcontainer="//@psms/@psmcontainers.1 " pos="3" seq="0" system="OS"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.4 " inputcontainer="//@psms/@psmcontainers.1 " name="takeScreenshot" outputcontainer="//@psms/@psmcontainers.2 " pos="4" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 " inputcontainer="//@psms/@psmcontainers.1 " name="deleteFile" outputcontainer="" pos="1" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.3 " inputcontainer="//@psms/@psmcontainers.1 " name="distributeFile" outputcontainer="" pos="2" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.5 " inputcontainer="//@psms/@psmcontainers.1 " name="copyFile" outputcontainer="" pos="3" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.4 " inputcontainer="//@psms/@psmcontainers.1 " name="takeScreenshot" outputcontainer="" pos="4" seq="0" system="OS"/>
 <psmsystems name="WebBrowser" pos="0" sysimplementedas="//@isms/@ismsystems.0 " systemtransformers="//@psms/@psmtransformers.0 "/>
 <psmsystems name="OS" pos="1" sysimplementedas="//@isms/@ismsystems.1 " systemtransformers="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1 //@psms/@psmtransformers.3 //@psms/@psmtransformers.4 "/>
 </psms>
@@ -40,11 +40,11 @@
 <ismcontainers name="window" pos="5"/>
 <ismcontainers name="buffer" pos="6"/>
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs" outputimplecontainer="//@isms/@ismcontainers.2 " pos="0" seq="0" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="del" outputimplecontainer="//@isms/@ismcontainers.2 " pos="1" seq="0" system="Win7"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="erase" outputimplecontainer="//@isms/@ismcontainers.2 " pos="2" seq="0" system="Win7"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="send" outputimplecontainer="//@isms/@ismcontainers.2 " pos="3" seq="0" system="Win7"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.5 " name="SetClipboardData" outputimplecontainer="//@isms/@ismcontainers.4 " pos="4" seq="0" system="Win7"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="ReadFile" outputimplecontainer="//@isms/@ismcontainers.6 " pos="5" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="del" outputimplecontainer="" pos="1" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="erase" outputimplecontainer="" pos="2" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="send" outputimplecontainer="" pos="3" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.5 " name="SetClipboardData" outputimplecontainer="" pos="4" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="ReadFile" outputimplecontainer="" pos="5" seq="0" system="Win7"/>
 <ismsystems implesystemtransformers="//@isms/@ismtransformers.0 " name="Firefox" pos="0"/>
 <ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " name="Win7" pos="1"/>
 </isms>

@@ -39,7 +39,23 @@
 							<outputDirectory>${basedir}/src/main/csharp</outputDirectory>
 							<compileOutput>false</compileOutput>
 						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
 					</execution>
+					
+					<execution>
+						<id>thrift-cpp-generation</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generator>cpp</generator>
+							<outputDirectory>${basedir}/src/main/cpp</outputDirectory>
+							<compileOutput>false</compileOutput>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>					
 				</executions>
 			</plugin>
 

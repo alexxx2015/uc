@@ -7,8 +7,8 @@ namespace java de.tum.in.i22.uc.thrift.types
  * Change the values for the platform and language you are compiling for
  */
 
-typedef i64 long
-typedef i32 int
+typedef i64 tlong
+typedef i32 tint
 
 enum TStatus {
 	OKAY = 1,
@@ -49,7 +49,7 @@ struct TAttribute {
 struct TEvent {
 	1: required string name,
 	2: map<string,string> parameters,
-	3: long timeStamp,
+	3: tlong timeStamp,
 	4: optional bool isActual = false
 	5: optional string comment	
 }
@@ -57,13 +57,13 @@ struct TEvent {
 struct TResponse {
 	1: TStatus status,
 	2: optional list<TEvent> executeEvents,
-	3: optional TEvent modifiedEvents,
+	3: optional TEvent modifiedEvent,
 	4: optional string comment
 }
 
 struct TPxpSpec{
 	1: string ip,
-	2: int port,
+	2: tint port,
 	3: string description,
 	4: string id
 }
@@ -111,7 +111,7 @@ enum TobiasStatusType {
 struct TobiasEvent {
 	1: string name,
 	2: map<string,string> parameters,
-	3: long timeStamp,
+	3: tlong timeStamp,
 	4: optional string comment
 }
 

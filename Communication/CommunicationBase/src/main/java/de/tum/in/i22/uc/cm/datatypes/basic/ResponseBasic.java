@@ -37,6 +37,9 @@ public class ResponseBasic implements IResponse {
 
 	@Override
 	public List<IEvent> getExecuteActions() {
+		if (_executeActions == null) {
+			return Collections.emptyList();
+		}
 		return Collections.unmodifiableList(_executeActions);
 	}
 

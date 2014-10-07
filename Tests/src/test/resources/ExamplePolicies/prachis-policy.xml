@@ -18,7 +18,7 @@
 							</eventMatch>
 						</or>
 						<not>
-							<stateBasedFormula operatorType="isNotIn" param1="city" param2="KlipperMem"/>
+							<stateBasedFormula operator="isNotIn" param1="city" param2="KlipperMem"/>
 						</not>
 					</or>
 					<or>

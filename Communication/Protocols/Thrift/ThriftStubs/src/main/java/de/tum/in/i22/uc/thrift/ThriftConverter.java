@@ -138,9 +138,14 @@ public final class ThriftConverter {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
+		IEvent modifiedEvent = null;
+		if (r.isSetModifiedEvent()) {
+			modifiedEvent = ThriftConverter.fromThrift(r.getModifiedEvent());
+		}
+
 		return new ResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
 				ThriftConverter.fromThriftEventList(r.getExecuteEvents()),
-				ThriftConverter.fromThrift(r.getModifiedEvents()));
+				modifiedEvent);
 	}
 
 	public static IPtpResponse fromThrift(TPtpResponse r) {
@@ -291,16 +296,24 @@ public final class ThriftConverter {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
-		TResponse res= new TResponse(ThriftConverter.toThrift(r
-				.getAuthorizationAction()));
-		List<TEvent> execTList = new LinkedList<TEvent>();
+		TResponse res= new TResponse(ThriftConverter.toThrift(r.getAuthorizationAction()));
+
+		List<TEvent> execTList = new LinkedList<>();
 		for (IEvent ev : r.getExecuteActions()){
 			execTList.add(ThriftConverter.toThrift(ev));
 		}
 		res.setExecuteEvents(execTList);
 		res.setExecuteEventsIsSet(true);
-		res.setModifiedEvents(ThriftConverter.toThrift(r.getModifiedEvent()));
-		res.setModifiedEventsIsSet(true);
+
+		if (r.getModifiedEvent() == null) {
+			res.setModifiedEventIsSet(false);
+		}
+		else {
+			res.setModifiedEvent(ThriftConverter.toThrift(r.getModifiedEvent()));
+			res.setModifiedEventIsSet(true);
+		}
+
+
 
 		return res;
 	}

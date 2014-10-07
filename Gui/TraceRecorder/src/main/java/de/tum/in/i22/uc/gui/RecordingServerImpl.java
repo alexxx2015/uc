@@ -25,11 +25,11 @@ public class RecordingServerImpl implements TPep2Pdp.Iface {
 	private static LinkedList<IEvent> ll = new LinkedList<IEvent>();
 	private IMessageFactory mf = MessageFactoryCreator.createMessageFactory();
 	private static Logger log = LoggerFactory.getLogger(RecordingServerImpl.class);
-	
+
 	public RecordingServerImpl() {
 		ll.clear();
 	}
-	
+
 	@Override
 	public void notifyEventAsync(TEvent pepEvent) throws TException {
 		log.debug("Async notified event "+ pepEvent);
@@ -40,9 +40,9 @@ public class RecordingServerImpl implements TPep2Pdp.Iface {
 	public TResponse notifyEventSync(TEvent pepEvent) throws TException {
 		log.debug("Sync notified event "+ pepEvent);
 		ll.add(ThriftConverter.fromThrift(pepEvent));
-		TResponse tr =new TResponse(TStatus.ALLOW); 
-		tr.setModifiedEvents(new TEvent("fakeModifiedEvent",new HashMap<String,String>(),0));
-		return tr; 
+		TResponse tr =new TResponse(TStatus.ALLOW);
+		tr.setModifiedEvent(new TEvent("fakeModifiedEvent",new HashMap<String,String>(),0));
+		return tr;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class RecordingServerImpl implements TPep2Pdp.Iface {
 	@Override
 	public TobiasResponse processEventSync(TobiasEvent e, String senderID)
 			throws TException {
-		Map<String,String> map = new HashMap<String,String>(e.getParameters()); 
+		Map<String,String> map = new HashMap<String,String>(e.getParameters());
 		log.debug("SyncT notified event "+ e);
 		ll.add(mf.createDesiredEvent(e.getName(), map));
 		return new TobiasResponse(TobiasStatusType.ALLOW);
