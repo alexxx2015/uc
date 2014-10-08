@@ -159,4 +159,17 @@ TAny2Pip.Iface {
 		_logger.debug("TAny2Pip: getDataFromID");
 		return ThriftConverter.toThrift(_handler.getDataFromId(id));
 	}
+
+	@Override
+	public TStatus addListener(String ip, int port, String id, String filter)
+			throws TException {
+		_logger.debug("TAny2Pip: addListener");
+		return ThriftConverter.toThrift(_handler.addListener(ip,port,id, filter));
+	}
+
+	@Override
+	public TStatus setUpdateFrequency(int msec, String id) throws TException {
+		_logger.debug("TAny2Pip: setUpdateFrequence");
+		return ThriftConverter.toThrift(_handler.setUpdateFrequency(msec,id));
+	}
 }

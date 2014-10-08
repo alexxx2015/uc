@@ -237,8 +237,20 @@ TAny2Any.Iface {
 	}
 
 	@Override
+
 	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
 		Set<TXmlPolicy> policies = _pmpServer.listPoliciesPmp();
 		return policies;
+	}
+
+	@Override
+	public TStatus addListener(String ip, int port, String id, String filter)
+			throws TException {
+		return _pipServer.addListener(ip, port, id, filter);
+	}
+
+	@Override
+	public TStatus setUpdateFrequency(int msec, String id) throws TException {
+		return _pipServer.setUpdateFrequency(msec,id);
 	}
 }

@@ -2,13 +2,13 @@ package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
@@ -37,6 +37,8 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
 import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
 import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
+import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
+import de.tum.in.i22.uc.pip.extensions.javapip.JavaPipManager;
 
 public class PipHandler extends PipProcessor {
 	private static final Logger _logger = LoggerFactory
@@ -47,6 +49,11 @@ public class PipHandler extends PipProcessor {
 	private final InformationFlowModelManager _ifModelManager;
 
 	private final PipManager _pipManager;
+
+	/**
+	 * Manager for remote Java Pip
+	 */
+	private final JavaPipManager _javaPipManager;
 
 	public PipHandler() {
 		this(new InformationFlowModelManager());
@@ -59,6 +66,10 @@ public class PipHandler extends PipProcessor {
 		_pipManager = new PipManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
+
+		_javaPipManager = new JavaPipManager();
+		Thread tjpip= new Thread(_javaPipManager);
+		tjpip.start();
 
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
@@ -101,12 +112,8 @@ public class PipHandler extends PipProcessor {
 		return _ifModel.getData(containerName);
 	}
 
-	private Stopwatch _stopwatchUpdate = Stopwatch.createUnstarted();
-	private Stopwatch _stopwatchUpdateSimulating = Stopwatch.createUnstarted();
-
 	@Override
 	public IStatus update(IEvent event) {
-//		_stopwatchUpdate.start();
 
 		IEventHandler eventHandler = null;
 		IStatus status = null;
@@ -143,13 +150,50 @@ public class PipHandler extends PipProcessor {
 				_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 			}
 
+			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
+				/*
+				 * TODO: Outsource this code.
+				 */
+				//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
+				_logger.debug("JAVAPIPMANGER NOTIFICATION");
+
+				switch (event.getName()){
+				case "Source":
+				case "Sink":
+					IName contName = ((JavaPipStatus) status).getContName();
+					Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
+
+					if (dataSet==null || contName==null) break;
+
+					String dataSetString = "";
+					for (IData d: dataSet){
+						dataSetString = dataSetString + " ";
+					}
+
+					Map<String,String> map=new HashMap<String, String>();
+					map.putAll(event.getParameters());
+					map.put("JavaPipContName", contName.getName());
+					map.put("JavaPipDataSet", dataSetString);
+					IEvent e=new EventBasic(event.getName(), map, event.isActual(), event.getTimestamp());
+
+					try {
+						BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+						_logger.debug("("+e+") queue size before= " +q.size());
+						q.put(e);
+						_logger.debug("("+e+") queue size after= " +q.size());
+					} catch (InterruptedException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					}
+					break;
+				default:
+				}
+			}
+
 			if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 				_logger.debug(this.toString());
 			}
 		}
-//
-//		_stopwatchUpdate.stop();
-//		System.out.println("Total time in update: " + _stopwatchUpdate.toString());
 
 		return status;
 	}
@@ -266,5 +310,51 @@ public class PipHandler extends PipProcessor {
 	public IData getDataFromId(String id) {
 		IData d = _ifModelManager.getDataFromId(id);
 		return (d == null) ? new DataBasic("null") : d;
+	}
+
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		//we use event objects to communicate with the updater thread manager
+		Map<String,String> pars = new HashMap<String,String>();
+		pars.put("ip", ip);
+		pars.put("port", ""+port);
+		pars.put("id", id);
+		pars.put("filter", filter);
+
+		IEvent ev= new EventBasic("AddListener",pars);
+
+		try {
+			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+			_logger.debug("("+ev+") queue size before= " +q.size());
+			q.put(ev);
+			_logger.debug("("+ev+")queue size after= " +q.size());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		//we use event objects to communicate with the updater thread manager
+		Map<String,String> pars = new HashMap<String,String>();
+		pars.put("msec", ""+msec);
+		pars.put("id", id);
+
+		IEvent ev= new EventBasic("SetUpdateFrequency",pars);
+
+		try {
+			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+			_logger.debug("("+ev+") queue size before= " +q.size());
+			q.put(ev);
+			_logger.debug("("+ev+")queue size after= " +q.size());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return new StatusBasic(EStatus.OKAY);
 	}
 }

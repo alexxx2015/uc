@@ -157,4 +157,14 @@ class ThriftAny2PipClient extends Any2PipClient {
 	public IData getDataFromId(String id) {
 		return _impl.getDataFromId(id);
 	}
+
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		return _impl.addListener(ip, port, id, filter);
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		return _impl.setUpdateFrequency(msec, id);
+	}
 }

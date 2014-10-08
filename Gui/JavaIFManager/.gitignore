@@ -1,0 +1,14 @@
+/*
+!src/
+!docs/
+!pom.xml
+!.gitignore
+!lib/
+/target
+/target
+/target
+/target
+/target
+/logging
+/pipdb
+/target/

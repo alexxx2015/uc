@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane hgap="14.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="94.0" prefWidth="477.0" vgap="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DialogEventHandler">
+  <children>
+    <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefHeight="71.0" prefWidth="252.0" spacing="7.0" GridPane.columnIndex="1">
+      <children>
+        <Label fx:id="labMessage" text="message" textAlignment="LEFT" wrapText="true">
+          <font>
+            <Font name="System Bold" size="13.0" />
+          </font>
+        </Label>
+        <Label fx:id="labDetails" text="details" textAlignment="LEFT" wrapText="true">
+          <font>
+            <Font size="12.0" />
+          </font>
+        </Label>
+            <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="400.0">
+               <children>
+              <Button fx:id="okButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#okPressed" text="OK" textAlignment="RIGHT" />
+               </children>
+            </HBox>
+      </children>
+    </VBox>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="65.0" prefWidth="80.0" text="!" textAlignment="CENTER" textFill="#f22c00">
+         <font>
+            <Font name="System Bold" size="54.0" />
+         </font>
+      </Label>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="+Infinity" minWidth="-Infinity" />
+  </columnConstraints>
+  <padding>
+    <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+  </padding>
+  <rowConstraints>
+    <RowConstraints maxHeight="+Infinity" minHeight="-Infinity" valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+  </rowConstraints>
+</GridPane>

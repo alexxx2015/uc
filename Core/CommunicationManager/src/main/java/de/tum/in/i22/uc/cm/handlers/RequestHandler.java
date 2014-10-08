@@ -46,6 +46,7 @@ import de.tum.in.i22.uc.pdp.requests.RegisterPxpPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
 import de.tum.in.i22.uc.pip.PipHandler;
+import de.tum.in.i22.uc.pip.requests.AddListenerPipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
@@ -58,6 +59,7 @@ import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewStructuredDataPipRequest;
+import de.tum.in.i22.uc.pip.requests.SetUpdateFrequencyPipRequest;
 import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
@@ -544,6 +546,22 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public Set<XmlPolicy> listPoliciesPmp() {
 		ListPoliciesPmpRequest request = new ListPoliciesPmpRequest();
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		AddListenerPipRequest request = new AddListenerPipRequest(ip, port, id, filter);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		SetUpdateFrequencyPipRequest request = new SetUpdateFrequencyPipRequest(msec, id);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

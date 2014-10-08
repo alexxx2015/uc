@@ -125,13 +125,13 @@ public class SceneGenerator {
 			}
 		});
 
-		final Tab pmpTab = new Tab();
-		pmpTab.setClosable(false);
-		pmpTab.setText("PMP");
-		pmpTab.setId("PMPTAB");
-		pmpTab.setContent(generatePmpTab());
+//		final Tab pmpTab = new Tab();
+//		pmpTab.setClosable(false);
+//		pmpTab.setText("PMP");
+//		pmpTab.setId("PMPTAB");
+//		pmpTab.setContent(generatePmpTab());
 
-		this.tabpane_center.getTabs().addAll(pdpTab, pipTab, pmpTab);
+		this.tabpane_center.getTabs().addAll(pdpTab, pipTab);//, pmpTab);
 		return this.tabpane_center;
 	}
 

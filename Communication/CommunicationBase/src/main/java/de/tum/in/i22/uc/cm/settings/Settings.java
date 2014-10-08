@@ -104,6 +104,8 @@ public class Settings extends SettingsLoader {
 
 	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
 
+	private static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
+
 	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
 	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
 
@@ -250,6 +252,8 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_ptpResources, ".");
 		loadSetting(PROP_NAME_ptEditorResources, ".");
+
+		loadSetting(PROP_NAME_javaPipMonitor, true);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -606,5 +610,9 @@ public class Settings extends SettingsLoader {
 
 	public String getPtEditorResources(){
 		return getValue(PROP_NAME_ptEditorResources);
+	}
+
+	public boolean getJavaPipMonitor() {
+		return getValue(PROP_NAME_javaPipMonitor);
 	}
 }
