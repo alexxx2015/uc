@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.ptp.adaptation.model;
+package de.tum.in.i22.uc.ptp.adaptation.domainmodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel.LayerType;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel.LayerType;
 
 public class DataContainerModel {
 

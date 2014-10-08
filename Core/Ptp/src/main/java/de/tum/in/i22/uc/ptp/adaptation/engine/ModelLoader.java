@@ -20,8 +20,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.LayerModel;
 import de.tum.in.i22.uc.ptp.utilities.Config;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
 
