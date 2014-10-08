@@ -36,6 +36,8 @@
 						<configuration>
 							<folder>${basedir}/target/classes</folder>
 							<interfaces>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2JPip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IJPip2Pip</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pdp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pip</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pip</param>

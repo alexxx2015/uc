@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.bigbold{
+	-fx-font-size: 30pt;
+	-fx-font-weight: bold;
+}

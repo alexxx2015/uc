@@ -166,4 +166,18 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		return null;
 	}
 
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("addListener method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("setUpdateFrequency method invoked");
+		return null;
+	}
+
 }

@@ -475,4 +475,14 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.listPoliciesPmp();
 	}
 
+	@Override
+	public IStatus addListener(String ip, int port, String id, String filter) {
+		return _requestHandler.addListener(ip, port, id, filter);
+	}
+
+	@Override
+	public IStatus setUpdateFrequency(int msec, String id) {
+		return _requestHandler.setUpdateFrequency(msec, id);
+	}
+
 }

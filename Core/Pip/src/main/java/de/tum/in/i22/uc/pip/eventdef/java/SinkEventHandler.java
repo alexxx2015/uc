@@ -35,18 +35,19 @@ public class SinkEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
+		String sinkId = null;
+		Set<IData> srcData = null;
 		try {
 //			String signature = getParameterValue("signature");
 //			String location = getParameterValue("location");
 			int pid = Integer.valueOf(getParameterValue("PID"));
 
-			String sinkId = ""+pid+_javaIFDelim+getParameterValue("id");
+			sinkId = ""+pid+_javaIFDelim+getParameterValue("id");
 
 //			String sinkId = pid+_otherDelim + _snkPrefix+ _otherDelim + location + _javaIFDelim + signature;
 			String[] sourceIds = iFlow.get(sinkId);
 
-			Set<IData> srcData = new HashSet<IData>();
-
+			srcData = new HashSet<IData>();
 			if (sourceIds!=null){
 			for (String sourceId : sourceIds){
 //				String[] arrStr=sourceId.split(_otherDelim);
@@ -100,7 +101,8 @@ public class SinkEventHandler extends JavaEventHandler {
 			e.printStackTrace();
 		}
 
-		return _messageFactory.createStatus(EStatus.OKAY);
+		if (direction.equals(EBehavior.INTRA)) return _messageFactory.createStatus(EStatus.OKAY);
+		return new JavaPipStatus(EStatus.OKAY, new NameBasic(sinkId), srcData);
 	}
 
 
