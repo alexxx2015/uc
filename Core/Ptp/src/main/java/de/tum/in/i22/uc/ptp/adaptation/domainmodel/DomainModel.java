@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.ptp.adaptation.model;
+package de.tum.in.i22.uc.ptp.adaptation.domainmodel;
 
 public class DomainModel {
 

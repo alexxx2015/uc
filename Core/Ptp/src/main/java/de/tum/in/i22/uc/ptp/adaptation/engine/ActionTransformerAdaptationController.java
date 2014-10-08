@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.ActionTransformerModel.RefinementType;
-import de.tum.in.i22.uc.ptp.adaptation.model.DataContainerModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.DomainModel.LayerType;
-import de.tum.in.i22.uc.ptp.adaptation.model.LayerModel;
-import de.tum.in.i22.uc.ptp.adaptation.model.SystemModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.ActionTransformerModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DataContainerModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.LayerModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.SystemModel;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.ActionTransformerModel.RefinementType;
+import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel.LayerType;
 import de.tum.in.i22.uc.ptp.utilities.PublicMethods;
 /**
  * @author Cipri
