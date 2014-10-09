@@ -160,6 +160,7 @@ public class LayerModel {
 		int index = this.actionTransformers.size();
 		actionTransformer.setXmlPosition(index);
 		this.actionTransformers.add(actionTransformer);
+		actionTransformer.setParenLayer(this);
 	}
 	
 	/**

@@ -34,17 +34,21 @@
 		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.4" name="unixDir"/>
 		
 		
-<!--0--><ismtransformers name="copy_cmd" seq="0" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
+<!--0--><ismtransformers name="copy_cmd" seq="0" ismRefmnt="//@isms/@ismtransformers.7" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
 <!--1--><ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.4"/>
 <!--2--><ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.2"/>
 <!--3--><ismtransformers name="write" seq="3" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.4"/>
 <!--4--><ismtransformers name="close" seq="4" inputimplecontainer="//@isms/@ismcontainers.4"/>
 <!--5--><ismtransformers name="getImage" seq="0" inputimplecontainer="//@isms/@ismcontainers.3" outputimplecontainer="//@isms/@ismcontainers.1"/>
 
-<!--6--><ismtransformers name="copy_seq" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
+		<!-- seq: open open read write write close -->
+<!--6--><ismtransformers name="copy_seq" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
+<!--7--><ismtransformers name="copy_seq1" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
+		
+<!--8--><ismtransformers name="deleteFile" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.1 //@isms/@ismtransformers.3"/>		
 		
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.0" name="firefox"/>
-		<ismsystems implesystemtransformers="//@isms/@ismtransformers.5" name="x11"/>
-		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.6" name="unix"/>
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.5 //@isms/@ismtransformers.8" name="x11"/>
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.6 //@isms/@ismtransformers.7" name="unix"/>
 	</isms>
 </metamodelv4:domain>

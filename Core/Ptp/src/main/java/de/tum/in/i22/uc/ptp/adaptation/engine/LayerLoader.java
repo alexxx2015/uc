@@ -87,7 +87,8 @@ public class LayerLoader {
 			return;
 		int transformersCounter = transformers.getLength();
 		/*use this map for the inner refinement*/
-		HashMap<ActionTransformerModel, Node> transformersNodesMap = new HashMap<ActionTransformerModel,Node>();
+		HashMap<String, Node> transformersNodesMap = new HashMap<String,Node>();
+		HashMap<String, ActionTransformerModel> transformersObjectMap = new HashMap<String,ActionTransformerModel>();
 		for(int i=0; i<transformersCounter; i++){
 			Node node = transformers.item(i);
 			if(node.getNodeType() != Node.ELEMENT_NODE)
@@ -106,8 +107,9 @@ public class LayerLoader {
 			ActionTransformerModel actionTransformer = new ActionTransformerModel(name, layer.getType());
 			actionTransformer.setParenLayer(layer);
 			actionTransformer.setRefinementType(refType);
-			transformersNodesMap.put(actionTransformer, node);
-			
+			String key = name + i;
+			transformersNodesMap.put(key, node);
+			transformersObjectMap.put(key, actionTransformer);
 			
 			switch(layer.getType()){
 				case PIM:
@@ -128,8 +130,9 @@ public class LayerLoader {
 		}
 		
 		/* do the inner refinement and cross*/
-		for(ActionTransformerModel at : transformersNodesMap.keySet()){
-			Node node = transformersNodesMap.get(at);
+		for(String key : transformersNodesMap.keySet()){
+			Node node = transformersNodesMap.get(key);
+			ActionTransformerModel at = transformersObjectMap.get(key);
 			String name = node.getAttributes().getNamedItem("name").getNodeValue();
 			//logger.debug(layer.getType()+" inner/cross ref :"+ name);
 			switch(layer.getType()){
@@ -275,7 +278,7 @@ public class LayerLoader {
 					continue;
 				}
 				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-				pimAction.addRefinement(refinement);
+				pimAction.addInnerRefinement(refinement);
 			}
 			else if(element.contains("//@psms/@psmtransformers.")){
 				element = element.replace("//@psms/@psmtransformers.", "");
@@ -286,7 +289,7 @@ public class LayerLoader {
 					continue;
 				}
 				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
-				pimAction.addRefinement(refinement);
+				pimAction.addCrossRefinement(refinement);
 			}
 		}
 	}
@@ -550,13 +553,8 @@ public class LayerLoader {
 		Node psmTransformerRefinement = node.getAttributes().getNamedItem("crossPsmRefmnt");
 		if(psmTransformerRefinement == null)
 			return;
-		if(psmTransformer.getRefinementType().equals(RefinementType.SEQ)){
+		if(psmTransformer.getInnerRefinementType().equals(RefinementType.SEQ)){
 			String errorMsg = "A sequence refinement cannot have cross refinement to another layer";
-			errorMsg += "\n"+ psmTransformer.toString();
-			throw new InvalidDomainModelFormatException(errorMsg);
-		}
-		if(!psmTransformer.getRefinements().isEmpty()){
-			String errorMsg = "A transformer should not have inner and cross refinement attributes at the same time";
 			errorMsg += "\n"+ psmTransformer.toString();
 			throw new InvalidDomainModelFormatException(errorMsg);
 		}
@@ -565,15 +563,9 @@ public class LayerLoader {
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			if(element.contains("//@psms/@psmtransformers.")){
-				element = element.replace("//@psms/@psmtransformers.", "");
-				int position = 0 ;
-				try{
-					position = Integer.parseInt(element);
-				} catch(Exception ex){
-					continue;
-				}
-				ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-				psmTransformer.addRefinement(refinement);
+				String errorMsg = "A sequence refinement cannot have cross refinement to the same layer";
+				errorMsg += "\n"+ psmTransformer.toString();
+				throw new InvalidDomainModelFormatException(errorMsg);
 			} else if(element.contains("//@isms/@ismtransformers.")){
 				element = element.replace("//@isms/@ismtransformers.", "");
 				int position = 0 ;
@@ -583,7 +575,7 @@ public class LayerLoader {
 					continue;
 				}
 				ActionTransformerModel refinement = layer.getRefinementLayer().getTransformerAtPosition(position);
-				psmTransformer.addRefinement(refinement);
+				psmTransformer.addCrossRefinement(refinement);
 			}
 		}
 	}
@@ -598,15 +590,13 @@ public class LayerLoader {
 		Node psmTransformerRefinement = node.getAttributes().getNamedItem("psmRefmnt");
 		if(psmTransformerRefinement == null)
 			return;
-		if(!psmTransformer.getRefinements().isEmpty()){
+		if(!psmTransformer.getInnerRefinements().isEmpty()){
 			String errorMsg = "A transformer should not have inner and cross refinement attributes at the same time";
 			errorMsg += "\n"+ psmTransformer.toString();
 			throw new InvalidDomainModelFormatException(errorMsg);
 		}
 		String implementedAsData = psmTransformerRefinement.getNodeValue();
 		String[] refinements = implementedAsData.split(" ");
-		if(refinements.length > 0)
-			psmTransformer.setInnerLayerRefined(true);
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@psms/@psmtransformers.", "");
@@ -617,7 +607,7 @@ public class LayerLoader {
 				continue;
 			}
 			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-			psmTransformer.addRefinement(refinement);
+			psmTransformer.addInnerRefinement(refinement);
 		}
 	}
 	
@@ -670,6 +660,8 @@ public class LayerLoader {
 		for(int i =0; i<systems.length; i++){
 			String element = systems[i].trim();
 			element = element.replace("//@psms/@psmtransformers.", "");
+			if(element.equals(""))
+				continue;
 			int position = 0 ;
 			try{
 				position = Integer.parseInt(element);
@@ -758,8 +750,6 @@ public class LayerLoader {
 			return;
 		String implementedAsData = ismTransformerRefinement.getNodeValue();
 		String[] refinements = implementedAsData.split(" ");
-		if(refinements.length > 0)
-			ismTransformer.setInnerLayerRefined(true);
 		for(int i =0; i<refinements.length; i++){
 			String element = refinements[i].trim();
 			element = element.replace("//@isms/@ismtransformers.", "");
@@ -768,7 +758,7 @@ public class LayerLoader {
 				position = Integer.parseInt(element);
 			} catch(Exception ex){logger.error("Invalid definition for transformer: "+ismTransformer.toStringShort(), ex);}
 			ActionTransformerModel refinement = layer.getTransformerAtPosition(position);
-			ismTransformer.addRefinement(refinement);
+			ismTransformer.addInnerRefinement(refinement);
 		}
 	}
 	
@@ -851,6 +841,8 @@ public class LayerLoader {
 		for(int i =0; i<systems.length; i++){
 			String element = systems[i].trim();
 			element = element.replace("//@isms/@ismtransformers.", "");
+			if(element.equals(""))
+				continue;
 			int position = 0 ;
 			try{
 				position = Integer.parseInt(element);
