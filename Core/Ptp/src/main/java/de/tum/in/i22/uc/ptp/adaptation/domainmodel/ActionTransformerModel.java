@@ -236,22 +236,22 @@ public class ActionTransformerModel {
 		this.specializations.add(spec);
 	}
 	
-	/**
-	 * There is no inner refinement for actions defined at PIM.
-	 * @param name
-	 * @return
-	 */
-	public ActionTransformerModel getInnerRefinementByName(String name){
-		if(name==null)
-			return null;		
-		for(ActionTransformerModel ref : this.innerRefinements){
-			if(ref.name.equals(name))
-				return ref;
-			if(ref.alsoKnownAs(name))
-				return ref;
-		}
-		return null;
-	}
+//	/**
+//	 * There is no inner refinement for actions defined at PIM.
+//	 * @param name
+//	 * @return
+//	 */
+//	public ActionTransformerModel getInnerRefinementByName(String name){
+//		if(name==null)
+//			return null;		
+//		for(ActionTransformerModel ref : this.innerRefinements){
+//			if(ref.name.equals(name))
+//				return ref;
+//			if(ref.alsoKnownAs(name))
+//				return ref;
+//		}
+//		return null;
+//	}
 	
 	public ActionTransformerModel getInnerRefinement(ActionTransformerModel a){
 		if(a==null)
@@ -434,6 +434,13 @@ public class ActionTransformerModel {
 	}
 	
 	private void addPsmTransformerAttributes(Element action){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
+		}
+		
 		//process inner refinements
 		String refinementInnerAttribute = "psmRefmnt";
 		String refinementInnerData = "";
@@ -479,11 +486,19 @@ public class ActionTransformerModel {
 		if(existsCrossRefinement)
 			action.setAttribute(refinementCrossAttribute, refinementCrossData);
 		
+		action.setAttribute(synonymName, synonymValue);
 		action.setAttribute(inputParamAttribute, inputParamData);
 		action.setAttribute(outputParamAttribute, outputParamData);
 	}
 	
 	private void addIsmTransformerAttributes(Element action){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
+		}
+		
 		//process inner refinements
 		String refinementInnerAttribute = "ismRefmnt";
 		String refinementInnerData = "";
@@ -516,6 +531,7 @@ public class ActionTransformerModel {
 		
 		if(existsInnerRefinement)
 			action.setAttribute(refinementInnerAttribute, refinementInnerData);
+		action.setAttribute(synonymName, synonymValue);
 		action.setAttribute(inputParamAttribute, inputParamData);
 		action.setAttribute(outputParamAttribute, outputParamData);
 	}
@@ -556,6 +572,25 @@ public class ActionTransformerModel {
 		return false;
 	}
 
+	/**
+	 * Uses the equals function + the signature. Verifies
+	 * <br> name
+	 * <br> synonyms
+	 * <br> system
+	 * <br> signature
+	 * @param o
+	 * @return
+	 */
+	public boolean equivalent(ActionTransformerModel o){
+		if(o == null)
+			return false;
+		if(!o.equals(this))
+			return false;
+		if(!equivalentTransformerSignature(o, this))
+			return false;
+		return true;
+	}
+	
 	@Override
 	public int hashCode() {
 		String unique = name + "#"+ layerType.name()+"#"+ (this.parentSystem==null ? "" : this.parentSystem.getName());
@@ -575,6 +610,34 @@ public class ActionTransformerModel {
 	 */
 	public void resetRefinement(){
 		this.innerRefinements.clear();
+	}
+
+	/**
+	 * Checks the signature of the compared transformers.
+	 * <br> Two transformers have the same signature if:
+	 * <br> - they have the same number of input elements AND
+	 * <br> - they have the same input params in the same order
+	 * <br> The output parameters are replaced from new to the base in case of a match.
+	 * The replacement is done at the merging.
+	 * @param newAt
+	 * @param baseE
+	 * @return boolean - true for same signature, false for different signature
+	 */
+	public static boolean equivalentTransformerSignature(ActionTransformerModel newAt, ActionTransformerModel baseE) {
+
+		ArrayList<DataContainerModel> newSignature = newAt.getInputParams();
+		ArrayList<DataContainerModel> baseSignature = baseE.getInputParams();
+		if(newSignature.size()!=baseSignature.size()){
+			return false;
+		}
+		for(int i=0; i<newSignature.size(); i++){
+			DataContainerModel newIn = newSignature.get(i);
+			DataContainerModel baseIn = baseSignature.get(i);
+			if(!newIn.equals(baseIn))
+				return false;
+		}
+		
+		return true;
 	}
 
 

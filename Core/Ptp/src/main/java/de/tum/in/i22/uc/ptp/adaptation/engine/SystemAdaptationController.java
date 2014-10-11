@@ -118,7 +118,7 @@ public class SystemAdaptationController {
 	private void mergeTransformers(SystemModel newSys, SystemModel baseSys) {
 		for(ActionTransformerModel at : newSys.getOperations()){
 			if(!baseSys.containsOperation(at)){
-				ActionTransformerModel baseAt = baseDm.getLayer(baseSys.getLayerType()).getActionTransformer(at);
+				ActionTransformerModel baseAt = baseDm.getLayer(baseSys.getLayerType()).getActionTransformerEquivalent(at);
 				baseSys.addOperation(baseAt);
 			}
 		}

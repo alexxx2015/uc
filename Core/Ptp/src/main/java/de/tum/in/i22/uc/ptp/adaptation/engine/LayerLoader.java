@@ -113,14 +113,16 @@ public class LayerLoader {
 			
 			switch(layer.getType()){
 				case PIM:
-					addPimActionSynonyms(actionTransformer, node);
+					addSynonyms(actionTransformer, node);
 					addPimActionParamData(actionTransformer, node);
 					break;
 				case PSM:
+					addSynonyms(actionTransformer, node);
 					addPsmTransformerInputContainers(actionTransformer, node);
 					addPsmTransformerOutputContainers(actionTransformer, node);
 					break;
 				case ISM:
+					addSynonyms(actionTransformer, node);
 					addIsmTransformerInputContainers(actionTransformer, node);
 					addIsmTransformerOutputContainers(actionTransformer, node);
 				default:
@@ -213,10 +215,6 @@ public class LayerLoader {
 		
 	}
 	
-
-	/**************************************************************
-	 * PIM level operations
-	 * */
 	
 	/**
 	 * Adds the synonyms from the XML to the Data object.
@@ -224,16 +222,20 @@ public class LayerLoader {
 	 * @param pimData - PIM Data object
 	 * @param node - PIM Data XML element
 	 */
-	private void addPimActionSynonyms(ActionTransformerModel action, Node node) {
-		Node pimSynonyms = node.getAttributes().getNamedItem("synonym");
-		if(pimSynonyms == null)
+	private void addSynonyms(ActionTransformerModel action, Node node) {
+		Node attrSynonyms = node.getAttributes().getNamedItem("synonym");
+		if(attrSynonyms == null)
 			return;
-		String synonymsAsData = pimSynonyms.getNodeValue();
+		String synonymsAsData = attrSynonyms.getNodeValue();
 		String[] synonyms = synonymsAsData.split(" ");
 		for (String syn : synonyms) {
 			action.addSynonym(syn);
 		}
 	}
+	
+	/**************************************************************
+	 * PIM level operations
+	 * */
 	
 	/** Adds the data parameters of the XML action to the object.
 	 *  

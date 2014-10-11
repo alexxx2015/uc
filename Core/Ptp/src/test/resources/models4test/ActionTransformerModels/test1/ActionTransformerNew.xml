@@ -58,7 +58,7 @@
 		<!-- new transformer -->
 		<ismtransformers name="copy_cmd_new" seq="0" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
 		<ismtransformers name="copy_file_new" seq="0" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.5"/>
-		
+				
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.6" name="firefox"/>
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.5" name="x11"/>
 		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.7" name="unix"/>

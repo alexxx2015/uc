@@ -75,12 +75,37 @@ public class LayerModel {
 		return null;
 	}
 	
+	
+	
+	/**
+	 * checks the name, synonyms, system
+	 * <br> WARNING: the signature is not checked!!
+	 * @param newAt
+	 * @return
+	 */
 	public ActionTransformerModel getActionTransformer(ActionTransformerModel newAt){
 		for(ActionTransformerModel at : this.actionTransformers){
 			if(at.equals(newAt))
 				return at;
 		}
 		return null;
+	}
+	
+	public ActionTransformerModel getActionTransformerEquivalent(ActionTransformerModel newAt){
+		for(ActionTransformerModel at : this.actionTransformers){
+			if(at.equivalent(newAt))
+				return at;
+		}
+		return null;
+	}
+	
+	public ArrayList<ActionTransformerModel> getActionTransformersOverloaded(ActionTransformerModel newAt){
+		ArrayList<ActionTransformerModel> overloaded = new ArrayList<>();
+		for(ActionTransformerModel at : this.actionTransformers){
+			if(at.equals(newAt))
+				overloaded.add(at);
+		}
+		return overloaded;
 	}
 	
 	public SystemModel getSystem(SystemModel system){
@@ -313,7 +338,8 @@ public class LayerModel {
 	}
 
 	public void filterActionTransformerSequences() {
-		// TODO Auto-generated method stub
+		for(ActionTransformerModel at : actionTransformers){
+		}
 		
 	}
 	
