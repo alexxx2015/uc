@@ -45,6 +45,7 @@ public class PtpHandler implements IPmp2Ptp {
 	 * object_instance - value used to replace in the template the value of object=<objectInstance>
 	 * timestepType - SECONDS MINUTES ...
 	 * timestepValue - one number as a string: 60, 102, ...
+	 * e.g template_id : 102
 	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> param, XmlPolicy xmlPolicy) {
@@ -141,6 +142,7 @@ public class PtpHandler implements IPmp2Ptp {
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		_logger.info("updateDomainModel: " + requestId + " "+ xmlDomainModel.toString());
 		
+		//TODO: explain the modes
 		String mergeMODE = parameters.get("PTP_MODE");
 		if(mergeMODE == null){
 			mergeMODE = "NORMAL";

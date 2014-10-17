@@ -428,10 +428,15 @@ public class PmpHandler extends PmpProcessor {
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		IPtpResponse updateResponse = _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
 		
+		//TODO: do not retranslate if there are no changes
+		
 		if(!updateResponse.getStatus().getEStatus().equals(EStatus.OKAY)){
 			return updateResponse;
 		}
 		
+		//the following lines where used only for testing purposes
+		//if PMP_MODE:ADAPTATION_ONLY then 
+		//the method simply returns without retranslating the policies
 		String MODE = parameters.get("PMP_MODE");
 		if(MODE != null){
 			if(MODE.equals("ADAPTATION_ONLY"))

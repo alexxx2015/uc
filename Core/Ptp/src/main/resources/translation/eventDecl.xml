@@ -24,7 +24,7 @@
 			<not>
 				<stateBasedFormula operator="isNotIn" param1="data" param2="KlipperMem"/>
 			</not>
-		</stateFormula>
+		</stateFormula>				
 	</event>
 	<event>
 		<eventName>delete</eventName>
