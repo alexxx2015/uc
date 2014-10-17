@@ -144,7 +144,7 @@ public class Settings extends SettingsLoader {
 			}
 		}
 
-		if (success) {
+		if (!success) {
 			_logger.warn("Must set properties file before getting the first Settings instance.");
 		}
 	}

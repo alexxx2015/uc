@@ -64,6 +64,7 @@
 								<param>java de.tum.in.i22.uc.thrift.types</param>
 								<param>csharp de.tum.in.i22.uc.thrift.types</param>
 								<param>cpp de.tum.in.i22.uc.thrift.types</param>
+								<param>cocoa de.tum.in.i22.uc.thrift.types</param>
 							</namespaces>
 							<outfile>${project.parent.basedir}/Protocols/Thrift/ThriftDefinitions/src/main/thrift/Services.thrift</outfile>
 						</configuration>

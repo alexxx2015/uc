@@ -55,7 +55,19 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
-					</execution>					
+					</execution>
+					<execution>
+						<id>thrift-cocoa-generation</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generator>cocoa</generator>
+							<outputDirectory>${basedir}/src/main/cocoa</outputDirectory>
+							<compileOutput>false</compileOutput>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 
