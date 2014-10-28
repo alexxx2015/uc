@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.example.org/eventDeclSchema eventDeclSchema.xsd">
 	<event>
-		<eventName>copy</eventName>
+		<eventName>copy1</eventName>
 		<eventClass>dataUsage</eventClass>
 		<params>
 			<param paramName="object">

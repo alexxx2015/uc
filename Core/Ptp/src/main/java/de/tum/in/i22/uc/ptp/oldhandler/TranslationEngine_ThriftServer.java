@@ -69,7 +69,7 @@ public class TranslationEngine_ThriftServer {
 	private static TranslationEngineHandler handler;
 	private static TranslationEngine.Processor processor;
 
-	public static final int TE_Default_PORT = 50001 ;
+	public static final int TE_Default_PORT = 50021 ;
 	private static int TE_PORT = 0;
 	
 	public static int getPort(){

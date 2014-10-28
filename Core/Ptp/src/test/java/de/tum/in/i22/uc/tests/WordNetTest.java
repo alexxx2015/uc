@@ -40,7 +40,7 @@ public class WordNetTest {
 	 *	The file will have its original line endings in your working directory.	 
 	 */
 	 
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	
 	private static final String NOUN_POS = "n";
 	private static final String VERB_POS = "v";
@@ -54,9 +54,7 @@ public class WordNetTest {
 		
 		Config conf = new Config();
 		String userDir = conf.getResourcesDir();
-		file = userDir + File.separator+ File.separator+ "src" 
-				+ File.separator + "main"
-				+ File.separator +"resources"
+		file = userDir 
 				+ File.separator + "dict" ;
 		
 		System.out.println("RitWordnet dict: "+ file);
@@ -88,6 +86,8 @@ public class WordNetTest {
 		}
 		
 		System.out.println("\nNOUNS");
+		computeSimilarity("city", "state", NOUN_POS);
+		computeSimilarity("state", "city", NOUN_POS);
 		computeSimilarity("photo", "picture", NOUN_POS);
 		computeSimilarity("photo", "car", NOUN_POS);
 		computeSimilarity("photo", "child", NOUN_POS);

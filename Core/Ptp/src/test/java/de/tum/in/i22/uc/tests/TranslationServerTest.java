@@ -8,50 +8,34 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tum.in.i22.uc.ptp.oldhandler.TranslationEngine;
-import de.tum.in.i22.uc.ptp.oldhandler.TranslationEngine_ThriftServer;
-import de.tum.in.i22.uc.ptp.oldhandler.TranslationException;
+import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.ptp.PtpHandler;
 
 public class TranslationServerTest {
 
 	private static TTransport transport;
-	private static TranslationEngine.Client client;
 	/**
 	 * The tests are by default disabled.
 	 * The tests assume that a translation server is running.
 	 * When testing manually, one has to start by hand the server.
 	 */
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
+	
+	private static PtpHandler ptpHandler;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if(!TESTS_ENABLED){
 			return;
 		} 
-		try {
-			 
-			//this is an old example of the ptp server
-			//the new version uses TAny2PmpThriftServer server
-			 int port = TranslationEngine_ThriftServer.getPort();
-			 			 
-		      transport = new TSocket("localhost", port);
-		      transport.open();
-
-		      TProtocol protocol = new  TBinaryProtocol(transport);
-		      client = new TranslationEngine.Client(protocol);
-		 } catch (TException x) {
-		      x.printStackTrace();
-		    }
-		      
+		
+		ptpHandler = new PtpHandler();
+		
 	}
 
 	@AfterClass
@@ -59,7 +43,6 @@ public class TranslationServerTest {
 		if(!TESTS_ENABLED){
 			return;
 		}
-		transport.close();
 	}
 	
 	@Test
@@ -123,16 +106,12 @@ public class TranslationServerTest {
 
 	private static String translatePolicy(int id, Map<String,String> parameters, String policy){
 		String requestId = "test_"+id+"_translate_policy";
-		
+		XmlPolicy xmlPolicy = new XmlPolicy(requestId, policy);
+		xmlPolicy.setTemplateId(parameters.get("template_id"));
+		xmlPolicy.setTemplateXml(policy);
 		String translatedPolicy = "";
-		try {
-			translatedPolicy = client.translatePolicy(requestId, parameters, policy);			
-		}catch (TranslationException ex){
-			System.out.println(ex.what +" "+ ex.why);
-		}
-		catch (TException e) {
-			System.out.println("transport exception");
-		}
+		translatedPolicy = ptpHandler.translatePolicy(requestId, parameters, xmlPolicy).getPolicy().getXml();
+		//translatedPolicy = client.translatePolicy(requestId, parameters, policy);			
 		String timestamp = (new Date()).toString();
 		System.out.println("===============================================");
 		System.out.println(timestamp);

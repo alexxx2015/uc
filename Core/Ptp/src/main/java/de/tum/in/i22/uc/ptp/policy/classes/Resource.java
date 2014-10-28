@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.ptp.policy.classes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 18 March 2013.
  * This class names a file container which can be an image,
@@ -36,6 +39,19 @@ public class Resource {
 	
 	protected EntityType entityType;
 		
+	
+	private List<String> synonyms = new ArrayList<String>();
+	
+	public List<String> getSynonyms(){
+		return synonyms;
+	}
+	
+	public void addSynonym(String syn){
+		if(syn == null)
+			return;
+		if(!synonyms.contains(syn))
+			synonyms.add(syn);
+	}
 	
 	/**
 	 * Path to this file on a file system

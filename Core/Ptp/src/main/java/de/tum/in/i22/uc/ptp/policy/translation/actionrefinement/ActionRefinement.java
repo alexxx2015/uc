@@ -203,7 +203,19 @@ public class ActionRefinement implements Filter{
 			XPath xpath=factory.newXPath();
 			String sExpression="//event[eventName='"+resource.getExtraInformation().toString()+"']/stateFormula";
 			NodeList nlStateFormula=(NodeList)xpath.evaluate(sExpression, xmlDocXpath, XPathConstants.NODESET);
+			
 			if(nlStateFormula!=null){
+				
+				if(nlStateFormula.getLength()==0){
+					//search for actions with synonyms
+					for(String synonym : resource.getSynonyms()){
+						sExpression="//event[eventName='"+synonym+"']/stateFormula";
+						nlStateFormula=(NodeList)xpath.evaluate(sExpression, xmlDocXpath, XPathConstants.NODESET);
+						if(nlStateFormula!=null)
+							if(nlStateFormula.getLength()>0)
+								break;
+					}
+				}
 				
 				if(nlStateFormula.getLength()>0){					
 					Node nodeStateFormula=nlStateFormula.item(0);						

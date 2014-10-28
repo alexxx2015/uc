@@ -427,10 +427,12 @@ public class PmpHandler extends PmpProcessor {
 	@Override
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		IPtpResponse updateResponse = _ptp.updateDomainModel(requestId, parameters, xmlDomainModel);
+		//response status: MODIFY - the domain model was changed
+		//response status: OKAY - no changes made
+		//response status: ERROR - error while adapting
 		
-		//TODO: do not retranslate if there are no changes
-		
-		if(!updateResponse.getStatus().getEStatus().equals(EStatus.OKAY)){
+		//do not retranslate if there are no changes		
+		if(!updateResponse.getStatus().getEStatus().equals(EStatus.MODIFY)){
 			return updateResponse;
 		}
 		

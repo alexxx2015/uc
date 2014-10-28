@@ -134,8 +134,8 @@ public class AdaptationEngineTest {
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
 		assertEquals("data", 4, pimData);
-		assertEquals("ism containers", 3, psmContainers);
-		assertEquals("psm containers", 7, ismContainers);
+		assertEquals("psm containers", 3, psmContainers);
+		assertEquals("ism containers", 7, ismContainers);
 	}
 	
 	//ok
