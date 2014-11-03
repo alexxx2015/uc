@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.pdp.core.operators.comparison.DataInContainerComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.operators.comparison.ElementInListComparisonOperator;
 import de.tum.in.i22.uc.pdp.core.operators.comparison.EndsWithComparisonOperator;
@@ -103,7 +105,7 @@ public class ParamMatch extends ParamMatchType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("name", name)
 				.add("value", value)
 				.add("type", type)

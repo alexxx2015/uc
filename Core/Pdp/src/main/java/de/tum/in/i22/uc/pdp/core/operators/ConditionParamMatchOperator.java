@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
@@ -15,7 +17,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("name", name)
 				.add("value", value)
 				.add("cmpOp", cmpOp)
