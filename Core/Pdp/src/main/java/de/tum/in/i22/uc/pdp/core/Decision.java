@@ -32,8 +32,11 @@ public class Decision implements Serializable {
 
 	private final AuthorizationAction _authorizationAction;
 
-	/** 'optional' executeActions processed by PXP */
+	/**
+	 * optional executeActions processed by PXP
+	 */
 	private final List<ExecuteAction> _executeActions = new LinkedList<>();
+
 	private PxpManager _pxpManager;
 
 	public Decision(AuthorizationAction authAction, PxpManager pxpManager) {
