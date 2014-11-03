@@ -218,7 +218,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			notifyObservers(event);
 
 			for (Mechanism mech : mechanisms) {
-				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
 				mech.startSimulation();
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
@@ -249,7 +248,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			notifyObservers(event);
 
 			for (Mechanism mech : mechanisms) {
-				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
 			}
@@ -269,10 +267,10 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
-		Map<String, Set<String>> map = new TreeMap<String, Set<String>>();
+		Map<String, Set<String>> map = new TreeMap<>();
 
 		for (String policyName : _policyTable.keySet()) {
-			Set<String> mechanisms = new TreeSet<String>();
+			Set<String> mechanisms = new TreeSet<>();
 			for (String mechName : _policyTable.get(policyName).keySet()) {
 				mechanisms.add(mechName);
 			}
