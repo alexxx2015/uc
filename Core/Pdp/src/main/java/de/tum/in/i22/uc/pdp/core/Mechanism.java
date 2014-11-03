@@ -78,7 +78,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			_executeAsyncActions.add(new ExecuteAction(execAction));
 		}
 
-		// Get observed by the PDP, such that we can signal the end of a timestep
+		// We will be observed by the PDP, such that we can signal the end of a timestep
 		addObserver(pdp);
 	}
 
@@ -209,35 +209,26 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	@Override
 	public void run() {
-		_logger.info("Started mechanism update thread usleep={} ms", _timestepSize);
+		_logger.info("Starting mechanism update thread usleep={} ms", _timestepSize);
 
 		_lastUpdate = System.currentTimeMillis();
 
 		while (!_interrupted) {
+			if (tick()) {
+				_logger.info("Mechanism condition satisfied; triggered optional executeActions");
+				for (ExecuteAction execAction : getExecuteAsyncActions()) {
+					_pdp.executeAction(execAction, false);
+				}
+			}
+
 			try {
-				if (tick()) {
-					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (ExecuteAction execAction : getExecuteAsyncActions()) {
-						if (execAction.getProcessor().equals("pep"))
-							_logger.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
-									execAction.getName());
-						else {
-							_logger.debug("Execute asynchronous action [{}]", execAction.getName());
-							_pdp.executeAction(execAction, false);
-						}
-					}
-				}
-
-				if (_interrupted) {
-					_logger.info("Mechanism [{}] thread was interrupted. terminating...", _name);
-					return;
-				}
-
 				Thread.sleep(_timestepSize);
 			} catch (InterruptedException e) {
-				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", _name);
+				_interrupted = true;
 			}
 		}
+
+		_logger.info("Mechanism [{}] was interrupted. Terminating.", _name);
 	}
 
 	@Override

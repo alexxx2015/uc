@@ -18,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
@@ -126,9 +125,8 @@ public class PdpHandler extends PdpProcessor {
 	public void init(PipProcessor iface1, PmpProcessor iface2, IDistributionManager distributionManager) {
 		super.init(iface1, iface2, distributionManager);
 
-		IPdp2Pip pip = getPip();
-		_logger.debug("initializing PDP. Pip reference is " + (pip != null ? "not " : "") + "NULL");
-		_pdp = new PolicyDecisionPoint(pip, _pxpManager, distributionManager);
+		_logger.debug("Initializing PDP. Pip reference is " + (iface1 != null ? "not " : "") + "NULL");
+		_pdp = new PolicyDecisionPoint(iface1, _pxpManager, distributionManager);
 	}
 
 	@Override

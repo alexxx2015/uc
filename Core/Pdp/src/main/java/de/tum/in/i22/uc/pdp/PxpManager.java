@@ -31,6 +31,13 @@ public class PxpManager {
 	private static HashMap<String, PxpSpec> pxpSpec = new HashMap<>();
 
 	public boolean execute(ExecuteAction execAction, boolean synchronous) {
+		if (!synchronous && execAction.getProcessor().toLowerCase().equals("pep")) {
+			_logger.warn(
+					"Execution of asynchronous executeAction [{}] not possible with processor PEP",
+					execAction.getName());
+			return false;
+		}
+
 		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
 				(synchronous == true ? "" : "a"), execAction.getName(), execAction.getParameters());
 
@@ -49,23 +56,23 @@ public class PxpManager {
 						throw new RuntimeException(e.getMessage(), e);
 					}
 
-					List<IEvent> listOfEventsToBeExecuted = new LinkedList<IEvent>();
+					List<IEvent> listOfEventsToBeExecuted = new LinkedList<>();
 					listOfEventsToBeExecuted.add(new EventBasic(execAction.getName(), execAction.getParameters()));
 
-					if (synchronous==true) res = client.executeSync(listOfEventsToBeExecuted);
-					else client.executeAsync(listOfEventsToBeExecuted);
+					if (synchronous) {
+						res = client.executeSync(listOfEventsToBeExecuted);
+					}
+					else {
+						client.executeAsync(listOfEventsToBeExecuted);
+					}
 
 				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		}
-		if (res == null)
-			return false;
-		else
-			return res.isStatus(EStatus.OKAY);
+
+		return res != null ? res.isStatus(EStatus.OKAY) : false;
 	}
 
 	public boolean registerPxp(PxpSpec pxp) {

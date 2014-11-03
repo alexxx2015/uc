@@ -123,7 +123,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 */
 			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
 			if (allMechanisms == null) {
-				allMechanisms = new HashMap<String, Mechanism>();
+				allMechanisms = new HashMap<>();
 				_policyTable.put(policyName, allMechanisms);
 			}
 
@@ -147,7 +147,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 					}
 
 					if (!allMechanisms.containsKey(mech.getName())) {
-						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
 						allMechanisms.put(mech.getName(), curMechanism);
 						new Thread(curMechanism).start();
 					} else {
@@ -235,7 +234,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		else {
 			/*
 			 * If it is an desired event, start mechanism's simulation
-			 * before signaling the observers, such that this signalling
+			 * before signaling the observers, such that this signaling
 			 * can be undone.
 			 */
 			for (Mechanism mech : mechanisms) {
@@ -287,7 +286,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		return _pip;
 	}
 
-	public boolean executeAction(ExecuteAction execAction, boolean synchronous) {
+	boolean executeAction(ExecuteAction execAction, boolean synchronous) {
 		return _pxpManager.execute(execAction, synchronous);
 	}
 
