@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.distribution;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -27,9 +27,9 @@ public interface IDistributionManager {
 
 	void update(IResponse res);
 
-	boolean wasTrueSince(LiteralOperator operator, long since);
+	boolean wasTrueSince(AtomicOperator operator, long since);
 
-	boolean wasTrueInBetween(LiteralOperator operator, long from, long to);
+	boolean wasTrueInBetween(AtomicOperator operator, long from, long to);
 
 	void unregisterPolicy(String policyName, IPLocation location);
 

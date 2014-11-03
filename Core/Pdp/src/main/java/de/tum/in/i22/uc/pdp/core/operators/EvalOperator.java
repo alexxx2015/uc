@@ -3,11 +3,11 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.EvalOperatorType;
 
-public class EvalOperator extends EvalOperatorType implements LiteralOperator {
+public class EvalOperator extends EvalOperatorType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(EvalOperator.class);
 
 	public EvalOperator() {

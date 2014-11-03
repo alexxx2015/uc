@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
@@ -42,14 +42,14 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public boolean wasTrueSince(LiteralOperator operator, long since) {
+	public boolean wasTrueSince(AtomicOperator operator, long since) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("wasObservedSince method invoked");
 		return false;
 	}
 
 	@Override
-	public boolean wasTrueInBetween(LiteralOperator operator, long from, long to) {
+	public boolean wasTrueInBetween(AtomicOperator operator, long from, long to) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("wasObservedInBetween method invoked");
 		return true;

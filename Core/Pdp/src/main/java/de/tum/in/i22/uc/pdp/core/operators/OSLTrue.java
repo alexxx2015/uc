@@ -3,12 +3,12 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
-public class OSLTrue extends TrueType implements LiteralOperator {
+public class OSLTrue extends TrueType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OSLTrue.class);
 
 	public OSLTrue() {

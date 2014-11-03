@@ -32,7 +32,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
@@ -451,7 +451,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueSince(LiteralOperator operator, long since) {
+	public boolean wasTrueSince(AtomicOperator operator, long since) {
 		_logger.debug("wasTrueSince({}, {})", operator, since);
 		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 						+ " WHERE opid = '" + operator.getFullId() + "'"
@@ -467,7 +467,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueInBetween(LiteralOperator operator, long from, long to) {
+	public boolean wasTrueInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
 		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
