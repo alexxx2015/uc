@@ -24,7 +24,7 @@ public class TranslationServerTest {
 	 * The tests assume that a translation server is running.
 	 * When testing manually, one has to start by hand the server.
 	 */
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	
 	private static PtpHandler ptpHandler;
 	

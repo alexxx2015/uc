@@ -41,7 +41,7 @@
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="print_sys" outputimplecontainer="//@isms/@ismcontainers.3 " pos="2" seq="0" synonym="" system="Firefox"/>
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="cmd_copy" outputimplecontainer="//@isms/@ismcontainers.4 " pos="3" seq="0" synonym="" system="Firefox"/>
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="pass_extern" outputimplecontainer="//@isms/@ismcontainers.3 " pos="4" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs_image" outputimplecontainer="" pos="5" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs_image" outputimplecontainer="//@isms/@ismcontainers.2 " pos="5" seq="0" synonym="" system="Firefox"/>
 <ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " name="Firefox" pos="0"/>
 </isms>
 </de.tum.in.i22.uc.metamodel:domain>

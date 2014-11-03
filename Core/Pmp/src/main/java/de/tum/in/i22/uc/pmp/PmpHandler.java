@@ -433,6 +433,7 @@ public class PmpHandler extends PmpProcessor {
 		
 		//do not retranslate if there are no changes		
 		if(!updateResponse.getStatus().getEStatus().equals(EStatus.MODIFY)){
+			_logger.info("no retranslation of policies after update");
 			return updateResponse;
 		}
 		

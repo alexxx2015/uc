@@ -40,7 +40,7 @@ public class WordNetTest {
 	 *	The file will have its original line endings in your working directory.	 
 	 */
 	 
-	private static final boolean TESTS_ENABLED = false;
+	private static final boolean TESTS_ENABLED = true;
 	
 	private static final String NOUN_POS = "n";
 	private static final String VERB_POS = "v";

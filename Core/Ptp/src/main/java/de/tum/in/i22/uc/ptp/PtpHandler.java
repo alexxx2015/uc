@@ -213,7 +213,7 @@ public class PtpHandler implements IPmp2Ptp {
 				+" mergedE: "+ mergedDomainModelElements
 				+" MODE: "+ mergeMODE;
 		StatusBasic adaptationStatus = new StatusBasic(EStatus.MODIFY, message);
-		if(mergedDomainModelElements == 0){
+		if(updatedAttributes == 0){
 			adaptationStatus = new StatusBasic(EStatus.OKAY, message);
 		}
 				

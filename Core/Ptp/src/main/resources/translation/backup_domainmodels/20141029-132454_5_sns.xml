@@ -6,7 +6,7 @@
 <pimdata name="zipcode" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
 <pimdata name="picture" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym="photo "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.3 //@psms/@psmtransformers.5 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.2 " pos="0" synonym="pay permit "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 //@psms/@psmtransformers.4 //@psms/@psmtransformers.7 //@psms/@psmtransformers.6 " name="copy" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="1" synonym="print replicate duplicate "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 //@psms/@psmtransformers.4 //@psms/@psmtransformers.7 " name="copy" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="1" synonym="print replicate duplicate "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="save" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="2" synonym="distribute "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.2 //@psms/@psmtransformers.0 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.2 " pos="3" synonym="modify "/>
 </pims>
@@ -41,7 +41,7 @@
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="print_sys" outputimplecontainer="//@isms/@ismcontainers.3 " pos="2" seq="0" synonym="" system="Firefox"/>
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="cmd_copy" outputimplecontainer="//@isms/@ismcontainers.4 " pos="3" seq="0" synonym="" system="Firefox"/>
 <ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="pass_extern" outputimplecontainer="//@isms/@ismcontainers.3 " pos="4" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs_image" outputimplecontainer="" pos="5" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs_image" outputimplecontainer="//@isms/@ismcontainers.2 " pos="5" seq="0" synonym="" system="Firefox"/>
 <ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " name="Firefox" pos="0"/>
 </isms>
 </de.tum.in.i22.uc.metamodel:domain>
