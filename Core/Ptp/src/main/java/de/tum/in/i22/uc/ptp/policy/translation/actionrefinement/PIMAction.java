@@ -84,6 +84,17 @@ public class PIMAction extends Event {
 				Node nodePIMAssociation=nodePIMData.getChildNodes().item(1);				
 				
 				String sName=nodePIMAction.getAttributes().getNamedItem("name").getNodeValue();									
+				resource.addSynonym(sName);
+				//extract synonyms for resource
+				String sSynonyms = nodePIMAction.getAttributes().getNamedItem("synonym").getNodeValue();
+				if(sSynonyms!=null){
+					String[] syns = sSynonyms.split(" ");
+					for(String synonym : syns){
+						if(synonym.length() > 2){
+							resource.addSynonym(synonym);
+						}
+					}
+				}
 				//
 				int iSeqNumber=-1;	
 				Node ndSequence=nodePIMAction.getAttributes().getNamedItem("seq");
@@ -308,6 +319,8 @@ public class PIMAction extends Event {
 //		arrTransformers=alTrans.toArray(new PSMTransformer[alTrans.size()]);
 		
 		PSMTransformer[] arrTransformers = preparePSMTransformers();
+		if(arrTransformers == null)
+			return ;
 		//update count of applicable transformers
 		this.iNumApplicableCrossTransformers=arrTransformers.length;
 		

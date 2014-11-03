@@ -11,8 +11,8 @@ import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel.LayerType;
  * @author Cipri
  *
  */
-public class ActionTransformerModel {
 
+public class ActionTransformerModel {
 	/**
 	 * An Action or a Transformer can be further refined 
 	 * as a SET or as a SEQUENCE of other events. 
@@ -45,7 +45,9 @@ public class ActionTransformerModel {
 	private RefinementType refinementType;
 	private boolean innerLayerRefined;
 	
-	private ArrayList<ActionTransformerModel> refinements;
+	private ArrayList<ActionTransformerModel> innerRefinements;
+	private ArrayList<ActionTransformerModel> crossRefinements;
+	private ArrayList<ActionTransformerModel> specializations;
 	
 	private ArrayList<ActionTransformerModel> associations;
 	
@@ -71,7 +73,9 @@ public class ActionTransformerModel {
 	public ActionTransformerModel(String name, LayerType type){
 		this.name = name;
 		this.layerType = type;
-		this.refinements = new ArrayList<>();
+		this.innerRefinements = new ArrayList<>();
+		this.crossRefinements = new ArrayList<>();
+		this.specializations = new ArrayList<>();
 		this.inputParams = new ArrayList<>();
 		this.outputParams = new ArrayList<>();
 		this.associations = new ArrayList<>();
@@ -123,25 +127,10 @@ public class ActionTransformerModel {
 		this.refinementType = type;
 	}
 	
-	public RefinementType getRefinementType(){
+	public RefinementType getInnerRefinementType(){
 		return this.refinementType;
 	}
 	
-	/**
-	 * @return the innerLayerRefined
-	 */
-	public boolean isInnerLayerRefined() {
-		return innerLayerRefined;
-	}
-
-	/**
-	 * The refinement is at the same layer.
-	 * @param innerLayerRefined the innerLayerRefined to set
-	 */
-	public void setInnerLayerRefined(boolean innerLayerRefined) {
-		this.innerLayerRefined = innerLayerRefined;
-	}
-
 	public boolean addSynonym(String name){
 		if(name==null)
 			return false;
@@ -213,40 +202,71 @@ public class ActionTransformerModel {
 		return this.parentSystem;
 	}
 	
-	public ArrayList<ActionTransformerModel> getRefinements(){
-		return this.refinements;
+	public ArrayList<ActionTransformerModel> getInnerRefinements(){
+		return this.innerRefinements;
 	}
 	
-	public void addRefinement(ActionTransformerModel refinedAs){
+	public ArrayList<ActionTransformerModel> getCrossRefinements(){
+		return this.crossRefinements;
+	}
+	
+	public ArrayList<ActionTransformerModel> getSpecializations(){
+		return this.specializations;
+	}
+	
+	public void addInnerRefinement(ActionTransformerModel refinedAs){
 		if(refinedAs == null)
 			return;
 		if(this.refinementType.equals(RefinementType.SEQ)){
-			int index = this.refinements.size();
+			int index = this.innerRefinements.size();
 			refinedAs.sequenceIndex = index;
 		}
-		this.refinements.add(refinedAs);
+		this.innerRefinements.add(refinedAs);
 	}
 	
-	/**
-	 * Note: No need for synonyms because the refinement is either at PSM or ISM level.
-	 * There is no inner refinement for actions defined at PIM.
-	 * @param name
-	 * @return
-	 */
-	public ActionTransformerModel getRefinementByName(String name){
-		if(name==null)
+	public void addCrossRefinement(ActionTransformerModel refinedAs){
+		if(refinedAs == null)
+			return;
+		this.crossRefinements.add(refinedAs);
+	}
+	
+	public void addSpecialization(ActionTransformerModel spec){
+		if(spec == null)
+			return;
+		this.specializations.add(spec);
+	}
+	
+//	/**
+//	 * There is no inner refinement for actions defined at PIM.
+//	 * @param name
+//	 * @return
+//	 */
+//	public ActionTransformerModel getInnerRefinementByName(String name){
+//		if(name==null)
+//			return null;		
+//		for(ActionTransformerModel ref : this.innerRefinements){
+//			if(ref.name.equals(name))
+//				return ref;
+//			if(ref.alsoKnownAs(name))
+//				return ref;
+//		}
+//		return null;
+//	}
+	
+	public ActionTransformerModel getInnerRefinement(ActionTransformerModel a){
+		if(a==null)
 			return null;		
-		for(ActionTransformerModel ref : this.refinements){
-			if(ref.name.equals(name))
+		for(ActionTransformerModel ref : this.innerRefinements){
+			if(ref.equals(a))
 				return ref;
 		}
 		return null;
 	}
 	
-	public ActionTransformerModel getRefinement(ActionTransformerModel a){
+	public ActionTransformerModel getCrossRefinement(ActionTransformerModel a){
 		if(a==null)
 			return null;		
-		for(ActionTransformerModel ref : this.refinements){
+		for(ActionTransformerModel ref : this.crossRefinements){
 			if(ref.equals(a))
 				return ref;
 		}
@@ -288,9 +308,13 @@ public class ActionTransformerModel {
 	public String toString(){
 		String result ="";
 		String systemName = this.parentSystem == null ? null : this.parentSystem.getName();
-		result += this.indentationLevel+name +" "+this.getSignature()+" ref: "+ this.refinementType.name() +" sys: "+ systemName;
-		String refinedAs = "";
-		for(ActionTransformerModel ref : this.refinements){
+		result += this.indentationLevel+name +" "+this.getSignature()+" "+ this.refinementType.name() +" sys: "+ systemName;
+		String refinedAs = " inner";
+		for(ActionTransformerModel ref : this.innerRefinements){
+			refinedAs += " "+ ref.name; 
+		}
+		refinedAs += " cross";
+		for(ActionTransformerModel ref : this.crossRefinements){
 			refinedAs += " "+ ref.name +"-"+ ref.layerType.name(); 
 		}
 		result += refinedAs;
@@ -384,7 +408,7 @@ public class ActionTransformerModel {
 		String refinementAttribute = "actionRefmnt";
 		String refinementData = "";
 		boolean existsRefinement = false;
-		for(ActionTransformerModel ref : this.refinements){
+		for(ActionTransformerModel ref : this.crossRefinements){
 			String refLevel = "//@psms/@psmtransformers.";
 			refinementData += refLevel + ref.xmlPosition +" ";
 			existsRefinement = true;
@@ -410,11 +434,18 @@ public class ActionTransformerModel {
 	}
 	
 	private void addPsmTransformerAttributes(Element action){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
+		}
+		
 		//process inner refinements
 		String refinementInnerAttribute = "psmRefmnt";
 		String refinementInnerData = "";
 		boolean existsInnerRefinement = false;
-		for(ActionTransformerModel ref : this.refinements){
+		for(ActionTransformerModel ref : this.innerRefinements){
 			if(ref.layerType.equals(this.layerType)){
 				String refLevel = "//@psms/@psmtransformers.";
 				refinementInnerData += refLevel + ref.xmlPosition +" ";
@@ -426,7 +457,7 @@ public class ActionTransformerModel {
 		String refinementCrossAttribute = "crossPsmRefmnt";
 		String refinementCrossData = "";
 		boolean existsCrossRefinement = false;
-		for(ActionTransformerModel ref : this.refinements){
+		for(ActionTransformerModel ref : this.crossRefinements){
 			if(!ref.layerType.equals(this.layerType)){
 				String refLevel = "//@isms/@ismtransformers.";
 				refinementCrossData += refLevel + ref.xmlPosition +" ";
@@ -455,16 +486,24 @@ public class ActionTransformerModel {
 		if(existsCrossRefinement)
 			action.setAttribute(refinementCrossAttribute, refinementCrossData);
 		
+		action.setAttribute(synonymName, synonymValue);
 		action.setAttribute(inputParamAttribute, inputParamData);
 		action.setAttribute(outputParamAttribute, outputParamData);
 	}
 	
 	private void addIsmTransformerAttributes(Element action){
+		//process synonyms
+		String synonymName = "synonym";
+		String synonymValue ="";
+		for(String syn : this.synonyms){
+			synonymValue += syn + " ";
+		}
+		
 		//process inner refinements
 		String refinementInnerAttribute = "ismRefmnt";
 		String refinementInnerData = "";
 		boolean existsInnerRefinement = false;
-		for(ActionTransformerModel ref : this.refinements){
+		for(ActionTransformerModel ref : this.innerRefinements){
 			if(ref.layerType.equals(this.layerType)){
 				String refLevel = "//@isms/@ismtransformers.";
 				refinementInnerData += refLevel + ref.xmlPosition +" ";
@@ -492,6 +531,7 @@ public class ActionTransformerModel {
 		
 		if(existsInnerRefinement)
 			action.setAttribute(refinementInnerAttribute, refinementInnerData);
+		action.setAttribute(synonymName, synonymValue);
 		action.setAttribute(inputParamAttribute, inputParamData);
 		action.setAttribute(outputParamAttribute, outputParamData);
 	}
@@ -532,6 +572,25 @@ public class ActionTransformerModel {
 		return false;
 	}
 
+	/**
+	 * Uses the equals function + the signature. Verifies
+	 * <br> name
+	 * <br> synonyms
+	 * <br> system
+	 * <br> signature
+	 * @param o
+	 * @return
+	 */
+	public boolean equivalent(ActionTransformerModel o){
+		if(o == null)
+			return false;
+		if(!o.equals(this))
+			return false;
+		if(!equivalentTransformerSignature(o, this))
+			return false;
+		return true;
+	}
+	
 	@Override
 	public int hashCode() {
 		String unique = name + "#"+ layerType.name()+"#"+ (this.parentSystem==null ? "" : this.parentSystem.getName());
@@ -550,7 +609,35 @@ public class ActionTransformerModel {
 	 * Empty the list of refinement elements.
 	 */
 	public void resetRefinement(){
-		this.refinements.clear();
+		this.innerRefinements.clear();
+	}
+
+	/**
+	 * Checks the signature of the compared transformers.
+	 * <br> Two transformers have the same signature if:
+	 * <br> - they have the same number of input elements AND
+	 * <br> - they have the same input params in the same order
+	 * <br> The output parameters are replaced from new to the base in case of a match.
+	 * The replacement is done at the merging.
+	 * @param newAt
+	 * @param baseE
+	 * @return boolean - true for same signature, false for different signature
+	 */
+	public static boolean equivalentTransformerSignature(ActionTransformerModel newAt, ActionTransformerModel baseE) {
+
+		ArrayList<DataContainerModel> newSignature = newAt.getInputParams();
+		ArrayList<DataContainerModel> baseSignature = baseE.getInputParams();
+		if(newSignature.size()!=baseSignature.size()){
+			return false;
+		}
+		for(int i=0; i<newSignature.size(); i++){
+			DataContainerModel newIn = newSignature.get(i);
+			DataContainerModel baseIn = baseSignature.get(i);
+			if(!newIn.equals(baseIn))
+				return false;
+		}
+		
+		return true;
 	}
 
 

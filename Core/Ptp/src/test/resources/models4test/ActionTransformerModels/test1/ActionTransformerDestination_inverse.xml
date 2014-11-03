@@ -4,7 +4,7 @@
 <pimdata name="album" pos="0" storedin="//@psms/@psmcontainers.5 " synonym="">
 <dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.1 "/>
 </pimdata>
-<pimdata name="town" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.3 //@psms/@psmcontainers.2 //@psms/@psmcontainers.4 //@psms/@psmcontainers.1 //@psms/@psmcontainers.5 " synonym="photo "/>
+<pimdata name="picture" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.3 //@psms/@psmcontainers.2 //@psms/@psmcontainers.4 //@psms/@psmcontainers.1 //@psms/@psmcontainers.5 " synonym="photo "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.0 //@psms/@psmtransformers.5 //@psms/@psmtransformers.6 " name="copy" paramData="//@pims/@pimdata.1 //@pims/@pimdata.0 " pos="0" synonym="duplicate replicate "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.0 " name="copy1" paramData="//@pims/@pimdata.1 //@pims/@pimdata.0 " pos="1" synonym=""/>
 </pims>

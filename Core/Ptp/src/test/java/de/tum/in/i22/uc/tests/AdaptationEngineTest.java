@@ -53,6 +53,7 @@ public class AdaptationEngineTest {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
+	//ok
 	@Test
 	public void testLoadBaseModel() {
 		if(!TESTS_ENABLED){
@@ -70,7 +71,7 @@ public class AdaptationEngineTest {
 		logger.info("Load Base Model: " + loadedElements);
 		assertTrue(loadedElements > 0);
 	}
-
+	//ok
 	@Test
 	public void testLoadModelFromFile() {
 		if(!TESTS_ENABLED){
@@ -91,7 +92,7 @@ public class AdaptationEngineTest {
 
 	}
 
-
+	//ok
 	@Test
 	public void testMergeDataContainers1() {
 		if(!TESTS_ENABLED){
@@ -133,10 +134,11 @@ public class AdaptationEngineTest {
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
 		assertEquals("data", 4, pimData);
-		assertEquals("ism containers", 3, psmContainers);
-		assertEquals("psm containers", 7, ismContainers);
+		assertEquals("psm containers", 3, psmContainers);
+		assertEquals("ism containers", 7, ismContainers);
 	}
 
+	//ok
 	/**
 	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test1
 	 * Please do not change those files in order for the test to pass!
@@ -151,19 +153,18 @@ public class AdaptationEngineTest {
 			assertTrue("AdaptationEngineTest disabled", true);
 			return;
 		}
+		String testNumber = "test1";
 		modelHandler = new ModelLoader();
-		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
 						File.separator+  "ActionTransformerBase.xml";
 		DomainModel baseDM = loadDomainModel(file, modelHandler);
 
-		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
 						File.separator+  "ActionTransformerNew.xml";
 		DomainModel newDM = loadDomainModel(file, modelHandler);
 
-		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
 						File.separator+  "ActionTransformerDestination.xml";
-
-
 
 		AdaptationController ac = new AdaptationController();
 		ac.setBaseDomainModel(baseDM);
@@ -201,7 +202,8 @@ public class AdaptationEngineTest {
 		assertEquals("psm systems", 3, psmSystems);
 		assertEquals("ism systems", 3, ismSystems);
 
-		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test1"+
+		//acts like a hashcheck
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
 				File.separator+  "ActionTransformerExpected.xml";
 
 		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
@@ -213,8 +215,92 @@ public class AdaptationEngineTest {
 			fail(e.getMessage());
 		}
 		assertEquals("update-expected match", 0, updatedElementsMerged);
+
 	}
 
+	//ok
+		/**
+		 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test1
+		 * Please do not change those files in order for the test to pass!
+		 * <br> Tests for each layer:
+		 * <br> - add new transformer
+		 * <br> - for same transformer - extend input/output/paramData elements
+		 * <br> - discover synonym at PIM
+		 */
+		@Test
+		public void testMergeActionTransformers_Test1_inverse() {
+			//same like previous but new model acts like base and base is the new model
+			if(!TESTS_ENABLED){
+				assertTrue("AdaptationEngineTest disabled", true);
+				return;
+			}
+			String testNumber = "test1";
+			modelHandler = new ModelLoader();
+			String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
+							File.separator+  "ActionTransformerBase.xml";
+			DomainModel baseDM = loadDomainModel(file, modelHandler);
+
+			file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
+							File.separator+  "ActionTransformerNew.xml";
+			DomainModel newDM = loadDomainModel(file, modelHandler);
+
+			String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
+							File.separator+  "ActionTransformerDestination_inverse.xml";
+
+			AdaptationController ac = new AdaptationController();
+			ac.setBaseDomainModel(newDM);
+			ac.setNewDomainModel(baseDM);
+			int updatedElements = 0;
+			try {
+				updatedElements = ac.mergeDomainModels();
+			} catch (DomainMergeException e) {
+				fail(e.getMessage());
+			}
+
+			//change the references only!
+			baseDM = newDM;
+
+			logger.info("UPDATED ELEMENTS: " + updatedElements);
+			System.out.println("=============TEST RESULT===========");
+			System.out.println(baseDM);
+			try {
+				modelHandler.storeXmlDomainModel(destination, baseDM);
+			} catch (InvalidDomainModelFormatException e) {
+				fail(e.getMessage());
+			}
+
+			int pimData = baseDM.getPimLayer().getDataContainers().size();
+			int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+			int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+			assertEquals("data", 2, pimData);
+			assertEquals("psm containers", 6,psmContainers);
+			assertEquals("ism containers", 6,ismContainers);
+			int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+			int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+			int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+			assertEquals("actions", 2,pimAction);
+			assertEquals("psm transformers", 7,psmTransformers);
+			assertEquals("ism transformers", 10,ismTransformers);
+			int psmSystems = baseDM.getPsmLayer().getSystems().size();
+			int ismSystems = baseDM.getIsmLayer().getSystems().size();
+			assertEquals("psm systems", 3, psmSystems);
+			assertEquals("ism systems", 3, ismSystems);
+
+			//acts like a hashcheck
+			String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
+					File.separator+  "ActionTransformerExpected.xml";
+
+			DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+			ac.setNewDomainModel(expectedDM);
+			int updatedElementsMerged = 0;
+			try {
+				updatedElementsMerged = ac.mergeDomainModels();
+			} catch (DomainMergeException e) {
+				fail(e.getMessage());
+			}
+			assertEquals("update-expected match", 0, updatedElementsMerged);
+
+	}
 
 	private DomainModel loadDomainModel(String file, ModelLoader modelHandler){
 		DomainModel expectedDM = null;
@@ -226,6 +312,7 @@ public class AdaptationEngineTest {
 		return expectedDM;
 	}
 
+	//ok
 	/**
 	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test2
 	 * Please do not change those files in order for the test to pass!
@@ -241,20 +328,11 @@ public class AdaptationEngineTest {
 		}
 		modelHandler = new ModelLoader();
 		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerBase.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+
+		DomainModel baseDM = loadDomainModel(file, modelHandler);
 
 		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerNew.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+		DomainModel newDM = loadDomainModel(file, modelHandler);
 
 		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "ActionTransformerDestination.xml";
 
@@ -288,17 +366,30 @@ public class AdaptationEngineTest {
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
 		assertEquals(2,pimAction);
-		assertEquals(6,psmTransformers);
-		assertEquals(8,ismTransformers);
+		assertEquals(7,psmTransformers);
+		assertEquals(9,ismTransformers);
 		int psmSystems = baseDM.getPsmLayer().getSystems().size();
 		int ismSystems = baseDM.getIsmLayer().getSystems().size();
 		assertEquals(3, psmSystems);
 		assertEquals(3, ismSystems);
 
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test2"+
+				File.separator+  "ActionTransformerExpected.xml";
+
+		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+		ac.setNewDomainModel(expectedDM);
+		int updatedElementsMerged = 0;
+		try {
+			updatedElementsMerged = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+		assertEquals("update-expected match", 0, updatedElementsMerged);
 	}
 
+	//ok
 	/**
-	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test2
+	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test3
 	 * Please do not change those files in order for the test to pass!
 	 * <br> Tests for each layer:
 	 * <br> - extend inner/cross SET ref
@@ -312,20 +403,11 @@ public class AdaptationEngineTest {
 		}
 		modelHandler = new ModelLoader();
 		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerBase.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+
+		DomainModel baseDM = loadDomainModel(file, modelHandler);
 
 		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerNew.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+		DomainModel newDM = loadDomainModel(file, modelHandler);
 
 		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+File.separator+  "ActionTransformerDestination.xml";
 
@@ -351,18 +433,191 @@ public class AdaptationEngineTest {
 		int pimData = baseDM.getPimLayer().getDataContainers().size();
 		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
 		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertTrue(pimData == 2);
-		assertTrue(psmContainers == 6);
-		assertTrue(ismContainers == 6);
+		assertEquals(2, pimData);
+		assertEquals(6, psmContainers);
+		assertEquals(6, ismContainers);
 		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
-		assertTrue(pimAction == 2);
-		assertTrue(psmTransformers == 5);
-		assertTrue(ismTransformers == 8);
+		assertEquals(2, pimAction);
+		assertEquals(6, psmTransformers);
+		assertEquals(10, ismTransformers);
+		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+		assertEquals(3, psmSystems);
+		assertEquals(3, ismSystems);
+
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test3"+
+				File.separator+  "ActionTransformerExpected.xml";
+
+		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+		ac.setNewDomainModel(expectedDM);
+		int updatedElementsMerged = 0;
+		try {
+			updatedElementsMerged = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+		assertEquals("update-expected match", 0, updatedElementsMerged);
 
 	}
 
+	/**
+	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test4
+	 * Please do not change those files in order for the test to pass!
+	 * <br> Tests for each layer:
+	 * <br> -
+	 * <br> -
+	 */
+	@Test
+	public void testMergeActionTransformers_Test4() {
+		if(!TESTS_ENABLED){
+			assertTrue("AdaptationEngineTest disabled", true);
+			return;
+		}
+		modelHandler = new ModelLoader();
+
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test4"+File.separator+  "ActionTransformerBase.xml";
+		DomainModel baseDM = loadDomainModel(file, modelHandler);
+
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test4"+File.separator+  "ActionTransformerNew.xml";
+		DomainModel newDM = loadDomainModel(file, modelHandler);
+
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test4"+File.separator+  "ActionTransformerDestination.xml";
+
+		AdaptationController ac = new AdaptationController();
+		ac.setBaseDomainModel(baseDM);
+		ac.setNewDomainModel(newDM);
+		int updatedElements = 0;
+		try {
+			updatedElements = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+
+		logger.info("UPDATED ELEMENTS: " + updatedElements);
+		System.out.println("=============TEST RESULT===========");
+		System.out.println(baseDM);
+		try {
+			modelHandler.storeXmlDomainModel(destination, baseDM);
+		} catch (InvalidDomainModelFormatException e) {
+			fail(e.getMessage());
+		}
+
+		int pimData = baseDM.getPimLayer().getDataContainers().size();
+		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+		assertEquals(2, pimData);
+		assertEquals(6, psmContainers);
+		assertEquals(6, ismContainers);
+		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+		assertEquals(2, pimAction);
+		assertEquals(6, psmTransformers);
+		assertEquals(13, ismTransformers);
+		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+
+		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+		assertEquals(3, psmSystems);
+		assertEquals(3, ismSystems);
+
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+"test4"+
+				File.separator+  "ActionTransformerExpected.xml";
+
+		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+		ac.setNewDomainModel(expectedDM);
+		int updatedElementsMerged = 0;
+
+		try {
+			updatedElementsMerged = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+
+		assertEquals("update-expected match", 0, updatedElementsMerged);
+
+	}
+
+	/**
+	 * The domain models used are in ./src/test/resources/models4test/ActionTransformerModels/test5
+	 * Please do not change those files in order for the test to pass!
+	 * <br> Tests:
+	 * <br> - find equivalent based on refinement
+	 * <br> - remove duplicate refinement sequence
+	 */
+	@Test
+	public void testMergeActionTransformers_Test5() {
+		if(!TESTS_ENABLED){
+			assertTrue("AdaptationEngineTest disabled", true);
+			return;
+		}
+		String testNumber = "test5";
+
+		modelHandler = new ModelLoader();
+
+		String file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+File.separator+  "ActionTransformerBase.xml";
+		DomainModel baseDM = loadDomainModel(file, modelHandler);
+
+		file = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+File.separator+  "ActionTransformerNew.xml";
+		DomainModel newDM = loadDomainModel(file, modelHandler);
+
+		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+File.separator+  "ActionTransformerDestination.xml";
+
+		AdaptationController ac = new AdaptationController();
+		ac.setBaseDomainModel(baseDM);
+		ac.setNewDomainModel(newDM);
+		int updatedElements = 0;
+		try {
+			updatedElements = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+
+		logger.info("UPDATED ELEMENTS: " + updatedElements);
+		System.out.println("=============TEST RESULT===========");
+		System.out.println(baseDM);
+		try {
+			modelHandler.storeXmlDomainModel(destination, baseDM);
+		} catch (InvalidDomainModelFormatException e) {
+			fail(e.getMessage());
+		}
+
+		int pimData = baseDM.getPimLayer().getDataContainers().size();
+		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+		assertEquals(2, pimData);
+		assertEquals(6, psmContainers);
+		assertEquals(6, ismContainers);
+		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+
+		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+		assertEquals(2, pimAction);
+		assertEquals(6, psmTransformers);
+		assertEquals(13, ismTransformers);
+		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+		assertEquals(3, psmSystems);
+		assertEquals(3, ismSystems);
+
+		String expected = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+testNumber+
+				File.separator+  "ActionTransformerExpected.xml";
+
+		DomainModel expectedDM = loadDomainModel(expected, modelHandler);
+		ac.setNewDomainModel(expectedDM);
+		int updatedElementsMerged = 0;
+		try {
+			updatedElementsMerged = ac.mergeDomainModels();
+		} catch (DomainMergeException e) {
+			fail(e.getMessage());
+		}
+		assertEquals("update-expected match", 0, updatedElementsMerged);
+
+	}
+
+	//ok
 	/**
 	 * The domain models used are in ./src/test/resources/models4test/SystemModels/test1/
 	 * Please do not change those files in order for the test to pass!
@@ -424,9 +679,10 @@ public class AdaptationEngineTest {
 		assertEquals(6, ismContainers);
 		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
 		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+
 		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
 		assertEquals(2, pimAction);
-		assertEquals(7, psmTransformers);
+		assertEquals(8, psmTransformers);
 		assertEquals(12, ismTransformers);
 		int psmSystems = baseDM.getPsmLayer().getSystems().size();
 		int ismSystems = baseDM.getIsmLayer().getSystems().size();
@@ -436,351 +692,351 @@ public class AdaptationEngineTest {
 	}
 
 
-	/**
-	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
-	 * Please do not change those files in order for the test to pass!
-	 * <br> Tests for each layer:
-	 * <br> - add new transformer
-	 * <br> - add new system
-	 * <br> - add new system association
-	 * <br> - add new cross refinement
-	 */
-	@Test
-	public void testMergeDummyModels_1() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyBase.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
+//	/**
+//	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
+//	 * Please do not change those files in order for the test to pass!
+//	 * <br> Tests for each layer:
+//	 * <br> - add new transformer
+//	 * <br> - add new system
+//	 * <br> - add new system association
+//	 * <br> - add new cross refinement
+//	 */
+//	@Test
+//	public void testMergeDummyModels_1() {
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyBase.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyNew.xml";
+//		DomainModel newDM = null;
+//		try {
+//			newDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyDestination.xml";
+//
+//		AdaptationController ac = new AdaptationController();
+//		ac.setBaseDomainModel(baseDM);
+//		ac.setNewDomainModel(newDM);
+//		int updatedElements = 0;
+//		try {
+//			updatedElements = ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		logger.info("UPDATED ELEMENTS: " + updatedElements);
+//		System.out.println("=============TEST RESULT===========");
+//		System.out.println(baseDM);
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		int pimData = baseDM.getPimLayer().getDataContainers().size();
+//		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+//		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+//		assertEquals(5, pimData);
+//		assertEquals(6, psmContainers);
+//		assertEquals(7, ismContainers);
+//		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+//		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+//		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+//		assertEquals(9, pimAction);
+//		assertEquals(5, psmTransformers);
+//		assertEquals(6, ismTransformers);
+//		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+//		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+//		assertEquals(2, psmSystems);
+//		assertEquals(2, ismSystems);
+//
+//	}
 
-		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyNew.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
 
-		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test1"+File.separator+  "DummyDestination.xml";
+//	/**
+//	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
+//	 * Please do not change those files in order for the test to pass!
+//	 * <br> Tests for each layer:
+//	 * <br> - add new transformer
+//	 * <br> - add new system
+//	 * <br> - add new system association
+//	 * <br> - add new cross refinement
+//	 */
+//	@Test
+//	public void testMergeDummyModels_2() {
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyBase.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyNew.xml";
+//		DomainModel newDM = null;
+//		try {
+//			newDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyExpected.xml";
+//		DomainModel exptectedDM = null;
+//		try {
+//			exptectedDM = modelHandler.loadDomainModel(expectedFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
+//
+//		AdaptationController ac = new AdaptationController();
+//		ac.setBaseDomainModel(baseDM);
+//		ac.setNewDomainModel(newDM);
+//		int updatedElements = 0;
+//		try {
+//			updatedElements = ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		logger.info("UPDATED ELEMENTS: " + updatedElements);
+//		System.out.println("=============TEST RESULT===========");
+//		System.out.println(baseDM);
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		ac.setNewDomainModel(exptectedDM);
+//		try {
+//			updatedElements = ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			fail(e.getMessage());
+//		}
+//		assertEquals(0, updatedElements);
+//
+//		int pimData = baseDM.getPimLayer().getDataContainers().size();
+//		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+//		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+//		assertEquals(5, pimData);
+//		assertEquals(6, psmContainers);
+//		assertEquals(7, ismContainers);
+//		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+//		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+//		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+//		assertEquals(9, pimAction);
+//		assertEquals(12, psmTransformers);
+//		assertEquals(11, ismTransformers);
+//		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+//		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+//		assertEquals(2, psmSystems);
+//		assertEquals(2, ismSystems);
+//
+//	}
 
-		AdaptationController ac = new AdaptationController();
-		ac.setBaseDomainModel(baseDM);
-		ac.setNewDomainModel(newDM);
-		int updatedElements = 0;
-		try {
-			updatedElements = ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			fail(e.getMessage());
-		}
+//	/**
+//	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
+//	 * Please do not change those files in order for the test to pass!
+//	 * <br> Tests for each layer:
+//	 * <br> - add new transformer
+//	 * <br> - add new system
+//	 * <br> - add new system association
+//	 * <br> - add new cross refinement
+//	 */
+//	@Test
+//	public void testResetDummyModels_1() {
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "BaseDomain.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "NewDomain.xml";
+//		DomainModel newDM = null;
+//		try {
+//			newDM = modelHandler.loadDomainModel(file);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset"+File.separator+  "DestinationDomain.xml";
+//		DomainModel exptectedDM = null;
+//		try {
+//			exptectedDM = modelHandler.loadDomainModel(expectedFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
+//
+//		AdaptationController ac = new AdaptationController();
+//		ac.setBaseDomainModel(baseDM);
+//		ac.setNewDomainModel(newDM);
+//		int updatedElements = 0;
+//		try {
+//			updatedElements = ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		logger.info("UPDATED ELEMENTS: " + updatedElements);
+//		System.out.println("=============TEST RESULT===========");
+//		System.out.println(baseDM);
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e) {
+//			fail(e.getMessage());
+//		}
+//
+//		ac.setNewDomainModel(exptectedDM);
+//		try {
+//			updatedElements = ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			fail(e.getMessage());
+//		}
+//		assertEquals(0, updatedElements);
+//
+//		int pimData = baseDM.getPimLayer().getDataContainers().size();
+//		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
+//		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
+//		assertEquals(5, pimData);
+//		assertEquals(6, psmContainers);
+//		assertEquals(7, ismContainers);
+//		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
+//		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
+//		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
+//		assertEquals(9, pimAction);
+//		assertEquals(12, psmTransformers);
+//		assertEquals(11, ismTransformers);
+//		int psmSystems = baseDM.getPsmLayer().getSystems().size();
+//		int ismSystems = baseDM.getIsmLayer().getSystems().size();
+//		assertEquals(2, psmSystems);
+//		assertEquals(2, ismSystems);
+//
+//	}
 
-		logger.info("UPDATED ELEMENTS: " + updatedElements);
-		System.out.println("=============TEST RESULT===========");
-		System.out.println(baseDM);
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e) {
-			fail(e.getMessage());
-		}
+//	@Test
+//	public void testStoreTransformersXML(){
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String baseFile = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerBase.xml";
+//		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerDestination.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(baseFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//	}
 
-		int pimData = baseDM.getPimLayer().getDataContainers().size();
-		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
-		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertEquals(5, pimData);
-		assertEquals(6, psmContainers);
-		assertEquals(7, ismContainers);
-		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
-		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
-		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
-		assertEquals(9, pimAction);
-		assertEquals(5, psmTransformers);
-		assertEquals(6, ismTransformers);
-		int psmSystems = baseDM.getPsmLayer().getSystems().size();
-		int ismSystems = baseDM.getIsmLayer().getSystems().size();
-		assertEquals(2, psmSystems);
-		assertEquals(2, ismSystems);
+//	@Test
+//	public void testStoreContainersXML(){
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+//		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(baseFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//	}
 
-	}
+//	@Test
+//	public void testBackUpOriginalDomainModelXML(){
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+//		modelHandler.backupBaseDomainModel();
+//		modelHandler.backupBaseDomainModel(baseFile);
+//	}
 
-
-	/**
-	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
-	 * Please do not change those files in order for the test to pass!
-	 * <br> Tests for each layer:
-	 * <br> - add new transformer
-	 * <br> - add new system
-	 * <br> - add new system association
-	 * <br> - add new cross refinement
-	 */
-	@Test
-	public void testMergeDummyModels_2() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyBase.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyNew.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyExpected.xml";
-		DomainModel exptectedDM = null;
-		try {
-			exptectedDM = modelHandler.loadDomainModel(expectedFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
-
-		AdaptationController ac = new AdaptationController();
-		ac.setBaseDomainModel(baseDM);
-		ac.setNewDomainModel(newDM);
-		int updatedElements = 0;
-		try {
-			updatedElements = ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			fail(e.getMessage());
-		}
-
-		logger.info("UPDATED ELEMENTS: " + updatedElements);
-		System.out.println("=============TEST RESULT===========");
-		System.out.println(baseDM);
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e) {
-			fail(e.getMessage());
-		}
-
-		ac.setNewDomainModel(exptectedDM);
-		try {
-			updatedElements = ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			fail(e.getMessage());
-		}
-		assertEquals(0, updatedElements);
-
-		int pimData = baseDM.getPimLayer().getDataContainers().size();
-		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
-		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertEquals(5, pimData);
-		assertEquals(6, psmContainers);
-		assertEquals(7, ismContainers);
-		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
-		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
-		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
-		assertEquals(9, pimAction);
-		assertEquals(12, psmTransformers);
-		assertEquals(11, ismTransformers);
-		int psmSystems = baseDM.getPsmLayer().getSystems().size();
-		int ismSystems = baseDM.getIsmLayer().getSystems().size();
-		assertEquals(2, psmSystems);
-		assertEquals(2, ismSystems);
-
-	}
-
-	/**
-	 * The domain models used are in ./src/test/resources/models4test/DummyModels/test1/
-	 * Please do not change those files in order for the test to pass!
-	 * <br> Tests for each layer:
-	 * <br> - add new transformer
-	 * <br> - add new system
-	 * <br> - add new system association
-	 * <br> - add new cross refinement
-	 */
-	@Test
-	public void testResetDummyModels_1() {
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "BaseDomain.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		file = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset1"+File.separator+  "NewDomain.xml";
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(file);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		String expectedFile = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"reset"+File.separator+  "DestinationDomain.xml";
-		DomainModel exptectedDM = null;
-		try {
-			exptectedDM = modelHandler.loadDomainModel(expectedFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		String destination = resourcesDir + File.separator+  Dummy_MODELS4TEST_DIR +File.separator+"test2"+File.separator+  "DummyDestination.xml";
-
-		AdaptationController ac = new AdaptationController();
-		ac.setBaseDomainModel(baseDM);
-		ac.setNewDomainModel(newDM);
-		int updatedElements = 0;
-		try {
-			updatedElements = ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			fail(e.getMessage());
-		}
-
-		logger.info("UPDATED ELEMENTS: " + updatedElements);
-		System.out.println("=============TEST RESULT===========");
-		System.out.println(baseDM);
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e) {
-			fail(e.getMessage());
-		}
-
-		ac.setNewDomainModel(exptectedDM);
-		try {
-			updatedElements = ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			fail(e.getMessage());
-		}
-		assertEquals(0, updatedElements);
-
-		int pimData = baseDM.getPimLayer().getDataContainers().size();
-		int psmContainers = baseDM.getPsmLayer().getDataContainers().size();
-		int ismContainers = baseDM.getIsmLayer().getDataContainers().size();
-		assertEquals(5, pimData);
-		assertEquals(6, psmContainers);
-		assertEquals(7, ismContainers);
-		int pimAction = baseDM.getPimLayer().getActionTransformers().size();
-		int psmTransformers = baseDM.getPsmLayer().getActionTransformers().size();
-		int ismTransformers = baseDM.getIsmLayer().getActionTransformers().size();
-		assertEquals(9, pimAction);
-		assertEquals(12, psmTransformers);
-		assertEquals(11, ismTransformers);
-		int psmSystems = baseDM.getPsmLayer().getSystems().size();
-		int ismSystems = baseDM.getIsmLayer().getSystems().size();
-		assertEquals(2, psmSystems);
-		assertEquals(2, ismSystems);
-
-	}
-
-	@Test
-	public void testStoreTransformersXML(){
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String baseFile = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerBase.xml";
-		String destination = resourcesDir + File.separator+  ActionTransformer_MODELS4TEST_DIR +File.separator+  "ActionTransformerDestination.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(baseFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-	}
-
-	@Test
-	public void testStoreContainersXML(){
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
-		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(baseFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-	}
-
-	@Test
-	public void testBackUpOriginalDomainModelXML(){
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
-		modelHandler.backupBaseDomainModel();
-		modelHandler.backupBaseDomainModel(baseFile);
-	}
-
-	@Test
-	public void testMergeAndStoreContainersXML(){
-		if(!TESTS_ENABLED){
-			assertTrue("AdaptationEngineTest disabled", true);
-			return;
-		}
-		modelHandler = new ModelLoader();
-		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
-		String newFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
-		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
-		DomainModel baseDM = null;
-		try {
-			baseDM = modelHandler.loadDomainModel(baseFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-		DomainModel newDM = null;
-		try {
-			newDM = modelHandler.loadDomainModel(newFile);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-
-		AdaptationController ac = new AdaptationController();
-		ac.setBaseDomainModel(baseDM);
-		ac.setNewDomainModel(newDM);
-		try {
-			ac.mergeDomainModels();
-		} catch (DomainMergeException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-
-		try {
-			modelHandler.storeXmlDomainModel(destination, baseDM);
-		} catch (InvalidDomainModelFormatException e1) {
-			fail(e1.getMessage());
-		}
-	}
+//	@Test
+//	public void testMergeAndStoreContainersXML(){
+//		if(!TESTS_ENABLED){
+//			assertTrue("AdaptationEngineTest disabled", true);
+//			return;
+//		}
+//		modelHandler = new ModelLoader();
+//		String baseFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerBase.xml";
+//		String newFile = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerNew.xml";
+//		String destination = resourcesDir + File.separator+  DataContainer_MODELS4TEST_DIR +File.separator+  "DataContainerDestination.xml";
+//		DomainModel baseDM = null;
+//		try {
+//			baseDM = modelHandler.loadDomainModel(baseFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//		DomainModel newDM = null;
+//		try {
+//			newDM = modelHandler.loadDomainModel(newFile);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//
+//		AdaptationController ac = new AdaptationController();
+//		ac.setBaseDomainModel(baseDM);
+//		ac.setNewDomainModel(newDM);
+//		try {
+//			ac.mergeDomainModels();
+//		} catch (DomainMergeException e) {
+//			e.printStackTrace();
+//			fail(e.getMessage());
+//		}
+//
+//		try {
+//			modelHandler.storeXmlDomainModel(destination, baseDM);
+//		} catch (InvalidDomainModelFormatException e1) {
+//			fail(e1.getMessage());
+//		}
+//	}
 
 }

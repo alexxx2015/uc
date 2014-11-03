@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
-<pims name="SNS_PIM">
-<pimdata name="photo" pos="0" storedin="//@psms/@psmcontainers.0 " synonym=""/>
-<pimdata name="album" pos="1" storedin="//@psms/@psmcontainers.1 " synonym="album1 album2 ">
-<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
-</pimdata>
-<pimdata name="profile" pos="2" storedin="//@psms/@psmcontainers.1 " synonym="">
-<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
-</pimdata>
-</pims>
-<psms name="SNS_PSM">
-<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="file" pos="0"/>
-<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.2 " name="directory" pos="1"/>
-</psms>
-<isms name="SNS_ISM">
-<ismcontainers name="htmlEle" pos="0"/>
-<ismcontainers name="unixFile" pos="1"/>
-<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 " name="unixDir" pos="2"/>
-</isms>
+	<pims name="SNS_PIM">
+		<pimdata name="photo" pos="0" storedin="//@psms/@psmcontainers.0 " synonym=""/>
+		<pimdata name="album" pos="1" storedin="//@psms/@psmcontainers.1 " synonym="album1 album2 ">
+			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+		</pimdata>
+		<pimdata name="profile" pos="2" storedin="//@psms/@psmcontainers.1 " synonym="">
+			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.0 "/>
+		</pimdata>
+	</pims>
+	<psms name="SNS_PSM">
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.1 " name="file" pos="0"/>
+		<psmcontainers containersassociation="//@psms/@psmcontainers.0 " contimplementedas="//@isms/@ismcontainers.2 " name="directory" pos="1"/>
+	</psms>
+	<isms name="SNS_ISM">
+		<ismcontainers name="htmlEle" pos="0"/>
+		<ismcontainers name="unixFile" pos="1"/>
+		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.1 " name="unixDir" pos="2"/>
+	</isms>
 </de.tum.in.i22.uc.metamodel:domain>

@@ -2,9 +2,11 @@ package de.tum.in.i22.uc.ptp.adaptation.engine;
 
 import java.util.ArrayList;
 
+import org.hamcrest.core.IsSame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rita.RiString;
 import de.tum.in.i22.uc.ptp.adaptation.domainmodel.ActionTransformerModel;
 import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DataContainerModel;
 import de.tum.in.i22.uc.ptp.adaptation.domainmodel.DomainModel;
@@ -102,7 +104,7 @@ public class ActionTransformerAdaptationController {
 		if(!newAt.getLayerType().equals(baseLayer.getType()))
 			return;
 		
-		for(ActionTransformerModel innerLink : newAt.getRefinements()){
+		for(ActionTransformerModel innerLink : newAt.getInnerRefinements()){
 			addNewTransformerToBase(innerLink, baseLayer);
 		}
 		
@@ -113,11 +115,11 @@ public class ActionTransformerAdaptationController {
 		logger.info("Try ADD NewTransformer: "+ newAt.toStringShort()+ " To Base: "+ baseLayer.getType());
 		ActionTransformerModel baseAt = searchEquivalent(newAt, baseLayer);
 		if(baseAt == null){
-			logger.info("created NewTransformer: " + newAt.toStringShort());
+			logger.info("	created NewTransformer: " + newAt.toStringShort());
 			baseAt = new ActionTransformerModel(newAt.getName(), newAt.getLayerType());
-			baseAt.setParenLayer(baseLayer);
-			baseAt.setRefinementType(newAt.getRefinementType());
-			baseAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
+			baseAt.setRefinementType(newAt.getInnerRefinementType());
+			baseLayer.addActionTransformer(baseAt);
+			incrementUpdateCounter();
 			
 			if(!baseAt.getLayerType().equals(LayerType.PIM)){
 				SystemModel baseSystem = baseLayer.getSystem(newAt.getParentSystem());
@@ -127,111 +129,131 @@ public class ActionTransformerAdaptationController {
 					 * Each transformer must have a parent system.
 					 */
 					baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+					baseLayer.addSystem(baseSystem);
 				}
 				baseSystem.addOperation(baseAt);		
 				incrementUpdateCounter();
 			}
-			baseLayer.addActionTransformer(baseAt);
-			incrementUpdateCounter();
 		}
 		else{
-			logger.info("Equivalent found: base "+ baseAt.toStringShort());
+			logger.info("	Equivalent found: base "+ baseAt.toStringShort());
 		}
 		
-		mergeRefinement(newAt, baseAt);
 		
-		updateInputAndOutputContainers(newAt, baseAt);
-		updateSynonyms(newAt, baseAt);
-		updateAssociations(newAt, baseAt);
+		if(newAt.getInnerRefinementType().equals(RefinementType.SET)){
+			if(baseAt.getInnerRefinementType().equals(RefinementType.SET)){
+				//synonyms first!! they must be updated first when is the case of equal/similar refinement
+				updateSynonyms(newAt, baseAt);
+				//input and output must be added to detect the signature!
+				updateInputAndOutputContainers(newAt, baseAt);
+				mergeInnerSet2Set(newAt, baseAt);
+				mergeCrossRefinement(newAt, baseAt);
+				updateAssociations(newAt, baseAt);
+			}
+			else if(baseAt.getInnerRefinementType().equals(RefinementType.SEQ)){
+				mergeSet2Seq(newAt, baseAt);
+			}
+		}
+		else{
+			//newAt.getRefinementType().equals(RefinementType.SEQ)
+			if(baseAt.getInnerRefinementType().equals(RefinementType.SET)){
+				ActionTransformerModel newSquence = mergeSeq2Set(newAt, baseAt);
+				//copying the elements from the new sequence.
+				//the refinement, input, output, association list should be empty in the case of a sequence
+				//added only for safety
+				mergeCrossRefinement(newAt, newSquence);
+				updateInputAndOutputContainers(newAt, newSquence);
+				updateSynonyms(newAt, newSquence);
+				updateAssociations(newAt, newSquence);
+			}
+			else if(baseAt.getInnerRefinementType().equals(RefinementType.SEQ)){
+				mergeSeq2Seq(newAt, baseAt);
+			}
+		}
+		
+		removeRedundantInnerLinks(baseAt);
 		
 		newAt.markAsMerged();
 		//logger.debug("ADD Success: "+ newAt.toString());
 		
 	}
 
+
 	/**
-	 * This is the case when a transformer from the newDM is inner SET refined
-	 * while the same transformer in the baseDM is cross refined.
-	 * Then, the new transformer is renamed and the base transformer is added to its refinements.
-	 * @param newAt
+	 *  Sequences can have different names but the same elements. 
+	 *	Therefore, at this moment, an element could end up
+	 *  with a set refinement composed of multiple sequences with different name,
+	 *  but which could be in an equivalence or containment relation.
+	 *  These sequences are processed in pair and merged according to the case presented before.
+	 *  All redundant sequences are removed from the refinement of the element.
 	 * @param baseAt
-	 * @param baseLayer
-	 * @return
 	 */
-	private ActionTransformerModel modifyNewActionTransformer(ActionTransformerModel newAt, ActionTransformerModel baseAt, LayerModel baseLayer) {
-		//logger.debug("created NewTransformer: " + newAt.toStringShort());
-		String newName = newAt.getName()+"#NewSet";
-		ActionTransformerModel renamedAt = new ActionTransformerModel(newName, newAt.getLayerType());
-		renamedAt.setParenLayer(baseLayer);
-		renamedAt.setRefinementType(newAt.getRefinementType());
-		renamedAt.setInnerLayerRefined(newAt.isInnerLayerRefined());
-		/* The parent system will be updated when the systems are merged.
-		 * Each transformer must have a parent system.
-		 */
-		renamedAt.setParentSystem(newAt.getParentSystem());			
-		baseLayer.addActionTransformer(renamedAt);
-		renamedAt.addRefinement(baseAt);
-		mergeSet2Set(newAt, renamedAt);
-		return renamedAt;
+	private void removeRedundantInnerLinks(ActionTransformerModel baseAt) {
+		if(!baseAt.getInnerRefinementType().equals(RefinementType.SET)){
+			return;
+		}
+		
+		ArrayList<ActionTransformerModel> refinements = baseAt.getInnerRefinements();
+		int indexFirst = 0;
+		int refSize = refinements.size(); //work with indexes to process the list on the fly
+		for(indexFirst = 0; indexFirst < refSize-1; indexFirst++){
+			ActionTransformerModel firstSequence = refinements.get(indexFirst);
+			if(!firstSequence.getInnerRefinementType().equals(RefinementType.SEQ))
+				continue;
+			for(int indexSecond = indexFirst+1; indexSecond < refSize; indexSecond++){
+				ActionTransformerModel secondSequence = refinements.get(indexSecond);
+				if(!secondSequence.getInnerRefinementType().equals(RefinementType.SEQ))
+					continue;
+				//now we have two sequences which we can compare
+				if(equivalentSequence(firstSequence, secondSequence)){
+					mergeNewSequenceToBaseSequence(secondSequence, firstSequence);
+					refinements.remove(indexSecond);
+					refSize = refinements.size();
+					indexSecond --; //decrease with one position to disable the ++
+					logger.info("	remove from base "+ baseAt.toStringShort() + " refinement: "+ secondSequence.toStringShort());
+					incrementUpdateCounter();
+				}
+			}
+		}
 	}
 
-	/** 
-	 * Update Inner/Cross Set/Seq refinement
-	 * @param newAt
-	 * @param baseAt
-	 * @throws DomainMergeException 
-	 */
-	private void mergeRefinement(ActionTransformerModel newAt, ActionTransformerModel baseAt) throws DomainMergeException {
-		//logger.debug("Try MERGE refinement - base: " + baseAt.toStringShort() + " new: "+ newAt.toStringShort());
-		
-		if(newAt.isInnerLayerRefined()){
-			if(baseAt.isInnerLayerRefined() == false){
-				/* This is the case when a transformer from the newDM is inner refined
-				 * while the same transformer in the baseDM is cross refined.
-				 */
-				String message = "Conflicting definition between base and new for transformer: "+ newAt.toStringShort();
-				message += "\nThe transformer is only an intermediate. Please rename.";
-				message += "\nPlease rename this new intermediate transformer in the new domain model.";
-				throw new DomainMergeException(message);
-			}
-		}
-		else {
-			if(baseAt.isInnerLayerRefined() == true){
-				/*This is the case when a transformer from the baseDM is inner refined
-				 * 
-				 * */
-				String newName = baseAt.getName()+"_"+baseAt.getRefinementType().name();
-				newAt.setName(newName);
-			}
-		}
-		
-		if(newAt.getRefinementType().equals(RefinementType.SET)){
-			if(baseAt.getRefinementType().equals(RefinementType.SET)){
-				mergeSet2Set(newAt, baseAt);
-			}
-			else if(baseAt.getRefinementType().equals(RefinementType.SEQ)){
-				mergeSet2Seq(newAt, baseAt);
-			}
-		}
-		else{
-			//newAt.getRefinementType().equals(RefinementType.SEQ)
-			if(baseAt.getRefinementType().equals(RefinementType.SET)){
-				mergeSeq2Set(newAt, baseAt);
-			}
-			else if(baseAt.getRefinementType().equals(RefinementType.SEQ)){
-				mergeSeq2Seq(newAt, baseAt);
-			}
+	private void mergeCrossRefinement(ActionTransformerModel newAt, ActionTransformerModel baseAt) throws DomainMergeException {
+		//logger.debug("Merge Set2Set - new: "+ newAt.toStringShort() +" base: "+ baseAt.toStringShort());
+		for(ActionTransformerModel ref : newAt.getCrossRefinements()){
+			ActionTransformerModel baseRef = baseAt.getCrossRefinement(ref);
+			if(baseRef == null){
+				LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType()).getRefinementLayer();
+				baseRef = refLayer.getActionTransformerEquivalent(ref);
+				logger.debug("	Merge Cross Set2Set EXTENDED base "+ baseAt.toString() + "  WITH "+ baseRef.toString());
+				baseAt.addCrossRefinement(baseRef);
+				incrementUpdateCounter();
+			}			
 		}
 		
 	}
-
+	
 	private void mergeSeq2Seq(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
+		//the element was created before.
+		boolean newSequence = baseAt.getInnerRefinements().size() == 0;
+		if(newSequence){
+			//copy new sequence to base
+			for(ActionTransformerModel ref : newAt.getInnerRefinements()){
+				ActionTransformerModel baseRef = null;
+				LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
+				baseRef = refLayer.getActionTransformerEquivalent(ref);
+				baseAt.addInnerRefinement(baseRef);
+				incrementUpdateCounter();
+			}
+			logger.debug("	Merge Seq2Seq ADDED to base "+ baseAt.toString());
+			incrementUpdateCounter();
+			return;
+		}
 		
 		boolean equivalent = equivalentSequence(newAt, baseAt);
 		if(equivalent){
 			String beforeBase = baseAt.toString();
 			mergeNewSequenceToBaseSequence(newAt, baseAt);
-			logger.debug("Merge Seq2Seq MODIFIED base "+ beforeBase + "  TO "+ baseAt.toString());
+			logger.debug("	Merge Seq2Seq MODIFIED base "+ beforeBase + " TO "+ baseAt.toString());
 		}
 		else{
 			/* keep both sequences. 
@@ -239,8 +261,16 @@ public class ActionTransformerAdaptationController {
 			 * the merging goes bottom up, and because we are using objects and not string,
 			 * the parents will still be able to find the renamed sequence.
 			 */
-			String sequenceName = newAt.getName() + "#"+PublicMethods.timestamp();
-			newAt.setName(sequenceName);
+			boolean uniqueName = false;
+			String sequenceName = newAt.getName();
+			while(!uniqueName){
+				sequenceName += "_"+baseDm.getLayer(baseAt.getLayerType()).getActionTransformers().size();
+				newAt.setName(sequenceName);
+				ActionTransformerModel found = null;
+				found = baseDm.getLayer(baseAt.getLayerType()).getActionTransformer(sequenceName);
+				if(found==null)
+					uniqueName = true;
+			}
 			//copy new sequence to base
 			ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
 			SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
@@ -250,26 +280,22 @@ public class ActionTransformerAdaptationController {
 				 * Each transformer must have a parent system.
 				 */
 				baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+				baseDm.getLayer(baseAt.getLayerType()).addSystem(baseSystem);
 			}
 			baseSystem.addOperation(seq);
+			
 			seq.setRefinementType(RefinementType.SEQ);
-			for(ActionTransformerModel ref : newAt.getRefinements()){
+			for(ActionTransformerModel ref : newAt.getInnerRefinements()){
 				ActionTransformerModel baseRef = null;
-				if(ref.getLayerType().equals(newAt.getLayerType())){
-					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
-					baseRef = refLayer.getActionTransformer(ref);					
-				}
-				else{
-					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType()).getRefinementLayer();
-					baseRef = refLayer.getActionTransformer(ref);
-				}				
-				
-				seq.addRefinement(baseRef);
-				baseDm.getLayer(baseAt.getLayerType()).addActionTransformer(seq);
-				logger.debug("Merge Seq2Seq ADDED to base "+ seq.toString());
+				LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
+				baseRef = refLayer.getActionTransformerEquivalent(ref);
+				seq.addInnerRefinement(baseRef);
 				incrementUpdateCounter();
 			}
 			
+			baseDm.getLayer(baseAt.getLayerType()).addActionTransformer(seq);
+			logger.debug("	Merge Seq2Seq ADDED to base "+ seq.toString());
+			incrementUpdateCounter();
 		}
 		
 	}
@@ -281,41 +307,49 @@ public class ActionTransformerAdaptationController {
 	 * The new transformer is added as a refinement to the set refinement of the base.
 	 * @param newAt
 	 * @param baseAt
+	 * @return 
 	 */
-	private void mergeSeq2Set(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
-		String sequenceName = newAt.getName() + "#"+PublicMethods.timestamp();
-		newAt.setName(sequenceName);
-		//copy object
+	private ActionTransformerModel mergeSeq2Set(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
+		String sequenceName = newAt.getName();
+		boolean uniqueName = false;
+		while(!uniqueName){
+			sequenceName += "_"+baseDm.getLayer(baseAt.getLayerType()).getActionTransformers().size();
+			newAt.setName(sequenceName);
+			ActionTransformerModel found = null;
+			found = baseDm.getLayer(baseAt.getLayerType()).getActionTransformer(sequenceName);
+			if(found==null)
+				uniqueName = true;
+		}
+		//create new sequence. copy object
 		ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
+		
 		SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
 		if(baseSystem == null){
+			//this should never happen!
 			/* The base system was not present before.
 			 * It will be updated when the systems are merged.
 			 * Each transformer must have a parent system.
 			 */
 			baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+			baseDm.getLayer(baseAt.getLayerType()).addSystem(baseSystem);
 		}
 		baseSystem.addOperation(seq);
 		seq.setRefinementType(RefinementType.SEQ);
-		for(ActionTransformerModel ref : newAt.getRefinements()){
-			ActionTransformerModel baseRef = baseAt.getRefinementByName(ref.getName());
-			if(baseRef == null){
-				if(ref.getLayerType().equals(baseAt.getLayerType())){
-					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
-					baseRef = refLayer.getActionTransformer(ref);					
-				}
-				else{
-					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType()).getRefinementLayer();
-					baseRef = refLayer.getActionTransformer(ref);
-				}				
-				logger.debug("Merge Seq2Set EXTENDED base "+ seq.toString() + "  WITH "+ baseRef.toString());
-				seq.addRefinement(baseRef);
+		
+		LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
+		refLayer.addActionTransformer(seq);
+		//add refinements to sequence
+		for(ActionTransformerModel ref : newAt.getInnerRefinements()){
+				ActionTransformerModel baseRef = refLayer.getActionTransformerEquivalent(ref);					
+				seq.addInnerRefinement(baseRef);
 				incrementUpdateCounter();
-			}	
 		}
 		
-		baseAt.addRefinement(seq);	
+		baseAt.addInnerRefinement(seq);	
+		logger.debug("	Merge Seq2Set EXTENDED base "+ baseAt.toString() + "  WITH "+ seq.toString());
 		incrementUpdateCounter();
+		
+		return seq;
 	}
 
 	/**
@@ -332,8 +366,18 @@ public class ActionTransformerAdaptationController {
 	 * @param baseAt
 	 */
 	private void mergeSet2Seq(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
+		String sequenceName = newAt.getName();
+		boolean uniqueName = false;
+		while(!uniqueName){
+			sequenceName += "_"+baseDm.getLayer(baseAt.getLayerType()).getActionTransformers().size();
+			newAt.setName(sequenceName);
+			ActionTransformerModel found = null;
+			found = baseDm.getLayer(baseAt.getLayerType()).getActionTransformer(sequenceName);
+			if(found==null)
+				uniqueName = true;
+		}
+		
 		//create new sequence
-		String sequenceName = baseAt.getName()+"#"+PublicMethods.timestamp();
 		ActionTransformerModel seq = new ActionTransformerModel(sequenceName, baseAt.getLayerType());
 		SystemModel baseSystem = baseDm.getLayer(baseAt.getLayerType()).getSystem(newAt.getParentSystem());
 		if(baseSystem == null){
@@ -342,22 +386,25 @@ public class ActionTransformerAdaptationController {
 			 * Each transformer must have a parent system.
 			 */
 			baseSystem = new SystemModel(newAt.getParentSystem().getName(),newAt.getLayerType());
+			baseDm.getLayer(baseAt.getLayerType()).addSystem(baseSystem);
 		}
 		baseSystem.addOperation(seq);
 		seq.setRefinementType(RefinementType.SEQ);
-		for(ActionTransformerModel ref : baseAt.getRefinements()){
-			seq.addRefinement(ref);
+		for(ActionTransformerModel ref : baseAt.getInnerRefinements()){
+			seq.addInnerRefinement(ref);
 		}				
 		//transform sequence in set and clear all refinement elements
 		baseAt.setRefinementType(RefinementType.SET);
 		baseAt.resetRefinement();
 		//update the base element refinement
-		baseAt.addRefinement(seq);
+		baseAt.addInnerRefinement(seq);
 		incrementUpdateCounter();
-		for(ActionTransformerModel ref : newAt.getRefinements()){
-			baseAt.addRefinement(ref); //the refinement was cleared before
+		for(ActionTransformerModel ref : newAt.getInnerRefinements()){
+			baseAt.addInnerRefinement(ref); //the refinement was cleared before
 			incrementUpdateCounter();
-		}		
+		}	
+		baseDm.getLayer(baseAt.getLayerType()).addActionTransformer(seq);
+		incrementUpdateCounter();
 	}
 
 	/**
@@ -365,21 +412,23 @@ public class ActionTransformerAdaptationController {
 	 * @param newAt.SET
 	 * @param baseAt.SET
 	 */
-	private void mergeSet2Set(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
+	private void mergeInnerSet2Set(ActionTransformerModel newAt,	ActionTransformerModel baseAt) {
 		//logger.debug("Merge Set2Set - new: "+ newAt.toStringShort() +" base: "+ baseAt.toStringShort());
-		for(ActionTransformerModel ref : newAt.getRefinements()){
-			ActionTransformerModel baseRef = baseAt.getRefinement(ref);
+		for(ActionTransformerModel ref : newAt.getInnerRefinements()){
+			ActionTransformerModel baseRef = baseAt.getInnerRefinement(ref);
 			if(baseRef == null){
 				if(ref.getLayerType().equals(baseAt.getLayerType())){
 					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType());
-					baseRef = refLayer.getActionTransformer(ref);					
+					baseRef = refLayer.getActionTransformerEquivalent(ref);					
 				}
-				else{
-					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType()).getRefinementLayer();
-					baseRef = refLayer.getActionTransformer(ref);
-				}				
-				logger.debug("Merge Set2Set EXTENDED base "+ baseAt.toString() + "  WITH "+ baseRef.toString());
-				baseAt.addRefinement(baseRef);
+				// else branch should never happen!
+//				else{
+//					
+//					LayerModel refLayer = baseDm.getLayer(baseAt.getLayerType()).getRefinementLayer();
+//					baseRef = refLayer.getActionTransformer(ref);
+//				}				
+				logger.debug("	Merge Inner Set2Set EXTENDED base "+ baseAt.toString() + " WITH "+ baseRef.toString());
+				baseAt.addInnerRefinement(baseRef);
 				incrementUpdateCounter();
 			}			
 		}
@@ -444,7 +493,7 @@ public class ActionTransformerAdaptationController {
 		for(ActionTransformerModel assoc : newAt.getAssociationLinks()){
 			ActionTransformerModel baseAssoc = baseAt.getAssociationLink(assoc);
 			if(baseAssoc == null){
-				baseAssoc = baseDm.getLayer(baseAt.getLayerType()).getActionTransformer(assoc);
+				baseAssoc = baseDm.getLayer(baseAt.getLayerType()).getActionTransformerEquivalent(assoc);
 				baseAt.addAssociationLink(baseAssoc);
 				incrementUpdateCounter();
 				logger.debug("UPDATE association: base "+ baseAt.toString() + " EXTENDED with "+ baseAssoc);
@@ -458,6 +507,7 @@ public class ActionTransformerAdaptationController {
 	 * <br> equivalent systems - PSM, ISM
 	 * <br> equivalent signature - PSM, ISM
 	 * <br> equivalent synonyms
+	 * <br> OR the same refinement (plus same signature and same system)
 	 * @param newAt
 	 * @param baseLayer
 	 * @return
@@ -472,7 +522,7 @@ public class ActionTransformerAdaptationController {
 		}
 		for(ActionTransformerModel baseE : baseLayer.getActionTransformers()){
 			//logger.debug("Search equivalent - base: " + baseE.toStringShort() + " new: "+ newAt.toStringShort());
-
+			baseEquivalent = null;
 			/* Applies at all three layers */
 			boolean nameCheck = false;
 			if(baseE.getName().equals(newAt.getName()))
@@ -481,7 +531,7 @@ public class ActionTransformerAdaptationController {
 				nameCheck = true;
 			else if(newAt.alsoKnownAs(baseE.getName()))
 				nameCheck = true;
-		
+					
 			/* Applies at only PSM and ISM layers */
 			if(!baseE.getLayerType().equals(LayerType.PIM)){
 				if(baseE.getParentSystem()==null)
@@ -490,25 +540,47 @@ public class ActionTransformerAdaptationController {
 				//check system
 				boolean systemCheck = false;
 				if(baseE.getParentSystem().equals(newAt.getParentSystem())){
-					if(nameCheck){
-						systemCheck = true;
-					}
+					systemCheck = true;
 				}
 				
 				//check signature
 				boolean signatureCheck = false;
-				if(nameCheck && systemCheck){
-					signatureCheck = checkMethodSignature(newAt, baseE);
+
+				if(systemCheck){
+					//same system.
+					signatureCheck = ActionTransformerModel.equivalentTransformerSignature(newAt, baseE);
 					if(signatureCheck){
-						baseEquivalent = baseE;
+						//same signature
+						if(nameCheck){
+							baseEquivalent = baseE;
+							break;
+						}
+						else{
+							//different name
+							boolean equalRefinement = isEqualRefinement(newAt, baseE);
+							if(equalRefinement){
+								baseEquivalent = baseE;
+								break;
+							}
+						}
 					}
 				}
 			}
-			else if (nameCheck){
-				//means that a PIM action was found
-				baseEquivalent = baseE;
+			else {
+				if (nameCheck){
+					//means that a PIM action was found
+					baseEquivalent = baseE;
+					break;
+				}
+				else {
+					//different name
+					boolean equalRefinement = isEqualRefinement(newAt, baseE);
+					if(equalRefinement){
+						baseEquivalent = baseE;
+						break;
+					}
+				}
 			}
-			
 		}
 		
 		if(!baseLayer.getType().equals(LayerType.PIM))
@@ -557,38 +629,69 @@ public class ActionTransformerAdaptationController {
 		return baseEquivalent;
 	}
 	
-	
-
-	
 
 	/**
-	 * Checks the signature of the compared transformers.
-	 * <br> Two transformers have the same signature if:
-	 * <br> - they have the same number of input elements AND
-	 * <br> - they have the same input params in the same order
-	 * <br> The output parameters are replaced from new to the base in case of a match.
-	 * The replacement is done at the merging.
+	 * Two actions or transformers have the same refinement if
+	 * <br> the inner refinement is of the same type (where is the case)
+	 * <br> the inner refinement has exactly the same elements (where is the case)
+	 * <br> the cross refinement has exactly the same elements
 	 * @param newAt
 	 * @param baseE
-	 * @return boolean - true for same signature, false for different signature
+	 * @return
 	 */
-	private boolean checkMethodSignature(ActionTransformerModel newAt, ActionTransformerModel baseE) {
+	private boolean isEqualRefinement(ActionTransformerModel newAt,	ActionTransformerModel baseE) {
 
-		ArrayList<DataContainerModel> newSignature = newAt.getInputParams();
-		ArrayList<DataContainerModel> baseSignature = baseE.getInputParams();
-		if(newSignature.size()!=baseSignature.size()){
+		if(!newAt.getInnerRefinementType().equals(baseE.getInnerRefinementType())){
 			return false;
 		}
-		for(int i=0; i<newSignature.size(); i++){
-			DataContainerModel newIn = newSignature.get(i);
-			DataContainerModel baseIn = baseSignature.get(i);
-			if(!newIn.equals(baseIn))
+		int newInnerRefSize = newAt.getInnerRefinements().size();
+		int baseInnerRefSize = baseE.getInnerRefinements().size();
+		if(newInnerRefSize != baseInnerRefSize)
+			return false;
+		int newCrossRefSize = newAt.getCrossRefinements().size();
+		int baseCrossRefSize = baseE.getCrossRefinements().size();
+		if(newCrossRefSize != baseCrossRefSize)
+			return false;
+		
+		if(newCrossRefSize == 0){
+			//only inner refined.
+			if(newInnerRefSize == 0){
+				//final element
 				return false;
+			}
+		}
+		
+		ArrayList<ActionTransformerModel> newInnerRef = newAt.getInnerRefinements();
+		ArrayList<ActionTransformerModel> baseInnerRef = baseE.getInnerRefinements();
+		boolean isSequence = newAt.getInnerRefinementType().equals(RefinementType.SEQ);
+		for(int i=0; i<newInnerRef.size(); i++){
+			ActionTransformerModel newRef = newInnerRef.get(i);
+			ActionTransformerModel baseRef = null;
+			if(isSequence){
+				baseRef = baseInnerRef.get(i);
+				if(!baseRef.equals(newRef))
+					return false;
+			}
+			else{
+				baseRef = baseE.getInnerRefinement(newRef);
+				if(baseRef == null)
+					return false;
+			}
+		}
+		
+		ArrayList<ActionTransformerModel> newCrossRef = newAt.getCrossRefinements();
+		for(int i=0; i<newCrossRef.size(); i++){
+			ActionTransformerModel newRef = newCrossRef.get(i);
+			ActionTransformerModel baseRef = null;
+			baseRef = baseE.getCrossRefinement(newRef);
+				if(baseRef == null)
+					return false;
 		}
 		
 		return true;
 	}
 
+	
 	/**
 	 * The sequences sent as parameters are first minimized.
 	 * Two sequences are equivalent if (and between conditions)  
@@ -608,12 +711,12 @@ public class ActionTransformerAdaptationController {
 		for(index=0; index<newSeq.size(); index++){
 			ActionTransformerModel newE =  newSeq.get(index);
 			ActionTransformerModel baseE = baseSeq.get(index);
-			if(!newE.equals(baseE))
+			if(!newE.equivalent(baseE))
 				return false;
 		}
 		return true;
 	}
-
+	
 	/**
 	 *  "minimized sequence" contains all the elements of a sequence in the same order 
 	 *  but with no consecutive repeating elements.
@@ -623,7 +726,7 @@ public class ActionTransformerAdaptationController {
 	 */
 	public static ArrayList<ActionTransformerModel> extractMinimizedSequence(ActionTransformerModel at){
 		ArrayList<ActionTransformerModel> uniqueElements = new ArrayList<ActionTransformerModel>();
-		ArrayList<ActionTransformerModel> seq = at.getRefinements();
+		ArrayList<ActionTransformerModel> seq = at.getInnerRefinements();
 		if(seq.size()==0)
 			return uniqueElements;
 		ActionTransformerModel lastAdded = seq.get(0);
@@ -648,8 +751,8 @@ public class ActionTransformerAdaptationController {
 	 * @param baseAt
 	 */
 	private void mergeNewSequenceToBaseSequence(ActionTransformerModel newAt, ActionTransformerModel baseAt){
-		ArrayList<ActionTransformerModel> newSeq = newAt.getRefinements();
-		ArrayList<ActionTransformerModel> baseSeq = baseAt.getRefinements();		
+		ArrayList<ActionTransformerModel> newSeq = newAt.getInnerRefinements();
+		ArrayList<ActionTransformerModel> baseSeq = baseAt.getInnerRefinements();		
 		
 		int baseIndex = 0;
 		int baseSize = baseSeq.size();

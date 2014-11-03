@@ -58,6 +58,9 @@ public class GenericCompliance {
 		replaceEventually(doc);
 		addDescription(doc, xmlPolicy.getDescription());
 		
+		//TODO: explain the reason for compliance
+		// when do you need a compliance class?
+		
 		//specific compliance
 		makePolicyCompliantToPep(doc, parameters);
 		

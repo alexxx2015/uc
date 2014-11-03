@@ -45,6 +45,7 @@ public class PtpHandler implements IPmp2Ptp {
 	 * object_instance - value used to replace in the template the value of object=<objectInstance>
 	 * timestepType - SECONDS MINUTES ...
 	 * timestepValue - one number as a string: 60, 102, ...
+	 * e.g template_id : 102
 	 */
 	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> param, XmlPolicy xmlPolicy) {
@@ -112,7 +113,6 @@ public class PtpHandler implements IPmp2Ptp {
 			}
 		}
 		
-		
 		//storePolicyForDebugging(xmlPolicy.getXml());
 		
 		IPtpResponse response = new PtpResponseBasic(translationStatus, xmlPolicy, message);
@@ -141,13 +141,15 @@ public class PtpHandler implements IPmp2Ptp {
 	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		_logger.info("updateDomainModel: " + requestId + " "+ xmlDomainModel.toString());
 		
+		//PTP_MODE is used to force the adaptation engine to overwrite the base domain model
+		//it is mainly used for testing when one wants to reset the domain model to a known initial one
 		String mergeMODE = parameters.get("PTP_MODE");
 		if(mergeMODE == null){
 			mergeMODE = "NORMAL";
 		}
 		
 		DomainModel baseDm = null;
-		int baseElements = -1;
+		int baseDomainModelElements = -1;
 		try {
 			baseDm = loadBaseDomainModel();
 		} catch (InvalidDomainModelFormatException e) {
@@ -156,10 +158,10 @@ public class PtpHandler implements IPmp2Ptp {
 			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel, "Loading base domain failed.");
 			return response;
 		}
-		baseElements = baseDm.getElementsSize();
+		baseDomainModelElements = baseDm.getElementsSize();
 		
 		DomainModel newDm = null;
-		int newElements = -1;
+		int newDomainModelElements = -1;
 		try {
 			newDm = loadNewDomainModel(xmlDomainModel);
 		} catch (InvalidDomainModelFormatException e) {
@@ -168,15 +170,15 @@ public class PtpHandler implements IPmp2Ptp {
 			IPtpResponse response = new PtpResponseBasic(adaptationStatus, xmlDomainModel, "Loading new domain failed.");
 			return response;
 		}
-		newElements = newDm.getElementsSize();
+		newDomainModelElements = newDm.getElementsSize();
 		
-		int updates = -1;
-		int mergedElements = -1;
+		int updatedAttributes = -1;
+		int mergedDomainModelElements = -1;
 		if(mergeMODE.equals("NORMAL")){
 			adaptationEngine.setBaseDomainModel(baseDm);
 			adaptationEngine.setNewDomainModel(newDm);
 			try {
-				updates = adaptationEngine.mergeDomainModels();
+				updatedAttributes = adaptationEngine.mergeDomainModels();
 			} catch (DomainMergeException e) {
 				_logger.error("Merging domains failed.", e);
 				StatusBasic adaptationStatus = new StatusBasic(EStatus.ERROR, "Merging domains failed. See logs for further details.");
@@ -184,7 +186,7 @@ public class PtpHandler implements IPmp2Ptp {
 				return response;
 			}
 		}
-		mergedElements = baseDm.getElementsSize();
+		mergedDomainModelElements = baseDm.getElementsSize();
 		
 		ModelLoader modelHandler = new ModelLoader();
 		modelHandler.backupBaseDomainModel();
@@ -204,18 +206,22 @@ public class PtpHandler implements IPmp2Ptp {
 			return response;
 		}
 		
-		String message = "Elements updated: "+ updates 
-				+" baseE: "+ baseElements
-				+" newE: "+ newElements
-				+" mergedE: "+ mergedElements
+		//used only as debugging information
+		String message = "Elements updated: "+ updatedAttributes 
+				+" baseE: "+ baseDomainModelElements
+				+" newE: "+ newDomainModelElements
+				+" mergedE: "+ mergedDomainModelElements
 				+" MODE: "+ mergeMODE;
-		StatusBasic adaptationStatus = new StatusBasic(EStatus.OKAY, message);
+		StatusBasic adaptationStatus = new StatusBasic(EStatus.MODIFY, message);
+		if(mergedDomainModelElements == 0){
+			adaptationStatus = new StatusBasic(EStatus.OKAY, message);
+		}
+				
 		XmlPolicy adaptedXmlDomainModel = new XmlPolicy(xmlDomainModel.getName(), "");
 		
 		IPtpResponse response = new PtpResponseBasic(adaptationStatus, adaptedXmlDomainModel, message);		
 		return response;
 	}
-
 	
 	private DomainModel loadNewDomainModel(XmlPolicy xmlDomainModel) throws InvalidDomainModelFormatException {
 		String xmlString = xmlDomainModel.getXml();

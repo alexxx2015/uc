@@ -135,7 +135,7 @@ public class DataContainerAdaptationController {
 			addNewContainerToBase(assoc, baseLayer);
 		}
 	
-		//at this step only simple(no associations) system containers are considered
+		//at this step all the containers that you depend on have already been merged
 		//container checked based on name equality
 		DataContainerModel existsDC = null;
 		ArrayList<DataContainerModel> baseLayerContainers = baseLayer.getDataContainers();
