@@ -78,11 +78,7 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 	}
 
 	public T peekLast() {
-		int index = this.next--;
-		if (index < 0) {
-			index = this.values.length - 1;
-		}
-		return this.values[index];
+		return this.values[(this.next != 0 ? this.next : this.values.length) - 1];
 	}
 
 
