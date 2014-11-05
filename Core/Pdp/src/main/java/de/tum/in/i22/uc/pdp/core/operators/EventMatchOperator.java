@@ -69,17 +69,15 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	public void update(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
 
-			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
-
-			if (!sinceLastTick) {
-				sinceLastTick =  matches((IEvent) arg);
-
-				if (sinceLastTick) {
-					setChanged();
-					notifyObservers(_state);
-					_state.set(StateVariable.SINCE_LAST_TICK, true);
-				}
+			if (matches((IEvent) arg)) {
+				/*
+				 * The event is happening.
+				 */
+				setChanged();
+				notifyObservers(_state);
+				_state.set(StateVariable.SINCE_LAST_TICK, true);
 			}
+
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
 	}
