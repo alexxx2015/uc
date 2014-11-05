@@ -21,7 +21,14 @@ public class RepLim extends RepLimType {
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
 
-		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
+		if (amount <= 0) {
+			throw new IllegalArgumentException("Amount must be positive.");
+		}
+
+		timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		if (timeAmount.getTimestepInterval() <= 0) {
+			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
+		}
 
 		CircularArray<Boolean> circArray = new CircularArray<>(timeAmount.getTimestepInterval());
 		for (int a = 0; a < timeAmount.getTimestepInterval(); a++) {
