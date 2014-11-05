@@ -33,6 +33,10 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 		values[pos] = val;
 	}
 
+	public int size() {
+		return values.length;
+	}
+
 	/**
 	 * Retrieves, but does not remove, the first entry.
 	 * @return
@@ -72,6 +76,15 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 			_logger.trace("next reached boundary, resetting to 0");
 		}
 	}
+
+	public T peekLast() {
+		int index = this.next--;
+		if (index < 0) {
+			index = this.values.length - 1;
+		}
+		return this.values[index];
+	}
+
 
 	@Override
 	public String toString() {
