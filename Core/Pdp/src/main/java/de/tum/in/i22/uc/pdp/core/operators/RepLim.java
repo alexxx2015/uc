@@ -36,6 +36,7 @@ public class RepLim extends RepLimType {
 		}
 
 		_state.set(StateVariable.CIRC_ARRAY, circArray);
+		_state.set(StateVariable.COUNTER, 0L);
 
 		op = (Operator) operators;
 		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + 2 * mech.getTimestepSize()));
@@ -74,9 +75,9 @@ public class RepLim extends RepLimType {
 		circArray.push(operandState);
 		_logger.debug("circularArray: {}", circArray);
 
-		// TODO: Setting circArray is actually not necessary,
+		// Setting circArray is actually not necessary,
 		// as we work on the original instance anyway
-		_state.set(StateVariable.CIRC_ARRAY, circArray);
+		// _state.set(StateVariable.CIRC_ARRAY, circArray);
 
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
