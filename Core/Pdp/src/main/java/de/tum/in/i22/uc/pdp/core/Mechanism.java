@@ -150,6 +150,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
 		_condition = _backupCondition.getFirst();
+		_condition.stopSimulation();
 	}
 
 
