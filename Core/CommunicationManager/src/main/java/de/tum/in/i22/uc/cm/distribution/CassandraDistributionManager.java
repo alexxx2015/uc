@@ -482,6 +482,21 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 	}
 
+	@Override
+	public long howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
+		if (!operator.isPositive()) {
+			throw new IllegalArgumentException("This method is only available for positive operators.");
+		}
+
+		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
+				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "');");
+
+		return rs.all().size();
+	}
+
 
 	@Override
 	public IPLocation getResponsibleLocation(String ip) {
