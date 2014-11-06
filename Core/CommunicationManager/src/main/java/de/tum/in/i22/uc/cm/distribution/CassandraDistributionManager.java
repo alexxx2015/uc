@@ -428,6 +428,13 @@ class CassandraDistributionManager implements IDistributionManager {
 			return;
 		}
 
+		/*
+		 * TODO
+		 * (1) We can probably do this in a new thread. However -> correctness? What if it fails?
+		 * (2) If this is done in a separate thread and potentially retried: use a fixed timestamp
+		 *     instead of now().
+		 */
+
 		DistributedPdpResponse res = (DistributedPdpResponse) response;
 
 		StringBuilder batchJob = new StringBuilder(512);
@@ -457,7 +464,7 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;");
-		if (operator.isPositive()) {
+		if (operator.getPositivity().is(true)) {
 			return !rs.isExhausted();
 		}
 		else {
@@ -474,7 +481,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
 				+ " LIMIT 1;");
-		if (operator.isPositive()) {
+		if (operator.getPositivity().is(true)) {
 			return !rs.isExhausted();
 		}
 		else {
@@ -484,7 +491,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public long howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
-		if (!operator.isPositive()) {
+		if (!operator.getPositivity().is(true)) {
 			throw new IllegalArgumentException("This method is only available for positive operators.");
 		}
 

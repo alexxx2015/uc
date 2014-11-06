@@ -8,6 +8,7 @@ import java.util.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
@@ -51,6 +52,8 @@ public abstract class Operator extends Observable implements IOperator {
 	private final Deque<State> _backupStates;
 
 	protected State _state;
+
+	protected Trilean _positivity = Trilean.UNDEF;
 
 	public Operator() {
 		_state = new State();
@@ -162,6 +165,11 @@ public abstract class Operator extends Observable implements IOperator {
 
 	public final boolean getValueAtLastTick() {
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
+	}
+
+	@Override
+	public final Trilean getPositivity() {
+		return _positivity;
 	}
 
 	public void startSimulation() {

@@ -14,6 +14,8 @@ public class OSLNot extends NotType {
 
 	private Operator op;
 
+	private boolean valueAtLastTick;
+
 	public OSLNot() {
 	}
 
@@ -28,6 +30,8 @@ public class OSLNot extends NotType {
 		}
 
 		op.init(mech, this, ttl);
+
+		_positivity = op.getPositivity().negate();
 	}
 
 	/**
@@ -57,11 +61,24 @@ public class OSLNot extends NotType {
 
 	@Override
 	public boolean tick() {
-		boolean valueAtLastTick = !op.tick();
+		valueAtLastTick = !op.tick();
 
 		_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing() {
+		if (!_positivity.is(valueAtLastTick)) {
+			valueAtLastTick = !op.distributedTickPostprocessing();
+
+			_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		}
+
 		return valueAtLastTick;
 	}
 

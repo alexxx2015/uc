@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
@@ -47,6 +48,12 @@ public class Condition implements ICondition {
 		// Local evaluation of the condition's operator
 		boolean res = _operator.tick();
 		_logger.debug("Ticking. New local evaluation of condition: {}", res);
+
+		if (Settings.getInstance().getDistributionEnabled()) {
+			res = _operator.distributedTickPostprocessing();
+			_logger.debug("Distributed evaluation of condition: {}", res);
+		}
+
 		return res;
 	}
 

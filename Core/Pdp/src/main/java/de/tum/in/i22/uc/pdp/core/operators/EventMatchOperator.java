@@ -6,6 +6,7 @@ import java.util.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
@@ -17,14 +18,16 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	private static Logger _logger = LoggerFactory.getLogger(EventMatchOperator.class);
 
 	public EventMatchOperator() {
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
-		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
 		_pdp.addObserver(this);
+		_positivity = Trilean.TRUE;
 	}
 
 	@Override
@@ -63,11 +66,6 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	}
 
 	@Override
-	public boolean isPositive() {
-		return true;
-	}
-
-	@Override
 	public void startSimulation() {
 		super.startSimulation();
 	}
@@ -85,9 +83,9 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 				/*
 				 * The event is happening.
 				 */
+				_state.set(StateVariable.SINCE_LAST_TICK, true);
 				setChanged();
 				notifyObservers(_state);
-				_state.set(StateVariable.SINCE_LAST_TICK, true);
 			}
 
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));

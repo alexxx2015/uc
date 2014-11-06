@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
@@ -20,8 +21,6 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 	private TimeAmount _timeAmount;
 
 	public OccurMinEvent() {
-		// How often the event has happened since the last tick
-		_state.set(StateVariable.COUNTER, 0L);
 	}
 
 	@Override
@@ -49,6 +48,10 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 
 		// get notified whenever the underlying event occurs
 		event.addObserver(this);
+
+		// How often the event has happened since the last tick
+		_state.set(StateVariable.COUNTER, 0L);
+		_positivity = Trilean.TRUE;
 	}
 
 	@Override
@@ -228,10 +231,5 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 			_logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public boolean isPositive() {
-		return true;
 	}
 }

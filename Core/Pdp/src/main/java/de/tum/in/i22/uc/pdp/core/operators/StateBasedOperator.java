@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -26,8 +27,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	protected String predicate;
 
 	public StateBasedOperator() {
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
-		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
@@ -37,6 +36,21 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 		String sep = Settings.getInstance().getSeparator1();
 		predicate = operator + sep + param1 + sep + param2 + sep + param3;
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
+
+		switch (operator) {
+		case OP_IS_COMBINED_WITH:
+			_positivity = Trilean.TRUE;
+			break;
+		case OP_IS_NOT_IN:
+		case OP_IS_ONLY_IN:
+			_positivity = Trilean.FALSE;
+			break;
+		default:
+			throw new UnsupportedOperationException("Unknown Predicate type: " + operator);
+		}
 	}
 
 	@Override
@@ -66,7 +80,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			 */
 			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
 
-			if (valueAtLastTick == isPositive()) {
+			if (getPositivity().is(valueAtLastTick)) {
 				/*
 				 * If the value has changed, notify our observers.
 				 */
@@ -100,7 +114,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	public boolean distributedTickPostprocessing() {
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
-		if (valueAtLastTick != isPositive()) {
+		if (!getPositivity().is(valueAtLastTick)) {
 			// The StateBasedOperator might have changed its state remotely.
 			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 
@@ -123,19 +137,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	@Override
-	public boolean isPositive() {
-		switch (operator) {
-			case OP_IS_COMBINED_WITH:
-				return true;
-			case OP_IS_NOT_IN:
-			case OP_IS_ONLY_IN:
-				return false;
-			default:
-				throw new UnsupportedOperationException("Unknown Predicate type: " + operator);
-		}
-	}
-
-	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
 
@@ -144,7 +145,9 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			if (sinceLastTick == (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK)) {
 				sinceLastTick = _pdp.getPip().evaluatePredicateSimulatingNextState((IEvent) arg, predicate);
 
-				if (sinceLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
+				_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+
+				if (getPositivity().is(sinceLastTick) && Settings.getInstance().getDistributionEnabled()) {
 					/*
 					 * The value of the operator has changed!
 					 * Notify our observers.
@@ -154,7 +157,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 				}
 			}
 
-			_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
 			_logger.debug("Updating [{}] with event {}. Result: {}.", predicate, ((IEvent) arg).getName(), sinceLastTick);
 		}
 	}

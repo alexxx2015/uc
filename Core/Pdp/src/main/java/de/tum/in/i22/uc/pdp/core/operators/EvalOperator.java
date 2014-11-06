@@ -35,11 +35,6 @@ public class EvalOperator extends EvalOperatorType implements AtomicOperator {
 	}
 
 	@Override
-	public boolean isPositive() {
-		throw new UnsupportedOperationException("EvalOperator. Not yet implemented.");
-	}
-
-	@Override
 	public void startSimulation() {
 		super.startSimulation();
 		// TODO: Implement

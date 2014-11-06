@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
@@ -14,6 +15,9 @@ public class OSLOr extends OrType {
 
 	private Operator op1;
 	private Operator op2;
+
+	private boolean op1state;
+	private boolean op2state;
 
 	public OSLOr() {
 	}
@@ -31,6 +35,8 @@ public class OSLOr extends OrType {
 
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
+
+		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
 
 	@Override
@@ -50,8 +56,31 @@ public class OSLOr extends OrType {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
-		boolean op1state = op1.tick();
-		boolean op2state = op2.tick();
+		op1state = op1.tick();
+		op2state = op2.tick();
+
+		boolean valueAtLastTick = op1state || op2state;
+
+		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing() {
+
+		/*
+		 * TODO parallelize
+		 */
+
+		if (!op1.getPositivity().is(op1state)) {
+			op1state = op1.distributedTickPostprocessing();
+		}
+
+		if (!op2.getPositivity().is(op2state)) {
+			op2state = op2.distributedTickPostprocessing();
+		}
 
 		boolean valueAtLastTick = op1state || op2state;
 

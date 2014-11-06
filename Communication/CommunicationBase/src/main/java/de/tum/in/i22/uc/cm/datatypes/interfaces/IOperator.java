@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
+
 public interface IOperator {
 
 	/**
@@ -13,4 +15,6 @@ public interface IOperator {
 	 * @return the {@link IMechanism} to which this {@link IOperator} belongs.
 	 */
 	public IMechanism getMechanism();
+
+	public Trilean getPositivity();
 }
