@@ -115,36 +115,54 @@ public class PmpHandler extends PmpProcessor {
 
 	/**
 	 * Initializes the initial representations specified
-	 * within the given policy.
+	 * within the given policy. This method returns a set of data,
+	 * namely all {@link IData}s that have been identified within
+	 * the policy's initial representations.
 	 *
-	 * @param policy
+	 * 2014/11/06. Extended by FK.
+	 *
+	 * @param policy the policy of which the initial representations are
+	 * 		initialized.
+	 * @return the set of identified {@link IData}s.
 	 */
-	private void initInitialRepresentations(PolicyType policy) {
-		if (policy.isSetInitialRepresentations()) {
-			InitialRepresentationType ir = policy.getInitialRepresentations();
+	private Set<IData> initInitialRepresentations(PolicyType policy) {
+		if (!policy.isSetInitialRepresentations()) {
+			return Collections.emptySet();
+		}
 
-			if (ir.isSetContainer()) {
-				for (ContainerType c : ir.getContainer()) {
+		InitialRepresentationType ir = policy.getInitialRepresentations();
 
-					if (c.isSetDataId()) {
-						Set<IData> dataSet = new HashSet<IData>();
-						for (String dataId : c.getDataId()) {
-							if (dataId != null && !dataId.equals("")) {
-								dataSet.add(new DataBasic(dataId.trim()));
-							}
-						}
+		if (!ir.isSetContainer()) {
+			return Collections.emptySet();
+		}
 
-						IName contName = MessageFactory.createName(c.getName());
-						IStatus status = getPip().initialRepresentation(contName, dataSet);
+		Set<IData> allData = new HashSet<>();
 
-						if (status.isStatus(EStatus.ERROR)) {
-							_logger.error("impossible to initialize representation for container " + contName + " with data id(s) " + dataSet + ": " + status.getErrorMessage());
-							throw new RuntimeException(status.getErrorMessage());
-						}
+		for (ContainerType c : ir.getContainer()) {
+
+			if (c.isSetDataId()) {
+				Set<IData> dataSet = new HashSet<>();
+				for (String dataId : c.getDataId()) {
+					dataId = dataId.trim();
+					if (!dataId.isEmpty()) {
+						dataSet.add(new DataBasic(dataId));
 					}
+				}
+
+				IName contName = MessageFactory.createName(c.getName());
+				IStatus status = getPip().initialRepresentation(contName, dataSet);
+
+				allData.addAll(dataSet);
+
+				if (status.isStatus(EStatus.ERROR)) {
+					_logger.error("Unable to initialize representation for container " + contName + " with data id(s) "
+							+ dataSet + ": " + status.getErrorMessage());
+					throw new RuntimeException(status.getErrorMessage());
 				}
 			}
 		}
+
+		return allData;
 	}
 
 
@@ -330,22 +348,29 @@ public class PmpHandler extends PmpProcessor {
 		//when you receive a raw xml policy, the object created is without a name.
 		String policyName = policy.getName();
 		xmlPolicy.setName(policyName);
-		
+
 		if (_policymanager.addPolicy(xmlPolicy)) {
 
+			Set<IData> allData = new HashSet<>();
+
 			// Initialize the initial representations specified in the policy
-			initInitialRepresentations(policy);
+			// and retrieve the corresponding data IDs.
+			allData.addAll(initInitialRepresentations(policy));
 
 			// Convert DATAUSAGE parameters within the policy
 			Pair<PolicyType,Set<IData>> convertedPolicy = convertDatausageParameters(policy);
 
-			// create an XmlPolicy out of the converted policy; the policy's name remains the same
-			final XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()),
+			// create an XmlPolicy out of the converted policy;
+			// the policy's name remains the same
+			XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()),
 														xmlPolicy.getDescription(), xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(),
 														xmlPolicy.getDataClass());
 
-			// map all data IDs to the new XmlPolicy
-			mapDataToPolicy(convertedPolicy.getRight(), convertedXmlPolicy);
+			// We got some further data IDs. Add them to the set of all data IDs.
+			allData.addAll(convertedPolicy.getRight());
+
+			// Map all data IDs to the new XmlPolicy
+			mapDataToPolicy(allData, convertedXmlPolicy);
 
 			if (Settings.getInstance().getDistributionEnabled()) {
 //				/*
@@ -398,28 +423,28 @@ public class PmpHandler extends PmpProcessor {
 
 		Map<String, String> policyParam = this._policymanager.getPolicyParam(xmlPolicy);
 		policyParam.putAll(parameters);
-		
+
 		IPtpResponse translationResponse = _ptp.translatePolicy(requestId, policyParam, xmlPolicy);
 		log = "Translated policy status: "+translationResponse.getStatus().getEStatus()+" " + policyname + " "+ xmlPolicy.getXml();
 		_logger.info(log);
 		if(translationResponse.getStatus().isStatus(EStatus.ERROR))
 			return translationResponse;
-	
+
 		//TODO: used only for debugging - to be removed
 		String PMP_MODE =  parameters.get("PMP_MODE");
 		if(PMP_MODE == null)
 			PMP_MODE = "NORMAL";
 		if(PMP_MODE.equals("TRANSLATE_ONLY"))
 			return translationResponse;
-		
+
 		XmlPolicy translatedPolicy = translationResponse.getPolicy();
 		this._policymanager.addPolicyParam(xmlPolicy, policyParam);
-		
+
 		/* revoke the policy in case it was deployed before. */
 		revokePolicyPmp(translatedPolicy.getName());
 
 		IStatus deploymentStatus = deployPolicyXMLPmp(translatedPolicy);
-		
+
 		PtpResponseBasic deploymentResponse = new PtpResponseBasic(deploymentStatus, translatedPolicy, deploymentStatus.getErrorMessage()+"");
 		return deploymentResponse;
 	}
@@ -430,22 +455,22 @@ public class PmpHandler extends PmpProcessor {
 		//response status: MODIFY - the domain model was changed
 		//response status: OKAY - no changes made
 		//response status: ERROR - error while adapting
-		
-		//do not retranslate if there are no changes		
+
+		//do not retranslate if there are no changes
 		if(!updateResponse.getStatus().getEStatus().equals(EStatus.MODIFY)){
 			_logger.info("no retranslation of policies after update");
 			return updateResponse;
 		}
-		
+
 		//the following lines where used only for testing purposes
-		//if PMP_MODE:ADAPTATION_ONLY then 
+		//if PMP_MODE:ADAPTATION_ONLY then
 		//the method simply returns without retranslating the policies
 		String MODE = parameters.get("PMP_MODE");
 		if(MODE != null){
 			if(MODE.equals("ADAPTATION_ONLY"))
 				return updateResponse;
 		}
-		
+
 		//retranslate all policies
 		Map<String,String> param = new HashMap<String, String>();
 		List<XmlPolicy> policies = this._policymanager.getPolicies();
