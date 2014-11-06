@@ -6,7 +6,7 @@
 <pimdata name="zipcode" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
 <pimdata name="picture" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym="photo "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.3 //@psms/@psmtransformers.5 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.2 " pos="0" synonym="pay permit "/>
-<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 //@psms/@psmtransformers.4 //@psms/@psmtransformers.7 //@psms/@psmtransformers.6 " name="copy" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="1" synonym="print replicate duplicate "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 //@psms/@psmtransformers.4 //@psms/@psmtransformers.7 " name="copy" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="1" synonym="print replicate "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.6 " name="save" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="2" synonym="distribute "/>
 <pimactions actionRefmnt="//@psms/@psmtransformers.2 //@psms/@psmtransformers.0 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.2 " pos="3" synonym="modify "/>
 </pims>
@@ -21,10 +21,10 @@
 <psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy1" outputcontainer="" pos="1" seq="0" synonym="" system="DummySystem"/>
 <psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy2" outputcontainer="" pos="2" seq="0" synonym="" system="DummySystem"/>
 <psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy3" outputcontainer="" pos="3" seq="0" synonym="" system="DummySystem"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.3 " inputcontainer="//@psms/@psmcontainers.0 " name="copyDomEle" outputcontainer="//@psms/@psmcontainers.2 " pos="4" seq="0" synonym="" system="WebBrowser"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.3 " inputcontainer="//@psms/@psmcontainers.0 " name="copyDomEle" outputcontainer="" pos="4" seq="0" synonym="" system="WebBrowser"/>
 <psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.1 " inputcontainer="//@psms/@psmcontainers.0 " name="payExternal" outputcontainer="//@psms/@psmcontainers.4 " pos="5" seq="0" synonym="notify " system="WebBrowser"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " inputcontainer="//@psms/@psmcontainers.0 " name="sendElement" outputcontainer="//@psms/@psmcontainers.4 " pos="6" seq="0" synonym="sendPage " system="WebBrowser"/>
-<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.2 " inputcontainer="//@psms/@psmcontainers.0 " name="printElement" outputcontainer="//@psms/@psmcontainers.3 " pos="7" seq="0" synonym="printPage printElement_NEW " system="WebBrowser"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.4 " inputcontainer="//@psms/@psmcontainers.0 " name="sendElement" outputcontainer="//@psms/@psmcontainers.4 " pos="6" seq="0" synonym="sendPage " system="WebBrowser"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.2 " inputcontainer="//@psms/@psmcontainers.0 " name="printElement" outputcontainer="//@psms/@psmcontainers.3 " pos="7" seq="0" synonym="printPage " system="WebBrowser"/>
 <psmsystems name="WebBrowser" pos="0" sysimplementedas="//@isms/@ismsystems.0 " systemtransformers="//@psms/@psmtransformers.0 //@psms/@psmtransformers.4 //@psms/@psmtransformers.5 //@psms/@psmtransformers.6 //@psms/@psmtransformers.7 "/>
 <psmsystems name="DummySystem" pos="1" systemtransformers="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.3 "/>
 </psms>
@@ -36,12 +36,11 @@
 <ismcontainers name="Clipboard" pos="4"/>
 <ismcontainers name="window" pos="5"/>
 <ismcontainers name="buffer" pos="6"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs" outputimplecontainer="//@isms/@ismcontainers.2 " pos="0" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="notify" outputimplecontainer="//@isms/@ismcontainers.3 " pos="1" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="print_sys" outputimplecontainer="//@isms/@ismcontainers.3 " pos="2" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="cmd_copy" outputimplecontainer="//@isms/@ismcontainers.4 " pos="3" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="pass_extern" outputimplecontainer="//@isms/@ismcontainers.3 " pos="4" seq="0" synonym="" system="Firefox"/>
-<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs_image" outputimplecontainer="" pos="5" seq="0" synonym="" system="Firefox"/>
-<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " name="Firefox" pos="0"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs" outputimplecontainer="" pos="0" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="notify" outputimplecontainer="" pos="1" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="print_sys" outputimplecontainer="" pos="2" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 //@isms/@ismcontainers.0 " name="cmd_copy" outputimplecontainer="" pos="3" seq="0" synonym="" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="pass_extern" outputimplecontainer="" pos="4" seq="0" synonym="" system="Firefox"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 " name="Firefox" pos="0"/>
 </isms>
 </de.tum.in.i22.uc.metamodel:domain>

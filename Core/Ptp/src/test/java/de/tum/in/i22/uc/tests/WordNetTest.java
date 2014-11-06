@@ -24,39 +24,39 @@ import rita.wordnet.jwnl.wndata.relationship.RelationshipList;
 
 public class WordNetTest {
 
-	private static RiWordNet wordnet;	
+	private static RiWordNet wordnet;
 	/**
-	 * The tests are disabled because they were used only to asses 
+	 * The tests are disabled because they were used only to asses
 	 * the functionality of the external library.
 	 * - speed, accuracy etc.
 	 */
-	 
+
 	 /**
 	 * If the wordnet tests fail or it does not work correctly,
      * it is because the files have been modified when you pushed to git.
 	 * Please restore all ./java/main/resources/dict files from http://wordnet.princeton.edu/wordnet/download/current-version/#win
-	 *	The source of the problem is the following: 
+	 *	The source of the problem is the following:
 	 *  warning: LF will be replaced by CRLF in Core/Ptp/src/main/resources/dict/verb.exc.
-	 *	The file will have its original line endings in your working directory.	 
+	 *	The file will have its original line endings in your working directory.
 	 */
-	 
+
 	private static final boolean TESTS_ENABLED = false;
-	
+
 	private static final String NOUN_POS = "n";
 	private static final String VERB_POS = "v";
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if(!TESTS_ENABLED){
 			return;
 		}
 		String file = "" ;
-		
+
 		Config conf = new Config();
 		String userDir = conf.getResourcesDir();
-		file = userDir 
+		file = userDir
 				+ File.separator + "dict" ;
-		
+
 		System.out.println("RitWordnet dict: "+ file);
 		wordnet = new RiWordNet(file);
 	}
@@ -77,14 +77,14 @@ public class WordNetTest {
 		float val = computeSimilarity("photo", "picture", NOUN_POS);
 		assertTrue("The dictionary files have been corrupted. See commentary at the beggining of the test calss.", val == 0.0f);
 	}
-	
+
 	@Test
 	public void testWordsSimilarity() throws JWNLException {
 		if(!TESTS_ENABLED){
 			assertTrue("WordNetTest disabled", true);
 			return;
 		}
-		
+
 		System.out.println("\nNOUNS");
 		computeSimilarity("city", "state", NOUN_POS);
 		computeSimilarity("state", "city", NOUN_POS);
@@ -98,14 +98,14 @@ public class WordNetTest {
 		computeSimilarity("picture", "photo", NOUN_POS);
 		computeSimilarity("city", "residence", NOUN_POS);
 		computeSimilarity("city", "town", NOUN_POS);
-		computeSimilarity("home", "residence", NOUN_POS);		
+		computeSimilarity("home", "residence", NOUN_POS);
 		computeSimilarity("parent", "child", NOUN_POS);
 		computeSimilarity("file", "directory", NOUN_POS);
 		computeSimilarity("file", "folder", NOUN_POS);
 		computeSimilarity("document", "folder", NOUN_POS);
-		
+
 		computeSimilarity("picture1", "photo1", NOUN_POS);
-		
+
 		System.out.println("\nVERBS");
 		computeSimilarity("copy", "duplicate", VERB_POS);
 		computeSimilarity("duplicate", "copy", VERB_POS);
@@ -130,23 +130,23 @@ public class WordNetTest {
 			return;
 		}
 		long start = System.currentTimeMillis();
-		
+
 		for(int i = 0; i<10; i++){
 			computeSimilarity(null,null,"n");
 			computeSimilarity(null,null,"v");
 		}
-		
+
 		long end = System.currentTimeMillis();
 		System.out.println((end-start)/1000 + " seconds");
 	}
-	
+
 	public float computeSimilarity(String wordA, String wordB, String pos) {
 		String conceptA = wordA;
 		String conceptB = wordB;
 		if(wordA == null)
 			conceptA = wordnet.getRandomWord("n");
 		if(wordB == null)
-			conceptB = wordnet.getRandomWord("n");		
+			conceptB = wordnet.getRandomWord("n");
 		String bestPos = wordnet.getBestPos(conceptA);
 		float distance = wordnet.getDistance(conceptA, conceptB, pos);
 		float distance2 = 1.0f;
@@ -167,7 +167,7 @@ public class WordNetTest {
 		System.out.println("Common Parent Index: " + ((AsymmetricRelationship) list.get(0)).getCommonParentIndex());
 		System.out.println("Depth: " + ((Relationship) list.get(0)).getDepth());
 	}
-	
+
 	private void demonstrateSymmetricRelationshipOperation(IndexWord start, IndexWord end) throws JWNLException {
 		// find all synonyms that <var>start</var> and <var>end</var> have in common
 		RelationshipList list = RelationshipFinder.getInstance().findRelationships(start.getSense(1), end.getSense(1), PointerType.SIMILAR_TO);
@@ -177,16 +177,16 @@ public class WordNetTest {
 		}
 		System.out.println("Depth: " + ((Relationship) list.get(0)).getDepth());
 	}
-	
+
 	@Test
 	public void testRandomSynonyms() throws Exception {
 		if(!TESTS_ENABLED){
 			assertTrue("WordNetTest disabled", true);
 			return;
 		}
-		
+
 		Dictionary dict = wordnet.jwnlDict;
-		
+
 		// Get a random noun
 		String word = wordnet.getRandomWord("n");
 		// Get max 15 synonyms
@@ -203,5 +203,5 @@ public class WordNetTest {
 			System.out.println("No synyonyms!");
 		}
 	}
-	
+
 }

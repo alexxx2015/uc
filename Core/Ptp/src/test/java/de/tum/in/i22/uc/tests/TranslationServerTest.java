@@ -25,17 +25,17 @@ public class TranslationServerTest {
 	 * When testing manually, one has to start by hand the server.
 	 */
 	private static final boolean TESTS_ENABLED = false;
-	
+
 	private static PtpHandler ptpHandler;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		if(!TESTS_ENABLED){
 			return;
-		} 
-		
+		}
+
 		ptpHandler = new PtpHandler();
-		
+
 	}
 
 	@AfterClass
@@ -44,7 +44,7 @@ public class TranslationServerTest {
 			return;
 		}
 	}
-	
+
 	@Test
 	public void translatePolicySimpleTest() {
 		if(!TESTS_ENABLED){
@@ -53,16 +53,16 @@ public class TranslationServerTest {
 		}
 		String file = "src/test/resources/policies4test/" +"102_no_copy.xml";
 		String policy = loadTestPolicy(file);
-		
+
 		String translatedPolicy = "";
 		Map<String,String> parameters = new HashMap<String,String>();
 		parameters.put("template_id", "102");
 		parameters.put("object_instance", "test_object");
 		translatedPolicy = translatePolicy(1, parameters, policy);
-		
+
 		assertTrue(translatedPolicy.length() > 0);
 	}
-	
+
 	@Test
 	public void translatePolicyEcaGUI() {
 		if(!TESTS_ENABLED){
@@ -71,16 +71,16 @@ public class TranslationServerTest {
 		}
 		String file = "src/test/resources/policies4test/" + "102_no_copy.xml";
 		String policy = loadTestPolicy(file);
-		
+
 		String translatedPolicy = "";
 		Map<String,String> parameters = new HashMap<String,String>();
 		//parameters.put("template_id", "102");
 		parameters.put("object_instance", "test_object");
 		translatedPolicy = translatePolicy(1, parameters, policy);
-		
+
 		assertTrue(translatedPolicy.length() > 0);
 	}
-	
+
 	@Test
 	public void translatePolicyStressTest() {
 		if(!TESTS_ENABLED){
@@ -92,7 +92,7 @@ public class TranslationServerTest {
 		Map<String,String> parameters = new HashMap<String,String>();
 		parameters.put("template_id", "102");
 		parameters.put("object_instance", "test_object");
-		
+
 		String translatedPolicy = "";
 		for (int i=0; i<50; i++){
 			translatedPolicy = "";
@@ -100,7 +100,7 @@ public class TranslationServerTest {
 			if(translatedPolicy.length() == 0)
 				break;
 		}
-		
+
 		assertTrue(translatedPolicy.length() > 0);
 	}
 
@@ -111,7 +111,7 @@ public class TranslationServerTest {
 		xmlPolicy.setTemplateXml(policy);
 		String translatedPolicy = "";
 		translatedPolicy = ptpHandler.translatePolicy(requestId, parameters, xmlPolicy).getPolicy().getXml();
-		//translatedPolicy = client.translatePolicy(requestId, parameters, policy);			
+		//translatedPolicy = client.translatePolicy(requestId, parameters, policy);
 		String timestamp = (new Date()).toString();
 		System.out.println("===============================================");
 		System.out.println(timestamp);
@@ -119,24 +119,24 @@ public class TranslationServerTest {
 		System.out.println(translatedPolicy);
 		return translatedPolicy;
 	}
-	
+
 	private static String loadTestPolicy(String file){
 		String policy = "";
 			String message = "Loading test file: "+ file;
 			try {
 				BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 				String line = bufferedReader.readLine();
-											
+
 				policy = line;
 				bufferedReader.close();
 			} catch (Exception e) {
 				String erroMsg = "ERROR reading test file!";
 				e.printStackTrace();
 			}
-	 
+
 			System.out.println(policy);
 			return policy;
-					
+
 		}
-	
+
 }

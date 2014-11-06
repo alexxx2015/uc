@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="city" pos="0" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="country" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym="state "/>
+<pimdata name="zipcode" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="picture" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.3 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.2 " pos="0" synonym="pay permit "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 " name="copy" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="1" synonym="print "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="save" paramData="//@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.0 //@pims/@pimdata.2 " pos="2" synonym="distribute "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.2 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 //@pims/@pimdata.2 " pos="3" synonym="modify "/>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers name="domElement" pos="0"/>
+<psmcontainers name="file" pos="1"/>
+<psmcontainers name="clipboardCont" pos="2"/>
+<psmcontainers name="printCont" pos="3"/>
+<psmcontainers name="externalCont" pos="4"/>
+<psmcontainers name="memLoc" pos="5"/>
+<psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="saveEle" outputcontainer="" pos="0" seq="0" synonym="" system="WebBrowser"/>
+<psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy1" outputcontainer="" pos="1" seq="0" synonym="" system="DummySystem"/>
+<psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy2" outputcontainer="" pos="2" seq="0" synonym="" system="DummySystem"/>
+<psmtransformers inputcontainer="//@psms/@psmcontainers.0 " name="dummy3" outputcontainer="" pos="3" seq="0" synonym="" system="DummySystem"/>
+<psmsystems name="WebBrowser" pos="0" systemtransformers="//@psms/@psmtransformers.0 "/>
+<psmsystems name="DummySystem" pos="1" systemtransformers="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.3 "/>
+</psms>
+<isms name="SNS_ISM"/>
+</de.tum.in.i22.uc.metamodel:domain>
