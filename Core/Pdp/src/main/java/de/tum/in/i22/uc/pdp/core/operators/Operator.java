@@ -133,6 +133,10 @@ public abstract class Operator extends Observable implements IOperator {
 		throw new UnsupportedOperationException("Calling tick() is only allowed on subtypes of " + Operator.class);
 	}
 
+	public boolean distributedTickPostprocessing() {
+		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
+	}
+
 	@Override
 	public final boolean equals(Object obj) {
 		if (obj instanceof Operator) {

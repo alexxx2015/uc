@@ -81,6 +81,15 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 		return this.values[(this.next != 0 ? this.next : this.values.length) - 1];
 	}
 
+	public T removeLast() {
+		this.next--;
+
+		if (this.next < 0) {
+			this.next = this.values.length - 1;
+		}
+
+		return this.values[this.next];
+	}
 
 	@Override
 	public String toString() {

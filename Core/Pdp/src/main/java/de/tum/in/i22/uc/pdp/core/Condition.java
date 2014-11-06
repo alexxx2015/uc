@@ -27,7 +27,7 @@ public class Condition implements ICondition {
 		_operator.init(mechanism);
 		_operator.initId();
 
-		_logger.debug("condition: {}", _operator);
+		_logger.debug("Condition: {}", _operator);
 	}
 
 	@Override
@@ -44,8 +44,9 @@ public class Condition implements ICondition {
 
 	@Override
 	public boolean tick() {
+		// Local evaluation of the condition's operator
 		boolean res = _operator.tick();
-		_logger.debug("Ticking. New evaluation of condition: {}", res);
+		_logger.debug("Ticking. New local evaluation of condition: {}", res);
 		return res;
 	}
 

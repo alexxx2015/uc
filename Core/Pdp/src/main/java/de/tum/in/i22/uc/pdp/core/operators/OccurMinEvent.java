@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -95,37 +94,37 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		// If distribution is enabled we want to know
 		// how often the event did happen remotely in the last timestep.
 		// Do this in a new thread that will update the CircularArray.
-		Thread globallyTrueThread = null;
-		if (Settings.getInstance().getDistributionEnabled()) {
-			globallyTrueThread = new Thread(new HowOftenTrueGloballyThread(_mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize(), stateCircArray));
-			globallyTrueThread.start();
-		}
-		else {
+//		Thread globallyTrueThread = null;
+//		if (Settings.getInstance().getDistributionEnabled()) {
+//			globallyTrueThread = new Thread(new HowOftenTrueGloballyThread(_mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize(), stateCircArray));
+//			globallyTrueThread.start();
+//		}
+//		else {
 			// If there is no distribution, just push the value that
 			// we have accumulated locally
 			stateCircArray.push((long) _state.get(StateVariable.COUNTER));
-		}
+//		}
 
 
 		boolean result = (count >= limit);
 		_logger.debug("Intermediate result: {} (count: {}, limit: {}).", result, count, limit);
 
-		if (!result && globallyTrueThread != null) {
-			/*
-			 * Local evaluation returned false and
-			 * distribution is enabled. Therefore,
-			 * we need to wait for the globallyTrueThread
-			 * (which will update CircularArray) and
-			 * evaluate again: Do not consider the old
-			 * value of COUNTER, but rather the value
-			 * that was added to the CircularArray.
-			 */
-			waitFor(globallyTrueThread);
-			count -= (long) _state.get(StateVariable.COUNTER);
-			count += stateCircArray.peekLast();
-			result = (count >= limit);
-			_logger.debug("After evaluation of distribution: {} (count: {}, limit: {}).", result, count, limit);
-		}
+//		if (!result && globallyTrueThread != null) {
+//			/*
+//			 * Local evaluation returned false and
+//			 * distribution is enabled. Therefore,
+//			 * we need to wait for the globallyTrueThread
+//			 * (which will update CircularArray) and
+//			 * evaluate again: Do not consider the old
+//			 * value of COUNTER, but rather the value
+//			 * that was added to the CircularArray.
+//			 */
+//			waitFor(globallyTrueThread);
+//			count -= (long) _state.get(StateVariable.COUNTER);
+//			count += stateCircArray.peekLast();
+//			result = (count >= limit);
+//			_logger.debug("After evaluation of distribution: {} (count: {}, limit: {}).", result, count, limit);
+//		}
 		/* else { // left for clarity
 			 *
 			 * In this case we do (locally) know
@@ -137,12 +136,37 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 
 		_logger.debug("Final result: {} (count: {}, limit: {}).", result, count, limit);
 
-
+		_state.set(StateVariable.COUNT_AT_LAST_TICK, count);
 		_state.set(StateVariable.COUNTER, 0L);
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, result);
 		waitFor(tickThread);
 		_logger.debug("Counter: {}, CircArray: {}.", _state.get(StateVariable.COUNTER), _state.get(StateVariable.CIRC_ARRAY));
 		return result;
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing() {
+		boolean isTrue = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+
+		if (!isTrue) {
+			// Lookup how often the event happened globally. The result will include our local count.
+			long globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+
+			CircularArray<Long> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
+			long count = _state.get(StateVariable.COUNT_AT_LAST_TICK);
+
+			count -= stateCircArray.removeLast(); 	// Subtract the value that has been counted locally and remove it from CircularArray
+			count += globallyTrue;					// Add the value that has been counted globally
+
+			stateCircArray.push(count);				// Push the globally counted value to CircularArray
+
+			isTrue = (count >= limit);
+
+			_state.set(StateVariable.COUNT_AT_LAST_TICK, count);
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, isTrue);
+		}
+
+		return isTrue;
 	}
 
 	@Override
@@ -166,22 +190,22 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		}
 	}
 
-	private class HowOftenTrueGloballyThread implements Runnable {
-		private long _from;
-		private long _to;
-		private CircularArray<Long> _array;
-
-		public HowOftenTrueGloballyThread(long from, long to, CircularArray<Long> array) {
-			_from = from;
-			_to = to;
-			_array = array;
-		}
-
-		@Override
-		public void run() {
-			_array.push(_pdp.getDistributionManager().howOftenTrueInBetween(event, _from, _to));
-		}
-	}
+//	private class HowOftenTrueGloballyThread implements Runnable {
+//		private long _from;
+//		private long _to;
+//		private CircularArray<Long> _array;
+//
+//		public HowOftenTrueGloballyThread(long from, long to, CircularArray<Long> array) {
+//			_from = from;
+//			_to = to;
+//			_array = array;
+//		}
+//
+//		@Override
+//		public void run() {
+//			_array.push(_pdp.getDistributionManager().howOftenTrueInBetween(event, _from, _to));
+//		}
+//	}
 
 	/**
 	 * A thread that issues tick() on the underlying {@link EventMatchOperator}.

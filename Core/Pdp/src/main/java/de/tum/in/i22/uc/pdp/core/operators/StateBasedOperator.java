@@ -61,39 +61,56 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 		if (sinceLastTick == valueAtLastTick) {
 			/*
-			 * The value was not changed or looked up during the last timestep via
+			 * The value has not changed or looked up during the last timestep via
 			 * on occurring event. Look up the value instantly.
 			 */
 			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
 
-			if (valueAtLastTick == isPositive() && Settings.getInstance().getDistributionEnabled()) {
+			if (valueAtLastTick == isPositive()) {
 				/*
 				 * If the value has changed, notify our observers.
-				 * In particular remote entities.
 				 */
 				setChanged();
-				notifyObservers();
+				notifyObservers(_state);
 			}
 		}
 		else {
 			valueAtLastTick = sinceLastTick;
 		}
 
-		if (valueAtLastTick != isPositive() && Settings.getInstance().getDistributionEnabled()) {
-			/*
-			 * Last resort: The StateBasedOperator might have changed its state remotely.
-			 */
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
-		}
 
-		// initialize for next timestep
-		sinceLastTick = valueAtLastTick;
+//
+//		if (valueAtLastTick != isPositive() && Settings.getInstance().getDistributionEnabled()) {
+//			/*
+//			 * Last resort: The StateBasedOperator might have changed its state remotely.
+//			 */
+//			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+//		}
+//
+//		// initialize for next timestep
+//		sinceLastTick = valueAtLastTick;
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-		_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+		_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}
+
+	@Override
+	public boolean distributedTickPostprocessing() {
+		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+
+		if (valueAtLastTick != isPositive()) {
+			// The StateBasedOperator might have changed its state remotely.
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+			_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
+		}
+
+		return valueAtLastTick;
+	}
+
 
 	@Override
 	public void startSimulation() {
