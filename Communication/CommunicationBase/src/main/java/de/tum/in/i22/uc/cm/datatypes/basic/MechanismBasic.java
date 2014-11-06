@@ -75,7 +75,7 @@
 //
 //	@Override
 //	public String toString() {
-//		return com.google.common.base.MoreObjects.toStringHelper(this)
+//		return MoreObjects.toStringHelper(this)
 //				.add("_condition", _condition)
 //				.add("_mechanismName", _mechanismName)
 //				.add("_response", _response)

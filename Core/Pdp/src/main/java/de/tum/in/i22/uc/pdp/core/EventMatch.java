@@ -3,6 +3,8 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
@@ -69,7 +71,7 @@ public class EventMatch extends EventMatchingOperatorType {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("action", action)
 				.add("isActual", !isTryEvent())
 				.add("params", getParams())

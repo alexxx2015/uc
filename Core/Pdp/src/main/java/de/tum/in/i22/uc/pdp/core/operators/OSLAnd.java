@@ -3,7 +3,8 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -14,6 +15,9 @@ public class OSLAnd extends AndType {
 
 	private Operator op1;
 	private Operator op2;
+
+	private boolean op1state;
+	private boolean op2state;
 
 	public OSLAnd() {
 	}
@@ -31,6 +35,8 @@ public class OSLAnd extends AndType {
 
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
+
+		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
 
 	@Override
@@ -49,8 +55,8 @@ public class OSLAnd extends AndType {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
-		boolean op1state = op1.tick();
-		boolean op2state = op2.tick();
+		op1state = op1.tick();
+		op2state = op2.tick();
 
 		boolean valueAtLastTick = op1state && op2state;
 
@@ -60,6 +66,28 @@ public class OSLAnd extends AndType {
 		return valueAtLastTick;
 	}
 
+	@Override
+	public boolean distributedTickPostprocessing() {
+
+		/*
+		 * TODO parallelize
+		 */
+
+		if (!op1.getPositivity().is(op1state)) {
+			op1state = op1.distributedTickPostprocessing();
+		}
+
+		if (!op2.getPositivity().is(op2state)) {
+			op2state = op2.distributedTickPostprocessing();
+		}
+
+		boolean valueAtLastTick = op1state && op2state;
+
+		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
+	}
 
 	/**
 	 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
@@ -69,17 +97,15 @@ public class OSLAnd extends AndType {
 	 * @throws IllegalStateException if this object is not in DNF.
 	 */
 	private void ensureDNF() throws IllegalArgumentException {
-		if (!(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof LiteralOperator)) {
+		if (!(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof AtomicOperator)) {
 			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
 						+ getClass() + " was of type " + op1.getClass() + ").");
 		}
-		if (!(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof LiteralOperator)) {
+		if (!(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof AtomicOperator)) {
 			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
 					+ getClass() + " was of type " + op2.getClass() + ").");
 		}
 	}
-
-
 
 	@Override
 	public void startSimulation() {

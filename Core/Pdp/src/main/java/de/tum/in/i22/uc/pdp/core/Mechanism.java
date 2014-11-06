@@ -78,7 +78,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			_executeAsyncActions.add(new ExecuteAction(execAction));
 		}
 
-		// Get observed by the PDP, such that we can signal the end of a timestep
+		// We will be observed by the PDP, such that we can signal the end of a timestep
 		addObserver(pdp);
 	}
 
@@ -124,21 +124,16 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 	public Decision notifyEvent(IEvent event, Decision d) {
-		_logger.debug("updating mechanism [{}]", _name);
+		_logger.debug("Processing mechanism [{}] with event [{}].", _name, event);
 
 		if (_triggerEvent.matches(event)) {
-			_logger.info("Trigger event matches -> evaluating condition");
+			_logger.info("Trigger event matches. Evaluating condition");
 
-			/*
-			 * synchronize with tick()
-			 */
-			synchronized(this) {
-				if (_condition.tick()) {
-					_logger.info("Condition satisfied; merging mechanism into decision");
-					d.processMechanism(this, event);
-				} else {
-					_logger.info("Condition NOT satisfied");
-				}
+			if (evaluateCondition()) {
+				_logger.info("Condition satisfied; merging mechanism into decision");
+				d.processMechanism(this, event);
+			} else {
+				_logger.info("Condition NOT satisfied");
 			}
 		}
 
@@ -155,6 +150,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
 		_condition = _backupCondition.getFirst();
+		_condition.stopSimulation();
 	}
 
 
@@ -163,35 +159,26 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		long elapsedLastUpdate = now - _lastUpdate;
 		long difference = elapsedLastUpdate - _timestepSize;
 
-		if (difference < 0) { // Aborting update because the timestep has not
-			// yet passed
-			_logger.trace("[{}] Timestep remaining {} -> timestep has not yet passed", _name, difference);
-			_logger.trace("##################################################");
+		if (difference < 0) {
+			/*
+			 * Aborting because the timestep has not yet passed.
+			 */
 			return false;
 		}
-
-		// Correct time substracting possible delay in the execution because
-		// difference between timestep and last time
-		// mechanism was updated will not be exactly the timestepSize
-		if (difference > _timestepSize) {
-			_logger.warn(
-					"[{}] Timestep difference is larger than mechanism's timestep size => we missed to evaluate at least one timestep!!",
-					_name);
-			_logger.warn("--------------------------------------------------------------------------------------------------------------");
+		else if (difference > _timestepSize) {
+			/*
+			 * We missed to evaluate one timestep.
+			 */
+			_logger.warn("[{}] We missed to evaluate at least one timestep.", _name);
+			_logger.warn("---------------------------------------------");
 		}
 
 		_timestep++;
 		_logger.debug("//////////////////////////////////////////////////////");
-		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep, _timestepSize);
+		_logger.debug("[{}] Ticking. Timestep no. {}. Next tick in {}us", _name, _timestep, _timestepSize);
 
 
-		/*
-		 * synchronize with notifyEvent()
-		 */
-		boolean conditionValue;
-		synchronized(this) {
-			conditionValue = _condition.tick();
-		}
+		boolean conditionValue = evaluateCondition();
 		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("//////////////////////////////////////////////////////");
 
@@ -199,45 +186,50 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		notifyObservers(END_OF_TIMESTEP);
 
 		/*
-		 * Important! Do this after _condition.evaluate(),
-		 * as it will rely on _lastUpdate value.
+		 * Important! Do this after evaluateCondition(),
+		 * as the condition evaluation will rely on
+		 * the value of _lastUpdate.
 		 */
 		_lastUpdate = now - difference;
 
 		return conditionValue;
 	}
 
+	/**
+	 * Evaluate the condition of this mechanism.
+	 * Important: Make the method call synchronous,
+	 * because both {@link Mechanism#tick()} and
+	 * {@link Mechanism#notifyEvent(IEvent, Decision)}
+	 * might call this method.
+	 *
+	 * @return the result of the condition evaluation.
+	 */
+	private synchronized boolean evaluateCondition() {
+		return _condition.tick();
+	}
+
 	@Override
 	public void run() {
-		_logger.info("Started mechanism update thread usleep={} ms", _timestepSize);
+		_logger.info("Starting mechanism update thread usleep={} ms", _timestepSize);
 
 		_lastUpdate = System.currentTimeMillis();
 
 		while (!_interrupted) {
+			if (tick()) {
+				_logger.info("Triggering optional executeActions");
+				for (ExecuteAction execAction : getExecuteAsyncActions()) {
+					_pdp.executeAction(execAction, false);
+				}
+			}
+
 			try {
-				if (tick()) {
-					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (ExecuteAction execAction : getExecuteAsyncActions()) {
-						if (execAction.getProcessor().equals("pep"))
-							_logger.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
-									execAction.getName());
-						else {
-							_logger.debug("Execute asynchronous action [{}]", execAction.getName());
-							_pdp.executeAction(execAction, false);
-						}
-					}
-				}
-
-				if (_interrupted) {
-					_logger.info("Mechanism [{}] thread was interrupted. terminating...", _name);
-					return;
-				}
-
 				Thread.sleep(_timestepSize);
 			} catch (InterruptedException e) {
-				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", _name);
+				_interrupted = true;
 			}
 		}
+
+		_logger.info("Mechanism [{}] was interrupted. Terminating.", _name);
 	}
 
 	@Override

@@ -7,6 +7,6 @@ package de.tum.in.i22.uc.cm.datatypes.interfaces;
  * @author Florian Kelbert
  *
  */
-public interface LiteralOperator extends IOperator {
-	public boolean isPositive();
+public interface AtomicOperator extends IOperator {
+
 }

@@ -60,10 +60,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final PxpManager _pxpManager;
 
-//	private final List<EventMatchOperator> _eventMatches;
-
-//	private final List<StateBasedOperator> _stateBasedOperatorChanges;
-
 	private final List<Operator> _changedOperators;
 
 	private final IDistributionManager _distributionManager;
@@ -76,8 +72,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_pip = pip;
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
-//		_stateBasedOperatorChanges = new LinkedList<>();
-//		_eventMatches = new LinkedList<>();
 		_changedOperators = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
@@ -123,7 +117,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 */
 			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
 			if (allMechanisms == null) {
-				allMechanisms = new HashMap<String, Mechanism>();
+				allMechanisms = new HashMap<>();
 				_policyTable.put(policyName, allMechanisms);
 			}
 
@@ -147,7 +141,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 					}
 
 					if (!allMechanisms.containsKey(mech.getName())) {
-						_logger.debug("Starting mechanism update thread...: " + curMechanism.getName());
 						allMechanisms.put(mech.getName(), curMechanism);
 						new Thread(curMechanism).start();
 					} else {
@@ -219,7 +212,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			notifyObservers(event);
 
 			for (Mechanism mech : mechanisms) {
-				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
 				mech.startSimulation();
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
@@ -235,7 +227,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		else {
 			/*
 			 * If it is an desired event, start mechanism's simulation
-			 * before signaling the observers, such that this signalling
+			 * before signaling the observers, such that this signaling
 			 * can be undone.
 			 */
 			for (Mechanism mech : mechanisms) {
@@ -250,7 +242,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			notifyObservers(event);
 
 			for (Mechanism mech : mechanisms) {
-				_logger.info("Processing mechanism [{}] for event [{}]", mech.getName(), event.getName());
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
 			}
@@ -270,10 +261,10 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
-		Map<String, Set<String>> map = new TreeMap<String, Set<String>>();
+		Map<String, Set<String>> map = new TreeMap<>();
 
 		for (String policyName : _policyTable.keySet()) {
-			Set<String> mechanisms = new TreeSet<String>();
+			Set<String> mechanisms = new TreeSet<>();
 			for (String mechName : _policyTable.get(policyName).keySet()) {
 				mechanisms.add(mechName);
 			}
@@ -287,7 +278,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		return _pip;
 	}
 
-	public boolean executeAction(ExecuteAction execAction, boolean synchronous) {
+	boolean executeAction(ExecuteAction execAction, boolean synchronous) {
 		return _pxpManager.execute(execAction, synchronous);
 	}
 
@@ -301,10 +292,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_policyTable.clear();
 	}
 
-//	public void addEventMatch(EventMatch eventMatch) {
-//		_actionDescriptionStore.addEventMatch(eventMatch);
-//	}
-
 	public void addMechanism(Mechanism mechanism) {
 		_actionDescriptionStore.addMechanism(mechanism);
 	}
@@ -313,13 +300,8 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		if ((o instanceof Operator) && (arg instanceof State)) {
 			_logger.info("Got update about Operator: {}. New state: {}.", o, arg);
-//			_eventMatches.add((EventMatchOperator) o);
 			_changedOperators.add((Operator) o);
 		}
-//		else if (o instanceof StateBasedOperator) {
-//			_logger.info("Got update about StateBasedOperator: {}.", o);
-//			_stateBasedOperatorChanges.add((StateBasedOperator) o);
-//		}
 		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
 			if (!_changedOperators.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
 				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), _changedOperators));

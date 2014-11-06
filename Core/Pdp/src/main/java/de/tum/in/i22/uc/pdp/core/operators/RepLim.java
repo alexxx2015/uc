@@ -21,7 +21,14 @@ public class RepLim extends RepLimType {
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
 
-		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
+		if (amount <= 0) {
+			throw new IllegalArgumentException("Amount must be positive.");
+		}
+
+		timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		if (timeAmount.getTimestepInterval() <= 0) {
+			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
+		}
 
 		CircularArray<Boolean> circArray = new CircularArray<>(timeAmount.getTimestepInterval());
 		for (int a = 0; a < timeAmount.getTimestepInterval(); a++) {
@@ -29,6 +36,7 @@ public class RepLim extends RepLimType {
 		}
 
 		_state.set(StateVariable.CIRC_ARRAY, circArray);
+		_state.set(StateVariable.COUNTER, 0L);
 
 		op = (Operator) operators;
 		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + 2 * mech.getTimestepSize()));
@@ -67,9 +75,9 @@ public class RepLim extends RepLimType {
 		circArray.push(operandState);
 		_logger.debug("circularArray: {}", circArray);
 
-		// TODO: Setting circArray is actually not necessary,
+		// Setting circArray is actually not necessary,
 		// as we work on the original instance anyway
-		_state.set(StateVariable.CIRC_ARRAY, circArray);
+		// _state.set(StateVariable.CIRC_ARRAY, circArray);
 
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}

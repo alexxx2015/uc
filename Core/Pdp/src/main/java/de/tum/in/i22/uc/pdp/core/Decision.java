@@ -9,6 +9,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -32,8 +34,11 @@ public class Decision implements Serializable {
 
 	private final AuthorizationAction _authorizationAction;
 
-	/** 'optional' executeActions processed by PXP */
+	/**
+	 * optional executeActions processed by PXP
+	 */
 	private final List<ExecuteAction> _executeActions = new LinkedList<>();
+
 	private PxpManager _pxpManager;
 
 	public Decision(AuthorizationAction authAction, PxpManager pxpManager) {
@@ -114,7 +119,7 @@ public class Decision implements Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeActions", _executeActions)
 				.add("_pxpManager", _pxpManager)

@@ -32,7 +32,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
@@ -428,6 +428,13 @@ class CassandraDistributionManager implements IDistributionManager {
 			return;
 		}
 
+		/*
+		 * TODO
+		 * (1) We can probably do this in a new thread. However -> correctness? What if it fails?
+		 * (2) If this is done in a separate thread and potentially retried: use a fixed timestamp
+		 *     instead of now().
+		 */
+
 		DistributedPdpResponse res = (DistributedPdpResponse) response;
 
 		StringBuilder batchJob = new StringBuilder(512);
@@ -451,13 +458,13 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueSince(LiteralOperator operator, long since) {
+	public boolean wasTrueSince(AtomicOperator operator, long since) {
 		_logger.debug("wasTrueSince({}, {})", operator, since);
 		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;");
-		if (operator.isPositive()) {
+		if (operator.getPositivity().is(true)) {
 			return !rs.isExhausted();
 		}
 		else {
@@ -467,19 +474,34 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueInBetween(LiteralOperator operator, long from, long to) {
+	public boolean wasTrueInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
 		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
 				+ " LIMIT 1;");
-		if (operator.isPositive()) {
+		if (operator.getPositivity().is(true)) {
 			return !rs.isExhausted();
 		}
 		else {
 			return rs.isExhausted();
 		}
+	}
+
+	@Override
+	public long howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
+		if (!operator.getPositivity().is(true)) {
+			throw new IllegalArgumentException("This method is only available for positive operators.");
+		}
+
+		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
+				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "');");
+
+		return rs.all().size();
 	}
 
 

@@ -1,13 +1,24 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.ParamMatch;
+import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
-public class ConditionParamMatchOperator extends ConditionParamMatchType {
+public class ConditionParamMatchOperator extends ConditionParamMatchType implements Observer {
 	private static Logger _logger = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
+
+	private ParamMatch pm;
 
 	public ConditionParamMatchOperator() {
 	}
@@ -15,39 +26,58 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType {
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
+
+		pm = new ParamMatch();
+		pm.setName(getName());
+		pm.setValue(getValue());
+		pm.setCmpOp(getCmpOp());
+
+		_pdp.addObserver(this);
+	}
+
+	@Override
+	public void startSimulation() {
+		super.startSimulation();
+	}
+
+	@Override
+	public void stopSimulation() {
+		super.stopSimulation();
 	}
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("name", name)
 				.add("value", value)
 				.add("cmpOp", cmpOp)
 				.toString();
 	}
 
-//	@Override
-//	protected boolean localEvaluation(IEvent curEvent) {
-//		_logger.debug("ConditionParamMatchOperator");
-//
-//		if (curEvent == null) {
-//			_logger.debug("null event received. ConditionParamMatchOperator returns false.");
-//			return false;
-//		}
-//
-//		ParamMatch pm = new ParamMatch(this.getName(), this.getValue(),this.getCmpOp(), _pdp);
-//		return pm.matches(pm.getName(), curEvent.getParameterValue(pm.getName()));
-//	}
-//
-//	protected boolean matches(IEvent ev) {
-//		_logger.debug("ConditionParamMatchOperator");
-//
-//		ParamMatch pm = new ParamMatch(this.getName(), this.getValue(),this.getCmpOp(), _pdp);
-//		return pm.matches(pm.getName(), ev.getParameterValue(pm.getName()));
-//	}
-
 	@Override
 	public boolean tick() {
-		return false;
+		/*
+		 * Lookup whether the last event parameter matched.
+		 */
+		boolean value = _state.get(StateVariable.SINCE_LAST_TICK);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, value);
+		return value;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
+
+			boolean matches = pm.matches(pm.getName(), ((IEvent) arg).getParameterValue(pm.getName()));
+
+			/*
+			 * Always overwrite SINCE_LAST_TICK, because we are only
+			 * interested in the last event happening, i.e. the event
+			 * happening NOW.
+			 */
+			_state.set(StateVariable.SINCE_LAST_TICK, matches);
+
+			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+		}
 	}
 }

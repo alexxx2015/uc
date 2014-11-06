@@ -3,7 +3,8 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.LiteralOperator;
+import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -14,6 +15,9 @@ public class OSLOr extends OrType {
 
 	private Operator op1;
 	private Operator op2;
+
+	private boolean op1state;
+	private boolean op2state;
 
 	public OSLOr() {
 	}
@@ -31,6 +35,8 @@ public class OSLOr extends OrType {
 
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
+
+		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
 
 	@Override
@@ -50,8 +56,31 @@ public class OSLOr extends OrType {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
-		boolean op1state = op1.tick();
-		boolean op2state = op2.tick();
+		op1state = op1.tick();
+		op2state = op2.tick();
+
+		boolean valueAtLastTick = op1state || op2state;
+
+		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		return valueAtLastTick;
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing() {
+
+		/*
+		 * TODO parallelize
+		 */
+
+		if (!op1.getPositivity().is(op1state)) {
+			op1state = op1.distributedTickPostprocessing();
+		}
+
+		if (!op2.getPositivity().is(op2state)) {
+			op2state = op2.distributedTickPostprocessing();
+		}
 
 		boolean valueAtLastTick = op1state || op2state;
 
@@ -70,11 +99,11 @@ public class OSLOr extends OrType {
 	 * @throws IllegalStateException if this object is not in DNF.
 	 */
 	private void ensureDNF() throws IllegalStateException {
-		if (!(op1 instanceof OSLOr) && !(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof LiteralOperator)) {
+		if (!(op1 instanceof OSLOr) && !(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof AtomicOperator)) {
 			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
 						+ getClass() + " was of type " + op1.getClass() + ").");
 		}
-		if (!(op2 instanceof OSLOr) && !(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof LiteralOperator)) {
+		if (!(op2 instanceof OSLOr) && !(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof AtomicOperator)) {
 			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
 					+ getClass() + " was of type " + op2.getClass() + ").");
 		}

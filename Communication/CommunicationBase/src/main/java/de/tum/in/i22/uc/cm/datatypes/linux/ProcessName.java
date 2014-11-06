@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 
 /**
@@ -35,7 +37,7 @@ public class ProcessName extends NameBasic implements IProcessRelativeName {
 	}
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_pid", _pid)
 				.toString();
