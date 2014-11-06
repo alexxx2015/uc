@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pip.core.statebased;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
 import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
@@ -58,7 +60,7 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_predicate", _predicate)
 				.toString();
 	}

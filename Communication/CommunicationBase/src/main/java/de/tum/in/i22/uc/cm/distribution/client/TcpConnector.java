@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 
@@ -61,7 +63,7 @@ public abstract class TcpConnector<HandleType> extends Connector<HandleType> {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_address", _address)
 				.add("_port", _port)
 				.toString();

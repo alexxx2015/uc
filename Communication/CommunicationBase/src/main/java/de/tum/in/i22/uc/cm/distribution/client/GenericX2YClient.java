@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.distribution.client;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 public abstract class GenericX2YClient implements IConnectable {
 
 	private final Connector<?> _connector;
@@ -25,7 +27,7 @@ public abstract class GenericX2YClient implements IConnectable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_connector", _connector)
 				.toString();
 	}

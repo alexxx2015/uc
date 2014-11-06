@@ -10,6 +10,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationAllowType;
 import de.tum.in.i22.uc.pdp.xsd.AuthorizationInhibitType;
@@ -130,7 +132,7 @@ public class AuthorizationAction implements Serializable {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(getClass())
+		return MoreObjects.toStringHelper(getClass())
 				.add("_name", _name)
 				.add("_type", _auth)
 				.add("_delay", _delay)

@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 
 /**
@@ -51,7 +53,7 @@ public class MmapName extends NameBasic implements IProcessRelativeName, IClonab
 
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_pid", _pid)
 				.add("_addr", _addr)

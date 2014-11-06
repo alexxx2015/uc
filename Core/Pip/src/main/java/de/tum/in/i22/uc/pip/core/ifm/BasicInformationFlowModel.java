@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -1020,7 +1021,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_containerToDataMap", _containerToDataMap)
 				.add("_aliasesMap", _aliasesMap).add("_namingMap", _namingMap)
 				.toString();
