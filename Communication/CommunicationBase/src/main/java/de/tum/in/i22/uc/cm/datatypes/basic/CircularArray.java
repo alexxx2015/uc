@@ -64,7 +64,13 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 		return val;
 	}
 
-	public void push(T val) {
+
+	/**
+	 *
+	 * @param val
+	 * @return the value that has been pushed
+	 */
+	public T push(T val) {
 		_logger.trace("push (next={}) -> {}", this.next, val);
 		this.values[this.next] = val;
 
@@ -75,6 +81,8 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 			this.next = 0;
 			_logger.trace("next reached boundary, resetting to 0");
 		}
+
+		return val;
 	}
 
 	public T peekLast() {
