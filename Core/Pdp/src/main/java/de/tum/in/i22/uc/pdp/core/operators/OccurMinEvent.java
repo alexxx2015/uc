@@ -95,26 +95,26 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 
 		stateCircArray.push((long) _state.get(StateVariable.COUNTER));	// Push the counter value to the array
 
-		boolean isTrue = (countAtLastTick >= limit);
+		boolean valueAtLastTick = (countAtLastTick >= limit);
 
-		_logger.debug("Result: {} (count: {}, limit: {}, new CircArray: {}.).", isTrue, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
+		_logger.debug("Result: {} (count: {}, limit: {}, new CircArray: {}.).", valueAtLastTick, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
 
 		/*
 		 * Save/reset state variables.
 		 */
 		_state.set(StateVariable.COUNTER, 0L);
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, isTrue);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 
 		waitFor(tickThread);
-		return isTrue;
+		return valueAtLastTick;
 	}
 
 	@Override
 	public boolean distributedTickPostprocessing() {
-		boolean isTrue = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
-		if (!isTrue) {
+		if (!valueAtLastTick) {
 			// Lookup how often the event happened globally. The result will include our local count.
 			long globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 
@@ -133,18 +133,18 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 
 			stateCircArray.push(globallyTrue);				// Push the globally counted value to CircularArray
 
-			isTrue = (countAtLastTick >= limit);
+			valueAtLastTick = (countAtLastTick >= limit);
 
-			_logger.debug("Distributed result: {} (count: {}, limit: {}, new CircArray: {}.).", isTrue, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
+			_logger.debug("Distributed result: {} (count: {}, limit: {}, new CircArray: {}.).", valueAtLastTick, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
 
 			/*
 			 * Save state variables.
 			 */
-			_state.set(StateVariable.VALUE_AT_LAST_TICK, isTrue);
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 		}
 
-		return isTrue;
+		return valueAtLastTick;
 	}
 
 	@Override
