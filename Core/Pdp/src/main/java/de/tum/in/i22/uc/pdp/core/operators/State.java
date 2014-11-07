@@ -1,18 +1,24 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.DeepCloneable;
 
 public class State implements DeepCloneable<State> {
 
-	private static final int NO_ENTRIES = StateVariable.values().length;
-
 	private Object[] _values;
 
 	State() {
-		_values = new Object[NO_ENTRIES];
+		_values = new Object[StateVariable.values().length];
 	}
 
 	public enum StateVariable {
+		/*
+		 * Due to the implementation of deepClone(), it is
+		 * wise to enumerate complex types first.
+		 */
+		CIRC_ARRAY,				// usually: type CircularArray
 		IMMUTABLE,				// usually: type boolean
 		VALUE_AT_LAST_TICK,		// usually: type boolean
 		ALWAYS_A,				// usually: type boolean
@@ -21,8 +27,7 @@ public class State implements DeepCloneable<State> {
 		OP1_STATE,				// usually: type boolean
 		OP2_STATE,				// usually: type boolean
 		COUNTER,				// usually: type long
-		COUNT_AT_LAST_TICK,		// usually: type long
-		CIRC_ARRAY				// usually: type CircularArray
+		COUNT_AT_LAST_TICK		// usually: type long
 	}
 
 	<T extends DeepCloneable<?>> void set(StateVariable sv, T value) {
@@ -44,19 +49,36 @@ public class State implements DeepCloneable<State> {
 
 	@Override
 	public State deepClone() {
-		State clone;
-		try {
-			clone = (State) super.clone();
-		} catch (CloneNotSupportedException e) {
-			clone = new State();
-		}
+		final State clone = new State();
+
+		List<Thread> startedThreads = new LinkedList<>();
 
 		for (int i = 0; i < _values.length; i++) {
 			if (_values[i] instanceof DeepCloneable) {
-				clone._values[i] = ((DeepCloneable<?>) _values[i]).deepClone();
+				/*
+				 * Perform more complicated clones in a separate thread.
+				 */
+				final int j = i;
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						clone._values[j] = ((DeepCloneable<?>) _values[j]).deepClone();
+					}
+				};
+				t.start();
+				startedThreads.add(t);
 			}
 			else {
 				clone._values[i] = _values[i];
+			}
+		}
+
+		// Wait for the started threads to complete
+		for (Thread t : startedThreads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
 			}
 		}
 
