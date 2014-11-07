@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -32,7 +33,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
-		_pdp.addObserver(this);
 
 		String sep = Settings.getInstance().getSeparator1();
 		predicate = operator + sep + param1 + sep + param2 + sep + param3;
@@ -147,5 +147,11 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 			_logger.debug("Updating [{}] with event {}. Result: {}.", predicate, ((IEvent) arg).getName(), sinceLastTick);
 		}
+	}
+
+	@Override
+	public Collection<Observer>  getObservers(Collection<Observer> observers) {
+		observers.add(this);
+		return observers;
 	}
 }

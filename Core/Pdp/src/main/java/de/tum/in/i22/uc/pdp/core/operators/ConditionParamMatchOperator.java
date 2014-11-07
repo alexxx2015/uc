@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,8 +32,6 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 		pm.setName(getName());
 		pm.setValue(getValue());
 		pm.setCmpOp(getCmpOp());
-
-		_pdp.addObserver(this);
 	}
 
 	@Override
@@ -79,5 +78,11 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
+	}
+
+	@Override
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		observers.add(this);
+		return observers;
 	}
 }

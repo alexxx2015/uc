@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
+import java.util.Observer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,4 +65,10 @@ public class Always extends AlwaysType {
 		super.stopSimulation();
 		op.stopSimulation();
 	}
+
+	@Override
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		return op.getObservers(observers);
+	}
+
 }

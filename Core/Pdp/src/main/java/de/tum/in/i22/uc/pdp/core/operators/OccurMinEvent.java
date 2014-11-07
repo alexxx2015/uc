@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -206,5 +207,11 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 			_logger.error(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		event.getObservers(observers);
+		return observers;
 	}
 }

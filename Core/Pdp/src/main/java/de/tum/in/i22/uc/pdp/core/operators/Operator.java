@@ -1,9 +1,11 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.Observer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -82,9 +83,7 @@ public abstract class Operator extends Observable implements IOperator {
 		_parent = parent;
 		_ttl = ttl;
 
-		if (Settings.getInstance().getDistributionEnabled()) {
-			this.addObserver(_pdp);
-		}
+		this.addObserver(_pdp);
 	}
 
 	/**
@@ -185,5 +184,9 @@ public abstract class Operator extends Observable implements IOperator {
 
 	public final State getState() {
 		return _state;
+	}
+
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		return observers;
 	}
 }

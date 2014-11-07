@@ -118,7 +118,7 @@ public class OccurMinEventTest {
 		r = _pdp.notifyEvent(new EventBasic("action", params, true));
 		Assert.assertTrue(r.isAuthorizationAction(EStatus.INHIBIT));
 
-		sleep(800);
+		sleep(300);
 
 		/*
 		 * The following event happens in the next (2nd) timestep and does not
@@ -130,7 +130,7 @@ public class OccurMinEventTest {
 		r = _pdp.notifyEvent(new EventBasic("action", params, true));
 		Assert.assertTrue(r.isAuthorizationAction(EStatus.INHIBIT));
 
-		sleep(800);
+		sleep(300);
 
 		/*
 		 * The following event happens in the next (3rd) and matches both

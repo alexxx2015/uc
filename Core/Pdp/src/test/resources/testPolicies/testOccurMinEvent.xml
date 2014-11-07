@@ -10,13 +10,13 @@
 
   <preventiveMechanism name="testOccurMinEvent">
     <description>...</description>
-    <timestep amount="500" unit="MILLISECONDS" />
+    <timestep amount="250" unit="MILLISECONDS" />
     
     <trigger action="action" tryEvent="false">
     </trigger>
     
     <condition>
-      <occurMinEvent amount="1000" unit="MILLISECONDS" limit="2">
+      <occurMinEvent amount="500" unit="MILLISECONDS" limit="2">
         <event action="action" tryEvent="false">
           <paramMatch name="name" value="match" />
         </event>

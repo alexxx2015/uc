@@ -1,5 +1,9 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Observer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +31,13 @@ public class Condition implements ICondition {
 
 		_operator.init(mechanism);
 		_operator.initId();
+
+		Collection<Observer> observers = new LinkedList<>();
+		for (Observer o : _operator.getObservers(observers)) {
+			mechanism.getPolicyDecisionPoint().addObserver(o);
+		}
+
+
 
 		_logger.debug("Condition: {}", _operator);
 	}

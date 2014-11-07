@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
+import java.util.Observer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,5 +101,12 @@ public class RepSince extends RepSinceType {
 		op1.stopSimulation();
 		op2.stopSimulation();
 		throw new UnsupportedOperationException("Not yet implemented.");
+	}
+
+	@Override
+	public Collection<Observer>  getObservers(Collection<Observer> observers) {
+		op1.getObservers(observers);
+		op2.getObservers(observers);
+		return observers;
 	}
 }

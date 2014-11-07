@@ -1,5 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
+import java.util.Observer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,5 +94,11 @@ public class During extends DuringType {
 	public void stopSimulation() {
 		super.stopSimulation();
 		op.stopSimulation();
+	}
+
+	@Override
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		op.getObservers(observers);
+		return observers;
 	}
 }

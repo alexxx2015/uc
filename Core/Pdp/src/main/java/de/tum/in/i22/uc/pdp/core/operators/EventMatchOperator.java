@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -7,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -26,7 +27,6 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 		_state.set(StateVariable.SINCE_LAST_TICK, false);
-		_pdp.addObserver(this);
 		_positivity = Trilean.TRUE;
 	}
 
@@ -85,5 +85,11 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
+	}
+
+	@Override
+	public Collection<Observer> getObservers(Collection<Observer> observers) {
+		observers.add(this);
+		return observers;
 	}
 }
