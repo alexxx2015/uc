@@ -22,6 +22,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	private ParamMatch pm;
 
 	public ConditionParamMatchOperator() {
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
