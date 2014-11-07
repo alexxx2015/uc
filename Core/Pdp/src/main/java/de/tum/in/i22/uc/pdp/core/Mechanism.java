@@ -29,6 +29,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	private final String _name;
 
+	private Thread _thisThread;
+
 	/**
 	 * A description of this {@link Mechanism}.
 	 */
@@ -42,6 +44,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
 	private boolean _interrupted = false;
+
+	private final Object _pausedLock = new Object();
+	private boolean _paused = false;
 
 	private final Deque<Condition> _backupCondition;
 
@@ -153,25 +158,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_condition.stopSimulation();
 	}
 
-
 	private boolean tick() {
-		long now = System.currentTimeMillis();
-		long elapsedLastUpdate = now - _lastUpdate;
-		long difference = elapsedLastUpdate - _timestepSize;
-
-		if (difference < 0) {
-			/*
-			 * Aborting because the timestep has not yet passed.
-			 */
-			return false;
-		}
-		else if (difference > _timestepSize) {
-			/*
-			 * We missed to evaluate one timestep.
-			 */
-			_logger.warn("[{}] We missed to evaluate at least one timestep.", _name);
-			_logger.warn("---------------------------------------------");
-		}
 
 		_timestep++;
 		_logger.debug("//////////////////////////////////////////////////////");
@@ -184,13 +171,6 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		setChanged();
 		notifyObservers(END_OF_TIMESTEP);
-
-		/*
-		 * Important! Do this after evaluateCondition(),
-		 * as the condition evaluation will rely on
-		 * the value of _lastUpdate.
-		 */
-		_lastUpdate = now - difference;
 
 		return conditionValue;
 	}
@@ -208,13 +188,119 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return _condition.tick();
 	}
 
+	/**
+	 * Makes this thread sleep for the specified amount of
+	 * milliseconds. The method returns true, if the sleep
+	 * was successful, i.e. if it was not interrupted.
+	 *
+	 * This sleep() might get interrupted due to a call
+	 * to pause().
+	 *
+	 * 2014/11/07 FK
+	 *
+	 * @param millis the number of milliseconds
+	 * @return true, if the sleep was not interrupted.
+	 */
+	private boolean sleep(long millis) {
+		if (millis <= 0) {
+			return true;
+		}
+		try {
+			_logger.debug("Sleeping {}ms.", millis);
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			if (!_paused) {
+				_interrupted = true;
+			}
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * 2014/11/07 FK
+	 */
 	@Override
 	public void run() {
 		_logger.info("Starting mechanism update thread usleep={} ms", _timestepSize);
 
-		_lastUpdate = System.currentTimeMillis();
+		long now = System.currentTimeMillis();
+		long elapsed = _timestepSize;
+		_lastUpdate = now - _timestepSize;
 
 		while (!_interrupted) {
+			/*
+			 * This block is to pause the mechanism in
+			 * correspondence with attribute _paused.
+			 */
+			try {
+				synchronized (_pausedLock) {
+					while (_paused) {
+						_pausedLock.wait();
+					}
+				}
+			}
+			catch (InterruptedException e) {
+				if (_interrupted) {
+					continue;
+				}
+
+				/*
+				 * Once the pause is released, set those
+				 * variables to their initial values such that
+				 * an immediate tick() will be executed.
+				 */
+				now = System.currentTimeMillis();
+				elapsed = _timestepSize;
+				_lastUpdate = now - _timestepSize;
+			}
+
+
+			if (_lastUpdate >= now) {
+				/*
+				 * now is now.
+				 * By setting _lastUpdate = now + _timestepSize
+				 * _after_ the tick(), the time needed for tick()
+				 * is attributed to the _old_ timestep, which reflects
+				 * the fact that tick() does not consider events
+				 * that happen from now on. Therefore, the _next_ tick()
+				 * will need to evaluate from timepoint
+				 * now + _timestepSize onward. -FK-
+				 */
+				now = System.currentTimeMillis();
+
+				/*
+				 * We know that this is not the first iteration of
+				 * this loop and we know that this Mechanism had
+				 * not been paused. Therefore, we measure how much time
+				 * the last iteration took and adjust the sleep time
+				 * accordingly.
+				 */
+				elapsed = (elapsed - now) * -1;
+				if (!sleep(_timestepSize - elapsed)) {
+					// If the sleep was interrupted, start all over.
+					continue;
+				}
+			}
+			/* else {
+				// In this case we know that it's the Mechanisms first iteration
+				// or that it had been paused. We do not need to do anything, because
+				// we want to perform an immediate evaluation.
+			}*/
+
+			/*
+			 * We measure the actual execution/evaluation time of one tick().
+			 * This is important, because we need to subtract the measured time
+			 * from the next Thread.sleep() (as done above). Otherwise we will keep shifting
+			 * the evaluation for the amount of time that has elapsed during policy
+			 * evaluation.
+			 * This measurement is started now and ends upon the next loop
+			 * right above. This way, the measurement is as exact as possible
+			 * -FK-
+			 */
+			elapsed = now;
+
 			if (tick()) {
 				_logger.info("Triggering optional executeActions");
 				for (ExecuteAction execAction : getExecuteAsyncActions()) {
@@ -222,14 +308,46 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 				}
 			}
 
-			try {
-				Thread.sleep(_timestepSize);
-			} catch (InterruptedException e) {
-				_interrupted = true;
-			}
+			_lastUpdate = now + _timestepSize;
 		}
 
-		_logger.info("Mechanism [{}] was interrupted. Terminating.", _name);
+		_logger.info("Mechanism [{}] was stopped.", _name);
+	}
+
+	/**
+	 * Pauses this mechanism.
+	 *
+	 * Subsequent unpausing causes an
+	 * immediate re-evaluation (i.e. tick())
+	 *
+	 * 2014/11/07 FK
+	 */
+	public void pause() {
+		synchronized (_pausedLock) {
+			_paused = true;
+
+			/*
+			 *  Send an interrupt to this thread,
+			 *  is the mechanism might currently
+			 *  be sleeping. We want to wake it up.
+			 */
+			_thisThread.interrupt();
+		}
+	}
+
+	/**
+	 * Unpauses this mechanism.
+	 *
+	 * Unpausing causes an
+	 * immediate re-evaluation (i.e. tick())
+	 *
+	 * 2014/11/07 FK
+	 */
+	public void unpause() {
+		synchronized (_pausedLock) {
+			_paused = false;
+			_pausedLock.notify();
+		}
 	}
 
 	@Override
@@ -268,5 +386,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	@Override
 	public int hashCode() {
 		return Objects.hash(_name, _policyName);
+	}
+
+	public void setThread(Thread t) {
+		_thisThread = t;
 	}
 }

@@ -24,9 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
@@ -142,7 +145,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 					if (!allMechanisms.containsKey(mech.getName())) {
 						allMechanisms.put(mech.getName(), curMechanism);
-						new Thread(curMechanism).start();
+						Thread t = new Thread(curMechanism);
+						curMechanism.setThread(t);
+						t.start();
 					} else {
 						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
 					}
@@ -175,6 +180,39 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			_logger.info("Revoking mechanism: {}", mech.getName());
 			mech.revoke();
 		}
+	}
+
+	private Mechanism findMechanism(String policyName, String mechName) {
+		Mechanism mech = null;
+
+		Map<String, Mechanism> mechanisms = _policyTable.get(policyName);
+		if (mechanisms != null) {
+			mech = mechanisms.get(mechName);
+		}
+
+		return mech;
+	}
+
+	public IStatus activateMechanism(String policyName, String mechName) {
+		Mechanism mech = findMechanism(policyName, mechName);
+
+		if (mech != null) {
+			mech.unpause();
+			return new StatusBasic(EStatus.OKAY);
+		}
+
+		return new StatusBasic(EStatus.ERROR);
+	}
+
+	public IStatus deactivateMechanism(String policyName, String mechName) {
+		Mechanism mech = findMechanism(policyName, mechName);
+
+		if (mech != null) {
+			mech.pause();
+			return new StatusBasic(EStatus.OKAY);
+		}
+
+		return new StatusBasic(EStatus.ERROR);
 	}
 
 	public boolean revokeMechanism(String policyName, String mechName) {
