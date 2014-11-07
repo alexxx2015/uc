@@ -33,13 +33,35 @@ public class OSLAndTest {
 		}
 	}
 
+	private void toNextTimestep(PolicyDecisionPoint pdp) {
+		sleep(100);
+		pdp.deactivateMechanism("testAnd", "testAnd");
+		sleep(100);
+		pdp.activateMechanism("testAnd", "testAnd");
+		sleep(50);
+	}
 
 	@Test
 	public void test() {
 
+		/*
+		 * ******************************************
+		 * IMPORTANT NOTE:
+		 *
+		 * This test is subject to timing constraints.
+		 * I performed several runs of the test and
+		 * adjusted the sleeps carefully. It may be the
+		 * case, however, the the test case fails on
+		 * machines that are slower or faster than mine.
+		 * In this case, please come talk to me. -FK-
+		 * ******************************************
+		 */
+
 		_pdp = new PolicyDecisionPoint();
 
 		_pdp.deployPolicyURI("src/test/resources/testPolicies/testAnd.xml");
+
+		toNextTimestep(_pdp);
 
 		params.clear();
 
@@ -54,8 +76,6 @@ public class OSLAndTest {
 		IResponse res = _pdp.notifyEvent(new EventBasic("action1", params, true));
 		Assert.assertTrue(res.isAuthorizationAction(EStatus.ALLOW));
 
-		sleep(50);
-
 		/*
 		 * The first occurrence of action2 is inhibited.
 		 */
@@ -68,7 +88,7 @@ public class OSLAndTest {
 		res = _pdp.notifyEvent(new EventBasic("action1", params, true));
 		Assert.assertTrue(res.isAuthorizationAction(EStatus.INHIBIT));
 
-		sleep(200);
+		toNextTimestep(_pdp);
 
 		/*
 		 * After waiting for the next timestep, action1 is again allowed.
