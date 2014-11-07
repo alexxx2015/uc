@@ -39,15 +39,15 @@ public class Always extends AlwaysType {
 			return false;
 		}
 		else {
-			boolean _valueAtLastTick = op.tick();
+			boolean valueAtLastTick = op.tick();
 
-			if (!_valueAtLastTick) {
+			if (!valueAtLastTick) {
 				_logger.debug("ALWAYS: activating IMMUTABILITY");
 				_state.set(StateVariable.IMMUTABLE, true);
 			}
 
-			_state.set(StateVariable.VALUE_AT_LAST_TICK, _valueAtLastTick);
-			return _valueAtLastTick;
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+			return valueAtLastTick;
 		}
 	}
 

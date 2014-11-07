@@ -67,10 +67,6 @@ public class Before extends BeforeType {
 
 		_logger.debug("Value [{}] was popped from circularArray. Result: {}. New circularArray: {}", _state.get(StateVariable.VALUE_AT_LAST_TICK), _state.get(StateVariable.VALUE_AT_LAST_TICK), circArray);
 
-		// TODO: Setting circArray is actually not necessary,
-		// as we work on the original instance anyway
-		_state.set(StateVariable.CIRC_ARRAY, circArray);
-
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
