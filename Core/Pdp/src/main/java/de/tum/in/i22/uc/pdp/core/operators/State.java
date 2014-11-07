@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.DeepCloneable;
 
-public class State implements DeepCloneable<State> {
+final public class State implements DeepCloneable<State> {
 
 	private Object[] _values;
 
@@ -24,31 +24,29 @@ public class State implements DeepCloneable<State> {
 		ALWAYS_A,				// usually: type boolean
 		ALWAYS_A_SINCE_LAST_B,	// usually: type boolean
 		SINCE_LAST_TICK,		// usually: type boolean
-		OP1_STATE,				// usually: type boolean
-		OP2_STATE,				// usually: type boolean
 		COUNTER,				// usually: type long
 		COUNT_AT_LAST_TICK		// usually: type long
 	}
 
-	<T extends DeepCloneable<?>> void set(StateVariable sv, T value) {
+	final <T extends DeepCloneable<?>> void set(StateVariable sv, T value) {
 		_values[sv.ordinal()] = value;
 	}
 
-	void set(StateVariable sv, long value) {
+	final void set(StateVariable sv, long value) {
 		_values[sv.ordinal()] = value;
 	}
 
-	void set(StateVariable sv, boolean value) {
+	final void set(StateVariable sv, boolean value) {
 		_values[sv.ordinal()] = value;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T get(StateVariable sv) {
+	final public <T> T get(StateVariable sv) {
 		return (T) _values[sv.ordinal()];
 	}
 
 	@Override
-	public State deepClone() {
+	final public State deepClone() {
 		final State clone = new State();
 
 		List<Thread> startedThreads = new LinkedList<>();

@@ -60,8 +60,6 @@ public class OSLAnd extends AndType {
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-		_state.set(StateVariable.OP1_STATE, op1state);
-		_state.set(StateVariable.OP2_STATE, op2state);
 
 		return valueAtLastTick;
 	}
@@ -72,25 +70,14 @@ public class OSLAnd extends AndType {
 		/*
 		 * TODO parallelize
 		 */
-
-		boolean op1state = _state.get(StateVariable.OP1_STATE);
-		boolean op2state = _state.get(StateVariable.OP2_STATE);
-
-		if (!op1.getPositivity().is(op1state)) {
-			op1state = op1.distributedTickPostprocessing();
-		}
-
-		if (!op2.getPositivity().is(op2state)) {
-			op2state = op2.distributedTickPostprocessing();
-		}
+		boolean op1state = op1.distributedTickPostprocessing();
+		boolean op2state = op2.distributedTickPostprocessing();
 
 		boolean valueAtLastTick = op1state && op2state;
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-
-		// Note: We don't need to save OP1_STATE and OP2_STATE
 
 		return valueAtLastTick;
 	}
