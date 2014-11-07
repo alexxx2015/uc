@@ -18,12 +18,22 @@ public class State implements DeepCloneable<State> {
 		ALWAYS_A,				// usually: type boolean
 		ALWAYS_A_SINCE_LAST_B,	// usually: type boolean
 		SINCE_LAST_TICK,		// usually: type boolean
+		OP1_STATE,				// usually: type boolean
+		OP2_STATE,				// usually: type boolean
 		COUNTER,				// usually: type long
 		COUNT_AT_LAST_TICK,		// usually: type long
 		CIRC_ARRAY				// usually: type CircularArray
 	}
 
-	<T> void set(StateVariable sv, T value) {
+	<T extends DeepCloneable<?>> void set(StateVariable sv, T value) {
+		_values[sv.ordinal()] = value;
+	}
+
+	void set(StateVariable sv, long value) {
+		_values[sv.ordinal()] = value;
+	}
+
+	void set(StateVariable sv, boolean value) {
 		_values[sv.ordinal()] = value;
 	}
 
