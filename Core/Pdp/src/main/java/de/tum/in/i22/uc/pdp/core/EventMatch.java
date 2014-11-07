@@ -44,7 +44,7 @@ public class EventMatch extends EventMatchingOperatorType {
 		 */
 		if (tryEvent != ev.isActual()) {
 			if (action.equals(ev.getName()) || action.equals(Settings.getInstance().getStarEvent())) {
-				if (params.size() == 0) {
+				if (params == null || params.size() == 0) {
 					_logger.info("Event DOES match.");
 					return true;
 				}
