@@ -39,13 +39,6 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	public boolean tick() {
 		boolean valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-//		if (!valueAtLastTick && Settings.getInstance().getDistributionEnabled()) {
-//			/*
-//			 * Last resort: The event might have happened remotely
-//			 */
-//			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
-//		}
-
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.SINCE_LAST_TICK, false);
 

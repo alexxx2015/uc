@@ -12,9 +12,9 @@ public class RepSince extends RepSinceType {
 	private Operator op1;
 	private Operator op2;
 
-	private long _counter = 0;
-	private boolean _value = false;
-	private boolean _subEverTrue = false;
+//	private long _counter = 0;
+//	private boolean _value = false;
+//	private boolean _subEverTrue = false;
 
 	public RepSince() {
 	}

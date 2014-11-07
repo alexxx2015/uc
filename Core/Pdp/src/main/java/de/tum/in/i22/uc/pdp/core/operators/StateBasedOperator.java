@@ -92,18 +92,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			valueAtLastTick = sinceLastTick;
 		}
 
-
-//
-//		if (valueAtLastTick != isPositive() && Settings.getInstance().getDistributionEnabled()) {
-//			/*
-//			 * Last resort: The StateBasedOperator might have changed its state remotely.
-//			 */
-//			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
-//		}
-//
-//		// initialize for next timestep
-//		sinceLastTick = valueAtLastTick;
-
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
 
