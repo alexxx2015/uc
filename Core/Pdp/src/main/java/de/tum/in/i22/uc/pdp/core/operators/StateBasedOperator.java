@@ -80,7 +80,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			 */
 			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
 
-			if (getPositivity().is(valueAtLastTick)) {
+			if (_positivity.is(valueAtLastTick)) {
 				/*
 				 * If the value has changed, notify our observers.
 				 */
@@ -102,7 +102,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	public boolean distributedTickPostprocessing() {
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
-		if (!getPositivity().is(valueAtLastTick)) {
+		if (!_positivity.is(valueAtLastTick)) {
 			// The StateBasedOperator might have changed its state remotely.
 			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
 
