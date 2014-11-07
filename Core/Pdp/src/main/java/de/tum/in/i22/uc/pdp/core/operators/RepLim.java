@@ -39,7 +39,7 @@ public class RepLim extends RepLimType {
 		_state.set(StateVariable.COUNTER, 0L);
 
 		op = (Operator) operators;
-		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + 2 * mech.getTimestepSize()));
+		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + mech.getTimestepSize()));
 	}
 
 	@Override

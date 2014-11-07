@@ -45,7 +45,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
 
 		event = (EventMatchOperator) getEvent();
-		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + 2 * mech.getTimestepSize()));
+		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
 		// get notified whenever the underlying event occurs
 		event.addObserver(this);

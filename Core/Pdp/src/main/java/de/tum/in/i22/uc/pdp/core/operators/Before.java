@@ -46,7 +46,7 @@ public class Before extends BeforeType {
 
 		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
 
-		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + 2 * mech.getTimestepSize()));
+		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
 		_positivity = op.getPositivity();
 	}
