@@ -1,0 +1,22 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy xmlns="http://www22.in.tum.de/enforcementLanguage"
+	xmlns:tns="http://www22.in.tum.de/enforcementLanguage" xmlns:a="http://www22.in.tum.de/action"
+	xmlns:e="http://www22.in.tum.de/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testAnd">
+
+	<preventiveMechanism name="testAnd">
+		<description>...</description>
+		<timestep amount="200" unit="MILLISECONDS" />
+		<trigger action="*" tryEvent="false" />
+		<condition>
+			<and>
+				<eventMatch action="action1" tryEvent="false" />
+				<eventMatch action="action2" tryEvent="false" />
+			</and>
+		</condition>
+		<authorizationAction name="default">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+</policy>
