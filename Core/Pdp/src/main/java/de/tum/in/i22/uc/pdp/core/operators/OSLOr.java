@@ -16,9 +16,6 @@ public class OSLOr extends OrType {
 	private Operator op1;
 	private Operator op2;
 
-	private boolean op1state;
-	private boolean op2state;
-
 	public OSLOr() {
 	}
 
@@ -56,14 +53,17 @@ public class OSLOr extends OrType {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
-		op1state = op1.tick();
-		op2state = op2.tick();
+		boolean op1state = op1.tick();
+		boolean op2state = op2.tick();
 
 		boolean valueAtLastTick = op1state || op2state;
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		_state.set(StateVariable.OP1_STATE, op1state);
+		_state.set(StateVariable.OP2_STATE, op2state);
+
 		return valueAtLastTick;
 	}
 
@@ -73,6 +73,9 @@ public class OSLOr extends OrType {
 		/*
 		 * TODO parallelize
 		 */
+
+		boolean op1state = _state.get(StateVariable.OP1_STATE);
+		boolean op2state = _state.get(StateVariable.OP2_STATE);
 
 		if (!op1.getPositivity().is(op1state)) {
 			op1state = op1.distributedTickPostprocessing();
@@ -87,6 +90,9 @@ public class OSLOr extends OrType {
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+
+		// Note: We don't need to save OP1_STATE and OP2_STATE
+
 		return valueAtLastTick;
 	}
 
