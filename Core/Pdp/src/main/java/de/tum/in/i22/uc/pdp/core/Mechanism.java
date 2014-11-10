@@ -1,11 +1,14 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +46,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	protected AuthorizationAction _authorizationAction;
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
-	private boolean _interrupted = false;
+
 
 	private final Object _pausedLock = new Object();
-	private boolean _paused = false;
+
+	private AtomicBoolean _interrupted = new AtomicBoolean(false);
+	private AtomicBoolean _paused = new AtomicBoolean(false);
 
 	private final Deque<Condition> _backupCondition;
 
@@ -125,7 +130,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 	public void revoke() {
-		_interrupted = true;
+		_interrupted.set(true);
 	}
 
 	public Decision notifyEvent(IEvent event, Decision d) {
@@ -206,11 +211,11 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			return true;
 		}
 		try {
-			_logger.debug("Sleeping {}ms.", millis);
+			_logger.debug("Sleeping {}ms (out of requested {}ms).", millis, _timestepSize);
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			if (!_paused) {
-				_interrupted = true;
+			if (!_paused.get()) {
+				_interrupted.set(true);
 			}
 			return false;
 		}
@@ -219,99 +224,92 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 	/**
-	 * 2014/11/07 FK
+	 * Main run method. Rewritten on 2014/11/10.
+	 *
+	 * The old implementation of this run() method was wrong.
+	 * The overhead for performing the policy evaluation was not
+	 * considered in the sleep()s in-between policy evaluations.
+	 * The result was that the evaluated time interval and the
+	 * actual system time drifted further and further. Tests
+	 * revealed that this new implementation is not subject to
+	 * such a phenomenon. The (im)precision of this new implementation
+	 * (with debug output enabled) is roughly 1 (one) millisecond.
+	 *
+	 * 2014/11/10 FK
 	 */
 	@Override
 	public void run() {
-		_logger.info("Starting mechanism update thread usleep={} ms", _timestepSize);
+		_logger.info("Starting mechanism update thread. sleep={}ms", _timestepSize);
 
-		long now = System.currentTimeMillis();
-		long elapsed = _timestepSize;
-		_lastUpdate = now - _timestepSize;
+		// Artificial point in time at which the last update
+		// supposedly 'happened'. Just to get things rolling...
+		_lastUpdate = System.currentTimeMillis() - _timestepSize;
 
-		while (!_interrupted) {
-			/*
-			 * This block is to pause the mechanism in
-			 * correspondence with attribute _paused.
-			 */
-			try {
-				synchronized (_pausedLock) {
-					while (_paused) {
-						_pausedLock.wait();
-					}
-				}
-			}
-			catch (InterruptedException e) {
-				if (_interrupted) {
-					continue;
-				}
-
-				/*
-				 * Once the pause is released, set those
-				 * variables to their initial values such that
-				 * an immediate tick() will be executed.
-				 */
-				now = System.currentTimeMillis();
-				elapsed = _timestepSize;
-				_lastUpdate = now - _timestepSize;
-			}
-
-
-			if (_lastUpdate >= now) {
-				/*
-				 * now is now.
-				 * By setting _lastUpdate = now + _timestepSize
-				 * _after_ the tick(), the time needed for tick()
-				 * is attributed to the _old_ timestep, which reflects
-				 * the fact that tick() does not consider events
-				 * that happen from now on. Therefore, the _next_ tick()
-				 * will need to evaluate from timepoint
-				 * now + _timestepSize onward. -FK-
-				 */
-				now = System.currentTimeMillis();
-
-				/*
-				 * We know that this is not the first iteration of
-				 * this loop and we know that this Mechanism had
-				 * not been paused. Therefore, we measure how much time
-				 * the last iteration took and adjust the sleep time
-				 * accordingly.
-				 */
-				elapsed = (elapsed - now) * -1;
-				if (!sleep(_timestepSize - elapsed)) {
-					// If the sleep was interrupted, start all over.
-					continue;
-				}
-			}
-			/* else {
-				// In this case we know that it's the Mechanisms first iteration
-				// or that it had been paused. We do not need to do anything, because
-				// we want to perform an immediate evaluation.
-			}*/
+		while (!_interrupted.get()) {
 
 			/*
-			 * We measure the actual execution/evaluation time of one tick().
-			 * This is important, because we need to subtract the measured time
-			 * from the next Thread.sleep() (as done above). Otherwise we will keep shifting
-			 * the evaluation for the amount of time that has elapsed during policy
-			 * evaluation.
-			 * This measurement is started now and ends upon the next loop
-			 * right above. This way, the measurement is as exact as possible
-			 * -FK-
+			 * Perform the actual tick().
 			 */
-			elapsed = now;
-
+			_logger.info("Ticking at time {}.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(System.currentTimeMillis())));
 			if (tick()) {
 				_logger.info("Triggering optional executeActions");
 				for (ExecuteAction execAction : getExecuteAsyncActions()) {
+					// TODO parallelize
 					_pdp.executeAction(execAction, false);
 				}
 			}
 
-			_lastUpdate = now + _timestepSize;
-		}
+			/*
+			 *  Adjust lastUpdate value.
+			 *  Important: Adjust this value _after_
+			 *  tick(), because condition evaluation
+			 *  will rely on its old value.
+			 */
+			_lastUpdate += _timestepSize;
 
-		_logger.info("Mechanism [{}] was stopped.", _name);
+			/*
+			 * Calculate the relative amount of time (in milliseconds)
+			 * that has passed during the last iteration. The result
+			 * is the amount of time that passed during the last tick()
+			 * and all associated overhead within this method.
+			 */
+			if (!sleep(_lastUpdate - System.currentTimeMillis())) {
+				/*
+				 * Sleep was interrupted and returned false.
+				 * There are two reasons why this might happen:
+				 * (1) The mechanism was revoked.
+				 * (2) The mechanism was set to pause.
+				 */
+
+				try {
+					synchronized (_pausedLock) {
+						/*
+						 * If the mechanism was paused, wait for
+						 * the pause to be released.
+						 */
+						while (_paused.get()) {
+							_pausedLock.wait();
+						}
+					}
+				}
+				catch (InterruptedException e) {
+					if (!_paused.get()) {
+						/*
+						 * Once the pause is released, set those
+						 * variables to their initial values such that
+						 * an immediate tick() will be executed.
+						 */
+						_lastUpdate = System.currentTimeMillis() - _timestepSize;
+					}
+					/*
+					else {
+						// In this cases the Mechanism was revoked (_interrupted.get() == true),
+						// which will result in termination of this method's main loop.
+					}
+					*/
+				}
+			}
+		}
 	}
 
 	/**
@@ -324,7 +322,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	public void pause() {
 		synchronized (_pausedLock) {
-			_paused = true;
+			_paused.set(true);
 
 			/*
 			 *  Send an interrupt to this thread,
@@ -345,7 +343,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	public void unpause() {
 		synchronized (_pausedLock) {
-			_paused = false;
+			_paused.set(false);
 			_pausedLock.notify();
 		}
 	}

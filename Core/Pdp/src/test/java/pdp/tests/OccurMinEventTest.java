@@ -83,13 +83,6 @@ public class OccurMinEventTest {
 		}
 	}
 
-	private void toNextTimestep(PolicyDecisionPoint pdp) {
-		sleep(100);
-		pdp.deactivateMechanism("testOccurMinEvent", "testOccurMinEvent");
-		sleep(100);
-		pdp.activateMechanism("testOccurMinEvent", "testOccurMinEvent");
-		sleep(100);
-	}
 
 	@SuppressWarnings("serial")
 	@Test
@@ -103,7 +96,8 @@ public class OccurMinEventTest {
 		 * adjusted the sleeps carefully. It may be the
 		 * case, however, the the test case fails on
 		 * machines that are slower or faster than mine.
-		 * In this case, please come talk to me. -FK-
+		 * In this case, please come talk to me.
+		 * -FK-
 		 * ******************************************
 		 */
 
@@ -123,7 +117,7 @@ public class OccurMinEventTest {
 		params.clear();
 		params.put("name", "match");
 
-		toNextTimestep(_pdp);
+		sleep(100);
 
 		/*
 		 * TEST 1.
@@ -145,7 +139,7 @@ public class OccurMinEventTest {
 		r = _pdp.notifyEvent(new EventBasic("action", params, true));
 		Assert.assertTrue(r.isAuthorizationAction(EStatus.INHIBIT));
 
-		toNextTimestep(_pdp);
+		sleep(500);
 
 		/*
 		 * The following event happens in the next (2nd) timestep and does not
@@ -157,7 +151,7 @@ public class OccurMinEventTest {
 		r = _pdp.notifyEvent(new EventBasic("action", params, true));
 		Assert.assertTrue(r.isAuthorizationAction(EStatus.INHIBIT));
 
-		toNextTimestep(_pdp);
+		sleep(500);
 
 		/*
 		 * The following event happens in the next (3rd) and matches both

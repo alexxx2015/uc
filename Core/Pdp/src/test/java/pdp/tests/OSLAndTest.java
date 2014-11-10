@@ -33,14 +33,6 @@ public class OSLAndTest {
 		}
 	}
 
-	private void toNextTimestep(PolicyDecisionPoint pdp) {
-		sleep(100);
-		pdp.deactivateMechanism("testAnd", "testAnd");
-		sleep(100);
-		pdp.activateMechanism("testAnd", "testAnd");
-		sleep(50);
-	}
-
 	@Test
 	public void test() {
 
@@ -53,7 +45,7 @@ public class OSLAndTest {
 		 * adjusted the sleeps carefully. It may be the
 		 * case, however, the the test case fails on
 		 * machines that are slower or faster than mine.
-		 * In this case, please come talk to me. -FK-
+		 * -FK-
 		 * ******************************************
 		 */
 
@@ -61,9 +53,9 @@ public class OSLAndTest {
 
 		_pdp.deployPolicyURI("src/test/resources/testPolicies/testAnd.xml");
 
-		toNextTimestep(_pdp);
-
 		params.clear();
+
+		sleep(100);
 
 		/*
 		 * This tests the AND operator. The event should be inhibited as soon
@@ -88,7 +80,7 @@ public class OSLAndTest {
 		res = _pdp.notifyEvent(new EventBasic("action1", params, true));
 		Assert.assertTrue(res.isAuthorizationAction(EStatus.INHIBIT));
 
-		toNextTimestep(_pdp);
+		sleep(500);
 
 		/*
 		 * After waiting for the next timestep, action1 is again allowed.

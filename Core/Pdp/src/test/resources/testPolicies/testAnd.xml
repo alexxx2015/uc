@@ -7,7 +7,7 @@
 
 	<preventiveMechanism name="testAnd">
 		<description>...</description>
-		<timestep amount="1000" unit="MILLISECONDS" />
+		<timestep amount="500" unit="MILLISECONDS" />
 		<trigger action="*" tryEvent="false" />
 		<condition>
 			<and>
