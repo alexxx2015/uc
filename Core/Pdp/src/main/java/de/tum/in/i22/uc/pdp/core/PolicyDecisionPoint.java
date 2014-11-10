@@ -129,6 +129,10 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * this policy, and start the mechanism
 			 */
 			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
+				/*
+				 * TODO Parallelize
+				 * (Watch out to synchronize shared data structures such as allMechanisms).
+				 */
 				try {
 					_logger.debug("Processing mechanism: {}", mech.getName());
 					Mechanism curMechanism;
@@ -140,11 +144,12 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 						curMechanism = new DetectiveMechanism(mech, policyName, this);
 					}
 					else {
-						throw new InvalidMechanismException("" + mech);
+						throw new InvalidMechanismException(mech.toString());
 					}
 
 					if (!allMechanisms.containsKey(mech.getName())) {
 						allMechanisms.put(mech.getName(), curMechanism);
+						curMechanism.set
 						Thread t = new Thread(curMechanism);
 						curMechanism.setThread(t);
 						t.start();
@@ -171,14 +176,11 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_logger.debug("revokePolicy({}) invoked.", policyName);
 
 		Map<String, Mechanism> mechanisms = _policyTable.remove(policyName);
-		if (mechanisms == null) {
-			_logger.warn("Policy {} was not deployed. Unable to revoke.", policyName);
-			return;
-		}
-
-		for (Mechanism mech : mechanisms.values()) {
-			_logger.info("Revoking mechanism: {}", mech.getName());
-			mech.revoke();
+		if (mechanisms != null) {
+			for (Mechanism mech : mechanisms.values()) {
+				_logger.info("Revoking mechanism: {}", mech.getName());
+				mech.revoke();
+			}
 		}
 	}
 

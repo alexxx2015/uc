@@ -76,8 +76,9 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "WITH CLUSTERING ORDER BY (time DESC);");
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
-						+ "policy text,"
-						+ "PRIMARY KEY (policy));");
+						+ "mechanismName text,"
+						+ "firstTick bigint "
+						+ "PRIMARY KEY (mechanismName));");
 	};
 
 //	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
@@ -147,6 +148,16 @@ class CassandraDistributionManager implements IDistributionManager {
 		adjustPolicyKeyspace(policyName, location, false);
 	}
 
+	@Override
+	public void registerMechanism(String policyName, String mechanismName, long firstTick) {
+		if (_defaultSession.execute("SELECT mechanismName FROM " + policyName + "." + TABLE_NAME_POLICY
+				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;").isExhausted()) {
+
+			_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_POLICY
+				+ " (mechanismName,firstTick) VALUES "
+				+ "('" + mechanismName + "', " + firstTick + ");");
+		}
+	}
 
 	/**
 	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
@@ -319,7 +330,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 
 		try {
-			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policy) VALUES ('" + policy.getXml() + "');");
+			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policyName,policy) VALUES ('" + policy.getXml() + "'," + policy.getFirstTick() + ");");
 		}
 		catch (Exception e) {
 			_logger.error("Error inserting policy {}: {}.", policy.getName(), e.getMessage());
@@ -527,5 +538,17 @@ class CassandraDistributionManager implements IDistributionManager {
 		_responsiblePdps.put(ip, result);
 
 		return result;
+	}
+
+	public long getFirstTick(String policyName, String mechanismName) {
+		ResultSet rs =_defaultSession.execute("SELECT firstTick FROM " + policyName + "." + TABLE_NAME_POLICY
+				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;");
+
+		if (rs.isExhausted()) {
+			throw new IllegalStateException("Mechanism [" + mechanismName + "] in policy [" + policyName
+					+ "] has not been registered.");
+		}
+
+		return rs.iterator().next().getLong("firstTick");
 	}
 }

@@ -75,4 +75,10 @@ public class DummyDistributionManager implements IDistributionManager {
 		return 0;
 	}
 
+	@Override
+	public void registerMechanism(String policyName, String mechanismName, long firstTick) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("registerMechanism method invoked");
+	}
+
 }

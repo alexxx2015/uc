@@ -16,7 +16,7 @@ public interface IMechanism {
 	 */
 	public String getPolicyName();
 
-	public long getLastUpdate();
+	public long getLastTick();
 
 	public long getTimestepSize();
 

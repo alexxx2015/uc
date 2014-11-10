@@ -36,4 +36,6 @@ public interface IDistributionManager {
 	void unregisterPolicy(String policyName, IPLocation location);
 
 	IPLocation getResponsibleLocation(String ip);
+
+	void registerMechanism(String policyName, String mechanismName, long firstTick);
 }

@@ -38,7 +38,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 * A description of this {@link Mechanism}.
 	 */
 	private final String _description;
-	private long _lastUpdate = 0;
+	private long _lastTick = 0;
 	private long _timestepSize = 0;
 	private long _timestep = 0;
 	private final EventMatch _triggerEvent;
@@ -47,6 +47,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	private final List<ExecuteAction> _executeAsyncActions;
 	private final PolicyDecisionPoint _pdp;
 
+	/**
+	 * The point in time in which the very first tick() of this
+	 * mechanism took place. This is to synchronize tick()ing
+	 * of this Mechanism in a distributed setup.
+	 */
+	private long _firstTick;
 
 	private final Object _pausedLock = new Object();
 
@@ -60,7 +66,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	private final String _policyName;
 
-	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp, long firstTick) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
 
 		if (pdp == null) {
@@ -70,26 +76,32 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		_pdp = pdp;
 		_policyName = policyName;
+
 		_name = mech.getName();
 		_description = mech.getDescription();
-		_lastUpdate = 0;
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
+
+		_firstTick = Long.MIN_VALUE;
+		_lastTick = 0;
 		_timestep = 0;
+
 		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
 		_condition = new Condition(mech.getCondition(), this);
-		_executeAsyncActions = new LinkedList<ExecuteAction>();
 
 		_backupCondition = new ArrayDeque<>(2);
 
-		_logger.debug("Processing executeAsyncActions");
-		// Processing synchronous executeActions for allow
+		_executeAsyncActions = new LinkedList<>();
 		for (ExecuteAsyncActionType execAction : mech.getExecuteAsyncAction()) {
 			_executeAsyncActions.add(new ExecuteAction(execAction));
 		}
 
 		// We will be observed by the PDP, such that we can signal the end of a timestep
 		addObserver(pdp);
+	}
+
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+		this(mech, policyName, pdp, 0);
 	}
 
 	@Override
@@ -115,8 +127,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	}
 
 	@Override
-	public long getLastUpdate() {
-		return _lastUpdate;
+	public long getLastTick() {
+		return _lastTick;
 	}
 
 	@Override
@@ -223,6 +235,25 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return true;
 	}
 
+	private void initializeLastTick() {
+		if (_firstTick == Long.MIN_VALUE) {
+			/*
+			 * Artificial point in time at which the last tick
+			 * supposedly 'happened'. Just to get things rolling...
+			 */
+			_lastTick = System.currentTimeMillis() - _timestepSize;
+			_firstTick = _lastTick;
+		}
+		else {
+			/*
+			 * Calculate the value of _lastTick on the basis
+			 * of _firstTick and _timestepSize.
+			 */
+			long now = System.currentTimeMillis();
+			_lastTick = now - (now - _firstTick) % _timestepSize;
+		}
+	}
+
 	/**
 	 * Main run method. Rewritten on 2014/11/10.
 	 *
@@ -239,11 +270,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	@Override
 	public void run() {
-		_logger.info("Starting mechanism update thread. sleep={}ms", _timestepSize);
+		_logger.info("Starting mechanism tick thread. sleep={}ms", _timestepSize);
 
-		// Artificial point in time at which the last update
-		// supposedly 'happened'. Just to get things rolling...
-		_lastUpdate = System.currentTimeMillis() - _timestepSize;
+		initializeLastTick();
 
 		while (!_interrupted.get()) {
 
@@ -260,12 +289,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			}
 
 			/*
-			 *  Adjust lastUpdate value.
+			 *  Adjust lastTick value.
 			 *  Important: Adjust this value _after_
 			 *  tick(), because condition evaluation
 			 *  will rely on its old value.
 			 */
-			_lastUpdate += _timestepSize;
+			_lastTick += _timestepSize;
 
 			/*
 			 * Calculate the relative amount of time (in milliseconds)
@@ -273,7 +302,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 * is the amount of time that passed during the last tick()
 			 * and all associated overhead within this method.
 			 */
-			if (!sleep(_lastUpdate - System.currentTimeMillis())) {
+			if (!sleep(_lastTick + _timestepSize - System.currentTimeMillis())) {
 				/*
 				 * Sleep was interrupted and returned false.
 				 * There are two reasons why this might happen:
@@ -295,11 +324,10 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 				catch (InterruptedException e) {
 					if (!_paused.get()) {
 						/*
-						 * Once the pause is released, set those
-						 * variables to their initial values such that
-						 * an immediate tick() will be executed.
+						 * Once the pause is released, re-initialize
+						 * lastTick variable.
 						 */
-						_lastUpdate = System.currentTimeMillis() - _timestepSize;
+						initializeLastTick();
 					}
 					/*
 					else {
@@ -336,9 +364,6 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	/**
 	 * Unpauses this mechanism.
 	 *
-	 * Unpausing causes an
-	 * immediate re-evaluation (i.e. tick())
-	 *
 	 * 2014/11/07 FK
 	 */
 	public void unpause() {
@@ -354,7 +379,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 				.add("_name", _name)
 				.add("_description", _description)
 				.add("_timestepSize", _timestepSize)
-				.add("_lastUpdate", _lastUpdate)
+				.add("_paused", _paused)
+				.add("_firstTick", _firstTick)
+				.add("_lastTick", _lastTick)
 				.add("_timestep", _timestep)
 				.add("_triggerEvent", _triggerEvent)
 				.add("_condition", _condition)
@@ -388,5 +415,16 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	public void setThread(Thread t) {
 		_thisThread = t;
+	}
+
+	public void setFirstTick(long firstTick) {
+		if (_firstTick != Long.MIN_VALUE) {
+			throw new IllegalStateException("Cannot set firstTick more than once.");
+		}
+		_firstTick = firstTick;
+	}
+
+	public long getFirstTick() {
+		return _firstTick;
 	}
 }

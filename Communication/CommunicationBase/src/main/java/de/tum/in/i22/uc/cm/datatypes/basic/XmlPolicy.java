@@ -16,6 +16,8 @@ public class XmlPolicy {
 	private String _name;
 	private String _xml;
 
+	private long _firstTick;
+
 	/**
 	 * The natural language description with all the param. markers removed.
 	 */
@@ -25,7 +27,7 @@ public class XmlPolicy {
 	 */
 	private String _templateId;
 	/**
-	 * Each policy can have a template which is translated by the PTP 
+	 * Each policy can have a template which is translated by the PTP
 	 * and instantiated by actual values and ECA rules.
 	 */
 	private String _templateXml;
@@ -33,46 +35,49 @@ public class XmlPolicy {
 	 * Each policy is applied to a particular data class.
 	 */
 	private String _dataClass;
-	
+
 	public XmlPolicy(String name, String xml) {
+		this(name, xml, "", "", "", "");
+	}
+
+	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass) {
 		if (name == null || xml == null) {
 			throw new RuntimeException("Parameters might not be null.");
 		}
 
-		_name = name;
-		_xml = xml;
-		_description = "";
-		_templateId = "";
-		_templateXml = "";
-		_dataClass = "";
-	}
-	
-	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass) {
-		this(name,xml);
 		_description = description;
 		_templateId = templateId;
 		_templateXml = templateXML;
 		_dataClass = dataClass;
 	}
-	
+
 	public String getName() {
 		return _name;
 	}
+
 	public void setName(String name){
 		if(name == null)
 			name = "";
-		this._name = name;
+		_name = name;
 	}
-	
+
+	public long getFirstTick() {
+		return _firstTick;
+	}
+
+	public void setFirstTick(long firstTick) {
+		_firstTick = firstTick;
+	}
+
 	public String getXml() {
 		return _xml;
 	}
 	public void setXml(String xml){
 		if(xml == null)
 			xml = "";
-		this._xml = xml;
+		_xml = xml;
 	}
-		
+
 	public String getDescription() {
 		return _description;
 	}
@@ -80,7 +85,7 @@ public class XmlPolicy {
 	public void setDescription(String description) {
 		if(description == null)
 			description = "";
-		this._description = description;
+		_description = description;
 	}
 
 	public String getTemplateId() {
@@ -90,7 +95,7 @@ public class XmlPolicy {
 	public void setTemplateId(String templateId) {
 		if(templateId == null)
 			templateId = "";
-		this._templateId = templateId;
+		_templateId = templateId;
 	}
 
 	public String getTemplateXml() {
@@ -100,7 +105,7 @@ public class XmlPolicy {
 	public void setTemplateXml(String templateXml) {
 		if(templateXml == null)
 			templateXml = "";
-		this._templateXml = templateXml;
+		_templateXml = templateXml;
 	}
 
 	public String getDataClass() {
@@ -110,7 +115,7 @@ public class XmlPolicy {
 	public void setDataClass(String dataClass) {
 		if(dataClass == null)
 			dataClass = "";
-		this._dataClass = dataClass;
+		_dataClass = dataClass;
 	}
 
 	@Override
@@ -132,7 +137,8 @@ public class XmlPolicy {
 	public String toString() {
 		return _name;
 	}
-	
+
+	@Override
 	public XmlPolicy clone(){
 		XmlPolicy clone = new XmlPolicy(_name, _xml, _description, _templateId, _templateXml, _dataClass);
 		return clone;

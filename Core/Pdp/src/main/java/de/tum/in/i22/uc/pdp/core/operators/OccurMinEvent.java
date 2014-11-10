@@ -117,7 +117,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 
 		if (!valueAtLastTick) {
 			// Lookup how often the event happened globally. The result will include our local count.
-			long globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastUpdate(), _mechanism.getLastUpdate() + _mechanism.getTimestepSize());
+			long globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
 
 			/*
 			 * Get saved state variables.
