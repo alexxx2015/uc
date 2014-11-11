@@ -38,4 +38,14 @@ public interface IDistributionManager {
 	IPLocation getResponsibleLocation(String ip);
 
 	void registerMechanism(String policyName, String mechanismName, long firstTick);
+
+	/**
+	 * Returns the point in time at which the specified Mechanism was first tick()ed.
+	 * If the Mechanism never tick() before, {@link Long#MIN_VALUE} is returned.
+	 *
+	 * @param policyName the name of the policy to which the mechanism belongs.
+	 * @param mechanismName the mechanism we are asking for.
+	 * @return
+	 */
+	long getFirstTick(String policyName, String mechanismName);
 }

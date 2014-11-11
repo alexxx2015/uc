@@ -81,4 +81,11 @@ public class DummyDistributionManager implements IDistributionManager {
 		_logger.error("registerMechanism method invoked");
 	}
 
+	@Override
+	public long getFirstTick(String policyName, String mechanismName) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("getFirstTick method invoked");
+		return Long.MIN_VALUE;
+	}
+
 }
