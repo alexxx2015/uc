@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.datastax.driver.core.AtomicMonotonicTimestampGenerator;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
@@ -30,9 +31,9 @@ import com.datastax.driver.core.exceptions.UnavailableException;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
@@ -112,7 +113,10 @@ class CassandraDistributionManager implements IDistributionManager {
 			throw new RuntimeException(e);
 		}
 
-		_cluster = Cluster.builder().withQueryOptions(options).addContactPoint(addr.getHostAddress()).build();
+		_cluster = Cluster.builder().withQueryOptions(options)
+							.addContactPoint(addr.getHostAddress())
+							.withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
+							.build();
 		_defaultSession = _cluster.connect();
 //		_pmpConnectionManager = new ConnectionManager<>(5);
 //		_pipConnectionManager = new ConnectionManager<>(5);
@@ -540,6 +544,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		return result;
 	}
 
+	@Override
 	public long getFirstTick(String policyName, String mechanismName) {
 		ResultSet rs =_defaultSession.execute("SELECT firstTick FROM " + policyName + "." + TABLE_NAME_POLICY
 				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;");
