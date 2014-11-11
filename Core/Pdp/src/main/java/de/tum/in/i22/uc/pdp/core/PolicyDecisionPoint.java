@@ -149,7 +149,6 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 					if (!allMechanisms.containsKey(mech.getName())) {
 						allMechanisms.put(mech.getName(), curMechanism);
-						curMechanism.set
 						Thread t = new Thread(curMechanism);
 						curMechanism.setThread(t);
 						t.start();

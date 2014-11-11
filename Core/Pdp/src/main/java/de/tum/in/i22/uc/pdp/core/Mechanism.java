@@ -66,7 +66,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	private final String _policyName;
 
-	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp, long firstTick) throws InvalidMechanismException {
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
 
 		if (pdp == null) {
@@ -81,7 +81,6 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_description = mech.getDescription();
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 
-		_firstTick = Long.MIN_VALUE;
 		_lastTick = 0;
 		_timestep = 0;
 
@@ -96,12 +95,10 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			_executeAsyncActions.add(new ExecuteAction(execAction));
 		}
 
+		_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
+
 		// We will be observed by the PDP, such that we can signal the end of a timestep
 		addObserver(pdp);
-	}
-
-	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
-		this(mech, policyName, pdp, 0);
 	}
 
 	@Override
@@ -243,6 +240,13 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 */
 			_lastTick = System.currentTimeMillis() - _timestepSize;
 			_firstTick = _lastTick;
+
+			/*
+			 * Also register the Mechanism with the DistributionManager
+			 * such that other systems will synchronize on the
+			 * value of _firstTick.
+			 */
+			_pdp.getDistributionManager().registerMechanism(_policyName, _name, _firstTick);
 		}
 		else {
 			/*
