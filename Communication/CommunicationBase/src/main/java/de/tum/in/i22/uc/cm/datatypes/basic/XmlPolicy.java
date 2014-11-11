@@ -45,6 +45,9 @@ public class XmlPolicy {
 			throw new RuntimeException("Parameters might not be null.");
 		}
 
+		_name = name;
+		_xml = xml;
+
 		_description = description;
 		_templateId = templateId;
 		_templateXml = templateXML;
