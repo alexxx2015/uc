@@ -30,7 +30,11 @@ public abstract class Operator extends Observable implements IOperator {
 	private Operator _parent;
 
 	/**
-	 * Time to live; i.e. how long _each_ state of this {@link Operator} must not be deleted.
+	 *
+	 * Time to live for distributed usage control. I.e. long this
+	 * {@link Operator}'s state must not be deleted due to later
+	 * evaluations.
+	 *
 	 * Specified in milliseconds.
 	 */
 	private long _ttl;
@@ -64,7 +68,7 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	public final void init(Mechanism mechanism) {
-		init(mechanism, null, Long.MIN_VALUE);
+		init(mechanism, null, mechanism.getTimestepSize() * 2);
 	}
 
 	protected void init(Mechanism mech, Operator parent, long ttl) {

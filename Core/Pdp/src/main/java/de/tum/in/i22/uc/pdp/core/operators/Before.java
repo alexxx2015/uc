@@ -56,9 +56,6 @@ public class Before extends BeforeType {
 
 	private void ensureDNF() {
 		/*
-		 * Probably, this will also work if we allow a full
-		 * DNF inside BEFORE (i.e. or, and, not).
-		 *
 		 * The following formulas are equivalent:
 		 * - not(a) before j 	== not(a before j)
 		 * - (a and b) before j == (a before j) and (b before j)

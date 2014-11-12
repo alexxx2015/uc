@@ -49,10 +49,13 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	public boolean distributedTickPostprocessing() {
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
-		// This check is equivalent to if(!_positivity.is(valueAtLastTick)),
-		// since _positivity of this operator is always TRUE.
+		/*
+		 * This check is equivalent to if(!_positivity.is(valueAtLastTick)),
+		 * since _positivity of this operator is always TRUE.
+		 */
 		if (!valueAtLastTick) {
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+			long lastTick = _mechanism.getLastTick();
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
 
 			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		}
