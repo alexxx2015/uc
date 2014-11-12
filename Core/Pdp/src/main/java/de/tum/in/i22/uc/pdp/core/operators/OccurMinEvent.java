@@ -85,24 +85,23 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 
 		stateCircArray.push(event.getValueAtLastTick());				// Push the counter value to the array
 
-		boolean valueAtLastTick = (countAtLastTick >= limit);
+		boolean result = (countAtLastTick >= limit);
 
-		_logger.debug("Result: {} (count: {}, limit: {}, new CircArray: {}.).", valueAtLastTick, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
+		_logger.debug("Result: {} (count: {}, limit: {}, new CircArray: {}.).", result, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
 
 		/*
 		 * Save/reset state variables.
 		 */
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 
-		return valueAtLastTick;
+		return result;
 	}
 
 	@Override
 	public boolean distributedTickPostprocessing() {
-		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean result = (int) _state.get(StateVariable.COUNT_AT_LAST_TICK) >= limit;
 
-		if (!valueAtLastTick) {
+		if (!result) {
 			/*
 			 *  Our local count was not sufficient. Look up how
 			 *  often the event happened globally.
@@ -125,18 +124,17 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 
 			stateCircArray.push(globallyTrue);					// Push the globally counted value to CircularArray
 
-			valueAtLastTick = (countAtLastTick >= limit);
+			result = (countAtLastTick >= limit);
 
-			_logger.debug("Distributed result: {} (count: {}, limit: {}, new CircArray: {}.).", valueAtLastTick, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
+			_logger.debug("Distributed result: {} (count: {}, limit: {}, new CircArray: {}.).", result, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
 
 			/*
 			 * Save state variables.
 			 */
-			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 		}
 
-		return valueAtLastTick;
+		return result;
 	}
 
 	@Override
