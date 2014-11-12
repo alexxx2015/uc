@@ -62,7 +62,7 @@ public class RepLim extends RepLimType {
 
 		_logger.debug("circularArray: {}", circArray);
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, (counter >= lowerLimit && counter <= upperLimit));
+		boolean result = counter >= lowerLimit && counter <= upperLimit;
 
 		if (circArray.pop()) {
 			counter--;
@@ -82,7 +82,7 @@ public class RepLim extends RepLimType {
 		// as we work on the original instance anyway
 		// _state.set(StateVariable.CIRC_ARRAY, circArray);
 
-		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		return result;
 	}
 
 	@Override

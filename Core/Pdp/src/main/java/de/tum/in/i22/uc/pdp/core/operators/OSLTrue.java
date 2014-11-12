@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
-import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
 
 public class OSLTrue extends TrueType implements AtomicOperator {
@@ -19,7 +18,6 @@ public class OSLTrue extends TrueType implements AtomicOperator {
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, true);
 		_positivity = Trilean.TRUE;
 	}
 

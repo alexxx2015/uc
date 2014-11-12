@@ -79,9 +79,9 @@ public class During extends DuringType {
 		_state.set(StateVariable.COUNTER, counter);
 
 		// The result is true, if the counter reaches 0.
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, (counter == 0));
-		_logger.debug("Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
-		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean result = counter == 0;
+		_logger.debug("Result: {}.", result);
+		return result;
 	}
 
 	@Override

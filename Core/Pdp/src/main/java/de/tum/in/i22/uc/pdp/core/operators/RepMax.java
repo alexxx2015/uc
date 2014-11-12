@@ -56,7 +56,6 @@ public class RepMax extends RepMaxType {
 				_state.set(StateVariable.IMMUTABLE, true);
 			}
 
-			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			_state.set(StateVariable.COUNTER, counter);
 
 			return valueAtLastTick;

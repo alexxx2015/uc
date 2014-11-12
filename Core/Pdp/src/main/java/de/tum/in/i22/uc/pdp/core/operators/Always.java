@@ -49,7 +49,6 @@ public class Always extends AlwaysType {
 				_state.set(StateVariable.IMMUTABLE, true);
 			}
 
-			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			return valueAtLastTick;
 		}
 	}

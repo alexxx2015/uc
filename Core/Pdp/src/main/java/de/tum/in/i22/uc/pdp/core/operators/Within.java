@@ -86,8 +86,7 @@ public class Within extends WithinType {
 		// The result is true, if the counter is greater than 0.
 		// Although we do not need the valueAtLastTick locally,
 		// we store it for the superclasses' getValueAtLastTick().
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, (counter > 0));
-		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		return counter > 0;
 	}
 
 	@Override

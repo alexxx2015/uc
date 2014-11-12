@@ -10,7 +10,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
-import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
 public class OSLAnd extends AndType {
@@ -62,8 +61,6 @@ public class OSLAnd extends AndType {
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-
 		return valueAtLastTick;
 	}
 
@@ -79,8 +76,6 @@ public class OSLAnd extends AndType {
 		boolean valueAtLastTick = op1state && op2state;
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
-
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}
