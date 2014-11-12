@@ -15,12 +15,17 @@ public enum Trilean {
 
 		@Override
 		public boolean is(boolean b) {
-			return b == true;
+			return b;
 		}
 
 		@Override
 		public Trilean negate() {
 			return Trilean.FALSE;
+		}
+
+		@Override
+		public boolean isBool() {
+			return true;
 		}
 	},
 
@@ -32,12 +37,17 @@ public enum Trilean {
 
 		@Override
 		public boolean is(boolean b) {
-			return b == false;
+			return !b;
 		}
 
 		@Override
 		public Trilean negate() {
 			return Trilean.TRUE;
+		}
+
+		@Override
+		public boolean isBool() {
+			return true;
 		}
 	},
 
@@ -56,10 +66,25 @@ public enum Trilean {
 		public Trilean negate() {
 			return Trilean.UNDEF;
 		}
+
+		@Override
+		public boolean isBool() {
+			return false;
+		}
 	};
 
 
+	/**
+	 * Tests whether this Enum is the same as
+	 * the specified boolean value.
+	 * For {@link Trilean#UNDEF}, this result is false.
+	 *
+	 * @param b the boolean with which to compare
+	 * @return true, if this {@link Trilean} encodes the same value.
+	 */
 	public abstract boolean is(boolean b);
+
+	public abstract boolean isBool();
 
 	public abstract boolean value();
 

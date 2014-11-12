@@ -116,6 +116,11 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
+
+	/**
+	 * Choose one value of enum
+	 * com.datastax.driver.core.ConsistencyLevel
+	 */
 	public static final String PROP_NAME_distributionConsistencyLevel = "distributionConsistencyLevel";
 
 
