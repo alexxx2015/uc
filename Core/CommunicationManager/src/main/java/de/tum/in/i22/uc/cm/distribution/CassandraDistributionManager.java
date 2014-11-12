@@ -78,7 +78,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
 						+ "mechanismName text,"
-						+ "firstTick bigint "
+						+ "firstTick bigint,"
 						+ "PRIMARY KEY (mechanismName));");
 	};
 
@@ -153,7 +153,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void registerMechanism(String policyName, String mechanismName, long firstTick) {
+	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
 		if (_defaultSession.execute("SELECT mechanismName FROM " + policyName + "." + TABLE_NAME_POLICY
 				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;").isExhausted()) {
 
@@ -550,8 +550,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;");
 
 		if (rs.isExhausted()) {
-			throw new IllegalStateException("Mechanism [" + mechanismName + "] in policy [" + policyName
-					+ "] has not been registered.");
+			return Long.MIN_VALUE;
 		}
 
 		return rs.iterator().next().getLong("firstTick");

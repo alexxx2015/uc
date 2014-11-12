@@ -246,7 +246,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 * such that other systems will synchronize on the
 			 * value of _firstTick.
 			 */
-			_pdp.getDistributionManager().registerMechanism(_policyName, _name, _firstTick);
+			new Thread() {
+				@Override
+				public void run() {
+					_pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick);
+				};
+			}.start();
 		}
 		else {
 			/*
@@ -274,31 +279,11 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	@Override
 	public void run() {
-		_logger.info("Starting mechanism tick thread. sleep={}ms", _timestepSize);
+		_logger.info("Starting mechanism tick thread ({}ms).", _timestepSize);
 
 		initializeLastTick();
 
 		while (!_interrupted.get()) {
-
-			/*
-			 * Perform the actual tick().
-			 */
-			_logger.info("Ticking at time {}.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(System.currentTimeMillis())));
-			if (tick()) {
-				_logger.info("Triggering optional executeActions");
-				for (ExecuteAction execAction : getExecuteAsyncActions()) {
-					// TODO parallelize
-					_pdp.executeAction(execAction, false);
-				}
-			}
-
-			/*
-			 *  Adjust lastTick value.
-			 *  Important: Adjust this value _after_
-			 *  tick(), because condition evaluation
-			 *  will rely on its old value.
-			 */
-			_lastTick += _timestepSize;
 
 			/*
 			 * Calculate the relative amount of time (in milliseconds)
@@ -340,7 +325,39 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 					}
 					*/
 				}
+
+				/*
+				 * Continue to next loop iteration.
+				 */
+				continue;
 			}
+
+			/*
+			 * Perform the actual tick().
+			 */
+			_logger.info("Ticking at time {}.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(System.currentTimeMillis())));
+			if (tick()) {
+				_logger.info("Triggering optional executeActions");
+				for (final ExecuteAction execAction : getExecuteAsyncActions()) {
+					/*
+					 * Being asynchronous execute actions, their
+					 * execution can be parallelized.
+					 */
+					new Thread() {
+						@Override
+						public void run() {
+							_pdp.executeAction(execAction, false);
+						};
+					}.start();
+				}
+			}
+
+			/*
+			 *  Adjust lastTick value. Do this _after_
+			 *  tick(), because condition evaluation
+			 *  will rely on its old value.
+			 */
+			_lastTick += _timestepSize;
 		}
 	}
 

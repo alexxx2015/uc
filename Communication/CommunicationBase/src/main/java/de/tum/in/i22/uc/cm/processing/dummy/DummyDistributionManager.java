@@ -76,7 +76,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void registerMechanism(String policyName, String mechanismName, long firstTick) {
+	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("registerMechanism method invoked");
 	}
