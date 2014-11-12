@@ -110,6 +110,8 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 		if (!_positivity.is(valueAtLastTick)) {
 			/*
+			 * The evaluation result is such that we cannot infer that our
+			 * local result also holds globally.
 			 * The Operator might have changed its state remotely.
 			 */
 			long lastTick = _mechanism.getLastTick();
