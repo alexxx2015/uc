@@ -25,8 +25,17 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 	protected void init(Mechanism mech, Operator parent, long ttl) {
 		super.init(mech, parent, ttl);
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
-		_state.set(StateVariable.SINCE_LAST_TICK, false);
+		/*
+		 * How often the event has occurred since the last tick.
+		 */
+		_state.set(StateVariable.SINCE_LAST_TICK, 0);
+
+		/*
+		 * How often the event occurred within the timestep that
+		 * ended at the last tick.
+		 */
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, 0);
+
 		_positivity = Trilean.TRUE;
 	}
 
@@ -37,40 +46,27 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 
 	@Override
 	public boolean tick() {
-		boolean valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+		int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-		_state.set(StateVariable.SINCE_LAST_TICK, false);
+		_state.set(StateVariable.SINCE_LAST_TICK, 0);
 
-		return valueAtLastTick;
+		return valueAtLastTick > 0;
 	}
 
 	@Override
 	public boolean distributedTickPostprocessing() {
-		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		int valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
-		/*
-		 * This check is equivalent to if(!_positivity.is(valueAtLastTick)),
-		 * since _positivity of this operator is always TRUE.
-		 */
-		if (!valueAtLastTick) {
+		if (valueAtLastTick == 0) {
 			long lastTick = _mechanism.getLastTick();
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+
+			valueAtLastTick = _pdp.getDistributionManager().howOftenTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
 
 			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		}
 
-		return valueAtLastTick;
-	}
-
-	@Override
-	public void startSimulation() {
-		super.startSimulation();
-	}
-
-	@Override
-	public void stopSimulation() {
-		super.stopSimulation();
+		return valueAtLastTick > 0;
 	}
 
 	@Override
@@ -79,15 +75,20 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 
 			if (matches((IEvent) arg)) {
 				/*
-				 * The event is happening.
+				 * The event is happening. Increase the counter counting
+				 * how often the event has happened and notify our observers.
 				 */
-				_state.set(StateVariable.SINCE_LAST_TICK, true);
+				_state.set(StateVariable.SINCE_LAST_TICK, (int) _state.get(StateVariable.SINCE_LAST_TICK) + (1));
 				setChanged();
 				notifyObservers(_state);
 			}
 
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
+	}
+
+	public int getValueAtLastTick() {
+		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
 	@Override

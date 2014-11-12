@@ -48,13 +48,6 @@ public class Condition implements ICondition {
 	}
 
 	@Override
-	public boolean getValueAtLastTick() {
-		boolean res = _operator.getValueAtLastTick();
-		_logger.debug("Evaluation of condition at last tick: {}", res);
-		return res;
-	}
-
-	@Override
 	public boolean tick() {
 		// Local evaluation of the condition's operator
 		boolean res = _operator.tick();

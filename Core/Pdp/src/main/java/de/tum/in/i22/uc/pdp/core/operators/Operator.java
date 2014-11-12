@@ -58,6 +58,13 @@ public abstract class Operator extends Observable implements IOperator {
 
 	protected State _state;
 
+	/**
+	 * In distributed usage control, _positivity
+	 * indicates whether for this {@link Operator}
+	 * (1) local satisfaction implies global satisfaction ({@link Trilean#TRUE}),
+	 * (2) local violation implies global violation ({@link Trilean#FALSE}),
+	 * (3) neither of the two above ({@link Trilean#UNDEF}).
+	 */
 	protected Trilean _positivity = Trilean.UNDEF;
 
 	public Operator() {
@@ -87,7 +94,7 @@ public abstract class Operator extends Observable implements IOperator {
 		_parent = parent;
 		_ttl = ttl;
 
-		this.addObserver(_pdp);
+		addObserver(_pdp);
 	}
 
 	/**
@@ -164,10 +171,6 @@ public abstract class Operator extends Observable implements IOperator {
 	 */
 	public final long getTTL() {
 		return _ttl;
-	}
-
-	public final boolean getValueAtLastTick() {
-		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
 	@Override

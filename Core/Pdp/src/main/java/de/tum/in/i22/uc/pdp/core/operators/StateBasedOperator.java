@@ -25,7 +25,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	public static final String OP_IS_NOT_IN = "isNotIn";
 	public static final String OP_IS_ONLY_IN = "isOnlyIn";
 
-	protected String predicate;
+	private String predicate;
 
 	public StateBasedOperator() {
 	}
@@ -75,20 +75,26 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 		if (sinceLastTick == valueAtLastTick) {
 			/*
-			 * The value has not changed or looked up during the last timestep via
-			 * on occurring event. Look up the value instantly.
+			 * The value was not changed since the last tick. Since the information flow
+			 * model might have changed in the meanwhile, we need to evaluate the
+			 * predicate instantly.
 			 */
 			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
 
 			if (_positivity.is(valueAtLastTick)) {
 				/*
-				 * If the value has changed, notify our observers.
+				 * Now, if the evaluation result is such that the global result can
+				 * be inferred from our local evaluation result, we inform our observers.
 				 */
 				setChanged();
 				notifyObservers(_state);
 			}
 		}
 		else {
+			/*
+			 * Otherwise, the value changed earlier during this timestep and we
+			 * do not need to re-evaluate.
+			 */
 			valueAtLastTick = sinceLastTick;
 		}
 
@@ -103,25 +109,17 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (!_positivity.is(valueAtLastTick)) {
-			// The StateBasedOperator might have changed its state remotely.
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+			/*
+			 * The Operator might have changed its state remotely.
+			 */
+			long lastTick = _mechanism.getLastTick();
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
 
 			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
 		}
 
 		return valueAtLastTick;
-	}
-
-
-	@Override
-	public void startSimulation() {
-		super.startSimulation();
-	}
-
-	@Override
-	public void stopSimulation() {
-		super.stopSimulation();
 	}
 
 	@Override

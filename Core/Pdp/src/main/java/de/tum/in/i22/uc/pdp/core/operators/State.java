@@ -36,6 +36,10 @@ final public class State implements DeepCloneable<State> {
 		_values[sv.ordinal()] = value;
 	}
 
+	final void set(StateVariable sv, int value) {
+		_values[sv.ordinal()] = value;
+	}
+
 	final void set(StateVariable sv, boolean value) {
 		_values[sv.ordinal()] = value;
 	}

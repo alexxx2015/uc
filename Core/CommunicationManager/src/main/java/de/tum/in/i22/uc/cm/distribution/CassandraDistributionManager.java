@@ -505,7 +505,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public long howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
+	public int howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
 		if (!operator.getPositivity().is(true)) {
 			throw new IllegalArgumentException("This method is only available for positive operators.");
 		}

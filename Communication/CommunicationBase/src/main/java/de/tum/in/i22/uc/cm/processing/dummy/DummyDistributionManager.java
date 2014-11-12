@@ -69,7 +69,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public long howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
+	public int howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("howOftenTrueInBetween method invoked");
 		return 0;

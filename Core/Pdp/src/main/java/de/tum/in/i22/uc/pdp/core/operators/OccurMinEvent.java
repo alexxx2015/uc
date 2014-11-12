@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
-import java.util.Observable;
 import java.util.Observer;
 
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.OccurMinEventType;
 
-public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, Observer {
+public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OccurMinEvent.class);
 
 	private EventMatchOperator event;
@@ -37,22 +36,17 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
 		}
 
-		CircularArray<Long> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
+		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
-			stateCircArray.set(0L, a);
+			stateCircArray.set(0, a);
 		}
 
-		_state.set(StateVariable.COUNT_AT_LAST_TICK, 0L);
+		_state.set(StateVariable.COUNT_AT_LAST_TICK, 0);
 		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
 
 		event = (EventMatchOperator) getEvent();
 		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
-		// get notified whenever the underlying event occurs
-		event.addObserver(this);
-
-		// How often the event has happened since the last tick
-		_state.set(StateVariable.COUNTER, 0L);
 		_positivity = Trilean.TRUE;
 	}
 
@@ -71,30 +65,25 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		/*
 		 *  tick() the underlying event such that it adjusts its state
 		 *  according to its tick() semantics.
-		 *  However, we are not interested in its result. We maintain the
-		 *  corresponding state (i.e. how often the event happened) ourselves.
-		 *  We can do this in a separate Thread that runs
-		 *  in parallel to what we are doing.
 		 */
-		Thread tickThread = new Thread(new EventTickThread());
-		tickThread.start();
+		event.tick();
 
 		/*
 		 * Get saved state variables.
 		 */
-		CircularArray<Long> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
-		long countAtLastTick = _state.get(StateVariable.COUNT_AT_LAST_TICK);
+		CircularArray<Integer> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
+		int countAtLastTick = _state.get(StateVariable.COUNT_AT_LAST_TICK);
 
-		_logger.debug("Counter: {}, old CircArray: {}.", _state.get(StateVariable.COUNTER), _state.get(StateVariable.CIRC_ARRAY));
+		_logger.debug("Counter: {}, old CircArray: {}.", event.getValueAtLastTick(), _state.get(StateVariable.CIRC_ARRAY));
 
 		/*
 		 * Do the actual work.
 		 */
 
 		countAtLastTick -= stateCircArray.pop(); 						// Delete oldest value from array and subtract it from count
-		countAtLastTick += (long) _state.get(StateVariable.COUNTER);	// Add the accumulated (during last timestep) counter value to the count
+		countAtLastTick += event.getValueAtLastTick();					// Add the accumulated (during last timestep) counter value to the count
 
-		stateCircArray.push((long) _state.get(StateVariable.COUNTER));	// Push the counter value to the array
+		stateCircArray.push(event.getValueAtLastTick());				// Push the counter value to the array
 
 		boolean valueAtLastTick = (countAtLastTick >= limit);
 
@@ -103,11 +92,9 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		/*
 		 * Save/reset state variables.
 		 */
-		_state.set(StateVariable.COUNTER, 0L);
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 
-		waitFor(tickThread);
 		return valueAtLastTick;
 	}
 
@@ -116,14 +103,18 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (!valueAtLastTick) {
-			// Lookup how often the event happened globally. The result will include our local count.
-			long globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+			/*
+			 *  Our local count was not sufficient. Look up how
+			 *  often the event happened globally.
+			 *  The result will include our local count.
+			 */
+			int globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
 
 			/*
 			 * Get saved state variables.
 			 */
-			CircularArray<Long> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
-			long countAtLastTick = _state.get(StateVariable.COUNT_AT_LAST_TICK);
+			CircularArray<Integer> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
+			int countAtLastTick = _state.get(StateVariable.COUNT_AT_LAST_TICK);
 
 			/*
 			 * Do the actual work.
@@ -132,7 +123,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 			countAtLastTick -= stateCircArray.removeLast(); 	// Subtract the value that has been counted locally and remove it from CircularArray
 			countAtLastTick += globallyTrue;					// Add the value that has been counted globally
 
-			stateCircArray.push(globallyTrue);				// Push the globally counted value to CircularArray
+			stateCircArray.push(globallyTrue);					// Push the globally counted value to CircularArray
 
 			valueAtLastTick = (countAtLastTick >= limit);
 
@@ -160,14 +151,14 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 		event.stopSimulation();
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof EventMatchOperator) {
-			// Our event has happened.
-			_state.set(StateVariable.COUNTER, ((long) _state.get(StateVariable.COUNTER)) + 1);
-			_logger.debug("Event happened: [{}]; Counter: {}.", o, (long) _state.get(StateVariable.COUNTER));
-		}
-	}
+//	@Override
+//	public void update(Observable o, Object arg) {
+//		if (o instanceof EventMatchOperator) {
+//			// Our event has happened.
+//			_state.set(StateVariable.COUNTER, ((long) _state.get(StateVariable.COUNTER)) + 1);
+//			_logger.debug("Event happened: [{}]; Counter: {}.", o, (long) _state.get(StateVariable.COUNTER));
+//		}
+//	}
 
 //	private class HowOftenTrueGloballyThread implements Runnable {
 //		private long _from;
@@ -186,28 +177,28 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator, 
 //		}
 //	}
 
-	/**
-	 * A thread that issues tick() on the underlying {@link EventMatchOperator}.
-	 */
-	private class EventTickThread implements Runnable {
-		@Override
-		public void run() {
-			event.tick();
-		}
-	}
+//	/**
+//	 * A thread that issues tick() on the underlying {@link EventMatchOperator}.
+//	 */
+//	private class EventTickThread implements Runnable {
+//		@Override
+//		public void run() {
+//			event.tick();
+//		}
+//	}
 
-	/**
-	 * Waits for the specified {@link Thread}.
-	 * @param t the thread to wait for.
-	 */
-	private void waitFor(Thread t) {
-		try {
-			t.join();
-		} catch (InterruptedException e) {
-			_logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * Waits for the specified {@link Thread}.
+//	 * @param t the thread to wait for.
+//	 */
+//	private void waitFor(Thread t) {
+//		try {
+//			t.join();
+//		} catch (InterruptedException e) {
+//			_logger.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public Collection<Observer> getObservers(Collection<Observer> observers) {

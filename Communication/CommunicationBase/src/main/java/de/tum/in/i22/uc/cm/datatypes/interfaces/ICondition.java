@@ -4,8 +4,6 @@ public interface ICondition {
 
 	boolean tick();
 
-	boolean getValueAtLastTick();
-
 	void startSimulation();
 
 	void stopSimulation();
