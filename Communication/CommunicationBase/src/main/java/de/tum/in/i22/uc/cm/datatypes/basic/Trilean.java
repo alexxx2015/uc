@@ -1,12 +1,14 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.DeepCloneable;
+
 /**
  * Three-valued boolean logic: true, false, undef.
  *
  * @author Florian Kelbert
  *
  */
-public enum Trilean {
+public enum Trilean implements DeepCloneable<Trilean> {
 	TRUE {
 		@Override
         public boolean value() {
@@ -26,6 +28,11 @@ public enum Trilean {
 		@Override
 		public boolean isBool() {
 			return true;
+		}
+
+		@Override
+		public Trilean deepClone() {
+			return TRUE;
 		}
 	},
 
@@ -49,6 +56,11 @@ public enum Trilean {
 		public boolean isBool() {
 			return true;
 		}
+
+		@Override
+		public Trilean deepClone() {
+			return FALSE;
+		}
 	},
 
 	UNDEF {
@@ -70,6 +82,11 @@ public enum Trilean {
 		@Override
 		public boolean isBool() {
 			return false;
+		}
+
+		@Override
+		public Trilean deepClone() {
+			return UNDEF;
 		}
 	};
 
