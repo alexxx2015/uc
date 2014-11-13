@@ -20,4 +20,10 @@ public interface IMechanism {
 
 	public long getTimestepSize();
 
+	boolean isSimulating();
+
+	void startSimulation();
+
+	void stopSimulation();
+
 }
