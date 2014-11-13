@@ -83,8 +83,7 @@ public class RepSince extends RepSinceType {
 
 	@Override
 	public boolean tick() {
-		// TO BE IMPLEMENTED
-		return false;
+		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 	@Override

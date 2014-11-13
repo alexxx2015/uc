@@ -13,23 +13,25 @@ public class IsCombinedWith extends StateBasedPredicate {
 	private final String _param1;
 	private final String _param2;
 
-	public IsCombinedWith(String predicate, String param1, String param2, IAnyInformationFlowModel ifm) {
+	public IsCombinedWith(String predicate, String param1, String param2, IAnyInformationFlowModel ifm) throws InvalidStateBasedFormulaException {
 		super(predicate, ifm);
-		_param1 = (param1 == null ? "" : param1);
-		_param2 = (param2 == null ? "" : param2);
+
+		if (param1 == null || param2 == null || param1.isEmpty() || param2.isEmpty()) {
+			throw new InvalidStateBasedFormulaException(
+					"Impossible to evaluate a formula where parameters have not been initialized [ param1 = " + param1
+							+ ", param2 = " + param2 + "]");
+		}
+
+		_param1 = param1;
+		_param2 = param2;
 	}
 
 	@Override
-	public boolean evaluate() throws InvalidStateBasedFormulaException {
+	public boolean evaluate() {
+		Set<IContainer> s1 = _informationFlowModel.getContainers(new DataBasic(_param1));
+		Set<IContainer> s2 = _informationFlowModel.getContainers(new DataBasic(_param2));
 
-		if ((_param1==null) || (_param2==null)){
-			throw new InvalidStateBasedFormulaException("Impossible to evaluate a formula where parameters have not been initialized [ param1 = "+_param1+" , param2 = "+_param2+"]");
-		}
-
-		Set<IContainer> s1= _informationFlowModel.getContainers(new DataBasic(_param1));
-		Set<IContainer> s2= _informationFlowModel.getContainers(new DataBasic(_param2));
-
-		return Sets.intersection(s1, s2).size()>0;
+		return Sets.intersection(s1, s2).size() > 0;
 	}
 
 }

@@ -22,7 +22,6 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	private ParamMatch pm;
 
 	public ConditionParamMatchOperator() {
-		_state.set(StateVariable.SINCE_LAST_TICK, false);
 	}
 
 	@Override
@@ -33,6 +32,8 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 		pm.setName(getName());
 		pm.setValue(getValue());
 		pm.setCmpOp(getCmpOp());
+
+		_state.set(StateVariable.SINCE_UPDATE, false);
 	}
 
 	@Override
@@ -59,8 +60,8 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 		/*
 		 * Lookup whether the last event parameter matched.
 		 */
-		boolean value = _state.get(StateVariable.SINCE_LAST_TICK);
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, value);
+		boolean value = _state.get(StateVariable.SINCE_UPDATE);
+		_state.set(StateVariable.SINCE_UPDATE, false);
 		return value;
 	}
 
@@ -68,16 +69,11 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	public void update(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
 
-			boolean matches = pm.matches(pm.getName(), ((IEvent) arg).getParameterValue(pm.getName()));
+			if (pm.matches(pm.getName(), ((IEvent) arg).getParameterValue(pm.getName()))) {
+				_state.set(StateVariable.SINCE_UPDATE, true);
+			}
 
-			/*
-			 * Always overwrite SINCE_LAST_TICK, because we are only
-			 * interested in the last event happening, i.e. the event
-			 * happening NOW.
-			 */
-			_state.set(StateVariable.SINCE_LAST_TICK, matches);
-
-			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_UPDATE));
 		}
 	}
 

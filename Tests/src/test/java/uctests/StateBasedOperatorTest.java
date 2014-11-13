@@ -140,6 +140,38 @@ public class StateBasedOperatorTest extends GenericTest {
 
 	}
 
+	@Test
+	public void testIsCombinedWith2() throws Exception {
+		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
+		String eventName = "testSBOp";
+		Map<String, String> map = createDummyMap();
+		map.put("name", "initialContainer");
+		map.put("name2", "initialContainer");
+		map.put("curTest", "isCombinedWith");
+		IEvent event = mf.createDesiredEvent(eventName, map);
+
+		// 1: send the event. Condition should be true, thus the event is
+		// inhibited
+		IResponse response1 = pdp.notifyEventSync(event);
+		_logger.debug("1: Received response as reply to " + event + ":"
+				+ response1);
+		Assert.assertNotNull(response1);
+		Assert.assertEquals(EStatus.INHIBIT, response1.getAuthorizationAction()
+				.getEStatus());
+
+		deployNewEventAndEmptyInitialContainer();
+
+		// 3: send the event again. This time there is no container in the system with both data myId
+		// and myid3. therefore the event is allowed, cause the condition is false.
+		IResponse response3 = pdp.notifyEventSync(event);
+		_logger.debug("3: Received response as reply to " + event + ":"
+				+ response3);
+		Assert.assertNotNull(response3);
+		Assert.assertEquals(EStatus.ALLOW, response3.getAuthorizationAction()
+				.getEStatus());
+
+	}
+
 	private void deployNewEventAndEmptyInitialContainer() {
 		// deploy semantics for a new event "testEvent" that empties
 		// initialcontainer

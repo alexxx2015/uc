@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ final public class State implements DeepCloneable<State> {
 		ALWAYS_A,				// usually: type boolean
 		ALWAYS_A_SINCE_LAST_B,	// usually: type boolean
 		SINCE_LAST_TICK,		// usually: type boolean
+		SINCE_UPDATE,			// usually: type boolean
 		COUNTER,				// usually: type long
 		COUNT_AT_LAST_TICK		// usually: type long
 	}
@@ -85,5 +87,10 @@ final public class State implements DeepCloneable<State> {
 		}
 
 		return clone;
+	}
+
+	@Override
+	public String toString() {
+		return "State: " + Arrays.deepToString(_values);
 	}
 }

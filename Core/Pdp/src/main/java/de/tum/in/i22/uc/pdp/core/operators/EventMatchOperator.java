@@ -4,12 +4,14 @@ import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.EventMatch;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -36,6 +38,8 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 		 */
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, 0);
 
+		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
+
 		_positivity = Trilean.TRUE;
 	}
 
@@ -44,14 +48,39 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 		return setId(id + 1);
 	}
 
+	public static final boolean considerHappenedForEntireTimestep = true;
+
 	@Override
 	public boolean tick() {
-		int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+		Trilean sinceUpdate = _state.get(StateVariable.SINCE_UPDATE);
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-		_state.set(StateVariable.SINCE_LAST_TICK, 0);
+		boolean result = false;
 
-		return valueAtLastTick > 0;
+		if (considerHappenedForEntireTimestep || sinceUpdate == Trilean.TRUE) {
+			int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+			_state.set(StateVariable.SINCE_LAST_TICK, 0);
+
+			result = valueAtLastTick > 0;
+		}
+		else {
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, 0);
+			_state.set(StateVariable.SINCE_LAST_TICK, 0);
+		}
+
+		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
+
+		return result;
+
+//		int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+//
+//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+//		_state.set(StateVariable.SINCE_LAST_TICK, 0);
+//
+//		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
+//
+//		return valueAtLastTick > 0;
 	}
 
 	@Override
@@ -59,10 +88,14 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 		int valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (valueAtLastTick == 0) {
-			long lastTick = _mechanism.getLastTick();
+			Pair<Long,Long> fromTo = getFromTo(Settings.getInstance().getDistributionGranularity());
 
-			valueAtLastTick = _pdp.getDistributionManager().howOftenTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+			valueAtLastTick = _pdp.getDistributionManager().howOftenTrueInBetween(this, fromTo.getLeft(), fromTo.getRight());
 
+//			long lastTick = _mechanism.getLastTick();
+//
+//			valueAtLastTick = _pdp.getDistributionManager().howOftenTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+//
 			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		}
 
@@ -78,9 +111,13 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 				 * The event is happening. Increase the counter counting
 				 * how often the event has happened and notify our observers.
 				 */
-				_state.set(StateVariable.SINCE_LAST_TICK, (int) _state.get(StateVariable.SINCE_LAST_TICK) + (1));
+				_state.set(StateVariable.SINCE_UPDATE, Trilean.TRUE);
+				_state.set(StateVariable.SINCE_LAST_TICK, (int) _state.get(StateVariable.SINCE_LAST_TICK) + 1);
 				setChanged();
 				notifyObservers(_state);
+			}
+			else {
+				_state.set(StateVariable.SINCE_UPDATE, Trilean.FALSE);
 			}
 
 			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));

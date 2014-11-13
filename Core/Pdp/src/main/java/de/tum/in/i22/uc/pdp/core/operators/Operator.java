@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.distribution.DistributionGranularity;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -179,6 +181,7 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	public void startSimulation() {
+		_logger.debug("startSimulation. Storing " + _state);
 		_backupStates.addFirst(_state.deepClone());
 	}
 
@@ -187,6 +190,7 @@ public abstract class Operator extends Observable implements IOperator {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
 		_state = _backupStates.getFirst();
+		_logger.debug("stopSimulation. Restoring " + _state);
 	}
 
 	public final State getState() {
@@ -195,5 +199,32 @@ public abstract class Operator extends Observable implements IOperator {
 
 	public Collection<Observer> getObservers(Collection<Observer> observers) {
 		return observers;
+	}
+
+	protected Pair<Long,Long> getFromTo(DistributionGranularity granularity) {
+		long from = 0;
+		long to = 0;
+
+		switch (granularity.getGranularity()) {
+		case EXACT:
+			if (_mechanism.isSimulating()) {
+				from = System.currentTimeMillis() - 1;
+			}
+			else {
+				from = _mechanism.getLastTick() + _mechanism.getTimestepSize() - 1;
+			}
+			to = from + 2;
+			break;
+		case TIMESTEP:
+			from = _mechanism.getLastTick();
+			to = from + _mechanism.getTimestepSize();
+			break;
+		case MILLISECONDS:
+			from = System.currentTimeMillis() - granularity.getMilliseconds();
+			to = from + 2 * granularity.getMilliseconds();
+			break;
+		}
+
+		return Pair.of(from, to);
 	}
 }
