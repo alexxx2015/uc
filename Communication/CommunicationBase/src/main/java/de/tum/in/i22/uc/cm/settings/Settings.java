@@ -18,6 +18,8 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.distribution.DistributionGranularity;
+import de.tum.in.i22.uc.cm.distribution.DistributionGranularity.EDistributionGranularity;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -113,6 +115,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
 
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+	public static final String PROP_NAME_distributionGranularity = "distributionGranularity";
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
@@ -216,6 +219,7 @@ public class Settings extends SettingsLoader {
 		});
 
 		loadSetting(PROP_NAME_distributionEnabled, false);
+		loadSetting(PROP_NAME_distributionGranularity, new DistributionGranularity(EDistributionGranularity.TIMESTEP));
 		loadSetting(PROP_NAME_distributionMaxPipConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
@@ -268,6 +272,22 @@ public class Settings extends SettingsLoader {
 
 		try {
 			loadedValue = new IPLocation(_props.getProperty(propName));
+			if (loadedValue != null) {
+				success = true;
+			}
+		} catch (Exception e) {
+		}
+
+		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
+	}
+
+	private DistributionGranularity loadSetting(String propName, DistributionGranularity defaultValue) {
+		DistributionGranularity loadedValue = defaultValue;
+
+		boolean success = false;
+
+		try {
+			loadedValue = new DistributionGranularity(_props.getProperty(propName));
 			if (loadedValue != null) {
 				success = true;
 			}
@@ -467,6 +487,10 @@ public class Settings extends SettingsLoader {
 
 	public boolean getDistributionEnabled() {
 		return getValue(PROP_NAME_distributionEnabled);
+	}
+
+	public DistributionGranularity getDistributionGranularity() {
+		return getValue(PROP_NAME_distributionGranularity);
 	}
 
 	public int getDistributionMaxPdpConnections() {
