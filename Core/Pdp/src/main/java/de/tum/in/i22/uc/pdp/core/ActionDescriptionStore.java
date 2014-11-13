@@ -39,10 +39,9 @@ class ActionDescriptionStore {
 		List<Mechanism> mechanismList = _mechanismMap.get(m.getTriggerEvent().getAction());
 		if (mechanismList == null) {
 			mechanismList = Collections.synchronizedList(new LinkedList<Mechanism>());
+			_mechanismMap.put(m.getTriggerEvent().getAction(), mechanismList);
 		}
 		mechanismList.add(m);
-
-		_mechanismMap.put(m.getTriggerEvent().getAction(), mechanismList);
 	}
 
 	/**
@@ -71,7 +70,7 @@ class ActionDescriptionStore {
 	 * @return
 	 */
 	Collection<Mechanism> getMechanismList(String eventAction) {
-		Collection<Mechanism> result = new LinkedList<Mechanism>();
+		Collection<Mechanism> result = new LinkedList<>();
 
 		List<Mechanism> matchingEvent = _mechanismMap.get(eventAction);
 		if (matchingEvent != null) {
