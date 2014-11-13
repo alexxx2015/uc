@@ -87,7 +87,7 @@ public class PdpHandler extends PdpProcessor {
 		}
 
 		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(res);
+			_distributionManager.update(res, false);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class PdpHandler extends PdpProcessor {
 		}
 
 		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(res);
+			_distributionManager.update(res, false);
 		}
 
 		return res;

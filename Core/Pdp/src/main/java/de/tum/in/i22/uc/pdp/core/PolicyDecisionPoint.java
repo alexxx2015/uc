@@ -250,11 +250,13 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			setChanged();
 			notifyObservers(event);
 
+			_pip.startSimulation();
 			for (Mechanism mech : mechanisms) {
 				mech.startSimulation();
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
 			}
+			_pip.stopSimulation();
 
 			if (_changedOperators.isEmpty()) {
 				response = decision.toResponse();
@@ -269,6 +271,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * before signaling the observers, such that this signaling
 			 * can be undone.
 			 */
+			_pip.startSimulation();
 			for (Mechanism mech : mechanisms) {
 				mech.startSimulation();
 			}
@@ -284,6 +287,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
 			}
+			_pip.stopSimulation();
 
 			/*
 			 * If it is an desired event, we ignore eventMatches and
@@ -343,7 +347,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		}
 		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
 			if (!_changedOperators.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), _changedOperators));
+				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), _changedOperators), true);
 			}
 
 			// Prepare for next
