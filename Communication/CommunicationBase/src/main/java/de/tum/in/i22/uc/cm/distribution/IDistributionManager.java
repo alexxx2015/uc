@@ -25,7 +25,7 @@ public interface IDistributionManager {
 	 */
 	public void registerPolicy(XmlPolicy policy);
 
-	void update(IResponse res);
+	void update(IResponse res, boolean endOfTimestep);
 
 	boolean wasTrueSince(AtomicOperator operator, long since);
 

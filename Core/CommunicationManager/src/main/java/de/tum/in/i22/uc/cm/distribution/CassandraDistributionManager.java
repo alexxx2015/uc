@@ -28,6 +28,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.UnavailableException;
+import com.datastax.driver.core.utils.UUIDs;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
@@ -56,7 +57,6 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final String TABLE_NAME_DATA = "hasdata";
 	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
 	private static final String TABLE_NAME_POLICY = "policy";
-	private static final String TABLE_NAME_RESPONSIBILITY = "responsibility";
 
 	private static final List<String> _tables;
 
@@ -399,10 +399,10 @@ class CassandraDistributionManager implements IDistributionManager {
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
 
-		Map<SocketContainer, Map<SocketContainer, Set<IData>>> flows = dataflow.getFlows();
+//		Map<SocketContainer, Map<SocketContainer, Set<IData>>> flows = dataflow.getFlows();
 
 		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
-			SocketContainer srcSocket = flow.getKey();
+//			SocketContainer srcSocket = flow.getKey();
 
 			Map<SocketContainer, Set<IData>> dsts = flow.getValue();
 
@@ -438,7 +438,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(IResponse response) {
+	public void update(IResponse response, boolean endOfTimestep) {
 		if (!(response instanceof DistributedPdpResponse)) {
 			return;
 		}
@@ -458,11 +458,20 @@ class CassandraDistributionManager implements IDistributionManager {
 		for (Operator op : res.getChangedOperators()) {
 			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", op.getFullId());
 
+			/*
+			 * Calculate the time when this operator happened.
+			 * If we are not at the end of a timestep, simply use now().
+			 * Otherwise, create a UUID corresponding to lastTick.
+			 */
+			String time = (endOfTimestep
+					? UUIDs.startOf(op.getMechanism().getLastTick()).toString()
+					: "now()");
+
 			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
 					+ " (opid, location, time) VALUES ("
 					+ "'" + op.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-					+ "now()"
+					+ time
 					+ ") USING TTL " + op.getTTL() / 1000 + ";");
 		}
 
