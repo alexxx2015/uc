@@ -159,17 +159,24 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return d;
 	}
 
+	@Override
 	public void startSimulation() {
 		_condition.startSimulation();
 		_backupCondition.addFirst(_condition);
 	}
 
+	@Override
 	public void stopSimulation() {
 		if (_backupCondition.isEmpty()) {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
 		_condition = _backupCondition.getFirst();
 		_condition.stopSimulation();
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return !_backupCondition.isEmpty();
 	}
 
 	private boolean tick() {
@@ -183,16 +190,13 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("//////////////////////////////////////////////////////");
 
-		setChanged();
-		notifyObservers(END_OF_TIMESTEP);
-
 		return conditionValue;
 	}
 
 	/**
 	 * Evaluate the condition of this mechanism.
 	 * Important: Make the method call synchronous,
-	 * because both {@link Mechanism#tick()} and
+	 * because both tick() and
 	 * {@link Mechanism#notifyEvent(IEvent, Decision)}
 	 * might call this method.
 	 *
@@ -358,6 +362,9 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 *  will rely on its old value.
 			 */
 			_lastTick += _timestepSize;
+
+			setChanged();
+			notifyObservers(END_OF_TIMESTEP);
 		}
 	}
 
