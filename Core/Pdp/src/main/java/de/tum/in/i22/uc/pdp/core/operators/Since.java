@@ -44,10 +44,10 @@ public class Since extends SinceType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		// A since B
-		boolean stateA = op1.tick();
-		boolean stateB = op2.tick();
+		boolean stateA = op1.tick(endOfTimestep);
+		boolean stateB = op2.tick(endOfTimestep);
 
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 		boolean alwaysASinceLastB = _state.get(StateVariable.ALWAYS_A_SINCE_LAST_B);

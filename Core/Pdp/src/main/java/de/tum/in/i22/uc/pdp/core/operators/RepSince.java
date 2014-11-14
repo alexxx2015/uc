@@ -82,7 +82,7 @@ public class RepSince extends RepSinceType {
 
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

@@ -23,11 +23,11 @@ import javax.xml.bind.UnmarshalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
@@ -40,7 +40,6 @@ import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.core.operators.State;
-import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
@@ -63,7 +62,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final PxpManager _pxpManager;
 
-	private final List<Operator> _changedOperators;
+	private final List<IOperator> _changedOperators;
 
 	private final IDistributionManager _distributionManager;
 
@@ -238,38 +237,53 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_logger.info("notifyEvent: {}", event);
 
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
-		IResponse response;
 
 		Collection<Mechanism> mechanisms = _actionDescriptionStore.getMechanismList(event.getName());
 
 		if (event.isActual()) {
 			/*
-			 * Notify the event to all Observers,
-			 * i.e. StateBasedOperators and EventMatchOperators
+			 * This is an actual event and can not be undone.
+			 * Therefore, signal it to all observers (i.e.
+			 * StateBasedOperator, EventMatchOperator,
+			 * ConditionMatchOperator). This will invoke their
+			 * corresponding update() methods.
+			 * Moreover, update the PIP with this actual event.
+			 * All this will be done unconditionally, in particular
+			 * independent of whether trigger events match or not.
+			 * Important: Update the PIP before notifying the observers,
+			 * as the latter will rely on the PIP's new state.
 			 */
+			_pip.update(event);
 			setChanged();
 			notifyObservers(event);
 
-			_pip.startSimulation();
+			/*
+			 * Notify the event to all Mechanisms,
+			 * effectively evaluating their condition.
+			 * This is done while simulating, because
+			 * this is not the end of a timestep. Rather,
+			 * we 'simulate' the end of a timestep in
+			 * order to get an evaluation result.
+			 */
 			for (Mechanism mech : mechanisms) {
 				mech.startSimulation();
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
 			}
-			_pip.stopSimulation();
 
-			if (_changedOperators.isEmpty()) {
-				response = decision.toResponse();
-			}
-			else {
-				response = new DistributedPdpResponse(decision.toResponse(), _changedOperators);
+			/*
+			 * Finally, check whether operators have changed.
+			 * If so, let the DistributionManager take care of them.
+			 */
+			if (Settings.getInstance().getDistributionEnabled() && !_changedOperators.isEmpty()) {
+				_distributionManager.update(_changedOperators, false);
 			}
 		}
 		else {
 			/*
-			 * If it is an desired event, start mechanism's simulation
-			 * before signaling the observers, such that this signaling
-			 * can be undone.
+			 * This is a desired event.
+			 * Therefore, the first thing to do is to
+			 * start the simulation of the Mechanisms and the PIP.
 			 */
 			_pip.startSimulation();
 			for (Mechanism mech : mechanisms) {
@@ -277,12 +291,21 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			}
 
 			/*
-			 * Notify the event to all Observers,
-			 * i.e. StateBasedOperators and EventMatchOperators
+			 * Then, notify the event to the PIP and to all
+			 * observers that registered for it (just as above
+			 * for the actual events). Since we started
+			 * simulation before, this will be undone later.
 			 */
+			_pip.update(event);
 			setChanged();
 			notifyObservers(event);
 
+			/*
+			 * Notify the event to all Mechanisms,
+			 * effectively simulating the end of a timestep.
+			 * After getting the evaluation result, stop
+			 * the simulation.
+			 */
 			for (Mechanism mech : mechanisms) {
 				mech.notifyEvent(event, decision);
 				mech.stopSimulation();
@@ -290,17 +313,16 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			_pip.stopSimulation();
 
 			/*
-			 * If it is an desired event, we ignore eventMatches and
-			 * statesBasedOperatorChanges that have happened, because
-			 * the event did (or the state change) did not actually happen).
+			 * If it is a desired event, we ignore operators that have
+			 * changed, because the event did (or the state change)
+			 * did not actually happen.
 			 */
-			response = decision.toResponse();
 		}
 
 		// prepare for next
 		_changedOperators.clear();
 
-		return response;
+		return decision.toResponse();
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
@@ -347,7 +369,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		}
 		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
 			if (!_changedOperators.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.update(new DistributedPdpResponse(new ResponseBasic(), _changedOperators), true);
+				_distributionManager.update(_changedOperators, true);
 			}
 
 			// Prepare for next

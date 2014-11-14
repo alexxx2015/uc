@@ -56,11 +56,12 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		/*
 		 * Lookup whether the last event parameter matched.
 		 */
 		boolean value = _state.get(StateVariable.SINCE_UPDATE);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, value);
 		_state.set(StateVariable.SINCE_UPDATE, false);
 		return value;
 	}

@@ -17,6 +17,7 @@ public class Always extends AlwaysType {
 
 	public Always() {
 		_state.set(StateVariable.IMMUTABLE, false);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, true);
 	}
 
 	@Override
@@ -37,14 +38,15 @@ public class Always extends AlwaysType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
-			boolean valueAtLastTick = op.tick();
+			boolean valueAtLastTick = op.tick(endOfTimestep);
 
 			if (!valueAtLastTick) {
+				_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 				_logger.debug("ALWAYS: activating IMMUTABILITY");
 				_state.set(StateVariable.IMMUTABLE, true);
 			}

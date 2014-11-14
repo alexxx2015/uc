@@ -37,14 +37,14 @@ public class RepMax extends RepMaxType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		if (_state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
 			long counter = _state.get(StateVariable.COUNTER);
 
-			if (op.tick()) {
+			if (op.tick(endOfTimestep)) {
 				counter++;
 				_logger.debug("Subformula was true. Incrementing counter to {}.", counter);
 			}
@@ -57,6 +57,8 @@ public class RepMax extends RepMaxType {
 			}
 
 			_state.set(StateVariable.COUNTER, counter);
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 			return valueAtLastTick;
 		}

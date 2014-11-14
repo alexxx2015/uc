@@ -80,7 +80,7 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
 
 		_logger.debug("circularArray: {}", circArray);
@@ -92,7 +92,7 @@ public class Before extends BeforeType {
 
 		// Evaluate the Operator. Push the result to the array, where
 		// it will be popped when time is ripe (i.e. after timeAmount).
-		circArray.push(op.tick());
+		circArray.push(op.tick(endOfTimestep));
 
 		_logger.debug("Value [{}] was popped from circularArray. Result: {}. New circularArray: {}", _state.get(StateVariable.VALUE_AT_LAST_TICK), _state.get(StateVariable.VALUE_AT_LAST_TICK), circArray);
 
@@ -100,7 +100,7 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	public boolean distributedTickPostprocessing() {
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
 
 		/*
@@ -109,7 +109,7 @@ public class Before extends BeforeType {
 		 * this 'wrong' element and insert the correct one.
 		 * The inserted element will be popped when time is ripe (i.e. after timeAmount).
 		 */
-		boolean distributedTickProcess = op.distributedTickPostprocessing();
+		boolean distributedTickProcess = op.distributedTickPostprocessing(endOfTimestep);
 		if (distributedTickProcess != circArray.peekLast()) {
 			circArray.removeLast();
 			circArray.push(distributedTickProcess);

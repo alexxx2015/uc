@@ -148,7 +148,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		if (_triggerEvent.matches(event)) {
 			_logger.info("Trigger event matches. Evaluating condition");
 
-			if (evaluateCondition()) {
+			if (evaluateCondition(false)) {
 				_logger.info("Condition satisfied; merging mechanism into decision");
 				d.processMechanism(this, event);
 			} else {
@@ -186,7 +186,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_logger.debug("[{}] Ticking. Timestep no. {}. Next tick in {}us", _name, _timestep, _timestepSize);
 
 
-		boolean conditionValue = evaluateCondition();
+		boolean conditionValue = evaluateCondition(true);
 		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("//////////////////////////////////////////////////////");
 
@@ -202,8 +202,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 *
 	 * @return the result of the condition evaluation.
 	 */
-	private synchronized boolean evaluateCondition() {
-		return _condition.tick();
+	private synchronized boolean evaluateCondition(boolean endOfTimestep) {
+		return _condition.tick(endOfTimestep);
 	}
 
 	/**

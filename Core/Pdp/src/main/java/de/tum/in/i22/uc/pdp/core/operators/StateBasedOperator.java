@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	private String _predicate;
 
-	private EStateBasedOperator _type;
+	private EStateBasedOperatorType _type;
 
 	public StateBasedOperator() {
 	}
@@ -56,19 +55,19 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	private void initIsCombinedWith(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperator.IS_COMBINED_WITH;
+		_type = EStateBasedOperatorType.IS_COMBINED_WITH;
 		_positivity = Trilean.TRUE;
-		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
+		_state.set(StateVariable.SINCE_LAST_TICK, false);
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 	}
 
 	private void initIsNotIn(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperator.IS_NOT_IN;
+		_type = EStateBasedOperatorType.IS_NOT_IN;
 		_positivity = Trilean.FALSE;
 	}
 
 	private void initIsOnlyIn(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperator.IS_ONLY_IN;
+		_type = EStateBasedOperatorType.IS_ONLY_IN;
 		_positivity = Trilean.FALSE;
 	}
 
@@ -87,88 +86,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 				.toString();
 	}
 
-//	@Override
-//	public boolean tick() {
-//		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
-//		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
-//
-//		if (sinceLastTick == valueAtLastTick) {
-//			/*
-//			 * The value was not changed since the last tick. Since the information flow
-//			 * model might have changed in the meanwhile, we need to evaluate the
-//			 * predicate instantly.
-//			 */
-//			valueAtLastTick = _pdp.getPip().evaluatePredicateCurrentState(predicate);
-//
-//			if (_positivity.is(valueAtLastTick)) {
-//				/*
-//				 * Now, if the evaluation result is such that the global result can
-//				 * be inferred from our local evaluation result, we inform our observers.
-//				 */
-//				setChanged();
-//				notifyObservers(_state);
-//			}
-//		}
-//		else {
-//			/*
-//			 * Otherwise, the value changed earlier during this timestep and we
-//			 * do not need to re-evaluate.
-//			 */
-//			valueAtLastTick = sinceLastTick;
-//		}
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//		_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
-//	}
-//
-//	@Override
-//	public boolean distributedTickPostprocessing() {
-//		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
-//
-//		if (!_positivity.is(valueAtLastTick)) {
-//			/*
-//			 * The evaluation result is such that we cannot infer that our
-//			 * local result also holds globally.
-//			 * The Operator might have changed its state remotely.
-//			 */
-//			long lastTick = _mechanism.getLastTick();
-//			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
-//
-//			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//			_state.set(StateVariable.SINCE_LAST_TICK, valueAtLastTick);
-//		}
-//
-//		return valueAtLastTick;
-//	}
-//
-//	@Override
-//	public void update(Observable o, Object arg) {
-//		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
-//
-//			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
-//			boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
-//
-//			if (sinceLastTick == valueAtLastTick) {
-//				sinceLastTick = _pdp.getPip().evaluatePredicateSimulatingNextState((IEvent) arg, predicate);
-//
-//				if (sinceLastTick != valueAtLastTick && _positivity.is(b)) {
-//					/*
-//					 * The value of the operator has changed!
-//					 * Notify our observers.
-//					 */
-//					setChanged();
-//					notifyObservers(_state);
-//
-//					_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
-//				}
-//			}
-//
-//			_logger.debug("Updating [{}] with event {}. Result: {}.", predicate, ((IEvent) arg).getName(), sinceLastTick);
-//		}
-//	}
-
 	@Override
 	public Collection<Observer>  getObservers(Collection<Observer> observers) {
 		observers.add(this);
@@ -176,10 +93,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		switch (_type) {
 		case IS_COMBINED_WITH:
-			return tickIsCombinedWith();
+			return tickIsCombinedWith(endOfTimestep);
 		case IS_NOT_IN:
 			return tickIsNotIn();
 		case IS_ONLY_IN:
@@ -190,10 +107,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	@Override
-	public boolean distributedTickPostprocessing() {
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 		switch (_type) {
 		case IS_COMBINED_WITH:
-			return distributedTickPostprocessingIsCombinedWith();
+			return distributedTickPostprocessingIsCombinedWith(endOfTimestep);
 		case IS_NOT_IN:
 			return distributedTickPostprocessingIsNotIn();
 		case IS_ONLY_IN:
@@ -203,75 +120,60 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		}
 	}
 
-	private boolean tickIsCombinedWith() {
-		Trilean sinceUpdate = _state.get(StateVariable.SINCE_UPDATE);
+	private boolean tickIsCombinedWith(boolean endOfTimestep) {
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-		boolean result;
+		if (endOfTimestep || !sinceLastTick) {
+			boolean valueNow = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
 
-		switch (sinceUpdate) {
-		case TRUE:
-			/*
-			 * We tick in the presence of an event and it _did_ make the predicate true.
-			 */
-			result = true;
-			break;
-		case FALSE:
-			/*
-			 * We tick in the presence of an event and it did _not_ make the predicate true.
-			 */
-			result = false;
-			break;
-		case UNDEF:
-		default:
-			/*
-			 * We tick at the end of a timestep.
-			 */
-			result = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
-
-			if (result) {
-				setChanged();
-				notifyObservers(_state);
+			if (endOfTimestep) {
+				_state.set(StateVariable.VALUE_AT_LAST_TICK, valueNow || sinceLastTick);
 			}
 
-			break;
+			sinceLastTick = valueNow;
 		}
 
-		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, result);
-
-		return result;
-
-//		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+//		if (endOfTimestep) {
+//			/*
+//			 * Our current result is true, if the current evaluation returns true or
+//			 * if the operator has been true since the last tick.
+//			 */
+//			boolean valueNow = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
+//			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueNow || sinceLastTick);
 //
-//		_logger.debug("sinceLastTick: {}", sinceLastTick);
-//
-//		if (!sinceLastTick) {
-//			sinceLastTick = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
-//			_logger.debug("Result of evaluation: {}", sinceLastTick);
+//			/*
+//			 * This is in preparation for the next timestep.
+//			 * If the operator is true now, we also consider it to be
+//			 * true for the next timestep, because there is always an
+//			 * amount of time in which this is the case (since only the
+//			 * next event might change the information flow state).
+//			 */
+//			sinceLastTick = valueNow;
 //		}
-//
-//		if (sinceLastTick) {
-//			_state.set(StateVariable.SINCE_LAST_TICK, true);
-//			setChanged();
-//			notifyObservers(_state);
+//		else {
+//			/*
+//			 *
+//			 */
+//			if (!sinceLastTick) {
+//				sinceLastTick = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
+//			}
 //		}
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, sinceLastTick);
-//		_state.set(StateVariable.SINCE_LAST_TICK, false);
-//
-//		return sinceLastTick;
+
+		_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+		if (sinceLastTick) {
+			setChanged();
+			notifyObservers(_state);
+		}
+
+		return sinceLastTick;
 	}
 
-	private boolean distributedTickPostprocessingIsCombinedWith() {
+	private boolean distributedTickPostprocessingIsCombinedWith(boolean endOfTimestep) {
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (!valueAtLastTick) {
-//			long lastTick = _mechanism.getLastTick();
-//			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
-
-			Pair<Long,Long> fromTo = getFromTo(Settings.getInstance().getDistributionGranularity());
-
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, fromTo.getLeft(), fromTo.getRight());
+			long lastTick = _mechanism.getLastTick();
+			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
 		}
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
@@ -321,18 +223,15 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	private void updateIsCombinedWith(Observable o, Object arg) {
 		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
+			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-			_pdp.getPip().update((IEvent) arg);
-			if (_pdp.getPip().evaluatePredicateCurrentState(_predicate)) {
-				_state.set(StateVariable.SINCE_UPDATE, Trilean.TRUE);
+			if (!sinceLastTick && _pdp.getPip().evaluatePredicateCurrentState(_predicate)) {
+				_state.set(StateVariable.SINCE_LAST_TICK, true);
 				setChanged();
 				notifyObservers(_state);
 			}
-			else {
-				_state.set(StateVariable.SINCE_UPDATE, Trilean.FALSE);
-			}
 
-			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_UPDATE));
+			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
 		}
 	}
 
@@ -346,9 +245,21 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	}
 
-	enum EStateBasedOperator {
+	public enum EStateBasedOperatorType {
 		IS_COMBINED_WITH,
 		IS_ONLY_IN,
 		IS_NOT_IN
+	}
+
+	public EStateBasedOperatorType getType() {
+		return _type;
+	}
+
+	public boolean is(EStateBasedOperatorType t) {
+		return _type == t;
+	}
+
+	public boolean getSinceLastTick() {
+		return _state.get(StateVariable.SINCE_LAST_TICK);
 	}
 }

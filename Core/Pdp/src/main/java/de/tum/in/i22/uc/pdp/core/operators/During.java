@@ -52,11 +52,11 @@ public class During extends DuringType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		long counter = _state.get(StateVariable.COUNTER);
 		_logger.trace("Current state counter: {}", counter);
 
-		if (op.tick()) {
+		if (op.tick(endOfTimestep)) {
 			/*
 			 * Subformula evaluated to true.
 			 * Decrement the counter if it is still positive.
@@ -80,6 +80,7 @@ public class During extends DuringType {
 
 		// The result is true, if the counter reaches 0.
 		boolean result = counter == 0;
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, result);
 		_logger.debug("Result: {}.", result);
 		return result;
 	}

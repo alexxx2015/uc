@@ -29,7 +29,7 @@ public class EvalOperator extends EvalOperatorType implements AtomicOperator {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		// TODO: evalOperator evaluation NYI; forward to external evaluation engine
 		return false;
 	}

@@ -17,4 +17,8 @@ public interface IOperator {
 	public IMechanism getMechanism();
 
 	public Trilean getPositivity();
+
+	public long getTTL();
+
+	public boolean getValueAtLastTick();
 }

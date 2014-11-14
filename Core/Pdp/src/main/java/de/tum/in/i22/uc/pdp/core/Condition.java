@@ -48,13 +48,14 @@ public class Condition implements ICondition {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		// Local evaluation of the condition's operator
-		boolean res = _operator.tick();
-		_logger.debug("Ticking. New local evaluation of condition: {}", res);
+		_logger.debug("Ticking.");
+		boolean res = _operator.tick(endOfTimestep);
+		_logger.debug("Local evaluation of condition: {}", res);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
-			res = _operator.distributedTickPostprocessing();
+			res = _operator.distributedTickPostprocessing(endOfTimestep);
 			_logger.debug("Distributed evaluation of condition: {}", res);
 		}
 

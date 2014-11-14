@@ -1,11 +1,13 @@
 package de.tum.in.i22.uc.cm.processing.dummy;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
@@ -36,7 +38,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void update(IResponse response, boolean endOfTimestep) {
+	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("update method invoked");
 	}

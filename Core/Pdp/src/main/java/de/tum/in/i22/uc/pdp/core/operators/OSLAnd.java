@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
 public class OSLAnd extends AndType {
@@ -50,32 +51,36 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		/*
 		 * Important: _Always_ evaluate both operators
 		 */
-		boolean op1state = op1.tick();
-		boolean op2state = op2.tick();
+		boolean op1state = op1.tick(endOfTimestep);
+		boolean op2state = op2.tick(endOfTimestep);
 
 		boolean valueAtLastTick = op1state && op2state;
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}
 
 	@Override
-	public boolean distributedTickPostprocessing() {
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 
 		/*
 		 * TODO parallelize
 		 */
-		boolean op1state = op1.distributedTickPostprocessing();
-		boolean op2state = op2.distributedTickPostprocessing();
+		boolean op1state = op1.distributedTickPostprocessing(endOfTimestep);
+		boolean op2state = op2.distributedTickPostprocessing(endOfTimestep);
 
 		boolean valueAtLastTick = op1state && op2state;
 
 		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}

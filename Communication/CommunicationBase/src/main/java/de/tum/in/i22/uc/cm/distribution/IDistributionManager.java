@@ -1,8 +1,9 @@
 package de.tum.in.i22.uc.cm.distribution;
 
+import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -25,7 +26,7 @@ public interface IDistributionManager {
 	 */
 	public void registerPolicy(XmlPolicy policy);
 
-	void update(IResponse res, boolean endOfTimestep);
+	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep);
 
 	boolean wasTrueSince(AtomicOperator operator, long since);
 

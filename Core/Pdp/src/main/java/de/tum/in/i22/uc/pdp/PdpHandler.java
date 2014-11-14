@@ -24,7 +24,6 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
-import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
 
 public class PdpHandler extends PdpProcessor {
 
@@ -80,15 +79,21 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		IResponse res = _pdp.notifyEvent(event);
+		_pdp.notifyEvent(event);
 
+		/*
+		// Signaling to PIP is now performed by PolicyDecisionPoint
 		if (event.isActual()) {
 			getPip().update(event);
 		}
+		*/
 
+		/*
+		// This is now done by the PolicyDecisionPoint
 		if (res instanceof DistributedPdpResponse) {
 			_distributionManager.update(res, false);
 		}
+		*/
 	}
 
 	@Override
@@ -107,16 +112,23 @@ public class PdpHandler extends PdpProcessor {
 		 * event and signal it to both the PIP and the PDP as actual event.
 		 */
 
+		/*
+		// Signaling to PIP is now performed by PolicyDecisionPoint
 		if (event.isActual()) {
 			getPip().update(event);
-		} else if (res.isAuthorizationAction(EStatus.ALLOW) && event.allowImpliesActual()) {
+		}
+		*/
+
+		if (!event.isActual() && res.isAuthorizationAction(EStatus.ALLOW) && event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
 			notifyEventAsync(ev2);
 		}
 
+		/*
+		// This is now done by the PolicyDecisionPoint
 		if (res instanceof DistributedPdpResponse) {
 			_distributionManager.update(res, false);
-		}
+		}*/
 
 		return res;
 	}

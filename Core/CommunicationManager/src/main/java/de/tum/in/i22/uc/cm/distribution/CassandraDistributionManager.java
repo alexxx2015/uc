@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +36,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
@@ -45,8 +47,8 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.core.operators.Operator;
-import de.tum.in.i22.uc.pdp.distribution.DistributedPdpResponse;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 class CassandraDistributionManager implements IDistributionManager {
@@ -97,6 +99,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	private String _hostname;
 
+	private final Map<IOperator,Long> _lastInsert;
+
 	/**
 	 * Maps the IP of a PEP to its responsible PDP.
 	 */
@@ -127,6 +131,8 @@ class CassandraDistributionManager implements IDistributionManager {
 			_hostname = "";
 			_logger.warn("Unable to retrieve hostname.");
 		}
+
+		_lastInsert = new HashMap<>();
 	}
 
 
@@ -399,11 +405,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	public void dataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
 
-//		Map<SocketContainer, Map<SocketContainer, Set<IData>>> flows = dataflow.getFlows();
-
 		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
-//			SocketContainer srcSocket = flow.getKey();
-
 			Map<SocketContainer, Set<IData>> dsts = flow.getValue();
 
 			for (Entry<SocketContainer, Set<IData>> dst : dsts.entrySet()) {
@@ -438,11 +440,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(IResponse response, boolean endOfTimestep) {
-		if (!(response instanceof DistributedPdpResponse)) {
-			return;
-		}
-
+	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep) {
 		/*
 		 * TODO
 		 * (1) We can probably do this in a new thread. However -> correctness? What if it fails?
@@ -450,29 +448,94 @@ class CassandraDistributionManager implements IDistributionManager {
 		 *     instead of now().
 		 */
 
-		DistributedPdpResponse res = (DistributedPdpResponse) response;
-
-		StringBuilder batchJob = new StringBuilder(512);
+		/*
+		 * Each INSERT statement takes approx. 180 characters,
+		 * plus some constant overhead of 50 characters.
+		 */
+		StringBuilder batchJob = new StringBuilder(180 * changedOperators.size() + 50);
 		batchJob.append("BEGIN UNLOGGED BATCH ");
 
-		for (Operator op : res.getChangedOperators()) {
-			_logger.info("UPDATING CASSANDRA STATE: event happened: {}", op.getFullId());
+		for (IOperator op : changedOperators) {
 
 			/*
 			 * Calculate the time when this operator happened.
 			 * If we are not at the end of a timestep, simply use now().
 			 * Otherwise, create a UUID corresponding to lastTick.
 			 */
-			String time = (endOfTimestep
-					? UUIDs.startOf(op.getMechanism().getLastTick()).toString()
-					: "now()");
+			String time = "";
 
-			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
-					+ " (opid, location, time) VALUES ("
-					+ "'" + op.getFullId() + "',"
-					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-					+ time
-					+ ") USING TTL " + op.getTTL() / 1000 + ";");
+			boolean doInsert = false;
+
+			if (op instanceof EventMatchOperator) {
+				doInsert = true;
+				time = endOfTimestep
+						? UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString()
+						: "now()";
+			}
+			else if (op instanceof StateBasedOperator) {
+				if (endOfTimestep) {
+					doInsert = true;
+					long timeToInsert = op.getValueAtLastTick()
+							? op.getMechanism().getLastTick() + 1
+							: op.getMechanism().getLastTick() - 1;
+					time = op.getValueAtLastTick()
+							? UUIDs.startOf(timeToInsert).toString()
+							: UUIDs.endOf(timeToInsert).toString();
+					_lastInsert.put(op, timeToInsert);
+				}
+				else {
+					Long lastInsert = _lastInsert.get(op);
+					if (lastInsert == null || lastInsert < op.getMechanism().getLastTick()) {
+						doInsert = true;
+						time = "now()";
+						_lastInsert.put(op, System.currentTimeMillis());
+					}
+				}
+			}
+
+
+//			if (!endOfTimestep) {
+//				time = "now()";
+//			}
+//			else {
+//				/*
+//				 * End of timestep
+//				 */
+//				if (op instanceof EventMatchOperator) {
+//
+//					time = UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString();
+//				}
+//				else if (op instanceof StateBasedOperator) {
+//					if (((StateBasedOperator) op).getType() == EStateBasedOperatorType.IS_COMBINED_WITH) {
+//
+//						if (op.getValueAtLastTick()) {
+//							time = UUIDs.startOf(op.getMechanism().getLastTick() + 1).toString();
+//						}
+//						else {
+//							time = UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString();
+//						}
+//					}
+//				}
+//			}
+
+
+//			= (endOfTimestep
+//					? UUIDs.startOf(op.getMechanism().getLastTick()).toString()
+//					: "now()");
+
+
+			if (doInsert) {
+				_logger.info("Updating Cassandra state at time {} with event {}",
+						 sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
+						op.getFullId());
+
+				batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+						+ " (opid, location, time) VALUES ("
+						+ "'" + op.getFullId() + "',"
+						+ "'" + IPLocation.localIpLocation.getHost() + "',"
+						+ time
+						+ ") USING TTL " + op.getTTL() / 1000 + ";");
+			}
 		}
 
 		batchJob.append(" APPLY BATCH;");

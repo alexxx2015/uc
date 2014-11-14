@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
 public class OSLNot extends NotType {
@@ -60,19 +61,23 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	public boolean tick() {
-		boolean valueAtLastTick = !op.tick();
+	public boolean tick(boolean endOfTimestep) {
+		boolean valueAtLastTick = !op.tick(endOfTimestep);
 
 		_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}
 
 	@Override
-	public boolean distributedTickPostprocessing() {
-		boolean valueAtLastTick = !op.distributedTickPostprocessing();
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
+		boolean valueAtLastTick = !op.distributedTickPostprocessing(endOfTimestep);
 
 		_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
 	}

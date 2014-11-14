@@ -61,12 +61,12 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		/*
 		 *  tick() the underlying event such that it adjusts its state
 		 *  according to its tick() semantics.
 		 */
-		event.tick();
+		event.tick(endOfTimestep);
 
 		/*
 		 * Get saved state variables.
@@ -81,9 +81,9 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 		 */
 
 		countAtLastTick -= stateCircArray.pop(); 						// Delete oldest value from array and subtract it from count
-		countAtLastTick += event.getValueAtLastTick();					// Add the accumulated (during last timestep) counter value to the count
+		countAtLastTick += event.getCountAtLastTick();					// Add the accumulated (during last timestep) counter value to the count
 
-		stateCircArray.push(event.getValueAtLastTick());				// Push the counter value to the array
+		stateCircArray.push(event.getCountAtLastTick());				// Push the counter value to the array
 
 		boolean result = (countAtLastTick >= limit);
 
@@ -98,16 +98,24 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	}
 
 	@Override
-	public boolean distributedTickPostprocessing() {
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 		boolean result = (int) _state.get(StateVariable.COUNT_AT_LAST_TICK) >= limit;
 
 		if (!result) {
 			/*
 			 *  Our local count was not sufficient. Look up how
 			 *  often the event happened globally.
-			 *  The result will include our local count.
+			 *  The result will include our local counts, except
+			 *  the one event occurrence that might have happened
+			 *  at this point in time (i.e. if an event is occurring).
+			 *  For this reason, if the event has happened since the last
+			 *  update (getSinceUpdate()), we add one to compensate for this.
 			 */
 			int globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+
+			if (event.getSinceUpdate()) {
+				globallyTrue++;
+			}
 
 			/*
 			 * Get saved state variables.

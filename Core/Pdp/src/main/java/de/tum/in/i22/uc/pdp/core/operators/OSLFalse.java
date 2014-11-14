@@ -27,8 +27,13 @@ public class OSLFalse extends FalseType implements AtomicOperator {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		_logger.info("Evaluating FALSE. false.");
+		return false;
+	}
+
+	@Override
+	public boolean getValueAtLastTick() {
 		return false;
 	}
 }

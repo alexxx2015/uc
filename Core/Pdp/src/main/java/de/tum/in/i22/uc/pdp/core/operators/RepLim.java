@@ -56,7 +56,7 @@ public class RepLim extends RepLimType {
 	}
 
 	@Override
-	public boolean tick() {
+	public boolean tick(boolean endOfTimestep) {
 		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
 		long counter = _state.get(StateVariable.COUNTER);
 
@@ -69,7 +69,7 @@ public class RepLim extends RepLimType {
 			_logger.debug("Oldest value was true. Removing it. Therefore also decrementing counter to {}.", counter);
 		}
 
-		boolean operandState = op.tick();
+		boolean operandState = op.tick(endOfTimestep);
 		if (operandState) {
 			counter++;
 			_logger.debug("Current value is true. Therefore incrementing counter to {}.", counter);
@@ -81,6 +81,8 @@ public class RepLim extends RepLimType {
 		// Setting circArray is actually not necessary,
 		// as we work on the original instance anyway
 		// _state.set(StateVariable.CIRC_ARRAY, circArray);
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, result);
 
 		return result;
 	}
