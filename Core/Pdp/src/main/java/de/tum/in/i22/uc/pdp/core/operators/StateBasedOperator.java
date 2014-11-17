@@ -122,63 +122,34 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	private boolean tickIsCombinedWith(boolean endOfTimestep) {
 		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+		boolean localResult = sinceLastTick;
 
-		if (endOfTimestep || !sinceLastTick) {
+		if (endOfTimestep) {
 			boolean valueNow = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
 
-			if (endOfTimestep) {
-				_state.set(StateVariable.VALUE_AT_LAST_TICK, valueNow || sinceLastTick);
+			if (valueNow) {
+				localResult = true;
+				setChanged();
+				notifyObservers(_state);
 			}
 
-			sinceLastTick = valueNow;
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, localResult);
+			_state.set(StateVariable.SINCE_LAST_TICK, valueNow);
 		}
 
-//		if (endOfTimestep) {
-//			/*
-//			 * Our current result is true, if the current evaluation returns true or
-//			 * if the operator has been true since the last tick.
-//			 */
-//			boolean valueNow = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
-//			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueNow || sinceLastTick);
-//
-//			/*
-//			 * This is in preparation for the next timestep.
-//			 * If the operator is true now, we also consider it to be
-//			 * true for the next timestep, because there is always an
-//			 * amount of time in which this is the case (since only the
-//			 * next event might change the information flow state).
-//			 */
-//			sinceLastTick = valueNow;
-//		}
-//		else {
-//			/*
-//			 *
-//			 */
-//			if (!sinceLastTick) {
-//				sinceLastTick = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
-//			}
-//		}
-
-		_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
-		if (sinceLastTick) {
-			setChanged();
-			notifyObservers(_state);
-		}
-
-		return sinceLastTick;
+		return localResult;
 	}
 
 	private boolean distributedTickPostprocessingIsCombinedWith(boolean endOfTimestep) {
-		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
-		if (!valueAtLastTick) {
+		if (!sinceLastTick) {
 			long lastTick = _mechanism.getLastTick();
-			valueAtLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+			sinceLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+			_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
 		}
 
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-
-		return valueAtLastTick;
+		return sinceLastTick;
 	}
 
 	private boolean tickIsNotIn() {

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
 
-public class CircArrayTest
+public class CircArrayTest extends TestParent
 {
   private static Logger log = LoggerFactory.getLogger(CircArrayTest.class);
 
@@ -13,13 +13,13 @@ public class CircArrayTest
   public void test()
   {
     log.debug("CircularArrayTest");
-    
+
     CircularArray<Integer> a = new CircularArray<Integer>(5);
     log.debug("a: " + a);
-    
+
     a.push(42);
     log.debug("a: " + a);
-    
+
     a.push(36);
     a.push(37);
     log.debug("pop: " + a.pop());
@@ -36,7 +36,7 @@ public class CircArrayTest
     log.debug("pop: " + a.pop());
     log.debug("pop: " + a.pop());
     log.debug("a: " + a);
-    
+
     assert(true);
   }
 

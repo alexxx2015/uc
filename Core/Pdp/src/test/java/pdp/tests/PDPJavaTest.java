@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-public class PDPJavaTest {
+public class PDPJavaTest extends TestParent {
 	private static Logger log = LoggerFactory.getLogger(PDPJavaTest.class);
 
 	private static PolicyDecisionPoint lpdp = null;
@@ -28,6 +28,8 @@ public class PDPJavaTest {
 		 * For a more detailed output remember to change the log level.
 		 * As of now, it is disabled (level ERROR)
 		 */
+
+		destroySettings();
 
 		IEvent e;
 		IResponse d;

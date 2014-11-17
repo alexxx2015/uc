@@ -15,7 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-public class OperatorTest {
+public class OperatorTest extends TestParent {
 	private static Logger log = LoggerFactory.getLogger(OperatorTest.class);
 	private static PolicyDecisionPoint lpdp = null;
 

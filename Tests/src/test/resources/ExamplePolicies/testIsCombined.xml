@@ -1,0 +1,33 @@
+<?xml version='1.0' standalone='yes' ?>
+<policySet xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage"
+	xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action"
+	xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testpolicy">
+
+	<actionDescriptions>
+		<actionDescription name="event.homeapp.controller.backend" />
+	</actionDescriptions>
+
+	<initialRepresentations>
+		<container name="x">
+			<dataId>D1</dataId>
+		</container>
+		<container name="y">
+			<dataId>D2</dataId>
+		</container>
+	</initialRepresentations>
+
+	<preventiveMechanism name="testSince">
+		<description>...</description>
+		<timestep amount="3" unit="SECONDS" />
+		<trigger action="*" isTry="true">
+		</trigger>
+		<condition>
+			<stateBasedFormula operator="isCombinedWith" param1="D1" param2="D2" />
+		</condition>
+			<authorizationAction name="default">
+				<inhibit />
+			</authorizationAction>
+	</preventiveMechanism>
+</policySet>

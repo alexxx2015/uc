@@ -14,7 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 
-public class OSLAndTest {
+public class OSLAndTest extends TestParent {
 	private static Logger _logger = LoggerFactory.getLogger(PDPJavaTest.class);
 
 	private static PolicyDecisionPoint _pdp = null;
