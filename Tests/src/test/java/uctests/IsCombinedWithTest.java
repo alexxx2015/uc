@@ -59,6 +59,7 @@ public class IsCombinedWithTest extends StateBasedOperatorTest {
 
 
 		/*
+		 * NEXT Timestep.
 		 * 2nd Test:
 		 * Send the event
 		 *  * There is no container containing both myId2 and myId3,

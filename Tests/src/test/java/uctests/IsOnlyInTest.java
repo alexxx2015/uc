@@ -67,8 +67,6 @@ public class IsOnlyInTest extends StateBasedOperatorTest {
 		 *    (The data is ONLY in 'initialContainer2')
 		 *  ==> INHIBIT
 		 */
-		// 3: send the event again. This time the only container with data myId
-		// should be initialcontainer2
 		IResponse response2 = pdp.notifyEventSync(event);
 		_logger.debug("3: Received response as reply to " + event + ": " + response2);
 		Assert.assertNotNull(response2);
