@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.pdp.core;
 
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,33 +41,29 @@ public class EventMatch extends EventMatchingOperatorType {
 
 		_logger.info("Matching [{}] against [{}]", this, ev);
 
+		boolean result = true;
+
 		/*
 		 *  Be aware: tryEvent vs. isActual must be unequal (!=).
 		 */
-		if (tryEvent != ev.isActual()) {
-			if (action.equals(ev.getName()) || action.equals(Settings.getInstance().getStarEvent())) {
-				if (params == null || params.size() == 0) {
-					_logger.info("Event DOES match.");
-					return true;
-				}
+		if (tryEvent == ev.isActual()
+					|| (!action.equals(ev.getName()) && !action.equals(Settings.getInstance().getStarEvent()))) {
+			result = false;
+		}
+		else if (params != null) {
+			Iterator<ParamMatchType> it = params.iterator();
+			while (result && it.hasNext()) {
+				ParamMatch p = ParamMatch.convertFrom(it.next(), _pdp);
+				_logger.debug("Matching param [{}]", p);
 
-				/*
-				 * Compare each parameter
-				 */
-				for (ParamMatchType p : params) {
-					_logger.debug("Matching param [{}]", p);
-					if (!ParamMatch.convertFrom(p, _pdp).matches(p.getName(), ev.getParameterValue(p.getName()))) {
-						_logger.info("Event does NOT match.");
-						return false;
-					}
+				if (!p.matches(p.getName(), ev.getParameterValue(p.getName()))) {
+					result = false;
 				}
-				_logger.info("Event DOES match.");
-				return true;
 			}
 		}
 
-		_logger.info("Event does NOT match.");
-		return false;
+		_logger.info("Event {} match.", result ? "DOES" : "does NOT");
+		return result;
 	}
 
 
@@ -77,5 +75,4 @@ public class EventMatch extends EventMatchingOperatorType {
 				.add("params", getParams())
 				.toString();
 	}
-
 }

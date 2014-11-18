@@ -12,6 +12,7 @@ import com.google.common.base.MoreObjects;
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormulaType;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -27,7 +28,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	private String _predicate;
 
-	private EStateBasedOperatorType _type;
+	private EStateBasedFormulaType _type;
 
 	public StateBasedOperator() {
 	}
@@ -55,19 +56,22 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	private void initIsCombinedWith(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperatorType.IS_COMBINED_WITH;
+		_type = EStateBasedFormulaType.IS_COMBINED_WITH;
 		_positivity = Trilean.TRUE;
 		_state.set(StateVariable.SINCE_LAST_TICK, false);
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 	}
 
 	private void initIsNotIn(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperatorType.IS_NOT_IN;
+		_type = EStateBasedFormulaType.IS_NOT_IN;
 		_positivity = Trilean.FALSE;
+		_state.set(StateVariable.SINCE_LAST_TICK, true);
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, true);
 	}
 
 	private void initIsOnlyIn(Mechanism mech, Operator parent, long ttl) {
-		_type = EStateBasedOperatorType.IS_ONLY_IN;
+		initIsNotIn(mech, parent, ttl);
+		_type = EStateBasedFormulaType.IS_ONLY_IN;
 		_positivity = Trilean.FALSE;
 	}
 
@@ -98,9 +102,9 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		case IS_COMBINED_WITH:
 			return tickIsCombinedWith(endOfTimestep);
 		case IS_NOT_IN:
-			return tickIsNotIn();
+			return tickIsNotIn(endOfTimestep);
 		case IS_ONLY_IN:
-			return tickIsOnlyIn();
+			return tickIsOnlyIn(endOfTimestep);
 		default:
 			throw new UnsupportedOperationException("Unknown Predicate type.");
 		}
@@ -152,27 +156,47 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		return sinceLastTick;
 	}
 
-	private boolean tickIsNotIn() {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean tickIsNotIn(boolean endOfTimestep) {
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+		boolean localResult = sinceLastTick;
+
+		if (endOfTimestep) {
+			boolean valueNow = _pdp.getPip().evaluatePredicateCurrentState(_predicate);
+
+			if (!valueNow) {
+				localResult = false;
+				setChanged();
+				notifyObservers(_state);
+			}
+
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, localResult);
+			_state.set(StateVariable.SINCE_LAST_TICK, valueNow);
+		}
+
+		return localResult;
 	}
 
-	private boolean tickIsOnlyIn() {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean tickIsOnlyIn(boolean endOfTimestep) {
+		return tickIsNotIn(endOfTimestep);
 	}
 
 
 
 
 	private boolean distributedTickPostprocessingIsNotIn() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+
+		if (sinceLastTick) {
+			long lastTick = _mechanism.getLastTick();
+			sinceLastTick = _pdp.getDistributionManager().wasTrueInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+			_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
+		}
+
+		return sinceLastTick;
 	}
 
 	private boolean distributedTickPostprocessingIsOnlyIn() {
-		// TODO Auto-generated method stub
-		return false;
+		return distributedTickPostprocessingIsNotIn();
 	}
 
 	@Override
@@ -207,26 +231,28 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	private void updateIsNotIn(Observable o, Object arg) {
-		// TODO Auto-generated method stub
+		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
+			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
+			if (sinceLastTick && !_pdp.getPip().evaluatePredicateCurrentState(_predicate)) {
+				_state.set(StateVariable.SINCE_LAST_TICK, false);
+				setChanged();
+				notifyObservers(_state);
+			}
+
+			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+		}
 	}
 
 	private void updateIsOnlyIn(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
+		updateIsNotIn(o, arg);
 	}
 
-	public enum EStateBasedOperatorType {
-		IS_COMBINED_WITH,
-		IS_ONLY_IN,
-		IS_NOT_IN
-	}
-
-	public EStateBasedOperatorType getType() {
+	public EStateBasedFormulaType getType() {
 		return _type;
 	}
 
-	public boolean is(EStateBasedOperatorType t) {
+	public boolean is(EStateBasedFormulaType t) {
 		return _type == t;
 	}
 

@@ -89,7 +89,8 @@ public class PmpHandler extends PmpProcessor {
 			Unmarshaller u = JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller();
 			policy = (PolicyType) ((JAXBElement<?>) u.unmarshal(inp)).getValue();
 		} catch (JAXBException | ClassCastException e) {
-			_logger.error(e.getMessage());
+			_logger.error("Unable to unmarshal policy.");
+			throw new IllegalArgumentException("Policy could not be parsed.");
 		}
 
 		_logger.debug("curPolicy [name=" + policy.getName() + ", " + policy.toString());
@@ -343,9 +344,15 @@ public class PmpHandler extends PmpProcessor {
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 
 		String xml = xmlPolicy.getXml();
+		PolicyType policy;
 
 		// Convert the string xml to a PolicyType
-		PolicyType policy = xmlToPolicy(xml);
+		try {
+			policy = xmlToPolicy(xml);
+		} catch (IllegalArgumentException e) {
+			_logger.error(e.getMessage());
+			return new StatusBasic(EStatus.ERROR);
+		}
 
 		// When you receive a raw xml policy, the object created is without a name.
 		xmlPolicy.setName(policy.getName());

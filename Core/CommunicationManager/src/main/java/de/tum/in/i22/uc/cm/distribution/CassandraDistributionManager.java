@@ -474,16 +474,25 @@ class CassandraDistributionManager implements IDistributionManager {
 			}
 			else if (op instanceof StateBasedOperator) {
 				if (endOfTimestep) {
+					/*
+					 * At the end of a timestep, StateBasedOperators are
+					 * attributed to the next timestep. The reason is that
+					 * the Operator will under any circumstances remain
+					 * unchanged until the next event happens. And this next
+					 * event will be strictly after the timestep. Hence, we
+					 * +1 to the time below.
+					 */
 					doInsert = true;
-					long timeToInsert = op.getValueAtLastTick()
-							? op.getMechanism().getLastTick() + 1
-							: op.getMechanism().getLastTick() - 1;
-					time = op.getValueAtLastTick()
-							? UUIDs.startOf(timeToInsert).toString()
-							: UUIDs.endOf(timeToInsert).toString();
+					long timeToInsert = op.getMechanism().getLastTick() + 1;
+					time = UUIDs.startOf(timeToInsert).toString();
 					_lastInsert.put(op, timeToInsert);
 				}
 				else {
+					/*
+					 * If we are not at the end of a timestep, we only
+					 * insert if the Operator was never inserted before,
+					 * or if the last insertion was before the last tick.
+					 */
 					Long lastInsert = _lastInsert.get(op);
 					if (lastInsert == null || lastInsert < op.getMechanism().getLastTick()) {
 						doInsert = true;
@@ -492,37 +501,6 @@ class CassandraDistributionManager implements IDistributionManager {
 					}
 				}
 			}
-
-
-//			if (!endOfTimestep) {
-//				time = "now()";
-//			}
-//			else {
-//				/*
-//				 * End of timestep
-//				 */
-//				if (op instanceof EventMatchOperator) {
-//
-//					time = UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString();
-//				}
-//				else if (op instanceof StateBasedOperator) {
-//					if (((StateBasedOperator) op).getType() == EStateBasedOperatorType.IS_COMBINED_WITH) {
-//
-//						if (op.getValueAtLastTick()) {
-//							time = UUIDs.startOf(op.getMechanism().getLastTick() + 1).toString();
-//						}
-//						else {
-//							time = UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString();
-//						}
-//					}
-//				}
-//			}
-
-
-//			= (endOfTimestep
-//					? UUIDs.startOf(op.getMechanism().getLastTick()).toString()
-//					: "now()");
-
 
 			if (doInsert) {
 				_logger.info("Updating Cassandra state at time {} with event {}",
@@ -551,12 +529,13 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;");
-		if (operator.getPositivity().is(true)) {
-			return !rs.isExhausted();
-		}
-		else {
-			return rs.isExhausted();
-		}
+		return operator.getPositivity().is(true) != rs.isExhausted();
+//		if (operator.getPositivity().is(true)) {
+//			return !rs.isExhausted();
+//		}
+//		else {
+//			return rs.isExhausted();
+//		}
 	}
 
 
@@ -568,12 +547,13 @@ class CassandraDistributionManager implements IDistributionManager {
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
 				+ " LIMIT 1;");
-		if (operator.getPositivity().is(true)) {
-			return !rs.isExhausted();
-		}
-		else {
-			return rs.isExhausted();
-		}
+		return operator.getPositivity().is(true) != rs.isExhausted();
+//		if (operator.getPositivity().is(true)) {
+//			return !rs.isExhausted();
+//		}
+//		else {
+//			return rs.isExhausted();
+//		}
 	}
 
 	@Override

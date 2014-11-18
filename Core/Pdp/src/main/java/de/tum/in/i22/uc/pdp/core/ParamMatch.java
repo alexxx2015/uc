@@ -59,12 +59,9 @@ public class ParamMatch extends ParamMatchType {
 	}
 
 	public static ParamMatch convertFrom(ParamMatchType p, PolicyDecisionPoint pdp) {
-		if (p instanceof ParamMatch) {
-			ParamMatch newp = (ParamMatch) p;
-			newp._pdp = pdp;
-			return newp;
-		}
-		throw new IllegalArgumentException(p + " is not of type " + ParamMatch.class);
+		ParamMatch newp = (ParamMatch) p;
+		newp._pdp = pdp;
+		return newp;
 	}
 
 

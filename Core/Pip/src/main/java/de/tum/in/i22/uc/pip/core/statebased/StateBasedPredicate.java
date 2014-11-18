@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
 import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
-import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormula;
+import de.tum.in.i22.uc.cm.pip.interfaces.EStateBasedFormulaType;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
@@ -28,7 +28,7 @@ public abstract class StateBasedPredicate implements IStateBasedPredicate {
 		InvalidStateBasedFormulaException exc = new InvalidStateBasedFormulaException("Predicate {" + predicate + "} is invalid.");
 
 		String[] st = predicate.split(StateBasedPredicate.SEPARATOR1);
-		EStateBasedFormula pred = EStateBasedFormula.from(st[0]);
+		EStateBasedFormulaType pred = EStateBasedFormulaType.from(st[0]);
 
 		if (st.length == 0 || pred == null) {
 			throw exc;

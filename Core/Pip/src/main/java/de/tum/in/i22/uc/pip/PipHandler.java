@@ -89,17 +89,8 @@ public class PipHandler extends PipProcessor {
 		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
 			_logger.debug(this.toString());
 		}
-		if (pred == null) {
-			_logger.error("Predicate to be evaluated is null. returning predefined value false. This shouldn't happen, though.");
-			return false;
-		}
-		try {
-			return pred.evaluate();
-		} catch (InvalidStateBasedFormulaException e) {
-			e.printStackTrace();
-			return false;
 
-		}
+		return pred.evaluate();
 	}
 
 	@Override

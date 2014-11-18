@@ -737,10 +737,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	 */
 	@Override
 	public IContainer getContainer(IName name) {
-		if (name != null) {
-			return _namingMap.get(name);
-		}
-		return null;
+		return name != null ? _namingMap.get(name) : null;
 	}
 
 	/*

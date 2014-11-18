@@ -13,6 +13,11 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
+/**
+ *
+ * @author Enrico Lovat, Florian Kelbert
+ *
+ */
 public class IsNotIn extends StateBasedPredicate {
 	private final Set<IData> _data;
 	private final Set<IName> _forbiddenContainerNames;
@@ -45,8 +50,7 @@ public class IsNotIn extends StateBasedPredicate {
 		}
 
 		for (IData d : _data) {
-			Set<IContainer> contForData = _informationFlowModel.getContainers(d);
-			if (!Sets.intersection(contForData, forbiddenContainers).isEmpty()) {
+			if (Sets.intersection(forbiddenContainers, _informationFlowModel.getContainers(d)).size() > 0) {
 				return false;
 			}
 		}
