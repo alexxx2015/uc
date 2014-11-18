@@ -70,6 +70,7 @@ public class IsNotInTest extends StateBasedOperatorTest {
 		Assert.assertNotNull(response2);
 		Assert.assertTrue(response2.isAuthorizationAction(EStatus.ALLOW));
 
+
 		/*
 		 * Empty the initial container and
 		 * wait for the next timestep. This

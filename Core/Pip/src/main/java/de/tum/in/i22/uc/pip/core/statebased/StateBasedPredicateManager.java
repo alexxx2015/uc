@@ -34,6 +34,17 @@ public class StateBasedPredicateManager {
 		_predicates = new HashMap<>();
 	}
 
+	/**
+	 * Creates an {@link IStateBasedPredicate} out of the specified predicate (String).
+	 * If the predicate was created before, a cached copy is returned.
+	 *
+	 * 2014/11/18 FK
+	 *
+	 * @param predicate the predicate to transform.
+	 * @param ifm the Information Flow Model upon which the {@link IStateBasedPredicate} will be evaluated.
+	 * @return an {@link IStateBasedPredicate} reflecting the specified predicate.
+	 * @throws InvalidStateBasedFormulaException in case the specified predicate was malformed.
+	 */
 	public IStateBasedPredicate get(String predicate, IAnyInformationFlowModel ifm) throws InvalidStateBasedFormulaException {
 		IStateBasedPredicate spredicate = _predicates.get(predicate);
 

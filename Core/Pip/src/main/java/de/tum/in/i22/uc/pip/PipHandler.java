@@ -88,7 +88,7 @@ public class PipHandler extends PipProcessor {
 			_logger.warn(e.toString());
 			return false;
 		}
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
+		if (Settings.getInstance().getPipPrintAfterUpdate() && !isSimulating()) {
 			_logger.debug(this.toString());
 		}
 
