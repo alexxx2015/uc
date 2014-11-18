@@ -35,20 +35,21 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
-import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
+import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicateManager;
 import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
 import de.tum.in.i22.uc.pip.extensions.javapip.JavaPipManager;
 
 public class PipHandler extends PipProcessor {
-	private static final Logger _logger = LoggerFactory
-			.getLogger(PipHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
 	private final IBasicInformationFlowModel _ifModel;
 
 	private final InformationFlowModelManager _ifModelManager;
 
 	private final PipManager _pipManager;
+
+	private final StateBasedPredicateManager _stateBasedPredicateManager;
 
 	/**
 	 * Manager for remote Java Pip
@@ -66,6 +67,7 @@ public class PipHandler extends PipProcessor {
 		_pipManager = new PipManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
+		_stateBasedPredicateManager = new StateBasedPredicateManager();
 
 		_javaPipManager = new JavaPipManager();
 		Thread tjpip= new Thread(_javaPipManager);
@@ -81,7 +83,7 @@ public class PipHandler extends PipProcessor {
 		IStateBasedPredicate pred;
 
 		try {
-			pred = StateBasedPredicate.create(predicate, _ifModelManager);
+			pred = _stateBasedPredicateManager.get(predicate, _ifModelManager);
 		} catch (InvalidStateBasedFormulaException e) {
 			_logger.warn(e.toString());
 			return false;

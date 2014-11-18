@@ -32,12 +32,12 @@ public class IsNotIn extends StateBasedPredicate {
 		}
 
 		_data = new HashSet<>();
-		for (String d : param1.split(SEPARATOR2)) {
+		for (String d : param1.split(StateBasedPredicateManager.SEPARATOR2)) {
 			_data.add(new DataBasic(d));
 		}
 
 		_forbiddenContainerNames = new HashSet<>();
-		for (String name : param2.split(SEPARATOR2)) {
+		for (String name : param2.split(StateBasedPredicateManager.SEPARATOR2)) {
 			_forbiddenContainerNames.add(MessageFactory.createName(name));
 		}
 	}
@@ -49,6 +49,9 @@ public class IsNotIn extends StateBasedPredicate {
 			forbiddenContainers.add(_informationFlowModel.getContainer(name));
 		}
 
+		/*
+		 * TODO potential for parallelization
+		 */
 		for (IData d : _data) {
 			if (Sets.intersection(forbiddenContainers, _informationFlowModel.getContainers(d)).size() > 0) {
 				return false;

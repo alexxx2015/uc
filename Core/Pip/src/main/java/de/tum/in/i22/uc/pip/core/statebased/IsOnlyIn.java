@@ -29,12 +29,12 @@ public class IsOnlyIn extends StateBasedPredicate {
 		}
 
 		_data = new HashSet<>();
-		for (String d : param1.split(SEPARATOR2)) {
+		for (String d : param1.split(StateBasedPredicateManager.SEPARATOR2)) {
 			_data.add(new DataBasic(d));
 		}
 
 		_allowedContainerNames = new HashSet<>();
-		for (String name : param2.split(SEPARATOR2)) {
+		for (String name : param2.split(StateBasedPredicateManager.SEPARATOR2)) {
 			_allowedContainerNames.add(MessageFactory.createName(name));
 		}
 	}
@@ -47,6 +47,9 @@ public class IsOnlyIn extends StateBasedPredicate {
 			allowedContainers.add(_informationFlowModel.getContainer(name));
 		}
 
+		/*
+		 * TODO potential for parallelization
+		 */
 		for (IData d : _data) {
 			Set<IContainer> actualContainers = _informationFlowModel.getContainers(d);
 			if (!allowedContainers.containsAll(actualContainers)) {
