@@ -530,12 +530,6 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;");
 		return operator.getPositivity().value() != rs.isExhausted();
-//		if (operator.getPositivity().is(true)) {
-//			return !rs.isExhausted();
-//		}
-//		else {
-//			return rs.isExhausted();
-//		}
 	}
 
 
@@ -548,12 +542,6 @@ class CassandraDistributionManager implements IDistributionManager {
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
 				+ " LIMIT 1;");
 		return operator.getPositivity().value() != rs.isExhausted();
-//		if (operator.getPositivity().is(true)) {
-//			return !rs.isExhausted();
-//		}
-//		else {
-//			return rs.isExhausted();
-//		}
 	}
 
 	@Override
