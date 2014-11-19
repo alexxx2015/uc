@@ -111,7 +111,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 *  For this reason, if the event has happened since the last
 			 *  update (getSinceUpdate()), we add one to compensate for this.
 			 */
-			int globallyTrue = _pdp.getDistributionManager().howOftenTrueInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+			int globallyTrue = _pdp.getDistributionManager().howOftenNotifiedInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
 
 			if (event.getSinceUpdate()) {
 				globallyTrue++;

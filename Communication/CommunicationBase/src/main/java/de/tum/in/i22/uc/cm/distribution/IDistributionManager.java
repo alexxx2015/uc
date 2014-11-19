@@ -28,11 +28,11 @@ public interface IDistributionManager {
 
 	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep);
 
-	boolean wasTrueSince(AtomicOperator operator, long since);
+	boolean wasNotifiedSince(AtomicOperator operator, long since);
 
-	boolean wasTrueInBetween(AtomicOperator operator, long from, long to);
+	boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to);
 
-	public int howOftenTrueInBetween(AtomicOperator operator, long from, long to);
+	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to);
 
 	void unregisterPolicy(String policyName, IPLocation location);
 

@@ -44,14 +44,14 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public boolean wasTrueSince(AtomicOperator operator, long since) {
+	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("wasObservedSince method invoked");
 		return false;
 	}
 
 	@Override
-	public boolean wasTrueInBetween(AtomicOperator operator, long from, long to) {
+	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("wasObservedInBetween method invoked");
 		return true;
@@ -71,7 +71,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public int howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
+	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("howOftenTrueInBetween method invoked");
 		return 0;

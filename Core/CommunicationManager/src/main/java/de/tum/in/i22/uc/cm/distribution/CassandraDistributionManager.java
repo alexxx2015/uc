@@ -57,7 +57,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
 	private static final String TABLE_NAME_DATA = "hasdata";
-	private static final String TABLE_NAME_OP_OBSERVED = "optrue";
+	private static final String TABLE_NAME_OP_NOTIFIED = "opnotified";
 	private static final String TABLE_NAME_POLICY = "policy";
 
 	private static final List<String> _tables;
@@ -71,7 +71,7 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "PRIMARY KEY (data)"
 						+ ");");
 		_tables.add(
-				"CREATE TABLE " + TABLE_NAME_OP_OBSERVED + " ("
+				"CREATE TABLE " + TABLE_NAME_OP_NOTIFIED + " ("
 						+ "opid text,"
 						+ "time timeuuid,"
 						+ "location text,"
@@ -507,7 +507,7 @@ class CassandraDistributionManager implements IDistributionManager {
 						 sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
 						op.getFullId());
 
-				batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+				batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
 						+ " (opid, location, time) VALUES ("
 						+ "'" + op.getFullId() + "',"
 						+ "'" + IPLocation.localIpLocation.getHost() + "',"
@@ -523,13 +523,13 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueSince(AtomicOperator operator, long since) {
-		_logger.debug("wasTrueSince({}, {})", operator, since);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
+		_logger.debug("wasNotifiedSince({}, {})", operator, since);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
 						+ " WHERE opid = '" + operator.getFullId() + "'"
 						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
 						+ " LIMIT 1;");
-		return operator.getPositivity().is(true) != rs.isExhausted();
+		return operator.getPositivity().value() != rs.isExhausted();
 //		if (operator.getPositivity().is(true)) {
 //			return !rs.isExhausted();
 //		}
@@ -540,14 +540,14 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public boolean wasTrueInBetween(AtomicOperator operator, long from, long to) {
-		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
+		_logger.debug("wasNotifiedInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
 				+ " LIMIT 1;");
-		return operator.getPositivity().is(true) != rs.isExhausted();
+		return operator.getPositivity().value() != rs.isExhausted();
 //		if (operator.getPositivity().is(true)) {
 //			return !rs.isExhausted();
 //		}
@@ -557,13 +557,9 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public int howOftenTrueInBetween(AtomicOperator operator, long from, long to) {
-		if (!operator.getPositivity().is(true)) {
-			throw new IllegalArgumentException("This method is only available for positive operators.");
-		}
-
-		_logger.debug("wasTrueInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_OBSERVED
+	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
+		_logger.debug("howOftenNotifiedInBetween({}, {}, {})", operator, from, to);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "');");
