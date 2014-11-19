@@ -54,7 +54,7 @@ public class PipHandler extends PipProcessor {
 	/**
 	 * Manager for remote Java Pip
 	 */
-	private final JavaPipManager _javaPipManager;
+	private JavaPipManager _javaPipManager;
 
 	public PipHandler() {
 		this(new InformationFlowModelManager());
@@ -69,9 +69,10 @@ public class PipHandler extends PipProcessor {
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 		_stateBasedPredicateManager = new StateBasedPredicateManager();
 
-		_javaPipManager = new JavaPipManager();
-		Thread tjpip= new Thread(_javaPipManager);
-		tjpip.start();
+		if (Settings.getInstance().getJavaPipMonitor()) {
+			_javaPipManager = new JavaPipManager();
+			new Thread(_javaPipManager).start();
+		}
 
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
