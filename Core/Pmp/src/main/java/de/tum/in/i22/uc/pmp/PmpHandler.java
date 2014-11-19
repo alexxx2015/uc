@@ -67,8 +67,6 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
-	private final static String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
-
 	private final Marshaller _marshaller;
 	private final Unmarshaller _unmarshaller;
 
@@ -83,12 +81,12 @@ public class PmpHandler extends PmpProcessor {
 		_policymanager = new PolicyManager();
 
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_CONTEXT);
+			JAXBContext jaxbContext = JAXBContext.newInstance(Settings.getInstance().getPmpJaxbContext());
 			_marshaller = jaxbContext.createMarshaller();
 			_marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			_unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
-			throw new RuntimeException("Unable to create Marshaller: " + e.getMessage());
+			throw new RuntimeException("Unable to create Marshaller or Unmarshaller: " + e.getMessage());
 		}
 	}
 

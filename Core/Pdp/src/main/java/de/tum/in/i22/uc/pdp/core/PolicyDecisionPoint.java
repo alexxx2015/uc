@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,6 @@ import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 public class PolicyDecisionPoint extends Observable implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
-	private static final String JAXB_CONTEXT = Settings.getInstance().getPdpJaxbContext();
-
 	private final IPdp2Pip _pip;
 
 	private final ActionDescriptionStore _actionDescriptionStore;
@@ -66,6 +65,8 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 	private final IDistributionManager _distributionManager;
 
+	private final Unmarshaller _unmarshaller;
+
 	public PolicyDecisionPoint() {
 		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
@@ -74,9 +75,16 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		_pip = pip;
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
+
 		_changedOperators = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
+
+		try {
+			_unmarshaller = JAXBContext.newInstance(Settings.getInstance().getPdpJaxbContext()).createUnmarshaller();
+		} catch (JAXBException e) {
+			throw new RuntimeException("Unable to create Marshaller or Unmarshaller: " + e.getMessage());
+		}
 	}
 
 	public boolean deployPolicyXML(XmlPolicy xmlPolicy) {
@@ -108,7 +116,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		}
 
 		try {
-			JAXBElement<?> poElement = (JAXBElement<?>) JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller().unmarshal(is);
+			JAXBElement<?> poElement = (JAXBElement<?>) _unmarshaller.unmarshal(is);
 			PolicyType policy = (PolicyType) poElement.getValue();
 			final String policyName = policy.getName();
 
