@@ -58,7 +58,8 @@ public class PmpHandler extends PmpProcessor {
 	private static final Logger _logger = LoggerFactory.getLogger(PmpHandler.class);
 
 	/**
-	 * Maps data to the XML policies in which it occurs. Used for fast lookup of
+	 * Maps data to the XML policies in which it occurs.
+	 * Used for fast lookup of
 	 * policies for a given data.
 	 */
 	private final Map<IData, Set<XmlPolicy>> _dataToPolicies;
@@ -68,6 +69,7 @@ public class PmpHandler extends PmpProcessor {
 
 	private final static String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
 
+	private final Marshaller _marshaller;
 	private final Unmarshaller _unmarshaller;
 
 	private IPmp2Ptp _ptp;
@@ -81,7 +83,10 @@ public class PmpHandler extends PmpProcessor {
 		_policymanager = new PolicyManager();
 
 		try {
-			_unmarshaller = JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller();
+			JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_CONTEXT);
+			_marshaller = jaxbContext.createMarshaller();
+			_marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			_unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
 			throw new RuntimeException("Unable to create Marshaller: " + e.getMessage());
 		}
@@ -95,7 +100,7 @@ public class PmpHandler extends PmpProcessor {
 
 		try {
 			policy = (PolicyType) ((JAXBElement<?>) _unmarshaller.unmarshal(inp)).getValue();
-		} catch (JAXBException | ClassCastException e) {
+		} catch (JAXBException e) {
 			_logger.error("Unable to unmarshal policy.");
 			throw new IllegalArgumentException("Policy could not be parsed.");
 		}
@@ -110,10 +115,8 @@ public class PmpHandler extends PmpProcessor {
 		StringWriter res = new StringWriter();
 
 		try {
-			Marshaller m = JAXBContext.newInstance(JAXB_CONTEXT).createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(new ObjectFactory().createPolicy(policy), res);
-		} catch (JAXBException | ClassCastException e) {
+			_marshaller.marshal(new ObjectFactory().createPolicy(policy), res);
+		} catch (JAXBException e) {
 			_logger.error(e.getMessage());
 		}
 
