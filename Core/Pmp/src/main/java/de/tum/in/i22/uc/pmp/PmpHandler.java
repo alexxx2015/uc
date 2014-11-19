@@ -66,7 +66,9 @@ public class PmpHandler extends PmpProcessor {
 	private final static String _DATAUSAGE = "dataUsage";
 	private final static String _DATA = "data";
 
-	private static final String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
+	private final static String JAXB_CONTEXT = Settings.getInstance().getPmpJaxbContext();
+
+	private final Unmarshaller _unmarshaller;
 
 	private IPmp2Ptp _ptp;
 	private PolicyManager _policymanager;
@@ -77,6 +79,12 @@ public class PmpHandler extends PmpProcessor {
 		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
 		_policymanager = new PolicyManager();
+
+		try {
+			_unmarshaller = JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller();
+		} catch (JAXBException e) {
+			throw new RuntimeException("Unable to create Marshaller: " + e.getMessage());
+		}
 	}
 
 	private PolicyType xmlToPolicy(String xml) {
@@ -86,8 +94,7 @@ public class PmpHandler extends PmpProcessor {
 		InputStream inp = new ByteArrayInputStream(xml.getBytes());
 
 		try {
-			Unmarshaller u = JAXBContext.newInstance(JAXB_CONTEXT).createUnmarshaller();
-			policy = (PolicyType) ((JAXBElement<?>) u.unmarshal(inp)).getValue();
+			policy = (PolicyType) ((JAXBElement<?>) _unmarshaller.unmarshal(inp)).getValue();
 		} catch (JAXBException | ClassCastException e) {
 			_logger.error("Unable to unmarshal policy.");
 			throw new IllegalArgumentException("Policy could not be parsed.");

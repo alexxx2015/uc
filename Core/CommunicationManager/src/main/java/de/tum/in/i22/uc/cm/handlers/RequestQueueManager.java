@@ -55,7 +55,7 @@ class RequestQueueManager implements Runnable {
 				requestWrapper = _requestQueue.take();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				run=false;
+				run = false;
 				break;
 			}
 
