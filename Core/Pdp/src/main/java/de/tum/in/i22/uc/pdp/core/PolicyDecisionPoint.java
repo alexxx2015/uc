@@ -241,7 +241,19 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		return true;
 	}
 
+
 	public IResponse notifyEvent(IEvent event) {
+		return notifyEvent(event, true);
+	}
+
+	/**
+	 * Notifies an event to this {@link PolicyDecisionPoint}.
+	 *
+	 * @param event the event to notify
+	 * @param syncCall whether the original call was synchronous or asynchronous
+	 * @return
+	 */
+	public IResponse notifyEvent(IEvent event, boolean syncCall) {
 		_logger.info("notifyEvent: {}", event);
 
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
@@ -266,32 +278,45 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			notifyObservers(event);
 
 			/*
+			 * If operators changed, let the
+			 * DistributionManager take care of them.
+			 */
+			if (Settings.getInstance().getDistributionEnabled() && !_changedOperators.isEmpty()) {
+				_distributionManager.update(_changedOperators, false);
+			}
+
+			/*
 			 * Notify the event to all Mechanisms,
 			 * effectively evaluating their condition.
 			 * This is done while simulating, because
 			 * this is not the end of a timestep. Rather,
 			 * we 'simulate' the end of a timestep in
 			 * order to get an evaluation result.
+			 *
+			 * However, we only need to perform this evaluation
+			 * if the event has been notified synchronously.
+			 * If the event was notified asynchronously, the
+			 * caller is not interested in a decision anyway.
 			 */
-			for (Mechanism mech : mechanisms) {
-				mech.startSimulation();
-				mech.notifyEvent(event, decision);
-				mech.stopSimulation();
-			}
-
-			/*
-			 * Finally, check whether operators have changed.
-			 * If so, let the DistributionManager take care of them.
-			 */
-			if (Settings.getInstance().getDistributionEnabled() && !_changedOperators.isEmpty()) {
-				_distributionManager.update(_changedOperators, false);
+			if (syncCall) {
+				for (Mechanism mech : mechanisms) {
+					mech.startSimulation();
+					mech.notifyEvent(event, decision);
+					mech.stopSimulation();
+				}
 			}
 		}
-		else {
+		else if (syncCall) {
 			/*
-			 * This is a desired event.
-			 * Therefore, the first thing to do is to
-			 * start the simulation of the Mechanisms and the PIP.
+			 * This is a desired event and it was
+			 * notified synchronously. In this case
+			 * the event is only simulated and the
+			 * caller is actually interested in an
+			 * evaluation result.
+			 */
+
+			/* The first thing to do is to start the
+			 * simulation of the Mechanisms and the PIP.
 			 */
 			_pip.startSimulation();
 			for (Mechanism mech : mechanisms) {
@@ -303,6 +328,11 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * observers that registered for it (just as above
 			 * for the actual events). Since we started
 			 * simulation before, this will be undone later.
+			 *
+			 * Different from the case above, where the
+			 * DistributionManager takes care about changed
+			 * operators, they are ignored here, because the
+			 * event is actually not happening.
 			 */
 			_pip.update(event);
 			setChanged();
@@ -319,15 +349,17 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 				mech.stopSimulation();
 			}
 			_pip.stopSimulation();
-
-			/*
-			 * If it is a desired event, we ignore operators that have
-			 * changed, because the event did (or the state change)
-			 * did not actually happen.
-			 */
 		}
+		/*else {
+			// The notified event is desired and it was
+			// notified asynchronously. In this case there
+			// is nothing to do, because the event is actually
+			// not happening and the caller is not interested
+			// in an evaluation result.
+		}*/
 
-		// prepare for next
+
+		// prepare for next iteration
 		_changedOperators.clear();
 
 		return decision.toResponse();

@@ -2,9 +2,10 @@ package de.tum.in.i22.uc.pdp;
 
 import java.util.Map;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
@@ -77,59 +78,38 @@ public class PdpHandler extends PdpProcessor {
 		return _pxpManager.registerPxp(pxp);
 	}
 
+	Stopwatch async = Stopwatch.createUnstarted();
+	Stopwatch sync = Stopwatch.createUnstarted();
+
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		_pdp.notifyEvent(event);
-
-		/*
-		// Signaling to PIP is now performed by PolicyDecisionPoint
-		if (event.isActual()) {
-			getPip().update(event);
-		}
-		*/
-
-		/*
-		// This is now done by the PolicyDecisionPoint
-		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(res, false);
-		}
-		*/
+//		async.start();
+		_pdp.notifyEvent(event, false);
+//		_logger.debug("Stopwatch: time spent in notifyEventAsync: {}ms.", async.stop().elapsed(TimeUnit.MILLISECONDS));
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
+//		sync.start();
 		if (event == null) {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
-		IResponse res = _pdp.notifyEvent(event);
+		IResponse res = _pdp.notifyEvent(event, true);
 
 		/*
-		 * (1) If the event is actual, we update the PIP in any case
-		 *
-		 * (2) If the event is *not* actual AND if the event was allowed by the
+		 * If the event is *not* actual AND if the event was allowed by the
 		 * PDP AND if for this event allowance implies that the event is to be
 		 * considered as actual event, then we create the corresponding actual
 		 * event and signal it to both the PIP and the PDP as actual event.
 		 */
 
-		/*
-		// Signaling to PIP is now performed by PolicyDecisionPoint
-		if (event.isActual()) {
-			getPip().update(event);
-		}
-		*/
 
 		if (!event.isActual() && res.isAuthorizationAction(EStatus.ALLOW) && event.allowImpliesActual()) {
 			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
 			notifyEventAsync(ev2);
 		}
 
-		/*
-		// This is now done by the PolicyDecisionPoint
-		if (res instanceof DistributedPdpResponse) {
-			_distributionManager.update(res, false);
-		}*/
-
+//		_logger.debug("Stopwatch: time spent in notifyEventSync: {}ms.", sync.stop().elapsed(TimeUnit.MILLISECONDS));
 		return res;
 	}
 

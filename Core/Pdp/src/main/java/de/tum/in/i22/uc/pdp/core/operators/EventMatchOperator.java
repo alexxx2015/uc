@@ -46,31 +46,8 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 		return setId(id + 1);
 	}
 
-//	public static final boolean considerHappenedForEntireTimestep = true;
-
 	@Override
 	public boolean tick(boolean endOfTimestep) {
-//		Trilean sinceUpdate = _state.get(StateVariable.SINCE_UPDATE);
-//
-//		boolean result = false;
-//
-//		if (considerHappenedForEntireTimestep || sinceUpdate == Trilean.TRUE) {
-//			int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
-//
-//			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//			_state.set(StateVariable.SINCE_LAST_TICK, 0);
-//
-//			result = valueAtLastTick > 0;
-//		}
-//		else {
-//			_state.set(StateVariable.VALUE_AT_LAST_TICK, 0);
-//			_state.set(StateVariable.SINCE_LAST_TICK, 0);
-//		}
-//
-//		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
-//
-//		return result;
-
 		int valueAtLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
@@ -86,10 +63,6 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator, Ob
 		int valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (valueAtLastTick == 0) {
-//			Pair<Long,Long> fromTo = getFromTo(Settings.getInstance().getDistributionGranularity());
-//
-//			valueAtLastTick = _pdp.getDistributionManager().howOftenTrueInBetween(this, fromTo.getLeft(), fromTo.getRight());
-
 			long lastTick = _mechanism.getLastTick();
 
 			valueAtLastTick = _pdp.getDistributionManager().howOftenNotifiedInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());

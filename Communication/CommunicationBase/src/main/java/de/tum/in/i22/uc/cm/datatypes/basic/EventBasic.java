@@ -15,8 +15,8 @@ public class EventBasic implements IEvent, Serializable {
 	private static final long serialVersionUID = 4317254908091570374L;
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
 
-	private String _name = null;
-	private String _pep = null;
+	private final String _name;
+	private String _pep;
 	private boolean _allowImpliesActual = false;
 	private boolean _isActual = false;
 	private final Map<String, String> _parameters = new HashMap<>();
@@ -28,15 +28,14 @@ public class EventBasic implements IEvent, Serializable {
 			_parameters.putAll(map);
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
 
+			/*
+			 * If the event has an allowImpliesActual parameter, use it.
+			 * Otherwise, fall back to default value.
+			 */
 			String allowImpliesActual = _parameters.get(Settings.PROP_NAME_allowImpliesActual);
-			if (allowImpliesActual != null) {
-				// If the event has a AIA parameter, use it
-				_allowImpliesActual = Boolean.valueOf(allowImpliesActual);
-			}
-			else {
-				// otherwise, fallback to Setting default value
-				_allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
-			}
+			_allowImpliesActual = allowImpliesActual != null
+					? Boolean.valueOf(allowImpliesActual)
+					: Settings.getInstance().getAllowImpliesActual();
 		}
 	}
 
@@ -104,7 +103,6 @@ public class EventBasic implements IEvent, Serializable {
 		}
 		return isEqual;
 	}
-
 
 	@Override
 	public int hashCode() {
