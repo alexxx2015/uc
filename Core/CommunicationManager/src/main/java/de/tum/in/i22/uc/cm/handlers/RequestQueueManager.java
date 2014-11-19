@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.processing.ERequestType;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -64,17 +65,24 @@ class RequestQueueManager implements Runnable {
 
 			_logger.debug("Processing " + request);
 
-			if (request instanceof PdpRequest) {
+			switch (request.getRequestType()) {
+			case PDP_REQUEST:
 				response = ((PdpRequest<?>) request).process(_pdp);
-			} else if (request instanceof PipRequest) {
+				break;
+			case PIP_REQUEST:
 				response = ((PipRequest<?>) request).process(_pip);
-			} else if (request instanceof PmpRequest) {
+				break;
+			case PMP_REQUEST:
 				response = ((PmpRequest<?>) request).process(_pmp);
-			} else if (request instanceof PoisonPillRequest) {
+				break;
+			case POISON_PILL:
 				response = ((PoisonPillRequest)request).process(new PoisonPillProcessor());
-			} else {
+				break;
+			default:
 				_logger.warn("Unknown queue element: " + request);
+				break;
 			}
+
 			if (forwarder != null) {
 				forwarder.forwardResponse(request, response);
 			}
@@ -112,6 +120,11 @@ class RequestQueueManager implements Runnable {
 	}
 
 	private class PoisonPillRequest extends Request<Object, PoisonPillProcessor>{
+
+		public PoisonPillRequest() {
+			super(ERequestType.POISON_PILL);
+		}
+
 		@Override
 		public Object process(PoisonPillProcessor processor) {
 			run = false;
