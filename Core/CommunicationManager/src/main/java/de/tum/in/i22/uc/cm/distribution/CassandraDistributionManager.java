@@ -75,7 +75,7 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "opid text,"
 						+ "time timeuuid,"
 						+ "location text,"
-						+ "PRIMARY KEY (opid,time)) "
+						+ "PRIMARY KEY (opid,time,location)) "
 						+ "WITH CLUSTERING ORDER BY (time DESC);");
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
