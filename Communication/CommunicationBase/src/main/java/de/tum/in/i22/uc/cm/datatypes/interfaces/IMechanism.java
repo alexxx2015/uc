@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
-public interface IMechanism {
+import de.tum.in.i22.uc.generic.Simulatable;
+
+public interface IMechanism extends Simulatable {
 
 	/**
 	 * Returns the name of this {@link IMechanism}.
@@ -19,11 +21,4 @@ public interface IMechanism {
 	public long getLastTick();
 
 	public long getTimestepSize();
-
-	boolean isSimulating();
-
-	void startSimulation();
-
-	void stopSimulation();
-
 }

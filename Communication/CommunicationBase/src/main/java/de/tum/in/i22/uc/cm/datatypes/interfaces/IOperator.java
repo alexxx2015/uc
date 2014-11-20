@@ -1,8 +1,9 @@
 package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
+import de.tum.in.i22.uc.generic.Simulatable;
 
-public interface IOperator {
+public interface IOperator extends Simulatable {
 
 	/**
 	 * Returns this {@link IOperator}'s internal identifier as a string.

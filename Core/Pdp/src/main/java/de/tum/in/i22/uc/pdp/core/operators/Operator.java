@@ -180,17 +180,24 @@ public abstract class Operator extends Observable implements IOperator {
 		return _positivity;
 	}
 
+	@Override
 	public void startSimulation() {
 		_logger.debug("startSimulation. Storing " + _state);
 		_backupStates.addFirst(_state.deepClone());
 	}
 
+	@Override
 	public void stopSimulation() {
 		if (_backupStates.isEmpty()) {
 			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
 		_state = _backupStates.getFirst();
 		_logger.debug("stopSimulation. Restoring " + _state);
+	}
+
+	@Override
+	public boolean isSimulating() {
+		return !_backupStates.isEmpty();
 	}
 
 	public final State getState() {

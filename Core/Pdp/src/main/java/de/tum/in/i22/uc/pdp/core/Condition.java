@@ -63,4 +63,9 @@ public class Condition implements ICondition {
 	public void stopSimulation() {
 		_operator.stopSimulation();
 	}
+
+	@Override
+	public boolean isSimulating() {
+		return _operator.isSimulating();
+	}
 }

@@ -38,7 +38,7 @@ public class PxpManager {
 			return false;
 		}
 
-		_logger.info("[PXPStub] Executing {}synchronous action {} with parameters: {}",
+		_logger.info("Executing {}synchronous action {} with parameters: {}",
 				(synchronous == true ? "" : "a"), execAction.getName(), execAction.getParameters());
 
 		String pxpId = execAction.getPxpId();

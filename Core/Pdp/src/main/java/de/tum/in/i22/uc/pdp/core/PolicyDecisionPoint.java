@@ -14,13 +14,14 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
+import java.util.concurrent.ExecutorCompletionService;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.PdpThreading;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
@@ -71,6 +73,9 @@ public class PolicyDecisionPoint implements Observer {
 
 	private final Unmarshaller _unmarshaller;
 
+	private final ExecutorCompletionService<?> _ecsOperators;
+	private final ExecutorCompletionService<Pair<Mechanism,Boolean>> _ecsMechanisms;
+
 	public PolicyDecisionPoint() {
 		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
@@ -83,6 +88,9 @@ public class PolicyDecisionPoint implements Observer {
 		_changedOperators = new LinkedList<>();
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
+
+		_ecsOperators = new ExecutorCompletionService<>(PdpThreading.instance());
+		_ecsMechanisms = new ExecutorCompletionService<>(PdpThreading.instance());
 
 		try {
 			_unmarshaller = JAXBContext.newInstance(Settings.getInstance().getPdpJaxbContext()).createUnmarshaller();
@@ -260,6 +268,11 @@ public class PolicyDecisionPoint implements Observer {
 		}
 	}
 
+	void updateAll(Collection<AtomicOperator> operators, IEvent event) {
+		operators.forEach(o -> _ecsOperators.submit(() -> o.update(event), null));
+		operators.forEach(o -> PdpThreading.take(_ecsOperators));
+	}
+
 
 	public IResponse notifyEvent(IEvent event) {
 		return notifyEvent(event, true);
@@ -278,6 +291,7 @@ public class PolicyDecisionPoint implements Observer {
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		Collection<Mechanism> mechanisms = _actionDescriptionStore.getMechanisms(event.getName());
+		Collection<AtomicOperator> operators = _actionDescriptionStore.getAtomicOperators(event.getName());
 
 		if (event.isActual()) {
 			/*
@@ -293,7 +307,7 @@ public class PolicyDecisionPoint implements Observer {
 			 * as the latter will rely on the PIP's new state.
 			 */
 			_pip.update(event);
-			_actionDescriptionStore.getAtomicOperators(event.getName()).forEach(o -> o.update(event));
+			updateAll(operators, event);
 
 			/*
 			 * If operators changed, let the
@@ -317,13 +331,19 @@ public class PolicyDecisionPoint implements Observer {
 			 * caller is not interested in a decision anyway.
 			 */
 			if (syncCall) {
-				for (Mechanism mech : mechanisms) {
-					mech.startSimulation();
-					if (mech.notifyEvent(event)) {
-						decision.processMechanism(mech);
+				mechanisms.forEach(m -> _ecsMechanisms.submit(() -> {
+					m.startSimulation();
+					boolean result = m.notifyEvent(event);
+					m.stopSimulation();
+					return Pair.of(m,result);
+				}));
+
+				mechanisms.forEach(m -> {
+					Pair<Mechanism,Boolean> res = PdpThreading.takeResult(_ecsMechanisms);
+					if (res.getRight()) {
+						decision.processMechanism(res.getLeft());
 					}
-					mech.stopSimulation();
-				}
+				});
 			}
 		}
 		else if (syncCall) {
@@ -336,12 +356,14 @@ public class PolicyDecisionPoint implements Observer {
 			 */
 
 			/* The first thing to do is to start the
-			 * simulation of the Mechanisms and the PIP.
+			 * simulation of the PIP and the Mechanisms.
+			 * This is sone in parallel using a
+			 * ExecutorCompletionService.
 			 */
-			_pip.startSimulation();
-			for (Mechanism mech : mechanisms) {
-				mech.startSimulation();
-			}
+			_ecsMechanisms.submit(() -> _pip.startSimulation(), null);
+			mechanisms.forEach(m -> _ecsMechanisms.submit(() -> m.startSimulation(), null));
+			mechanisms.forEach(m -> PdpThreading.take(_ecsMechanisms));
+			PdpThreading.take(_ecsMechanisms);
 
 			/*
 			 * Then, notify the event to the PIP and to all
@@ -355,7 +377,7 @@ public class PolicyDecisionPoint implements Observer {
 			 * event is actually not happening.
 			 */
 			_pip.update(event);
-			_actionDescriptionStore.getAtomicOperators(event.getName()).forEach(o -> o.update(event));
+			updateAll(operators, event);
 
 			/*
 			 * Notify the event to all Mechanisms,
@@ -363,13 +385,20 @@ public class PolicyDecisionPoint implements Observer {
 			 * After getting the evaluation result, stop
 			 * the simulation.
 			 */
-			for (Mechanism mech : mechanisms) {
-				if (mech.notifyEvent(event)) {
-					decision.processMechanism(mech);
-				}
-				mech.stopSimulation();
-			}
+			mechanisms.forEach(m -> _ecsMechanisms.submit(() -> {
+				boolean result = m.notifyEvent(event);
+				m.stopSimulation();
+				return Pair.of(m,result);
+			}));
+
 			_pip.stopSimulation();
+
+			mechanisms.forEach(m -> {
+				Pair<Mechanism,Boolean> res = PdpThreading.takeResult(_ecsMechanisms);
+				if (res.getRight()) {
+					decision.processMechanism(res.getLeft());
+				}
+			});
 		}
 		/*else {
 			// The notified event is desired and it was
@@ -410,9 +439,7 @@ public class PolicyDecisionPoint implements Observer {
 
 	public void stop() {
 		for (Map<String, Mechanism> map : _policyTable.values()) {
-			for (Mechanism mech : map.values()) {
-				mech.revoke();
-			}
+			map.values().forEach(m -> m.revoke());
 		}
 
 		_policyTable.clear();
