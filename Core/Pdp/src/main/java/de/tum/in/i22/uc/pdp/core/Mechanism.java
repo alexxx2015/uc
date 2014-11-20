@@ -19,7 +19,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
 public abstract class Mechanism extends Observable implements Runnable, IMechanism {
@@ -91,9 +90,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_backupCondition = new ArrayDeque<>(2);
 
 		_executeAsyncActions = new LinkedList<>();
-		for (ExecuteAsyncActionType execAction : mech.getExecuteAsyncAction()) {
-			_executeAsyncActions.add(new ExecuteAction(execAction));
-		}
+		mech.getExecuteAsyncAction().forEach(a -> _executeAsyncActions.add(new ExecuteAction(a)));
 
 		_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
 

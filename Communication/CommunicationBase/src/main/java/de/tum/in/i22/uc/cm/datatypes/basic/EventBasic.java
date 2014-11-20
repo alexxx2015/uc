@@ -18,14 +18,22 @@ public class EventBasic implements IEvent, Serializable {
 	private final String _name;
 	private String _pep;
 	private boolean _allowImpliesActual = false;
-	private boolean _isActual = false;
+	private final boolean _isActual;
 	private final Map<String, String> _parameters = new HashMap<>();
 	private long _timestamp;
 
-	public EventBasic(String name, Map<String, String> map) {
+	public EventBasic(String name, Map<String, String> params) {
+		this(name, params, false, 0);
+	}
+
+	public EventBasic(String name, Map<String, String> params, boolean isActual) {
+		this(name, params, isActual, 0);
+	}
+
+	public EventBasic(String name, Map<String, String> params, boolean isActual, long timeStamp) {
 		_name = name;
-		if (map != null) {
-			_parameters.putAll(map);
+		if (params != null) {
+			_parameters.putAll(params);
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
 
 			/*
@@ -37,16 +45,9 @@ public class EventBasic implements IEvent, Serializable {
 					? Boolean.valueOf(allowImpliesActual)
 					: Settings.getInstance().getAllowImpliesActual();
 		}
-	}
 
-	public EventBasic(String name, Map<String, String> map, boolean isActual) {
-		this(name, map);
-		_isActual = isActual;
-	}
-
-	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
-		this(name, map, isActual);
 		_timestamp = timeStamp;
+		_isActual = isActual;
 	}
 
 	@Override
