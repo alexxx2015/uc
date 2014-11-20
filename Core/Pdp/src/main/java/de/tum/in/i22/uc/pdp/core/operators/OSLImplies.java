@@ -67,22 +67,24 @@ public class OSLImplies extends ImpliesType {
 			if (!PdpThreading.resultOf(taken)) {
 				valueAtLastTick = true;
 				PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+				_logger.info("Result: true. (op1 was false. Not waiting for op2");
 			}
 			else {
 				valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}
 		else /*if (taken == op2Future)*/ {
 			if (PdpThreading.resultOf(taken)) {
 				valueAtLastTick = true;
 				PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+				_logger.info("Result: true. (op2 was true. Not waiting for op1");
 			}
 			else {
 				valueAtLastTick = !PdpThreading.takeResult(_executorCompletionService);
+				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}
-
-		_logger.info("op1: {}; op2: {}. Result: {}", PdpThreading.resultOf(op1Future), PdpThreading.resultOf(op2Future), valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 

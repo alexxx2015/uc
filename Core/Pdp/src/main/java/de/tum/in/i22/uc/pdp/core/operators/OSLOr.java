@@ -2,8 +2,6 @@ package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,19 +59,19 @@ public class OSLOr extends OrType {
 	@Override
 	public boolean tick(boolean endOfTimestep) {
 
-		Future<Boolean> op1Future = _executorCompletionService.submit(() -> op1.tick(endOfTimestep));
-		Future<Boolean> op2Future = _executorCompletionService.submit(() -> op2.tick(endOfTimestep));
+		_executorCompletionService.submit(() -> op1.tick(endOfTimestep));
+		_executorCompletionService.submit(() -> op2.tick(endOfTimestep));
 
 		boolean valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
 
 		if (valueAtLastTick) {
 			PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+			_logger.info("Result: {}. (One of the operands was true, not waiting for the other operand to be evaluated)", true);
 		}
 		else {
 			valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
-
-		_logger.info("op1: {}; op2: {}. Result: {}", PdpThreading.resultOf(op1Future), PdpThreading.resultOf(op2Future), valueAtLastTick);
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
@@ -109,19 +107,34 @@ public class OSLOr extends OrType {
 	@Override
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 
-		/*
-		 * TODO parallelize
-		 */
-		boolean op1state = op1.distributedTickPostprocessing(endOfTimestep);
-		boolean op2state = op2.distributedTickPostprocessing(endOfTimestep);
+		_executorCompletionService.submit(() -> op1.distributedTickPostprocessing(endOfTimestep));
+		_executorCompletionService.submit(() -> op2.distributedTickPostprocessing(endOfTimestep));
 
-		boolean valueAtLastTick = op1state || op2state;
+		boolean valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
 
-		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+		if (valueAtLastTick) {
+			PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+			_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
+		}
+		else {
+			valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
+		}
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
+
+//		boolean op1state = op1.distributedTickPostprocessing(endOfTimestep);
+//		boolean op2state = op2.distributedTickPostprocessing(endOfTimestep);
+//
+//		boolean valueAtLastTick = op1state || op2state;
+//
+//		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
+//
+//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+//
+//		return valueAtLastTick;
 	}
 
 

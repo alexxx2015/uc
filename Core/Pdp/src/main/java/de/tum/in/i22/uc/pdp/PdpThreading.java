@@ -6,6 +6,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * A class for managing {@link Executors} within the PDP.
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class PdpThreading {
 	private static ExecutorService _instance = null;
 
@@ -26,6 +32,15 @@ public class PdpThreading {
 		return _instance;
 	}
 
+	/**
+	 * A wrapper method for {@link Future#get()},
+	 * essentially taking care of the Exceptions.
+	 * This method throws a {@link RuntimeException}
+	 * if any Exception occurs.
+	 *
+	 * @param future
+	 * @return
+	 */
 	public static <T> T resultOf(Future<T> future) {
 		try {
 			return future.get();
@@ -34,6 +49,15 @@ public class PdpThreading {
 		}
 	}
 
+	/**
+	 * A wrapper method for {@link ExecutorCompletionService#take()},
+	 * essentially taking care of the Exceptions.
+	 * This method throws a {@link RuntimeException}
+	 * if any Exception occurs.
+	 *
+	 * @param future
+	 * @return
+	 */
 	public static <T> Future<T> take(ExecutorCompletionService<T> ecs) {
 		try {
 			return ecs.take();
@@ -42,6 +66,18 @@ public class PdpThreading {
 		}
 	}
 
+	/**
+	 * A method performing {@link ExecutorCompletionService#take()}
+	 * on the specified parameter. After taking the Future object
+	 * out of the {@link ExecutorCompletionService},
+	 * {@link PdpThreading#resultOf(Future)} is applied to get the
+	 * actual result.
+	 *
+	 * Throws a {@link RuntimeException} if any Exception occurs.
+	 *
+	 * @param future
+	 * @return
+	 */
 	public static <T> T takeResult(ExecutorCompletionService<T> ecs) {
 		try {
 			return resultOf(ecs.take());
