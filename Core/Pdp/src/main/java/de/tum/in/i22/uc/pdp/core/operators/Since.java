@@ -56,25 +56,25 @@ public class Since extends SinceType {
 			_state.set(StateVariable.ALWAYS_A, false);
 		}
 
-		if (_state.get(StateVariable.ALWAYS_A)) {
+		if ((boolean) _state.get(StateVariable.ALWAYS_A)) {
 			valueAtLastTick = true;
-			_logger.debug("A was always true. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
+			_logger.debug("A was always true. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
 		}
 		else {
 			if (stateB) {
 				valueAtLastTick = true;
 				alwaysASinceLastB = true;
-				_logger.debug("B is happening at this timestep. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
+				_logger.debug("B is happening at this timestep. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
 			}
 			else {
 				if (stateA && alwaysASinceLastB) {
 					valueAtLastTick = true;
-					_logger.debug("A was always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
+					_logger.debug("A was always true since last B happened. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 				else {
 					valueAtLastTick = false;
 					alwaysASinceLastB = false;
-					_logger.debug("A was NOT always true since last B happened. Result: {}.", _state.get(StateVariable.VALUE_AT_LAST_TICK));
+					_logger.debug("A was NOT always true since last B happened. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
 				}
 			}
 		}

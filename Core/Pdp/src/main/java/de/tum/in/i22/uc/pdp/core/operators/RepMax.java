@@ -38,7 +38,7 @@ public class RepMax extends RepMaxType {
 
 	@Override
 	public boolean tick(boolean endOfTimestep) {
-		if (_state.get(StateVariable.IMMUTABLE)) {
+		if ((boolean) _state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
