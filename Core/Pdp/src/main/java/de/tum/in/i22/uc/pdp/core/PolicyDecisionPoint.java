@@ -14,8 +14,6 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -29,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -41,14 +40,17 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
+import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.core.operators.State;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class PolicyDecisionPoint extends Observable implements Observer {
+public class PolicyDecisionPoint implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 
 	private final IPdp2Pip _pip;
@@ -243,6 +245,21 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 		return true;
 	}
 
+	void addObserver(AtomicOperator o) {
+		switch(o.getOperatorType()) {
+		case STATE_BASED:
+			_actionDescriptionStore.add((StateBasedOperator) o);
+			break;
+		case EVENT_MATCH:
+			_actionDescriptionStore.add((EventMatchOperator) o);
+			break;
+		case CONDITION_PARAM_MATCH:
+			_actionDescriptionStore.add((ConditionParamMatchOperator) o);
+			break;
+		default:
+		}
+	}
+
 
 	public IResponse notifyEvent(IEvent event) {
 		return notifyEvent(event, true);
@@ -260,7 +277,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
-		Collection<Mechanism> mechanisms = _actionDescriptionStore.getMechanismList(event.getName());
+		Collection<Mechanism> mechanisms = _actionDescriptionStore.getMechanisms(event.getName());
 
 		if (event.isActual()) {
 			/*
@@ -276,8 +293,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * as the latter will rely on the PIP's new state.
 			 */
 			_pip.update(event);
-			setChanged();
-			notifyObservers(event);
+			_actionDescriptionStore.getAtomicOperators(event.getName()).forEach(o -> o.update(event));
 
 			/*
 			 * If operators changed, let the
@@ -303,7 +319,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			if (syncCall) {
 				for (Mechanism mech : mechanisms) {
 					mech.startSimulation();
-					mech.notifyEvent(event, decision);
+					if (mech.notifyEvent(event)) {
+						decision.processMechanism(mech);
+					}
 					mech.stopSimulation();
 				}
 			}
@@ -337,8 +355,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * event is actually not happening.
 			 */
 			_pip.update(event);
-			setChanged();
-			notifyObservers(event);
+			_actionDescriptionStore.getAtomicOperators(event.getName()).forEach(o -> o.update(event));
 
 			/*
 			 * Notify the event to all Mechanisms,
@@ -347,7 +364,9 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 			 * the simulation.
 			 */
 			for (Mechanism mech : mechanisms) {
-				mech.notifyEvent(event, decision);
+				if (mech.notifyEvent(event)) {
+					decision.processMechanism(mech);
+				}
 				mech.stopSimulation();
 			}
 			_pip.stopSimulation();
@@ -400,7 +419,7 @@ public class PolicyDecisionPoint extends Observable implements Observer {
 	}
 
 	public void addMechanism(Mechanism mechanism) {
-		_actionDescriptionStore.addMechanism(mechanism);
+		_actionDescriptionStore.add(mechanism);
 	}
 
 	@Override

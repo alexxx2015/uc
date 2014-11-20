@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.xsd.FalseType;
 
@@ -35,5 +37,14 @@ public class OSLFalse extends FalseType implements AtomicOperator {
 	@Override
 	public boolean getValueAtLastTick() {
 		return false;
+	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		return EOperatorType.OSL_FALSE;
+	}
+
+	@Override
+	public void update(IEvent event) {
 	}
 }

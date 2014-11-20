@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.TrueType;
@@ -37,5 +39,14 @@ public class OSLTrue extends TrueType implements AtomicOperator {
 	@Override
 	public boolean getValueAtLastTick() {
 		return true;
+	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		return EOperatorType.OSL_TRUE;
+	}
+
+	@Override
+	public void update(IEvent event) {
 	}
 }

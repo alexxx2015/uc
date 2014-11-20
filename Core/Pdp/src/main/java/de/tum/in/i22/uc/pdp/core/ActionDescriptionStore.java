@@ -3,65 +3,96 @@ package de.tum.in.i22.uc.pdp.core;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
+import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
 class ActionDescriptionStore {
 	/**
 	 * Maps event names to {@link EventMatch} objects
 	 */
-	private final Map<String, List<EventMatch>> _eventMatchMap;
+	private final Map<String, List<EventMatchOperator>> _eventMatchMap;
 
 	/**
 	 * Maps event names to {@link Mechanism}s
 	 */
 	private final Map<String, List<Mechanism>> _mechanismMap;
 
+	private final Set<StateBasedOperator> _sboSet;
+	private final Set<ConditionParamMatchOperator> _conditionSet;
+
 	ActionDescriptionStore() {
-		_eventMatchMap = Collections.synchronizedMap(new HashMap<String, List<EventMatch>>());
+		_eventMatchMap = Collections.synchronizedMap(new HashMap<String, List<EventMatchOperator>>());
 		_mechanismMap = Collections.synchronizedMap(new HashMap<String, List<Mechanism>>());
+		_sboSet = Collections.synchronizedSet(new HashSet<StateBasedOperator>());
+		_conditionSet = Collections.synchronizedSet(new HashSet<ConditionParamMatchOperator>());
 	}
 
-//	void addEventMatch(EventMatch e) {
-//		List<EventMatch> eventMatchList = _eventMatchMap.get(e.getAction());
-//		if (eventMatchList == null) {
-//			eventMatchList = Collections.synchronizedList(new LinkedList<EventMatch>());
-//		}
-//		eventMatchList.add(e);
-//
-//		_eventMatchMap.put(e.getAction(), eventMatchList);
-//	}
+	void add(EventMatchOperator e) {
+		String actionName = e.getAction();
+		List<EventMatchOperator> eventMatches = _eventMatchMap.get(actionName);
 
-	void addMechanism(Mechanism m) {
-		List<Mechanism> mechanismList = _mechanismMap.get(m.getTriggerEvent().getAction());
-		if (mechanismList == null) {
-			mechanismList = Collections.synchronizedList(new LinkedList<Mechanism>());
-			_mechanismMap.put(m.getTriggerEvent().getAction(), mechanismList);
+		if (eventMatches == null) {
+			eventMatches = Collections.synchronizedList(new LinkedList<>());
+			_eventMatchMap.put(actionName, eventMatches);
 		}
-		mechanismList.add(m);
+
+		eventMatches.add(e);
+	}
+
+	void add(StateBasedOperator s) {
+		_sboSet.add(s);
+	}
+
+	void add(ConditionParamMatchOperator c) {
+		_conditionSet.add(c);
 	}
 
 	/**
-	 * Returns the list of {@link EventMatch}es for the specified eventAction.
+	 * Map the mechanism's trigger event to the actual Mechanism.
 	 *
-	 * @param eventAction
-	 * @return
+	 * @param mechanism
 	 */
-	 List<EventMatch> getEventList(String eventAction) {
-		List<EventMatch> list;
-		if (eventAction == null || (list = _eventMatchMap.get(eventAction)) == null) {
-			return Collections.emptyList();
+	void add(Mechanism mechanism) {
+		String actionName = mechanism.getTriggerEvent().getAction();
+		List<Mechanism> mechanisms = _mechanismMap.get(actionName);
+
+		if (mechanisms == null) {
+			mechanisms = Collections.synchronizedList(new LinkedList<>());
+			_mechanismMap.put(actionName, mechanisms);
 		}
 
-		// important: return a _new_ list. Otherwise the returned list would need to be
-		// synchronized by all users of the list. We can avoid concurrency conflicts
-		// by returning a new map.
-		return new LinkedList<>(list);
+		mechanisms.add(mechanism);
 	}
 
+	Collection<AtomicOperator> getAtomicOperators(String eventName) {
+		List<AtomicOperator> result = new LinkedList<>();
+
+		List<EventMatchOperator> eventMatches = _eventMatchMap.get(eventName);
+		if (eventMatches != null) {
+			synchronized (eventMatches) {
+				result.addAll(_eventMatchMap.get(eventName));
+			}
+		}
+
+		synchronized (_sboSet) {
+			result.addAll(_sboSet);
+		}
+
+		synchronized (_conditionSet) {
+			result.addAll(_conditionSet);
+		}
+
+		return result;
+	}
 
 	/**
 	 * Returns the list of {@link Mechanism}s for the specified eventAction.
@@ -69,7 +100,7 @@ class ActionDescriptionStore {
 	 * @param eventAction
 	 * @return
 	 */
-	Collection<Mechanism> getMechanismList(String eventAction) {
+	Collection<Mechanism> getMechanisms(String eventAction) {
 		Collection<Mechanism> result = new LinkedList<>();
 
 		List<Mechanism> matchingEvent = _mechanismMap.get(eventAction);

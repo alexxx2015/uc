@@ -21,4 +21,6 @@ public interface IOperator {
 	public long getTTL();
 
 	public boolean getValueAtLastTick();
+
+	public EOperatorType getOperatorType();
 }

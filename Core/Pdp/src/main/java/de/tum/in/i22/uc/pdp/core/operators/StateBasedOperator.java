@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +9,10 @@ import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
-import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
 
@@ -30,7 +28,7 @@ import de.tum.in.i22.uc.pdp.xsd.StateBasedOperatorType;
  * @author Enrico Lovat, Florian Kelbert
  *
  */
-public class StateBasedOperator extends StateBasedOperatorType implements AtomicOperator, Observer  {
+public class StateBasedOperator extends StateBasedOperatorType implements AtomicOperator  {
 	private static Logger _logger = LoggerFactory.getLogger(StateBasedOperator.class);
 
 	public static final String OP_IS_COMBINED_WITH = "isCombinedWith";
@@ -121,7 +119,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	@Override
-	public Collection<Observer> getObservers(Collection<Observer> observers) {
+	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		observers.add(this);
 		return observers;
 	}
@@ -200,51 +198,53 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		return sinceLastTick;
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
-			/*
-			 * An event is happening and updates this operator. We get
-			 * the boolean that indicates this operator's value since
-			 * the last tick has occurred.
-			 */
-			boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+	public void update(IEvent arg) {
+		/*
+		 * An event is happening and updates this operator. We get
+		 * the boolean that indicates this operator's value since
+		 * the last tick has occurred.
+		 */
+		boolean sinceLastTick = _state.get(StateVariable.SINCE_LAST_TICK);
+
+		/*
+		 * If the sinceLastTick variable is NOT EQUAL to this operator's
+		 * positivity, this means that our local evaluation result is not yet
+		 * definite: The evaluation so far (within this timestep) always
+		 * returned a value that necessitates coordination with other
+		 * systems to get a definite evaluation result. Hence, in this case
+		 * (i.e. if _positivity != sinceLastTick), we perform an evaluation
+		 * of this operator using the PIP (second part of the if statement)
+		 * (this execution has been made conditional for performance
+		 * reasons). If the evaluation result IS EQUAL to this operator's
+		 * positivity, the sinceLastTick state variable is set accordingly
+		 * and our observers are notified (which will basically inform
+		 * remote systems about our local state change).
+		 */
+		if (!_positivity.is(sinceLastTick) && _positivity.is(_pdp.getPip().evaluatePredicateCurrentState(_predicate))) {
+			_state.set(StateVariable.SINCE_LAST_TICK, _positivity.value());
 
 			/*
-			 * If the sinceLastTick variable is NOT EQUAL to this operator's
-			 * positivity, this means that our local evaluation result is not yet
-			 * definite: The evaluation so far (within this timestep) always
-			 * returned a value that necessitates coordination with other
-			 * systems to get a definite evaluation result. Hence, in this case
-			 * (i.e. if _positivity != sinceLastTick), we perform an evaluation
-			 * of this operator using the PIP (second part of the if statement)
-			 * (this execution has been made conditional for performance
-			 * reasons). If the evaluation result IS EQUAL to this operator's
-			 * positivity, the sinceLastTick state variable is set accordingly
-			 * and our observers are notified (which will basically inform
-			 * remote systems about our local state change).
+			 * Not that our observers are only notified if the result of the
+			 * above evaluation corresponds to this operator's positivity.
+			 * Consequence: For operators with positive positivity
+			 * (isCombinedWith), we notify the observers if the evaluation
+			 * result is satisfaction (i.e. telling the others that the
+			 * operator was satisfied at our site and hence that it is
+			 * satisfied globally). For operators with negative positivity
+			 * (isNotIn, isOnlyIn), we notify our observers if the
+			 * evaluation result is violation (i.e. telling the others that
+			 * the operator was violated at our site and hence that it is
+			 * violated globally.
 			 */
-			if (!_positivity.is(sinceLastTick) && _positivity.is(_pdp.getPip().evaluatePredicateCurrentState(_predicate))) {
-				_state.set(StateVariable.SINCE_LAST_TICK, _positivity.value());
-
-				/*
-				 * Not that our observers are only notified if the result of the
-				 * above evaluation corresponds to this operator's positivity.
-				 * Consequence: For operators with positive positivity
-				 * (isCombinedWith), we notify the observers if the evaluation
-				 * result is satisfaction (i.e. telling the others that the
-				 * operator was satisfied at our site and hence that it is
-				 * satisfied globally). For operators with negative positivity
-				 * (isNotIn, isOnlyIn), we notify our observers if the
-				 * evaluation result is violation (i.e. telling the others that
-				 * the operator was violated at our site and hence that it is
-				 * violated globally.
-				 */
-				setChanged();
-				notifyObservers(_state);
-			}
-
-			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+			setChanged();
+			notifyObservers(_state);
 		}
+
+		_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		return EOperatorType.STATE_BASED;
 	}
 }

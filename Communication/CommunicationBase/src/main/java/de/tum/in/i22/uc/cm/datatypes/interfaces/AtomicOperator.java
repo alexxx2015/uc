@@ -8,5 +8,5 @@ package de.tum.in.i22.uc.cm.datatypes.interfaces;
  *
  */
 public interface AtomicOperator extends IOperator {
-
+	public void update(IEvent event);
 }

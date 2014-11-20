@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp.distribution;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class DistributedPdpResponse implements IResponse {
 	}
 
 	@Override
-	public List<IEvent> getExecuteActions() {
+	public Collection<IEvent> getExecuteActions() {
 		return _response.getExecuteActions();
 	}
 

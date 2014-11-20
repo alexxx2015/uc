@@ -46,7 +46,7 @@ public class Decision implements Serializable {
 		_pxpManager = pxpManager;
 	}
 
-	public void processMechanism(IMechanism m, IEvent curEvent) {
+	public synchronized void processMechanism(IMechanism m) {
 		if (!(m instanceof Mechanism)) {
 			throw new IllegalArgumentException("Mechanism of type " + Mechanism.class + " expected, but got " + m.getClass() + ".");
 		}

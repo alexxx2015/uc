@@ -1,0 +1,23 @@
+package de.tum.in.i22.uc.cm.datatypes.interfaces;
+
+public enum EOperatorType {
+	ALWAYS,
+	BEFORE,
+	CONDITION_PARAM_MATCH,
+	DURING,
+	EVAL,
+	EVENT_MATCH,
+	OCCUR_MIN_EVENT,
+	OSL_AND,
+	OSL_FALSE,
+	OSL_IMPLIES,
+	OSL_NOT,
+	OSL_OR,
+	OSL_TRUE,
+	REPLIM,
+	REPMAX,
+	REPSINCE,
+	SINCE,
+	STATE_BASED,
+	WITHIN;
+}

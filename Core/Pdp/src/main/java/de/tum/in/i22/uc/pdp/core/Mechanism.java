@@ -18,6 +18,7 @@ import com.google.common.base.MoreObjects;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.pdp.PdpThreading;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
@@ -139,21 +140,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_interrupted.set(true);
 	}
 
-	public Decision notifyEvent(IEvent event, Decision d) {
-		_logger.debug("Processing mechanism [{}] with event [{}].", _name, event);
-
-		if (_triggerEvent.matches(event)) {
-			_logger.info("Trigger event matches. Evaluating condition");
-
-			if (evaluateCondition(false)) {
-				_logger.info("Condition satisfied; merging mechanism into decision");
-				d.processMechanism(this, event);
-			} else {
-				_logger.info("Condition NOT satisfied");
-			}
-		}
-
-		return d;
+	public boolean notifyEvent(IEvent event) {
+		return _triggerEvent.matches(event) && evaluateCondition(false);
 	}
 
 	@Override
@@ -344,12 +332,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 					 * Being asynchronous execute actions, their
 					 * execution can be parallelized.
 					 */
-					new Thread() {
-						@Override
-						public void run() {
-							_pdp.executeAction(execAction, false);
-						};
-					}.start();
+					PdpThreading.instance().execute(() -> _pdp.executeAction(execAction, false));
 				}
 			}
 

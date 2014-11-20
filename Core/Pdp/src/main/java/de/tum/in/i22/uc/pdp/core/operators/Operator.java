@@ -5,12 +5,13 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Objects;
 import java.util.Observable;
-import java.util.Observer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
@@ -196,7 +197,7 @@ public abstract class Operator extends Observable implements IOperator {
 		return _state;
 	}
 
-	public Collection<Observer> getObservers(Collection<Observer> observers) {
+	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		return observers;
 	}
 
@@ -204,31 +205,9 @@ public abstract class Operator extends Observable implements IOperator {
 	public boolean getValueAtLastTick() {
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
-//
-//	protected Pair<Long,Long> getFromTo(DistributionGranularity granularity) {
-//		long from = 0;
-//		long to = 0;
-//
-//		switch (granularity.getGranularity()) {
-//		case EXACT:
-//			if (_mechanism.isSimulating()) {
-//				from = System.currentTimeMillis() - 1;
-//			}
-//			else {
-//				from = _mechanism.getLastTick() + _mechanism.getTimestepSize() - 1;
-//			}
-//			to = from + 2;
-//			break;
-//		case TIMESTEP:
-//			from = _mechanism.getLastTick();
-//			to = from + _mechanism.getTimestepSize();
-//			break;
-//		case MILLISECONDS:
-//			from = System.currentTimeMillis() - granularity.getMilliseconds();
-//			to = from + 2 * granularity.getMilliseconds();
-//			break;
-//		}
-//
-//		return Pair.of(from, to);
-//	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		throw new UnsupportedOperationException("Not allowed to call getOperatortype on " + Operator.class);
+	}
 }

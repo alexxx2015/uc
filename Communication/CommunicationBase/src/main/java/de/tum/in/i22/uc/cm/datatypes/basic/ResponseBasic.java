@@ -1,7 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -12,18 +12,15 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
 public class ResponseBasic implements IResponse {
-	private IStatus _authorizationAction = null;
-	private List<IEvent> _executeActions = null;
-	private IEvent _modifiedEvent = null;
-
-	public ResponseBasic() {
-	}
+	private final IStatus _authorizationAction;
+	private final Collection<IEvent> _executeActions;
+	private final IEvent _modifiedEvent;
 
 	public ResponseBasic(IStatus authorizationAction) {
-		_authorizationAction = authorizationAction;
+		this(authorizationAction, Collections.emptyList(), null);
 	}
 
-	public ResponseBasic(IStatus authorizationAction, List<IEvent> executeActions, IEvent modifiedEvent) {
+	public ResponseBasic(IStatus authorizationAction, Collection<IEvent> executeActions, IEvent modifiedEvent) {
 		_authorizationAction = authorizationAction;
 		_executeActions = executeActions;
 		_modifiedEvent = modifiedEvent;
@@ -36,11 +33,11 @@ public class ResponseBasic implements IResponse {
 	}
 
 	@Override
-	public List<IEvent> getExecuteActions() {
+	public Collection<IEvent> getExecuteActions() {
 		if (_executeActions == null) {
 			return Collections.emptyList();
 		}
-		return Collections.unmodifiableList(_executeActions);
+		return Collections.unmodifiableCollection(_executeActions);
 	}
 
 	@Override

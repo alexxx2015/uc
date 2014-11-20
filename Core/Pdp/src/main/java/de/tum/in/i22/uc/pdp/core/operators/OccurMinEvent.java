@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
-import java.util.Observer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -208,8 +209,17 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 //	}
 
 	@Override
-	public Collection<Observer> getObservers(Collection<Observer> observers) {
+	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		event.getObservers(observers);
 		return observers;
+	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		return EOperatorType.OCCUR_MIN_EVENT;
+	}
+
+	@Override
+	public void update(IEvent event) {
 	}
 }

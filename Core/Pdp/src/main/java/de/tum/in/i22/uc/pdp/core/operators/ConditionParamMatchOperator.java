@@ -1,22 +1,21 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.ParamMatch;
-import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.ConditionParamMatchType;
 
-public class ConditionParamMatchOperator extends ConditionParamMatchType implements Observer {
+public class ConditionParamMatchOperator extends ConditionParamMatchType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(ConditionParamMatchOperator.class);
 
 	private ParamMatch pm;
@@ -66,21 +65,22 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 		return value;
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof PolicyDecisionPoint && arg instanceof IEvent) {
-
-			if (pm.matches(pm.getName(), ((IEvent) arg).getParameterValue(pm.getName()))) {
-				_state.set(StateVariable.SINCE_UPDATE, true);
-			}
-
-			_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_UPDATE));
+	public void update(IEvent ev) {
+		if (pm.matches(pm.getName(), ev.getParameterValue(pm.getName()))) {
+			_state.set(StateVariable.SINCE_UPDATE, true);
 		}
+
+		_logger.debug("Updating with event {}. Result: {}.", ev, _state.get(StateVariable.SINCE_UPDATE));
 	}
 
 	@Override
-	public Collection<Observer> getObservers(Collection<Observer> observers) {
+	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		observers.add(this);
 		return observers;
+	}
+
+	@Override
+	public EOperatorType getOperatorType() {
+		return EOperatorType.CONDITION_PARAM_MATCH;
 	}
 }
