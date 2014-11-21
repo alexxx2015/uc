@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pdp;
 
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -58,9 +59,9 @@ public class PdpThreading {
 	 * @param future
 	 * @return
 	 */
-	public static <T> Future<T> take(ExecutorCompletionService<T> ecs) {
+	public static <T> Future<T> take(CompletionService<T> cs) {
 		try {
-			return ecs.take();
+			return cs.take();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -78,9 +79,9 @@ public class PdpThreading {
 	 * @param future
 	 * @return
 	 */
-	public static <T> T takeResult(ExecutorCompletionService<T> ecs) {
+	public static <T> T takeResult(CompletionService<T> cs) {
 		try {
-			return resultOf(ecs.take());
+			return resultOf(cs.take());
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e.getMessage());
 		}
