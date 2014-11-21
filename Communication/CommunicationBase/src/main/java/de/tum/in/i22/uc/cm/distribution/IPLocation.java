@@ -7,8 +7,6 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 
 import com.google.common.base.MoreObjects;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-
 
 public class IPLocation extends Location {
 	private final String _host;
@@ -113,15 +111,5 @@ public class IPLocation extends Location {
 	@Override
 	public String asString() {
 		return _host + "#" + _port;
-	}
-
-	/**
-	 * As prescribed by {@link IName}.
-	 * Returns this {@link IPLocation}'s host
-	 * prefixed by {@link Location#PREFIX_LOCATION}.
-	 */
-	@Override
-	public String getName() {
-		return PREFIX_LOCATION + _host;
 	}
 }

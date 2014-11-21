@@ -9,7 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 /**
  * A container can have several representations.
  * PipName is a representation of the container.
- * @author Stoimenov
+ * @author Stoimenov, Florian Kelbert
  *
  */
 public class NameBasic implements IName {

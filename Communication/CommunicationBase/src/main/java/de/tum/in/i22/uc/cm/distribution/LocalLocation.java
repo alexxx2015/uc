@@ -52,11 +52,6 @@ public class LocalLocation extends Location {
 	}
 
 	@Override
-	public String getName() {
-		return PREFIX_LOCATION + local;
-	}
-
-	@Override
 	public String asString() {
 		return local;
 	}
