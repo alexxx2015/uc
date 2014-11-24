@@ -343,8 +343,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 */
 			_lastTick += _timestepSize;
 
-			setChanged();
-			notifyObservers(END_OF_TIMESTEP);
+//			setChanged();
+//			notifyObservers(END_OF_TIMESTEP);
 		}
 	}
 

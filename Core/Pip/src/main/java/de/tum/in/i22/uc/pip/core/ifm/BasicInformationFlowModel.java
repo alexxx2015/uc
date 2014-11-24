@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,9 +122,11 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	@Override
 	public void remove(IData data) {
 		if (data != null) {
-			for (IContainer cont : _containerToDataMap.keySet()) {
-				_containerToDataMap.get(cont).remove(data);
-			}
+			_containerToDataMap.values().forEach(c -> c.remove(data));
+
+//			for (IContainer cont : _containerToDataMap.keySet()) {
+//				_containerToDataMap.get(cont).remove(data);
+//			}
 		}
 	}
 
@@ -155,19 +156,15 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 					toRemove.add(entry.getKey());
 				}
 			}
-			for (IName key : toRemove) {
-				_namingMap.remove(key);
-			}
+
+			toRemove.forEach(n -> _namingMap.remove(n));
+//			for (IName key : toRemove) {
+//				_namingMap.remove(key);
+//			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public void emptyContainer(IContainer container) {
 		if (container != null) {
@@ -176,13 +173,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#emptyContainer
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
-	 */
+
 	@Override
 	public void emptyContainer(IName containerName) {
 		if (containerName != null) {
@@ -190,14 +181,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
-	 * tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public void addAlias(IContainer fromContainer, IContainer toContainer) {
 		if (fromContainer == null || toContainer == null
@@ -215,14 +199,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		aliases.add(toContainer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addAlias(de.
-	 * tum.in.i22.uc.cm.datatypes.interfaces.IName,
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IName)
-	 */
+
 	@Override
 	public void addAlias(IName fromContainerName, IName toContainerName) {
 		if (fromContainerName == null || toContainerName == null) {
@@ -233,14 +210,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 				_namingMap.get(toContainerName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAlias(
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer,
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public void removeAlias(IContainer fromContainer, IContainer toContainer) {
 		if (fromContainer == null || toContainer == null) {
@@ -252,19 +222,13 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		if ((aliases = _aliasesMap.get(fromContainer)) != null) {
 			aliases.remove(toContainer);
 
-			if (aliases.size() == 0) {
+			if (aliases.isEmpty()) {
 				_aliasesMap.remove(fromContainer);
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesFrom
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public Collection<IContainer> getAliasesFrom(IContainer container) {
 		Set<IContainer> result;
@@ -276,13 +240,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		return Collections.unmodifiableSet(result);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
-	 * getAliasTransitiveReflexiveClosure
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public Set<IContainer> getAliasTransitiveReflexiveClosure(
 			IContainer container) {
@@ -295,25 +253,13 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		return closure;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesFrom
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public void removeAllAliasesFrom(IContainer fromContainer) {
 		_aliasesMap.remove(fromContainer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#removeAllAliasesTo
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public void removeAllAliasesTo(IContainer toContainer) {
 		if (toContainer == null) {
@@ -322,50 +268,40 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 
 		List<IContainer> toRemove = new LinkedList<IContainer>();
 
-		for (IContainer from : _aliasesMap.keySet()) {
-			Set<IContainer> toSet = _aliasesMap.get(from);
-			if (toSet != null && toSet.remove(toContainer)) {
-				if (toSet.size() == 0) {
-					toRemove.add(from);
-				}
+		_aliasesMap.keySet().forEach(k -> {
+			Set<IContainer> toSet = _aliasesMap.get(k);
+			if (toSet != null && toSet.remove(toContainer) && toSet.isEmpty()) {
+				toRemove.add(k);
 			}
-		}
+		});
 
-		for (IContainer rem : toRemove) {
-			_aliasesMap.remove(rem);
-		}
+		toRemove.forEach(c -> _aliasesMap.remove(c));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAliasesTo
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public Set<IContainer> getAliasesTo(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
 
 		if (container != null) {
-			for (Entry<IContainer, Set<IContainer>> aliasEntry : _aliasesMap
-					.entrySet()) {
-				if (aliasEntry.getValue().contains(container)) {
-					result.add(aliasEntry.getKey());
-				}
-			}
+
+			_aliasesMap.entrySet().forEach(e -> {
+				if (e.getValue().contains(container))
+					result.add(e.getKey());
+			});
+
+//			for (Entry<IContainer, Set<IContainer>> aliasEntry : _aliasesMap
+//					.entrySet()) {
+//				if (aliasEntry.getValue().contains(container)) {
+//					result.add(aliasEntry.getKey());
+//				}
+//			}
 		}
 
 		return Collections.unmodifiableSet(result);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#
-	 * getAliasTransitiveClosure
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
 	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
@@ -522,34 +458,18 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		addDataTransitively(data, getContainer(dstContainerName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#addDataTransitively
-	 * (java.util.Collection,
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer)
-	 */
+
 	@Override
-	public void addDataTransitively(Collection<IData> data,
-			IContainer dstContainer) {
+	public void addDataTransitively(Collection<IData> data, IContainer dstContainer) {
 		if (data == null || data.size() == 0 || dstContainer == null) {
 			return;
 		}
 
 		addData(data, dstContainer);
-		for (IContainer c : getAliasTransitiveClosure(dstContainer)) {
-			addData(data, c);
-		}
+		getAliasTransitiveClosure(dstContainer).forEach(c -> addData(data, c));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getContainers
-	 * (de.tum.in.i22.uc.cm.datatypes.interfaces.IData)
-	 */
+
 	@Override
 	public Set<IContainer> getContainers(IData data) {
 		if (data == null) {
@@ -687,8 +607,8 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 			return;
 		}
 
-		IContainer cont;
-		if ((cont = getContainer(oldName)) != null) {
+		IContainer cont = getContainer(oldName);
+		if (cont != null) {
 			addName(newName, cont);
 		}
 	}
@@ -773,13 +693,12 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	 */
 	@Override
 	public <T extends IName> Collection<T> getAllNames(Class<T> type) {
-		Collection<T> result = new LinkedList<>();
+		List<T> result = new LinkedList<>();
 
-		for (IName name : _namingMap.keySet()) {
-			if (type.isInstance(name)) {
-				result.add(type.cast(name));
-			}
-		}
+		_namingMap.keySet().forEach(n -> {
+			if (type.isInstance(n))
+				result.add(type.cast(n));
+		});
 
 		return Collections.unmodifiableCollection(result);
 	}
@@ -795,11 +714,10 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	public Collection<IName> getAllNames(IContainer container) {
 		Collection<IName> result = new LinkedList<>();
 
-		for (Entry<IName, IContainer> nameEntry : _namingMap.entrySet()) {
-			if (nameEntry.getValue().equals(container)) {
-				result.add(nameEntry.getKey());
-			}
-		}
+		_namingMap.entrySet().forEach(e -> {
+			if (e.getValue().equals(container))
+				result.add(e.getKey());
+		});
 
 		return Collections.unmodifiableCollection(result);
 	}
@@ -824,22 +742,21 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 		return getAllNames(cont, type);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.tum.in.i22.uc.pip.core.ifm.IBasicInformationFlowModel#getAllNames(
-	 * de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer, java.lang.Class)
-	 */
+
 	@Override
 	public <T extends IName> List<T> getAllNames(IContainer cont, Class<T> type) {
 		List<T> result = new LinkedList<>();
 
-		for (IName name : _namingMap.keySet()) {
-			if (_namingMap.get(name).equals(cont) && type.isInstance(name)) {
-				result.add(type.cast(name));
-			}
-		}
+		_namingMap.entrySet().forEach(e -> {
+			if (e.getValue().equals(cont) && type.isInstance(e.getKey()))
+				result.add(type.cast(e.getKey()));
+		});
+
+//		for (IName name : _namingMap.keySet()) {
+//			if (_namingMap.get(name).equals(cont) && type.isInstance(name)) {
+//				result.add(type.cast(name));
+//			}
+//		}
 
 		return Collections.unmodifiableList(result);
 	}
@@ -1020,11 +937,12 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 				.add("_containerToDataMap", _containerToDataMap)
-				.add("_aliasesMap", _aliasesMap).add("_namingMap", _namingMap)
+				.add("_aliasesMap", _aliasesMap)
+				.add("_namingMap", _namingMap)
 				.toString();
 	}
 
-	public class SortByNames implements Comparator<Entry<IName, IContainer>> {
+	private class SortByNames implements Comparator<Entry<IName, IContainer>> {
 		@Override
 		public int compare(Entry<IName, IContainer> e1,
 				Entry<IName, IContainer> e2) {
@@ -1034,15 +952,16 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 
 	@Override
 	public IData getDataFromId(String id) {
-		if ((id != null) && (!"".equals(id))) {
-			Set<IData> union = new HashSet<IData>();
-			for (Set<IData> set : _containerToDataMap.values()) {
-				union.addAll(set);
-			}
-			for (IData d : union){
+		if (id == null || id.isEmpty()) {
+			return null;
+		}
+
+		for (Set<IData> dataSet : _containerToDataMap.values()) {
+			for (IData d : dataSet) {
 				if (d.getId().equals(id)) return d;
 			}
 		}
+
 		return null;
 	}
 

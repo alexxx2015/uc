@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import java.util.Collection;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
@@ -26,7 +25,7 @@ public interface IDistributionManager {
 	 */
 	public void registerPolicy(XmlPolicy policy);
 
-	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep);
+	public void update(IOperator operator, boolean endOfTimestep);
 
 	boolean wasNotifiedSince(AtomicOperator operator, long since);
 

@@ -119,7 +119,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		observers.add(this);
 		return observers;
 	}
@@ -162,7 +162,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			if (_positivity.is(valueNow)) {
 				localResult = valueNow;
 				setChanged();
-				notifyObservers(_state);
+				notifyObservers(Mechanism.END_OF_TIMESTEP);
 			}
 
 			/*
@@ -198,7 +198,8 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		return sinceLastTick;
 	}
 
-	public void update(IEvent arg) {
+	@Override
+	public void update(IEvent ev) {
 		/*
 		 * An event is happening and updates this operator. We get
 		 * the boolean that indicates this operator's value since
@@ -237,10 +238,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 			 * violated globally.
 			 */
 			setChanged();
-			notifyObservers(_state);
+			notifyObservers(ev);
 		}
 
-		_logger.debug("Updating with event {}. Result: {}.", arg, _state.get(StateVariable.SINCE_LAST_TICK));
+		_logger.debug("Updating with event {}. Result: {}.", ev, _state.get(StateVariable.SINCE_LAST_TICK));
 	}
 
 	@Override

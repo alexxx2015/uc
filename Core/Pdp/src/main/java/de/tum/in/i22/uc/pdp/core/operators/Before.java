@@ -132,7 +132,7 @@ public class Before extends BeforeType {
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		op.getObservers(observers);
 		return observers;
 	}

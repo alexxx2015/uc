@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.pdp;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,14 +85,15 @@ public class PdpHandler extends PdpProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-//		async.start();
-		_pdp.notifyEvent(event, false);
-//		_logger.debug("Stopwatch: time spent in notifyEventAsync: {}ms.", async.stop().elapsed(TimeUnit.MILLISECONDS));
+		async.start();
+		PdpThreading.instance().submit(() -> _pdp.notifyEvent(event, false), null);
+		async.stop();
+		System.out.println("Time spent notifyEventAsync: " + async.elapsed(TimeUnit.MILLISECONDS));
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-//		sync.start();
+		sync.start();
 		if (event == null) {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
@@ -109,7 +112,8 @@ public class PdpHandler extends PdpProcessor {
 			notifyEventAsync(ev2);
 		}
 
-//		_logger.debug("Stopwatch: time spent in notifyEventSync: {}ms.", sync.stop().elapsed(TimeUnit.MILLISECONDS));
+		sync.stop();
+		System.out.println("Time spent notifyEventSync: " + sync.elapsed(TimeUnit.MILLISECONDS));
 		return res;
 	}
 

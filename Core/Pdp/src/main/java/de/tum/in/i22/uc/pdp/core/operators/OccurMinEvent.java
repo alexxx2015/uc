@@ -106,18 +106,9 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			/*
 			 *  Our local count was not sufficient. Look up how
 			 *  often the event happened globally.
-			 *  The result will include our local counts, except
-			 *  the one event occurrence that might have happened
-			 *  at this point in time (i.e. if an event is occurring).
-			 *  For this reason, if the event has happened since the last
-			 *  update (getSinceUpdate()), we add one to compensate for this.
+			 *  The result will include our local counts.
 			 */
 			int globallyTrue = _pdp.getDistributionManager().howOftenNotifiedInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
-
-			// TODO double check. Also the comment above.
-//			if (event.getSinceUpdate()) {
-//				globallyTrue++;
-//			}
 
 			/*
 			 * Get saved state variables.
@@ -209,7 +200,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 //	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		event.getObservers(observers);
 		return observers;
 	}

@@ -106,7 +106,7 @@ public class Within extends WithinType {
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		return op.getObservers(observers);
 	}
 

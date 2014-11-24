@@ -65,6 +65,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 		return value;
 	}
 
+	@Override
 	public void update(IEvent ev) {
 		if (pm.matches(pm.getName(), ev.getParameterValue(pm.getName()))) {
 			_state.set(StateVariable.SINCE_UPDATE, true);
@@ -74,7 +75,7 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		observers.add(this);
 		return observers;
 	}

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core.operators;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Observable;
 
@@ -204,7 +205,11 @@ public abstract class Operator extends Observable implements IOperator {
 		return _state;
 	}
 
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	public final Collection<AtomicOperator> getObservers() {
+		return getObservers(new LinkedList<>());
+	}
+
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		return observers;
 	}
 

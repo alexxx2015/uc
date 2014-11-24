@@ -99,7 +99,7 @@ public class During extends DuringType {
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		op.getObservers(observers);
 		return observers;
 	}

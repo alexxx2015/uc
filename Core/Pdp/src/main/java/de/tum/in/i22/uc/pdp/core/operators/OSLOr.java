@@ -171,7 +171,7 @@ public class OSLOr extends OrType {
 	}
 
 	@Override
-	public Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
+	protected Collection<AtomicOperator> getObservers(Collection<AtomicOperator> observers) {
 		op1.getObservers(observers);
 		op2.getObservers(observers);
 		return observers;

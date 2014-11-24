@@ -29,7 +29,7 @@ public class Condition implements ICondition {
 		_operator.init(mechanism);
 		_operator.initId();
 
-		_operator.getObservers(new LinkedList<>()).forEach(o -> mechanism.getPolicyDecisionPoint().addObserver(o));
+		mechanism.getPolicyDecisionPoint().addObservers(_operator.getObservers());
 
 		_logger.debug("Condition: {}", _operator);
 	}

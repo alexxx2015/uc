@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.processing.dummy;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +36,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep) {
+	public void update(IOperator operator, boolean endOfTimestep) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("update method invoked");
 	}

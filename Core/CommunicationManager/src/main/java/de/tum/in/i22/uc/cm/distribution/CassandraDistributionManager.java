@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -101,6 +102,8 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	private final Map<IOperator,Long> _lastInsert;
 
+	private final CompletionService<?> _completionService;
+
 	/**
 	 * Maps the IP of a PEP to its responsible PDP.
 	 */
@@ -124,13 +127,15 @@ class CassandraDistributionManager implements IDistributionManager {
 		_defaultSession = _cluster.connect();
 //		_pmpConnectionManager = new ConnectionManager<>(5);
 //		_pipConnectionManager = new ConnectionManager<>(5);
-		_responsiblePdps = new HashMap<>();
+		_responsiblePdps = Collections.synchronizedMap(new HashMap<>());
 		try {
 			_hostname = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 			_hostname = "";
 			_logger.warn("Unable to retrieve hostname.");
 		}
+
+		_completionService = new ExecutorCompletionService<>(Executors.newCachedThreadPool());
 
 		_lastInsert = new HashMap<>();
 	}
@@ -319,6 +324,10 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		final Session newSession = _cluster.connect(keyspaceName);
 
+
+//		_tables.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
+//		_tables.forEach(t -> _completionService.take());
+
 		ExecutorService es = Executors.newCachedThreadPool();
 
 		// Create all tables
@@ -334,9 +343,9 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 		try {
 			es.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (InterruptedException e) {
+			throw new RuntimeException (e.getMessage());
+
 		}
 
 		try {
@@ -440,7 +449,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(Collection<IOperator> changedOperators, boolean endOfTimestep) {
+	public void update(IOperator op, boolean endOfTimestep) {
 		/*
 		 * TODO
 		 * (1) We can probably do this in a new thread. However -> correctness? What if it fails?
@@ -452,71 +461,68 @@ class CassandraDistributionManager implements IDistributionManager {
 		 * Each INSERT statement takes approx. 180 characters,
 		 * plus some constant overhead of 50 characters.
 		 */
-		StringBuilder batchJob = new StringBuilder(180 * changedOperators.size() + 50);
-		batchJob.append("BEGIN UNLOGGED BATCH ");
+		StringBuilder batchJob = new StringBuilder(230);
+//		batchJob.append("BEGIN UNLOGGED BATCH ");
 
-		for (IOperator op : changedOperators) {
+		/*
+		 * Calculate the time when this operator happened.
+		 * If we are not at the end of a timestep, simply use now().
+		 * Otherwise, create a UUID corresponding to lastTick.
+		 */
+		String time = "";
 
-			/*
-			 * Calculate the time when this operator happened.
-			 * If we are not at the end of a timestep, simply use now().
-			 * Otherwise, create a UUID corresponding to lastTick.
-			 */
-			String time = "";
+		boolean doInsert = false;
 
-			boolean doInsert = false;
-
-			if (op instanceof EventMatchOperator) {
+		if (op instanceof EventMatchOperator) {
+			doInsert = true;
+			time = endOfTimestep
+					? UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString()
+					: "now()";
+		}
+		else if (op instanceof StateBasedOperator) {
+			if (endOfTimestep) {
+				/*
+				 * At the end of a timestep, StateBasedOperators are
+				 * attributed to the next timestep. The reason is that
+				 * the Operator will under any circumstances remain
+				 * unchanged until the next event happens. And this next
+				 * event will be strictly after the timestep. Hence, we
+				 * +1 to the time below.
+				 */
 				doInsert = true;
-				time = endOfTimestep
-						? UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString()
-						: "now()";
+				long timeToInsert = op.getMechanism().getLastTick() + 1;
+				time = UUIDs.startOf(timeToInsert).toString();
+				_lastInsert.put(op, timeToInsert);
 			}
-			else if (op instanceof StateBasedOperator) {
-				if (endOfTimestep) {
-					/*
-					 * At the end of a timestep, StateBasedOperators are
-					 * attributed to the next timestep. The reason is that
-					 * the Operator will under any circumstances remain
-					 * unchanged until the next event happens. And this next
-					 * event will be strictly after the timestep. Hence, we
-					 * +1 to the time below.
-					 */
+			else {
+				/*
+				 * If we are not at the end of a timestep, we only
+				 * insert if the Operator was never inserted before,
+				 * or if the last insertion was before the last tick.
+				 */
+				Long lastInsert = _lastInsert.get(op);
+				if (lastInsert == null || lastInsert < op.getMechanism().getLastTick()) {
 					doInsert = true;
-					long timeToInsert = op.getMechanism().getLastTick() + 1;
-					time = UUIDs.startOf(timeToInsert).toString();
-					_lastInsert.put(op, timeToInsert);
+					time = "now()";
+					_lastInsert.put(op, System.currentTimeMillis());
 				}
-				else {
-					/*
-					 * If we are not at the end of a timestep, we only
-					 * insert if the Operator was never inserted before,
-					 * or if the last insertion was before the last tick.
-					 */
-					Long lastInsert = _lastInsert.get(op);
-					if (lastInsert == null || lastInsert < op.getMechanism().getLastTick()) {
-						doInsert = true;
-						time = "now()";
-						_lastInsert.put(op, System.currentTimeMillis());
-					}
-				}
-			}
-
-			if (doInsert) {
-				_logger.info("Updating Cassandra state at time {} with event {}",
-						 sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
-						op.getFullId());
-
-				batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
-						+ " (opid, location, time) VALUES ("
-						+ "'" + op.getFullId() + "',"
-						+ "'" + IPLocation.localIpLocation.getHost() + "',"
-						+ time
-						+ ") USING TTL " + op.getTTL() / 1000 + ";");
 			}
 		}
 
-		batchJob.append(" APPLY BATCH;");
+		if (doInsert) {
+			_logger.info("Updating Cassandra state at time {} with event {}",
+					 sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
+					op.getFullId());
+
+			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+					+ " (opid, location, time) VALUES ("
+					+ "'" + op.getFullId() + "',"
+					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ time
+					+ ") USING TTL " + op.getTTL() / 1000 + ";");
+		}
+
+//		batchJob.append(" APPLY BATCH;");
 
 		_defaultSession.execute(batchJob.toString());
 	}
