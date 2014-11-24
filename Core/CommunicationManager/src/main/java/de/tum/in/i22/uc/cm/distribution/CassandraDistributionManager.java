@@ -17,6 +17,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,31 +323,10 @@ class CassandraDistributionManager implements IDistributionManager {
 			return;
 		}
 
-		final Session newSession = _cluster.connect(keyspaceName);
-
+		Session newSession = _cluster.connect(keyspaceName);
 
 		_tables.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
 		_tables.forEach(t -> Threading.take(_completionService));
-
-//		ExecutorService es = Executors.newCachedThreadPool();
-//
-//		// Create all tables
-//		for (final String tbl : _tables) {
-//				es.execute(new Runnable() {
-//					@Override
-//					public void run() {
-//						try {
-//							newSession.execute(tbl);
-//						} catch (AlreadyExistsException e) {}
-//					}
-//				});
-//		}
-//		try {
-//			es.awaitTermination(1, TimeUnit.MINUTES);
-//		} catch (InterruptedException e) {
-//			throw new RuntimeException (e.getMessage());
-//
-//		}
 
 		try {
 			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policyName,policy) VALUES ('" + policy.getXml() + "'," + policy.getFirstTick() + ");");
@@ -396,9 +378,11 @@ class CassandraDistributionManager implements IDistributionManager {
 		StringBuilder query = new StringBuilder();
 		query.append("ALTER KEYSPACE " + name + " WITH replication ");
 		query.append("= {'class':'NetworkTopologyStrategy',");
-		for (String loc : allLocations) {
-			query.append("'" + loc + "':1,");
-		}
+
+		allLocations.forEach(l ->
+			query.append("'" + l + "':1,")
+		);
+
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
 
@@ -438,9 +422,9 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		Set<XmlPolicy> policies = new HashSet<>();
 
-		for (IData d : data) {
-			policies.addAll(_pmp.getPolicies(d));
-		}
+		data.forEach(d ->
+			policies.addAll(_pmp.getPolicies(d))
+		);
 
 		return policies;
 	}
@@ -582,6 +566,15 @@ class CassandraDistributionManager implements IDistributionManager {
 		return rs.all().size();
 	}
 
+	@Override
+	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
+		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND timestep >= " + timestep + ";");
+
+		return rs.all().size();
+	}
 
 	@Override
 	public IPLocation getResponsibleLocation(String ip) {
@@ -591,11 +584,20 @@ class CassandraDistributionManager implements IDistributionManager {
 			IPLocation loc = new IPLocation(ip, Settings.getInstance().getPepListenerPort());
 			Pdp2PepClient pdp2pep = new ThriftClientFactory().createPdp2PepClient(loc);
 			try {
-				pdp2pep.connect();
 				_logger.debug("Asking remotely for PdpLocation at {}.", loc);
+
+				Future<?> futureCon = Threading.instance().submit(() -> {
+					try {
+						pdp2pep.connect();
+					} catch (Exception e) {
+					}
+				}, null);
+
+				futureCon.get(200, TimeUnit.MILLISECONDS);
+
 				result = pdp2pep.getResponsiblePdpLocation();
 				pdp2pep.disconnect();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				result = new IPLocation(ip);
 				_logger.warn("Unable to connect to {}.", loc);
 				_logger.warn("Assuming a responsible location of {}.", ip);

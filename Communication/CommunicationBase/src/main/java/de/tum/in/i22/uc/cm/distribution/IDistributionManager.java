@@ -52,4 +52,6 @@ public interface IDistributionManager {
 	boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep);
 
 	int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep);
+
+	int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep);
 }

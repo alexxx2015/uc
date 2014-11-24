@@ -102,4 +102,11 @@ public class DummyDistributionManager implements IDistributionManager {
 		return 0;
 	}
 
+	@Override
+	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("howOftenNotifiedSinceTimestep method invoked");
+		return 0;
+	}
+
 }
