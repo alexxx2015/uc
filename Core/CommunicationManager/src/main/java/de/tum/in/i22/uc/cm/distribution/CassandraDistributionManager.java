@@ -3,8 +3,10 @@ package de.tum.in.i22.uc.cm.distribution;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,33 +59,50 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
-	private static final String TABLE_NAME_DATA = "hasdata";
-	private static final String TABLE_NAME_OP_NOTIFIED = "opnotified";
-	private static final String TABLE_NAME_POLICY = "policy";
+	private static final String TABLE_SHARED_DATA = "hasdata";
+	private static final String TABLE_SHARED_OP_NOTIFIED = "opnotified";
+	private static final String TABLE_SHARED_MECHANISMS = "mechanisms";
+	private static final String TABLE_SHARED_POLICIES = "policies";
 
-	private static final List<String> _tables;
+	private static final String TABLE_PRIVATE_POLICIES = "policies";
+
+	private static final List<String> _tablesShared;
+
+	private static final List<String> _tablesPrivate;
 
 	static {
-		_tables = new LinkedList<>();
-		_tables.add(
-				"CREATE TABLE " + TABLE_NAME_DATA + " ("
+		_tablesShared = new LinkedList<>();
+		_tablesShared.add(
+				"CREATE TABLE " + TABLE_SHARED_DATA + " ("
 						+ "data text,"
 						+ "locations set<text>,"
 						+ "PRIMARY KEY (data)"
 						+ ");");
-		_tables.add(
-				"CREATE TABLE " + TABLE_NAME_OP_NOTIFIED + " ("
+		_tablesShared.add(
+				"CREATE TABLE " + TABLE_SHARED_OP_NOTIFIED + " ("
 						+ "opid text,"
 						+ "time timeuuid,"
 						+ "location text,"
 						+ "timestep bigint,"
 						+ "PRIMARY KEY (opid,timestep,time,location)) "
 						+ "WITH CLUSTERING ORDER BY (timestep DESC);");
-		_tables.add(
-				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
+		_tablesShared.add(
+				"CREATE TABLE " + TABLE_SHARED_POLICIES + " ("
+						+ "policyName text,"
+						+ "policy text,"
+						+ "PRIMARY KEY (policyName));");
+		_tablesShared.add(
+				"CREATE TABLE " + TABLE_SHARED_MECHANISMS + " ("
 						+ "mechanismName text,"
 						+ "firstTick bigint,"
 						+ "PRIMARY KEY (mechanismName));");
+
+		_tablesPrivate = new LinkedList<>();
+		_tablesPrivate.add(
+				"CREATE TABLE " + TABLE_PRIVATE_POLICIES + " ("
+						+ "policyName text,"
+						+ "policy text,"
+						+ "PRIMARY KEY (policyName));");
 	};
 
 //	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
@@ -130,7 +149,7 @@ class CassandraDistributionManager implements IDistributionManager {
 //		_pipConnectionManager = new ConnectionManager<>(5);
 		_responsiblePdps = Collections.synchronizedMap(new HashMap<>());
 		try {
-			_hostname = InetAddress.getLocalHost().getHostName();
+			_hostname = InetAddress.getLocalHost().getHostName().replaceAll("[^a-zA-Z0-9]","");
 		} catch (UnknownHostException e) {
 			_hostname = "";
 			_logger.warn("Unable to retrieve hostname.");
@@ -151,25 +170,36 @@ class CassandraDistributionManager implements IDistributionManager {
 		_pdp = pdp;
 		_pip = pip;
 		_pmp = pmp;
+
+		initPrivateKeyspace();
+
 		_initialized = true;
 	}
 
 	@Override
 	public void registerPolicy(XmlPolicy policy) {
 		createPolicyKeyspace(policy);
+
+		ResultSet rs = _defaultSession.execute("SELECT policyName FROM " + _hostname + "." + TABLE_PRIVATE_POLICIES + " WHERE policyName = '" + policy.getName() + "';");
+		if (rs.isExhausted()) {
+			String b64 = new String(Base64.getEncoder().encode(policy.getOriginalXml().getBytes(Charset.defaultCharset())), Charset.defaultCharset());
+			_defaultSession.execute("INSERT INTO " + _hostname + "." + TABLE_PRIVATE_POLICIES + " (policyName,policy) VALUES ('" + policy.getName() + "','" + b64 + "');");
+		}
 	}
 
 	@Override
 	public void unregisterPolicy(String policyName, IPLocation location) {
 		adjustPolicyKeyspace(policyName, location, false);
+
+		_defaultSession.execute("DELETE FROM " + _hostname + "." + TABLE_PRIVATE_POLICIES + " WHERE policyName = '" + policyName + "';");
 	}
 
 	@Override
 	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
-		if (_defaultSession.execute("SELECT mechanismName FROM " + policyName + "." + TABLE_NAME_POLICY
+		if (_defaultSession.execute("SELECT mechanismName FROM " + policyName + "." + TABLE_SHARED_MECHANISMS
 				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;").isExhausted()) {
 
-			_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_NAME_POLICY
+			_defaultSession.execute("INSERT INTO " + policyName + "." + TABLE_SHARED_MECHANISMS
 				+ " (mechanismName,firstTick) VALUES "
 				+ "('" + mechanismName + "', " + firstTick + ");");
 		}
@@ -259,16 +289,16 @@ class CassandraDistributionManager implements IDistributionManager {
 				while (!done) {
 					try {
 						// Check whether there already exists an entry for this dataID ...
-						if (_defaultSession.execute("SELECT data from " + p.getName() + "." + TABLE_NAME_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
+						if (_defaultSession.execute("SELECT data from " + p.getName() + "." + TABLE_SHARED_DATA + " WHERE data = '" + dataID + "';").isExhausted()) {
 							// ... if not, insert the corresponding row
-							_defaultSession.execute("INSERT INTO " + p.getName() + "." + TABLE_NAME_DATA
+							_defaultSession.execute("INSERT INTO " + p.getName() + "." + TABLE_SHARED_DATA
 									+ " (data, locations) VALUES ('" + dataID + "',{'"
 									+ IPLocation.localIpLocation.getHost() + "','"
 									+ dstLocation.getHost() + "'})");
 						}
 						else {
 							// ... otherwise add the additional location to the existing row
-							_defaultSession.execute("UPDATE " + p.getName() + "." + TABLE_NAME_DATA + " SET locations = locations + {'"
+							_defaultSession.execute("UPDATE " + p.getName() + "." + TABLE_SHARED_DATA + " SET locations = locations + {'"
 									+ dstLocation.getHost()	+ "'} WHERE data = '" + dataID + "'");
 						}
 						done = true;
@@ -311,6 +341,39 @@ class CassandraDistributionManager implements IDistributionManager {
 //		_pipConnectionManager.release(remotePip);
 	}
 
+	private void initPrivateKeyspace() {
+		boolean existed = false;
+
+		try {
+			_defaultSession.execute("CREATE KEYSPACE " + _hostname
+					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
+		}
+		catch (AlreadyExistsException e) {
+			existed = true;
+		}
+
+		if (existed) {
+			ResultSet rs = _defaultSession.execute("SELECT policy FROM " + _hostname + "." + TABLE_PRIVATE_POLICIES);
+
+			for (Row r : rs) {
+				String b64 = new String(Base64.getDecoder().decode(r.getString("policy").getBytes(Charset.defaultCharset())), Charset.defaultCharset());
+				_pmp.deployPolicyRawXMLPmp(b64);
+			}
+
+//			rs.forEach(r -> _completionService.submit(() -> {
+//				String b64 = new String(Base64.getDecoder().decode(r.getString("policy").getBytes(Charset.defaultCharset())), Charset.defaultCharset());
+//				_pmp.deployPolicyRawXMLPmp(b64);
+//			}, null));
+//			rs.forEach(r -> Threading.take(_completionService));
+		}
+		else {
+			Session newSession = _cluster.connect(_hostname);
+
+			_tablesPrivate.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
+			_tablesPrivate.forEach(t -> Threading.take(_completionService));
+		}
+	}
+
 	private void createPolicyKeyspace(XmlPolicy policy) {
 
 		String keyspaceName = policy.getName().toLowerCase();
@@ -325,15 +388,17 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		Session newSession = _cluster.connect(keyspaceName);
 
-		_tables.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
-		_tables.forEach(t -> Threading.take(_completionService));
+		_tablesShared.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
+		_tablesShared.forEach(t -> Threading.take(_completionService));
 
 		try {
-			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policyName,policy) VALUES ('" + policy.getXml() + "'," + policy.getFirstTick() + ");");
+			newSession.execute("INSERT INTO " + TABLE_SHARED_POLICIES + " (policyName,policy) VALUES ('" + policy.getName() + "','" + policy.getXml() + "');");
 		}
 		catch (Exception e) {
 			_logger.error("Error inserting policy {}: {}.", policy.getName(), e.getMessage());
 		}
+
+
 	}
 
 	// FIXME Execution of this method should actually be atomic, as otherwise
@@ -498,7 +563,7 @@ class CassandraDistributionManager implements IDistributionManager {
 					 sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
 					op.getFullId());
 
-			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 					+ " (opid, location, timestep, time) VALUES ("
 					+ "'" + op.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
@@ -527,7 +592,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("wasNotifiedInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "')"
@@ -538,7 +603,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("howOftenNotifiedInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "');");
@@ -549,7 +614,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("wasNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep = " + timestep
 				+ " LIMIT 1;");
@@ -559,7 +624,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep = " + timestep + ";");
 
@@ -569,7 +634,7 @@ class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep >= " + timestep + ";");
 
@@ -611,7 +676,7 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public long getFirstTick(String policyName, String mechanismName) {
-		ResultSet rs =_defaultSession.execute("SELECT firstTick FROM " + policyName + "." + TABLE_NAME_POLICY
+		ResultSet rs =_defaultSession.execute("SELECT firstTick FROM " + policyName + "." + TABLE_SHARED_MECHANISMS
 				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;");
 
 		if (rs.isExhausted()) {

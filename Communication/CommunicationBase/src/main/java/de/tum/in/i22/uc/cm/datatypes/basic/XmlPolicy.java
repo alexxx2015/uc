@@ -36,11 +36,13 @@ public class XmlPolicy {
 	 */
 	private String _dataClass;
 
+	private String _originalXml;
+
 	public XmlPolicy(String name, String xml) {
-		this(name, xml, "", "", "", "");
+		this(name, xml, "", "", "", "", xml);
 	}
 
-	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass) {
+	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass, String originalXml) {
 		if (name == null || xml == null) {
 			throw new RuntimeException("Parameters might not be null.");
 		}
@@ -52,6 +54,7 @@ public class XmlPolicy {
 		_templateId = templateId;
 		_templateXml = templateXML;
 		_dataClass = dataClass;
+		_originalXml = originalXml;
 	}
 
 	public String getName() {
@@ -143,7 +146,11 @@ public class XmlPolicy {
 
 	@Override
 	public XmlPolicy clone(){
-		XmlPolicy clone = new XmlPolicy(_name, _xml, _description, _templateId, _templateXml, _dataClass);
+		XmlPolicy clone = new XmlPolicy(_name, _xml, _description, _templateId, _templateXml, _dataClass, _originalXml);
 		return clone;
+	}
+
+	public String getOriginalXml() {
+		return _originalXml;
 	}
 }

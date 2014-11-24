@@ -222,7 +222,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_distributionMaxPipConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
-		loadSetting(PROP_NAME_distributionConsistencyLevel, ConsistencyLevel.ALL, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionConsistencyLevel, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 

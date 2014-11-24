@@ -497,20 +497,6 @@ public class PolicyDecisionPoint implements Observer {
 				_distributionManager.update((IOperator) o, true);
 			}
 		}
-//
-//
-//		if ((o instanceof Operator) && (arg instanceof State)) {
-//			_logger.info("Got update about Operator: {}. New state: {}.", o, arg);meat -d
-//			_changedOperators.add((Operator) o);
-//		}
-//		else if ((o instanceof Mechanism) && (arg == Mechanism.END_OF_TIMESTEP)) {
-//			if (!_changedOperators.isEmpty() && Settings.getInstance().getDistributionEnabled()) {
-//				_distributionManager.update(_changedOperators, true);
-//			}
-//
-//			// Prepare for next
-//			_changedOperators.clear();
-//		}
 	}
 
 	public IDistributionManager getDistributionManager() {

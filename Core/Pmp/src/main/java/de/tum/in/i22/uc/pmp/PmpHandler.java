@@ -99,7 +99,7 @@ public class PmpHandler extends PmpProcessor {
 		try {
 			policy = (PolicyType) ((JAXBElement<?>) _unmarshaller.unmarshal(inp)).getValue();
 		} catch (JAXBException e) {
-			_logger.error("Unable to unmarshal policy.");
+			_logger.error("Unable to unmarshal policy: " + e.getMessage());
 			throw new IllegalArgumentException("Policy could not be parsed.");
 		}
 
@@ -380,7 +380,7 @@ public class PmpHandler extends PmpProcessor {
 			// the policy's name remains the same
 			XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()),
 														xmlPolicy.getDescription(), xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(),
-														xmlPolicy.getDataClass());
+														xmlPolicy.getDataClass(), xml);
 
 			// We got some further data IDs. Add them to the set of all data IDs.
 			allData.addAll(convertedPolicy.getRight());
