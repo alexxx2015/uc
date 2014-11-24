@@ -190,8 +190,9 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 		 * then we need to query remote systems for a definite evaluation result.
 		 */
 		if (!_positivity.is(sinceLastTick)) {
-			long lastTick = _mechanism.getLastTick();
-			sinceLastTick = _pdp.getDistributionManager().wasNotifiedInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+//			long lastTick = _mechanism.getLastTick();
+//			sinceLastTick = _pdp.getDistributionManager().wasNotifiedInBetween(this, lastTick, lastTick + _mechanism.getTimestepSize());
+			sinceLastTick = _pdp.getDistributionManager().wasNotifiedAtTimestep(this, _mechanism.getTimestep());
 			_state.set(StateVariable.SINCE_LAST_TICK, sinceLastTick);
 		}
 

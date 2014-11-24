@@ -21,4 +21,6 @@ public interface IMechanism extends Simulatable {
 	public long getLastTick();
 
 	public long getTimestepSize();
+
+	long getTimestep();
 }

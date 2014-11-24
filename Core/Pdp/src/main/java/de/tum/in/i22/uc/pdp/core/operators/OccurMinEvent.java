@@ -108,7 +108,10 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 *  often the event happened globally.
 			 *  The result will include our local counts.
 			 */
-			int globallyTrue = _pdp.getDistributionManager().howOftenNotifiedInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+//			int globallyTrue = _pdp.getDistributionManager().howOftenNotifiedInBetween(event, _mechanism.getLastTick(), _mechanism.getLastTick() + _mechanism.getTimestepSize());
+//			int globallyTrue = _pdp.getDistributionManager().howOftenNotifiedAtTimestep(event, _mechanism.getTimestep());
+
+			event.distributedTickPostprocessing(endOfTimestep);
 
 			/*
 			 * Get saved state variables.
@@ -121,9 +124,9 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 */
 
 			countAtLastTick -= stateCircArray.removeLast(); 	// Subtract the value that has been counted locally and remove it from CircularArray
-			countAtLastTick += globallyTrue;					// Add the value that has been counted globally
+			countAtLastTick += event.getCountAtLastTick();					// Add the value that has been counted globally
 
-			stateCircArray.push(globallyTrue);					// Push the globally counted value to CircularArray
+			stateCircArray.push(event.getCountAtLastTick());					// Push the globally counted value to CircularArray
 
 			result = (countAtLastTick >= limit);
 

@@ -27,7 +27,7 @@ public interface IDistributionManager {
 
 	public void update(IOperator operator, boolean endOfTimestep);
 
-	boolean wasNotifiedSince(AtomicOperator operator, long since);
+//	boolean wasNotifiedSince(AtomicOperator operator, long since);
 
 	boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to);
 
@@ -48,4 +48,8 @@ public interface IDistributionManager {
 	 * @return
 	 */
 	long getFirstTick(String policyName, String mechanismName);
+
+	boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep);
+
+	int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep);
 }

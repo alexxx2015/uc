@@ -41,12 +41,12 @@ public class DummyDistributionManager implements IDistributionManager {
 		_logger.error("update method invoked");
 	}
 
-	@Override
-	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
-		_logger.error("DummyDistributionManager DUMMY Implementation");
-		_logger.error("wasObservedSince method invoked");
-		return false;
-	}
+//	@Override
+//	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
+//		_logger.error("DummyDistributionManager DUMMY Implementation");
+//		_logger.error("wasObservedSince method invoked");
+//		return false;
+//	}
 
 	@Override
 	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
@@ -86,6 +86,20 @@ public class DummyDistributionManager implements IDistributionManager {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("getFirstTick method invoked");
 		return Long.MIN_VALUE;
+	}
+
+	@Override
+	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("wasNotifiedAtTimestep method invoked");
+		return false;
+	}
+
+	@Override
+	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("howOftenNotifiedAtTimestep method invoked");
+		return 0;
 	}
 
 }

@@ -76,8 +76,9 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "opid text,"
 						+ "time timeuuid,"
 						+ "location text,"
-						+ "PRIMARY KEY (opid,time,location)) "
-						+ "WITH CLUSTERING ORDER BY (time DESC);");
+						+ "timestep bigint,"
+						+ "PRIMARY KEY (opid,timestep,time,location)) "
+						+ "WITH CLUSTERING ORDER BY (timestep DESC);");
 		_tables.add(
 				"CREATE TABLE " + TABLE_NAME_POLICY + " ("
 						+ "mechanismName text,"
@@ -470,6 +471,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		 * Otherwise, create a UUID corresponding to lastTick.
 		 */
 		String time = "";
+		long timestep = op.getMechanism().getTimestep();
 
 		boolean doInsert = false;
 
@@ -493,6 +495,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				long timeToInsert = op.getMechanism().getLastTick() + 1;
 				time = UUIDs.startOf(timeToInsert).toString();
 				_lastInsert.put(op, timeToInsert);
+				timestep++;
 			}
 			else {
 				/*
@@ -515,9 +518,10 @@ class CassandraDistributionManager implements IDistributionManager {
 					op.getFullId());
 
 			batchJob.append("INSERT INTO " + op.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
-					+ " (opid, location, time) VALUES ("
+					+ " (opid, location, timestep, time) VALUES ("
 					+ "'" + op.getFullId() + "',"
 					+ "'" + IPLocation.localIpLocation.getHost() + "',"
+					+ timestep + ","
 					+ time
 					+ ") USING TTL " + op.getTTL() / 1000 + ";");
 		}
@@ -528,15 +532,15 @@ class CassandraDistributionManager implements IDistributionManager {
 	}
 
 
-	@Override
-	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
-		_logger.debug("wasNotifiedSince({}, {})", operator, since);
-		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
-						+ " WHERE opid = '" + operator.getFullId() + "'"
-						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
-						+ " LIMIT 1;");
-		return operator.getPositivity().value() != rs.isExhausted();
-	}
+//	@Override
+//	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
+//		_logger.debug("wasNotifiedSince({}, {})", operator, since);
+//		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+//						+ " WHERE opid = '" + operator.getFullId() + "'"
+//						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
+//						+ " LIMIT 1;");
+//		return operator.getPositivity().value() != rs.isExhausted();
+//	}
 
 
 	@Override
@@ -557,6 +561,26 @@ class CassandraDistributionManager implements IDistributionManager {
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + sdf.format(new Date(to)) + "');");
+
+		return rs.all().size();
+	}
+
+	@Override
+	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		_logger.debug("wasNotifiedAtTimestep({}, {})", operator, timestep);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND timestep = " + timestep
+				+ " LIMIT 1;");
+		return operator.getPositivity().value() != rs.isExhausted();
+	}
+
+	@Override
+	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
+		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
+				+ " WHERE opid = '" + operator.getFullId() + "'"
+				+ " AND timestep = " + timestep + ";");
 
 		return rs.all().size();
 	}

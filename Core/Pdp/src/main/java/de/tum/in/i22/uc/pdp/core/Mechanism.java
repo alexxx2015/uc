@@ -40,7 +40,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	private final String _description;
 	private long _lastTick = 0;
 	private long _timestepSize = 0;
-	private long _timestep = 0;
+	private long _timestep = 1;
 	private final EventMatch _triggerEvent;
 	private Condition _condition;
 	protected AuthorizationAction _authorizationAction;
@@ -81,14 +81,11 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_description = mech.getDescription();
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
 
-		_lastTick = 0;
-		_timestep = 0;
-
 		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
 		_condition = new Condition(mech.getCondition(), this);
 
-		_backupCondition = new ArrayDeque<>(2);
+		_backupCondition = new ArrayDeque<>(1);
 
 		_executeAsyncActions = new LinkedList<>();
 		mech.getExecuteAsyncAction().forEach(a -> _executeAsyncActions.add(new ExecuteAction(a)));
@@ -166,14 +163,15 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	private boolean tick() {
 
-		_timestep++;
 		_logger.debug("//////////////////////////////////////////////////////");
-		_logger.debug("[{}] Ticking. Timestep no. {}. Next tick in {}us", _name, _timestep, _timestepSize);
+		_logger.debug("[{}] Ticking. Timestep no. {}. Next tick in {}ms", _name, _timestep, _timestepSize);
 
 
 		boolean conditionValue = evaluateCondition(true);
 		_logger.debug("Condition evaluated to: " + conditionValue);
 		_logger.debug("//////////////////////////////////////////////////////");
+
+		_timestep++;
 
 		return conditionValue;
 	}
@@ -235,12 +233,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 * such that other systems will synchronize on the
 			 * value of _firstTick.
 			 */
-			new Thread() {
-				@Override
-				public void run() {
-					_pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick);
-				};
-			}.start();
+			PdpThreading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
 		}
 		else {
 			/*
@@ -249,6 +242,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 */
 			long now = System.currentTimeMillis();
 			_lastTick = now - (now - _firstTick) % _timestepSize;
+			_timestep = 1 + (now - _firstTick) / _timestepSize;
 		}
 	}
 
@@ -434,5 +428,10 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	public long getFirstTick() {
 		return _firstTick;
+	}
+
+	@Override
+	public long getTimestep() {
+		return _timestep;
 	}
 }
