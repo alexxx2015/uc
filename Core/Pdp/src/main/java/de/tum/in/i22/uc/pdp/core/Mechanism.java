@@ -18,7 +18,7 @@ import com.google.common.base.MoreObjects;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
-import de.tum.in.i22.uc.pdp.PdpThreading;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
@@ -233,7 +233,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 * such that other systems will synchronize on the
 			 * value of _firstTick.
 			 */
-			PdpThreading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
+			Threading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
 		}
 		else {
 			/*
@@ -326,7 +326,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 					 * Being asynchronous execute actions, their
 					 * execution can be parallelized.
 					 */
-					PdpThreading.instance().execute(() -> _pdp.executeAction(execAction, false));
+					Threading.instance().execute(() -> _pdp.executeAction(execAction, false));
 				}
 			}
 

@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.PdpThreading;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.ImpliesType;
@@ -37,7 +37,7 @@ public class OSLImplies extends ImpliesType {
 			throw new IllegalStateException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
 
-		_executorCompletionService = new ExecutorCompletionService<>(PdpThreading.instance());
+		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
 
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
@@ -62,26 +62,26 @@ public class OSLImplies extends ImpliesType {
 
 		boolean valueAtLastTick;
 
-		Future<Boolean> taken = PdpThreading.take(_executorCompletionService);
+		Future<Boolean> taken = Threading.take(_executorCompletionService);
 		if (taken == op1Future) {
-			if (!PdpThreading.resultOf(taken)) {
+			if (!Threading.resultOf(taken)) {
 				valueAtLastTick = true;
-				PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+				Threading.instance().submit(() -> Threading.take(_executorCompletionService));
 				_logger.info("Result: true. (op1 was false. Not waiting for op2");
 			}
 			else {
-				valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+				valueAtLastTick = Threading.takeResult(_executorCompletionService);
 				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}
 		else /*if (taken == op2Future)*/ {
-			if (PdpThreading.resultOf(taken)) {
+			if (Threading.resultOf(taken)) {
 				valueAtLastTick = true;
-				PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+				Threading.instance().submit(() -> Threading.take(_executorCompletionService));
 				_logger.info("Result: true. (op2 was true. Not waiting for op1");
 			}
 			else {
-				valueAtLastTick = !PdpThreading.takeResult(_executorCompletionService);
+				valueAtLastTick = !Threading.takeResult(_executorCompletionService);
 				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}

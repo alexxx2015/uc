@@ -16,10 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -326,28 +323,28 @@ class CassandraDistributionManager implements IDistributionManager {
 		final Session newSession = _cluster.connect(keyspaceName);
 
 
-//		_tables.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
-//		_tables.forEach(t -> _completionService.take());
+		_tables.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
+		_tables.forEach(t -> Threading.take(_completionService));
 
-		ExecutorService es = Executors.newCachedThreadPool();
-
-		// Create all tables
-		for (final String tbl : _tables) {
-				es.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							newSession.execute(tbl);
-						} catch (AlreadyExistsException e) {}
-					}
-				});
-		}
-		try {
-			es.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (InterruptedException e) {
-			throw new RuntimeException (e.getMessage());
-
-		}
+//		ExecutorService es = Executors.newCachedThreadPool();
+//
+//		// Create all tables
+//		for (final String tbl : _tables) {
+//				es.execute(new Runnable() {
+//					@Override
+//					public void run() {
+//						try {
+//							newSession.execute(tbl);
+//						} catch (AlreadyExistsException e) {}
+//					}
+//				});
+//		}
+//		try {
+//			es.awaitTermination(1, TimeUnit.MINUTES);
+//		} catch (InterruptedException e) {
+//			throw new RuntimeException (e.getMessage());
+//
+//		}
 
 		try {
 			newSession.execute("INSERT INTO " + TABLE_NAME_POLICY + " (policyName,policy) VALUES ('" + policy.getXml() + "'," + policy.getFirstTick() + ");");

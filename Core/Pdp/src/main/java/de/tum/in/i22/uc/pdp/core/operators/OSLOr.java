@@ -2,14 +2,15 @@ package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutorCompletionService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.PdpThreading;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.OrType;
@@ -39,7 +40,7 @@ public class OSLOr extends OrType {
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
 
-		_executorCompletionService = new ExecutorCompletionService<>(PdpThreading.instance());
+		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
 
 		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
@@ -62,14 +63,14 @@ public class OSLOr extends OrType {
 		_executorCompletionService.submit(() -> op1.tick(endOfTimestep));
 		_executorCompletionService.submit(() -> op2.tick(endOfTimestep));
 
-		boolean valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+		boolean valueAtLastTick = Threading.takeResult(_executorCompletionService);
 
 		if (valueAtLastTick) {
-			PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+			Threading.instance().submit(() -> Threading.take(_executorCompletionService));
 			_logger.info("Result: {}. (One of the operands was true, not waiting for the other operand to be evaluated)", true);
 		}
 		else {
-			valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+			valueAtLastTick = Threading.takeResult(_executorCompletionService);
 			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
 
@@ -110,14 +111,14 @@ public class OSLOr extends OrType {
 		_executorCompletionService.submit(() -> op1.distributedTickPostprocessing(endOfTimestep));
 		_executorCompletionService.submit(() -> op2.distributedTickPostprocessing(endOfTimestep));
 
-		boolean valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+		boolean valueAtLastTick = Threading.takeResult(_executorCompletionService);
 
 		if (valueAtLastTick) {
-			PdpThreading.instance().submit(() -> PdpThreading.take(_executorCompletionService));
+			Threading.instance().submit(() -> Threading.take(_executorCompletionService));
 			_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
 		}
 		else {
-			valueAtLastTick = PdpThreading.takeResult(_executorCompletionService);
+			valueAtLastTick = Threading.takeResult(_executorCompletionService);
 			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
 

@@ -21,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
@@ -86,7 +87,7 @@ public class PdpHandler extends PdpProcessor {
 	@Override
 	public void notifyEventAsync(IEvent event) {
 		async.start();
-		PdpThreading.instance().submit(() -> _pdp.notifyEvent(event, false), null);
+		Threading.instance().submit(() -> _pdp.notifyEvent(event, false), null);
 		async.stop();
 		System.out.println("Time spent notifyEventAsync: " + async.elapsed(TimeUnit.MILLISECONDS));
 	}

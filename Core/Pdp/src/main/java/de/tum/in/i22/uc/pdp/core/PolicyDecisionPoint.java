@@ -36,11 +36,11 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pdp.PdpThreading;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
@@ -86,8 +86,8 @@ public class PolicyDecisionPoint implements Observer {
 		_policyTable = new HashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 
-		_csOperators = new ExecutorCompletionService<>(PdpThreading.instance());
-		_csMechanisms = new ExecutorCompletionService<>(PdpThreading.instance());
+		_csOperators = new ExecutorCompletionService<>(Threading.instance());
+		_csMechanisms = new ExecutorCompletionService<>(Threading.instance());
 
 		try {
 			_unmarshaller = JAXBContext.newInstance(Settings.getInstance().getPdpJaxbContext()).createUnmarshaller();
@@ -281,7 +281,7 @@ public class PolicyDecisionPoint implements Observer {
 		 * completion.
 		 */
 		operators.forEach(o -> _csOperators.submit(() -> o.update(event), null));
-		operators.forEach(o -> PdpThreading.take(_csOperators));
+		operators.forEach(o -> Threading.take(_csOperators));
 	}
 
 
@@ -318,13 +318,13 @@ public class PolicyDecisionPoint implements Observer {
 		/*
 		 * Get all relevant Mechanisms to evaluate. This is done in a new Thread.
 		 */
-		Future<Collection<Mechanism>> futureMechanisms = PdpThreading.instance().submit(() -> _actionDescriptionStore.getMechanisms(event.getName()));
+		Future<Collection<Mechanism>> futureMechanisms = Threading.instance().submit(() -> _actionDescriptionStore.getMechanisms(event.getName()));
 		Collection<Mechanism> mechanisms;
 
 		/*
 		 * Get all relevant Operators that need to be updated. This is done in a new Thread.
 		 */
-		Future<Collection<AtomicOperator>> futureOperators = PdpThreading.instance().submit(() -> _actionDescriptionStore.getAtomicOperators(event.getName()));
+		Future<Collection<AtomicOperator>> futureOperators = Threading.instance().submit(() -> _actionDescriptionStore.getAtomicOperators(event.getName()));
 
 		if (event.isActual()) {
 			/*
@@ -341,7 +341,7 @@ public class PolicyDecisionPoint implements Observer {
 			 * Wait for the relevant-Operators-thread to finish. Once
 			 * the Operators are retrieved, update them.
 			 */
-			updateAll(PdpThreading.resultOf(futureOperators), event);
+			updateAll(Threading.resultOf(futureOperators), event);
 
 //			/*
 //			 * If operators changed, let the
@@ -365,7 +365,7 @@ public class PolicyDecisionPoint implements Observer {
 			 * caller is not interested in a decision anyway.
 			 */
 			if (syncCall) {
-				mechanisms = PdpThreading.resultOf(futureMechanisms);
+				mechanisms = Threading.resultOf(futureMechanisms);
 
 				/*
 				 * Do the actual start/stop of simulation and notification
@@ -383,7 +383,7 @@ public class PolicyDecisionPoint implements Observer {
 				 * the decision.
 				 */
 				mechanisms.forEach(m -> {
-					Pair<Mechanism,Boolean> res = PdpThreading.takeResult(_csMechanisms);
+					Pair<Mechanism,Boolean> res = Threading.takeResult(_csMechanisms);
 					if (res.getRight()) {
 						decision.processMechanism(res.getLeft());
 					}
@@ -405,10 +405,10 @@ public class PolicyDecisionPoint implements Observer {
 			 * ExecutorCompletionService.
 			 */
 			_csMechanisms.submit(() -> _pip.startSimulation(), null);
-			mechanisms = PdpThreading.resultOf(futureMechanisms);
+			mechanisms = Threading.resultOf(futureMechanisms);
 			mechanisms.forEach(m -> _csMechanisms.submit(() -> m.startSimulation(), null));
-			mechanisms.forEach(m -> PdpThreading.take(_csMechanisms));
-			PdpThreading.take(_csMechanisms);
+			mechanisms.forEach(m -> Threading.take(_csMechanisms));
+			Threading.take(_csMechanisms);
 
 			/*
 			 * Then, notify the event to the PIP and to all
@@ -422,7 +422,7 @@ public class PolicyDecisionPoint implements Observer {
 			 * event is actually not happening.
 			 */
 			_pip.update(event);
-			updateAll(PdpThreading.resultOf(futureOperators), event);
+			updateAll(Threading.resultOf(futureOperators), event);
 
 			/*
 			 * Notify the event to all Mechanisms,
@@ -439,7 +439,7 @@ public class PolicyDecisionPoint implements Observer {
 			_pip.stopSimulation();
 
 			mechanisms.forEach(m -> {
-				Pair<Mechanism,Boolean> res = PdpThreading.takeResult(_csMechanisms);
+				Pair<Mechanism,Boolean> res = Threading.takeResult(_csMechanisms);
 				if (res.getRight()) {
 					decision.processMechanism(res.getLeft());
 				}

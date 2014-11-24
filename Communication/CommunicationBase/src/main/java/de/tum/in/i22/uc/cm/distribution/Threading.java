@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.pdp;
+package de.tum.in.i22.uc.cm.distribution;
 
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
  * @author Florian Kelbert
  *
  */
-public class PdpThreading {
+public class Threading {
 	private static ExecutorService _instance = null;
 
 	public static ExecutorService instance() {
@@ -25,7 +25,7 @@ public class PdpThreading {
 		 * -with-example-code -FK-
 		 */
 		if (_instance == null) {
-			synchronized (PdpThreading.class) {
+			synchronized (Threading.class) {
 				if (_instance == null)
 					_instance = Executors.newCachedThreadPool();
 			}
@@ -71,7 +71,7 @@ public class PdpThreading {
 	 * A method performing {@link ExecutorCompletionService#take()}
 	 * on the specified parameter. After taking the Future object
 	 * out of the {@link ExecutorCompletionService},
-	 * {@link PdpThreading#resultOf(Future)} is applied to get the
+	 * {@link Threading#resultOf(Future)} is applied to get the
 	 * actual result.
 	 *
 	 * Throws a {@link RuntimeException} if any Exception occurs.
