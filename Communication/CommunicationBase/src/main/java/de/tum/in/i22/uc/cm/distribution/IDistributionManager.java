@@ -23,7 +23,7 @@ public interface IDistributionManager {
 	 *
 	 * @param policy the policy to be managed.
 	 */
-	public void registerPolicy(XmlPolicy policy);
+	public void register(XmlPolicy policy);
 
 	public void update(IOperator operator, boolean endOfTimestep);
 
@@ -33,7 +33,7 @@ public interface IDistributionManager {
 
 	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to);
 
-	void unregisterPolicy(String policyName, IPLocation location);
+	void deregister(String policyName, IPLocation location);
 
 	IPLocation getResponsibleLocation(String ip);
 

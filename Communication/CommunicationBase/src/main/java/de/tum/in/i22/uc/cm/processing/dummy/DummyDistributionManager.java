@@ -30,7 +30,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void registerPolicy(XmlPolicy policy) {
+	public void register(XmlPolicy policy) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
 	}
@@ -56,7 +56,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void unregisterPolicy(String policyName, IPLocation location) {
+	public void deregister(String policyName, IPLocation location) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("unregisterPolicy method invoked");
 	}

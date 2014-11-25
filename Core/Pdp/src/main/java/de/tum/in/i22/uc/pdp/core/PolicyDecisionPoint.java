@@ -284,7 +284,8 @@ public class PolicyDecisionPoint implements Observer {
 		 * completion.
 		 */
 		operators.forEach(o -> _csOperators.submit(() -> o.update(event), null));
-		operators.forEach(o -> Threading.take(_csOperators));
+		Threading.waitFor(operators.size(), _csOperators);
+//		operators.forEach(o -> Threading.take(_csOperators));
 	}
 
 
@@ -410,8 +411,9 @@ public class PolicyDecisionPoint implements Observer {
 			_csMechanisms.submit(() -> _pip.startSimulation(), null);
 			mechanisms = Threading.resultOf(futureMechanisms);
 			mechanisms.forEach(m -> _csMechanisms.submit(() -> m.startSimulation(), null));
-			mechanisms.forEach(m -> Threading.take(_csMechanisms));
-			Threading.take(_csMechanisms);
+//			mechanisms.forEach(m -> Threading.take(_csMechanisms));
+//			Threading.take(_csMechanisms);
+			Threading.waitFor(mechanisms.size() + 1, _csMechanisms);
 
 			/*
 			 * Then, notify the event to the PIP and to all

@@ -56,12 +56,33 @@ public class Threading {
 	 * This method throws a {@link RuntimeException}
 	 * if any Exception occurs.
 	 *
-	 * @param future
+	 * @param cs
 	 * @return
 	 */
 	public static <T> Future<T> take(CompletionService<T> cs) {
 		try {
 			return cs.take();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
+
+	/**
+	 * Similar to {@link Threading#take(CompletionService)}, this
+	 * method waits for the next results within the specified
+	 * {@link CompletionService}. However, this method will wait
+	 * for the specified number of results to be retrieved and
+	 * ignore their return value.
+	 *
+	 * @param num for how many to wait
+	 * @param cs
+	 */
+	public static <T> void waitFor(int num, CompletionService<T> cs) {
+		try {
+			while (num-- > 0) {
+				cs.take();
+			}
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e.getMessage());
 		}

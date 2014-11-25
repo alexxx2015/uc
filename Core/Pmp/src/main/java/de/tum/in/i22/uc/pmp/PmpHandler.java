@@ -310,7 +310,7 @@ public class PmpHandler extends PmpProcessor {
 		IStatus status;
 
 		if (_policymanager.removePolicy(policyName)) {
-			_distributionManager.unregisterPolicy(policyName, IPLocation.localIpLocation);
+			_distributionManager.deregister(policyName, IPLocation.localIpLocation);
 			status = getPdp().revokePolicy(policyName);
 		}
 		else {
@@ -389,7 +389,7 @@ public class PmpHandler extends PmpProcessor {
 			mapDataToPolicy(allData, convertedXmlPolicy);
 
 			if (Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.registerPolicy(convertedXmlPolicy);
+				_distributionManager.register(convertedXmlPolicy);
 			}
 
 			// finally, deploy at the PDP
