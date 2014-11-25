@@ -380,7 +380,7 @@ public class PmpHandler extends PmpProcessor {
 			// the policy's name remains the same
 			XmlPolicy convertedXmlPolicy = new XmlPolicy(policy.getName(), policyToXML(convertedPolicy.getLeft()),
 														xmlPolicy.getDescription(), xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(),
-														xmlPolicy.getDataClass(), xml);
+														xmlPolicy.getDataClass());
 
 			// We got some further data IDs. Add them to the set of all data IDs.
 			allData.addAll(convertedPolicy.getRight());

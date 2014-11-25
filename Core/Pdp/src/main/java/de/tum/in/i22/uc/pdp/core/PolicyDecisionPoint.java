@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 
@@ -83,7 +83,7 @@ public class PolicyDecisionPoint implements Observer {
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
 
-		_policyTable = new HashMap<String, Map<String, Mechanism>>();
+		_policyTable = new ConcurrentHashMap<String, Map<String, Mechanism>>();
 		_actionDescriptionStore = new ActionDescriptionStore();
 
 		_csOperators = new ExecutorCompletionService<>(Threading.instance());
@@ -125,9 +125,12 @@ public class PolicyDecisionPoint implements Observer {
 		}
 
 		try {
-			JAXBElement<?> poElement = (JAXBElement<?>) _unmarshaller.unmarshal(is);
+			JAXBElement<?> poElement;
+			synchronized (_unmarshaller) {
+				poElement = (JAXBElement<?>) _unmarshaller.unmarshal(is);
+			}
 			PolicyType policy = (PolicyType) poElement.getValue();
-			final String policyName = policy.getName();
+			String policyName = policy.getName();
 
 			_logger.debug("Deploying policy [name={}]", policyName);
 
@@ -136,7 +139,7 @@ public class PolicyDecisionPoint implements Observer {
 			 */
 			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
 			if (allMechanisms == null) {
-				allMechanisms = new HashMap<>();
+				allMechanisms = new ConcurrentHashMap<>();
 				_policyTable.put(policyName, allMechanisms);
 			}
 

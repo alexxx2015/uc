@@ -25,15 +25,15 @@ public class PolicyManager {
 	 * e.g. scope of the request; modifications to policy specific to application
 	 */
 	private Map<String, Map<String,String>> _params;
-	
+
 	public PolicyManager(){
-		_policies = new ConcurrentHashMap<String, XmlPolicy>(50);
-		_params = new ConcurrentHashMap<>(50);
+		_policies = new ConcurrentHashMap<>();
+		_params = new ConcurrentHashMap<>();
 	}
 
 	/**
 	 * Adds a policy that was not before in the storage.
-	 * <br> Adds a policy on the PMP's list of deployed policies. 
+	 * <br> Adds a policy on the PMP's list of deployed policies.
 	 * @param p
 	 * @return true if it is unique. false if already exists.
 	 */
@@ -64,12 +64,12 @@ public class PolicyManager {
 		this._params.put(policyName, param);
 		return true;
 	}
-	
+
 	/**
 	 * Returns the parameters for a particular policy.
 	 * <br> The policy is identified by its unique name.
 	 * If the policy is null or it does not have parameters,
-	 * it returns an empty parameters map. 
+	 * it returns an empty parameters map.
 	 * @param p
 	 * @return
 	 */
@@ -83,7 +83,7 @@ public class PolicyManager {
 			return new HashMap<String,String>();
 		return par;
 	}
-	
+
 	/**
 	 * Remove the policy from the PMP's list
 	 * @param p
@@ -118,7 +118,7 @@ public class PolicyManager {
 	 */
 	public List<XmlPolicy> getPolicies(){
 		List<XmlPolicy> values = new ArrayList<>();
-		
+
 		Iterator<Entry<String, XmlPolicy>> iterator = _policies.entrySet().iterator();
 		while(iterator.hasNext()){
 			XmlPolicy p = iterator.next().getValue();

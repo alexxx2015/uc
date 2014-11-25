@@ -29,7 +29,6 @@ import com.datastax.driver.core.AtomicMonotonicTimestampGenerator;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.UnavailableException;
@@ -105,9 +104,6 @@ class CassandraDistributionManager implements IDistributionManager {
 						+ "PRIMARY KEY (policyName));");
 	};
 
-//	private final ConnectionManager<Pmp2PmpClient> _pmpConnectionManager;
-//	private final ConnectionManager<Pip2PipClient> _pipConnectionManager;
-
 	private final Session _defaultSession;
 
 	private final Cluster _cluster;
@@ -145,8 +141,7 @@ class CassandraDistributionManager implements IDistributionManager {
 							.withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
 							.build();
 		_defaultSession = _cluster.connect();
-//		_pmpConnectionManager = new ConnectionManager<>(5);
-//		_pipConnectionManager = new ConnectionManager<>(5);
+
 		_responsiblePdps = Collections.synchronizedMap(new HashMap<>());
 		try {
 			_hostname = InetAddress.getLocalHost().getHostName().replaceAll("[^a-zA-Z0-9]","");
@@ -178,12 +173,14 @@ class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void registerPolicy(XmlPolicy policy) {
-		createPolicyKeyspace(policy);
+		createSharedPolicyKeyspace(policy);
 
+		/*
+		 * TODO: Encrypt what we are writing, so that others don't know which policies we are enforcing
+		 */
 		ResultSet rs = _defaultSession.execute("SELECT policyName FROM " + _hostname + "." + TABLE_PRIVATE_POLICIES + " WHERE policyName = '" + policy.getName() + "';");
 		if (rs.isExhausted()) {
-			String b64 = new String(Base64.getEncoder().encode(policy.getOriginalXml().getBytes(Charset.defaultCharset())), Charset.defaultCharset());
-			_defaultSession.execute("INSERT INTO " + _hostname + "." + TABLE_PRIVATE_POLICIES + " (policyName,policy) VALUES ('" + policy.getName() + "','" + b64 + "');");
+			_defaultSession.execute("INSERT INTO " + _hostname + "." + TABLE_PRIVATE_POLICIES + " (policyName,policy) VALUES ('" + policy.getName() + "','" + toBase64(policy.getXml()) + "');");
 		}
 	}
 
@@ -232,7 +229,6 @@ class CassandraDistributionManager implements IDistributionManager {
 				// if the location was not yet part of the keyspace, then we need to
 				// deploy the policy at the remote location
 				try {
-//					Pmp2PmpClient remotePmp = _pmpConnectionManager.obtain(new ThriftClientFactory().createPmp2PmpClient(pmpLocation));
 					Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
 					remotePmp.connect();
 
@@ -240,7 +236,6 @@ class CassandraDistributionManager implements IDistributionManager {
 						success = false;
 					}
 
-//					_pmpConnectionManager.release(remotePmp);
 					remotePmp.disconnect();
 				} catch (IOException e) {
 					success = false;
@@ -326,7 +321,6 @@ class CassandraDistributionManager implements IDistributionManager {
 		Pip2PipClient remotePip = null;
 
 		try {
-//			remotePip = _pipConnectionManager.obtain(new ThriftClientFactory().createPip2PipClient(pipLocation));
 			remotePip = new ThriftClientFactory().createPip2PipClient(pipLocation);
 			remotePip.connect();
 		} catch (IOException e) {
@@ -337,8 +331,6 @@ class CassandraDistributionManager implements IDistributionManager {
 		remotePip.initialRepresentation(socketName, data);
 
 		remotePip.disconnect();
-
-//		_pipConnectionManager.release(remotePip);
 	}
 
 	private void initPrivateKeyspace() {
@@ -355,16 +347,10 @@ class CassandraDistributionManager implements IDistributionManager {
 		if (existed) {
 			ResultSet rs = _defaultSession.execute("SELECT policy FROM " + _hostname + "." + TABLE_PRIVATE_POLICIES);
 
-			for (Row r : rs) {
-				String b64 = new String(Base64.getDecoder().decode(r.getString("policy").getBytes(Charset.defaultCharset())), Charset.defaultCharset());
-				_pmp.deployPolicyRawXMLPmp(b64);
-			}
-
-//			rs.forEach(r -> _completionService.submit(() -> {
-//				String b64 = new String(Base64.getDecoder().decode(r.getString("policy").getBytes(Charset.defaultCharset())), Charset.defaultCharset());
-//				_pmp.deployPolicyRawXMLPmp(b64);
-//			}, null));
-//			rs.forEach(r -> Threading.take(_completionService));
+			/*
+			 * For some reason, this won't work if parallelized
+			 */
+			rs.forEach(r -> _pmp.deployPolicyRawXMLPmp(fromBase64(r.getString("policy"))));
 		}
 		else {
 			Session newSession = _cluster.connect(_hostname);
@@ -374,7 +360,7 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 	}
 
-	private void createPolicyKeyspace(XmlPolicy policy) {
+	private void createSharedPolicyKeyspace(XmlPolicy policy) {
 
 		String keyspaceName = policy.getName().toLowerCase();
 
@@ -424,12 +410,12 @@ class CassandraDistributionManager implements IDistributionManager {
 
 		// (2) We build the set of locations that are currently known within the keyspace
 		Set<String> allLocations = new HashSet<>();
-		for (Row row : rows) {
-			String[] entries = row.getString("strategy_options").replaceAll("[{}\"]", "").split(",");
+		rows.forEach(r -> {
+			String[] entries = r.getString("strategy_options").replaceAll("[{}\"]", "").split(",");
 			for (String loc : entries) {
 				allLocations.add(loc.split(":")[0]);
 			}
-		}
+		});
 
 		// (3) According to parameter 'add', we add or remove the provided location from the set of locations
 		if ((add && !allLocations.add(location.getHost())) || (!add && !allLocations.remove(location.getHost()))) {
@@ -654,8 +640,7 @@ class CassandraDistributionManager implements IDistributionManager {
 				Future<?> futureCon = Threading.instance().submit(() -> {
 					try {
 						pdp2pep.connect();
-					} catch (Exception e) {
-					}
+					} catch (Exception e) {}
 				}, null);
 
 				futureCon.get(200, TimeUnit.MILLISECONDS);
@@ -684,5 +669,13 @@ class CassandraDistributionManager implements IDistributionManager {
 		}
 
 		return rs.iterator().next().getLong("firstTick");
+	}
+
+	private String toBase64(String s) {
+		return new String(Base64.getEncoder().encode(s.getBytes(Charset.defaultCharset())), Charset.defaultCharset());
+	}
+
+	private String fromBase64(String s) {
+		return new String(Base64.getDecoder().decode(s.getBytes(Charset.defaultCharset())), Charset.defaultCharset());
 	}
 }
