@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.AtomicMonotonicTimestampGenerator;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.QueryOptions;
-import com.datastax.driver.core.Session;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
@@ -49,22 +46,15 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
-	private final Session _session;
-
-	private final Cluster _cluster;
-
 	private PdpProcessor _pdp;
 	private PipProcessor _pip;
 	private PmpProcessor _pmp;
 
 	private boolean _initialized = false;
 
-
-	private final CompletionService<?> _completionService;
-
 	private final PrivateKeyspace _privateKeyspace;
 
-	private final Map<String,SharedKeyspace> _sharedKeyspaces;
+	private final SharedKeyspaceManager _sharedKeyspaces;
 
 	/**
 	 * Maps the IP of a PEP to its responsible PDP.
@@ -82,18 +72,16 @@ public class CassandraDistributionManager implements IDistributionManager {
 			throw new RuntimeException(e);
 		}
 
-		_cluster = Cluster.builder().withQueryOptions(options)
+		Cluster cluster = Cluster.builder().withQueryOptions(options)
 							.addContactPoint(addr.getHostAddress())
 							.withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
 							.build();
-		_session = _cluster.connect();
 
 		_responsiblePdps = Collections.synchronizedMap(new HashMap<>());
 
-		_completionService = new ExecutorCompletionService<>(Threading.instance());
+		_privateKeyspace = PrivateKeyspace.create(cluster);
 
-		_privateKeyspace = PrivateKeyspace.create(_session, _cluster);
-		_sharedKeyspaces = new HashMap<>();
+		_sharedKeyspaces = new SharedKeyspaceManager(cluster);
 	}
 
 
@@ -119,30 +107,19 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void register(XmlPolicy policy) {
-		SharedKeyspace k = _sharedKeyspaces.get(policy.getName());
-		if (k == null) {
-			k = new SharedKeyspace(policy, _session, _cluster);
-			_sharedKeyspaces.put(policy.getName(), k);
-		}
+		_sharedKeyspaces.create(policy);
 		_privateKeyspace.add(policy);
 	}
 
 	@Override
 	public void deregister(String policyName, IPLocation location) {
-		SharedKeyspace k = _sharedKeyspaces.get(policyName);
-		if (k != null) {
-			k.adjustSharedKeyspace(policyName, location, false);
-		}
+		_sharedKeyspaces.get(policyName).adjust(policyName, location, false);
 		_privateKeyspace.delete(policyName);
 	}
 
 	@Override
 	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
-		SharedKeyspace k = _sharedKeyspaces.get(policyName);
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		k.setFirstTick(mechanismName, firstTick);
+		_sharedKeyspaces.get(policyName).setFirstTick(mechanismName, firstTick);
 	}
 
 	/**
@@ -166,9 +143,9 @@ public class CassandraDistributionManager implements IDistributionManager {
 			 *     is removed from the policy's keyspace
 			 */
 
-			SharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
+			ISharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
 
-			if (ks.adjustSharedKeyspace(policy.getName(), pmpLocation, true)) {
+			if (ks.adjust(policy.getName(), pmpLocation, true)) {
 				boolean success = true;
 
 				// if the location was not yet part of the keyspace, then we need to
@@ -190,7 +167,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 				// If remote deployment of the policy fails,
 				// then we remove the location from the keyspace
 				if (!success) {
-					ks.adjustSharedKeyspace(policy.getName(), pmpLocation, false);
+					ks.adjust(policy.getName(), pmpLocation, false);
 				}
 
 				/*
@@ -216,8 +193,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		data.forEach(d -> {
 			_pmp.getPolicies(d).forEach(p -> {
-				SharedKeyspace ks = _sharedKeyspaces.get(p.getName());
-				ks.addData(d, dstLocation);
+				_sharedKeyspaces.get(p.getName()).addData(d, dstLocation);
 			});
 		});
 	}
@@ -288,69 +264,33 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public void update(IOperator op, boolean endOfTimestep) {
-		SharedKeyspace k = _sharedKeyspaces.get(op.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		k.update(op, endOfTimestep);
+	public void notify(IOperator operator, boolean endOfTimestep) {
+		_sharedKeyspaces.get(operator).notify(operator, endOfTimestep);
 	}
-
-
-//	@Override
-//	public boolean wasNotifiedSince(AtomicOperator operator, long since) {
-//		_logger.debug("wasNotifiedSince({}, {})", operator, since);
-//		ResultSet rs = _defaultSession.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_NAME_OP_NOTIFIED
-//						+ " WHERE opid = '" + operator.getFullId() + "'"
-//						+ " AND time > maxTimeuuid('" + sdf.format(new Date(since)) + "')"
-//						+ " LIMIT 1;");
-//		return operator.getPositivity().value() != rs.isExhausted();
-//	}
-
 
 	@Override
 	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		SharedKeyspace k = _sharedKeyspaces.get(operator.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.wasNotifiedInBetween(operator, from, to);
+		return _sharedKeyspaces.get(operator).wasNotifiedInBetween(operator, from, to);
 	}
 
 	@Override
 	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		SharedKeyspace k = _sharedKeyspaces.get(operator.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.howOftenNotifiedInBetween(operator, from, to);
+		return _sharedKeyspaces.get(operator).howOftenNotifiedInBetween(operator, from, to);
 	}
 
 	@Override
 	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		SharedKeyspace k = _sharedKeyspaces.get(operator.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.wasNotifiedAtTimestep(operator, timestep);
+		return _sharedKeyspaces.get(operator).wasNotifiedAtTimestep(operator, timestep);
 	}
 
 	@Override
 	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		SharedKeyspace k = _sharedKeyspaces.get(operator.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.howOftenNotifiedAtTimestep(operator, timestep);
+		return _sharedKeyspaces.get(operator).howOftenNotifiedAtTimestep(operator, timestep);
 	}
 
 	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
-		SharedKeyspace k = _sharedKeyspaces.get(operator.getMechanism().getPolicyName());
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.howOftenNotifiedSinceTimestep(operator, timestep);
+		return _sharedKeyspaces.get(operator).howOftenNotifiedSinceTimestep(operator, timestep);
 	}
 
 	@Override
@@ -387,11 +327,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public long getFirstTick(String policyName, String mechanismName) {
-		SharedKeyspace k = _sharedKeyspaces.get(policyName);
-		if (k == null) {
-			throw new NullPointerException("Shared Keyspace does not exist");
-		}
-		return k.getFirstTick(mechanismName);
+		return _sharedKeyspaces.get(policyName).getFirstTick(mechanismName);
 	}
 
 	static String toBase64(String s) {

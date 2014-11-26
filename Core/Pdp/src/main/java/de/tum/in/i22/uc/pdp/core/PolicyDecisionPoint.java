@@ -496,10 +496,10 @@ public class PolicyDecisionPoint implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof IOperator) {
 			if (arg instanceof IEvent && ((IEvent) arg).isActual()) {
-				_distributionManager.update((IOperator) o, false);
+				_distributionManager.notify((IOperator) o, false);
 			}
 			else if (arg == Mechanism.END_OF_TIMESTEP) {
-				_distributionManager.update((IOperator) o, true);
+				_distributionManager.notify((IOperator) o, true);
 			}
 		}
 	}

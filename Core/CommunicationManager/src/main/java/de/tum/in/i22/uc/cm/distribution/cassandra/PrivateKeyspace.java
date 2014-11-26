@@ -35,27 +35,22 @@ class PrivateKeyspace extends Keyspace {
 						+ "PRIMARY KEY (policyName));");
 	};
 
-	private PrivateKeyspace (String name, Session session, Cluster cluster) {
-		super(name, session, cluster);
-		init();
+	private PrivateKeyspace(String name, Cluster cluster) {
+		super(name, cluster);
 	}
 
-	static PrivateKeyspace create(Session session, Cluster cluster) {
+	static PrivateKeyspace create(Cluster cluster) {
 		String hostname;
 		try {
 			hostname = InetAddress.getLocalHost().getHostName().replaceAll("[^a-zA-Z0-9]","");
 		} catch (UnknownHostException e) {
-			hostname = "";
 			_logger.warn("Unable to retrieve hostname.");
+			throw new RuntimeException("Unable to retrieve hostname.");
 		}
 
-		return new PrivateKeyspace(hostname, session, cluster);
-	}
-
-	private void init() {
 		boolean existed = false;
 		try {
-			_session.execute("CREATE KEYSPACE " + _name
+			cluster.connect().execute("CREATE KEYSPACE " + hostname
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
 		catch (AlreadyExistsException e) {
@@ -63,16 +58,19 @@ class PrivateKeyspace extends Keyspace {
 		}
 
 		if (!existed) {
-			Session newSession = _cluster.connect(_name);
+			Session newSession = cluster.connect(hostname);
 
 			CompletionService<?> cs = new ExecutorCompletionService<>(Threading.instance());
 			_tables.forEach(t -> cs.submit(() -> newSession.execute(t), null));
 			Threading.waitFor(_tables.size(), cs);
 		}
+
+		return new PrivateKeyspace(hostname, cluster);
 	}
 
+
 	Collection<String> getPolicies() {
-		ResultSet rs = _session.execute("SELECT policy FROM " + _name + "." + TABLE_POLICIES);
+		ResultSet rs = _session.execute("SELECT policy FROM " + TABLE_POLICIES);
 
 		Collection<String> policies = new LinkedList<>();
 
@@ -92,14 +90,14 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policy the policy to be made persistent.
 	 */
 	void add(XmlPolicy policy) {
-		ResultSet rs = _session.execute("SELECT policyName FROM " + _name + "." + TABLE_POLICIES
+		ResultSet rs = _session.execute("SELECT policyName FROM " + TABLE_POLICIES
 				+ " WHERE policyName = '" + policy.getName() + "';");
 
 		if (rs.isExhausted()) {
 			/*
 			 * TODO: Encrypt what we are writing, so that others don't know which policies we are enforcing
 			 */
-			_session.execute("INSERT INTO " + _name + "." + TABLE_POLICIES + " (policyName,policy)"
+			_session.execute("INSERT INTO " + TABLE_POLICIES + " (policyName,policy)"
 					+ " VALUES ('" + policy.getName() + "','" + CassandraDistributionManager.toBase64(policy.getXml()) + "');");
 		}
 	}
@@ -112,7 +110,7 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policyName the policy to be deleted.
 	 */
 	void delete(String policyName) {
-		_session.execute("DELETE FROM " + _name + "." + TABLE_POLICIES
+		_session.execute("DELETE FROM " + TABLE_POLICIES
 				+ " WHERE policyName = '" + policyName + "';");
 	}
 }

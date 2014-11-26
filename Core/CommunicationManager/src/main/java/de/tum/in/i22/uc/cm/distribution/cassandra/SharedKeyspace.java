@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
@@ -30,13 +31,13 @@ import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
-public class SharedKeyspace extends Keyspace {
+public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	protected static final Logger _logger = LoggerFactory.getLogger(SharedKeyspace.class);
 
-	private static final String TABLE_SHARED_DATA = "hasdata";
-	private static final String TABLE_SHARED_OP_NOTIFIED = "opnotified";
-	private static final String TABLE_SHARED_MECHANISMS = "mechanisms";
-	private static final String TABLE_SHARED_POLICIES = "policies";
+	private static final String TABLE_DATA = "hasdata";
+	private static final String TABLE_OP_NOTIFIED = "opnotified";
+	private static final String TABLE_MECHANISMS = "mechanisms";
+	private static final String TABLE_POLICIES = "policies";
 
 	private static final List<String> _tablesShared;
 
@@ -47,54 +48,65 @@ public class SharedKeyspace extends Keyspace {
 	static {
 		_tablesShared = new LinkedList<>();
 		_tablesShared.add(
-				"CREATE TABLE " + TABLE_SHARED_DATA + " ("
+				"CREATE TABLE " + TABLE_DATA + " ("
 						+ "data text,"
 						+ "locations set<text>,"
 						+ "PRIMARY KEY (data)"
 						+ ");");
 		_tablesShared.add(
-				"CREATE TABLE " + TABLE_SHARED_OP_NOTIFIED + " ("
+				"CREATE TABLE " + TABLE_OP_NOTIFIED + " ("
 						+ "opid text,"
 						+ "time timeuuid,"
 						+ "location text,"
 						+ "timestep bigint,"
+						+ "dummyttl int,"		// dummy column that is not part of the PRIMARY KEY in order to allow for retrieval of TTL value
 						+ "PRIMARY KEY (opid,timestep,time,location)) "
 						+ "WITH CLUSTERING ORDER BY (timestep DESC);");
 		_tablesShared.add(
-				"CREATE TABLE " + TABLE_SHARED_POLICIES + " ("
+				"CREATE TABLE " + TABLE_POLICIES + " ("
 						+ "policyName text,"
 						+ "policy text,"
 						+ "PRIMARY KEY (policyName));");
 		_tablesShared.add(
-				"CREATE TABLE " + TABLE_SHARED_MECHANISMS + " ("
+				"CREATE TABLE " + TABLE_MECHANISMS + " ("
 						+ "mechanismName text,"
 						+ "firstTick bigint,"
 						+ "PRIMARY KEY (mechanismName));");
 	};
 
+	private PreparedStatement preparedGetFirstTick;
+	private PreparedStatement preparedSetFirstTick;
+	private PreparedStatement preparedNotify;
 
-	public SharedKeyspace(XmlPolicy policy, Session session, Cluster cluster) {
-		super(policy.getName().toLowerCase(), session, cluster);
+
+	private SharedKeyspace(XmlPolicy policy, Cluster cluster) {
+		super(policy.getName().toLowerCase(), cluster);
 		_policy = policy;
 		_lastInsert = new HashMap<>();
-		init();
+
+		prepareStatements();
 	}
 
+	private void prepareStatements() {
+		preparedGetFirstTick = _session.prepare("SELECT firstTick FROM " + TABLE_MECHANISMS
+				+ " WHERE mechanismName = ? LIMIT 1;");
 
-	/**
-	 * Creates a keyspace that is shared by all entities enforcing
-	 * the specified policy.
-	 *
-	 * @param policy the policy for which a keyspace is to be created.
-	 */
-	private void init() {
+		preparedSetFirstTick = _session.prepare("INSERT INTO " + TABLE_MECHANISMS
+				+ " (mechanismName,firstTick) VALUES (?,?);");
+
+		preparedNotify = _session.prepare("INSERT INTO " + TABLE_OP_NOTIFIED
+				+ " (opid, location, timestep, time) VALUES (?,?,?,?)"
+				+ " USING TTL ?;");
+	}
+
+	static SharedKeyspace create(XmlPolicy policy, Cluster cluster) {
 		boolean existed = false;
 
 		/*
 		 * Try to create the Keyspace.
 		 */
 		try {
-			_session.execute("CREATE KEYSPACE " + _name
+			cluster.connect().execute("CREATE KEYSPACE " + policy.getName()
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','" + IPLocation.localIpLocation.getHost() + "':1}");
 		}
 		catch (AlreadyExistsException e) {
@@ -109,26 +121,28 @@ public class SharedKeyspace extends Keyspace {
 			/*
 			 * The keyspace did not exist before.
 			 */
-			Session newSession = _cluster.connect(_name);
+			Session newSession = cluster.connect(policy.getName());
 
 			/*
 			 * Create all tables. In parallel.
 			 */
 			CompletionService<?> _completionService = new ExecutorCompletionService<>(Threading.instance());
 			_tablesShared.forEach(t -> _completionService.submit(() -> newSession.execute(t), null));
-			_tablesShared.forEach(t -> Threading.take(_completionService));
+			Threading.waitFor(_tablesShared.size(), _completionService);
 
 			try {
 				/*
 				 * Insert policy into the corresponding table.
 				 */
-				newSession.execute("INSERT INTO " + TABLE_SHARED_POLICIES + " (policyName,policy)"
-						+ " VALUES ('" + _policy.getName() + "','" + CassandraDistributionManager.toBase64(_policy.getXml()) + "');");
+				newSession.execute("INSERT INTO " + TABLE_POLICIES + " (policyName,policy)"
+						+ " VALUES ('" + policy.getName() + "','" + CassandraDistributionManager.toBase64(policy.getXml()) + "');");
 			}
 			catch (Exception e) {
-				_logger.error("Error inserting policy {}: {}.", _policy.getName(), e.getMessage());
+				_logger.error("Error inserting policy {}: {}.", policy.getName(), e.getMessage());
 			}
 		}
+
+		return new SharedKeyspace(policy, cluster);
 	}
 
 
@@ -146,7 +160,8 @@ public class SharedKeyspace extends Keyspace {
 	 * @return returns true if the keyspace was in fact adjusted,
 	 * 		i.e. if the provided location was added or removed.
 	 */
-	boolean adjustSharedKeyspace(String name, IPLocation location, boolean add) {
+	@Override
+	public boolean adjust(String name, IPLocation location, boolean add) {
 
 		name = name.toLowerCase();
 
@@ -189,19 +204,16 @@ public class SharedKeyspace extends Keyspace {
 		return true;
 	}
 
+	@Override
 	public void setFirstTick(String mechanismName, long firstTick) {
-		if (_session.execute("SELECT mechanismName FROM " + _name + "." + TABLE_SHARED_MECHANISMS
-				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;").isExhausted()) {
-
-			_session.execute("INSERT INTO " + _name + "." + TABLE_SHARED_MECHANISMS
-				+ " (mechanismName,firstTick) VALUES "
-				+ "('" + mechanismName + "', " + firstTick + ");");
+		if (_session.execute(preparedGetFirstTick.bind(mechanismName)).isExhausted()) {
+			_session.execute(preparedSetFirstTick.bind(mechanismName, firstTick));
 		}
 	}
 
+	@Override
 	public long getFirstTick(String mechanismName) {
-		ResultSet rs = _session.execute("SELECT firstTick FROM " + _name + "." + TABLE_SHARED_MECHANISMS
-				+ " WHERE mechanismName = '" + mechanismName + "' LIMIT 1;");
+		ResultSet rs = _session.execute(preparedGetFirstTick.bind(mechanismName));
 
 		if (rs.isExhausted()) {
 			return Long.MIN_VALUE;
@@ -210,18 +222,20 @@ public class SharedKeyspace extends Keyspace {
 		return rs.iterator().next().getLong("firstTick");
 	}
 
+	@Override
 	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("wasNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _session.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
+		ResultSet rs = _session.execute("SELECT opid FROM " + TABLE_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep = " + timestep
 				+ " LIMIT 1;");
 		return operator.getPositivity().value() != rs.isExhausted();
 	}
 
+	@Override
 	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("wasNotifiedInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _session.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
+		ResultSet rs = _session.execute("SELECT opid FROM " + TABLE_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + CassandraDistributionManager.sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + CassandraDistributionManager.sdf.format(new Date(to)) + "')"
@@ -229,18 +243,20 @@ public class SharedKeyspace extends Keyspace {
 		return operator.getPositivity().value() != rs.isExhausted();
 	}
 
+	@Override
 	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _session.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
+		ResultSet rs = _session.execute("SELECT opid FROM " + TABLE_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep = " + timestep + ";");
 
 		return rs.all().size();
 	}
 
+	@Override
 	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
 		_logger.debug("howOftenNotifiedInBetween({}, {}, {})", operator, from, to);
-		ResultSet rs = _session.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
+		ResultSet rs = _session.execute("SELECT opid FROM " + TABLE_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND time > maxTimeuuid('" + CassandraDistributionManager.sdf.format(new Date(from)) + "')"
 				+ " AND time < minTimeuuid('" + CassandraDistributionManager.sdf.format(new Date(to)) + "');");
@@ -248,29 +264,24 @@ public class SharedKeyspace extends Keyspace {
 		return rs.all().size();
 	}
 
+	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		ResultSet rs = _session.execute("SELECT opid FROM " + operator.getMechanism().getPolicyName() + "." + TABLE_SHARED_OP_NOTIFIED
+		ResultSet rs = _session.execute("SELECT opid FROM " + TABLE_OP_NOTIFIED
 				+ " WHERE opid = '" + operator.getFullId() + "'"
 				+ " AND timestep >= " + timestep + ";");
 
 		return rs.all().size();
 	}
 
-	public void update(IOperator op, boolean endOfTimestep) {
-		/*
-		 * Each INSERT statement takes approx. 180 characters,
-		 * plus some constant overhead of 50 characters.
-		 */
-		StringBuilder batchJob = new StringBuilder(230);
-//		batchJob.append("BEGIN UNLOGGED BATCH ");
-
+	@Override
+	public void notify(IOperator op, boolean endOfTimestep) {
 		/*
 		 * Calculate the time when this operator happened.
 		 * If we are not at the end of a timestep, simply use now().
 		 * Otherwise, create a UUID corresponding to lastTick.
 		 */
-		String time = "";
+		UUID time = null;
 		long timestep = op.getMechanism().getTimestep();
 
 		boolean doInsert = false;
@@ -278,8 +289,8 @@ public class SharedKeyspace extends Keyspace {
 		if (op instanceof EventMatchOperator) {
 			doInsert = true;
 			time = endOfTimestep
-					? UUIDs.endOf(op.getMechanism().getLastTick() - 1).toString()
-					: "now()";
+					? UUIDs.endOf(op.getMechanism().getLastTick() - 1)
+					: UUIDs.timeBased();
 		}
 		else if (op instanceof StateBasedOperator) {
 			if (endOfTimestep) {
@@ -293,7 +304,7 @@ public class SharedKeyspace extends Keyspace {
 				 */
 				doInsert = true;
 				long timeToInsert = op.getMechanism().getLastTick() + 1;
-				time = UUIDs.startOf(timeToInsert).toString();
+				time = UUIDs.startOf(timeToInsert);
 				_lastInsert.put(op, timeToInsert);
 				timestep++;
 			}
@@ -306,7 +317,7 @@ public class SharedKeyspace extends Keyspace {
 				Long lastInsert = _lastInsert.get(op);
 				if (lastInsert == null || lastInsert < op.getMechanism().getLastTick()) {
 					doInsert = true;
-					time = "now()";
+					time = UUIDs.timeBased();
 					_lastInsert.put(op, System.currentTimeMillis());
 				}
 			}
@@ -314,38 +325,29 @@ public class SharedKeyspace extends Keyspace {
 
 		if (doInsert) {
 			_logger.info("Updating Cassandra state at time {} with event {}",
-					 CassandraDistributionManager.sdf.format(new Date(time.equals("now()") ? System.currentTimeMillis() : UUIDs.unixTimestamp(UUID.fromString(time)))),
+					 CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
 					op.getFullId());
 
-			batchJob.append("INSERT INTO " + _name + "." + TABLE_SHARED_OP_NOTIFIED
-					+ " (opid, location, timestep, time) VALUES ("
-					+ "'" + op.getFullId() + "',"
-					+ "'" + IPLocation.localIpLocation.getHost() + "',"
-					+ timestep + ","
-					+ time
-					+ ") USING TTL " + op.getTTL() / 1000 + ";");
+			_session.execute(preparedNotify.bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (op.getTTL() / 1000)));
 		}
-
-//		batchJob.append(" APPLY BATCH;");
-
-		_session.execute(batchJob.toString());
 	}
 
-	void addData(IData data, IPLocation location) {
+	@Override
+	public void addData(IData data, IPLocation location) {
 		boolean done = false;
 		while (!done) {
 			try {
 				// Check whether there already exists an entry for this dataID ...
-				if (_session.execute("SELECT data from " + _name + "." + TABLE_SHARED_DATA + " WHERE data = '" + data.getId() + "';").isExhausted()) {
+				if (_session.execute("SELECT data from " + TABLE_DATA + " WHERE data = '" + data.getId() + "';").isExhausted()) {
 					// ... if not, insert the corresponding row
-					_session.execute("INSERT INTO " + _name + "." + TABLE_SHARED_DATA
+					_session.execute("INSERT INTO " + TABLE_DATA
 							+ " (data, locations) VALUES ('" + data.getId() + "',{'"
 							+ IPLocation.localIpLocation.getHost() + "','"
 							+ location.getHost() + "'})");
 				}
 				else {
 					// ... otherwise add the additional location to the existing row
-					_session.execute("UPDATE " + _name + "." + TABLE_SHARED_DATA + " SET locations = locations + {'"
+					_session.execute("UPDATE " + TABLE_DATA + " SET locations = locations + {'"
 							+ location.getHost()	+ "'} WHERE data = '" + data.getId() + "'");
 				}
 				done = true;

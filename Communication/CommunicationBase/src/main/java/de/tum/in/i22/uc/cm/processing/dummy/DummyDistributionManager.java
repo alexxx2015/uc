@@ -36,7 +36,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void update(IOperator operator, boolean endOfTimestep) {
+	public void notify(IOperator operator, boolean endOfTimestep) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("update method invoked");
 	}

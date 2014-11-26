@@ -8,9 +8,9 @@ public abstract class Keyspace {
 	protected final Cluster _cluster;
 	protected final String _name;
 
-	public Keyspace(String name, Session session, Cluster cluster) {
+	public Keyspace(String name, Cluster cluster) {
 		_name = name;
-		_session = session;
 		_cluster = cluster;
+		_session = cluster.connect(name);
 	}
 }

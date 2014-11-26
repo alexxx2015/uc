@@ -34,7 +34,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 		if (_timeAmount.getTimestepInterval() <= 0) {
-			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
+			throw new IllegalStateException("Arguments must result in a positive timestepInterval.");
 		}
 
 		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
