@@ -17,13 +17,13 @@
 
 	<preventiveMechanism name="testTUM2">
 		<description>...</description>
-		<timestep amount="5" unit="MINUTES" />
+		<timestep amount="5" unit="SECONDS" />
 
 		<trigger action="*" tryEvent="true">
 		</trigger>
 
 		<condition>
-			<occurMinEvent amount="13" unit="MINUTES" limit="2">
+			<occurMinEvent amount="13" unit="SECONDS" limit="2">
 				<event action="Execve" tryEvent="false">
 					<paramMatch name="filename" value="/bin/ls"/>
 				</event>
@@ -39,13 +39,13 @@
 
 	<preventiveMechanism name="testTUM1">
 		<description>...</description>
-		<timestep amount="5" unit="MINUTES" />
+		<timestep amount="5" unit="SECONDS" />
 
 		<trigger action="*" tryEvent="true">
 		</trigger>
 
 		<condition>
-			<occurMinEvent amount="13" unit="MINUTES" limit="2">
+			<occurMinEvent amount="13" unit="SECONDS" limit="2">
 				<event action="Execve" tryEvent="false">
 					<paramMatch name="filename" value="/bin/ls"/>
 				</event>

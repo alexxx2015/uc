@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 
 public abstract class Operator extends Observable implements IOperator {
@@ -76,11 +77,11 @@ public abstract class Operator extends Observable implements IOperator {
 		_backupStates = new ArrayDeque<>(2);
 	}
 
-	public final void init(Mechanism mechanism) {
+	public final void init(Mechanism mechanism) throws InvalidOperatorException {
 		init(mechanism, null, mechanism.getTimestepSize() * 2);
 	}
 
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		if (mech == null) {
 			throw new NullPointerException("Provided mechanism was null.");
 		}

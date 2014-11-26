@@ -388,12 +388,14 @@ public class PmpHandler extends PmpProcessor {
 			// Map all data IDs to the new XmlPolicy
 			mapDataToPolicy(allData, convertedXmlPolicy);
 
-			if (Settings.getInstance().getDistributionEnabled()) {
+			IStatus deployStatus = getPdp().deployPolicyXML(convertedXmlPolicy);
+
+			// Deploy at the PDP
+			if (deployStatus.isStatus(EStatus.OKAY) && Settings.getInstance().getDistributionEnabled()) {
 				_distributionManager.register(convertedXmlPolicy);
 			}
 
-			// finally, deploy at the PDP
-			return getPdp().deployPolicyXML(convertedXmlPolicy);
+			return deployStatus;
 		}
 		else {
 			_logger.debug("Policy was deployed before. Not deploying again.");

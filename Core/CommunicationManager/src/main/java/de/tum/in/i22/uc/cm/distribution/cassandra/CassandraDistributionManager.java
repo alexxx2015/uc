@@ -20,7 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.AtomicMonotonicTimestampGenerator;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
@@ -62,7 +64,10 @@ public class CassandraDistributionManager implements IDistributionManager {
 	private final Map<String, IPLocation> _responsiblePdps;
 
 	public CassandraDistributionManager() {
-		QueryOptions options = new QueryOptions().setConsistencyLevel(Settings.getInstance().getDistributionConsistencyLevel());
+		/*
+		 * Default consistency level.
+		 */
+		QueryOptions options = new QueryOptions().setConsistencyLevel(ConsistencyLevel.QUORUM);
 
 		InetAddress addr = null;
 		try {

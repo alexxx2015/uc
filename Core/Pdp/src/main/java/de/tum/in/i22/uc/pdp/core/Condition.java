@@ -1,12 +1,12 @@
 package de.tum.in.i22.uc.pdp.core;
 
-import java.util.LinkedList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidConditionException;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.Operator;
 import de.tum.in.i22.uc.pdp.xsd.ConditionType;
 
@@ -18,15 +18,20 @@ public class Condition implements ICondition {
 	public Condition() {
 	}
 
-	public Condition(ConditionType cond, Mechanism mechanism) {
+	public Condition(ConditionType cond, Mechanism mechanism) throws InvalidConditionException {
 		_operator = (Operator) cond.getOperators();
 
 		if (_operator == null) {
-			_logger.error("Condition is empty.");
-			throw new NullPointerException("Condition is empty.");
+			throw new InvalidConditionException("Condition is empty.");
 		}
 
-		_operator.init(mechanism);
+		try {
+			_operator.init(mechanism);
+		}
+		catch (InvalidOperatorException e) {
+			throw new InvalidConditionException(e.getClass() + ": " + e.getMessage());
+		}
+
 		_operator.initId();
 
 		mechanism.getPolicyDecisionPoint().addObservers(_operator.getObservers());

@@ -28,6 +28,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
@@ -89,14 +90,16 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 	private void prepareStatements() {
 		preparedGetFirstTick = _session.prepare("SELECT firstTick FROM " + TABLE_MECHANISMS
-				+ " WHERE mechanismName = ? LIMIT 1;");
+				+ " WHERE mechanismName = ? LIMIT 1;").setConsistencyLevel(Settings.getInstance().getDistributionReadConsistency());
 
 		preparedSetFirstTick = _session.prepare("INSERT INTO " + TABLE_MECHANISMS
-				+ " (mechanismName,firstTick) VALUES (?,?);");
+				+ " (mechanismName,firstTick) VALUES (?,?);")
+				.setConsistencyLevel(Settings.getInstance().getDistributionWriteConsistency());
 
 		preparedNotify = _session.prepare("INSERT INTO " + TABLE_OP_NOTIFIED
-				+ " (opid, location, timestep, time) VALUES (?,?,?,?)"
-				+ " USING TTL ?;");
+				+ " (opid, location, timestep, time, dummyttl) VALUES (?,?,?,?,0)"
+				+ " USING TTL ?;")
+				.setConsistencyLevel(Settings.getInstance().getDistributionWriteConsistency());
 	}
 
 	static SharedKeyspace create(XmlPolicy policy, Cluster cluster) {

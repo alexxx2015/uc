@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 
@@ -22,17 +23,10 @@ public class RepLim extends RepLimType {
 	}
 
 	@Override
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
-		if (amount <= 0) {
-			throw new IllegalArgumentException("Amount must be positive.");
-		}
-
 		timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
-		if (timeAmount.getTimestepInterval() <= 0) {
-			throw new IllegalStateException("Arguments must result in a positive timestepValue.");
-		}
 
 		CircularArray<Boolean> circArray = new CircularArray<>(timeAmount.getTimestepInterval());
 		for (int a = 0; a < timeAmount.getTimestepInterval(); a++) {

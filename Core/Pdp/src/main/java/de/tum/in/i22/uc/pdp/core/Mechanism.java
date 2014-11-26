@@ -19,6 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidConditionException;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
@@ -52,7 +53,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 * mechanism took place. This is to synchronize tick()ing
 	 * of this Mechanism in a distributed setup.
 	 */
-	private long _firstTick;
+	private long _firstTick = Long.MIN_VALUE;
 
 	private final Object _pausedLock = new Object();
 
@@ -83,14 +84,17 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
-		_condition = new Condition(mech.getCondition(), this);
+		try {
+			_condition = new Condition(mech.getCondition(), this);
+		}
+		catch (InvalidConditionException e) {
+			throw new InvalidMechanismException(e.getClass() + ": " + e.getMessage());
+		}
 
 		_backupCondition = new ArrayDeque<>(1);
 
 		_executeAsyncActions = new LinkedList<>();
 		mech.getExecuteAsyncAction().forEach(a -> _executeAsyncActions.add(new ExecuteAction(a)));
-
-		_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
 
 		// We will be observed by the PDP, such that we can signal the end of a timestep
 		addObserver(pdp);
@@ -219,31 +223,28 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		return true;
 	}
 
-	private void initializeLastTick() {
+	/**
+	 * Initializes the firstTick attribute.
+	 * Important: Call this method in the main run() loop
+	 * rather than in the constructor, because the in the
+	 * distributed case this value might end up later in
+	 * the distributed database.
+	 */
+	private void initFirstTick() {
 		if (_firstTick == Long.MIN_VALUE) {
-			/*
-			 * Artificial point in time at which the last tick
-			 * supposedly 'happened'. Just to get things rolling...
-			 */
-			_lastTick = System.currentTimeMillis() - _timestepSize;
-			_firstTick = _lastTick;
+			_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
+		}
 
-			/*
-			 * Also register the Mechanism with the DistributionManager
-			 * such that other systems will synchronize on the
-			 * value of _firstTick.
-			 */
+		if (_firstTick == Long.MIN_VALUE) {
+			_firstTick = System.currentTimeMillis() - _timestepSize;
 			Threading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
 		}
-		else {
-			/*
-			 * Calculate the value of _lastTick on the basis
-			 * of _firstTick and _timestepSize.
-			 */
-			long now = System.currentTimeMillis();
-			_lastTick = now - (now - _firstTick) % _timestepSize;
-			_timestep = 1 + (now - _firstTick) / _timestepSize;
-		}
+	}
+
+	private void initLastTick() {
+		long now = System.currentTimeMillis();
+		_lastTick = now - (now - _firstTick) % _timestepSize;
+		_timestep = 1 + (now - _firstTick) / _timestepSize;
 	}
 
 	/**
@@ -264,7 +265,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	public void run() {
 		_logger.info("Starting mechanism tick thread ({}ms).", _timestepSize);
 
-		initializeLastTick();
+		initFirstTick();
+		initLastTick();
 
 		while (!_interrupted.get()) {
 
@@ -299,7 +301,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 						 * Once the pause is released, re-initialize
 						 * lastTick variable.
 						 */
-						initializeLastTick();
+						initLastTick();
 					}
 					/*
 					else {

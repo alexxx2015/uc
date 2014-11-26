@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.AndType;
 
@@ -27,7 +28,7 @@ public class OSLAnd extends AndType {
 	}
 
 	@Override
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
 		op1 = (Operator) operators.get(0);
@@ -142,17 +143,17 @@ public class OSLAnd extends AndType {
 	/**
 	 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
 	 * This method checks whether the operands of AND(.,.) are AND, NOT, or a Literal.
-	 * If this is not the case, an IllegalStateException is thrown.
+	 * If this is not the case, an InvalidOperatorException is thrown.
 	 *
-	 * @throws IllegalStateException if this object is not in DNF.
+	 * @throws InvalidOperatorException if this object is not in DNF.
 	 */
-	private void ensureDNF() throws IllegalArgumentException {
+	private void ensureDNF() throws InvalidOperatorException {
 		if (!(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof AtomicOperator)) {
-			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
+			throw new InvalidOperatorException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
 						+ getClass() + " was of type " + op1.getClass() + ").");
 		}
 		if (!(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof AtomicOperator)) {
-			throw new IllegalStateException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
+			throw new InvalidOperatorException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
 					+ getClass() + " was of type " + op2.getClass() + ").");
 		}
 	}

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pdp.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.xsd.time.TimeUnitType;
 
 public class TimeAmount {
@@ -18,11 +19,19 @@ public class TimeAmount {
 	private final long _interval;
 	private final long _timestepInterval;
 
-	public TimeAmount(long amount, TimeUnitType tu, long mechanismTimestepSize) {
+	public TimeAmount(long amount, TimeUnitType tu, long mechanismTimestepSize) throws InvalidOperatorException {
+		if (amount <= 0) {
+			throw new InvalidOperatorException("Amount must be positive.");
+		}
+
 		_amount = amount;
 		_unit = tu.value();
 		_interval = amount * getTimeUnitMultiplier(tu);
 		_timestepInterval = _interval / mechanismTimestepSize;
+
+		if (_timestepInterval <= 0) {
+			throw new InvalidOperatorException("Arguments must result in a positive timestepInterval.");
+		}
 
 		_logger.debug("Interval: {}, timestepInterval: {}", _interval, _timestepInterval);
 	}

@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.OccurMinEventType;
 
@@ -25,17 +26,10 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	}
 
 	@Override
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
-		if (amount <= 0) {
-			throw new IllegalArgumentException("Amount must be positive.");
-		}
-
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
-		if (_timeAmount.getTimestepInterval() <= 0) {
-			throw new IllegalStateException("Arguments must result in a positive timestepInterval.");
-		}
 
 		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {

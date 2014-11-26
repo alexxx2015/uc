@@ -49,7 +49,7 @@ class RequestQueueManager implements Runnable {
 	public void run() {
 		_logger.debug("Request handler run method");
 
-		while (!Thread.interrupted() && run ) {
+		while (!Thread.interrupted() && run) {
 			RequestWrapper requestWrapper = null;
 			try {
 				requestWrapper = _requestQueue.take();

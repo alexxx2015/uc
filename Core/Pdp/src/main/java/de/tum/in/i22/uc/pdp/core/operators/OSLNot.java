@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.NotType;
 
@@ -21,7 +22,7 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
 		op = (Operator) operators;
@@ -38,13 +39,13 @@ public class OSLNot extends NotType {
 	/**
 	 * If distribution is enabled, then conditions must be in DNF (cf. CANS 2014 paper).
 	 * At this place, we check whether the operand of NOT(.) is a Literal. If this is not
-	 * the case, an IllegalStateException is thrown.
+	 * the case, an InvalidOperatorException is thrown.
 	 *
-	 * @throws IllegalStateException if the operand is not a {@link AtomicOperator}.
+	 * @throws InvalidOperatorException if the operand is not a {@link AtomicOperator}.
 	 */
-	private void ensureDNF() {
+	private void ensureDNF() throws InvalidOperatorException {
 		if (!(op instanceof AtomicOperator)) {
-			throw new IllegalStateException(
+			throw new InvalidOperatorException(
 					"Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (operand of "
 							+ getClass() + " was not of type " + AtomicOperator.class + ").");
 		}

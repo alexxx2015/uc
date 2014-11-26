@@ -7,11 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
 
 public class SharedKeyspaceManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(SharedKeyspaceManager.class);
@@ -33,87 +31,48 @@ public class SharedKeyspaceManager {
 	 * @return
 	 */
 	ISharedKeyspace create(XmlPolicy policy) {
-		ISharedKeyspace keyspace = get(policy.getName());
+		ISharedKeyspace keyspace;
 
-		if (keyspace == DummyKeyspace.instance) {
+		/*
+		 * Check whether the keyspace already exists
+		 */
+		synchronized (_sharedKeyspaces) {
+			keyspace = _sharedKeyspaces.get(policy.getName());
+		}
+
+		/*
+		 * If the keyspace does not exist, create it.
+		 */
+		if (keyspace == null) {
 			keyspace = SharedKeyspace.create(policy, _cluster);
-			_sharedKeyspaces.put(policy.getName(), keyspace);
+			synchronized (_sharedKeyspaces) {
+				_sharedKeyspaces.put(policy.getName(), keyspace);
+				_sharedKeyspaces.notifyAll();
+			}
 		}
 
 		return keyspace;
 	}
 
+
 	ISharedKeyspace get(String policyName) {
-		ISharedKeyspace k = _sharedKeyspaces.get(policyName);
-		return k != null ? k : DummyKeyspace.instance;
+		ISharedKeyspace k = null;
+
+		/*
+		 * Wait for the keyspace to get created.
+		 */
+		synchronized (_sharedKeyspaces) {
+			while ((k = _sharedKeyspaces.get(policyName)) == null) {
+				try {
+					_sharedKeyspaces.wait();
+				} catch (InterruptedException e) {}
+			}
+		}
+
+		return k;
 	}
 
 	ISharedKeyspace get(IOperator op) {
 		return get(op.getMechanism().getPolicyName());
-	}
-
-	static final class DummyKeyspace implements ISharedKeyspace {
-
-		static final DummyKeyspace instance = new DummyKeyspace();
-
-		private DummyKeyspace() {
-		}
-
-		@Override
-		public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
-			_logger.error("DummyKeyspace::howOftenNotifiedSinceTimestep");
-			return 0;
-		}
-
-		@Override
-		public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
-			_logger.error("DummyKeyspace::howOftenNotifiedInBetween");
-			return 0;
-		}
-
-		@Override
-		public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-			_logger.error("DummyKeyspace::howOftenNotifiedAtTimestep");
-			return 0;
-		}
-
-		@Override
-		public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
-			_logger.error("DummyKeyspace::wasNotifiedInBetween");
-			return false;
-		}
-
-		@Override
-		public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-			_logger.error("DummyKeyspace::wasNotifiedAtTimestep");
-			return false;
-		}
-
-		@Override
-		public long getFirstTick(String mechanismName) {
-			_logger.error("DummyKeyspace::getFirstTick");
-			return 0;
-		}
-
-		@Override
-		public void notify(IOperator op, boolean endOfTimestep) {
-			_logger.error("DummyKeyspace::update");
-		}
-
-		@Override
-		public void addData(IData d, IPLocation dstLocation) {
-			_logger.error("DummyKeyspace::addData");
-		}
-
-		@Override
-		public boolean adjust(String name, IPLocation pmpLocation, boolean b) {
-			_logger.error("DummyKeyspace::adjust");
-			return false;
-		}
-
-		@Override
-		public void setFirstTick(String mechanismName, long firstTick) {
-			_logger.error("DummyKeyspace::setFirstTick");
-		}
 	}
 }

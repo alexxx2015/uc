@@ -12,6 +12,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.ImpliesType;
 
@@ -27,14 +28,14 @@ public class OSLImplies extends ImpliesType {
 	}
 
 	@Override
-	protected void init(Mechanism mech, Operator parent, long ttl) {
+	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
-			throw new IllegalStateException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
+			throw new InvalidOperatorException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
 
 		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());

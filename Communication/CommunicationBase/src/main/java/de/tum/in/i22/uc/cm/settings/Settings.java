@@ -19,7 +19,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.distribution.DistributionGranularity;
-import de.tum.in.i22.uc.cm.distribution.DistributionGranularity.EDistributionGranularity;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -115,7 +114,6 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
 
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
-	public static final String PROP_NAME_distributionGranularity = "distributionGranularity";
 	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
@@ -124,7 +122,8 @@ public class Settings extends SettingsLoader {
 	 * Choose one value of enum
 	 * com.datastax.driver.core.ConsistencyLevel
 	 */
-	public static final String PROP_NAME_distributionConsistencyLevel = "distributionConsistencyLevel";
+	public static final String PROP_NAME_distributionWriteConsistency = "distributionWriteConsistency";
+	public static final String PROP_NAME_distributionReadConsistency = "distributionReadConsistency";
 
 
 
@@ -218,11 +217,11 @@ public class Settings extends SettingsLoader {
 		});
 
 		loadSetting(PROP_NAME_distributionEnabled, false);
-		loadSetting(PROP_NAME_distributionGranularity, new DistributionGranularity(EDistributionGranularity.TIMESTEP));
 		loadSetting(PROP_NAME_distributionMaxPipConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
-		loadSetting(PROP_NAME_distributionConsistencyLevel, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 
@@ -488,10 +487,6 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_distributionEnabled);
 	}
 
-	public DistributionGranularity getDistributionGranularity() {
-		return getValue(PROP_NAME_distributionGranularity);
-	}
-
 	public int getDistributionMaxPdpConnections() {
 		return getValue(PROP_NAME_distributionMaxPdpConnections);
 	}
@@ -500,8 +495,12 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_distributionMaxPmpConnections);
 	}
 
-	public ConsistencyLevel getDistributionConsistencyLevel() {
-		return getValue(PROP_NAME_distributionConsistencyLevel);
+	public ConsistencyLevel getDistributionWriteConsistency() {
+		return getValue(PROP_NAME_distributionWriteConsistency);
+	}
+
+	public ConsistencyLevel getDistributionReadConsistency() {
+		return getValue(PROP_NAME_distributionReadConsistency);
 	}
 
 	public int getConnectionAttemptInterval() {
