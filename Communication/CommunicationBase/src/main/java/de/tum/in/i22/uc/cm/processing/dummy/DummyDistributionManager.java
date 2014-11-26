@@ -47,13 +47,13 @@ public class DummyDistributionManager implements IDistributionManager {
 //		_logger.error("wasObservedSince method invoked");
 //		return false;
 //	}
-
-	@Override
-	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		_logger.error("DummyDistributionManager DUMMY Implementation");
-		_logger.error("wasObservedInBetween method invoked");
-		return true;
-	}
+//
+//	@Override
+//	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
+//		_logger.error("DummyDistributionManager DUMMY Implementation");
+//		_logger.error("wasObservedInBetween method invoked");
+//		return true;
+//	}
 
 	@Override
 	public void deregister(String policyName, IPLocation location) {
@@ -68,12 +68,12 @@ public class DummyDistributionManager implements IDistributionManager {
 		return IPLocation.localIpLocation;
 	}
 
-	@Override
-	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		_logger.error("DummyDistributionManager DUMMY Implementation");
-		_logger.error("howOftenTrueInBetween method invoked");
-		return 0;
-	}
+//	@Override
+//	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
+//		_logger.error("DummyDistributionManager DUMMY Implementation");
+//		_logger.error("howOftenTrueInBetween method invoked");
+//		return 0;
+//	}
 
 	@Override
 	public void setFirstTick(String policyName, String mechanismName, long firstTick) {

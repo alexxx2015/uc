@@ -9,11 +9,7 @@ public interface ISharedKeyspace {
 
 	int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep);
 
-	int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to);
-
 	int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep);
-
-	boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to);
 
 	boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep);
 
@@ -23,8 +19,10 @@ public interface ISharedKeyspace {
 
 	void addData(IData d, IPLocation dstLocation);
 
-	boolean adjust(String name, IPLocation pmpLocation, boolean b);
-
 	void setFirstTick(String mechanismName, long firstTick);
+
+	boolean diminishBy(IPLocation location);
+
+	boolean enlargeBy(IPLocation location);
 
 }

@@ -28,10 +28,10 @@ public interface IDistributionManager {
 	public void notify(IOperator operator, boolean endOfTimestep);
 
 //	boolean wasNotifiedSince(AtomicOperator operator, long since);
-
-	boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to);
-
-	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to);
+//
+//	boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to);
+//
+//	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to);
 
 	void deregister(String policyName, IPLocation location);
 

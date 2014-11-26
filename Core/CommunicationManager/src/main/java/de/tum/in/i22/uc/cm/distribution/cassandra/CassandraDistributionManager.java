@@ -3,9 +3,7 @@ package de.tum.in.i22.uc.cm.distribution.cassandra;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,7 +82,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		_responsiblePdps = Collections.synchronizedMap(new HashMap<>());
 
-		_privateKeyspace = PrivateKeyspace.create(cluster);
+		_privateKeyspace = new PrivateKeyspace(cluster);
 
 		_sharedKeyspaces = new SharedKeyspaceManager(cluster);
 	}
@@ -110,23 +108,6 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_initialized = true;
 	}
 
-	@Override
-	public void register(XmlPolicy policy) {
-		_sharedKeyspaces.create(policy);
-		_privateKeyspace.add(policy);
-	}
-
-	@Override
-	public void deregister(String policyName, IPLocation location) {
-		_sharedKeyspaces.get(policyName).adjust(policyName, location, false);
-		_privateKeyspace.delete(policyName);
-	}
-
-	@Override
-	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
-		_sharedKeyspaces.get(policyName).setFirstTick(mechanismName, firstTick);
-	}
-
 	/**
 	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
 	 * via Thrift interfaces.
@@ -150,7 +131,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 			ISharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
 
-			if (ks.adjust(policy.getName(), pmpLocation, true)) {
+			if (ks.enlargeBy(pmpLocation)) {
 				boolean success = true;
 
 				// if the location was not yet part of the keyspace, then we need to
@@ -172,7 +153,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 				// If remote deployment of the policy fails,
 				// then we remove the location from the keyspace
 				if (!success) {
-					ks.adjust(policy.getName(), pmpLocation, false);
+					ks.diminishBy(pmpLocation);
 				}
 
 				/*
@@ -267,20 +248,26 @@ public class CassandraDistributionManager implements IDistributionManager {
 		return policies;
 	}
 
+	@Override
+	public void register(XmlPolicy policy) {
+		_sharedKeyspaces.create(policy);
+		_privateKeyspace.add(policy);
+	}
+
+	@Override
+	public void deregister(String policyName, IPLocation location) {
+		_sharedKeyspaces.get(policyName).diminishBy(location);
+		_privateKeyspace.delete(policyName);
+	}
+
+	@Override
+	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
+		_sharedKeyspaces.get(policyName).setFirstTick(mechanismName, firstTick);
+	}
 
 	@Override
 	public void notify(IOperator operator, boolean endOfTimestep) {
 		_sharedKeyspaces.get(operator).notify(operator, endOfTimestep);
-	}
-
-	@Override
-	public boolean wasNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		return _sharedKeyspaces.get(operator).wasNotifiedInBetween(operator, from, to);
-	}
-
-	@Override
-	public int howOftenNotifiedInBetween(AtomicOperator operator, long from, long to) {
-		return _sharedKeyspaces.get(operator).howOftenNotifiedInBetween(operator, from, to);
 	}
 
 	@Override
@@ -296,6 +283,11 @@ public class CassandraDistributionManager implements IDistributionManager {
 	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
 		return _sharedKeyspaces.get(operator).howOftenNotifiedSinceTimestep(operator, timestep);
+	}
+
+	@Override
+	public long getFirstTick(String policyName, String mechanismName) {
+		return _sharedKeyspaces.get(policyName).getFirstTick(mechanismName);
 	}
 
 	@Override
@@ -328,18 +320,5 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_responsiblePdps.put(ip, result);
 
 		return result;
-	}
-
-	@Override
-	public long getFirstTick(String policyName, String mechanismName) {
-		return _sharedKeyspaces.get(policyName).getFirstTick(mechanismName);
-	}
-
-	static String toBase64(String s) {
-		return new String(Base64.getEncoder().encode(s.getBytes(Charset.defaultCharset())), Charset.defaultCharset());
-	}
-
-	static String fromBase64(String s) {
-		return new String(Base64.getDecoder().decode(s.getBytes(Charset.defaultCharset())), Charset.defaultCharset());
 	}
 }

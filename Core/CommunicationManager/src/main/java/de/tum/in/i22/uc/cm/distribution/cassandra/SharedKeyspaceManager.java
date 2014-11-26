@@ -44,7 +44,7 @@ public class SharedKeyspaceManager {
 		 * If the keyspace does not exist, create it.
 		 */
 		if (keyspace == null) {
-			keyspace = SharedKeyspace.create(policy, _cluster);
+			keyspace = new SharedKeyspace(policy, _cluster);
 			synchronized (_sharedKeyspaces) {
 				_sharedKeyspaces.put(policy.getName(), keyspace);
 				_sharedKeyspaces.notifyAll();

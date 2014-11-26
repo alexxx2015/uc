@@ -60,4 +60,16 @@ public class Network {
 
 		return result;
 	}
+
+	public static String getHostname() {
+		String hostname;
+
+		try {
+			hostname = InetAddress.getLocalHost().getHostName().replaceAll("[^a-zA-Z0-9]","");
+		} catch (UnknownHostException e) {
+			throw new RuntimeException("Unable to retrieve hostname.");
+		}
+
+		return hostname;
+	}
 }
