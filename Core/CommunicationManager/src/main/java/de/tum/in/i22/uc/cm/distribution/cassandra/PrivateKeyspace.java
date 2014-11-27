@@ -3,11 +3,16 @@ package de.tum.in.i22.uc.cm.distribution.cassandra;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.RegularStatement;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.distribution.Network;
@@ -29,14 +34,6 @@ class PrivateKeyspace extends Keyspace {
 						+ "PRIMARY KEY (policyName));");
 	};
 
-	private PreparedStatement _prepSelectPolicies;
-	private PreparedStatement _prepSelectPolicyName;
-
-	private PreparedStatement _prepInsertPolicy;
-
-	private PreparedStatement _prepDeletePolicy;
-
-
 	PrivateKeyspace(Cluster cluster) {
 		super(Network.getHostname(), cluster);
 	}
@@ -47,28 +44,14 @@ class PrivateKeyspace extends Keyspace {
 	}
 
 	@Override
-	void prepareStatements() {
-
-		_prepSelectPolicies = _session.prepare("SELECT policy FROM " + TABLE_POLICIES + ";")
-			.setConsistencyLevel(readConsistency);
-
-		_prepSelectPolicyName = _session.prepare("SELECT policyName FROM " + TABLE_POLICIES
-			+ " WHERE policyName = ?;")
-			.setConsistencyLevel(readConsistency);
-
-		_prepInsertPolicy = _session.prepare("INSERT INTO " + TABLE_POLICIES
-			+ " (policyName,policy) VALUES (?,?);")
-			.setConsistencyLevel(writeConsistency);
-
-		_prepDeletePolicy = _session.prepare("DELETE FROM " + TABLE_POLICIES
-			+ " WHERE policyName = ?;")
-			.setConsistencyLevel(writeConsistency);
+	IPreparedStatementId[] getPrepareStatements() {
+		return Prepared.values();
 	}
 
 	Collection<String> getPolicies() {
 		Collection<String> policies = new LinkedList<>();
 
-		_session.execute(_prepSelectPolicies.bind()).forEach(
+		_session.execute(Prepared._prepSelectPolicies.get().bind()).forEach(
 				r -> policies.add(MyBase64.fromBase64(r.getString("policy"))));
 
 		return policies;
@@ -85,9 +68,9 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policy the policy to be made persistent.
 	 */
 	void add(XmlPolicy policy) {
-		if (_session.execute(_prepSelectPolicyName.bind(policy.getName())).isExhausted()) {
+		if (_session.execute(Prepared._prepSelectPolicyName.get().bind(policy.getName())).isExhausted()) {
 			// TODO: Encrypt what we are writing, so that others don't know which policies we are enforcing
-			_session.execute(_prepInsertPolicy.bind(policy.getName(), MyBase64.toBase64(policy.getXml())));
+			_session.execute(Prepared._prepInsertPolicy.get().bind(policy.getName(), MyBase64.toBase64(policy.getXml())));
 		}
 	}
 
@@ -99,6 +82,58 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policyName the policy to be deleted.
 	 */
 	void delete(String policyName) {
-		_session.execute(_prepDeletePolicy.bind(policyName));
+		_session.execute(Prepared._prepDeletePolicy.get().bind(policyName));
+	}
+
+
+	private enum Prepared implements IPreparedStatementId {
+
+		_prepSelectPolicies(
+				QueryBuilder
+				.select("policy")
+				.from(TABLE_POLICIES),
+				readConsistency),
+
+		_prepSelectPolicyName(
+				QueryBuilder
+				.select("policyName")
+				.from(TABLE_POLICIES)
+				.where(QueryBuilder.eq("policyName", QueryBuilder.bindMarker())),
+				readConsistency),
+
+		_prepInsertPolicy(
+				QueryBuilder
+				.insertInto(TABLE_POLICIES)
+				.value("policyName", QueryBuilder.bindMarker())
+				.value("policy", QueryBuilder.bindMarker()),
+				writeConsistency),
+
+		_prepDeletePolicy(
+				QueryBuilder
+				.delete()
+				.all()
+				.from(TABLE_POLICIES)
+				.where(QueryBuilder.eq("policyName", QueryBuilder.bindMarker())),
+				writeConsistency),
+		;
+
+		Prepared(RegularStatement regular, ConsistencyLevel cl) {
+			_regular = regular;
+			_cl = cl;
+		}
+
+		@Override
+		public void prepare(Session session) {
+			_prepared = session.prepare(_regular).setConsistencyLevel(_cl);
+		}
+
+		@Override
+		public PreparedStatement get() {
+			return _prepared;
+		}
+
+		private PreparedStatement _prepared;
+		private RegularStatement _regular;
+		private ConsistencyLevel _cl;
 	}
 }

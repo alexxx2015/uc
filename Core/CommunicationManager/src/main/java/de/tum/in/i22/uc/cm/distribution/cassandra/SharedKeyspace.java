@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorCompletionService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.Sets;
 
@@ -24,7 +26,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.generic.MyBase64;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
@@ -72,20 +73,6 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 						+ "PRIMARY KEY (mechanismName));");
 	};
 
-	private PreparedStatement _prepSelectFirstTick;
-	private PreparedStatement _prepSelectHasData;
-	private PreparedStatement _prepSelectNotifiedAllAt;
-	private PreparedStatement _prepSelectNotifiedOneAt;
-	private PreparedStatement _prepSelectNotifiedAllSince;
-	private PreparedStatement _prepSelectStrategyOptions;
-
-	private PreparedStatement _prepInsertData;
-	private PreparedStatement _prepInsertFirstTick;
-	private PreparedStatement _prepInsertNotified;
-	private PreparedStatement _prepInsertPolicy;
-
-	private PreparedStatement _prepUpdateData;
-
 
 	SharedKeyspace(XmlPolicy policy, Cluster cluster) {
 		super(policy.getName().toLowerCase(), cluster);
@@ -101,77 +88,19 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	}
 
 	@Override
-	void prepareStatements() {
-		ExecutorCompletionService<?> cs = new ExecutorCompletionService<>(Threading.instance());
-
-		/*
-		 * SELECTs
-		 */
-		_prepSelectStrategyOptions = _session.prepare("SELECT strategy_options FROM system.schema_keyspaces "
-				+ " WHERE keyspace_name = '" + _name + "';");
-
-		_prepSelectFirstTick = _session.prepare("SELECT firstTick FROM " + TABLE_MECHANISMS
-				+ " WHERE mechanismName = ? LIMIT 1;")
-				.setConsistencyLevel(readConsistency);
-
-		_prepSelectNotifiedAllAt = _session.prepare("SELECT opid FROM " + TABLE_OP_NOTIFIED
-				+ " WHERE opid = ?"
-				+ " AND timestep = ?;")
-				.setConsistencyLevel(readConsistency);
-
-		_prepSelectNotifiedOneAt = _session.prepare("SELECT opid FROM " + TABLE_OP_NOTIFIED
-				+ " WHERE opid = ?"
-				+ " AND timestep = ?"
-				+ " LIMIT 1;")
-				.setConsistencyLevel(readConsistency);
-
-		_prepSelectNotifiedAllSince = _session.prepare("SELECT opid FROM " + TABLE_OP_NOTIFIED
-				+ " WHERE opid = ?"
-				+ " AND timestep >= ?;")
-				.setConsistencyLevel(readConsistency);
-
-		_prepSelectHasData = _session.prepare("SELECT data from " + TABLE_DATA
-				+ " WHERE data = ?;")
-				.setConsistencyLevel(readConsistency);
-
-
-		/*
-		 * INSERTs
-		 */
-		_prepInsertFirstTick = _session.prepare("INSERT INTO " + TABLE_MECHANISMS
-				+ " (mechanismName,firstTick) VALUES (?,?);")
-				.setConsistencyLevel(writeConsistency);
-
-		_prepInsertNotified = _session.prepare("INSERT INTO " + TABLE_OP_NOTIFIED
-				+ " (opid, location, timestep, time, dummyttl) VALUES (?,?,?,?,0)"
-				+ " USING TTL ?;")
-				.setConsistencyLevel(writeConsistency);
-
-		_prepInsertData = _session.prepare("INSERT INTO " + TABLE_DATA
-				+ " (data, locations) VALUES (?,?);")
-				.setConsistencyLevel(writeConsistency);
-
-		_prepInsertPolicy = _session.prepare("INSERT INTO " + TABLE_POLICIES
-				+ " (policyName,policy) VALUES (?,?);");
-
-
-		/*
-		 * UPDATEs
-		 */
-		_prepUpdateData = _session.prepare("UPDATE " + TABLE_DATA
-				+ " SET locations = locations + ? WHERE data = ?;")
-				.setConsistencyLevel(writeConsistency);
+	IPreparedStatementId[] getPrepareStatements() {
+		return Prepared.values();
 	}
 
 
 	void initialize() {
-		_session.execute(_prepInsertPolicy.bind(_name, MyBase64.toBase64(_policy.getXml())));
+		_session.execute(Prepared._prepInsertPolicy.get().bind(_name, MyBase64.toBase64(_policy.getXml())));
 	}
 
 
 	private Set<String> getLocations() {
 		// Retrieve current information about the keyspace
-		ResultSet rows = _session.execute(_prepSelectStrategyOptions.bind());
+		ResultSet rows = _session.execute(Prepared._prepSelectStrategyOptions.get().bind(_name));
 
 		// Build the set of locations that are currently known within the keyspace
 		Set<String> allLocations = new HashSet<>();
@@ -228,14 +157,14 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 	@Override
 	public void setFirstTick(String mechanismName, long firstTick) {
-		if (_session.execute(_prepSelectFirstTick.bind(mechanismName)).isExhausted()) {
-			_session.execute(_prepInsertFirstTick.bind(mechanismName, firstTick));
+		if (_session.execute(Prepared._prepSelectFirstTick.get().bind(mechanismName)).isExhausted()) {
+			_session.execute(Prepared._prepInsertFirstTick.get().bind(mechanismName, firstTick));
 		}
 	}
 
 	@Override
 	public long getFirstTick(String mechanismName) {
-		ResultSet rs = _session.execute(_prepSelectFirstTick.bind(mechanismName));
+		ResultSet rs = _session.execute(Prepared._prepSelectFirstTick.get().bind(mechanismName));
 		return rs.isExhausted() ? Long.MIN_VALUE : rs.iterator().next().getLong("firstTick");
 	}
 
@@ -243,20 +172,20 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("wasNotifiedAtTimestep({}, {})", operator, timestep);
 
-		ResultSet rs = _session.execute(_prepSelectNotifiedOneAt.bind(operator.getFullId(), timestep));
+		ResultSet rs = _session.execute(Prepared._prepSelectNotifiedOneAt.get().bind(operator.getFullId(), timestep));
 		return operator.getPositivity().value() != rs.isExhausted();
 	}
 
 	@Override
 	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		return _session.execute(_prepSelectNotifiedAllAt.bind(operator.getFullId(), timestep)).all().size();
+		return _session.execute(Prepared._prepSelectNotifiedAllAt.get().bind(operator.getFullId(), timestep)).all().size();
 	}
 
 	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedSinceTimestep({}, {})", operator, timestep);
-		return _session.execute(_prepSelectNotifiedAllSince.bind(operator.getFullId(), timestep)).all().size();
+		return _session.execute(Prepared._prepSelectNotifiedAllSince.get().bind(operator.getFullId(), timestep)).all().size();
 	}
 
 	@Override
@@ -313,21 +242,142 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 					 CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
 					op.getFullId());
 
-			_session.execute(_prepInsertNotified.bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (op.getTTL() / 1000)));
+			_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (op.getTTL() / 1000)));
 		}
 	}
 
 	@Override
 	public void addData(IData data, IPLocation location) {
 		// Check whether there already exists an entry for this dataID.
-		if (_session.execute(_prepSelectHasData.bind(data.getId())).isExhausted()) {
+		if (_session.execute(Prepared._prepSelectHasData.get().bind(data.getId())).isExhausted()) {
 			// If such an entry did not exist, create an initial entry.
-			_session.execute(_prepInsertData.bind(data.getId(),
+			_session.execute(Prepared._prepInsertData.get().bind(data.getId(),
 					Sets.newHashSet(IPLocation.localIpLocation.getHost(),location.getHost())));
 		}
 		else {
 			// If an entry existed, then update the existing one.
-			_session.execute(_prepUpdateData.bind(Collections.singleton(location.getHost()), data.getId()));
+			_session.execute(Prepared._prepUpdateData.get().bind(Collections.singleton(location.getHost()), data.getId()));
 		}
+	}
+
+	private enum Prepared implements IPreparedStatementId {
+		/*
+		 * SELECTs
+		 */
+		_prepSelectStrategyOptions(
+				QueryBuilder
+				.select("strategy_options")
+				.from("system","schema_keyspaces")
+				.where(QueryBuilder.eq("keyspace_name", QueryBuilder.bindMarker())),
+				defaultConsistency),
+
+		_prepSelectFirstTick(
+				QueryBuilder
+				.select("firstTick")
+				.from(TABLE_MECHANISMS)
+				.where(QueryBuilder.eq("mechanismName", QueryBuilder.bindMarker()))
+				.limit(1),
+				readConsistency),
+
+		_prepSelectNotifiedAllAt(
+				QueryBuilder
+				.select("opid")
+				.from(TABLE_OP_NOTIFIED)
+				.where(QueryBuilder.eq("opid", QueryBuilder.bindMarker()))
+					.and(QueryBuilder.eq("timestep", QueryBuilder.bindMarker())),
+				readConsistency),
+
+		_prepSelectNotifiedOneAt(
+				QueryBuilder
+				.select("opid")
+				.from(TABLE_OP_NOTIFIED)
+				.where(QueryBuilder.eq("opid", QueryBuilder.bindMarker()))
+					.and(QueryBuilder.eq("timestep", QueryBuilder.bindMarker()))
+				.limit(1),
+				readConsistency),
+
+		_prepSelectNotifiedAllSince(
+				QueryBuilder
+				.select("opid")
+				.from(TABLE_OP_NOTIFIED)
+				.where(QueryBuilder.eq("opid", QueryBuilder.bindMarker()))
+					.and(QueryBuilder.gte("timestep", QueryBuilder.bindMarker())),
+				readConsistency),
+
+		_prepSelectHasData(
+				QueryBuilder
+				.select("data")
+				.from(TABLE_DATA)
+				.where(QueryBuilder.eq("data", QueryBuilder.bindMarker())),
+				readConsistency),
+
+		/*
+		 * INSERTs
+		 */
+		_prepInsertFirstTick(
+				QueryBuilder
+				.insertInto(TABLE_MECHANISMS)
+				.value("mechanismName", QueryBuilder.bindMarker())
+				.value("firstTick", QueryBuilder.bindMarker()),
+				writeConsistency),
+
+		_prepInsertNotified(
+				QueryBuilder
+				.insertInto(TABLE_OP_NOTIFIED)
+				.value("opid", QueryBuilder.bindMarker())
+				.value("location", QueryBuilder.bindMarker())
+				.value("timestep", QueryBuilder.bindMarker())
+				.value("time", QueryBuilder.bindMarker())
+				.value("dummyttl", 0)
+				.using(QueryBuilder.ttl(QueryBuilder.bindMarker())),
+				writeConsistency),
+
+		_prepInsertData(
+				QueryBuilder
+				.insertInto(TABLE_DATA)
+				.value("data", QueryBuilder.bindMarker())
+				.value("locations", QueryBuilder.bindMarker()),
+				writeConsistency),
+
+		_prepInsertPolicy(
+				QueryBuilder
+				.insertInto(TABLE_POLICIES)
+				.value("policyName", QueryBuilder.bindMarker())
+				.value("policy", QueryBuilder.bindMarker()),
+				writeConsistency),
+
+		/*
+		 * UPDATEs
+		 */
+		_prepUpdateData(
+				QueryBuilder
+				.update(TABLE_DATA)
+				.with(QueryBuilder.add("locations", QueryBuilder.bindMarker()))
+				.where(QueryBuilder.eq("data", QueryBuilder.bindMarker())),
+				writeConsistency),
+
+		;
+
+		Prepared(RegularStatement regular, ConsistencyLevel cl) {
+			_regular = regular;
+			_cl = cl;
+		}
+
+		@Override
+		public void prepare(Session session) {
+			_prepared = session.prepare(_regular).setConsistencyLevel(_cl);
+		}
+
+		@Override
+		public PreparedStatement get() {
+			return _prepared;
+		}
+
+		/*
+		 * For Enums, attributes go to the end.
+		 */
+		private PreparedStatement _prepared;
+		private RegularStatement _regular;
+		private ConsistencyLevel _cl;
 	}
 }

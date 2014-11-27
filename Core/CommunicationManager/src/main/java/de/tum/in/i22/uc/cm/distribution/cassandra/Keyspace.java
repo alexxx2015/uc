@@ -20,6 +20,7 @@ public abstract class Keyspace {
 
 	protected static final ConsistencyLevel writeConsistency = Settings.getInstance().getDistributionWriteConsistency();
 	protected static final ConsistencyLevel readConsistency = Settings.getInstance().getDistributionReadConsistency();
+	protected static final ConsistencyLevel defaultConsistency = Settings.getInstance().getDistributionDefaultConsistency();
 
 	public Keyspace(String name, Cluster cluster) {
 		_name = name;
@@ -36,7 +37,7 @@ public abstract class Keyspace {
 	}
 
 	abstract List<String> getTables();
-	abstract void prepareStatements();
+	abstract IPreparedStatementId[] getPrepareStatements();
 
 	private boolean createKeyspace() {
 		try {
@@ -57,6 +58,12 @@ public abstract class Keyspace {
 		CompletionService<?> cs = new ExecutorCompletionService<>(Threading.instance());
 		tables.forEach(t -> cs.submit(() -> _session.execute(t), null));
 		Threading.waitFor(tables.size(), cs);
+	}
+
+	private void prepareStatements() {
+		for (IPreparedStatementId stmt : getPrepareStatements()) {
+			stmt.prepare(_session);
+		}
 	}
 }
 
