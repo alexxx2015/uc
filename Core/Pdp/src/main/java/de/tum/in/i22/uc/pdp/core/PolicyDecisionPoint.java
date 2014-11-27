@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,10 +46,8 @@ import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
 import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
-import de.tum.in.i22.uc.pdp.xsd.DetectiveMechanismType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
-import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
 public class PolicyDecisionPoint implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
@@ -119,72 +116,72 @@ public class PolicyDecisionPoint implements Observer {
 		return deployXML(is);
 	}
 
+
+	private PolicyType toPolicy(InputStream is) {
+		PolicyType policy = null;
+
+		if (is != null) {
+			try {
+				JAXBElement<?> poElement;
+				synchronized (_unmarshaller) {
+					poElement = (JAXBElement<?>) _unmarshaller.unmarshal(is);
+				}
+				policy = (PolicyType) poElement.getValue();
+
+			} catch (JAXBException e) {
+				_logger.error("Error while deploying policy: " + e.getMessage() + " (" + e.getClass() + ")");
+			}
+		}
+
+		return policy;
+	}
+
+
 	private boolean deployXML(InputStream is) {
-		if (is == null) {
+		PolicyType policy = toPolicy(is);
+
+		if (policy == null) {
 			return false;
 		}
 
-		try {
-			JAXBElement<?> poElement;
-			synchronized (_unmarshaller) {
-				poElement = (JAXBElement<?>) _unmarshaller.unmarshal(is);
-			}
-			PolicyType policy = (PolicyType) poElement.getValue();
-			String policyName = policy.getName();
+		String policyName = policy.getName();
 
-			_logger.debug("Deploying policy [name={}]", policyName);
+		_logger.debug("Deploying policy [name={}]", policyName);
 
+		/*
+		 * Get the set of mechanisms of this policy (if any)
+		 */
+		Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
+		if (allMechanisms == null) {
+			allMechanisms = new ConcurrentHashMap<>();
+			_policyTable.put(policyName, allMechanisms);
+		}
+
+		/*
+		 * Loop over all mechanisms, add them to the set of mechanisms for
+		 * this policy, and start the mechanism
+		 */
+		for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
 			/*
-			 * Get the set of mechanisms of this policy (if any)
+			 * TODO Parallelize
+			 * (Watch out to synchronize shared data structures such as allMechanisms).
 			 */
-			Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
-			if (allMechanisms == null) {
-				allMechanisms = new ConcurrentHashMap<>();
-				_policyTable.put(policyName, allMechanisms);
-			}
+			try {
+				_logger.debug("Processing mechanism: {}", mech.getName());
+				Mechanism curMechanism = MechanismFactory.create(mech, policyName, this);
 
-			/*
-			 * Loop over all mechanisms, add them to the set of mechanisms for
-			 * this policy, and start the mechanism
-			 */
-			for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
-				/*
-				 * TODO Parallelize
-				 * (Watch out to synchronize shared data structures such as allMechanisms).
-				 */
-				try {
-					_logger.debug("Processing mechanism: {}", mech.getName());
-					Mechanism curMechanism;
-
-					if (mech instanceof PreventiveMechanismType) {
-						curMechanism = new PreventiveMechanism(mech, policyName, this);
-					}
-					else if (mech instanceof DetectiveMechanismType) {
-						curMechanism = new DetectiveMechanism(mech, policyName, this);
-					}
-					else {
-						throw new InvalidMechanismException(mech.toString());
-					}
-
-					if (!allMechanisms.containsKey(mech.getName())) {
-						allMechanisms.put(mech.getName(), curMechanism);
-						Thread t = new Thread(curMechanism);
-						curMechanism.setThread(t);
-						t.start();
-					} else {
-						_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
-					}
-				} catch (InvalidMechanismException e) {
-					_logger.error("Invalid mechanism specified: {}", e.getMessage());
-					return false;
+				if (!allMechanisms.containsKey(mech.getName())) {
+					allMechanisms.put(mech.getName(), curMechanism);
+					Thread t = new Thread(curMechanism);
+					curMechanism.setThread(t);
+					t.start();
+				} else {
+					_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
 				}
+			} catch (InvalidMechanismException e) {
+				_logger.error("Invalid mechanism specified: {}", e.getMessage());
+				return false;
 			}
-		} catch (UnmarshalException e) {
-			_logger.error("Syntax error in policy: " + e.getMessage());
-			return false;
-		} catch (JAXBException | ClassCastException e) {
-			_logger.error("Error while deploying policy: " + e.getMessage());
-			return false;
 		}
 
 		return true;
