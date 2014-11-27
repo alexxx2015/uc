@@ -42,11 +42,10 @@ import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
-import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
 import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
-import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
 public class PolicyDecisionPoint implements Observer {
@@ -54,7 +53,7 @@ public class PolicyDecisionPoint implements Observer {
 
 	private final IPdp2Pip _pip;
 
-	private final ActionDescriptionStore _actionDescriptionStore;
+	private final ObserverManager _observerManager;
 
 	/**
 	 * Maps policy names to its set of mechanisms, where for each mechanism the
@@ -71,6 +70,8 @@ public class PolicyDecisionPoint implements Observer {
 	private final CompletionService<?> _csOperators;
 	private final CompletionService<Pair<Mechanism,Boolean>> _csMechanisms;
 
+	private final MechanismFactory _mechanismFactory;
+
 	public PolicyDecisionPoint() {
 		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
 	}
@@ -81,10 +82,12 @@ public class PolicyDecisionPoint implements Observer {
 		_distributionManager = distributionManager;
 
 		_policyTable = new ConcurrentHashMap<String, Map<String, Mechanism>>();
-		_actionDescriptionStore = new ActionDescriptionStore();
+		_observerManager = new ObserverManager();
 
 		_csOperators = new ExecutorCompletionService<>(Threading.instance());
 		_csMechanisms = new ExecutorCompletionService<>(Threading.instance());
+
+		_mechanismFactory = new MechanismFactory(this);
 
 		try {
 			_unmarshaller = JAXBContext.newInstance(Settings.getInstance().getPdpJaxbContext()).createUnmarshaller();
@@ -117,6 +120,15 @@ public class PolicyDecisionPoint implements Observer {
 	}
 
 
+	/**
+	 * Transforms the provided {@link InputStream} into
+	 * a {@link PolicyType} and returns the corresponding
+	 * result. If the provided stream can not be transformed,
+	 * null is returned.
+	 *
+	 * @param is
+	 * @return
+	 */
 	private PolicyType toPolicy(InputStream is) {
 		PolicyType policy = null;
 
@@ -136,7 +148,36 @@ public class PolicyDecisionPoint implements Observer {
 		return policy;
 	}
 
+	private void deployMechanism(Mechanism mechanism) {
+		String policyName = mechanism.getPolicyName();
 
+		Map<String, Mechanism> deployedMechanisms = _policyTable.get(policyName);
+		if (deployedMechanisms == null) {
+			deployedMechanisms = new ConcurrentHashMap<>();
+			_policyTable.put(policyName, deployedMechanisms);
+		}
+
+		if (!deployedMechanisms.containsKey(mechanism.getName())) {
+			deployedMechanisms.put(mechanism.getName(), mechanism);
+			Thread t = new Thread(mechanism);
+			mechanism.setThread(t);
+			t.start();
+		} else {
+			_logger.warn("Mechanism [{}] is already deployed for policy [{}]", mechanism.getName(), policyName);
+		}
+	}
+
+
+	/**
+	 * Deploys the policy provided as an {@link InputStream}.
+	 * The provided stream is expected to be
+	 * transformable into a {@link PolicyType}. If deployment
+	 * is successful, true is returned. If an error occurs,
+	 * false is returned.
+	 *
+	 * @param is the input stream to be deployed.
+	 * @return true, if deployment was successful. False, if an error occurred.
+	 */
 	private boolean deployXML(InputStream is) {
 		PolicyType policy = toPolicy(is);
 
@@ -144,45 +185,19 @@ public class PolicyDecisionPoint implements Observer {
 			return false;
 		}
 
-		String policyName = policy.getName();
+		_logger.debug("Deploying policy {}.", policy.getName());
 
-		_logger.debug("Deploying policy [name={}]", policyName);
-
-		/*
-		 * Get the set of mechanisms of this policy (if any)
-		 */
-		Map<String, Mechanism> allMechanisms = _policyTable.get(policyName);
-		if (allMechanisms == null) {
-			allMechanisms = new ConcurrentHashMap<>();
-			_policyTable.put(policyName, allMechanisms);
+		Collection <Mechanism> newMechanisms;
+		try {
+			newMechanisms = _mechanismFactory.createMechanisms(policy);
+		} catch (InvalidPolicyException e) {
+			e.printStackTrace();
+			return false;
 		}
 
-		/*
-		 * Loop over all mechanisms, add them to the set of mechanisms for
-		 * this policy, and start the mechanism
-		 */
-		for (MechanismBaseType mech : policy.getDetectiveMechanismOrPreventiveMechanism()) {
-			/*
-			 * TODO Parallelize
-			 * (Watch out to synchronize shared data structures such as allMechanisms).
-			 */
-			try {
-				_logger.debug("Processing mechanism: {}", mech.getName());
-				Mechanism curMechanism = MechanismFactory.create(mech, policyName, this);
-
-				if (!allMechanisms.containsKey(mech.getName())) {
-					allMechanisms.put(mech.getName(), curMechanism);
-					Thread t = new Thread(curMechanism);
-					curMechanism.setThread(t);
-					t.start();
-				} else {
-					_logger.warn("Mechanism [{}] is already deployed for policy [{}]", curMechanism.getName(), policyName);
-				}
-			} catch (InvalidMechanismException e) {
-				_logger.error("Invalid mechanism specified: {}", e.getMessage());
-				return false;
-			}
-		}
+		CompletionService<?> cs = new ExecutorCompletionService<>(Threading.instance());
+		newMechanisms.forEach(m -> cs.submit(() -> deployMechanism(m), null));
+		Threading.waitFor(newMechanisms.size(), cs);
 
 		return true;
 	}
@@ -245,7 +260,7 @@ public class PolicyDecisionPoint implements Observer {
 
 		_logger.info("Revoking mechanism: {}", mechName);
 		mech.revoke();
-		_actionDescriptionStore.removeMechanism(mech.getTriggerEvent().getAction());
+		_observerManager.removeMechanism(mech.getTriggerEvent().getAction());
 
 		return true;
 	}
@@ -254,13 +269,13 @@ public class PolicyDecisionPoint implements Observer {
 		observers.forEach(o -> {
 			switch(o.getOperatorType()) {
 			case STATE_BASED:
-				_actionDescriptionStore.add((StateBasedOperator) o);
+				_observerManager.add((StateBasedOperator) o);
 				break;
 			case EVENT_MATCH:
-				_actionDescriptionStore.add((EventMatchOperator) o);
+				_observerManager.add((EventMatchOperator) o);
 				break;
 			case CONDITION_PARAM_MATCH:
-				_actionDescriptionStore.add((ConditionParamMatchOperator) o);
+				_observerManager.add((ConditionParamMatchOperator) o);
 				break;
 			default:
 				break;
@@ -282,7 +297,6 @@ public class PolicyDecisionPoint implements Observer {
 		 */
 		operators.forEach(o -> _csOperators.submit(() -> o.update(event), null));
 		Threading.waitFor(operators.size(), _csOperators);
-//		operators.forEach(o -> Threading.take(_csOperators));
 	}
 
 
@@ -319,13 +333,13 @@ public class PolicyDecisionPoint implements Observer {
 		/*
 		 * Get all relevant Mechanisms to evaluate. This is done in a new Thread.
 		 */
-		Future<Collection<Mechanism>> futureMechanisms = Threading.instance().submit(() -> _actionDescriptionStore.getMechanisms(event.getName()));
+		Future<Collection<Mechanism>> futureMechanisms = Threading.instance().submit(() -> _observerManager.getMechanisms(event.getName()));
 		Collection<Mechanism> mechanisms;
 
 		/*
 		 * Get all relevant Operators that need to be updated. This is done in a new Thread.
 		 */
-		Future<Collection<AtomicOperator>> futureOperators = Threading.instance().submit(() -> _actionDescriptionStore.getAtomicOperators(event.getName()));
+		Future<Collection<AtomicOperator>> futureOperators = Threading.instance().submit(() -> _observerManager.getAtomicOperators(event.getName()));
 
 		if (event.isActual()) {
 			/*
@@ -343,14 +357,6 @@ public class PolicyDecisionPoint implements Observer {
 			 * the Operators are retrieved, update them.
 			 */
 			updateAll(Threading.resultOf(futureOperators), event);
-
-//			/*
-//			 * If operators changed, let the
-//			 * DistributionManager take care of them.
-//			 */
-//			if (Settings.getInstance().getDistributionEnabled() && !_changedOperators.isEmpty()) {
-//				_distributionManager.update(_changedOperators, false);
-//			}
 
 			/*
 			 * Notify the event to all Mechanisms,
@@ -408,8 +414,6 @@ public class PolicyDecisionPoint implements Observer {
 			_csMechanisms.submit(() -> _pip.startSimulation(), null);
 			mechanisms = Threading.resultOf(futureMechanisms);
 			mechanisms.forEach(m -> _csMechanisms.submit(() -> m.startSimulation(), null));
-//			mechanisms.forEach(m -> Threading.take(_csMechanisms));
-//			Threading.take(_csMechanisms);
 			Threading.waitFor(mechanisms.size() + 1, _csMechanisms);
 
 			/*
@@ -448,10 +452,6 @@ public class PolicyDecisionPoint implements Observer {
 			});
 		}
 
-
-//		// prepare for next iteration
-//		_changedOperators.clear();
-
 		return decision.toResponse();
 	}
 
@@ -486,7 +486,7 @@ public class PolicyDecisionPoint implements Observer {
 	}
 
 	public void addMechanism(Mechanism mechanism) {
-		_actionDescriptionStore.add(mechanism);
+		_observerManager.add(mechanism);
 	}
 
 	@Override

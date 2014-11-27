@@ -40,7 +40,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	private final String _description;
 	private long _lastTick = 0;
-	private long _timestepSize = 0;
+	private final long _timestepSize;
 	private long _timestep = 1;
 	private final EventMatch _triggerEvent;
 	private Condition _condition;

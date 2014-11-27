@@ -15,7 +15,14 @@ import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
-class ActionDescriptionStore {
+
+/**
+ * This class manages the {@link PolicyDecisionPoint}s observers.
+ *
+ * @author Florian Kelbert
+ *
+ */
+class ObserverManager {
 	/**
 	 * Maps event names to {@link EventMatch} objects
 	 */
@@ -29,7 +36,7 @@ class ActionDescriptionStore {
 	private final Set<StateBasedOperator> _sboSet;
 	private final Set<ConditionParamMatchOperator> _conditionSet;
 
-	ActionDescriptionStore() {
+	ObserverManager() {
 		_eventMatchMap = Collections.synchronizedMap(new HashMap<String, List<EventMatchOperator>>());
 		_mechanismMap = Collections.synchronizedMap(new HashMap<String, List<Mechanism>>());
 		_sboSet = Collections.synchronizedSet(new HashSet<StateBasedOperator>());

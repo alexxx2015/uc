@@ -3,8 +3,6 @@ package de.tum.in.i22.uc.pip.test;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -13,8 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
@@ -97,13 +93,5 @@ public class InformationFlowModelTest {
 		Assert.assertEquals(3, _ifModel.getAllNames(ProcessName.class).size());
 
 		Assert.assertEquals(9, _ifModel.getAllNames(new ContainerBasic("c1")).size());
-
-		Stopwatch watch = Stopwatch.createUnstarted();
-		for (int i = 0; i < 9999999; i++) {
-			watch.start();
-			_ifModel.getAllNames(new ContainerBasic("c1"));
-			watch.stop();
-		}
-		System.out.println(watch.elapsed(TimeUnit.MILLISECONDS));
 	}
 }
