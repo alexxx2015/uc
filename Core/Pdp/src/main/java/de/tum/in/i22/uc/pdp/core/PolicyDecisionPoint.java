@@ -40,9 +40,6 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
-import de.tum.in.i22.uc.pdp.core.operators.ConditionParamMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
-import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
 public class PolicyDecisionPoint implements Observer {
@@ -198,21 +195,7 @@ public class PolicyDecisionPoint implements Observer {
 	}
 
 	void addObservers(Collection<AtomicOperator> observers) {
-		observers.forEach(o -> {
-			switch(o.getOperatorType()) {
-			case STATE_BASED:
-				_observerManager.add((StateBasedOperator) o);
-				break;
-			case EVENT_MATCH:
-				_observerManager.add((EventMatchOperator) o);
-				break;
-			case CONDITION_PARAM_MATCH:
-				_observerManager.add((ConditionParamMatchOperator) o);
-				break;
-			default:
-				break;
-			}
-		});
+		_observerManager.add(observers);
 	}
 
 	/**

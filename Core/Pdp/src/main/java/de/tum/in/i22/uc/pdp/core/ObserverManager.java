@@ -43,7 +43,7 @@ class ObserverManager {
 		_conditionSet = Collections.synchronizedSet(new HashSet<ConditionParamMatchOperator>());
 	}
 
-	void add(EventMatchOperator e) {
+	private void add(EventMatchOperator e) {
 		String actionName = e.getAction();
 		List<EventMatchOperator> eventMatches = _eventMatchMap.get(actionName);
 
@@ -55,11 +55,11 @@ class ObserverManager {
 		eventMatches.add(e);
 	}
 
-	void add(StateBasedOperator s) {
+	private void add(StateBasedOperator s) {
 		_sboSet.add(s);
 	}
 
-	void add(ConditionParamMatchOperator c) {
+	private void add(ConditionParamMatchOperator c) {
 		_conditionSet.add(c);
 	}
 
@@ -78,6 +78,24 @@ class ObserverManager {
 		}
 
 		mechanisms.add(mechanism);
+	}
+
+	void add(Collection<AtomicOperator> observers) {
+		observers.forEach(o -> {
+			switch(o.getOperatorType()) {
+			case STATE_BASED:
+				add((StateBasedOperator) o);
+				break;
+			case EVENT_MATCH:
+				add((EventMatchOperator) o);
+				break;
+			case CONDITION_PARAM_MATCH:
+				add((ConditionParamMatchOperator) o);
+				break;
+			default:
+				break;
+			}
+		});
 	}
 
 	Collection<AtomicOperator> getAtomicOperators(String eventName) {
