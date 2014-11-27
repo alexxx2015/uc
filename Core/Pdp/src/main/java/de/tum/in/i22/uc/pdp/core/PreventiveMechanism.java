@@ -16,7 +16,7 @@ class PreventiveMechanism extends Mechanism {
 		PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
 		_logger.debug("Processing PreventiveMechanism");
 
-		pdp.addMechanism(this);
+		pdp.addObserver(this);
 
 		// TODO: subscription to PEP?!
 

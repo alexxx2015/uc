@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 
@@ -54,16 +51,9 @@ public class PolicyDecisionPoint implements Observer {
 	private final IPdp2Pip _pip;
 
 	private final ObserverManager _observerManager;
-
-	/**
-	 * Maps policy names to its set of mechanisms, where for each mechanism the
-	 * mechanism name maps to the actual mechanism
-	 */
-	private final Map<String, Map<String, Mechanism>> _policyTable;
-
-	private final PxpManager _pxpManager;
-
+	private final MechanismManager _mechanismManager;
 	private final IDistributionManager _distributionManager;
+	private final PxpManager _pxpManager;
 
 	private final Unmarshaller _unmarshaller;
 
@@ -78,11 +68,11 @@ public class PolicyDecisionPoint implements Observer {
 
 	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
 		_pip = pip;
+
 		_pxpManager = pxpManager;
 		_distributionManager = distributionManager;
-
-		_policyTable = new ConcurrentHashMap<String, Map<String, Mechanism>>();
 		_observerManager = new ObserverManager();
+		_mechanismManager = new MechanismManager();
 
 		_csOperators = new ExecutorCompletionService<>(Threading.instance());
 		_csMechanisms = new ExecutorCompletionService<>(Threading.instance());
@@ -148,25 +138,6 @@ public class PolicyDecisionPoint implements Observer {
 		return policy;
 	}
 
-	private void deployMechanism(Mechanism mechanism) {
-		String policyName = mechanism.getPolicyName();
-
-		Map<String, Mechanism> deployedMechanisms = _policyTable.get(policyName);
-		if (deployedMechanisms == null) {
-			deployedMechanisms = new ConcurrentHashMap<>();
-			_policyTable.put(policyName, deployedMechanisms);
-		}
-
-		if (!deployedMechanisms.containsKey(mechanism.getName())) {
-			deployedMechanisms.put(mechanism.getName(), mechanism);
-			Thread t = new Thread(mechanism);
-			mechanism.setThread(t);
-			t.start();
-		} else {
-			_logger.warn("Mechanism [{}] is already deployed for policy [{}]", mechanism.getName(), policyName);
-		}
-	}
-
 
 	/**
 	 * Deploys the policy provided as an {@link InputStream}.
@@ -195,74 +166,35 @@ public class PolicyDecisionPoint implements Observer {
 			return false;
 		}
 
-		CompletionService<?> cs = new ExecutorCompletionService<>(Threading.instance());
-		newMechanisms.forEach(m -> cs.submit(() -> deployMechanism(m), null));
-		Threading.waitFor(newMechanisms.size(), cs);
+		/*
+		 * TODO: Parallelize.
+		 * However: Need to make MechanismManager thread-safe!
+		 */
+		newMechanisms.forEach(m -> _mechanismManager.deploy(m));
 
 		return true;
 	}
 
 	public void revokePolicy(String policyName) {
 		_logger.debug("revokePolicy({}) invoked.", policyName);
-
-		Map<String, Mechanism> mechanisms = _policyTable.remove(policyName);
-		if (mechanisms != null) {
-			for (Mechanism mech : mechanisms.values()) {
-				_logger.info("Revoking mechanism: {}", mech.getName());
-				mech.revoke();
-			}
-		}
+		_mechanismManager.revokePolicy(policyName);
 	}
 
-	private Mechanism findMechanism(String policyName, String mechName) {
-		Mechanism mech = null;
-
-		Map<String, Mechanism> mechanisms = _policyTable.get(policyName);
-		if (mechanisms != null) {
-			mech = mechanisms.get(mechName);
-		}
-
-		return mech;
+	IStatus activateMechanism(String policyName, String mechName) {
+		return _mechanismManager.activate(policyName, mechName);
 	}
 
-	public IStatus activateMechanism(String policyName, String mechName) {
-		Mechanism mech = findMechanism(policyName, mechName);
-
-		if (mech != null) {
-			mech.unpause();
-			return new StatusBasic(EStatus.OKAY);
-		}
-
-		return new StatusBasic(EStatus.ERROR);
-	}
-
-	public IStatus deactivateMechanism(String policyName, String mechName) {
-		Mechanism mech = findMechanism(policyName, mechName);
-
-		if (mech != null) {
-			mech.pause();
-			return new StatusBasic(EStatus.OKAY);
-		}
-
-		return new StatusBasic(EStatus.ERROR);
+	IStatus deactivateMechanism(String policyName, String mechName) {
+		return _mechanismManager.deactivate(policyName, mechName);
 	}
 
 	public boolean revokeMechanism(String policyName, String mechName) {
-		_logger.info("revokeMechanism({}, {}) invoked.", policyName, mechName);
-
-		Mechanism mech;
-		Map<String, Mechanism> mechanisms = _policyTable.get(policyName);
-
-		if (mechanisms == null || (mech = mechanisms.remove(mechName)) == null) {
-			_logger.info("Mechanism [{}] did not exist for policy [{}] and could not be revoked.", mechName, policyName);
-			return false;
+		Mechanism revoked = _mechanismManager.revoke(policyName, mechName);
+		if (revoked != null) {
+			_observerManager.removeMechanism(revoked.getTriggerEvent().getAction());
 		}
 
-		_logger.info("Revoking mechanism: {}", mechName);
-		mech.revoke();
-		_observerManager.removeMechanism(mech.getTriggerEvent().getAction());
-
-		return true;
+		return revoked != null;
 	}
 
 	void addObservers(Collection<AtomicOperator> observers) {
@@ -456,17 +388,7 @@ public class PolicyDecisionPoint implements Observer {
 	}
 
 	public Map<String, Set<String>> listDeployedMechanisms() {
-		Map<String, Set<String>> map = new TreeMap<>();
-
-		for (String policyName : _policyTable.keySet()) {
-			Set<String> mechanisms = new TreeSet<>();
-			for (String mechName : _policyTable.get(policyName).keySet()) {
-				mechanisms.add(mechName);
-			}
-			map.put(policyName, mechanisms);
-		}
-
-		return map;
+		return _mechanismManager.listMechanisms();
 	}
 
 	public IPdp2Pip getPip() {
@@ -478,14 +400,10 @@ public class PolicyDecisionPoint implements Observer {
 	}
 
 	public void stop() {
-		for (Map<String, Mechanism> map : _policyTable.values()) {
-			map.values().forEach(m -> m.revoke());
-		}
-
-		_policyTable.clear();
+		_mechanismManager.revokeAll();
 	}
 
-	public void addMechanism(Mechanism mechanism) {
+	public void addObserver(Mechanism mechanism) {
 		_observerManager.add(mechanism);
 	}
 
