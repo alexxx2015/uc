@@ -124,6 +124,7 @@ public class Settings extends SettingsLoader {
 	 */
 	public static final String PROP_NAME_distributionWriteConsistency = "distributionWriteConsistency";
 	public static final String PROP_NAME_distributionReadConsistency = "distributionReadConsistency";
+	public static final String PROP_NAME_distributionDefaultConsistency = "distributionDefaultConsistency";
 
 
 
@@ -221,6 +222,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
 		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
 		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
@@ -501,6 +503,10 @@ public class Settings extends SettingsLoader {
 
 	public ConsistencyLevel getDistributionReadConsistency() {
 		return getValue(PROP_NAME_distributionReadConsistency);
+	}
+
+	public ConsistencyLevel getDistributionDefaultConsistency() {
+		return getValue(PROP_NAME_distributionDefaultConsistency);
 	}
 
 	public int getConnectionAttemptInterval() {
