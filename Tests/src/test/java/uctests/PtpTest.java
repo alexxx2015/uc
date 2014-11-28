@@ -20,7 +20,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 public class PtpTest {
@@ -36,8 +35,6 @@ public class PtpTest {
 		if(!TESTS_ENABLED){
 			return;
 		}
-
-		Settings.getInstance().loadSetting(Settings.PROP_NAME_ptpResources, ptpProjectLocation);
 
 		/*
 		 * Start PMP server.

@@ -97,8 +97,8 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		_session.execute(Prepared._prepInsertPolicy.get().bind(_name, MyBase64.toBase64(_policy.getXml())));
 	}
 
-
-	private Set<String> getLocations() {
+	@Override
+	public Set<String> getLocations() {
 		// Retrieve current information about the keyspace
 		ResultSet rows = _session.execute(Prepared._prepSelectStrategyOptions.get().bind(_name));
 
@@ -113,6 +113,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		return allLocations;
 	}
+
 
 	private void alterKeyspace(Set<String> locations) {
 		StringBuilder query = new StringBuilder(locations.size() * 22 + 100);

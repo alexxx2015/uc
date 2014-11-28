@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.distribution.cassandra;
 
+import java.util.Set;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
@@ -24,5 +26,7 @@ public interface ISharedKeyspace {
 	boolean diminishBy(IPLocation location);
 
 	boolean enlargeBy(IPLocation location);
+
+	Set<String> getLocations();
 
 }

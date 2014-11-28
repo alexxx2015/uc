@@ -30,7 +30,6 @@ class MechanismManager {
 	void deploy(Mechanism mechanism) {
 		String policyName = mechanism.getPolicyName();
 
-
 		Map<String, Mechanism> deployedMechanisms = _policyTable.get(policyName);
 		if (deployedMechanisms == null) {
 			deployedMechanisms = new ConcurrentHashMap<>();

@@ -89,26 +89,26 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
-	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
-	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
-	private static final String PROP_NAME_excelOcbName = "excelOcbName";
-	private static final String PROP_NAME_excelScbName = "excelScbName";
+	public static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
+	public static final String PROP_NAME_excelListSeparator = "excelListSeparator";
+	public static final String PROP_NAME_excelOcbName = "excelOcbName";
+	public static final String PROP_NAME_excelScbName = "excelScbName";
 
-	private static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
-	private static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
+	public static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
+	public static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
 
-	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
+	public static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
 
-	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
+	public static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
 
-	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
+	public static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
-	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+	public static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
 
-	private static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
+	public static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
 
-	private static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
-	private static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
+	public static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
+	public static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
 
 	public static final String PROP_NAME_ptpResources = "ptpResources";
 	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
@@ -126,6 +126,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_distributionReadConsistency = "distributionReadConsistency";
 	public static final String PROP_NAME_distributionDefaultConsistency = "distributionDefaultConsistency";
 
+	public static final String PROP_NAME_distributionSeedFile = "distributionSeedFile";
 
 
 	private Settings() {
@@ -223,7 +224,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
 		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
-		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionDefaultConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionSeedFile, "cassandraSeeds.txt");
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 
@@ -507,6 +509,10 @@ public class Settings extends SettingsLoader {
 
 	public ConsistencyLevel getDistributionDefaultConsistency() {
 		return getValue(PROP_NAME_distributionDefaultConsistency);
+	}
+
+	public String getDistributionSeedFile() {
+		return getValue(PROP_NAME_distributionSeedFile);
 	}
 
 	public int getConnectionAttemptInterval() {

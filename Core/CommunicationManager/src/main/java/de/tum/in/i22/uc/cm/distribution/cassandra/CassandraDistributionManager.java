@@ -61,6 +61,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	 */
 	private final Map<String, IPLocation> _responsiblePdps;
 
+	private final SeedCollector _seedcollector;
+
 	public CassandraDistributionManager() {
 		/*
 		 * Default consistency level.
@@ -81,10 +83,9 @@ public class CassandraDistributionManager implements IDistributionManager {
 							.build();
 
 		_responsiblePdps = new ConcurrentHashMap<>();
-
 		_privateKeyspace = new PrivateKeyspace(cluster);
-
 		_sharedKeyspaces = new SharedKeyspaceManager(cluster);
+		_seedcollector = new SeedCollector();
 	}
 
 
@@ -150,9 +151,15 @@ public class CassandraDistributionManager implements IDistributionManager {
 					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
 				}
 
-				// If remote deployment of the policy fails,
-				// then we remove the location from the keyspace
-				if (!success) {
+
+				if (success) {
+					// If remote deployment succeeded, then
+					// this is a new seed.
+					_seedcollector.add(pmpLocation.getHost());
+				}
+				else {
+					// If remote deployment of the policy fails,
+					// then we remove the location from the keyspace
 					ks.diminishBy(pmpLocation);
 				}
 
@@ -231,6 +238,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
+
+
 			}
 		}
 	}
@@ -252,6 +261,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 	public void register(XmlPolicy policy) {
 		_sharedKeyspaces.create(policy);
 		_privateKeyspace.add(policy);
+		_seedcollector.add(_sharedKeyspaces.get(policy.getName()).getLocations());
 	}
 
 	@Override
@@ -306,6 +316,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 					} catch (Exception e) {}
 				}, null);
 
+				// Timeout, if the requested PEP does not answer
 				futureCon.get(200, TimeUnit.MILLISECONDS);
 
 				result = pdp2pep.getResponsiblePdpLocation();
