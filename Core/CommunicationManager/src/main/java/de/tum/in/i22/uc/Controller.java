@@ -46,10 +46,12 @@ public class Controller implements IRequestHandler  {
 	protected IRequestHandler _requestHandler;
 
 	public Controller() {
+		this(new String[0]);
 	}
 
 	public Controller(String[] args) {
 		_args = args;
+		loadProperties(_args);
 	}
 
 	public static void main(String[] args) {
@@ -64,9 +66,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean start() {
-		// Load properties (if provided via parameter)
-		loadProperties(_args);
-
 		// If ports are available...
 		if (arePortsAvailable()) {
 			// ..start UC infrastructure
