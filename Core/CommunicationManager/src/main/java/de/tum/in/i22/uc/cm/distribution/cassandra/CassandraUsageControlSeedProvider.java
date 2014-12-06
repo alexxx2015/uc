@@ -15,14 +15,14 @@ import org.apache.cassandra.locator.SeedProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.settings.Settings;
+
 public class CassandraUsageControlSeedProvider implements SeedProvider {
 	private static final Logger _logger = LoggerFactory.getLogger(CassandraUsageControlSeedProvider.class);
+	
+	private String _seedsValue;
 
 	public CassandraUsageControlSeedProvider(Map<String, String> args) {
-	}
-
-	@Override
-	public List<InetAddress> getSeeds() {
 		Config conf;
         try {
             conf = DatabaseDescriptor.loadConfig();
@@ -32,9 +32,16 @@ public class CassandraUsageControlSeedProvider implements SeedProvider {
             throw new AssertionError(e);
         }
 
-        String seedsValue = conf.seed_provider.parameters.get("seeds");
+        _seedsValue = conf.seed_provider.parameters.get("seeds");
+	}
+	
+	public CassandraUsageControlSeedProvider() {
+		_seedsValue = Settings.getInstance().getDistributionSeedFile();
+	}
 
-        File seedFile = new File(seedsValue);
+	@Override
+	public List<InetAddress> getSeeds() {
+        File seedFile = new File(_seedsValue);
 
         boolean fileIntact = false;
 
@@ -70,7 +77,7 @@ public class CassandraUsageControlSeedProvider implements SeedProvider {
 		else {
 			// Maybe we just read a default comma-separated list
 			// of seeds from the configuration file. Try.
-			line = seedsValue;
+			line = _seedsValue;
 		}
 
 		List<InetAddress> seeds = new LinkedList<>();

@@ -27,7 +27,7 @@ class SeedCollector {
 			throw new RuntimeException("Provided seed (" + _file.getAbsolutePath() + ") file exists, but is a directory.");
 		}
 		
-		new CassandraUsageControlSeedProvider(null).getSeeds().forEach(s -> _seeds.add(s.getHostAddress()));
+		new CassandraUsageControlSeedProvider().getSeeds().forEach(s -> _seeds.add(s.getHostAddress()));
 	}
 
 	void add(Set<String> locs) {
