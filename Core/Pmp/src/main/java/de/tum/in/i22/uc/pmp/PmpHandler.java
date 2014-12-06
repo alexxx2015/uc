@@ -350,7 +350,7 @@ public class PmpHandler extends PmpProcessor {
 	
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
-		_logger.debug("remotePolicyTransfer invoked [{}]", xml);
+		_logger.debug("remotePolicyTransfer invoked [{}, {}]", xml, from);
 
 		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
 		return deployPolicyXMLPmp(xmlPolicy, from);

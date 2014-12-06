@@ -22,9 +22,7 @@ public interface IDistributionManager {
 	 * Method to be invoked whenever a new policy name ought to be managed.
 	 *
 	 * @param policy the policy to be managed.
-	 */
-	void register(XmlPolicy policy);
-	
+	 */	
 	void register(XmlPolicy policy, String from);
 
 	public void notify(IOperator operator, boolean endOfTimestep);

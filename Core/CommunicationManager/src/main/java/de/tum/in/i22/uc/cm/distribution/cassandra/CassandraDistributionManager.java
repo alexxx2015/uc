@@ -261,12 +261,6 @@ public class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(XmlPolicy policy) {
-		register(policy, null);
-	}
-	
-
-	@Override
 	public void register(XmlPolicy policy, String from) {
 		_sharedKeyspaces.create(policy);
 		_privateKeyspace.add(policy);
