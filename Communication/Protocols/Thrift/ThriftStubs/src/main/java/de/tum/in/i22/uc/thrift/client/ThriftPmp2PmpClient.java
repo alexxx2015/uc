@@ -102,4 +102,9 @@ class ThriftPmp2PmpClient extends Pmp2PmpClient {
 		return _impl.listPoliciesPmp();
 	}
 
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		return _impl.remotePolicyTransfer(xml);
+	}
+
 }

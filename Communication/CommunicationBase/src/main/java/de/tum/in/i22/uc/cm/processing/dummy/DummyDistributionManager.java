@@ -30,7 +30,7 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(XmlPolicy policy) {
+	public void register(XmlPolicy policy, boolean isRemotePolicyTransfer) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
 	}
@@ -107,6 +107,11 @@ public class DummyDistributionManager implements IDistributionManager {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("howOftenNotifiedSinceTimestep method invoked");
 		return 0;
+	}
+
+	public void awaitPolicyTransfer(String policyName) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("awaitPolicyTransfer method invoked");
 	}
 
 }

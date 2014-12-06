@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,6 +248,21 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		}
 	}
 
+	static boolean existsPhysically(Cluster cluster, String policyName) {
+		Session session = cluster.connect();
+		boolean exists = true;
+		try {
+			session.execute(Prepared._prepSelectPolicy.get().bind());
+			_logger.info("Keyspace {} exists.", policyName);
+		}
+		catch (Exception e) {
+			exists = false;
+			_logger.info("Keyspace {} does not exist.", policyName);
+		}
+		
+		return exists;
+	}
+	
 	@Override
 	public void addData(IData data, IPLocation location) {
 		// Check whether there already exists an entry for this dataID.
@@ -310,6 +326,13 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				.select("data")
 				.from(TABLE_DATA)
 				.where(QueryBuilder.eq("data", QueryBuilder.bindMarker())),
+				readConsistency),
+				
+		_prepSelectPolicy(
+				QueryBuilder
+				.select("policyName")
+				.from(TABLE_POLICIES)
+				.limit(1),
 				readConsistency),
 
 		/*

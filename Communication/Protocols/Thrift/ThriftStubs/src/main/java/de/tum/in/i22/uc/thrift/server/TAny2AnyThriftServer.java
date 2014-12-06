@@ -253,4 +253,9 @@ TAny2Any.Iface {
 	public TStatus setUpdateFrequency(int msec, String id) throws TException {
 		return _pipServer.setUpdateFrequency(msec,id);
 	}
+
+	@Override
+	public TStatus remotePolicyTransfer(String xml) throws TException {
+		return _pmpServer.remotePolicyTransfer(xml);
+	}
 }

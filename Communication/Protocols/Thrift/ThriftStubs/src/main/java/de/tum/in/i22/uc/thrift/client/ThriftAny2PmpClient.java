@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
@@ -137,6 +136,11 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	@Override
 	public Set<XmlPolicy> listPoliciesPmp() {
 		return _impl.listPoliciesPmp();
+	}
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		return _impl.remotePolicyTransfer(xml);
 	}
 
 }

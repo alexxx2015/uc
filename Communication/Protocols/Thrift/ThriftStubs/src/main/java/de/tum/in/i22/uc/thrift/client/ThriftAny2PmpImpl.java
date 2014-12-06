@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.thrift.client;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
@@ -20,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
-import de.tum.in.i22.uc.thrift.types.TContainer;
 
 class ThriftAny2PmpImpl implements IAny2Pmp {
 	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PmpImpl.class);
@@ -142,5 +139,13 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 		}
 	}
 
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		try {
+			return ThriftConverter.fromThrift(_handle.remotePolicyTransfer(xml));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
 }

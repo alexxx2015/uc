@@ -91,4 +91,9 @@ TAny2Pmp.Iface {
 		Set<XmlPolicy> policies = _handler.listPoliciesPmp();
 		return ThriftConverter.toThriftPoliciesSet(policies);
 	}
+
+	@Override
+	public TStatus remotePolicyTransfer(String xml) throws TException {
+		return ThriftConverter.toThrift(_handler.remotePolicyTransfer(xml));
+	}
 }

@@ -330,7 +330,7 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus deployPolicyRawXMLPmp(String xml) {
-		_logger.debug("deployPolicyRawXMLPmp invoked [" + xml + "]");
+		_logger.debug("deployPolicyRawXMLPmp invoked [{}]", xml);
 
 		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
 		return deployPolicyXMLPmp(xmlPolicy);
@@ -347,9 +347,21 @@ public class PmpHandler extends PmpProcessor {
 		}
 		return new StatusBasic(EStatus.ERROR, "Error while loading policy file " + policyFilePath);
 	}
+	
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		_logger.debug("remotePolicyTransfer invoked [{}]", xml);
+
+		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
+		return deployPolicyXMLPmp(xmlPolicy, true);
+	}
 
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
+		return deployPolicyXMLPmp(xmlPolicy, false);
+	}
+	
+	private IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy, boolean isRemotePolicyTransfer) {
 
 		String xml = xmlPolicy.getXml();
 		PolicyType policy;
@@ -392,7 +404,7 @@ public class PmpHandler extends PmpProcessor {
 
 			// Deploy at the PDP
 			if (deployStatus.isStatus(EStatus.OKAY) && Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.register(convertedXmlPolicy);
+				_distributionManager.register(convertedXmlPolicy, isRemotePolicyTransfer);
 			}
 
 			return deployStatus;

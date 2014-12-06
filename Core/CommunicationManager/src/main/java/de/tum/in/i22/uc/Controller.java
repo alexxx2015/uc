@@ -484,4 +484,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.setUpdateFrequency(msec, id);
 	}
 
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		return _requestHandler.remotePolicyTransfer(xml);
+	}
+
 }

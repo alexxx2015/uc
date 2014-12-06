@@ -71,6 +71,7 @@ import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListPoliciesPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RemotePolicyTransferPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.TranslatePolicyPmpRequest;
@@ -562,6 +563,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus setUpdateFrequency(int msec, String id) {
 		SetUpdateFrequencyPipRequest request = new SetUpdateFrequencyPipRequest(msec, id);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml) {
+		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

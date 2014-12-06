@@ -62,6 +62,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	private final Map<String, IPLocation> _responsiblePdps;
 
 	private final SeedCollector _seedcollector;
+	
+	private final Cluster _cluster;
 
 	public CassandraDistributionManager() {
 		/*
@@ -77,15 +79,15 @@ public class CassandraDistributionManager implements IDistributionManager {
 			throw new RuntimeException(e);
 		}
 
-		Cluster cluster = Cluster.builder()
+		_cluster = Cluster.builder()
 							.withQueryOptions(options)
 							.addContactPoint(addr.getHostAddress())
 							.withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
 							.build();
 
 		_responsiblePdps = new ConcurrentHashMap<>();
-		_privateKeyspace = new PrivateKeyspace(cluster);
-		_sharedKeyspaces = new SharedKeyspaceManager(cluster);
+		_privateKeyspace = new PrivateKeyspace(_cluster);
+		_sharedKeyspaces = new SharedKeyspaceManager(_cluster);
 		_seedcollector = new SeedCollector();
 	}
 
@@ -259,8 +261,13 @@ public class CassandraDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(XmlPolicy policy) {
-		_sharedKeyspaces.create(policy);
+	public void register(XmlPolicy policy, boolean isRemotePolicyTransfer) {
+		if (isRemotePolicyTransfer) {
+			awaitPolicyTransfer(policy.getName());
+		}
+		else {
+			_sharedKeyspaces.create(policy);
+		}
 		_privateKeyspace.add(policy);
 		_seedcollector.add(_sharedKeyspaces.get(policy.getName()).getLocations());
 	}
@@ -332,5 +339,15 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_responsiblePdps.put(ip, result);
 
 		return result;
+	}
+	
+	public void awaitPolicyTransfer(String policyName) {
+		while (!SharedKeyspace.existsPhysically(_cluster, policyName)) {
+			_logger.info("Waiting for keyspace {} to be physically available.", policyName);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		};
 	}
 }

@@ -53,4 +53,7 @@ public interface IPmp2Pmp extends IPmp2Ptp{
 	@AThriftMethod(signature="set<Types.TXmlPolicy> getPolicies(1: Types.TData data)")
 	public Set<XmlPolicy> getPolicies(IData data);
 
+	@AThriftMethod(signature="Types.TStatus remotePolicyTransfer (1: string xml)")
+	public IStatus remotePolicyTransfer(String xml);
+
 }
