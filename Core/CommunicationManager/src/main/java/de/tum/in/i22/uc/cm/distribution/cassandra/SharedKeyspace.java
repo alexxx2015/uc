@@ -249,10 +249,10 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	}
 
 	static boolean existsPhysically(Cluster cluster, String policyName) {
-		Session session = cluster.connect(policyName);
 		boolean exists = true;
+		
 		try {
-			session.execute(Prepared._prepSelectPolicy.get().bind());
+			Session session = cluster.connect(policyName);
 			_logger.info("Keyspace {} exists.", policyName);
 		}
 		catch (Exception e) {
