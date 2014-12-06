@@ -30,7 +30,13 @@ public class DummyDistributionManager implements IDistributionManager {
 	}
 
 	@Override
-	public void register(XmlPolicy policy, boolean isRemotePolicyTransfer) {
+	public void register(XmlPolicy policy) {
+		_logger.error("DummyDistributionManager DUMMY Implementation");
+		_logger.error("register method invoked");
+	}
+
+	@Override
+	public void register(XmlPolicy policy, String from) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
 	}

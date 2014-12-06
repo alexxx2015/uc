@@ -329,14 +329,6 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus deployPolicyRawXMLPmp(String xml) {
-		_logger.debug("deployPolicyRawXMLPmp invoked [{}]", xml);
-
-		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
-		return deployPolicyXMLPmp(xmlPolicy);
-	}
-
-	@Override
 	public IStatus deployPolicyURIPmp(String policyFilePath) {
 		if (policyFilePath.endsWith(".xml")) {
 			try {
@@ -347,21 +339,41 @@ public class PmpHandler extends PmpProcessor {
 		}
 		return new StatusBasic(EStatus.ERROR, "Error while loading policy file " + policyFilePath);
 	}
+
+	@Override
+	public IStatus deployPolicyRawXMLPmp(String xml) {
+		_logger.debug("deployPolicyRawXMLPmp invoked [{}]", xml);
+
+		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
+		return deployPolicyXMLPmp(xmlPolicy);
+	}
 	
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		_logger.debug("remotePolicyTransfer invoked [{}]", xml);
 
 		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
-		return deployPolicyXMLPmp(xmlPolicy, true);
+		return deployPolicyXMLPmp(xmlPolicy, from);
 	}
 
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
-		return deployPolicyXMLPmp(xmlPolicy, false);
+		return deployPolicyXMLPmp(xmlPolicy, null);
 	}
 	
-	private IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy, boolean isRemotePolicyTransfer) {
+	private IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy, String from) {
+		Pair<IStatus,XmlPolicy> status = deployPolicyXMLPmp_impl(xmlPolicy);
+		
+		if (status.getLeft().isStatus(EStatus.OKAY)
+				&& status.getRight() != null
+				&& Settings.getInstance().getDistributionEnabled()) {
+			_distributionManager.register(status.getRight(), from);
+		}
+		
+		return status.getLeft();
+	}
+	
+	private Pair<IStatus,XmlPolicy> deployPolicyXMLPmp_impl(XmlPolicy xmlPolicy) {
 
 		String xml = xmlPolicy.getXml();
 		PolicyType policy;
@@ -371,7 +383,7 @@ public class PmpHandler extends PmpProcessor {
 			policy = xmlToPolicy(xml);
 		} catch (IllegalArgumentException e) {
 			_logger.error(e.getMessage());
-			return new StatusBasic(EStatus.ERROR);
+			return Pair.of(new StatusBasic(EStatus.ERROR), null);
 		}
 
 		// When you receive a raw xml policy, the object created is without a name.
@@ -400,18 +412,12 @@ public class PmpHandler extends PmpProcessor {
 			// Map all data IDs to the new XmlPolicy
 			mapDataToPolicy(allData, convertedXmlPolicy);
 
-			IStatus deployStatus = getPdp().deployPolicyXML(convertedXmlPolicy);
-
 			// Deploy at the PDP
-			if (deployStatus.isStatus(EStatus.OKAY) && Settings.getInstance().getDistributionEnabled()) {
-				_distributionManager.register(convertedXmlPolicy, isRemotePolicyTransfer);
-			}
-
-			return deployStatus;
+			return Pair.of(getPdp().deployPolicyXML(convertedXmlPolicy), convertedXmlPolicy);
 		}
 		else {
 			_logger.debug("Policy was deployed before. Not deploying again.");
-			return new StatusBasic(EStatus.OKAY);
+			return Pair.of(new StatusBasic(EStatus.OKAY), null);
 		}
 
 	}
