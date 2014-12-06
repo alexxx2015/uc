@@ -24,8 +24,7 @@ public class CassandraUsageControlSeedProvider implements SeedProvider {
 	@Override
 	public List<InetAddress> getSeeds() {
 		Config conf;
-        try
-        {
+        try {
             conf = DatabaseDescriptor.loadConfig();
         }
         catch (Exception e)
@@ -74,7 +73,7 @@ public class CassandraUsageControlSeedProvider implements SeedProvider {
 			line = seedsValue;
 		}
 
-		List<InetAddress> seeds = new LinkedList<InetAddress>();
+		List<InetAddress> seeds = new LinkedList<>();
         for (String host : line.split(",")) {
 			try {
 				seeds.add(InetAddress.getByName(host.trim()));

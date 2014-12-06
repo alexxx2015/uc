@@ -19,13 +19,15 @@ class SeedCollector {
 	private final Set<String> _seeds;
 	private final File _file;
 
-	public SeedCollector() {
+	SeedCollector() {
 		_seeds = Collections.synchronizedSet(new HashSet<>());
 		_file = new File(Settings.getInstance().getDistributionSeedFile());
 
 		if (_file.isDirectory()) {
 			throw new RuntimeException("Provided seed (" + _file.getAbsolutePath() + ") file exists, but is a directory.");
 		}
+		
+		new CassandraUsageControlSeedProvider(null).getSeeds().forEach(s -> _seeds.add(s.getHostAddress()));
 	}
 
 	void add(Set<String> locs) {
