@@ -18,6 +18,8 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.Sets;
@@ -128,8 +130,8 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
-
-		_session.execute(query.toString());
+		
+		_session.execute(new SimpleStatement(query.toString()).setConsistencyLevel(defaultConsistency));
 	}
 
 
@@ -249,24 +251,18 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	}
 
 	static boolean existsPhysically(Cluster cluster, String policyName) {
-//		boolean exists = true;
-//		
-//		try {
-//			cluster.connect(policyName);
-//			_logger.info("Keyspace {} exists.", policyName);
-//		}
-//		catch (Exception e) {
-//			exists = false;
-//			_logger.info("Keyspace {} does not exist.", policyName);
-//		}
-//		
-//		return exists;
-		if (cluster.connect().execute("DESCRIBE KEYSPACE " + policyName + ";").isExhausted()) {
+		boolean exists = true;
+		
+		try {
+			cluster.connect(policyName);
+			_logger.info("Keyspace {} exists.", policyName);
+		}
+		catch (Exception e) {
+			exists = false;
 			_logger.info("Keyspace {} does not exist.", policyName);
-			return false;
 		}
 		
-		return true;
+		return exists;
 	}
 	
 	@Override

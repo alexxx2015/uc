@@ -262,12 +262,12 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void register(XmlPolicy policy, boolean isRemotePolicyTransfer) {
-		if (isRemotePolicyTransfer) {
-			awaitPolicyTransfer(policy.getName());
-		}
-		else {
+//		if (isRemotePolicyTransfer) {
+//			awaitPolicyTransfer(policy.getName());
+//		}
+//		else {
 			_sharedKeyspaces.create(policy);
-		}
+//		}
 		_privateKeyspace.add(policy);
 		_seedcollector.add(_sharedKeyspaces.get(policy.getName()).getLocations());
 	}
