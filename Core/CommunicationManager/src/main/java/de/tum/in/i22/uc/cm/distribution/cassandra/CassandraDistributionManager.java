@@ -79,7 +79,6 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		Cluster cluster = Cluster.builder()
 							.withQueryOptions(options)
-							.withSSL()
 							.addContactPoint(addr.getHostAddress())
 							.withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
 							.build();
