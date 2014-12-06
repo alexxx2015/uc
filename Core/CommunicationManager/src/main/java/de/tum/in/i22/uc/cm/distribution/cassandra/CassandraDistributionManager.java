@@ -144,7 +144,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 					Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
 					remotePmp.connect();
 
-					if (!remotePmp.deployPolicyRawXMLPmp(policy.getXml()).isStatus(EStatus.OKAY)) {
+					if (!remotePmp.remotePolicyTransfer(policy.getXml()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
 
