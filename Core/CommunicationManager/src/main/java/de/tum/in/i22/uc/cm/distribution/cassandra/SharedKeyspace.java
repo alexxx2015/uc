@@ -249,18 +249,24 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	}
 
 	static boolean existsPhysically(Cluster cluster, String policyName) {
-		boolean exists = true;
-		
-		try {
-			Session session = cluster.connect(policyName);
-			_logger.info("Keyspace {} exists.", policyName);
-		}
-		catch (Exception e) {
-			exists = false;
+//		boolean exists = true;
+//		
+//		try {
+//			cluster.connect(policyName);
+//			_logger.info("Keyspace {} exists.", policyName);
+//		}
+//		catch (Exception e) {
+//			exists = false;
+//			_logger.info("Keyspace {} does not exist.", policyName);
+//		}
+//		
+//		return exists;
+		if (cluster.connect().execute("DESCRIBE KEYSPACE " + policyName + ";").isExhausted()) {
 			_logger.info("Keyspace {} does not exist.", policyName);
+			return false;
 		}
 		
-		return exists;
+		return true;
 	}
 	
 	@Override
