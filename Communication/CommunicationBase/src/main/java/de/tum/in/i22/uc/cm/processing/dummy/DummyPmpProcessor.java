@@ -130,7 +130,7 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml) {
+	public IStatus remotePolicyTransfer(String xml, String from) {
 		_logger.error("PmpProcessor DUMMY Implementation");
 		_logger.error("remotePolicyTransfer method invoked");
 		return null;

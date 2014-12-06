@@ -139,8 +139,8 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml) {
-		return _impl.remotePolicyTransfer(xml);
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		return _impl.remotePolicyTransfer(xml, from);
 	}
 
 }

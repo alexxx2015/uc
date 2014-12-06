@@ -255,7 +255,7 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(String xml) throws TException {
-		return _pmpServer.remotePolicyTransfer(xml);
+	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
+		return _pmpServer.remotePolicyTransfer(xml, from);
 	}
 }

@@ -93,7 +93,7 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(String xml) throws TException {
-		return ThriftConverter.toThrift(_handler.remotePolicyTransfer(xml));
+	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
+		return ThriftConverter.toThrift(_handler.remotePolicyTransfer(xml, from));
 	}
 }

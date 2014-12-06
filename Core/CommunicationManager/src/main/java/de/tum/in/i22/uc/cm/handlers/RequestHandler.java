@@ -569,8 +569,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml) {
-		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml);
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

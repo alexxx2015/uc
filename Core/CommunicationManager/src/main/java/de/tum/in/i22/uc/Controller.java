@@ -485,8 +485,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml) {
-		return _requestHandler.remotePolicyTransfer(xml);
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		return _requestHandler.remotePolicyTransfer(xml, from);
 	}
 
 }
