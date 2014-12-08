@@ -137,7 +137,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		_logger.debug("Trying to lock keyspace {}.", _name);
 		while (!locked) {
-			Row result = _session.execute(Prepared._prepInsertLock.get().bind()).one();
+			Row result = _session.execute(Prepared._prepInsertLock.get().bind(true, IPLocation.localIpLocation.getHost())).one();
 
 			locked = result.getBool("[applied]");
 			if (!locked) {
@@ -430,8 +430,8 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		_prepInsertLock(
 				QueryBuilder
 				.insertInto(TABLE_LOCK)
-				.value("locked", true)
-				.value("by", IPLocation.localIpLocation.getHost())
+				.value("locked", QueryBuilder.bindMarker())
+				.value("by", QueryBuilder.bindMarker())
 				.ifNotExists(),
 				writeConsistency),
 
