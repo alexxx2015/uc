@@ -17,9 +17,9 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
-import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.Sets;
@@ -40,6 +40,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	private static final String TABLE_OP_NOTIFIED = "opnotified";
 	private static final String TABLE_MECHANISMS = "mechanisms";
 	private static final String TABLE_POLICIES = "policies";
+	private static final String TABLE_LOCK = "lock";
 
 	private static final List<String> _tables;
 
@@ -74,6 +75,11 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 						+ "mechanismName text,"
 						+ "firstTick bigint,"
 						+ "PRIMARY KEY (mechanismName));");
+		_tables.add(
+				"CREATE TABLE IF NOT EXISTS " + TABLE_LOCK + " ("
+						+ "locked boolean,"
+						+ "by text,"
+						+ "PRIMARY KEY (locked));");
 	};
 
 
@@ -118,45 +124,94 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	}
 
 
+	/**
+	 * Acquires a lock for this keyspace. This is
+	 * important if we alter the keyspace's metadata.
+	 * However, this is expensive. Cf. Cassandra lightweight
+	 * transactions:
+	 * http://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0
+	 * http://www.opencredo.com/2014/01/06/new-features-in-cassandra-2-0-lightweight-transactions-on-insert/
+	 */
+	private void acquireLock() {
+		boolean locked = false;
+
+		_logger.debug("Trying to lock keyspace {}.", _name);
+		while (!locked) {
+			Row result = _session.execute(Prepared._prepInsertLock.get().bind()).one();
+
+			locked = result.getBool("[applied]");
+			if (!locked) {
+				/*
+				 * We did not get the lock. But maybe we had it already ...
+				 */
+				if (result.getString("by").equals(IPLocation.localIpLocation.getHost())) {
+					locked = true;
+					_logger.debug("Lock acquired. We had it already.");
+				}
+				else {
+					_logger.debug("Lock is kept by {}. Waiting.", result.getString("by"));
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {}
+				}
+			}
+		}
+	}
+
+
+	private void releaseLock() {
+		_session.execute(Prepared._prepDeleteLock.get().bind());
+	}
+
+
+
 	private void alterKeyspace(Set<String> locations) {
 		StringBuilder query = new StringBuilder(locations.size() * 22 + 100);
 
 		query.append("ALTER KEYSPACE " + _name + " WITH replication ");
 		query.append("= {'class':'NetworkTopologyStrategy',");
 
-		locations.forEach(l ->
-			query.append("'" + l + "':1,")
-		);
+		locations.forEach(l -> query.append("'" + l + "':1,"));
 
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
-		
+
 		_session.execute(new SimpleStatement(query.toString()).setConsistencyLevel(defaultConsistency));
 	}
 
 
 	@Override
 	public boolean enlargeBy(IPLocation location) {
-		Set<String> allLocations = getLocations();
+		boolean result = false;
 
+		acquireLock();
+
+		Set<String> allLocations = getLocations();
 		if (allLocations.add(location.getHost())) {
 			alterKeyspace(allLocations);
-			return true;
+			result = true;
 		}
 
-		return false;
+		releaseLock();
+
+		return result;
 	}
 
 	@Override
 	public boolean diminishBy(IPLocation location) {
-		Set<String> allLocations = getLocations();
+		boolean result = false;
 
+		acquireLock();
+
+		Set<String> allLocations = getLocations();
 		if (allLocations.remove(location.getHost())) {
 			alterKeyspace(allLocations);
-			return true;
+			result = true;
 		}
 
-		return false;
+		releaseLock();
+
+		return result;
 	}
 
 	@Override
@@ -243,7 +298,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		if (doInsert) {
 			_logger.info("Updating Cassandra state at time {} with event {}",
-					 CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
+					CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
 					op.getFullId());
 
 			_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (op.getTTL() / 1000)));
@@ -252,7 +307,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 	static boolean existsPhysically(Cluster cluster, String policyName) {
 		boolean exists = true;
-		
+
 		try {
 			cluster.connect(policyName);
 			_logger.info("Keyspace {} exists.", policyName);
@@ -261,10 +316,10 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 			exists = false;
 			_logger.info("Keyspace {} does not exist.", policyName);
 		}
-		
+
 		return exists;
 	}
-	
+
 	@Override
 	public void addData(IData data, IPLocation location) {
 		// Check whether there already exists an entry for this dataID.
@@ -329,7 +384,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				.from(TABLE_DATA)
 				.where(QueryBuilder.eq("data", QueryBuilder.bindMarker())),
 				readConsistency),
-				
+
 		_prepSelectPolicy(
 				QueryBuilder
 				.select("policyName")
@@ -372,6 +427,14 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				.value("policy", QueryBuilder.bindMarker()),
 				writeConsistency),
 
+		_prepInsertLock(
+				QueryBuilder
+				.insertInto(TABLE_LOCK)
+				.value("locked", true)
+				.value("by", IPLocation.localIpLocation.getHost())
+				.ifNotExists(),
+				writeConsistency),
+
 		/*
 		 * UPDATEs
 		 */
@@ -380,6 +443,15 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				.update(TABLE_DATA)
 				.with(QueryBuilder.add("locations", QueryBuilder.bindMarker()))
 				.where(QueryBuilder.eq("data", QueryBuilder.bindMarker())),
+				writeConsistency),
+
+		/*
+		 * DELETEs
+		 */
+		_prepDeleteLock(
+				QueryBuilder
+				.delete("locked","by")
+				.from(TABLE_LOCK),
 				writeConsistency),
 
 		;

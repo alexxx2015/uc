@@ -13,9 +13,8 @@ import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
-public abstract class Keyspace {
+abstract class Keyspace {
 	protected final Session _session;
-	protected final Cluster _cluster;
 	protected final String _name;
 
 	protected static final ConsistencyLevel writeConsistency = Settings.getInstance().getDistributionWriteConsistency();
@@ -24,9 +23,8 @@ public abstract class Keyspace {
 
 	public Keyspace(String name, Cluster cluster) {
 		_name = name;
-		_cluster = cluster;
 
-		boolean created = createKeyspace();
+		boolean created = createKeyspace(cluster);
 		_session = cluster.connect(_name);
 
 		if (created) {
@@ -39,9 +37,9 @@ public abstract class Keyspace {
 	abstract List<String> getTables();
 	abstract IPreparedStatementId[] getPrepareStatements();
 
-	private boolean createKeyspace() {
+	private boolean createKeyspace(Cluster cluster) {
 		try {
-			_cluster.connect().execute("CREATE KEYSPACE " + _name
+			cluster.connect().execute("CREATE KEYSPACE " + _name
 					+ " WITH replication = {'class':'NetworkTopologyStrategy','"
 					+ IPLocation.localIpLocation.getHost() + "':1}");
 		}
