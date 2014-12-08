@@ -33,7 +33,13 @@ import de.tum.in.i22.uc.generic.MyBase64;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
 
-public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
+class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	protected static final Logger _logger = LoggerFactory.getLogger(SharedKeyspace.class);
 
 	private static final String TABLE_DATA = "hasdata";

@@ -41,6 +41,12 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
@@ -62,7 +68,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 	private final Map<String, IPLocation> _responsiblePdps;
 
 	private final SeedCollector _seedcollector;
-	
+
 	private final Cluster _cluster;
 
 	public CassandraDistributionManager() {
@@ -105,7 +111,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		/*
 		 * Get the policies stored in the private keyspace
 		 * and deploy them.
-		 * For some reason, this won't work if parallelized
+		 * For some reason, this won't work if parallelized.
 		 */
 		_privateKeyspace.getPolicies().forEach(p -> _pmp.deployPolicyRawXMLPmp(p));
 
@@ -137,21 +143,21 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 			if (ks.enlargeBy(pmpLocation)) {
 				boolean success = true;
+				Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
 
 				// if the location was not yet part of the keyspace, then we need to
 				// deploy the policy at the remote location
 				try {
-					Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
 					remotePmp.connect();
 
 					if (!remotePmp.remotePolicyTransfer(policy.getXml(), IPLocation.localIpLocation.getHost()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
-
-					remotePmp.disconnect();
 				} catch (IOException e) {
 					success = false;
 					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
+				} finally {
+					remotePmp.disconnect();
 				}
 
 
@@ -211,14 +217,12 @@ public class CassandraDistributionManager implements IDistributionManager {
 		try {
 			remotePip = new ThriftClientFactory().createPip2PipClient(pipLocation);
 			remotePip.connect();
+			remotePip.initialRepresentation(socketName, data);
 		} catch (IOException e) {
 			_logger.error("Unable to perform remote data transfer with [" + pipLocation + "]");
-			return;
+		} finally {
+			remotePip.disconnect();
 		}
-
-		remotePip.initialRepresentation(socketName, data);
-
-		remotePip.disconnect();
 	}
 
 
@@ -241,8 +245,6 @@ public class CassandraDistributionManager implements IDistributionManager {
 				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
 				doCrossSystemDataTrackingCoarse(data, pipLocation);
 				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
-
-
 			}
 		}
 	}
@@ -326,11 +328,13 @@ public class CassandraDistributionManager implements IDistributionManager {
 				futureCon.get(200, TimeUnit.MILLISECONDS);
 
 				result = pdp2pep.getResponsiblePdpLocation();
-				pdp2pep.disconnect();
 			} catch (Exception e) {
 				result = new IPLocation(ip);
 				_logger.warn("Unable to connect to {}.", loc);
 				_logger.warn("Assuming a responsible location of {}.", ip);
+			}
+			finally {
+				pdp2pep.disconnect();
 			}
 		}
 
@@ -338,14 +342,14 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		return result;
 	}
-	
-	public void awaitPolicyTransfer(String policyName) {
-		while (!SharedKeyspace.existsPhysically(_cluster, policyName)) {
-			_logger.info("Waiting for keyspace {} to be physically available.", policyName);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-		};
-	}
+
+//	public void awaitPolicyTransfer(String policyName) {
+//		while (!SharedKeyspace.existsPhysically(_cluster, policyName)) {
+//			_logger.info("Waiting for keyspace {} to be physically available.", policyName);
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//			}
+//		};
+//	}
 }

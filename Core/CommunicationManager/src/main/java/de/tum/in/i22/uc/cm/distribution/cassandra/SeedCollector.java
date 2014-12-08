@@ -13,6 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
 
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
 class SeedCollector {
 	protected static final Logger _logger = LoggerFactory.getLogger(SeedCollector.class);
 
@@ -26,7 +32,7 @@ class SeedCollector {
 		if (_file.isDirectory()) {
 			throw new RuntimeException("Provided seed (" + _file.getAbsolutePath() + ") file exists, but is a directory.");
 		}
-		
+
 		new CassandraUsageControlSeedProvider().getSeeds().forEach(s -> _seeds.add(s.getHostAddress()));
 	}
 

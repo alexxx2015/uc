@@ -18,6 +18,12 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.distribution.Network;
 import de.tum.in.i22.uc.generic.MyBase64;
 
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
 class PrivateKeyspace extends Keyspace {
 	protected static final Logger _logger = LoggerFactory.getLogger(PrivateKeyspace.class);
 

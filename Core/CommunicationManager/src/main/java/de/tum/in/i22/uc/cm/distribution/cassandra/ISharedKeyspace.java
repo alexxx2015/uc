@@ -7,7 +7,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 
-public interface ISharedKeyspace {
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
+interface ISharedKeyspace {
 
 	int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep);
 

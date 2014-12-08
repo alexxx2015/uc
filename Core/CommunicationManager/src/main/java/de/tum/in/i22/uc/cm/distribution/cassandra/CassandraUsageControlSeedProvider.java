@@ -17,9 +17,15 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.settings.Settings;
 
+
+/**
+ *
+ * @author Florian Kelbert
+ *
+ */
 public class CassandraUsageControlSeedProvider implements SeedProvider {
 	private static final Logger _logger = LoggerFactory.getLogger(CassandraUsageControlSeedProvider.class);
-	
+
 	private String _seedsValue;
 
 	public CassandraUsageControlSeedProvider(Map<String, String> args) {
@@ -34,7 +40,7 @@ public class CassandraUsageControlSeedProvider implements SeedProvider {
 
         _seedsValue = conf.seed_provider.parameters.get("seeds");
 	}
-	
+
 	public CassandraUsageControlSeedProvider() {
 		_seedsValue = Settings.getInstance().getDistributionSeedFile();
 	}
