@@ -78,7 +78,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		_tables.add(
 				"CREATE TABLE IF NOT EXISTS " + TABLE_LOCK + " ("
 						+ "locked boolean,"
-						+ "by text,"
+						+ "lockedby text,"
 						+ "PRIMARY KEY (locked));");
 	};
 
@@ -144,7 +144,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				/*
 				 * We did not get the lock. But maybe we had it already ...
 				 */
-				if (result.getString("by").equals(IPLocation.localIpLocation.getHost())) {
+				if (result.getString("lockedby").equals(IPLocation.localIpLocation.getHost())) {
 					locked = true;
 					_logger.debug("Lock acquired. We had it already.");
 				}
@@ -160,7 +160,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 
 	private void releaseLock() {
-		_session.execute(Prepared._prepDeleteLock.get().bind());
+		_session.execute(Prepared._prepDeleteLock.get().bind(true));
 	}
 
 
@@ -431,7 +431,7 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 				QueryBuilder
 				.insertInto(TABLE_LOCK)
 				.value("locked", QueryBuilder.bindMarker())
-				.value("by", QueryBuilder.bindMarker())
+				.value("lockedby", QueryBuilder.bindMarker())
 				.ifNotExists(),
 				writeConsistency),
 
@@ -450,8 +450,9 @@ public class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		 */
 		_prepDeleteLock(
 				QueryBuilder
-				.delete("locked","by")
-				.from(TABLE_LOCK),
+				.delete()
+				.from(TABLE_LOCK)
+				.where(QueryBuilder.eq("locked",QueryBuilder.bindMarker())),
 				writeConsistency),
 
 		;
