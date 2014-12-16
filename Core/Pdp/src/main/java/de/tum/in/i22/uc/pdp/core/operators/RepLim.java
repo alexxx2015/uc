@@ -104,4 +104,14 @@ public class RepLim extends RepLimType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.REPLIM;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
+	}
+
+	@Override
+	public boolean isDNF() {
+		return op.isAtomic();
+	}
 }

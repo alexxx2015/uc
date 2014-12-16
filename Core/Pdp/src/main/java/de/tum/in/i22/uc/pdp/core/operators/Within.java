@@ -108,4 +108,14 @@ public class Within extends WithinType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.WITHIN;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
+	}
+
+	@Override
+	public boolean isDNF() {
+		return op.isAtomic();
+	}
 }

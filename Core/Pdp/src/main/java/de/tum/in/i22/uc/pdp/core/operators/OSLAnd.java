@@ -104,11 +104,11 @@ public class OSLAnd extends AndType {
 	 * @throws InvalidOperatorException if this object is not in DNF.
 	 */
 	private void ensureDNF() throws InvalidOperatorException {
-		if (!(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1 instanceof AtomicOperator)) {
+		if (!(op1 instanceof OSLAnd) && !(op1 instanceof OSLNot) && !(op1.isAtomic())) {
 			throw new InvalidOperatorException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (first operand of "
 						+ getClass() + " was of type " + op1.getClass() + ").");
 		}
-		if (!(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2 instanceof AtomicOperator)) {
+		if (!(op2 instanceof OSLAnd) && !(op2 instanceof OSLNot) && !(op2.isAtomic())) {
 			throw new InvalidOperatorException("Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (second operand of "
 					+ getClass() + " was of type " + op2.getClass() + ").");
 		}
@@ -138,5 +138,20 @@ public class OSLAnd extends AndType {
 	@Override
 	public EOperatorType getOperatorType() {
 		return EOperatorType.OSL_AND;
+	}
+
+	@Override
+	public boolean isAtomic() {
+		return false;
+	}
+
+	@Override
+	public boolean isDNF() {
+		try {
+			ensureDNF();
+			return true;
+		} catch (InvalidOperatorException e) {
+			return false;
+		}
 	}
 }

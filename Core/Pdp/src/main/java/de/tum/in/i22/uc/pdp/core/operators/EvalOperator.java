@@ -59,4 +59,14 @@ public class EvalOperator extends EvalOperatorType implements AtomicOperator {
 	@Override
 	public void update(IEvent event) {
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
 }

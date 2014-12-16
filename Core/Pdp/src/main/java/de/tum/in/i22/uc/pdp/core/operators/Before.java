@@ -135,4 +135,14 @@ public class Before extends BeforeType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.BEFORE;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
+	}
+
+	@Override
+	public boolean isDNF() {
+		return op.isAtomic();
+	}
 }

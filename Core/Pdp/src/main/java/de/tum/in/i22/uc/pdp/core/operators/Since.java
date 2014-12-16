@@ -112,4 +112,14 @@ public class Since extends SinceType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.SINCE;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
 }

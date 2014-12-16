@@ -44,7 +44,7 @@ public class OSLNot extends NotType {
 	 * @throws InvalidOperatorException if the operand is not a {@link AtomicOperator}.
 	 */
 	private void ensureDNF() throws InvalidOperatorException {
-		if (!(op instanceof AtomicOperator)) {
+		if (!(op.isAtomic())) {
 			throw new InvalidOperatorException(
 					"Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (operand of "
 							+ getClass() + " was not of type " + AtomicOperator.class + ").");
@@ -104,5 +104,21 @@ public class OSLNot extends NotType {
 	@Override
 	public EOperatorType getOperatorType() {
 		return EOperatorType.OSL_NOT;
+	}
+
+	@Override
+	public boolean isDNF() {
+		try {
+			ensureDNF();
+			return true;
+		}
+		catch (InvalidOperatorException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
 	}
 }

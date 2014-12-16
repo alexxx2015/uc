@@ -221,6 +221,16 @@ public abstract class Operator extends Observable implements IOperator {
 
 	@Override
 	public EOperatorType getOperatorType() {
-		throw new UnsupportedOperationException("Not allowed to call getOperatortype on " + Operator.class);
+		throw new UnsupportedOperationException("Not allowed to call getOperatortype() on " + Operator.class);
+	}
+
+	@Override
+	public boolean isAtomic() {
+		throw new UnsupportedOperationException("Not allowed to call isAtomic() on " + Operator.class);
+	}
+
+	@Override
+	public boolean isDNF() {
+		throw new UnsupportedOperationException("Not allowed to call isDNF() on " + Operator.class);
 	}
 }

@@ -248,4 +248,14 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	public EOperatorType getOperatorType() {
 		return EOperatorType.STATE_BASED;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
 }

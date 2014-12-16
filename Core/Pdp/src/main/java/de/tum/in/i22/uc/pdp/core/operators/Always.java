@@ -78,4 +78,14 @@ public class Always extends AlwaysType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.ALWAYS;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
+	}
+
+	@Override
+	public boolean isDNF() {
+		return op.isAtomic();
+	}
 }

@@ -112,4 +112,14 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.EVENT_MATCH;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
 }

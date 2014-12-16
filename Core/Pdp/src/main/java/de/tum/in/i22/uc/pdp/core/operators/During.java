@@ -109,4 +109,14 @@ public class During extends DuringType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.DURING;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return op.isAtomic();
+	}
+
+	@Override
+	public boolean isDNF() {
+		return op.isAtomic();
+	};
 }

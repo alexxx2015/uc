@@ -119,4 +119,14 @@ public class OSLImplies extends ImpliesType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.OSL_IMPLIES;
 	}
+
+	@Override
+	public boolean isDNF() {
+		return false;
+	}
+
+	@Override
+	public boolean isAtomic() {
+		return false;
+	}
 }

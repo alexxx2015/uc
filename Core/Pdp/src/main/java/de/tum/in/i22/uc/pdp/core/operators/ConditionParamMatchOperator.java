@@ -85,4 +85,14 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	public EOperatorType getOperatorType() {
 		return EOperatorType.CONDITION_PARAM_MATCH;
 	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
 }

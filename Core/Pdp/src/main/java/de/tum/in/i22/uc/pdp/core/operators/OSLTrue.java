@@ -50,4 +50,14 @@ public class OSLTrue extends TrueType implements AtomicOperator {
 	@Override
 	public void update(IEvent event) {
 	}
+
+	@Override
+	public boolean isDNF() {
+		return true;
+	}
+
+	@Override
+	public boolean isAtomic() {
+		return true;
+	}
 }
