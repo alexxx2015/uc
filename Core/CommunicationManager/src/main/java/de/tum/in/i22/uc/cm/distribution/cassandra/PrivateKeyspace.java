@@ -92,9 +92,11 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policy the policy to be made persistent.
 	 */
 	void add(XmlPolicy policy) {
-		if (_session.execute(Prepared._prepSelectPolicyName.get().bind(policy.getName())).isExhausted()) {
+		String name = toValidKeyspaceName(policy.getName());
+
+		if (_session.execute(Prepared._prepSelectPolicyName.get().bind(name)).isExhausted()) {
 			// TODO: Encrypt what we are writing, so that others don't know which policies we are enforcing
-			_session.execute(Prepared._prepInsertPolicy.get().bind(policy.getName(), MyBase64.toBase64(policy.getXml())));
+			_session.execute(Prepared._prepInsertPolicy.get().bind(name, MyBase64.toBase64(policy.getXml())));
 		}
 	}
 
@@ -106,7 +108,7 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policyName the policy to be deleted.
 	 */
 	void delete(String policyName) {
-		_session.execute(Prepared._prepDeletePolicy.get().bind(policyName));
+		_session.execute(Prepared._prepDeletePolicy.get().bind(toValidKeyspaceName(policyName)));
 	}
 
 

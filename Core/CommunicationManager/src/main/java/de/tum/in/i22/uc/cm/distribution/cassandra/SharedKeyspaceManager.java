@@ -64,6 +64,7 @@ class SharedKeyspaceManager {
 
 
 	ISharedKeyspace get(String policyName) {
+		policyName = Keyspace.toValidKeyspaceName(policyName);
 		ISharedKeyspace k = null;
 
 		/*
@@ -71,6 +72,7 @@ class SharedKeyspaceManager {
 		 */
 		synchronized (_sharedKeyspaces) {
 			while ((k = _sharedKeyspaces.get(policyName)) == null) {
+				_logger.info("Waiting for keyspace {} to be created", policyName);
 				try {
 					_sharedKeyspaces.wait();
 				} catch (InterruptedException e) {}
