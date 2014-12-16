@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorCompletionService;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
 
@@ -28,7 +29,7 @@ abstract class Keyspace {
 	protected final Session _session;
 
 	/**
-	 * The name of the keyspace
+	 * The name of this keyspace
 	 */
 	protected final String _name;
 
@@ -47,11 +48,11 @@ abstract class Keyspace {
 	 * Prepared Statements returned by the subclasses
 	 * {@link Keyspace#getPrepareStatements()} will be prepared.
 	 *
-	 * @param name the name of the keyspace
+	 * @param name the name of this keyspace
 	 * @param cluster the cluster in which the keyspace is in
 	 */
 	Keyspace(String name, Cluster cluster) {
-		_name = name;
+		_name = toValidKeyspaceName(name);
 
 		boolean created = createKeyspace(cluster);
 		_session = cluster.connect(_name);
@@ -63,7 +64,16 @@ abstract class Keyspace {
 		prepareStatements();
 	}
 
+	/**
+	 * Returns all tables to be created within this keyspace.
+	 * @return all tables to be created within this keyspace.
+	 */
 	abstract List<String> getTables();
+
+	/**
+	 * Returns all prepared statements to be prepared within this keyspace.
+	 * @return all prepared statements to be prepared within this keyspace.
+	 */
 	abstract IPreparedStatementId[] getPrepareStatements();
 
 	/**
@@ -109,6 +119,10 @@ abstract class Keyspace {
 		Threading.waitFor(tables.size(), cs);
 	}
 
+	static String toValidKeyspaceName(String s) {
+		return s.toLowerCase().replaceAll("-", "_");
+	}
+
 	/**
 	 * Prepares all prepared statements within this keyspace.
 	 * All prepared statements returned by
@@ -118,6 +132,11 @@ abstract class Keyspace {
 		for (IPreparedStatementId stmt : getPrepareStatements()) {
 			stmt.prepare(_session);
 		}
+	}
+
+	interface IPreparedStatementId {
+		void prepare(Session session);
+		PreparedStatement get();
 	}
 }
 

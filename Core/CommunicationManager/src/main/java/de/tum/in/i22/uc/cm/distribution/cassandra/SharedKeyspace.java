@@ -90,7 +90,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 
 	SharedKeyspace(XmlPolicy policy, Cluster cluster) {
-		super(policy.getName().toLowerCase(), cluster);
+		super(policy.getName(), cluster);
 		_policy = policy;
 		_lastInsert = new HashMap<>();
 
@@ -311,20 +311,22 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		}
 	}
 
-	static boolean existsPhysically(Cluster cluster, String policyName) {
-		boolean exists = true;
-
-		try {
-			cluster.connect(policyName);
-			_logger.info("Keyspace {} exists.", policyName);
-		}
-		catch (Exception e) {
-			exists = false;
-			_logger.info("Keyspace {} does not exist.", policyName);
-		}
-
-		return exists;
-	}
+//	static boolean existsPhysically(Cluster cluster, String policyName) {
+//		policyName = toValidKeyspaceName(policyName);
+//
+//		boolean exists = true;
+//
+//		try {
+//			cluster.connect(policyName);
+//			_logger.info("Keyspace {} exists.", policyName);
+//		}
+//		catch (Exception e) {
+//			exists = false;
+//			_logger.info("Keyspace {} does not exist.", policyName);
+//		}
+//
+//		return exists;
+//	}
 
 	@Override
 	public void addData(IData data, IPLocation location) {
@@ -463,7 +465,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		;
 
-		Prepared(RegularStatement regular, ConsistencyLevel cl) {
+		private Prepared(RegularStatement regular, ConsistencyLevel cl) {
 			_regular = regular;
 			_cl = cl;
 		}

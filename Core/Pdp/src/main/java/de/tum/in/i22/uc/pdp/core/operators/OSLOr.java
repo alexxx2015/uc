@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.slf4j.Logger;
@@ -58,67 +59,23 @@ public class OSLOr extends OrType {
 		return "(" + op1 + " || " + op2 + ")";
 	}
 
-	@Override
-	public boolean tick(boolean endOfTimestep) {
 
-		_executorCompletionService.submit(() -> op1.tick(endOfTimestep));
-		_executorCompletionService.submit(() -> op2.tick(endOfTimestep));
+	private boolean tickIntern(Callable<Boolean> callOp1, Callable<Boolean> callOp2) {
 
+		_executorCompletionService.submit(callOp1);
+		_executorCompletionService.submit(callOp2);
+
+
+		// Wait for the evaluation of the first operand
 		boolean valueAtLastTick = Threading.takeResult(_executorCompletionService);
 
 		if (valueAtLastTick) {
-			Threading.instance().submit(() -> Threading.take(_executorCompletionService));
-			_logger.info("Result: {}. (One of the operands was true, not waiting for the other operand to be evaluated)", true);
-		}
-		else {
-			valueAtLastTick = Threading.takeResult(_executorCompletionService);
-			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
-		}
-
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-
-		return valueAtLastTick;
-
-//
-//		Future<Boolean> op1state = PdpThreading.instance().submit(() -> op1.tick(endOfTimestep));
-//		Future<Boolean> op2state = PdpThreading.instance().submit(() -> op2.tick(endOfTimestep));
-//
-//		boolean valueAtLastTick = PdpThreading.resultOf(op1state) || PdpThreading.resultOf(op2state);
-//
-//		_logger.info("op1: {}; op2: {}. Result: {}", PdpThreading.resultOf(op1state), PdpThreading.resultOf(op2state), valueAtLastTick);
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
-
-//		/*
-//		 * Important: _Always_ evaluate both operators
-//		 */
-//		boolean op1state = op1.tick(endOfTimestep);
-//		boolean op2state = op2.tick(endOfTimestep);
-//
-//		boolean valueAtLastTick = op1state || op2state;
-//
-//		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
-	}
-
-	@Override
-	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
-
-		_executorCompletionService.submit(() -> op1.distributedTickPostprocessing(endOfTimestep));
-		_executorCompletionService.submit(() -> op2.distributedTickPostprocessing(endOfTimestep));
-
-		boolean valueAtLastTick = Threading.takeResult(_executorCompletionService);
-
-		if (valueAtLastTick) {
+			// Wait for the evaluation of the second operand without blocking.
 			Threading.instance().submit(() -> Threading.take(_executorCompletionService));
 			_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
 		}
 		else {
+			// Wait for the evaluation of the second operand
 			valueAtLastTick = Threading.takeResult(_executorCompletionService);
 			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
@@ -126,17 +83,19 @@ public class OSLOr extends OrType {
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
+	}
 
-//		boolean op1state = op1.distributedTickPostprocessing(endOfTimestep);
-//		boolean op2state = op2.distributedTickPostprocessing(endOfTimestep);
-//
-//		boolean valueAtLastTick = op1state || op2state;
-//
-//		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
+
+	@Override
+	public boolean tick(boolean endOfTimestep) {
+		return tickIntern(() -> op1.tick(endOfTimestep), () -> op2.tick(endOfTimestep));
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
+		return tickIntern(
+				() -> op1.distributedTickPostprocessing(endOfTimestep),
+				() -> op2.distributedTickPostprocessing(endOfTimestep));
 	}
 
 

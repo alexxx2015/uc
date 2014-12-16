@@ -90,32 +90,6 @@ public class OSLImplies extends ImpliesType {
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 
 		return valueAtLastTick;
-
-
-//		Future<Boolean> op1state = PdpThreading.instance().submit(() -> op1.tick(endOfTimestep));
-//		Future<Boolean> op2state = PdpThreading.instance().submit(() -> op2.tick(endOfTimestep));
-//
-//		boolean valueAtLastTick = !PdpThreading.resultOf(op1state) || PdpThreading.resultOf(op2state);
-//
-//		_logger.info("op1: {}; op2: {}. Result: {}", PdpThreading.resultOf(op1state), PdpThreading.resultOf(op2state), valueAtLastTick);
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
-
-//		/*
-//		 * Important: _Always_ evaluate both operators
-//		 */
-//		boolean op1state = op1.tick(endOfTimestep);
-//		boolean op2state = op2.tick(endOfTimestep);
-//
-//		boolean valueAtLastTick = !op1state || op2state;
-//
-//		_logger.info("op1: {}; op2: {}. Result: {}", op1state, op2state, valueAtLastTick);
-//
-//		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
-//
-//		return valueAtLastTick;
 	}
 
 

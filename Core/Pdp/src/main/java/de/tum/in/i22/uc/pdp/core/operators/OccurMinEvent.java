@@ -101,42 +101,8 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 * CIRC_ARRAY counts locally only!
 			 * If this result is not sufficient, ask remotely!
 			 */
-			long global = _pdp.getDistributionManager().howOftenNotifiedSinceTimestep(event,
+			return limit <= _pdp.getDistributionManager().howOftenNotifiedSinceTimestep(event,
 								_mechanism.getTimestep() - _timeAmount.getTimestepInterval());
-
-			return global >= limit;
-
-
-//			/*
-//			 *  Our local count was not sufficient. Look up how
-//			 *  often the event happened globally.
-//			 *  The result will include our local counts.
-//			 */
-//			event.distributedTickPostprocessing(endOfTimestep);
-//
-//			/*
-//			 * Get saved state variables.
-//			 */
-//			CircularArray<Integer> stateCircArray = _state.get(StateVariable.CIRC_ARRAY);
-//			int countAtLastTick = _state.get(StateVariable.COUNT_AT_LAST_TICK);
-//
-//			/*
-//			 * Do the actual work.
-//			 */
-//
-//			countAtLastTick -= stateCircArray.removeLast(); 	// Subtract the value that has been counted locally and remove it from CircularArray
-//			countAtLastTick += event.getCountAtLastTick();					// Add the value that has been counted globally
-//
-//			stateCircArray.push(event.getCountAtLastTick());					// Push the globally counted value to CircularArray
-//
-//			result = (countAtLastTick >= limit);
-//
-//			_logger.debug("Distributed result: {} (count: {}, limit: {}, new CircArray: {}.).", result, countAtLastTick, limit, _state.get(StateVariable.CIRC_ARRAY));
-//
-//			/*
-//			 * Save state variables.
-//			 */
-//			_state.set(StateVariable.COUNT_AT_LAST_TICK, countAtLastTick);
 		}
 
 		return result;

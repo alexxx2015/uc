@@ -20,6 +20,13 @@ import de.tum.in.i22.uc.generic.MyBase64;
 
 
 /**
+ * A representation of a keyspace that is private
+ * for PDP. This private keyspace could very well
+ * also be implemented as a local database. In order
+ * to not set up yet another database, this is
+ * also stored in the distributed Cassandra database.
+ * For this reason, all data written into such a private
+ * keyspace should be encrypted.
  *
  * @author Florian Kelbert
  *
@@ -40,8 +47,15 @@ class PrivateKeyspace extends Keyspace {
 						+ "PRIMARY KEY (policyName));");
 	};
 
+	/**
+	 * Creates a {@link PrivateKeyspace} object,
+	 * using "private_" + {@link Network#getHostname()}
+	 * as keyspace name.
+	 *
+	 * @param cluster the cluster in which to create this keyspace.
+	 */
 	PrivateKeyspace(Cluster cluster) {
-		super(Network.getHostname(), cluster);
+		super("private_" + Network.getHostname(), cluster);
 	}
 
 	@Override
@@ -54,6 +68,11 @@ class PrivateKeyspace extends Keyspace {
 		return Prepared.values();
 	}
 
+	/**
+	 * Returns all the policies that are stored within
+	 * this Keyspace.
+	 * @return all policies stored within this Keyspace.
+	 */
 	Collection<String> getPolicies() {
 		Collection<String> policies = new LinkedList<>();
 
@@ -64,9 +83,8 @@ class PrivateKeyspace extends Keyspace {
 	}
 
 
-
 	/**
-	 * This is to make locally deployed policies persisent. As such,
+	 * This is to make locally deployed policies persistent. As such,
 	 * deployed policies can and will be reloaded after shutdown and
 	 * restart of the Pdp/Pmp. If the policy was already present in
 	 * the Database, nothing will happen.
@@ -123,7 +141,7 @@ class PrivateKeyspace extends Keyspace {
 				writeConsistency),
 		;
 
-		Prepared(RegularStatement regular, ConsistencyLevel cl) {
+		private Prepared(RegularStatement regular, ConsistencyLevel cl) {
 			_regular = regular;
 			_cl = cl;
 		}

@@ -37,13 +37,15 @@ class SharedKeyspaceManager {
 	 * @return
 	 */
 	ISharedKeyspace create(XmlPolicy policy) {
+		String name = Keyspace.toValidKeyspaceName(policy.getName());
+
 		ISharedKeyspace keyspace;
 
 		/*
 		 * Check whether the keyspace already exists
 		 */
 		synchronized (_sharedKeyspaces) {
-			keyspace = _sharedKeyspaces.get(policy.getName());
+			keyspace = _sharedKeyspaces.get(name);
 		}
 
 		/*
@@ -52,7 +54,7 @@ class SharedKeyspaceManager {
 		if (keyspace == null) {
 			keyspace = new SharedKeyspace(policy, _cluster);
 			synchronized (_sharedKeyspaces) {
-				_sharedKeyspaces.put(policy.getName(), keyspace);
+				_sharedKeyspaces.put(name, keyspace);
 				_sharedKeyspaces.notifyAll();
 			}
 		}
