@@ -22,8 +22,6 @@ public class OSLImplies extends ImpliesType {
 	private Operator op1;
 	private Operator op2;
 
-	private ExecutorCompletionService<Boolean> _executorCompletionService;
-
 	public OSLImplies() {
 	}
 
@@ -40,8 +38,6 @@ public class OSLImplies extends ImpliesType {
 		if (Settings.getInstance().getDistributionEnabled()) {
 			throw new InvalidOperatorException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
-
-		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
 	}
 
 	@Override
@@ -58,31 +54,33 @@ public class OSLImplies extends ImpliesType {
 	@Override
 	public boolean tick(boolean endOfTimestep) {
 
-		Future<Boolean> op1Future = _executorCompletionService.submit(() -> op1.tick(endOfTimestep));
-		Future<Boolean> op2Future = _executorCompletionService.submit(() -> op2.tick(endOfTimestep));
+		ExecutorCompletionService<Boolean> cs = new ExecutorCompletionService<>(Threading.instance());
+
+		Future<Boolean> op1Future = cs.submit(() -> op1.tick(endOfTimestep));
+		Future<Boolean> op2Future = cs.submit(() -> op2.tick(endOfTimestep));
 
 		boolean valueAtLastTick;
 
-		Future<Boolean> taken = Threading.take(_executorCompletionService);
+		Future<Boolean> taken = Threading.take(cs);
 		if (taken == op1Future) {
 			if (!Threading.resultOf(taken)) {
 				valueAtLastTick = true;
-				Threading.instance().submit(() -> Threading.take(_executorCompletionService));
+				Threading.instance().submit(() -> Threading.take(cs));
 				_logger.info("Result: true. (op1 was false. Not waiting for op2");
 			}
 			else {
-				valueAtLastTick = Threading.takeResult(_executorCompletionService);
+				valueAtLastTick = Threading.takeResult(cs);
 				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}
 		else /*if (taken == op2Future)*/ {
 			if (Threading.resultOf(taken)) {
 				valueAtLastTick = true;
-				Threading.instance().submit(() -> Threading.take(_executorCompletionService));
+				Threading.instance().submit(() -> Threading.take(cs));
 				_logger.info("Result: true. (op2 was true. Not waiting for op1");
 			}
 			else {
-				valueAtLastTick = !Threading.takeResult(_executorCompletionService);
+				valueAtLastTick = !Threading.takeResult(cs);
 				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 			}
 		}

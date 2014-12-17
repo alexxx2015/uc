@@ -23,7 +23,8 @@ public class OSLOr extends OrType {
 	private Operator op1;
 	private Operator op2;
 
-	private ExecutorCompletionService<Boolean> _executorCompletionService;
+	private ExecutorCompletionService<Boolean> _executorCompletionServiceLocal;
+	private ExecutorCompletionService<Boolean> _executorCompletionServiceDistr;
 
 	public OSLOr() {
 	}
@@ -42,7 +43,9 @@ public class OSLOr extends OrType {
 			ensureDNF();
 		}
 
-		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
+		_executorCompletionServiceLocal = new ExecutorCompletionService<>(Threading.instance());
+		_executorCompletionServiceDistr = new ExecutorCompletionService<>(Threading.instance());
+
 		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
 
@@ -59,23 +62,23 @@ public class OSLOr extends OrType {
 	}
 
 
-	private boolean tickIntern(Callable<Boolean> callOp1, Callable<Boolean> callOp2) {
+	private boolean tickIntern(Callable<Boolean> callOp1, Callable<Boolean> callOp2, ExecutorCompletionService<Boolean> cs) {
 
-		_executorCompletionService.submit(callOp1);
-		_executorCompletionService.submit(callOp2);
+		cs.submit(callOp1);
+		cs.submit(callOp2);
 
 
 		// Wait for the evaluation of the first operand
-		boolean valueAtLastTick = Threading.takeResult(_executorCompletionService);
+		boolean valueAtLastTick = Threading.takeResult(cs);
 
 		if (valueAtLastTick) {
 			// Wait for the evaluation of the second operand without blocking.
-			Threading.instance().submit(() -> Threading.take(_executorCompletionService));
+			Threading.instance().submit(() -> Threading.take(cs));
 			_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
 		}
 		else {
 			// Wait for the evaluation of the second operand
-			valueAtLastTick = Threading.takeResult(_executorCompletionService);
+			valueAtLastTick = Threading.takeResult(cs);
 			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
 
@@ -87,14 +90,15 @@ public class OSLOr extends OrType {
 
 	@Override
 	public boolean tick(boolean endOfTimestep) {
-		return tickIntern(() -> op1.tick(endOfTimestep), () -> op2.tick(endOfTimestep));
+		return tickIntern(() -> op1.tick(endOfTimestep), () -> op2.tick(endOfTimestep), _executorCompletionServiceLocal);
 	}
 
 	@Override
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 		return tickIntern(
 				() -> op1.distributedTickPostprocessing(endOfTimestep),
-				() -> op2.distributedTickPostprocessing(endOfTimestep));
+				() -> op2.distributedTickPostprocessing(endOfTimestep),
+				_executorCompletionServiceDistr);
 	}
 
 
