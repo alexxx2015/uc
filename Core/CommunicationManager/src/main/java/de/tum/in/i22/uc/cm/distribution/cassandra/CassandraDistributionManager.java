@@ -264,7 +264,9 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 	@Override
 	public void register(XmlPolicy policy, String from) {
-		_sharedKeyspaces.create(policy);
+		ISharedKeyspace ks = _sharedKeyspaces.create(policy);
+		ks.enlargeBy(IPLocation.localIpLocation);
+
 		_privateKeyspace.add(policy);
 		_seedcollector.add(_sharedKeyspaces.get(policy.getName()).getLocations());
 		if (from != null) {
