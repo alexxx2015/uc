@@ -30,6 +30,7 @@ public class During extends DuringType {
 		timeAmount = new TimeAmount(getAmount(), getUnit(), mech.getTimestepSize());
 
 		op = (Operator) operators;
+		op.init(mech, this, ttl);
 
 		_initialCounterValue = timeAmount.getTimestepInterval() + 1;
 
@@ -38,8 +39,6 @@ public class During extends DuringType {
 		 * if this counter reaches a value of 0.
 		 */
 		_state.set(StateVariable.COUNTER, _initialCounterValue);
-
-		op.init(mech, this, ttl);
 	}
 
 	@Override

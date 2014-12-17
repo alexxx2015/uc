@@ -34,14 +34,14 @@ public class OSLImplies extends ImpliesType {
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
 
+		op1.init(mech, this, ttl);
+		op2.init(mech, this, ttl);
+
 		if (Settings.getInstance().getDistributionEnabled()) {
 			throw new InvalidOperatorException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
 
 		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
-
-		op1.init(mech, this, ttl);
-		op2.init(mech, this, ttl);
 	}
 
 	@Override

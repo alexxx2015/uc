@@ -35,15 +35,14 @@ public class OSLOr extends OrType {
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
 
+		op1.init(mech, this, ttl);
+		op2.init(mech, this, ttl);
+
 		if (Settings.getInstance().getDistributionEnabled()) {
 			ensureDNF();
 		}
 
-		op1.init(mech, this, ttl);
-		op2.init(mech, this, ttl);
-
 		_executorCompletionService = new ExecutorCompletionService<>(Threading.instance());
-
 		_positivity = (op1.getPositivity() == op2.getPositivity()) ? op1.getPositivity() : Trilean.UNDEF;
 	}
 

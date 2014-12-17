@@ -26,12 +26,11 @@ public class OSLNot extends NotType {
 		super.init(mech, parent, ttl);
 
 		op = (Operator) operators;
+		op.init(mech, this, ttl);
 
 		if (Settings.getInstance().getDistributionEnabled()) {
 			ensureDNF();
 		}
-
-		op.init(mech, this, ttl);
 
 		_positivity = op.getPositivity().negate();
 	}

@@ -30,6 +30,9 @@ public class OccurMinEvent extends OccurMinEventType {
 
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 
+		event = (EventMatchOperator) getEvent();
+		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
+
 		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			stateCircArray.set(0, a);
@@ -37,9 +40,6 @@ public class OccurMinEvent extends OccurMinEventType {
 
 		_state.set(StateVariable.COUNT_AT_LAST_TICK, 0);
 		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
-
-		event = (EventMatchOperator) getEvent();
-		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
 		_positivity = Trilean.TRUE;
 	}

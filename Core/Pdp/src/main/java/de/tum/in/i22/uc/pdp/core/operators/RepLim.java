@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.pdp.xsd.RepLimType;
 
 public class RepLim extends RepLimType {
 	private static Logger _logger = LoggerFactory.getLogger(RepLim.class);
-	private TimeAmount timeAmount = null;
+	private TimeAmount _timeAmount;
 	private Operator op;
 
 	public RepLim() {
@@ -26,18 +26,18 @@ public class RepLim extends RepLimType {
 	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
-		timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 
-		CircularArray<Boolean> circArray = new CircularArray<>(timeAmount.getTimestepInterval());
-		for (int a = 0; a < timeAmount.getTimestepInterval(); a++) {
+		op = (Operator) operators;
+		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
+
+		CircularArray<Boolean> circArray = new CircularArray<>(_timeAmount.getTimestepInterval());
+		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
 			circArray.set(false, a);
 		}
 
 		_state.set(StateVariable.CIRC_ARRAY, circArray);
 		_state.set(StateVariable.COUNTER, 0L);
-
-		op = (Operator) operators;
-		op.init(mech, this, Math.max(ttl, timeAmount.getInterval() + mech.getTimestepSize()));
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class RepLim extends RepLimType {
 
 	@Override
 	public String toString() {
-		return "REPLIM(" + timeAmount + ", " + op + " )";
+		return "REPLIM(" + _timeAmount + ", " + op + " )";
 	}
 
 	@Override

@@ -34,12 +34,11 @@ public class Within extends WithinType {
 		super.init(mech, parent, ttl);
 
 		op = (Operator) getOperators();
+		op.init(mech, this, ttl);
 
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 
 		_maxCounterValue = _timeAmount.getTimestepInterval() + 1;
-
-		op.init(mech, this, ttl);
 	}
 
 	@Override

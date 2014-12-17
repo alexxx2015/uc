@@ -28,13 +28,14 @@ public class Before extends BeforeType {
 	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 
+		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
+
 		op = ((Operator) operators);
+		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
 		if (Settings.getInstance().getDistributionEnabled()) {
 			ensureDNF();
 		}
-
-		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 
 		CircularArray<Boolean> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
 		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
@@ -42,8 +43,6 @@ public class Before extends BeforeType {
 		}
 
 		_state.set(StateVariable.CIRC_ARRAY, stateCircArray);
-
-		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
 		_positivity = op.getPositivity();
 	}

@@ -27,6 +27,7 @@ public class RepSince extends RepSinceType {
 	@Override
 	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
+
 		op1 = (Operator) operators.get(0);
 		op2 = (Operator) operators.get(1);
 
