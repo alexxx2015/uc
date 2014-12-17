@@ -141,7 +141,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 			ISharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
 
-			if (ks.enlargeBy(pmpLocation)) {
+			if (!ks.getLocations().contains(pmpLocation.getHost())) {
 				boolean success = true;
 				Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
 
@@ -166,11 +166,11 @@ public class CassandraDistributionManager implements IDistributionManager {
 					// this is a new seed.
 					_seedcollector.add(pmpLocation.getHost());
 				}
-				else {
-					// If remote deployment of the policy fails,
-					// then we remove the location from the keyspace
-					ks.diminishBy(pmpLocation);
-				}
+//				else {
+//					// If remote deployment of the policy fails,
+//					// then we remove the location from the keyspace
+//					ks.diminishBy(pmpLocation);
+//				}
 
 				/*
 				 * TODO: We need to deal with the fact that success == false at this place.
