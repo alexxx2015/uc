@@ -155,7 +155,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 					_logger.debug("Lock acquired. We had it already.");
 				}
 				else {
-					_logger.debug("Lock is kept by {}. Waiting.", result.getString("by"));
+					_logger.debug("Lock is kept by {}. Waiting.", result.getString("lockedby"));
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {}
