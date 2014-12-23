@@ -307,7 +307,11 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 					CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
 					op.getFullId());
 
-			_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (op.getTTL() / 1000)));
+			long ttl = op.getTTL();
+			if (ttl == Long.MAX_VALUE || ttl <= 0) {
+				ttl = 0;
+			}
+			_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (ttl / 1000)));
 		}
 	}
 

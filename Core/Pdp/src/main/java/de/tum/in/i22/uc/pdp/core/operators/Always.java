@@ -28,7 +28,7 @@ public class Always extends AlwaysType {
 	protected void init(Mechanism mech, Operator parent, long ttl) throws InvalidOperatorException {
 		super.init(mech, parent, ttl);
 		op = ((Operator) operators);
-		op.init(mech, this, ttl);
+		op.init(mech, this, Long.MAX_VALUE);
 	}
 
 	@Override
