@@ -115,16 +115,16 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	@Override
 	public Set<String> getLocations() {
 		// Retrieve current information about the keyspace
-		ResultSet rows = _session.execute(Prepared._prepSelectStrategyOptions.get().bind(_name));
+		Row row = _session.execute(Prepared._prepSelectStrategyOptions.get().bind(_name)).one();
 
 		// Build the set of locations that are currently known within the keyspace
 		Set<String> allLocations = new HashSet<>();
-		rows.forEach(r -> {
-			String[] entries = r.getString(0).replaceAll("[{}\"]", "").split(",");
-			for (String loc : entries) {
-				allLocations.add(loc.split(":")[0]);
-			}
-		});
+
+		// Remove parenthesis and quotes, and split the string into its parts
+		String[] entries = row.getString(0).replaceAll("[{}\"]", "").split(",");
+		for (String loc : entries) {
+			allLocations.add(loc.split(":")[0]);
+		}
 
 		return allLocations;
 	}

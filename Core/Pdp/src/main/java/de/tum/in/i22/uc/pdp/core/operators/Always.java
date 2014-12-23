@@ -1,12 +1,14 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
@@ -39,13 +41,13 @@ public class Always extends AlwaysType {
 		return "ALWAYS (" + op + ")";
 	}
 
-	@Override
-	public boolean tick(boolean endOfTimestep) {
+
+	private boolean tickIntern(Callable<Boolean> callOp) {
 		if ((boolean) _state.get(StateVariable.IMMUTABLE)) {
 			return false;
 		}
 		else {
-			boolean valueAtLastTick = op.tick(endOfTimestep);
+			boolean valueAtLastTick = Threading.resultOf(Threading.instance().submit(callOp));
 
 			if (!valueAtLastTick) {
 				_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
@@ -55,6 +57,17 @@ public class Always extends AlwaysType {
 
 			return valueAtLastTick;
 		}
+	}
+
+
+	@Override
+	public boolean tick(boolean endOfTimestep) {
+		return tickIntern(() -> op.tick(endOfTimestep));
+	}
+
+	@Override
+	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
+		return tickIntern(() -> op.distributedTickPostprocessing(endOfTimestep));
 	}
 
 	@Override

@@ -196,7 +196,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pipEventHandlerPackage,
 				"de.tum.in.i22.uc.pip.eventdef.");
 		loadSetting(PROP_NAME_pipInitializerEvent, "SchemaInitializer");
-		loadSetting(PROP_NAME_pipPersistenceDirectory, "pipdb");
+		loadSetting(PROP_NAME_pipPersistenceDirectory, ".pipdb");
 
 		loadSetting(PROP_NAME_pipPrintAfterUpdate, true);
 

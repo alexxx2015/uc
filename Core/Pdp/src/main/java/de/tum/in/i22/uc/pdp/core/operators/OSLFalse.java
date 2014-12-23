@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
+import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.FalseType;
 
 public class OSLFalse extends FalseType implements AtomicOperator {
@@ -22,6 +23,7 @@ public class OSLFalse extends FalseType implements AtomicOperator {
 		super.init(mech, parent, ttl);
 
 		_positivity = Trilean.FALSE;
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 	}
 
 	@Override
