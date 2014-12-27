@@ -117,5 +117,10 @@ public class During extends DuringType {
 	@Override
 	public boolean isDNF() {
 		return op.isAtomic();
-	};
+	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+	}
 }

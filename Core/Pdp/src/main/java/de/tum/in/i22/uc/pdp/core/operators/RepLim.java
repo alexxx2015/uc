@@ -114,4 +114,10 @@ public class RepLim extends RepLimType {
 	public boolean isDNF() {
 		return op.isAtomic();
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op.setRelevant(relevant);
+	}
 }

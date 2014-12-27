@@ -88,4 +88,10 @@ public class RepMax extends RepMaxType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.REPMAX;
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op.setRelevant(relevant);
+	}
 }

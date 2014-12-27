@@ -157,4 +157,11 @@ public class OSLAnd extends AndType {
 			return false;
 		}
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op1.setRelevant(relevant);
+		op2.setRelevant(relevant);
+	}
 }

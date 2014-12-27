@@ -200,6 +200,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	@Override
 	public void update(IEvent ev) {
+		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
+			return;
+		}
+
 		/*
 		 * An event is happening and updates this operator. We get
 		 * the boolean that indicates this operator's value since
@@ -257,5 +261,10 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 	@Override
 	public boolean isDNF() {
 		return true;
+	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
 	}
 }

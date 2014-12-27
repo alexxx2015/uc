@@ -72,6 +72,11 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 
 	@Override
 	public void update(IEvent ev) {
+
+		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
+			return;
+		}
+
 		if (matches(ev)) {
 			/*
 			 * The event is happening. Increase the counter counting
@@ -79,6 +84,7 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 			 */
 			_state.set(StateVariable.SINCE_UPDATE, Trilean.TRUE);
 			_state.set(StateVariable.SINCE_LAST_TICK, (int) _state.get(StateVariable.SINCE_LAST_TICK) + 1);
+
 			setChanged();
 			notifyObservers(ev);
 		}
