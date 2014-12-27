@@ -57,10 +57,7 @@ abstract class Keyspace {
 		boolean created = createKeyspace(cluster);
 		_session = cluster.connect(_name);
 
-//		if (created) {
-			createTables();
-//		}
-
+		createTables();
 		prepareStatements();
 	}
 
