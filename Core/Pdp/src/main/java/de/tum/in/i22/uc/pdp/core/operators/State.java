@@ -26,6 +26,7 @@ final public class State implements DeepCloneable<State> {
 		ALWAYS_A_SINCE_LAST_B,	// usually: type boolean
 		SINCE_LAST_TICK,		// usually: type boolean
 		SINCE_UPDATE,			// usually: type boolean
+		RELEVANT,				// usually: type boolean
 		COUNTER,				// usually: type long
 		COUNT_AT_LAST_TICK		// usually: type long
 	}

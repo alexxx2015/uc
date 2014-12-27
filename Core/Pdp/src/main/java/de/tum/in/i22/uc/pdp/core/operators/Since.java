@@ -122,4 +122,11 @@ public class Since extends SinceType {
 	public boolean isDNF() {
 		return true;
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op1.setRelevant(relevant);
+		op2.setRelevant(relevant);
+	}
 }

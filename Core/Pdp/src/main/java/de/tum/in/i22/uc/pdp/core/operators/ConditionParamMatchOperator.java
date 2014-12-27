@@ -95,4 +95,9 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	public boolean isDNF() {
 		return true;
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+	}
 }

@@ -120,4 +120,10 @@ public class OSLNot extends NotType {
 	public boolean isAtomic() {
 		return op.isAtomic();
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op.setRelevant(relevant);
+	}
 }

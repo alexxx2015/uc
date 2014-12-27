@@ -145,4 +145,9 @@ public class Before extends BeforeType {
 	public boolean isDNF() {
 		return op.isAtomic();
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+	}
 }

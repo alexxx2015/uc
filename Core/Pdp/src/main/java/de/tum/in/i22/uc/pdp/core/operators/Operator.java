@@ -73,6 +73,7 @@ public abstract class Operator extends Observable implements IOperator {
 	public Operator() {
 		_state = new State();
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
+		_state.set(StateVariable.RELEVANT, true);
 		_initialized = false;
 		_backupStates = new ArrayDeque<>(2);
 	}
@@ -232,5 +233,9 @@ public abstract class Operator extends Observable implements IOperator {
 	@Override
 	public boolean isDNF() {
 		throw new UnsupportedOperationException("Not allowed to call isDNF() on " + Operator.class);
+	}
+
+	protected void setRelevant(boolean relevant) {
+		throw new UnsupportedOperationException("Not allowed to call setRelevant() on " + Operator.class);
 	}
 }

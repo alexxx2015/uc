@@ -117,4 +117,10 @@ public class Within extends WithinType {
 	public boolean isDNF() {
 		return op.isAtomic();
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op.setRelevant(relevant);
+	}
 }

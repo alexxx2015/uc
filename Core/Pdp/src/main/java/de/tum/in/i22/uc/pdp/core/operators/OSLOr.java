@@ -160,4 +160,11 @@ public class OSLOr extends OrType {
 			return false;
 		}
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
+		op1.setRelevant(relevant);
+		op2.setRelevant(relevant);
+	}
 }
