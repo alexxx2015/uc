@@ -103,6 +103,7 @@ public class Before extends BeforeType {
 		 * The inserted element will be popped when time is ripe (i.e. after timeAmount).
 		 */
 		boolean distributedTickProcess = op.distributedTickPostprocessing(endOfTimestep);
+		_logger.debug("Result of distributed evaluation: {}", distributedTickProcess);
 		if (distributedTickProcess != circArray.peekLast()) {
 			circArray.removeLast();
 			circArray.push(distributedTickProcess);

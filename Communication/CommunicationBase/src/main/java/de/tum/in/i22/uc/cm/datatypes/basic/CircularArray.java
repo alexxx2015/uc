@@ -96,6 +96,8 @@ public class CircularArray<T> implements DeepCloneable<CircularArray<T>> {
 			this.next = this.values.length - 1;
 		}
 
+		_logger.trace("Removing last element: {}", this.values[this.next]);
+
 		return this.values[this.next];
 	}
 
