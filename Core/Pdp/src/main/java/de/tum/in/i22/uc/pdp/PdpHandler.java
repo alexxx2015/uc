@@ -2,12 +2,9 @@ package de.tum.in.i22.uc.pdp;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Stopwatch;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
@@ -81,20 +78,13 @@ public class PdpHandler extends PdpProcessor {
 		return _pxpManager.registerPxp(pxp);
 	}
 
-	Stopwatch async = Stopwatch.createUnstarted();
-	Stopwatch sync = Stopwatch.createUnstarted();
-
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		async.start();
 		Threading.instance().submit(() -> _pdp.notifyEvent(event, false), null);
-		async.stop();
-		System.out.println("Time spent notifyEventAsync: " + async.elapsed(TimeUnit.MILLISECONDS));
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		sync.start();
 		if (event == null) {
 			return new ResponseBasic(new StatusBasic(EStatus.ERROR, "null event received"), null, null);
 		}
@@ -113,8 +103,6 @@ public class PdpHandler extends PdpProcessor {
 			notifyEventAsync(ev2);
 		}
 
-		sync.stop();
-		System.out.println("Time spent notifyEventSync: " + sync.elapsed(TimeUnit.MILLISECONDS));
 		return res;
 	}
 
