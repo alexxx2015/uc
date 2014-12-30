@@ -148,6 +148,7 @@ public class Before extends BeforeType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
+		op.setRelevant(relevant);
 	}
 }

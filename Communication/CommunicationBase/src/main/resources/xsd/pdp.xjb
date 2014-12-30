@@ -93,6 +93,11 @@
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.operators.OccurMinEvent" />
       <inheritance:extends>de.tum.in.i22.uc.pdp.core.operators.Operator</inheritance:extends>
     </jxb:bindings>
+
+    <jxb:bindings node="//xs:complexType[@name='IsMaxInType']">
+      <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.operators.IsMaxIn" />
+      <inheritance:extends>de.tum.in.i22.uc.pdp.core.operators.Operator</inheritance:extends>
+    </jxb:bindings>
    
     <jxb:bindings node="//xs:complexType[@name='StateBasedOperatorType']">
       <jxb:class implClass = "de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator" />

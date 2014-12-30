@@ -222,7 +222,7 @@ public abstract class Operator extends Observable implements IOperator {
 
 	@Override
 	public EOperatorType getOperatorType() {
-		throw new UnsupportedOperationException("Not allowed to call getOperatortype() on " + Operator.class);
+		throw new UnsupportedOperationException("Not allowed to call getOperatorType() on " + Operator.class);
 	}
 
 	@Override
@@ -236,6 +236,6 @@ public abstract class Operator extends Observable implements IOperator {
 	}
 
 	protected void setRelevant(boolean relevant) {
-		throw new UnsupportedOperationException("Not allowed to call setRelevant() on " + Operator.class);
+		_state.set(StateVariable.RELEVANT, relevant);
 	}
 }

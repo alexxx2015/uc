@@ -60,9 +60,4 @@ public class OSLFalse extends FalseType implements AtomicOperator {
 	public boolean isAtomic() {
 		return true;
 	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
-	}
 }

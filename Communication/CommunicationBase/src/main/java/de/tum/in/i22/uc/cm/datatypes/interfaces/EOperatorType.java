@@ -7,6 +7,7 @@ public enum EOperatorType {
 	DURING,
 	EVAL,
 	EVENT_MATCH,
+	IS_MAX_IN,
 	OCCUR_MIN_EVENT,
 	OSL_AND,
 	OSL_FALSE,

@@ -142,7 +142,7 @@ public class OccurMinEvent extends OccurMinEventType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		event.setRelevant(relevant);
 	}
 }

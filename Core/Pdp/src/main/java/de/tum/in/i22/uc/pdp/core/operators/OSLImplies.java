@@ -130,7 +130,7 @@ public class OSLImplies extends ImpliesType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		op1.setRelevant(relevant);
 		op2.setRelevant(relevant);
 	}

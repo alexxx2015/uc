@@ -120,7 +120,7 @@ public class Within extends WithinType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		op.setRelevant(relevant);
 	}
 }

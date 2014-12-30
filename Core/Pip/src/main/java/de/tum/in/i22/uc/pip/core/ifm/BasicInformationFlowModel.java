@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -478,8 +479,7 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 
 		Set<IContainer> result = new HashSet<>();
 
-		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap
-				.entrySet()) {
+		for (Entry<IContainer, Set<IData>> entry : _containerToDataMap.entrySet()) {
 			if (entry.getValue().contains(data)) {
 				result.add(entry.getKey());
 			}

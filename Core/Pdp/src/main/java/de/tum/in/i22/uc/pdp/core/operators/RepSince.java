@@ -116,4 +116,11 @@ public class RepSince extends RepSinceType {
 	public EOperatorType getOperatorType() {
 		return EOperatorType.REPSINCE;
 	}
+
+	@Override
+	protected void setRelevant(boolean relevant) {
+		super.setRelevant(relevant);
+		op1.setRelevant(relevant);
+		op2.setRelevant(relevant);
+	}
 }

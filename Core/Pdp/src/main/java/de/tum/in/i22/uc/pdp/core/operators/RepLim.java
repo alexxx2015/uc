@@ -117,7 +117,7 @@ public class RepLim extends RepLimType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		op.setRelevant(relevant);
 	}
 }

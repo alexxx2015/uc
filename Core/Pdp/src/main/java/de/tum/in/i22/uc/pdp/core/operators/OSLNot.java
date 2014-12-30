@@ -123,7 +123,7 @@ public class OSLNot extends NotType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		op.setRelevant(relevant);
 	}
 }

@@ -125,7 +125,7 @@ public class Since extends SinceType {
 
 	@Override
 	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+		super.setRelevant(relevant);
 		op1.setRelevant(relevant);
 		op2.setRelevant(relevant);
 	}
