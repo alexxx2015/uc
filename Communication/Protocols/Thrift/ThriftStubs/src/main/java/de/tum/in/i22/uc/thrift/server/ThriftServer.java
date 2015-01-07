@@ -3,11 +3,15 @@ package de.tum.in.i22.uc.thrift.server;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.transport.TSSLTransportFactory;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**
  * Main Thrift server class.
@@ -35,12 +39,20 @@ class ThriftServer implements IThriftServer {
 	 * @throws TTransportException
 	 */
 	ThriftServer(int port, TProcessor processor) throws TTransportException {
-		TServerTransport serverTransport = new TServerSocket(port);
+		_port = port;
+		TServerTransport serverTransport;
+
+		if (Settings.getInstance().isSslEnabled()) {
+			TSSLTransportParameters params = new TSSLTransportParameters();
+			params.setKeyStore(Settings.getInstance().getSslKeystore(), Settings.getInstance().getSslKeystorePassword(), null, null);
+			serverTransport = TSSLTransportFactory.getServerSocket(_port, 0, null, params);
+		}
+		else {
+			serverTransport = new TServerSocket(_port);
+		}
 
 		_server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
-		_port = port;
-
-		_logger.info("ThriftServer [{}] listening on port {}.", processor.getClass().toString().substring(processor.getClass().toString().lastIndexOf('.') + 1), port);
+		_logger.info("ThriftServer [{}] listening on port {} with SSL {}.", processor.getClass().toString().substring(processor.getClass().toString().lastIndexOf('.') + 1), _port, Settings.getInstance().isSslEnabled() ? "enabled" : "disabled");
 	}
 
 	@Override
@@ -61,7 +73,6 @@ class ThriftServer implements IThriftServer {
 	 */
 	@Override
 	public boolean started() {
-		_logger.info("Server on port {}: {}.", _port, _server.isServing() ? "OK" : "FAIL");
 		return _server.isServing();
 	}
 }

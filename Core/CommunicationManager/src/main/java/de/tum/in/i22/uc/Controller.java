@@ -101,7 +101,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		System.out.println("Calling isStarted: " + _pdpServer + "," + _pipServer+ "," +  _pmpServer+ "," +  _anyServer+ "," +  _pdpServer.started() + "," + _pipServer.started() + "," +  _pmpServer.started() + "," +  _anyServer.started());
 		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer.started())
 				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
 				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())

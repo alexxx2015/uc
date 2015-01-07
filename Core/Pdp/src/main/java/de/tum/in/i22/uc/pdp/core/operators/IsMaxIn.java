@@ -11,8 +11,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
@@ -25,7 +23,7 @@ import de.tum.in.i22.uc.pdp.xsd.IsMaxInType;
 public class IsMaxIn extends IsMaxInType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(IsMaxIn.class);
 
-	private IData _data;
+	private DataBasic _data; // Use DataBasic, because JAXB does not support interfaces (i.e. IData)
 	private Set<Pair<IName,ComparisonOperatorTypes>> _containerNames;
 	private long _limit;
 
@@ -133,19 +131,25 @@ public class IsMaxIn extends IsMaxInType implements AtomicOperator {
 
 	@Override
 	public void update(IEvent event) {
-		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
-			return;
-		}
+		// TODO Auto-generated method stub
 
-		if ((boolean) _state.get(StateVariable.SINCE_LAST_TICK)) {
-			int countainerCount = 0;
-			for (IContainer cont : _pdp.getPip().getContainersForData(_data)) {
-				// TODO: Rather: Get all container names for this data. Then compare for each returned IName,
-				// whether it matches one of _containerNames. If so, containerCount++ .
-
-				// Compile error left on purpose
-				.
-			}
-		}
 	}
+
+//	@Override
+//	public void update(IEvent event) {
+//		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
+//			return;
+//		}
+//
+//		if ((boolean) _state.get(StateVariable.SINCE_LAST_TICK)) {
+//			int countainerCount = 0;
+//			for (IContainer cont : _pdp.getPip().getContainersForData(_data)) {
+//				// TODO: Rather: Get all container names for this data. Then compare for each returned IName,
+//				// whether it matches one of _containerNames. If so, containerCount++ .
+//
+//				// Compile error left on purpose
+//
+//			}
+//		}
+//	}
 }

@@ -118,6 +118,12 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
 	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
 
+	public static final String PROP_NAME_sslEnabled = "sslEnabled";
+	public static final String PROP_NAME_sslTruststore = "sslTruststore";
+	public static final String PROP_NAME_sslKeystore = "sslKeystore";
+	public static final String PROP_NAME_sslKeystorePassword = "sslKeystorePassword";
+	public static final String PROP_NAME_sslTruststorePassword = "sslTruststorePassword";
+
 	/**
 	 * Choose one value of enum
 	 * com.datastax.driver.core.ConsistencyLevel
@@ -226,6 +232,12 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionDefaultConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionSeedFile, "cassandraSeeds.txt");
+
+		loadSetting(PROP_NAME_sslEnabled, false);
+		loadSetting(PROP_NAME_sslTruststore, ".truststore");
+		loadSetting(PROP_NAME_sslKeystore, ".keystore");
+		loadSetting(PROP_NAME_sslKeystorePassword, "");
+		loadSetting(PROP_NAME_sslTruststorePassword, "");
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 
@@ -653,5 +665,25 @@ public class Settings extends SettingsLoader {
 
 	public boolean getJavaPipMonitor() {
 		return getValue(PROP_NAME_javaPipMonitor);
+	}
+
+	public boolean isSslEnabled() {
+		return getValue(PROP_NAME_sslEnabled);
+	}
+
+	public String getSslTruststore() {
+		return getValue(PROP_NAME_sslTruststore);
+	}
+
+	public String getSslKeystore() {
+		return getValue(PROP_NAME_sslKeystore);
+	}
+
+	public String getSslTruststorePassword() {
+		return getValue(PROP_NAME_sslTruststorePassword);
+	}
+
+	public String getSslKeystorePassword() {
+		return getValue(PROP_NAME_sslKeystorePassword);
 	}
 }
