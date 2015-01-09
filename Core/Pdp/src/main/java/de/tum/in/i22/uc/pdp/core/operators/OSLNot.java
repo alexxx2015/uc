@@ -73,11 +73,16 @@ public class OSLNot extends NotType {
 
 	@Override
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
-		boolean valueAtLastTick = !op.distributedTickPostprocessing(endOfTimestep);
+		boolean valueAtLastTick;
 
-		_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
-
-		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		if (!op.getPositivity().is(op.getValueAtLastTick())) {
+			valueAtLastTick = !op.distributedTickPostprocessing(endOfTimestep);
+			_logger.info("op: {}. Result: {}", !valueAtLastTick, valueAtLastTick);
+			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+		}
+		else {
+			valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		}
 
 		return valueAtLastTick;
 	}

@@ -63,7 +63,6 @@ public class OSLAnd extends AndType {
 
 	@Override
 	public boolean tick(boolean endOfTimestep) {
-
 		_executorCompletionServiceLocal.submit(() -> op1.tick(endOfTimestep));
 		_executorCompletionServiceLocal.submit(() -> op2.tick(endOfTimestep));
 

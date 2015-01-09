@@ -1,8 +1,8 @@
 package de.tum.in.i22.uc.pdp.core.operators;
 
 import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,23 +61,22 @@ public class OSLOr extends OrType {
 		return "(" + op1 + " || " + op2 + ")";
 	}
 
-
-	private boolean tickIntern(Callable<Boolean> callOp1, Callable<Boolean> callOp2, ExecutorCompletionService<Boolean> cs) {
-
-		cs.submit(callOp1);
-		cs.submit(callOp2);
+	@Override
+	public boolean tick(boolean endOfTimestep) {
+		_executorCompletionServiceLocal.submit(() -> op1.tick(endOfTimestep));
+		_executorCompletionServiceLocal.submit(() -> op2.tick(endOfTimestep));
 
 		// Wait for the evaluation of the first operand
-		boolean valueAtLastTick = Threading.takeResult(cs);
+		boolean valueAtLastTick = Threading.takeResult(_executorCompletionServiceLocal);
 
 		if (valueAtLastTick) {
-			// Wait for the evaluation of the second operand without blocking.
-			Threading.instance().submit(() -> Threading.take(cs));
+			// Wait for evaluation of the second operand without blocking
+			Threading.instance().submit(() -> Threading.take(_executorCompletionServiceLocal));
 			_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
 		}
 		else {
-			// Wait for the evaluation of the second operand
-			valueAtLastTick = Threading.takeResult(cs);
+			// Do wait for evaluation of the second operand
+			valueAtLastTick = Threading.takeResult(_executorCompletionServiceLocal);
 			_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
 		}
 
@@ -86,18 +85,69 @@ public class OSLOr extends OrType {
 		return valueAtLastTick;
 	}
 
-
-	@Override
-	public boolean tick(boolean endOfTimestep) {
-		return tickIntern(() -> op1.tick(endOfTimestep), () -> op2.tick(endOfTimestep), _executorCompletionServiceLocal);
-	}
-
 	@Override
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
-		return tickIntern(
-				() -> op1.distributedTickPostprocessing(endOfTimestep),
-				() -> op2.distributedTickPostprocessing(endOfTimestep),
-				_executorCompletionServiceDistr);
+
+		Future<Boolean> op1Future = null;
+		Future<Boolean> op2Future = null;
+
+		if (!op1.getPositivity().is(op1.getValueAtLastTick())) {
+			_logger.info("Performing distributed evaluation of first operand.");
+			op1Future = _executorCompletionServiceDistr.submit(() -> op1.distributedTickPostprocessing(endOfTimestep));
+		}
+
+		if (!op2.getPositivity().is(op2.getValueAtLastTick())) {
+			_logger.info("Performing distributed evaluation of second operand.");
+			op2Future = _executorCompletionServiceDistr.submit(() -> op2.distributedTickPostprocessing(endOfTimestep));
+		}
+
+		boolean valueAtLastTick;
+		if (op1Future == null && op2Future == null) {
+			/*
+			 * Local evaluation was sufficient.
+			 */
+			_logger.info("No distributed evaluation needed.");
+			valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
+		}
+		else if (op1Future != null && op2Future != null) {
+			/*
+			 * Both operators need to perform distributed lookup.
+			 */
+
+			// Wait for the evaluation of the first operand
+			valueAtLastTick = Threading.takeResult(_executorCompletionServiceDistr);
+
+			if (valueAtLastTick) {
+				// Wait for evaluation of the second operand without blocking
+				Threading.instance().submit(() -> Threading.take(_executorCompletionServiceDistr));
+				_logger.info("Result: true. (One of the operands was true, not waiting for the other operand to be evaluated)");
+			}
+			else {
+				// Do wait for evaluation of the second operand
+				valueAtLastTick = Threading.takeResult(_executorCompletionServiceDistr);
+				_logger.info("Result: {}. (After evaluating both operands)", valueAtLastTick);
+			}
+		}
+		else {
+			/*
+			 * One of the operators needs to perform distributed lookup.
+			 */
+			Future<Boolean> future = Threading.take(_executorCompletionServiceDistr);
+			if (future == op1Future) {
+				valueAtLastTick = Threading.resultOf(op1Future) || op2.getValueAtLastTick();
+			}
+			else if (future == op2Future) {
+				valueAtLastTick = Threading.resultOf(op2Future) || op1.getValueAtLastTick();
+			}
+			else {
+				throw new RuntimeException("Unknown Future object. Something is going wrong. This should not happen.");
+			}
+			_logger.info("Result: {} (After evaluating one operand).", valueAtLastTick);
+		}
+
+		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
+
+		return valueAtLastTick;
 	}
 
 
