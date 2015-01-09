@@ -166,11 +166,6 @@ public class CassandraDistributionManager implements IDistributionManager {
 					// this is a new seed.
 					_seedcollector.add(pmpLocation.getHost());
 				}
-//				else {
-//					// If remote deployment of the policy fails,
-//					// then we remove the location from the keyspace
-//					ks.diminishBy(pmpLocation);
-//				}
 
 				/*
 				 * TODO: We need to deal with the fact that success == false at this place.
