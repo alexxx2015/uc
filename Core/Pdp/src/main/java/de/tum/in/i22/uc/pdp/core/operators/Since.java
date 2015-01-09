@@ -60,25 +60,18 @@ public class Since extends SinceType {
 
 		if ((boolean) _state.get(StateVariable.ALWAYS_A)) {
 			valueAtLastTick = true;
-			_logger.debug("A was always true. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
+			_logger.debug("A was always true. Result: true.");
 		}
 		else {
 			if (stateB) {
-				valueAtLastTick = true;
 				alwaysASinceLastB = true;
-				_logger.debug("B is happening at this timestep. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
+				_logger.debug("B is happening at this timestep. Result: true.");
 			}
 			else {
-				if (stateA && alwaysASinceLastB) {
-					valueAtLastTick = true;
-					_logger.debug("A was always true since last B happened. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
-				}
-				else {
-					valueAtLastTick = false;
-					alwaysASinceLastB = false;
-					_logger.debug("A was NOT always true since last B happened. Result: {}.", (boolean) _state.get(StateVariable.VALUE_AT_LAST_TICK));
-				}
+				alwaysASinceLastB = alwaysASinceLastB && stateA;
+				_logger.debug("A was {}always true since last B happened. Result: {}.", alwaysASinceLastB ? "": "NOT ", alwaysASinceLastB);
 			}
+			valueAtLastTick = alwaysASinceLastB;
 		}
 
 		_state.set(StateVariable.ALWAYS_A_SINCE_LAST_B, alwaysASinceLastB);
@@ -86,6 +79,11 @@ public class Since extends SinceType {
 
 		return valueAtLastTick;
 	}
+
+//	@Override
+//	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
+//
+//	}
 
 	@Override
 	public void startSimulation() {

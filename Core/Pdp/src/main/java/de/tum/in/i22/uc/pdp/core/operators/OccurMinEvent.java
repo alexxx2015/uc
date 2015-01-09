@@ -9,13 +9,14 @@ import de.tum.in.i22.uc.cm.datatypes.basic.CircularArray;
 import de.tum.in.i22.uc.cm.datatypes.basic.Trilean;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.EOperatorType;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.pdp.core.Mechanism;
 import de.tum.in.i22.uc.pdp.core.TimeAmount;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidOperatorException;
 import de.tum.in.i22.uc.pdp.core.operators.State.StateVariable;
 import de.tum.in.i22.uc.pdp.xsd.OccurMinEventType;
 
-public class OccurMinEvent extends OccurMinEventType {
+public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	private static Logger _logger = LoggerFactory.getLogger(OccurMinEvent.class);
 
 	private EventMatchOperator event;
@@ -144,5 +145,9 @@ public class OccurMinEvent extends OccurMinEventType {
 	protected void setRelevant(boolean relevant) {
 		super.setRelevant(relevant);
 		event.setRelevant(relevant);
+	}
+
+	@Override
+	public void update(IEvent event) {
 	}
 }

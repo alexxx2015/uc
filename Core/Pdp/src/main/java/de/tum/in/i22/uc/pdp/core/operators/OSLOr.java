@@ -67,7 +67,6 @@ public class OSLOr extends OrType {
 		cs.submit(callOp1);
 		cs.submit(callOp2);
 
-
 		// Wait for the evaluation of the first operand
 		boolean valueAtLastTick = Threading.takeResult(cs);
 

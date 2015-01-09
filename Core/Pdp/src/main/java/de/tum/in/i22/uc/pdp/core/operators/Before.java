@@ -55,7 +55,7 @@ public class Before extends BeforeType {
 		 * - (a or b) before j 	== (a before j) or (b before j)
 		 *
 		 */
-		if (!(op instanceof OSLOr) && !(op instanceof OSLAnd) && !(op instanceof OSLNot) && !(op instanceof AtomicOperator)) {
+		if (!(op instanceof AtomicOperator)) {
 			throw new InvalidOperatorException(
 					"Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (operand of "
 							+ getClass() + " was not of type " + AtomicOperator.class + ").");
@@ -83,7 +83,7 @@ public class Before extends BeforeType {
 		// this value is the result of the evaluation of BEFORE at this timestep.
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, circArray.pop());
 
-		// Evaluate the Operator. Push the result to the array, where
+		// Evaluate the Operator. Push the result to the array, from where
 		// it will be popped when time is ripe (i.e. after timeAmount).
 		circArray.push(op.tick(endOfTimestep));
 
@@ -96,20 +96,22 @@ public class Before extends BeforeType {
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
 		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
 
-		/*
-		 * If distributed evaluation yields a different result from what
-		 * we have pushed into the array before upon local evaluation, then remove
-		 * this 'wrong' element and insert the correct one.
-		 * The inserted element will be popped when time is ripe (i.e. after timeAmount).
-		 */
-		boolean distributedTickProcess = op.distributedTickPostprocessing(endOfTimestep);
-		_logger.debug("Result of distributed evaluation: {}", distributedTickProcess);
-		if (distributedTickProcess != circArray.peekLast()) {
-			circArray.removeLast();
-			circArray.push(distributedTickProcess);
+		if (!op.getPositivity().is(circArray.peekLast())) {
+			/*
+			 * If the value that we have pushed to the array is not equal to the operator's
+			 * positivity, then we need to perform a remote lookup. We when remove
+			 * the 'wrong' local evaluation result from the array and insert the correct (distributed) one.
+			 * The inserted element will be popped when time is ripe (i.e. after timeAmount).
+			 */
+			boolean distributedTickProcess = op.distributedTickPostprocessing(endOfTimestep);
+			_logger.debug("Result of distributed evaluation: {}", distributedTickProcess);
+			if (op.getPositivity().is(distributedTickProcess)) {
+				circArray.removeLast();
+				circArray.push(distributedTickProcess);
+			}
 		}
 
-		// The actual result at this timestep is not changed
+		// The actual result at _this_ timestep is not changed
 		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
 	}
 
