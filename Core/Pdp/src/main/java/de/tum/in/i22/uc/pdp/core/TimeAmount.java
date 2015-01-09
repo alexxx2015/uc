@@ -83,4 +83,8 @@ public class TimeAmount {
 	public String toString() {
 		return _amount + " " + _unit + "(" + _timestepInterval + ")";
 	}
+
+	public long getAmount() {
+		return _amount;
+	}
 }
