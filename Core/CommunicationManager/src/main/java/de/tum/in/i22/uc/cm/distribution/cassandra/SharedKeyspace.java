@@ -29,6 +29,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.generic.MyBase64;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
@@ -311,7 +313,26 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 			if (ttl == Long.MAX_VALUE || ttl <= 0) {
 				ttl = 0;
 			}
-			_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), timestep, time, (int) (ttl / 1000)));
+
+			final long ftimestep = timestep;
+			final UUID ftime = time;
+			final long fttl = ttl;
+			Threading.instance().submit(() -> {
+				boolean success = false;
+
+				while (!success) {
+					try {
+						_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), ftimestep, ftime, (int) (fttl / 1000)));
+						success = true;
+					}
+					catch (Exception e) {
+						try {
+							Thread.sleep(Settings.getInstance().getDistributionRetryInterval());
+						} catch (Exception e1) {
+						}
+					}
+				}
+			});
 		}
 	}
 

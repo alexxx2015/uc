@@ -18,7 +18,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.distribution.DistributionGranularity;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -114,15 +113,13 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
 
 	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
-	public static final String PROP_NAME_distributionMaxPipConnections = "distributionMaxPipConnections";
-	public static final String PROP_NAME_distributionMaxPdpConnections = "distributionMaxPdpConnections";
-	public static final String PROP_NAME_distributionMaxPmpConnections = "distributionMaxPmpConnections";
 
-	public static final String PROP_NAME_sslEnabled = "sslEnabled";
-	public static final String PROP_NAME_sslTruststore = "sslTruststore";
-	public static final String PROP_NAME_sslKeystore = "sslKeystore";
-	public static final String PROP_NAME_sslKeystorePassword = "sslKeystorePassword";
-	public static final String PROP_NAME_sslTruststorePassword = "sslTruststorePassword";
+	/**
+	 * The number of milliseconds to wait between re-trying to read/write the distributed database in case of failure
+	 */
+	public static final String PROP_NAME_distributionRetryInterval = "distributionRetryInterval";
+
+	public static final String PROP_NAME_distributionSeedFile = "distributionSeedFile";
 
 	/**
 	 * Choose one value of enum
@@ -132,7 +129,13 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_distributionReadConsistency = "distributionReadConsistency";
 	public static final String PROP_NAME_distributionDefaultConsistency = "distributionDefaultConsistency";
 
-	public static final String PROP_NAME_distributionSeedFile = "distributionSeedFile";
+	public static final String PROP_NAME_sslEnabled = "sslEnabled";
+	public static final String PROP_NAME_sslTruststore = "sslTruststore";
+	public static final String PROP_NAME_sslKeystore = "sslKeystore";
+	public static final String PROP_NAME_sslKeystorePassword = "sslKeystorePassword";
+	public static final String PROP_NAME_sslTruststorePassword = "sslTruststorePassword";
+
+
 
 
 	private Settings() {
@@ -225,13 +228,11 @@ public class Settings extends SettingsLoader {
 		});
 
 		loadSetting(PROP_NAME_distributionEnabled, false);
-		loadSetting(PROP_NAME_distributionMaxPipConnections, 5);
-		loadSetting(PROP_NAME_distributionMaxPdpConnections, 5);
-		loadSetting(PROP_NAME_distributionMaxPmpConnections, 5);
 		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionDefaultConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
 		loadSetting(PROP_NAME_distributionSeedFile, "cassandraSeeds.txt");
+		loadSetting(PROP_NAME_distributionRetryInterval, 50);
 
 		loadSetting(PROP_NAME_sslEnabled, false);
 		loadSetting(PROP_NAME_sslTruststore, ".truststore");
@@ -286,22 +287,6 @@ public class Settings extends SettingsLoader {
 
 		try {
 			loadedValue = new IPLocation(_props.getProperty(propName));
-			if (loadedValue != null) {
-				success = true;
-			}
-		} catch (Exception e) {
-		}
-
-		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
-	}
-
-	private DistributionGranularity loadSetting(String propName, DistributionGranularity defaultValue) {
-		DistributionGranularity loadedValue = defaultValue;
-
-		boolean success = false;
-
-		try {
-			loadedValue = new DistributionGranularity(_props.getProperty(propName));
 			if (loadedValue != null) {
 				success = true;
 			}
@@ -495,20 +480,8 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}
 
-	public int getDistributionMaxPipConnections() {
-		return getValue(PROP_NAME_distributionMaxPipConnections);
-	}
-
 	public boolean getDistributionEnabled() {
 		return getValue(PROP_NAME_distributionEnabled);
-	}
-
-	public int getDistributionMaxPdpConnections() {
-		return getValue(PROP_NAME_distributionMaxPdpConnections);
-	}
-
-	public int getDistributionMaxPmpConnections() {
-		return getValue(PROP_NAME_distributionMaxPmpConnections);
 	}
 
 	public ConsistencyLevel getDistributionWriteConsistency() {
@@ -525,6 +498,10 @@ public class Settings extends SettingsLoader {
 
 	public String getDistributionSeedFile() {
 		return getValue(PROP_NAME_distributionSeedFile);
+	}
+
+	public long getDistributionRetryInterval() {
+		return getValue(PROP_NAME_distributionRetryInterval);
 	}
 
 	public int getConnectionAttemptInterval() {
