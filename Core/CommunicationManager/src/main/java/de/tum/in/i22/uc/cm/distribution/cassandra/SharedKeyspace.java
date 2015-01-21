@@ -111,13 +111,13 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 
 	void initialize() {
-		_session.execute(Prepared._prepInsertPolicy.get().bind(_name, MyBase64.toBase64(_policy.getXml())));
+		execute(Prepared._prepInsertPolicy.get().bind(_name, MyBase64.toBase64(_policy.getXml())));
 	}
 
 	@Override
 	public Set<String> getLocations() {
 		// Retrieve current information about the keyspace
-		Row row = _session.execute(Prepared._prepSelectStrategyOptions.get().bind(_name)).one();
+		Row row = execute(Prepared._prepSelectStrategyOptions.get().bind(_name)).one();
 
 		// Build the set of locations that are currently known within the keyspace
 		Set<String> allLocations = new HashSet<>();
@@ -145,7 +145,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		_logger.debug("Trying to lock keyspace {}.", _name);
 		while (!locked) {
-			Row result = _session.execute(Prepared._prepInsertLock.get().bind(true, IPLocation.localIpLocation.getHost())).one();
+			Row result = execute(Prepared._prepInsertLock.get().bind(true, IPLocation.localIpLocation.getHost())).one();
 
 			locked = result.getBool("[applied]");
 			if (!locked) {
@@ -168,7 +168,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 
 	private void releaseLock() {
-		_session.execute(Prepared._prepDeleteLock.get().bind(true));
+		execute(Prepared._prepDeleteLock.get().bind(true));
 	}
 
 
@@ -184,7 +184,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 		query.deleteCharAt(query.length() - 1);
 		query.append("}");
 
-		_session.execute(new SimpleStatement(query.toString()).setConsistencyLevel(defaultConsistency));
+		execute(new SimpleStatement(query.toString()).setConsistencyLevel(defaultConsistency));
 	}
 
 
@@ -224,14 +224,14 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 	@Override
 	public void setFirstTick(String mechanismName, long firstTick) {
-		if (_session.execute(Prepared._prepSelectFirstTick.get().bind(mechanismName)).isExhausted()) {
-			_session.execute(Prepared._prepInsertFirstTick.get().bind(mechanismName, firstTick));
+		if (execute(Prepared._prepSelectFirstTick.get().bind(mechanismName)).isExhausted()) {
+			execute(Prepared._prepInsertFirstTick.get().bind(mechanismName, firstTick));
 		}
 	}
 
 	@Override
 	public long getFirstTick(String mechanismName) {
-		ResultSet rs = _session.execute(Prepared._prepSelectFirstTick.get().bind(mechanismName));
+		ResultSet rs = execute(Prepared._prepSelectFirstTick.get().bind(mechanismName));
 		return rs.isExhausted() ? Long.MIN_VALUE : rs.iterator().next().getLong("firstTick");
 	}
 
@@ -239,20 +239,20 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("wasNotifiedAtTimestep({}, {})", operator, timestep);
 
-		ResultSet rs = _session.execute(Prepared._prepSelectNotifiedOneAt.get().bind(operator.getFullId(), timestep));
+		ResultSet rs = execute(Prepared._prepSelectNotifiedOneAt.get().bind(operator.getFullId(), timestep));
 		return operator.getPositivity().value() != rs.isExhausted();
 	}
 
 	@Override
 	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedAtTimestep({}, {})", operator, timestep);
-		return _session.execute(Prepared._prepSelectNotifiedAllAt.get().bind(operator.getFullId(), timestep)).all().size();
+		return execute(Prepared._prepSelectNotifiedAllAt.get().bind(operator.getFullId(), timestep)).all().size();
 	}
 
 	@Override
 	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
 		_logger.debug("howOftenNotifiedSinceTimestep({}, {})", operator, timestep);
-		return _session.execute(Prepared._prepSelectNotifiedAllSince.get().bind(operator.getFullId(), timestep)).all().size();
+		return execute(Prepared._prepSelectNotifiedAllSince.get().bind(operator.getFullId(), timestep)).all().size();
 	}
 
 	@Override
@@ -322,7 +322,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 				while (!success) {
 					try {
-						_session.execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), ftimestep, ftime, (int) (fttl / 1000)));
+						execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), ftimestep, ftime, (int) (fttl / 1000)));
 						success = true;
 					}
 					catch (Exception e) {
@@ -356,14 +356,14 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 	@Override
 	public void addData(IData data, IPLocation location) {
 		// Check whether there already exists an entry for this dataID.
-		if (_session.execute(Prepared._prepSelectHasData.get().bind(data.getId())).isExhausted()) {
+		if (execute(Prepared._prepSelectHasData.get().bind(data.getId())).isExhausted()) {
 			// If such an entry did not exist, create an initial entry.
-			_session.execute(Prepared._prepInsertData.get().bind(data.getId(),
+			execute(Prepared._prepInsertData.get().bind(data.getId(),
 					Sets.newHashSet(IPLocation.localIpLocation.getHost(),location.getHost())));
 		}
 		else {
 			// If an entry existed, then update the existing one.
-			_session.execute(Prepared._prepUpdateData.get().bind(Collections.singleton(location.getHost()), data.getId()));
+			execute(Prepared._prepUpdateData.get().bind(Collections.singleton(location.getHost()), data.getId()));
 		}
 	}
 

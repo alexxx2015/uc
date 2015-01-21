@@ -76,7 +76,7 @@ class PrivateKeyspace extends Keyspace {
 	Collection<String> getPolicies() {
 		Collection<String> policies = new LinkedList<>();
 
-		_session.execute(Prepared._prepSelectPolicies.get().bind()).forEach(
+		execute(Prepared._prepSelectPolicies.get().bind()).forEach(
 				r -> policies.add(MyBase64.fromBase64(r.getString("policy"))));
 
 		return policies;
@@ -94,9 +94,9 @@ class PrivateKeyspace extends Keyspace {
 	void add(XmlPolicy policy) {
 		String name = toValidKeyspaceName(policy.getName());
 
-		if (_session.execute(Prepared._prepSelectPolicyName.get().bind(name)).isExhausted()) {
+		if (execute(Prepared._prepSelectPolicyName.get().bind(name)).isExhausted()) {
 			// TODO: Encrypt what we are writing, so that others don't know which policies we are enforcing
-			_session.execute(Prepared._prepInsertPolicy.get().bind(name, MyBase64.toBase64(policy.getXml())));
+			execute(Prepared._prepInsertPolicy.get().bind(name, MyBase64.toBase64(policy.getXml())));
 		}
 	}
 
@@ -108,7 +108,7 @@ class PrivateKeyspace extends Keyspace {
 	 * @param policyName the policy to be deleted.
 	 */
 	void delete(String policyName) {
-		_session.execute(Prepared._prepDeletePolicy.get().bind(toValidKeyspaceName(policyName)));
+		execute(Prepared._prepDeletePolicy.get().bind(toValidKeyspaceName(policyName)));
 	}
 
 

@@ -4,11 +4,17 @@ import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.exceptions.AlreadyExistsException;
+import com.datastax.driver.core.exceptions.QueryTimeoutException;
 
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
@@ -22,11 +28,13 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  *
  */
 abstract class Keyspace {
+	protected static final Logger _logger = LoggerFactory.getLogger(Keyspace.class);
+
 	/**
 	 * The session that is used to query the tables
 	 * within the keyspace.
 	 */
-	protected final Session _session;
+	private final Session _session;
 
 	/**
 	 * The name of this keyspace
@@ -134,6 +142,30 @@ abstract class Keyspace {
 	interface IPreparedStatementId {
 		void prepare(Session session);
 		PreparedStatement get();
+	}
+
+
+	protected ResultSet execute(Statement stmt) {
+		boolean success = false;
+
+		while (!success) {
+			try {
+				success = true;
+				return _session.execute(stmt);
+			}
+			catch (QueryTimeoutException e) {
+				success = false;
+				_logger.info("QueryTimeoutException: {}. Query: {}. Retrying in {}.", e.getMessage(), stmt.toString(), Settings.getInstance().getDistributionRetryInterval());
+			}
+
+			if (!success) {
+				try {
+					Thread.sleep(Settings.getInstance().getDistributionRetryInterval());
+				} catch (InterruptedException e1) {}
+			}
+		}
+
+		return null;
 	}
 }
 
