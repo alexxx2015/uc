@@ -62,7 +62,7 @@ abstract class Keyspace {
 	Keyspace(String name, Cluster cluster) {
 		_name = toValidKeyspaceName(name);
 
-		boolean created = createKeyspace(cluster);
+		createKeyspace(cluster);
 		_session = cluster.connect(_name);
 
 		createTables();

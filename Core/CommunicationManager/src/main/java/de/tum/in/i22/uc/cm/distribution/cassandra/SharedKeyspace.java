@@ -30,7 +30,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
-import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.generic.MyBase64;
 import de.tum.in.i22.uc.pdp.core.operators.EventMatchOperator;
 import de.tum.in.i22.uc.pdp.core.operators.StateBasedOperator;
@@ -318,40 +317,11 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 			final UUID ftime = time;
 			final long fttl = ttl;
 			Threading.instance().submit(() -> {
-				boolean success = false;
-
-				while (!success) {
-					try {
-						execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), ftimestep, ftime, (int) (fttl / 1000)));
-						success = true;
-					}
-					catch (Exception e) {
-						try {
-							Thread.sleep(Settings.getInstance().getDistributionRetryInterval());
-						} catch (Exception e1) {
-						}
-					}
-				}
+				execute(Prepared._prepInsertNotified.get().bind(op.getFullId(), IPLocation.localIpLocation.getHost(), ftimestep, ftime, (int) (fttl / 1000)));
 			});
 		}
 	}
 
-//	static boolean existsPhysically(Cluster cluster, String policyName) {
-//		policyName = toValidKeyspaceName(policyName);
-//
-//		boolean exists = true;
-//
-//		try {
-//			cluster.connect(policyName);
-//			_logger.info("Keyspace {} exists.", policyName);
-//		}
-//		catch (Exception e) {
-//			exists = false;
-//			_logger.info("Keyspace {} does not exist.", policyName);
-//		}
-//
-//		return exists;
-//	}
 
 	@Override
 	public void addData(IData data, IPLocation location) {

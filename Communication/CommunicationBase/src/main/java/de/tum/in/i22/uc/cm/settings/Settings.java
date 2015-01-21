@@ -500,7 +500,7 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_distributionSeedFile);
 	}
 
-	public long getDistributionRetryInterval() {
+	public int getDistributionRetryInterval() {
 		return getValue(PROP_NAME_distributionRetryInterval);
 	}
 
