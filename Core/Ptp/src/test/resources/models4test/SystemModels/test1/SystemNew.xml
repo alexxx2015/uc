@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamodelv4:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:metamodelv4="http://metamodelone/4.0">
+	<pims name="SNS_PIM">
+
+		<!-- extend action association.  extend SET cross refinement-->
+		<pimactions name="copy" seq="0" actionassociation="//@pims/@pimactions.1" actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.3 //@psms/@psmtransformers.0" paramData="//@pims/@pimdata.1 //@pims/@pimdata.0"/>
+		
+		<pimactions name="copy1" seq="0" actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.0" paramData="//@pims/@pimdata.1 //@pims/@pimdata.0"/>		
+		
+		
+		<pimdata storedin="//@psms/@psmcontainers.5" name="album">		
+			<dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.1"/>
+		</pimdata>
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.3 //@psms/@psmcontainers.2 //@psms/@psmcontainers.4 //@psms/@psmcontainers.1" name="picture"/>
+	</pims>
+
+	<psms name="SNS_PSM">
+		
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.0" name="domEle"/>
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.1" name="clipboard"/>
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.2" name="processMem"/>
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.3" name="window"/>
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.4" name="file"/>
+		<psmcontainers containersassociation="//@psms/@psmcontainers.4" contimplementedas="//@isms/@ismcontainers.5" name="directory"/>
+		
+<!--0--><psmtransformers name="copy_paste" seq="0" outputcontainer="//@psms/@psmcontainers.1 //@psms/@psmcontainers.5" inputcontainer="//@psms/@psmcontainers.0 //@psms/@psmcontainers.4" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
+<!--1--><psmtransformers name="screenshot" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.3" psmRefmnt="//@psms/@psmtransformers.2" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
+<!--2--><psmtransformers name="screenshot_smart" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.3" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
+<!--3--><psmtransformers name="copyFile" seq="0" outputcontainer="//@psms/@psmcontainers.4" inputcontainer="//@psms/@psmcontainers.4" crossPsmRefmnt="//@isms/@ismtransformers.6"/>
+		<!-- new transformer -->
+<!--4--><psmtransformers name="copy_paste1" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.7"/>
+<!--5--><psmtransformers name="copy_paste2" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.7"/>
+		<!-- new cross refinement -->
+<!--0--><psmsystems systemtransformers="//@psms/@psmtransformers.0" sysimplementedas="//@isms/@ismsystems.0 //@isms/@ismsystems.5" name="webBrowser"/>
+<!--1--><psmsystems systemtransformers="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2" sysimplementedas="//@isms/@ismsystems.2" name="fileSystem"/>
+<!--2--><psmsystems systemtransformers="//@psms/@psmtransformers.3" sysimplementedas="//@isms/@ismsystems.1" name="windowsSys"/>
+		<!-- new system + new system association -->
+<!--3--><psmsystems systemtransformers="//@psms/@psmtransformers.4" systemassociation="//@psms/@psmsystems.4" sysimplementedas="//@isms/@ismsystems.3" name="mac"/>
+<!--4--><psmsystems systemtransformers="//@psms/@psmtransformers.5" sysimplementedas="//@isms/@ismsystems.4" name="mac_extenstion"/>
+		
+	</psms>
+
+	<isms name="SNS_ISM">
+<!--0--><ismcontainers name="htmlEle"/>
+<!--1--><ismcontainers name="xclipboard"/>
+<!--2--><ismcontainers name="procMem"/>
+<!--3--><ismcontainers name="drawable"/>
+<!--4--><ismcontainers name="unixfile"/>
+<!--5--><ismcontainers implecontainerassociation="//@isms/@ismcontainers.4" name="unixDir"/>
+
+<!--0--><ismtransformers name="copy_cmd" seq="0" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
+<!--1--><ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.4 //@isms/@ismcontainers.5"/>		
+<!--2--><ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.2 //@isms/@ismcontainers.1"/>		
+<!--3--><ismtransformers name="write" seq="3" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--4--><ismtransformers name="close" seq="4" inputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--5--><ismtransformers name="getImage" seq="0" inputimplecontainer="//@isms/@ismcontainers.3" outputimplecontainer="//@isms/@ismcontainers.1" ismRefmnt="//@isms/@ismtransformers.1" />
+<!--6--><ismtransformers name="copy_cmd_new" seq="0" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
+		<!-- new transformers -->
+<!--7--><ismtransformers name="close_mac" seq="0" inputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--8--><ismtransformers name="extend_mac" seq="0" inputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--9--><ismtransformers name="read_chrome" seq="0" inputimplecontainer="//@isms/@ismcontainers.0"/>
+		
+<!--0--><ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.6" name="firefox"/>
+<!--1--><ismsystems implesystemtransformers="//@isms/@ismtransformers.5" name="x11"/>
+<!--2--><ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4" name="unix"/>
+		<!-- new system + new system association -->
+<!--3--><ismsystems implesystemtransformers="//@isms/@ismtransformers.7" implesystemassociation="//@isms/@ismsystems.4" name="ios"/>
+<!--4--><ismsystems implesystemtransformers="//@isms/@ismtransformers.8" name="ios_extension"/>
+		<!-- new system -->
+<!--5--><ismsystems implesystemtransformers="//@isms/@ismtransformers.9" name="chrome"/>
+		<!-- NO cross refinement for ism systems -->
+	</isms>
+</metamodelv4:domain>

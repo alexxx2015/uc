@@ -6,85 +6,74 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 
 /**
  * Remembers which remote data flows have occurred.
- * The source {@link Location} of the data flow is fixed,
- * but there might be many destination {@link Location}s
- * to which different data has flown to different containers.
  *
  * @author Florian Kelbert
  *
  */
 public class RemoteDataFlowInfo {
-	/**
-	 * the location from which the data has flown
-	 */
-	private final Location _srcLocation;
+	private static Logger _logger = LoggerFactory.getLogger(RemoteDataFlowInfo.class);
 
 	/**
-	 * Maps the data flow that has occurred:
-	 * - to which location
-	 *   - into which container (names) at this location
-	 *     - which data
+	 * Maps the data flow that has occurred.
 	 */
-	private Map<Location,Map<IName,Set<IData>>> _dataflow;
+	private final Map<SocketContainer,Map<SocketContainer,Set<IData>>> _dataflow;
 
-	public RemoteDataFlowInfo(Location srcLocation) {
-		_srcLocation = srcLocation;
+	public RemoteDataFlowInfo() {
+		_dataflow = new HashMap<>();
 	}
 
-	public Location getSrcLocation() {
-		return _srcLocation;
-	}
 
 	/**
-	 * Adds the information that data has flown from this object's
-	 * source {@link Location} to the specified destination {@link Location}.
 	 *
-	 * @param dstLocation the location to which the data has flown
-	 * @param contName the name of the container into which the data has flown
-	 * @param data the data that has flown
+	 * @param srcCont
+	 * @param dstCont
+	 * @param data
 	 */
-	public void addFlow(Location dstLocation, IName contName, Set<IData> data) {
-		if (_dataflow == null) {
-			_dataflow = new HashMap<>();
+	public void addFlow(SocketContainer srcCont, SocketContainer dstCont, Set<IData> data) {
+		_logger.info("addFlow: {}, {}, {}.", srcCont, dstCont, data);
+
+		Map<SocketContainer,Set<IData>> flows = _dataflow.get(srcCont);
+		if (flows == null) {
+			flows = new HashMap<>();
+			_dataflow.put(srcCont, flows);
 		}
 
-		Map<IName,Set<IData>> map = _dataflow.get(dstLocation);
-		if (map == null) {
-			_dataflow.put(dstLocation, map = new HashMap<>());
+		Set<IData> oldData = flows.get(dstCont);
+		if (oldData == null) {
+			oldData = new HashSet<>();
+			flows.put(dstCont, oldData);
 		}
-
-		Set<IData> flow = map.get(contName);
-		if (flow == null) {
-			map.put(contName, flow = new HashSet<>());
-		}
-		flow.addAll(data);
+		oldData.addAll(data);
 	}
 
-	public Map<Location, Map<IName,Set<IData>>> getFlows() {
+	public Map<SocketContainer,Map<SocketContainer,Set<IData>>> getFlows() {
 		// TODO: inner elements can still be changed by caller.
 		return Collections.unmodifiableMap(_dataflow);
 	}
 
 	/**
-	 * Whether data has flown from this object's source {@link Location}.
-	 * @return true if there is at least one destination {@link Location}
+	 * Whether data has flown from this object's source {@link SocketContainer}.
+	 * @return true if there is at least one destination {@link SocketContainer}
 	 * 			to which data has flown; false otherwise.
 	 */
 	public boolean isEmpty() {
-		return _dataflow == null || _dataflow.size() == 0;
+		return _dataflow.isEmpty();
 	}
 
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
-				.add("_srcLocation", _srcLocation)
+		return MoreObjects.toStringHelper(this)
 				.add("_dataflow", _dataflow)
 				.toString();
 	}

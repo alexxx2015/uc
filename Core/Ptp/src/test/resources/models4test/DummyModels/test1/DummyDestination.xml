@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<de.tum.in.i22.uc.metamodel:domain xmlns:de.tum.in.i22.uc.metamodel="http://metamodelone/4.0" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0">
+<pims name="SNS_PIM">
+<pimdata name="city" pos="0" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="country" pos="1" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="state" pos="2" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="zipcode" pos="3" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym=""/>
+<pimdata name="picture" pos="4" storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.3 //@psms/@psmcontainers.4 //@psms/@psmcontainers.5 " synonym="photo "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="notify" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="0" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.3 //@psms/@psmtransformers.4 " name="copy" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.3 " pos="1" synonym="replicate duplicate "/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="print" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.4 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="2" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="save" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="3" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.2 " name="distribute" paramData="//@pims/@pimdata.0 //@pims/@pimdata.2 //@pims/@pimdata.1 //@pims/@pimdata.3 //@pims/@pimdata.4 " pos="4" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="pay" paramData="//@pims/@pimdata.4 //@pims/@pimdata.0 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="5" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 //@psms/@psmtransformers.1 " name="delete" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="6" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="permit" paramData="//@pims/@pimdata.0 //@pims/@pimdata.4 //@pims/@pimdata.1 //@pims/@pimdata.2 //@pims/@pimdata.3 " pos="7" synonym=""/>
+<pimactions actionRefmnt="//@psms/@psmtransformers.0 " name="modify" paramData="//@pims/@pimdata.4 //@pims/@pimdata.2 //@pims/@pimdata.0 //@pims/@pimdata.3 //@pims/@pimdata.1 " pos="8" synonym=""/>
+</pims>
+<psms name="SNS_PSM">
+<psmcontainers contimplementedas="//@isms/@ismcontainers.0 //@isms/@ismcontainers.1 //@isms/@ismcontainers.5 " name="domElement" pos="0"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.2 " name="file" pos="1"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.4 " name="clipboardCont" pos="2"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="printCont" pos="3"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.3 " name="externalCont" pos="4"/>
+<psmcontainers contimplementedas="//@isms/@ismcontainers.6 " name="memLoc" pos="5"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.0 " inputcontainer="//@psms/@psmcontainers.0 " name="saveEle" outputcontainer="//@psms/@psmcontainers.1 " pos="0" seq="0" system="WebBrowser"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 " inputcontainer="//@psms/@psmcontainers.1 " name="deleteFile" outputcontainer="" pos="1" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.3 " inputcontainer="//@psms/@psmcontainers.1 " name="distributeFile" outputcontainer="" pos="2" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.5 " inputcontainer="//@psms/@psmcontainers.1 " name="copyFile" outputcontainer="" pos="3" seq="0" system="OS"/>
+<psmtransformers crossPsmRefmnt="//@isms/@ismtransformers.4 " inputcontainer="//@psms/@psmcontainers.1 " name="takeScreenshot" outputcontainer="" pos="4" seq="0" system="OS"/>
+<psmsystems name="WebBrowser" pos="0" sysimplementedas="//@isms/@ismsystems.0 " systemtransformers="//@psms/@psmtransformers.0 "/>
+<psmsystems name="OS" pos="1" sysimplementedas="//@isms/@ismsystems.1 " systemtransformers="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1 //@psms/@psmtransformers.3 //@psms/@psmtransformers.4 "/>
+</psms>
+<isms name="SNS_ISM">
+<ismcontainers name="span" pos="0"/>
+<ismcontainers name="img" pos="1"/>
+<ismcontainers name="file" pos="2"/>
+<ismcontainers name="OutputDevices" pos="3"/>
+<ismcontainers name="Clipboard" pos="4"/>
+<ismcontainers name="window" pos="5"/>
+<ismcontainers name="buffer" pos="6"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.1 " name="save_fs" outputimplecontainer="//@isms/@ismcontainers.2 " pos="0" seq="0" system="Firefox"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="del" outputimplecontainer="" pos="1" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="erase" outputimplecontainer="" pos="2" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="send" outputimplecontainer="" pos="3" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.5 " name="SetClipboardData" outputimplecontainer="" pos="4" seq="0" system="Win7"/>
+<ismtransformers inputimplecontainer="//@isms/@ismcontainers.2 " name="ReadFile" outputimplecontainer="" pos="5" seq="0" system="Win7"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.0 " name="Firefox" pos="0"/>
+<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.5 " name="Win7" pos="1"/>
+</isms>
+</de.tum.in.i22.uc.metamodel:domain>

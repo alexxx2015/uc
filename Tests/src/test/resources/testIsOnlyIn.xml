@@ -1,0 +1,35 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy     
+    xmlns="http://www22.in.tum.de/enforcementLanguage"
+    xmlns:tns="http://www22.in.tum.de/enforcementLanguage" 
+    xmlns:a="http://www22.in.tum.de/action"
+    xmlns:e="http://www22.in.tum.de/event" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="testIsOnlyIn">
+	
+	<initialRepresentations>
+		<container name="initialContainer">
+			<dataId>myId</dataId>
+		</container>
+		<container name="initialContainer2">
+			<dataId>myId</dataId>
+		</container>
+	</initialRepresentations>
+
+	<preventiveMechanism name="testIsOnlyIn">
+		<description>...</description>
+		<timestep amount="200" unit="MILLISECONDS" />
+		<trigger action="testSBOp" tryEvent="true">
+			<paramMatch name="name" value="initialContainer2" cmpOp="equals" type="dataUsage" dataID="myId" />
+		</trigger>
+		<condition>
+			<stateBasedFormula operator="isOnlyIn" param1="myId" param2="initialContainer2" />
+		</condition>
+		<authorizationAction name="default" start="true"
+			fallback="fallback">
+			<inhibit />
+		</authorizationAction>
+	</preventiveMechanism>
+	
+</policy>

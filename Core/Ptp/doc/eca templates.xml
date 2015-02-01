@@ -1,0 +1,323 @@
+TRUST relation
+There is a trust_factor for each relation type.
+The visitor has a trust_ration based on the relation with the owner.
+best_friend 1
+good friend 0.8
+friend 0.6
+acquaintance 0.4
+never met 0.2
+
+if($trust_ration <= $trust_factor){
+            //apply policy            
+}
+!!! WARNING: this may actually not be correct. There are two types of policies: ALLOW only <subject> or INHIBIT only <subject>
+If I have policies in terms of "only friends can copy" than I should invert the comparison.
+My proposal is to limit the application of the policies only on the class of relations.
+If I have policy on friends then this does not apply on acquaintance or good friend.
+
+
+
+-----------------------------------------------------
+<<all subjects except me>> must delete this data after <<N>> <<timeunits>> (applies to photos, saved pages)
+XML:
+----
+101 state country
+<Policy Subject=" ">
+	<Obligation>
+		<after>
+			<Timesteps>
+				<num value=" "/>
+				<days/>
+			</Timesteps>
+			<Action name="delete" type="desiredEv">
+				<Params>
+					<Param name="object" policyType="dataUsage" value=" "/>
+				</Params>
+			</Action>
+		</after>
+	</Obligation>
+</Policy>
+
+for each subformula,
+E: any
+C: actionRef(pastForm)
+A: delete(object, "")
+
+		{
+			"id" : "101",
+			"templates" : [
+				{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<execute/>", "del", "paramName", "objectValue"],
+					"type" : "detective"
+				}
+			] 	
+		},
+
+	["<execute/>", "action", "paramName", "objectValue"]
+	
+*****************************************
+*****************************************
+102
+<<all subjects except me>> must never <<copy/distribute>> this data (applies to all data)
+XML:
+----
+<Policy Subject=" ">
+	<Obligation>
+		<always>
+			<not>
+				<Action name=" " type="desiredEv">
+					<Params>
+						<Param name="object" policyType="dataUsage" value=" "/>
+					</Params>
+				</Action>
+			</not>
+		</always>
+	</Obligation>
+</Policy> 
+
+for each subformula,
+E: any
+C: actionRef(pastForm)
+A: inhibit/modify
+Exception: when C is of the form 'event and X'. In that case, E = event, C = X, A = inhibit
+Note: 1. we don't have support for 'distribute' event in our implementation. Or do we?
+      2. we will demo this policy with enforcement by modification also. this should be easy as we are configuring ECA rules from a config/settings file.
+
+	  city
+	  
+{
+	"id" : "102",
+	"templates" : [
+		{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<inhibit/>"],
+					"type" : "preventive"
+		}
+	] 	
+},
+	
+	  
+		{
+			"id" : "102",
+			"templates" : [
+				{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<modify/>", "object", "Action not allowed!"],
+					"type" : "preventive"
+				}
+			] 	
+		},
+acquaintance	
+			PTP	deploy	Enforce	Status
+copy inh	ok	ok		inhibit	OK
+copy mod 	
+distribute	ok	ok		allow	NOK
+print		ok	ok		allow 	NOK
+save		ok	ok		inhibit ok for global policies
+
+	
+*****************************************
+*****************************************
+103 city zipcode state
+Notify me when this data is <<copied/distributed>> by <<all subjects except me>> (applies to all data)
+XML:
+----
+<Policy Subject=" ">
+	<Obligation>
+		<always>
+			<implies>
+				<Action name=" " type="desiredEv">
+					<Params>
+						<Param name="object" value=" "/>
+					</Params>
+				</Action>
+				<Action name="notify" type="desiredEv">
+					<Params>
+						<Param name="object" policyType="dataUsage" value=" "/>
+					</Params>
+				</Action>
+			</implies>
+		</always>
+	</Obligation>
+</Policy>
+
+for each subformula,
+E: any
+C: actionRef(pastForm)--> get(first formula of implies))
+A: desiredEv(second action) --> execute ev: send email
+Note: here an admin can set what is meant by notify (email, text etc.). We also need to see how the extension can implement notify at its level.
+
+
+{
+	"id" : "103",
+	"templates" : [
+		{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<execute/>", "notify", "pxpID", "pxp", "object",  "<@objectInstance@>", "method", "email", "destination", "lucaci@in.tum.de", "subject", "###policy violation###", "message", "you have an intrusion!"],
+					"type" : "preventive"
+		}
+	] 	
+},
+
+
+*****************************************
+*****************************************
+
+<<all subjects except me>> must not <<copy/distribute>> this data unless permission is granted (applies to all data)
+XML:
+----
+<Policy Subject=" ">
+	<Obligation>
+		<until>
+			<not>
+				<Action name=" " type="desiredEv">
+					<Params>
+						<Param name="object" value=" "/>
+					</Params>
+				</Action>
+			</not>
+			<Action name="permit" type="desiredEv">
+				<Params>
+					<Param name="object" policyType="dataUsage" value=" "/>
+				</Params>
+			</Action>
+		</until>
+	</Obligation>
+</Policy>
+
+for each subformula,
+E: any
+C: actionRef(pastForm)
+A: inhibit
+Note: we will also enforce this policy through execution. In that case, A: a dummy permission event
+
+{
+	"id" : "104",
+	"templates" : [
+		{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<inhibit/>"],
+					"type" : "preventive"
+		}
+	] 	
+},
+
+*****************************************
+*****************************************
+
+105
+picture 
+state
+
+<<all subjects except me>> may <<copy/distribute>> this data max <<N>> times (applies to all data)
+
+XML:
+----
+<Policy Subject=" ">
+	<Obligation>
+		<repmax>
+			<num value=""/>
+			<Action name="" type="desiredEv">
+				<Params>
+					<Param name="object" policyType="dataUsage" value=" "/>
+				</Params>
+			</Action>
+		</repmax>
+	</Obligation>
+</Policy>
+
+for each subformula,
+E: any
+C: actionRef(pastForm)
+A: inhibit
+Note: demo of enforcement by modification should be easy
+
+*****************************************
+*****************************************
+106
+<<all subjects except me>> must <<print/copy/save>> this photo min <<X>> time, max <<Y>> times in the next <<N>> <<timeunits>>. 
+
+XML:
+----
+<Policy Subject="alice">
+	<Obligation>
+		<repLim>
+			<Timesteps>
+				<num value="N"/>
+				<minutes/>
+			</Timesteps>
+			<num value="X"/>
+			<num value="Y"/>
+			<Action name="" type="desiredEv">
+				<Params>
+					<Param class="photo" name="object" policyType="dataUsage" value="myphoto.jpg"/>
+				</Params>
+			</Action>
+		</repLim>
+	</Obligation>
+</Policy>
+
+for each subformula,
+E: any
+C: actionRef(pastForm)
+A: execute(print(false subformula))
+		{
+			"id" : "106",
+			"templates" : [
+				{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<execute/>", "notify", "pxpID", "pxp", "object",  "<@objectInstance@>", "method", "email", "destination", "lucaci@in.tum.de", "subject", "###policy violation###", "message", "you have an intrusion!"],
+					"type" : "preventive"
+				}
+			] 	
+		},
+*****************************************
+*****************************************
+
+<<all subjects except me>> must <<print/copy/save>> this photo max <<N>> times after which they must pay 
+
+XML:
+----
+<Policy Subject="alice">
+	<Obligation>
+		<repUntil>
+			<num value="N"/>
+			<Action name="" type="desiredEv">
+				<Params>
+					<Param class="photo" name="object" policyType="dataUsage" value="myphoto.jpg"/>
+				</Params>
+			</Action>
+			<Action name="pay" type="desiredEv">
+				<Params>
+					<Param class="photo" name="object" policyType="dataUsage" value="myphoto.jpg"/>
+				</Params>
+			</Action>
+		</repUntil>
+	</Obligation>
+</Policy>
+
+for each subformula,
+ E: any
+ C: actionRef(pastForm)
+ A: inhibit
+ Note: we can also demo enforcement by execution using A: execute(pay)
+ 
+		{
+			"id" : "107",
+			"templates" : [
+				{
+					"event" : "<*/>",
+					"condition" : "<actionRef(pastForm)/>",
+					"action" : ["<inhibit/>"],
+				}
+			] 	
+		}
+ 
+ 

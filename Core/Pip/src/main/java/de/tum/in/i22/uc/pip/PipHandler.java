@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pip;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -25,8 +24,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.factories.MessageFactory;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -36,14 +35,13 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 import de.tum.in.i22.uc.pip.core.manager.PipManager;
-import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicate;
+import de.tum.in.i22.uc.pip.core.statebased.StateBasedPredicateManager;
+import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.eventdef.java.JavaPipStatus;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.extensions.javapip.JavaPipManager;
 
 public class PipHandler extends PipProcessor {
-	private static final Logger _logger = LoggerFactory
-			.getLogger(PipHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PipHandler.class);
 
 	private final IBasicInformationFlowModel _ifModel;
 
@@ -51,16 +49,12 @@ public class PipHandler extends PipProcessor {
 
 	private final PipManager _pipManager;
 
-	//	/**
-	//	 * Manages everything related to distributed data flow tracking
-	//	 */
-	//	private final PipDistributionManager _distributedPipManager;
-	
+	private final StateBasedPredicateManager _stateBasedPredicateManager;
+
 	/**
 	 * Manager for remote Java Pip
 	 */
-	private final JavaPipManager _javaPipManager;
-	
+	private JavaPipManager _javaPipManager;
 
 	public PipHandler() {
 		this(new InformationFlowModelManager());
@@ -71,17 +65,18 @@ public class PipHandler extends PipProcessor {
 		init(new DummyPdpProcessor(), new DummyPmpProcessor());
 
 		_pipManager = new PipManager();
-		//		_distributedPipManager = new PipDistributionManager();
 		_ifModelManager = ifmModelManager;
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
-		
-		_javaPipManager = new JavaPipManager();
-		Thread tjpip= new Thread(_javaPipManager);
-		tjpip.start();
-		
+		_stateBasedPredicateManager = new StateBasedPredicateManager();
+
+		if (Settings.getInstance().getJavaPipMonitor()) {
+			_javaPipManager = new JavaPipManager();
+			new Thread(_javaPipManager).start();
+		}
+
 		// initialize data flow according to settings
 		update(new EventBasic(Settings.getInstance().getPipInitializerEvent(),
-				null, true));
+				(Map<String,String>) null, true));
 	}
 
 	@Override
@@ -89,25 +84,16 @@ public class PipHandler extends PipProcessor {
 		IStateBasedPredicate pred;
 
 		try {
-			pred = StateBasedPredicate.create(predicate, _ifModelManager);
+			pred = _stateBasedPredicateManager.get(predicate, _ifModelManager);
 		} catch (InvalidStateBasedFormulaException e) {
 			_logger.warn(e.toString());
 			return false;
 		}
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
+		if (Settings.getInstance().getPipPrintAfterUpdate() && !isSimulating()) {
 			_logger.debug(this.toString());
 		}
-		if (pred == null) {
-			_logger.error("Predicate to be evaluated is null. returning predefined value false. This shouldn't happen, though.");
-			return false;
-		}
-		try {
-			return pred.evaluate();
-		} catch (InvalidStateBasedFormulaException e) {
-			e.printStackTrace();
-			return false;
 
-		}
+		return pred.evaluate();
 	}
 
 	@Override
@@ -122,9 +108,9 @@ public class PipHandler extends PipProcessor {
 
 	@Override
 	public IStatus update(IEvent event) {
-		String eventName = event.getName();
+
 		IEventHandler eventHandler = null;
-		IStatus status;
+		IStatus status = null;
 
 		/*
 		 * Get the event handler and perform the information flow update
@@ -134,75 +120,73 @@ public class PipHandler extends PipProcessor {
 		try {
 			eventHandler = EventHandlerManager.createEventHandler(event);
 		} catch (Exception e) {
-			return new StatusBasic(EStatus.ERROR,
-					"Could not instantiate event handler for " + eventName + ", "
-							+ e.getMessage());
+			_logger.error("Could not instantiate event handler for " + event.getName() + ", " + e.getMessage());
+			eventHandler = null;
 		}
 
 		if (eventHandler == null) {
-			return new StatusBasic(EStatus.ERROR);
+			_logger.error("EventHandler is null. Unable to update PIP state,");
+			status = new StatusBasic(EStatus.ERROR);
 		}
+		else {
+			eventHandler.setEvent(event);
+			eventHandler.setInformationFlowModel(_ifModelManager);
+			eventHandler.setDistributionManager(_distributionManager);
 
-		eventHandler.setEvent(event);
-		eventHandler.setInformationFlowModel(_ifModelManager);
+			_logger.info("Executing PipHandler for " + event);
+			status = eventHandler.performUpdate();
 
-		_logger.info(System.lineSeparator() + "Executing PipHandler for "
-				+ event);
-		status = eventHandler.performUpdate();
-
-		/*
-		 * The returned status will tell us whether we have to do some more
-		 * work, namely remote data flow tracking and policy shipment
-		 */
-		if (status.isStatus(EStatus.REMOTE_DATA_FLOW_HAPPENED)
-				&& status instanceof DistributedPipStatus) {
-
-			_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
-		}else 
-			
-			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
-			//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
-			_logger.debug("JAVAPIPMANGER NOTIFICATION");
-
-			switch (event.getName()){
-			case "Source":
-			case "Sink":
-				IName contName = ((JavaPipStatus) status).getContName();
-				Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
-
-				if (dataSet==null || contName==null) break;
-				
-				String dataSetString = "";
-				for (IData d: dataSet){
-					dataSetString = dataSetString + " ";
-				}
-				
-				Map<String,String> map=new HashMap<String, String>();
-				map.putAll(event.getParameters());
-				map.put("JavaPipContName", contName.getName());
-				map.put("JavaPipDataSet", dataSetString);
-				IEvent e=new EventBasic(event.getName(), map, event.isActual(), event.getTimestamp());
-								
-				try {
-					BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
-					_logger.debug("("+e+") queue size before= " +q.size());
-					q.put(e);
-					_logger.debug("("+e+") queue size after= " +q.size());
-				} catch (InterruptedException ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
-				}
-				break;
-			default:
+			/*
+			 * The returned status will tell us whether we have to do some more
+			 * work, namely remote data flow tracking and policy shipment
+			 */
+			if (!isSimulating() && status instanceof DistributedPipStatus) {
+				_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
 			}
-			
-			
-		}
-		
-			
-		
-		if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
-			_logger.debug(this.toString());
+
+			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
+				/*
+				 * TODO: Outsource this code.
+				 */
+				//	no need to check the PEP=java because that's the only way to get status instanceof JavaPipStatus
+				_logger.debug("JAVAPIPMANGER NOTIFICATION");
+
+				switch (event.getName()){
+				case "Source":
+				case "Sink":
+					IName contName = ((JavaPipStatus) status).getContName();
+					Set<IData> dataSet= ((JavaPipStatus) status).getDataSet();
+
+					if (dataSet==null || contName==null) break;
+
+					String dataSetString = "";
+					for (IData d: dataSet){
+						dataSetString = dataSetString + " ";
+					}
+
+					Map<String,String> map=new HashMap<String, String>();
+					map.putAll(event.getParameters());
+					map.put("JavaPipContName", contName.getName());
+					map.put("JavaPipDataSet", dataSetString);
+					IEvent e=new EventBasic(event.getName(), map, event.isActual(), event.getTimestamp());
+
+					try {
+						BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
+						_logger.debug("("+e+") queue size before= " +q.size());
+						q.put(e);
+						_logger.debug("("+e+") queue size after= " +q.size());
+					} catch (InterruptedException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					}
+					break;
+				default:
+				}
+			}
+
+			if (!isSimulating() && Settings.getInstance().getPipPrintAfterUpdate()) {
+				_logger.debug(this.toString());
+			}
 		}
 
 		return status;
@@ -244,16 +228,13 @@ public class PipHandler extends PipProcessor {
 		Boolean res = null;
 
 		if (_ifModelManager.startSimulation().getEStatus() == EStatus.OKAY) {
-			_logger.trace("Updating PIP semantics with current event ("
-					+ (event == null ? "null" : event.getName()) + ")");
+			_logger.trace("Updating PIP semantics with current event ({})", event);
 			update(event);
-			_logger.trace("Evaluate predicate in new updated state ("
-					+ predicate + ")");
+			_logger.trace("Evaluate predicate in new updated state ("+ predicate + ")");
 			res = evaluatePredicateCurrentState(predicate);
 			_logger.trace("Result of the evaluation is " + res);
 			_logger.trace("Restoring PIP previous state...");
 			_ifModelManager.stopSimulation();
-			_logger.trace("done!");
 		} else {
 			_logger.error("Failed! Stack not empty!");
 		}
@@ -262,40 +243,13 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		Set<IData> all = new HashSet<>();
-		for (IContainer c : _ifModel.getAllContainers()) {
-			all.addAll(_ifModel.getData(c));
-		}
-		return all.containsAll(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		for (IContainer c : _ifModel.getAllContainers()) {
-			if (_ifModel.getData(c).contains(data)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> containers) {
-		// TODO
-		return false;
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> containers) {
-		// TODO
-		return false;
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		_logger.debug("initialRepresentation(" + containerName + "," + data
-				+ ")");
+		_logger.debug("initialRepresentation(" + containerName + "," + data + ")");
+
+		/*
+		 * Convert to a 'more' proper IName object.
+		 */
+		containerName = MessageFactory.createName(containerName.getName());
 
 		IContainer container;
 		if ((container = _ifModel.getContainer(containerName)) == null) {
@@ -327,12 +281,6 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		//		return _distributedPipManager.whoHasData(data, recursionDepth);
-		return Collections.emptySet();
-	}
-
-	@Override
 	public String toString() {
 		return _ifModelManager.niceString();
 	}
@@ -353,16 +301,9 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public void stop() {
-		
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public IData getDataFromId(String id) {
-		IData d=_ifModelManager.getDataFromId(id);
-		return (d==null)?new DataBasic("null"):d;
+		IData d = _ifModelManager.getDataFromId(id);
+		return (d == null) ? new DataBasic("null") : d;
 	}
 
 	@Override
@@ -373,9 +314,9 @@ public class PipHandler extends PipProcessor {
 		pars.put("port", ""+port);
 		pars.put("id", id);
 		pars.put("filter", filter);
-		
+
 		IEvent ev= new EventBasic("addJPIPListener",pars);
-		
+
 		try {
 			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
 			_logger.debug("("+ev+") queue size before= " +q.size());
@@ -385,7 +326,7 @@ public class PipHandler extends PipProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+
 		return new StatusBasic(EStatus.OKAY);
 	}
 
@@ -395,9 +336,9 @@ public class PipHandler extends PipProcessor {
 		Map<String,String> pars = new HashMap<String,String>();
 		pars.put("msec", ""+msec);
 		pars.put("id", id);
-		
+
 		IEvent ev= new EventBasic("SetUpdateFrequency",pars);
-		
+
 		try {
 			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();
 			_logger.debug("("+ev+") queue size before= " +q.size());
@@ -407,7 +348,7 @@ public class PipHandler extends PipProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+
 		return new StatusBasic(EStatus.OKAY);
 	}
 }

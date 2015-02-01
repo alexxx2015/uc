@@ -2,6 +2,8 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IConflictResolutionFlag;
 
 public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
@@ -33,7 +35,7 @@ public class ConflictResolutionFlagBasic implements IConflictResolutionFlag {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_eConflictResolution", _eConflictResolution)
 				.toString();
 	}

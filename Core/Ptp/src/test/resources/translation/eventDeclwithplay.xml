@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventDeclaration xmlns="http://www.example.org/eventDeclSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/eventDeclSchema eventDeclSchema.xsd">
+	<event>
+		<eventName>copy</eventName>
+		<eventClass>dataUsage</eventClass>
+		<params>
+			<param paramName="object">
+				<paramValue>photo</paramValue>
+				<paramValue>document</paramValue>
+				<paramValue>song</paramValue>
+				<paramValue>video</paramValue>
+			</param>
+		</params>
+		<stateFormula>
+			<not>
+				<isNotIn data="data">
+					<containers>
+						<container>KlipperMem</container>
+					</containers>
+				</isNotIn>
+			</not>
+		</stateFormula>
+	</event>
+	<event>
+		<eventName>delete</eventName>
+		<eventClass>dataUsage</eventClass>
+		<params>
+			<param paramName="object">
+				<paramValue>photo</paramValue>
+				<paramValue>document</paramValue>
+				<paramValue>song</paramValue>
+				<paramValue>video</paramValue>
+			</param>
+		</params>
+		<stateFormula>
+			<isOnlyIn data="data">
+				<containers>
+					<container>null</container>
+				</containers>
+			</isOnlyIn>
+		</stateFormula>
+	</event>
+	<event>
+		<eventName>play</eventName>
+		<eventClass>dataUsage</eventClass>
+		<params>
+			<param paramName="object">
+				<paramValue>song</paramValue>
+				<paramValue>video</paramValue>
+			</param>
+			<param paramName="device">
+				<paramValue>device x</paramValue>
+				<paramValue>device y</paramValue>
+			</param>
+		</params>
+		<stateFormula>
+		</stateFormula>
+	</event>
+</eventDeclaration>

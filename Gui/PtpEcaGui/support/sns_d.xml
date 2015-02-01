@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamodelv4:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:metamodelv4="http://metamodelone/4.0">
+  <pims name="SNS_PIM">
+    <pimactions name="delete" seq="0" actionRefmnt="//@psms/@psmtransformers.1 //@psms/@psmtransformers.2 //@psms/@psmtransformers.0" paramData="//@pims/@pimdata.1 //@pims/@pimdata.0"/>
+    <pimdata storedin="//@psms/@psmcontainers.3" name="album">
+      <dataAssoLinks assoType="isAggregationOf" targetAssoData="//@pims/@pimdata.1"/>
+    </pimdata>
+    <pimdata storedin="//@psms/@psmcontainers.1 //@psms/@psmcontainers.2 //@psms/@psmcontainers.0" name="photo"/>
+  </pims>
+  <psms name="SNS_PSM">
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.0" name="clipboard"/>
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.1" name="processMem"/>
+    <psmcontainers contimplementedas="//@isms/@ismcontainers.2" name="file"/>
+    <psmcontainers containersassociation="//@psms/@psmcontainers.2" contimplementedas="//@isms/@ismcontainers.3" name="directory"/>
+    <psmtransformers name="deleteFile" seq="0" outputcontainer="//@psms/@psmcontainers.2" psmRefmnt="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1" inputcontainer="//@psms/@psmcontainers.2"/>
+    <psmtransformers name="overwriteFile" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.2" crossPsmRefmnt="//@isms/@ismtransformers.4 //@isms/@ismtransformers.1"/>
+    <psmtransformers name="removeFile" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.2" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
+    <psmsystems systemtransformers="//@psms/@psmtransformers.2 //@psms/@psmtransformers.1 //@psms/@psmtransformers.0" sysimplementedas="//@isms/@ismsystems.0" name="fileSystem"/>
+  </psms>
+  <isms name="SNS_ISM">
+    <ismcontainers name="xclipboard"/>
+    <ismcontainers name="procMem"/>
+    <ismcontainers name="unixfile"/>
+    <ismcontainers implecontainerassociation="//@isms/@ismcontainers.2" name="unixDir"/>
+    <ismtransformers name="unlink" seq="0" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="shred" seq="0" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="shred" seq="1" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="unlink" seq="2" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismtransformers name="overwriteRemove" seq="0" refType="seqRefmnt" ismRefmnt="//@isms/@ismtransformers.2 //@isms/@ismtransformers.3" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.2"/>
+    <ismsystems implesystemtransformers="//@isms/@ismtransformers.0 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4" name="unix"/>
+  </isms>
+</metamodelv4:domain>

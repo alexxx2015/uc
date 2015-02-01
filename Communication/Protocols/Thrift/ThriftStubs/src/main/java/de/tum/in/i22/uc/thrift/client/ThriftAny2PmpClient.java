@@ -8,12 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
@@ -85,12 +84,6 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-		return _impl.informRemoteDataFlow(srcLocation, dstLocation, dataflow);
-	}
-
-	@Override
 	public IMechanism exportMechanismPmp(String par) {
 		return _impl.exportMechanismPmp(par);
 	}
@@ -131,14 +124,23 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		return _impl.translatePolicy(requestId, parameters, xmlPolicy);
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		return _impl.specifyPolicyFor(representations, dataClass);
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		return _impl.updateDomainModel(requestId, parameters, xmlDomainModel);
+	}
+
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		return _impl.listPoliciesPmp();
+	}
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		return _impl.remotePolicyTransfer(xml, from);
 	}
 
 }

@@ -70,7 +70,7 @@ public class DragAndDropEventHandler extends ExcelEvents {
 		TreeSet<CellName> srcSetSorted = new TreeSet<CellName>(
 				new SortCellName());
 
-		CellName src = new CellName(srcCoordinate);
+		CellName src = CellName.create(srcCoordinate);
 
 		for (CellName cell : allCells) {
 			if (cell.getWorkbook().equals(srcWorkbookName)

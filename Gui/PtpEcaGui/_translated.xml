@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><policySet xmlns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:tns="http://www.iese.fhg.de/pef/1.0/enforcementLanguage" xmlns:a="http://www.iese.fhg.de/pef/1.0/action" xmlns:e="http://www.iese.fhg.de/pef/1.0/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <preventiveMechanism name="Mechanism__1_null_">
+    <trigger action="any" tryEvent="true"/>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="Authorization_1">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism__2_null_">
+    <trigger action="any" tryEvent="true"/>
+    <condition>
+      <and>
+        <eventMatch action="write" tryEvent="true">
+          <paramMatch name="object" type="dataUsage" value="test.xml"/>
+        </eventMatch>
+        <eventually>
+          <and>
+            <eventMatch action="read" tryEvent="true">
+              <paramMatch name="object" type="dataUsage" value="test.xml"/>
+            </eventMatch>
+            <eventually>
+              <eventMatch action="open" tryEvent="true">
+                <paramMatch name="object" type="dataUsage" value="test.xml"/>
+              </eventMatch>
+            </eventually>
+          </and>
+        </eventually>
+      </and>
+    </condition>
+    <authorizationAction name="Authorization_2">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism__3_null_">
+    <trigger action="any" tryEvent="true"/>
+    <condition>
+      <true/>
+    </condition>
+    <authorizationAction name="Authorization_3">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+  <preventiveMechanism name="Mechanism__4_null_">
+    <trigger action="any" tryEvent="true"/>
+    <condition>
+      <not/>
+    </condition>
+    <authorizationAction name="Authorization_4">
+      <inhibit/>
+    </authorizationAction>
+  </preventiveMechanism>
+</policySet>

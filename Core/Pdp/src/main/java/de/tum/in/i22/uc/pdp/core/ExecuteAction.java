@@ -1,89 +1,70 @@
 package de.tum.in.i22.uc.pdp.core;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
-import de.tum.in.i22.uc.pdp.core.shared.Param;
+import com.google.common.base.MoreObjects;
+
+import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteActionType;
 import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.ParameterType;
 
-public class ExecuteAction implements Serializable, IPdpExecuteAction {
-	private static final long serialVersionUID = 8451999937686098519L;
-	private static Logger log = LoggerFactory.getLogger(ExecuteAction.class);
+public class ExecuteAction extends EventBasic {
+	private static final long serialVersionUID = -1885601336140178748L;
 
-	private String name = null;
-	private final Set<Param<?>> parameters = new HashSet<Param<?>>();
-	private String processor = null;
-	private String id = null;
+	private static Logger _logger = LoggerFactory.getLogger(ExecuteAction.class);
 
-	public ExecuteAction(String name, List<Param<?>> params) {
-		this.name = name;
-		this.parameters.addAll(params);
-	}
+	private final String _processor;
+	private final String _pxpId;
 
-	public ExecuteAction() {
+	private ExecuteAction(String name, String pxpId, Collection<ParameterType> params, String processor) {
+		super(name, convert(params));
+
+		_pxpId = pxpId;
+		_processor = processor;
 	}
 
 	public ExecuteAction(ExecuteActionType execAction) {
-		log.debug("Preparing executeAction from ExecuteActionType");
-		this.name = execAction.getName();
-		this.id = execAction.getId();
-		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param<String>(param.getName(), param.getValue()));
-		}
+		this(execAction.getName(), execAction.getId(), execAction.getParameter(), null);
+		_logger.debug("Preparing executeAction from ExecuteActionType");
 	}
 
 	public ExecuteAction(ExecuteAsyncActionType execAction) {
-		log.debug("Preparing executeAction from ExecuteAsyncActionType");
-		this.name = execAction.getName();
-		this.id = execAction.getId();
-		this.processor = execAction.getProcessor().value();
-		for (ParameterType param : execAction.getParameter()) {
-			this.parameters.add(new Param<String>(param.getName(), param.getValue()));
-		}
+		this(execAction.getName(), execAction.getId(), execAction.getParameter(), execAction.getProcessor().value());
+		_logger.debug("Preparing executeAction from ExecuteAsyncActionType");
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public Collection<Param<?>> getParams() {
-		return parameters;
-	}
-
-	@Override
-	public Param<?> getParameterForName(String name) {
-		for (Param<?> p : parameters) {
-			if (p.getName().equalsIgnoreCase(name)) {
-				return p;
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public String getProcessor() {
-		return processor;
+		return _processor;
 	}
 
-	@Override
-	public String getId() {
-		return this.id;
+	public String getPxpId() {
+		return _pxpId;
+	}
+
+	private static Map<String,String> convert(Collection<ParameterType> paramsIn) {
+		if (paramsIn == null) {
+			return Collections.emptyMap();
+		}
+
+		Map<String,String> paramsOut = new HashMap<>();
+		paramsIn.forEach(p -> paramsOut.put(p.getName(), p.getValue()));
+		return paramsOut;
 	}
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this).add("name", name).add("id", id)
-				.add(processor, processor).add("parameters", parameters).toString();
+		return MoreObjects.toStringHelper(this)
+				.add("_name", super.getName())
+				.add("_pxpId", _pxpId)
+				.add("_processor", _processor)
+				.add("_parameters", super.getParameters())
+				.toString();
 	}
 }

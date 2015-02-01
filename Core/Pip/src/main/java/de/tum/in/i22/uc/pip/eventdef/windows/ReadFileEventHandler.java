@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -121,7 +122,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of ReadFile event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
-			return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+			return Pair.of(EBehavior.INTRA, null);
 		}
 
 		Map<String, Object> attributes;
@@ -144,12 +145,32 @@ public class ReadFileEventHandler extends WindowsEvents {
 
 		if (existingScope != null) {
 			_logger.debug("Test1 succeeded. TB is loading to file " + filename);
-			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
+			return Pair.of(EBehavior.OUT, existingScope);
 		} else {
 			_logger.debug("Test1 failed. TB is NOT loading to file " + filename);
 		}
 
-		// TEST 2 : GENERIC JBC APP READING THIS FILE?
+		// TEST 2 : InternalFileSharing LOADING THIS FILE?
+		// If so behave as OUT
+		if (processName.equalsIgnoreCase("java.exe")) {
+			attributes = new HashMap<String, Object>();
+			attributes.put("app", "InternalFileSharing");
+			attributes.put("PID", pid);
+			attributes.put("filename", filename);
+			scopeToCheck = new ScopeBasic("InternalFileSharing loading file " + filename, type,
+					attributes);
+
+			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		}
+
+		if (existingScope != null) {
+			_logger.debug("Test2 succeeded. InternalFileSharing is loading to file " + filename);
+			return Pair.of(EBehavior.OUT, existingScope);
+		} else {
+			_logger.debug("Test2 failed. InternalFileSharing is NOT loading to file " + filename);
+		}
+
+		// TEST 3 : GENERIC JBC APP READING THIS FILE?
 		// If so behave as OUT
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.JBC_GENERIC_LOAD;
@@ -161,11 +182,11 @@ public class ReadFileEventHandler extends WindowsEvents {
 				attributes);
 		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 		if (existingScope != null) {
-			_logger.debug("Test2 succeeded. Generic JBC App is reading file "
+			_logger.debug("Test3 succeeded. Generic JBC App is reading file "
 					+ filename);
-			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
+			return Pair.of(EBehavior.OUT, existingScope);
 		} else {
-			_logger.debug("Test2 failed. Generic JBC App is NOT reading file "
+			_logger.debug("Test3 failed. Generic JBC App is NOT reading file "
 					+ filename);
 		}
 
@@ -173,7 +194,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 		// behave as INTRA
 		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");
 
-		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+		return Pair.of(EBehavior.INTRA, null);
 	}
 
 }

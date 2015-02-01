@@ -20,6 +20,7 @@
 
 package de.tum.in.i22.uc.cm.processing.dummy;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
@@ -52,47 +56,34 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 
 	@Override
 	public IStatus revokePolicy(String policyName) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("revokePolicy method invoked");
-		return null;
+		return new StatusBasic(EStatus.ERROR);
 	}
 
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("revokeMechanism method invoked");
-		return null;
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		// TODO Auto-generated method stub
-		_logger.error("PdpProcessor DUMMY Implementation");
-		_logger.error("deployPolicyURI method invoked");
-		return null;
+		return new StatusBasic(EStatus.ERROR);
 	}
 
 	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("deployPolicyXML method invoked");
-		return null;
+		return new StatusBasic(EStatus.ERROR);
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanisms() {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("listMechanisms method invoked");
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override
 	public boolean registerPxp(PxpSpec pxp) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("registerPxp method invoked");
 		return false;
@@ -100,39 +91,27 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 
 	@Override
 	public void notifyEventAsync(IEvent event) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("notifyEventAsync method invoked");
-
 	}
 
 	@Override
 	public IResponse notifyEventSync(IEvent event) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
 		_logger.error("notifyEventSync method invoked");
-		return null;
+		return new ResponseBasic(new StatusBasic(EStatus.ALLOW));
 	}
 
 	@Override
 	public void processEventAsync(IEvent pepEvent) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
-		_logger.error("TobiasProcessEventAsync method invoked");
+		_logger.error("processEventAsync method invoked");
 	}
 
 	@Override
 	public IResponse processEventSync(IEvent pepEvent) {
-		// TODO Auto-generated method stub
 		_logger.error("PdpProcessor DUMMY Implementation");
-		_logger.error("TobiasProcessEventSync method invoked");
-		return null;
-		}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
+		_logger.error("processEventSync method invoked");
+		return new ResponseBasic(new StatusBasic(EStatus.ALLOW));
 	}
-
 }

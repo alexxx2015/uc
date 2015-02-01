@@ -2,7 +2,8 @@ package de.tum.in.i22.uc.cm.pip.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
 public interface IEventHandler {
 	public IStatus performUpdate();
@@ -14,11 +15,13 @@ public interface IEventHandler {
 	 */
 	public IEventHandler setEvent(IEvent event);
 
-	public void setInformationFlowModel(IInformationFlowModel ifm);
+	public void setInformationFlowModel(IAnyInformationFlowModel ifm);
 
 	/**
 	 * Resets the event, i.e. all of its attributes, such that
 	 * the object can be reused.
 	 */
 	public void reset();
+
+	public void setDistributionManager(IDistributionManager _distributionManager);
 }

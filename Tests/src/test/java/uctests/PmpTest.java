@@ -29,7 +29,6 @@ public class PmpTest extends GenericTest{
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -45,11 +44,11 @@ public class PmpTest extends GenericTest{
 //			e.printStackTrace();
 //		}
 
-		log.info(box.getIfModel());
+		log.info(pip.toString());
 		pip.initialRepresentation(new NameBasic ("secondContainer"),pip.getDataInContainer(new NameBasic("initialContainer")));
-		log.info(box.getIfModel());
-		
-		log.error("policy deployed. let's test it");
+		log.info(pip.toString());
+
+		log.info("policy deployed. let's test it");
 
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("name", "secondContainer");
@@ -63,9 +62,9 @@ public class PmpTest extends GenericTest{
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
+
 		Assert.assertEquals(EStatus.INHIBIT, r.getAuthorizationAction().getEStatus());
-		
+
 	}
 
 }

@@ -1,141 +1,118 @@
 package de.tum.in.i22.uc.pdp.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
+import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.pdp.PxpManager;
-import de.tum.in.i22.uc.pdp.core.condition.Condition;
-import de.tum.in.i22.uc.pdp.core.condition.TimeAmount;
+import com.google.common.base.MoreObjects;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.pdp.core.exceptions.InvalidConditionException;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.core.shared.Decision;
-import de.tum.in.i22.uc.pdp.core.shared.Event;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpAuthorizationAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpExecuteAction;
-import de.tum.in.i22.uc.pdp.core.shared.IPdpMechanism;
-import de.tum.in.i22.uc.pdp.xsd.AuthorizationActionType;
-import de.tum.in.i22.uc.pdp.xsd.ExecuteAsyncActionType;
 import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
-import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
-public class Mechanism implements IPdpMechanism {
-	private static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
+public abstract class Mechanism extends Observable implements Runnable, IMechanism {
+	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
 
-	private String _name = null;
-	private String _description = null;
-	private long _lastUpdate = 0;
-	private long _timestepSize = 0;
-	private long _timestep = 0;
-	private EventMatch _triggerEvent = null;
-	private Condition _condition = null;
-	private IPdpAuthorizationAction _authorizationAction = null;
-	private List<IPdpExecuteAction> _executeAsyncActions = new ArrayList<IPdpExecuteAction>();
-	private PolicyDecisionPoint _pdp = null;
-	private boolean _interrupted = false;
-	private PxpManager _pxpManager;
+	public static final Object END_OF_TIMESTEP = new Object();
 
 	/**
-	 * The name of the policy of which this mechanism is a part of
+	 * The name of this {@link Mechanism}.
+	 */
+	private final String _name;
+
+	private Thread _thisThread;
+
+	/**
+	 * A description of this {@link Mechanism}.
+	 */
+	private final String _description;
+	private long _lastTick = 0;
+	private final long _timestepSize;
+	private long _timestep = 1;
+	private final EventMatch _triggerEvent;
+	private Condition _condition;
+	protected AuthorizationAction _authorizationAction;
+	private final List<ExecuteAction> _executeAsyncActions;
+	private final PolicyDecisionPoint _pdp;
+
+	/**
+	 * The point in time in which the very first tick() of this
+	 * mechanism took place. This is to synchronize tick()ing
+	 * of this Mechanism in a distributed setup.
+	 */
+	private long _firstTick = Long.MIN_VALUE;
+
+	private final Object _pausedLock = new Object();
+
+	private AtomicBoolean _interrupted = new AtomicBoolean(false);
+	private AtomicBoolean _paused = new AtomicBoolean(false);
+
+	private final Deque<Condition> _backupCondition;
+
+	/**
+	 * The name of the policy to which this {@link Mechanism} belongs.
 	 */
 	private final String _policyName;
 
-	public Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
+	protected Mechanism(MechanismBaseType mech, String policyName, PolicyDecisionPoint pdp) throws InvalidMechanismException {
 		_logger.debug("Preparing mechanism from MechanismBaseType");
-		_pdp = pdp;
+
 		if (pdp == null) {
 			_logger.error("Impossible to take proper decision with a null pdp. failing miserably");
 			throw new RuntimeException();
 		}
 
+		_pdp = pdp;
 		_policyName = policyName;
-		_pxpManager = pdp.getPxpManager();
+
 		_name = mech.getName();
 		_description = mech.getDescription();
-		_lastUpdate = 0;
 		_timestepSize = mech.getTimestep().getAmount() * TimeAmount.getTimeUnitMultiplier(mech.getTimestep().getUnit());
-		_timestep = 0;
 
-		if (mech instanceof PreventiveMechanismType) {
-			PreventiveMechanismType curMech = (PreventiveMechanismType) mech;
-			_logger.debug("Processing PreventiveMechanism");
+		_triggerEvent = EventMatch.convertFrom(mech.getTrigger(), _pdp);
 
-			_triggerEvent = new EventMatch(curMech.getTrigger(), this);
-
-			ActionDescriptionStore ads = pdp.getActionDescriptionStore();
-			ads.addMechanism(this);
-
-			// TODO: subscription to PEP?!
-
-			_logger.debug("Preparing AuthorizationAction from List<AuthorizationActionType>: {} entries", curMech
-					.getAuthorizationAction().size());
-			HashMap<String, AuthorizationAction> authActions = new HashMap<String, AuthorizationAction>();
-
-			for (AuthorizationActionType auth : curMech.getAuthorizationAction()) {
-				_logger.debug("Found authAction {}", auth.getName());
-				if (auth.isSetStart() || curMech.getAuthorizationAction().size() == 1)
-					authActions.put("start", new AuthorizationAction(auth));
-				else
-					authActions.put(auth.getName(), new AuthorizationAction(auth));
-			}
-
-			_logger.debug("Preparing hierarchy of authorizationActions (list: {})", authActions.size());
-			_authorizationAction = authActions.get("start");
-
-			if (curMech.getAuthorizationAction().size() > 1) {
-				IPdpAuthorizationAction curAuth = _authorizationAction;
-				_logger.debug("starting with curAuth: {}", curAuth.getName());
-				do {
-					_logger.debug("searching for fallback={}", curAuth.getFallbackName());
-					if (!curAuth.getFallbackName().equalsIgnoreCase("allow")
-							&& !curAuth.getFallbackName().equalsIgnoreCase("inhibit")) {
-						IPdpAuthorizationAction fallbackAuth = authActions.get(curAuth.getFallbackName());
-						if (fallbackAuth == null) {
-							_logger.error("Requested fallback authorizationAction {} not found!", curAuth.getFallbackName());
-							throw new InvalidMechanismException("Requested fallback authorizationAction not specified");
-						}
-						curAuth.setFallback(fallbackAuth);
-						_logger.debug("  set fallback to {}", curAuth.getFallback().getName());
-					} else {
-						if (curAuth.getFallbackName().equalsIgnoreCase("allow")) {
-							curAuth.setFallback(AuthorizationAction.AUTHORIZATION_ALLOW);
-						}
-						_logger.debug("  set fallback to static {}", curAuth.getFallback().getName());
-						break;
-					}
-					curAuth = curAuth.getFallback();
-				} while (true);
-			}
-			_logger.debug("AuthorizationActions successfully processed.");
+		try {
+			_condition = new Condition(mech.getCondition(), this);
+		}
+		catch (InvalidConditionException e) {
+			throw new InvalidMechanismException(e.getClass() + ": " + e.getMessage());
 		}
 
-		_condition = new Condition(mech.getCondition(), this);
+		_backupCondition = new ArrayDeque<>(1);
 
-		_logger.debug("Processing executeAsyncActions");
-		// Processing synchronous executeActions for allow
-		for (ExecuteAsyncActionType execAction : mech.getExecuteAsyncAction()) {
-			_executeAsyncActions.add(new ExecuteAction(execAction));
-		}
+		_executeAsyncActions = new LinkedList<>();
+		mech.getExecuteAsyncAction().forEach(a -> _executeAsyncActions.add(new ExecuteAction(a)));
+
+		// We will be observed by the PDP, such that we can signal the end of a timestep
+		addObserver(pdp);
 	}
 
 	@Override
 	public String getName() {
 		return _name;
 	}
-	@Override
-	public IPdpAuthorizationAction getAuthorizationAction() {
+
+	public AuthorizationAction getAuthorizationAction() {
 		return _authorizationAction;
 	}
 
-	@Override
-	public List<IPdpExecuteAction> getExecuteAsyncActions() {
+	public List<ExecuteAction> getExecuteAsyncActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public EventMatch getTriggerEvent() {
 		return _triggerEvent;
 	}
@@ -146,104 +123,269 @@ public class Mechanism implements IPdpMechanism {
 	}
 
 	@Override
+	public long getLastTick() {
+		return _lastTick;
+	}
+
+	@Override
+	public ICondition getCondition() {
+		return _condition;
+	}
+
+	@Override
+	public String getPolicyName() {
+		return _policyName;
+	}
+
 	public void revoke() {
-		_interrupted = true;
+		_interrupted.set(true);
 	}
 
-	public synchronized Decision notifyEvent(Event curEvent, Decision d) {
-		_logger.debug("updating mechanism [{}]", _name);
-		if (_triggerEvent.eventMatches(curEvent)) {
-			_logger.info("Event matches -> evaluating condition");
-			boolean ret = _condition.evaluate(curEvent);
-			if (ret) {
-				_logger.info("Condition satisfied; merging mechanism into decision");
-				d.processMechanism(this, curEvent);
-			} else
-				_logger.info("condition NOT satisfied");
-		}
-
-		return d;
+	public boolean notifyEvent(IEvent event) {
+		return _triggerEvent.matches(event) && evaluateCondition(false);
 	}
 
-	private synchronized boolean mechanismUpdate() { // TODO improve accuracy to
-		// microseconds?
-		long now = System.currentTimeMillis();
-		long elapsedLastUpdate = now - _lastUpdate;
-		long difference = elapsedLastUpdate - _timestepSize / 1000;
+	@Override
+	public void startSimulation() {
+		_condition.startSimulation();
+		_backupCondition.addFirst(_condition);
+	}
 
-		if (difference < 0) { // Aborting update because the timestep has not
-			// yet passed
-			_logger.trace("[{}] Timestep remaining {} -> timestep has not yet passed", _name, difference);
-			_logger.trace("##############################################################################################################");
-			return false;
+	@Override
+	public void stopSimulation() {
+		if (_backupCondition.isEmpty()) {
+			throw new IllegalStateException("No ongoing simulation. Cannot stop simulation.");
 		}
+		_condition = _backupCondition.getFirst();
+		_condition.stopSimulation();
+	}
 
-		// Correct time substracting possible delay in the execution because
-		// difference between timestep and last time
-		// mechanism was updated will not be exactly the timestepSize
-		_lastUpdate = now - difference;
-		if (difference > _timestepSize) {
-			_logger.warn(
-					"[{}] Timestep difference is larger than mechanism's timestep size => we missed to evaluate at least one timestep!!",
-					_name);
-			_logger.warn("--------------------------------------------------------------------------------------------------------------");
-		}
+	@Override
+	public boolean isSimulating() {
+		return !_backupCondition.isEmpty();
+	}
+
+	private boolean tick() {
+
+		_logger.debug("//////////////////////////////////////////////////////");
+		_logger.debug("[{}] Ticking. Timestep no. {}. Next tick in {}ms", _name, _timestep, _timestepSize);
+
+
+		boolean conditionValue = evaluateCondition(true);
+		_logger.debug("Condition evaluated to: " + conditionValue);
+		_logger.debug("//////////////////////////////////////////////////////");
 
 		_timestep++;
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
-		_logger.debug("[{}] Null-Event updating {}. timestep at interval of {} us", _name, _timestep,
-				_timestepSize);
-
-		boolean conditionValue = _condition.evaluate(null);
-		_logger.debug("conditionValue: {}", conditionValue);
-		_logger.debug("////////////////////////////////////////////////////////////////////////////////////////////////////////////");
 
 		return conditionValue;
 	}
 
+	/**
+	 * Evaluate the condition of this mechanism.
+	 * Important: Make the method call synchronous,
+	 * because both tick() and
+	 * {@link Mechanism#notifyEvent(IEvent, Decision)}
+	 * might call this method.
+	 *
+	 * @return the result of the condition evaluation.
+	 */
+	private synchronized boolean evaluateCondition(boolean endOfTimestep) {
+		return _condition.tick(endOfTimestep);
+	}
+
+	/**
+	 * Makes this thread sleep for the specified amount of
+	 * milliseconds. The method returns true, if the sleep
+	 * was successful, i.e. if it was not interrupted.
+	 *
+	 * This sleep() might get interrupted due to a call
+	 * to pause().
+	 *
+	 * 2014/11/07 FK
+	 *
+	 * @param millis the number of milliseconds
+	 * @return true, if the sleep was not interrupted.
+	 */
+	private boolean sleep(long millis) {
+		if (millis <= 0) {
+			return true;
+		}
+		try {
+			_logger.debug("Sleeping {}ms (out of requested {}ms).", millis, _timestepSize);
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			if (!_paused.get()) {
+				_interrupted.set(true);
+			}
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Initializes the firstTick attribute.
+	 * Important: Call this method in the main run() loop
+	 * rather than in the constructor, because the in the
+	 * distributed case this value might end up later in
+	 * the distributed database.
+	 */
+	private void initFirstTick() {
+		if (_firstTick == Long.MIN_VALUE) {
+			_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
+		}
+
+		if (_firstTick == Long.MIN_VALUE) {
+			_firstTick = System.currentTimeMillis() - _timestepSize;
+			Threading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
+		}
+	}
+
+	private void initLastTick() {
+		long now = System.currentTimeMillis();
+		_lastTick = now - (now - _firstTick) % _timestepSize;
+		_timestep = 1 + (now - _firstTick) / _timestepSize;
+	}
+
+	/**
+	 * Main run method. Rewritten on 2014/11/10.
+	 *
+	 * The old implementation of this run() method was wrong.
+	 * The overhead for performing the policy evaluation was not
+	 * considered in the sleep()s in-between policy evaluations.
+	 * The result was that the evaluated time interval and the
+	 * actual system time drifted further and further. Tests
+	 * revealed that this new implementation is not subject to
+	 * such a phenomenon. The (im)precision of this new implementation
+	 * (with debug output enabled) is roughly 1 (one) millisecond.
+	 *
+	 * 2014/11/10 FK
+	 */
 	@Override
 	public void run() {
-		long sleepValue = _timestepSize / 1000;
-		_logger.info("Started mechanism update thread usleep={} ms", sleepValue);
+		_logger.info("Starting mechanism tick thread ({}ms).", _timestepSize);
 
-		_lastUpdate = System.currentTimeMillis();
-		_condition.operator.initOperatorForMechanism(this);
+		initFirstTick();
+		initLastTick();
 
-		while (!_interrupted) {
-			try {
-				boolean mechanismValue = mechanismUpdate();
-				if (mechanismValue) {
-					_logger.info("Mechanism condition satisfied; triggered optional executeActions");
-					for (IPdpExecuteAction execAction : getExecuteAsyncActions()) {
-						if (execAction.getProcessor().equals("pep"))
-							_logger.warn("Timetriggered execution of executeAction [{}] not possible with processor PEP",
-									execAction.getName());
-						else {
-							_logger.debug("Execute asynchronous action [{}]", execAction.getName());
-							_pxpManager.execute(execAction, false);
+		while (!_interrupted.get()) {
+
+			/*
+			 * Calculate the relative amount of time (in milliseconds)
+			 * that has passed during the last iteration. The result
+			 * is the amount of time that passed during the last tick()
+			 * and all associated overhead within this method.
+			 */
+			if (!sleep(_lastTick + _timestepSize - System.currentTimeMillis())) {
+				/*
+				 * Sleep was interrupted and returned false.
+				 * There are two reasons why this might happen:
+				 * (1) The mechanism was revoked.
+				 * (2) The mechanism was set to pause.
+				 */
+
+				try {
+					synchronized (_pausedLock) {
+						/*
+						 * If the mechanism was paused, wait for
+						 * the pause to be released.
+						 */
+						while (_paused.get()) {
+							_pausedLock.wait();
 						}
 					}
 				}
-
-				if (_interrupted) {
-					_logger.info("Mechanism [{}] thread was interrupted. terminating...", _name);
-					return;
+				catch (InterruptedException e) {
+					if (!_paused.get()) {
+						/*
+						 * Once the pause is released, re-initialize
+						 * lastTick variable.
+						 */
+						initLastTick();
+					}
+					/*
+					else {
+						// In this cases the Mechanism was revoked (_interrupted.get() == true),
+						// which will result in termination of this method's main loop.
+					}
+					*/
 				}
 
-				Thread.sleep(sleepValue);
-			} catch (InterruptedException e) {
-				_logger.info("[InterruptedException] Mechanism [{}] was interrupted. terminating...", _name);
+				/*
+				 * Continue to next loop iteration.
+				 */
+				continue;
 			}
+
+			/*
+			 * Perform the actual tick().
+			 */
+			_logger.info("Ticking at time {}.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(System.currentTimeMillis())));
+			if (tick()) {
+				_logger.info("Triggering optional executeActions");
+				for (final ExecuteAction execAction : getExecuteAsyncActions()) {
+					/*
+					 * Being asynchronous execute actions, their
+					 * execution can be parallelized.
+					 */
+					Threading.instance().execute(() -> _pdp.executeAction(execAction, false));
+				}
+			}
+
+			/*
+			 *  Adjust lastTick value. Do this _after_
+			 *  tick(), because condition evaluation
+			 *  will rely on its old value.
+			 */
+			_lastTick += _timestepSize;
+
+//			setChanged();
+//			notifyObservers(END_OF_TIMESTEP);
+		}
+	}
+
+	/**
+	 * Pauses this mechanism.
+	 *
+	 * Subsequent unpausing causes an
+	 * immediate re-evaluation (i.e. tick())
+	 *
+	 * 2014/11/07 FK
+	 */
+	public void pause() {
+		synchronized (_pausedLock) {
+			_paused.set(true);
+
+			/*
+			 *  Send an interrupt to this thread,
+			 *  is the mechanism might currently
+			 *  be sleeping. We want to wake it up.
+			 */
+			_thisThread.interrupt();
+		}
+	}
+
+	/**
+	 * Unpauses this mechanism.
+	 *
+	 * 2014/11/07 FK
+	 */
+	public void unpause() {
+		synchronized (_pausedLock) {
+			_paused.set(false);
+			_pausedLock.notify();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this.getClass())
+		return MoreObjects.toStringHelper(this.getClass())
 				.add("_name", _name)
 				.add("_description", _description)
 				.add("_timestepSize", _timestepSize)
-				.add("_lastUpdate", _lastUpdate)
+				.add("_paused", _paused)
+				.add("_firstTick", _firstTick)
+				.add("_lastTick", _lastTick)
 				.add("_timestep", _timestep)
 				.add("_triggerEvent", _triggerEvent)
 				.add("_condition", _condition)
@@ -252,12 +394,10 @@ public class Mechanism implements IPdpMechanism {
 				.toString();
 	}
 
-	@Override
-	public List<IPdpExecuteAction> getExecuteActions() {
+	public List<ExecuteAction> getExecuteActions() {
 		return _executeAsyncActions;
 	}
 
-	@Override
 	public PolicyDecisionPoint getPolicyDecisionPoint() {
 		return _pdp;
 	}
@@ -275,5 +415,25 @@ public class Mechanism implements IPdpMechanism {
 	@Override
 	public int hashCode() {
 		return Objects.hash(_name, _policyName);
+	}
+
+	public void setThread(Thread t) {
+		_thisThread = t;
+	}
+
+	public void setFirstTick(long firstTick) {
+		if (_firstTick != Long.MIN_VALUE) {
+			throw new IllegalStateException("Cannot set firstTick more than once.");
+		}
+		_firstTick = firstTick;
+	}
+
+	public long getFirstTick() {
+		return _firstTick;
+	}
+
+	@Override
+	public long getTimestep() {
+		return _timestep;
 	}
 }

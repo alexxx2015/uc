@@ -1,21 +1,26 @@
 package de.tum.in.i22.uc.cm.datatypes.basic;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
 public class ResponseBasic implements IResponse {
-	private IStatus _authorizationAction = null;
-	private List<IEvent> _executeActions = null;
-	private IEvent _modifiedEvent = null;
+	private final IStatus _authorizationAction;
+	private final Collection<IEvent> _executeActions;
+	private final IEvent _modifiedEvent;
 
-	public ResponseBasic(IStatus authorizationAction,
-			List<IEvent> executeActions, IEvent modifiedEvent) {
-		super();
+	public ResponseBasic(IStatus authorizationAction) {
+		this(authorizationAction, Collections.emptyList(), null);
+	}
+
+	public ResponseBasic(IStatus authorizationAction, Collection<IEvent> executeActions, IEvent modifiedEvent) {
 		_authorizationAction = authorizationAction;
 		_executeActions = executeActions;
 		_modifiedEvent = modifiedEvent;
@@ -28,8 +33,11 @@ public class ResponseBasic implements IResponse {
 	}
 
 	@Override
-	public List<IEvent> getExecuteActions() {
-		return Collections.unmodifiableList(_executeActions);
+	public Collection<IEvent> getExecuteActions() {
+		if (_executeActions == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableCollection(_executeActions);
 	}
 
 	@Override
@@ -37,10 +45,15 @@ public class ResponseBasic implements IResponse {
 		return _modifiedEvent;
 	}
 
+	@Override
+	public boolean isAuthorizationAction(EStatus status) {
+		return _authorizationAction == null ? false : _authorizationAction.isStatus(status);
+	}
+
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_authorizationAction", _authorizationAction)
 				.add("_executeAction", _executeActions)
 				.add("_modifiedEvent", _modifiedEvent)

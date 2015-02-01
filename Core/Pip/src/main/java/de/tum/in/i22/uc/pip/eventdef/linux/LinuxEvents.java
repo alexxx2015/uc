@@ -3,36 +3,30 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
-import de.tum.in.i22.uc.cm.datatypes.linux.RemoteSocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SharedFiledescr;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
-import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
+import de.tum.in.i22.uc.pip.distribution.DistributedPipStatus;
 import de.tum.in.i22.uc.pip.eventdef.linux.ShutdownEventHandler.Shut;
 import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
-import de.tum.in.i22.uc.pip.extensions.distribution.DistributedPipStatus;
 
 /**
  * This class provides functionalities used by multiple events originating from a Linux PEP.
@@ -93,11 +87,15 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 
 		_informationFlowModel.removeName(name);
 
-		if (cont instanceof SocketContainer) {
-			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
-				shutdownSocket((SocketContainer) cont, Shut.RDWR);
-			}
-		}
+		/*
+		 * Don't do this as of now: The container might have been shared with
+		 * child processes. But: we need to do some cleanup at some point. To be fixed.
+		 */
+//		if (cont instanceof SocketContainer) {
+//			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
+//				shutdownSocket((SocketContainer) cont, Shut.RDWR);
+//			}
+//		}
 	}
 
 	void shutdownSocket(SocketContainer cont, Shut how) {
@@ -129,31 +127,31 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 			}
 		}
 
-		for (SocketName n : allSocketNames) {
-			IContainer remoteContainer = _informationFlowModel.getContainer(n);
-			if (remoteContainer instanceof RemoteSocketContainer) {
-				notifyRemoteShutdown((RemoteSocketContainer) remoteContainer, how);
-			}
-		}
+//		for (SocketName n : allSocketNames) {
+//			IContainer remoteContainer = _informationFlowModel.getContainer(n);
+//			if (remoteContainer instanceof RemoteSocketContainer) {
+//				notifyRemoteShutdown((RemoteSocketContainer) remoteContainer, how);
+//			}
+//		}
 	}
 
-	private static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut how) {
-		SocketName remoteName = remoteContainer.getSocketName();
-
-		Map<String,String> params = new HashMap<String,String>();
-
-		params.put(EventBasic.PEP_PARAMETER_KEY, "Linux");
-		params.put("localIP", remoteName.getRemoteIP());
-		params.put("localPort", String.valueOf(remoteName.getRemotePort()));
-		params.put("remoteIP", remoteName.getLocalIP());
-		params.put("remotePort", String.valueOf(remoteName.getLocalPort()));
-
-		params.put("how", how.toString());
-
-		// TODO
-//		distributedPipManager.update(remoteContainer.getLocation(),
-//				new EventBasic("Shutdown", params, true));
-	}
+//	private static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut how) {
+//		SocketName remoteName = remoteContainer.getSocketName();
+//
+//		Map<String,String> params = new HashMap<String,String>();
+//
+//		params.put(EventBasic.PEP_PARAMETER_KEY, "Linux");
+//		params.put("localIP", remoteName.getRemoteIP());
+//		params.put("localPort", String.valueOf(remoteName.getRemotePort()));
+//		params.put("remoteIP", remoteName.getLocalIP());
+//		params.put("remotePort", String.valueOf(remoteName.getLocalPort()));
+//
+//		params.put("how", how.toString());
+//
+//		// TODO
+////		distributedPipManager.update(remoteContainer.getLocation(),
+////				new EventBasic("Shutdown", params, true));
+//	}
 
 
 	IStatus copyDataTransitive(IContainer srcCont, IContainer dstCont) {
@@ -188,7 +186,8 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 					// ... there is exactly one alias to it
 					IContainer c = aliases.iterator().next();
 
-					if (c instanceof RemoteSocketContainer) {
+					if (c instanceof SocketContainer) {
+						_logger.info("Incoming remote data flow.");
 
 						/*
 						 * There is _incoming_ remote data flow.
@@ -201,13 +200,13 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 
 						_informationFlowModel.addDataTransitively(data, dstCont);
 
-						Location localLocation = LocalLocation.getInstance();
-						Location remoteLocation = ((RemoteSocketContainer) c).getLocation();
+//						// FIXME Is this necessary?
+//						if (!sameResponsibleLocation((SocketContainer) c, (SocketContainer) srcCont)) {
+//							remoteDataFlow = new RemoteDataFlowInfo();
+//							remoteDataFlow.addFlow((SocketContainer) c, (SocketContainer) srcCont, data);
+//						}
 
-						remoteDataFlow = new RemoteDataFlowInfo(remoteLocation);
-						remoteDataFlow.addFlow(localLocation, localLocation, data);
-
-						return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
+//						return new DistributedPipStatus(remoteDataFlow);
 					}
 
 					break;
@@ -222,7 +221,8 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		for (IContainer c : _informationFlowModel.getAliasTransitiveReflexiveClosure(dstCont)) {
 			_informationFlowModel.addData(data, c);
 
-			if (c instanceof RemoteSocketContainer) {
+			if (c instanceof SocketContainer && !sameResponsibleLocation((SocketContainer) c, IPLocation.localIpLocation)) {
+				_logger.info("Outgoing remote data flow.");
 
 				/*
 				 * In case we are copying to a RemoteSocketContainer, we
@@ -230,11 +230,15 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 				 * we assemble the information about which data has flown remotely.
 				 */
 				if (remoteDataFlow == null) {
-					remoteDataFlow = new RemoteDataFlowInfo(LocalLocation.getInstance());
+					remoteDataFlow = new RemoteDataFlowInfo();
 				}
 
-				RemoteSocketContainer rsc = (RemoteSocketContainer) c;
-				remoteDataFlow.addFlow(rsc.getLocation(), rsc.getSocketName(), data);
+				for (IContainer aliasCont : _informationFlowModel.getAliasesTo(c)) {
+					if (aliasCont instanceof SocketContainer
+							&& !sameResponsibleLocation((SocketContainer) aliasCont, (SocketContainer) c)) {
+						remoteDataFlow.addFlow((SocketContainer) aliasCont, (SocketContainer) c, data);
+					}
+				}
 			}
 		}
 
@@ -243,7 +247,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		 * so, return a corresponding status.
 		 */
 		if (remoteDataFlow != null && !remoteDataFlow.isEmpty()) {
-			return DistributedPipStatus.createRemoteDataFlowStatus(remoteDataFlow);
+			return new DistributedPipStatus(remoteDataFlow);
 		}
 
 		return STATUS_OKAY;
@@ -263,5 +267,17 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		}
 
 		return result;
+	}
+
+	protected boolean sameResponsibleLocation(SocketContainer s1, SocketContainer s2) {
+		return s1.getResponsibleLocation().getHost().equals(s2.getResponsibleLocation().getHost());
+	}
+
+	protected boolean sameResponsibleLocation(SocketContainer s1, IPLocation loc) {
+		return s1.getResponsibleLocation().getHost().equals(loc.getHost());
+	}
+
+	protected boolean sameResponsibleLocation(IPLocation l1, IPLocation l2) {
+		return l1.getHost().equals(l2.getHost());
 	}
 }

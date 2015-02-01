@@ -2,19 +2,21 @@ package de.tum.in.i22.uc.cm.datatypes.basic;
 
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 
 /**
  * A container can have several representations.
  * PipName is a representation of the container.
- * @author Stoimenov
+ * @author Stoimenov, Florian Kelbert
  *
  */
 public class NameBasic implements IName {
 	private final String _name ;
 
 	public NameBasic(String name) {
-		this._name = name;
+		_name = name;
 	}
 
 	@Override
@@ -24,7 +26,7 @@ public class NameBasic implements IName {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.toString();
 	}

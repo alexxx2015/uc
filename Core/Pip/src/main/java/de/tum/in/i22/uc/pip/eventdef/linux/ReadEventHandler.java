@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -21,9 +22,9 @@ import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 /**
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
 public class ReadEventHandler extends LinuxEvents {
 
@@ -83,7 +84,7 @@ public class ReadEventHandler extends LinuxEvents {
 		Set<IContainer> transitiveReflexiveClosure = null;
 
 		IStatus res = _messageFactory.createStatus(EStatus.OKAY);
-		
+
 		if (direction.equals(EBehavior.INTRA)
 				|| direction.equals(EBehavior.OUT)
 				|| direction.equals(EBehavior.INTRAOUT)) {
@@ -147,7 +148,7 @@ public class ReadEventHandler extends LinuxEvents {
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of ReadFile event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
-			return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+			return Pair.of(EBehavior.INTRA, null);
 		}
 
 		Map<String, Object> attributes;
@@ -168,7 +169,7 @@ public class ReadEventHandler extends LinuxEvents {
 		if (existingScope != null) {
 			_logger.debug("Test succeeded. Generic binary App is reading file "
 					+ filename);
-			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
+			return Pair.of(EBehavior.OUT, existingScope);
 		} else {
 			_logger.debug("Test failed. Generic binary App is NOT reading file "
 					+ filename);
@@ -178,7 +179,7 @@ public class ReadEventHandler extends LinuxEvents {
 		// behave as INTRA
 		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");
 
-		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+		return Pair.of(EBehavior.INTRA, null);
 	}
 
 }

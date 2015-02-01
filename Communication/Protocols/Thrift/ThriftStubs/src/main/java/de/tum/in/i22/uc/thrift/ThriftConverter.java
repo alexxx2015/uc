@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.PtpResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -27,9 +28,11 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.thrift.types.TAttribute;
 import de.tum.in.i22.uc.thrift.types.TAttributeName;
@@ -37,6 +40,7 @@ import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TName;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
@@ -134,16 +138,35 @@ public final class ThriftConverter {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
+		IEvent modifiedEvent = null;
+		if (r.isSetModifiedEvent()) {
+			modifiedEvent = ThriftConverter.fromThrift(r.getModifiedEvent());
+		}
+
 		return new ResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
 				ThriftConverter.fromThriftEventList(r.getExecuteEvents()),
-				ThriftConverter.fromThrift(r.getModifiedEvents()));
+				modifiedEvent);
 	}
 
+	public static IPtpResponse fromThrift(TPtpResponse r) {
+		if (r == null) {
+			_logger.debug("TPtpResponse was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
+		}
+
+		return new PtpResponseBasic(ThriftConverter.fromThrift(r.getStatus()),
+				ThriftConverter.fromThrift(r.getPolicy()), r.getMessage());
+	}
 
 	public static Location fromThrift(String location) {
 		if (location == null || location.equals("")) {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
+
+		if (location.equals(LocalLocation.local)) {
+			return IPLocation.localIpLocation;
+		}
+
 		return new IPLocation(location);
 	}
 
@@ -273,25 +296,40 @@ public final class ThriftConverter {
 			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
 
-		TResponse res= new TResponse(ThriftConverter.toThrift(r
-				.getAuthorizationAction()));
-		List<TEvent> execTList = new LinkedList<TEvent>();
+		TResponse res= new TResponse(ThriftConverter.toThrift(r.getAuthorizationAction()));
+
+		List<TEvent> execTList = new LinkedList<>();
 		for (IEvent ev : r.getExecuteActions()){
 			execTList.add(ThriftConverter.toThrift(ev));
 		}
 		res.setExecuteEvents(execTList);
 		res.setExecuteEventsIsSet(true);
-		res.setModifiedEvents(ThriftConverter.toThrift(r.getModifiedEvent()));
-		res.setModifiedEventsIsSet(true);
+
+		if (r.getModifiedEvent() == null) {
+			res.setModifiedEventIsSet(false);
+		}
+		else {
+			res.setModifiedEvent(ThriftConverter.toThrift(r.getModifiedEvent()));
+			res.setModifiedEventIsSet(true);
+		}
+
+
 
 		return res;
 	}
 
-	public static String toThrift(Location location) {
-		if (location == null) {
-			return "";
+	public static TPtpResponse toThrift(IPtpResponse r) {
+		if (r == null) {
+			_logger.debug("IPtpResponse was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
 		}
-		return location.asString();
+
+		TPtpResponse res = new TPtpResponse(toThrift(r.getPolicy()), toThrift(r.getStatus()), r.getMessage());
+		return res;
+	}
+
+	public static String toThrift(Location location) {
+		return location == null ? "" : location.asString();
 	}
 
 	public static TStatus toThrift(IStatus s) {
@@ -448,11 +486,12 @@ public final class ThriftConverter {
 	}
 
 	public static TXmlPolicy toThrift(XmlPolicy xmlPolicy) {
-		return new TXmlPolicy(xmlPolicy.getName(), xmlPolicy.getXml());
+		return new TXmlPolicy(xmlPolicy.getName(), xmlPolicy.getXml(), xmlPolicy.getDescription(),
+				xmlPolicy.getTemplateId(), xmlPolicy.getTemplateXml(), xmlPolicy.getDataClass());
 	}
 
 	public static XmlPolicy fromThrift(TXmlPolicy xMLPolicy) {
-		return new XmlPolicy(xMLPolicy.name, xMLPolicy.xml);
+		return new XmlPolicy(xMLPolicy.name, xMLPolicy.xml, xMLPolicy.description, xMLPolicy.templateId, xMLPolicy.templateXml, xMLPolicy.dataClass);
 	}
 
 	public static Set<XmlPolicy> fromThriftPolicySet(Set<TXmlPolicy> policies) {
@@ -462,7 +501,7 @@ public final class ThriftConverter {
 
 		Set<XmlPolicy> result = new HashSet<>();
 		for (TXmlPolicy p : policies) {
-			result.add(new XmlPolicy(p.name, p.xml));
+			result.add(new XmlPolicy(p.name, p.xml, p.description, p.templateId, p.templateXml, p.dataClass));
 		}
 		return result;
 	}
@@ -474,7 +513,7 @@ public final class ThriftConverter {
 
 		Set<TXmlPolicy> result = new HashSet<>();
 		for (XmlPolicy p : policies) {
-			result.add(new TXmlPolicy(p.getName(), p.getXml()));
+			result.add(new TXmlPolicy(p.getName(), p.getXml(), p.getDescription(), p.getTemplateId(), p.getTemplateXml(), p.getDataClass()));
 		}
 		return result;
 	}

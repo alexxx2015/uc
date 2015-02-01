@@ -16,5 +16,6 @@
 		<module>Pdp</module>
 		<module>Pip</module>
 		<module>Pmp</module>
+		<module>Ptp</module>
 	</modules>
 </project>

@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
 import de.tum.in.i22.uc.thrift.types.TName;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TPxpSpec;
 import de.tum.in.i22.uc.thrift.types.TResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
@@ -77,11 +78,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus deployPolicyURI(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public Map<String, Set<String>> listMechanisms() throws TException {
 		return _pdpServer.listMechanisms();
 	}
@@ -95,26 +91,6 @@ TAny2Any.Iface {
 	@Override
 	public TData newInitialRepresentation(TName container) throws TException {
 		return _pipServer.newInitialRepresentation(container);
-	}
-
-	@Override
-	public boolean hasAllData(Set<TData> data) throws TException {
-		return _pipServer.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<TData> data) throws TException {
-		return _pipServer.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<TName> names) throws TException {
-		return _pipServer.hasAllContainers(names);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<TName> names) throws TException {
-		return _pipServer.hasAnyContainer(names);
 	}
 
 	@Override
@@ -173,37 +149,24 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		return _pmpServer.informRemoteDataFlow(srcAddress, srcPort, dstAddress,
-				dstPort, data);
-	}
-
-	@Override
-	public Set<String> whoHasData(Set<TData> data, int recursionDepth)
-			throws TException {
-		return _pipServer.whoHasData(data, recursionDepth);
-	}
-
-	@Override
 	public TStatus revokePolicyPmp(String policyName) throws TException {
-		return _pdpServer.revokePolicy(policyName);
+		return _pmpServer.revokePolicyPmp(policyName);
 	}
 
 	@Override
 	public TStatus revokeMechanismPmp(String policyName, String mechName)
 			throws TException {
-		return _pdpServer.revokeMechanism(policyName, mechName);
+		return _pmpServer.revokeMechanismPmp(policyName, mechName);
 	}
 
 	@Override
 	public TStatus deployPolicyURIPmp(String policyFilePath) throws TException {
-		return _pdpServer.deployPolicyURI(policyFilePath);
+		return _pmpServer.deployPolicyURIPmp(policyFilePath);
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanismsPmp() throws TException {
-		return _pdpServer.listMechanisms();
+		return _pmpServer.listMechanismsPmp();
 	}
 
 	@Override
@@ -255,14 +218,29 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus specifyPolicyFor(Set<TContainer> representations,
-			String dataClass) throws TException {
-		return _pmpServer.specifyPolicyFor(representations, dataClass);
+	public TData getDataFromId(String id) throws TException {
+		return _pipServer.getDataFromId(id);
 	}
 
 	@Override
-	public TData getDataFromId(String id) throws TException {
-		return _pipServer.getDataFromId(id);
+	public TPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlPolicy)
+			throws TException {
+		return _pmpServer.translatePolicy(requestId, parameters, xmlPolicy);
+	}
+
+	@Override
+	public TPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, TXmlPolicy xmlDomainModel)
+			throws TException {
+		return _pmpServer.updateDomainModel(requestId, parameters, xmlDomainModel);
+	}
+
+	@Override
+
+	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
+		Set<TXmlPolicy> policies = _pmpServer.listPoliciesPmp();
+		return policies;
 	}
 
 	@Override
@@ -276,4 +254,8 @@ TAny2Any.Iface {
 		return _pipServer.setUpdateFrequency(msec,id);
 	}
 
+	@Override
+	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
+		return _pmpServer.remotePolicyTransfer(xml, from);
+	}
 }

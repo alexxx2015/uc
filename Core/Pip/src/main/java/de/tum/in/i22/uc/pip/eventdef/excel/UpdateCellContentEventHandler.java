@@ -34,20 +34,20 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 		}
 
 		Set<CellName> affectedSet = getSetOfCells(affectedRange);
-		CellName targetCellName = new CellName(target);
+		CellName targetCellName = CellName.create(target);
 		IContainer targetContainer = _informationFlowModel.getContainer(targetCellName);
-		
+
 		if (targetContainer==null){
 			targetContainer = new ContainerBasic();
 			_informationFlowModel.addName(targetCellName, targetContainer, true);
 		}
-			
-		
+
+
 		//delete existing aliases and data
 		_informationFlowModel.removeAllAliasesTo(targetContainer);
 		_informationFlowModel.emptyContainer(targetContainer);
-		
-		
+
+
 		//add the new ones
 		for (CellName c: affectedSet) {
 			IContainer src= _informationFlowModel.getContainer(c);
@@ -58,9 +58,9 @@ public class UpdateCellContentEventHandler extends ExcelEvents {
 			_informationFlowModel.addAlias(src, targetContainer);
 			_informationFlowModel.addDataTransitively(_informationFlowModel.getData(src), targetContainer);
 		}
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
-		
+
 	}
 
 }

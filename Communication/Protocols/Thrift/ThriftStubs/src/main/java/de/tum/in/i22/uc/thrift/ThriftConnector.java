@@ -5,13 +5,15 @@ import java.io.IOException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSSLTransportFactory;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.TcpConnector;
+import de.tum.in.i22.uc.cm.settings.Settings;
 
 /**
  * A class representing a {@link ThriftConnector}, i.e. a {@link TcpConnector}
@@ -44,13 +46,20 @@ public class ThriftConnector<HandleType extends TServiceClient> extends TcpConne
 	@Override
 	public HandleType connect() throws IOException {
 		HandleType handle = null;
-		_transport = new TSocket(_address, _port);
 
 		try {
-			_transport.open();
+			if (Settings.getInstance().isSslEnabled()) {
+				TSSLTransportParameters params = new TSSLTransportParameters();
+				params.setTrustStore(Settings.getInstance().getSslTruststore(), Settings.getInstance().getSslTruststorePassword(), null, null);
+				_transport = TSSLTransportFactory.getClientSocket(_address, _port, 0, params);
+			}
+			else {
+				_transport = new TSocket(_address, _port);
+				_transport.open();
+			}
 			handle = _iface.getConstructor(TProtocol.class).newInstance(new TBinaryProtocol(_transport));
 		} catch (Exception e) {
-			_logger.debug("Failed to establish connection.", e);
+			_logger.debug("Failed to establish connection to " + this + ".");
 			disconnect();
 			throw new IOException(e.getMessage(), e);
 		}
@@ -65,6 +74,4 @@ public class ThriftConnector<HandleType extends TServiceClient> extends TcpConne
 			_transport = null;
 		}
 	}
-
-
 }

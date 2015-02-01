@@ -1,5 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.linux;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 
 /**
@@ -50,7 +52,7 @@ public class FiledescrName extends NameBasic implements IProcessRelativeName, IC
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_pid", _pid)
 				.add("_fd", _fd)

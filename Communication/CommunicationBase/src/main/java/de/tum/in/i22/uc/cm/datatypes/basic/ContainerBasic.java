@@ -11,6 +11,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -97,7 +99,7 @@ public class ContainerBasic implements IContainer {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_id", _id).toString();
 	}
 

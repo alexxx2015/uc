@@ -7,7 +7,6 @@ package de.tum.in.i22.uc.pip.eventdef.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -26,7 +25,7 @@ public class TestEventEventHandler extends BaseEventHandler {
 	public void reset(){
 		super.reset();
 	}
-	
+
 	@Override
 	protected IStatus update() {
 
@@ -35,12 +34,16 @@ public class TestEventEventHandler extends BaseEventHandler {
 		// This event is used to delete an initial representation in the pdp
 		// test.s
 
+//
 //		_logger.debug("TestEventEventHandler. Trying to empty initial container");
-//		_logger.debug("As of now, initial container contains the following ["+basicIfModel.getData(new NameBasic("initialContainer")));
+//		_logger.debug("As of now, initial container contains the following ["
+//				+ _informationFlowModel.getData(new NameBasic("initialContainer")));
 //
 //		_informationFlowModel.emptyContainer(new NameBasic("initialContainer"));
 //
-//		_logger.debug("After emptying it, initial container contains the following ["+basicIfModel.getData(new NameBasic("initialContainer")));
+//		_logger.debug("After emptying it, initial container contains the following ["
+//				+ _informationFlowModel.getData(new NameBasic("initialContainer")));
+
 
 		//
 		return _messageFactory.createStatus(EStatus.OKAY);

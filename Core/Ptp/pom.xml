@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>UsageControlSystem</groupId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+		<artifactId>Core</artifactId>
+	</parent>
+
+	<artifactId>Ptp</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rita</groupId>
+			<artifactId>rita</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${basedir}${file.separator}lib${file.separator}rita.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>rita.support</groupId>
+			<artifactId>rita.support</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${basedir}${file.separator}lib${file.separator}rita.support.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>core1.0</groupId>
+			<artifactId>core1.0</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${basedir}${file.separator}lib${file.separator}core1.0.jar</systemPath>
+		</dependency>
+		
+		
+		<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
+			* -->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+
+				<executions>
+					<execution>
+						<!-- Clean up nologging -->
+						<id>clean-nologging</id>
+						<phase>clean</phase>
+					</execution>
+
+					<execution>
+						<!-- Change the source code such that all logging methods will not be executed.
+							This is done _before_ compilation phase. -->
+						<id>do-nologging</id>
+						<phase>process-sources</phase>
+					</execution>
+
+					<!-- Undo changes to the source code for disabling logging.
+						This is done _after_ compilation phase and _before_ test-compilation phase.
+						THUS: Logging is _NOT_ disabled for test classes. -->
+					<execution>
+						<id>undo-nologging</id>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		
+	</build>
+
+	<name>Ptp</name>
+	<description>Policy Translation Point</description>
+</project>

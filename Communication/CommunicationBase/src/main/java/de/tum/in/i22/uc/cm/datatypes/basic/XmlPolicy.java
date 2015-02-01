@@ -10,27 +10,115 @@ import java.util.Objects;
  * passing around strings).
  *
  * @author Florian Kelbert
- *
+ * <br>extended by Ciprian Lucaci
  */
 public class XmlPolicy {
-	private final String _name;
-	private final String _xml;
+	private String _name;
+	private String _xml;
+
+	private long _firstTick;
+
+	/**
+	 * The natural language description with all the param. markers removed.
+	 */
+	private String _description;
+	/**
+	 * Id of the template from the configuration file or database of templates.
+	 */
+	private String _templateId;
+	/**
+	 * Each policy can have a template which is translated by the PTP
+	 * and instantiated by actual values and ECA rules.
+	 */
+	private String _templateXml;
+	/**
+	 * Each policy is applied to a particular data class.
+	 */
+	private String _dataClass;
 
 	public XmlPolicy(String name, String xml) {
+		this(name, xml, "", "", "", "");
+	}
+
+	public XmlPolicy(String name, String xml, String description, String templateId, String templateXML, String dataClass) {
 		if (name == null || xml == null) {
 			throw new RuntimeException("Parameters might not be null.");
 		}
 
 		_name = name;
 		_xml = xml;
+
+		_description = description;
+		_templateId = templateId;
+		_templateXml = templateXML;
+		_dataClass = dataClass;
 	}
 
 	public String getName() {
 		return _name;
 	}
 
+	public void setName(String name){
+		if(name == null)
+			name = "";
+		_name = name;
+	}
+
+	public long getFirstTick() {
+		return _firstTick;
+	}
+
+	public void setFirstTick(long firstTick) {
+		_firstTick = firstTick;
+	}
+
 	public String getXml() {
 		return _xml;
+	}
+	public void setXml(String xml){
+		if(xml == null)
+			xml = "";
+		_xml = xml;
+	}
+
+	public String getDescription() {
+		return _description;
+	}
+
+	public void setDescription(String description) {
+		if(description == null)
+			description = "";
+		_description = description;
+	}
+
+	public String getTemplateId() {
+		return _templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		if(templateId == null)
+			templateId = "";
+		_templateId = templateId;
+	}
+
+	public String getTemplateXml() {
+		return _templateXml;
+	}
+
+	public void setTemplateXml(String templateXml) {
+		if(templateXml == null)
+			templateXml = "";
+		_templateXml = templateXml;
+	}
+
+	public String getDataClass() {
+		return _dataClass;
+	}
+
+	public void setDataClass(String dataClass) {
+		if(dataClass == null)
+			dataClass = "";
+		_dataClass = dataClass;
 	}
 
 	@Override
@@ -51,5 +139,11 @@ public class XmlPolicy {
 	@Override
 	public String toString() {
 		return _name;
+	}
+
+	@Override
+	public XmlPolicy clone(){
+		XmlPolicy clone = new XmlPolicy(_name, _xml, _description, _templateId, _templateXml, _dataClass);
+		return clone;
 	}
 }

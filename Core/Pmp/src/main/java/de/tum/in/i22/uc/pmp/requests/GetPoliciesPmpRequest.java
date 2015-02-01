@@ -12,10 +12,9 @@ public class GetPoliciesPmpRequest extends PmpRequest<Set<XmlPolicy>> {
 	public GetPoliciesPmpRequest(IData data) {
 		_data = data;
 	}
-
+	
 	@Override
 	public Set<XmlPolicy> process(PmpProcessor processor) {
 		return processor.getPolicies(_data);
 	}
-
 }

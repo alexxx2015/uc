@@ -6,45 +6,48 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class EventBasic implements IEvent, Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4317254908091570374L;
 	public static final String PEP_PARAMETER_KEY = Settings.getInstance().getPep();
 
-	private String _name = null;
-	private String _pep = null;
+	private final String _name;
+	private String _pep;
 	private boolean _allowImpliesActual = false;
-	private boolean _isActual = false;
+	private final boolean _isActual;
 	private final Map<String, String> _parameters = new HashMap<>();
 	private long _timestamp;
 
-	public EventBasic(String name, Map<String, String> map) {
+	public EventBasic(String name, Map<String, String> params) {
+		this(name, params, false, 0);
+	}
+
+	public EventBasic(String name, Map<String, String> params, boolean isActual) {
+		this(name, params, isActual, 0);
+	}
+
+	public EventBasic(String name, Map<String, String> params, boolean isActual, long timeStamp) {
 		_name = name;
-		if (map != null) {
-			_parameters.putAll(map);			
+		if (params != null) {
+			_parameters.putAll(params);
 			_pep = _parameters.get(PEP_PARAMETER_KEY);
-			
-			// If the event has a AIA parameter, use it
-			String AIA=_parameters.get(Settings.PROP_NAME_allowImpliesActual);
-			if (AIA!=null) _allowImpliesActual = Boolean.valueOf(AIA);
-			//otherwise, fallback to Setting default value
-			else  _allowImpliesActual = Boolean.valueOf(Settings.getInstance().getAllowImpliesActual());
+
+			/*
+			 * If the event has an allowImpliesActual parameter, use it.
+			 * Otherwise, fall back to default value.
+			 */
+			String allowImpliesActual = _parameters.get(Settings.PROP_NAME_allowImpliesActual);
+			_allowImpliesActual = allowImpliesActual != null
+					? Boolean.valueOf(allowImpliesActual)
+					: Settings.getInstance().getAllowImpliesActual();
 		}
-	}
 
-	public EventBasic(String name, Map<String, String> map, boolean isActual) {
-		this(name, map);
+		_timestamp = timeStamp;
 		_isActual = isActual;
-	}
-
-	public EventBasic(String name, Map<String, String> map, boolean isActual, long timeStamp) {
-		this(name, map, isActual);
-		_timestamp=timeStamp;
 	}
 
 	@Override
@@ -73,8 +76,13 @@ public class EventBasic implements IEvent, Serializable {
 	}
 
 	@Override
+	public String getParameterValue(String name) {
+		return name == null ? null : _parameters.get(name);
+	}
+
+	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_name", _name)
 				.add("_pep", _pep)
 				.add("_isActual", _isActual)
@@ -96,7 +104,6 @@ public class EventBasic implements IEvent, Serializable {
 		}
 		return isEqual;
 	}
-
 
 	@Override
 	public int hashCode() {

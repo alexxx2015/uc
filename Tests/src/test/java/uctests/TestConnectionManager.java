@@ -4,11 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.ConnectionManager;
-import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -84,7 +81,7 @@ public class TestConnectionManager extends GenericTest{
 	@Test
 	public void testMaxSize() throws Exception {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
-		
+
 		/*
 		 * This test checks whether old connections are in fact removed
 		 * from the ConnectionManager once its maximum size is reached.
@@ -93,7 +90,7 @@ public class TestConnectionManager extends GenericTest{
 
 		// create a new connection manager of size 2 and start the pdp server
 		ConnectionManager<Any2PdpClient> manager = new ConnectionManager<>(2);
-		
+
 		/*
 		 * Start three servers
 		 */

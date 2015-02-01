@@ -6,7 +6,6 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -47,10 +46,6 @@ public class KillProcessEventHandler extends BaseEventHandler {
 			_informationFlowModel.removeAllAliasesTo(processContainer);
 			_informationFlowModel.remove(processContainer);
 
-			for (IName nm : _informationFlowModel.getAllNamingsFrom(processContainer)) {
-				_informationFlowModel.removeName(nm);
-			}
-			
 			JavaEventHandler.killProcess(pid, _informationFlowModel);
 		}
 

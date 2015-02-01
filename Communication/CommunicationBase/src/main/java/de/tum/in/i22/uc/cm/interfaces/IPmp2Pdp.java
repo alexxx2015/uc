@@ -25,9 +25,6 @@ public interface IPmp2Pdp {
 	@AThriftMethod(signature="Types.TStatus revokeMechanism (1: string policyName, 2: string mechName)")
 	public IStatus revokeMechanism(String policyName, String mechName);
 
-	@AThriftMethod(signature="Types.TStatus deployPolicyURI (1: string policyFilePath)")
-	public IStatus deployPolicyURI(String policyFilePath);
-
 	@AThriftMethod(signature="Types.TStatus deployPolicyXML (1: Types.TXmlPolicy XMLPolicy)")
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy);
 

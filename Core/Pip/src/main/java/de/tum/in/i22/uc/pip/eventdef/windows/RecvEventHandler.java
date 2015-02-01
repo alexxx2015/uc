@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -33,7 +34,7 @@ public class RecvEventHandler extends WindowsEvents {
 		String socketHandle = null;
 		String processName = null;
 		String pidStr = null;
-		
+
 		try {
 			socketHandle = getParameterValue("SocketHandle");
 			processName = getParameterValue("ProcessName");
@@ -96,32 +97,32 @@ public class RecvEventHandler extends WindowsEvents {
 			IContainer intermediateCont = _informationFlowModel.getContainer(new NameBasic(scope.getId()));
 			_informationFlowModel.addData(dataSet, intermediateCont);
 		}
-		
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 
-	
-	
+
+
 	@Override
 	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
 		_logger.debug("XBehav function of Recv");
 		String socketHandle = null;
 		String pid = null;
-		
+
 		try {
 			socketHandle = getParameterValue("SocketHandle");
 			pid = getParameterValue("PID");
 		} catch (ParameterNotFoundException e) {
 			_logger.error("Error parsing parameters of Recv event. falling back to default INTRA layer behavior"
 					+ System.getProperty("line.separator") + e.getMessage());
-			return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+			return Pair.of(EBehavior.INTRA, null);
 		}
 
 		Map<String, Object> attributes;
 		IScope scopeToCheck=null;
 		IScope existingScope=null;
 		EScopeType type;
-		
+
 
 		// TEST : GENERIC JBC APP READING FROM THIS SOCKET?
 		// If so behave as OUT
@@ -135,7 +136,7 @@ public class RecvEventHandler extends WindowsEvents {
 		if (existingScope != null) {
 			_logger.debug("Test2 succeeded. Generic JBC App is reading from socket "
 					+ socketHandle);
-			return new Pair<EBehavior, IScope>(EBehavior.OUT, existingScope);
+			return Pair.of(EBehavior.OUT, existingScope);
 		} else {
 			_logger.debug("Test2 failed. Generic JBC App is NOT reading from socket "
 					+ socketHandle);
@@ -145,10 +146,10 @@ public class RecvEventHandler extends WindowsEvents {
 		// behave as INTRA
 		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");
 
-		return new Pair<EBehavior, IScope>(EBehavior.INTRA, null);
+		return Pair.of(EBehavior.INTRA, null);
 	}
-	
-	
-	
-	
+
+
+
+
 }

@@ -8,15 +8,21 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IScopeInformationFlowModel;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.pip.ifm.IScopeInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
+import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
@@ -24,25 +30,24 @@ import de.tum.in.i22.uc.pip.core.manager.EventHandlerManager;
 /**
  * Visibility of this class and its methods has been developed carefully. Access
  * via {@link InformationFlowModelManager}.
- * 
+ *
  * @author Florian Kelbert
- * 
+ *
  */
-public final class ScopeInformationFlowModel extends
-		InformationFlowModelExtension implements IScopeInformationFlowModel {
+public final class ScopeInformationFlowModel extends InformationFlowModelExtension implements IScopeInformationFlowModel {
 	private static final Logger _logger = LoggerFactory
 			.getLogger(ScopeInformationFlowModel.class);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #toString()
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_scopeSet", _scopeSet).toString();
 	}
 
@@ -55,57 +60,62 @@ public final class ScopeInformationFlowModel extends
 	public ScopeInformationFlowModel(
 			InformationFlowModelManager informationFlowModelManager) {
 		super(informationFlowModelManager);
-		_scopeSet = new HashSet<IScope>();
+		_scopeSet = new NotifyingSet<>(new HashSet<IScope>(), _observer);
 		_scopeSetBackup = null;
 
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #reset()
 	 */
 	@Override
 	public void reset() {
-		_scopeSet = new HashSet<>();
+		super.reset();
+		_scopeSet = new NotifyingSet<>(new HashSet<IScope>(), _observer);
 		_scopeSetBackup = null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #push()
 	 */
 	@Override
-	public void push() {
+	public IStatus startSimulation() {
+		super.startSimulation();
 		_logger.info("Pushing current PIP state...");
 		if (_scopeSet != null) {
-			_scopeSetBackup = new HashSet<IScope>(_scopeSet);
+			_scopeSetBackup = new NotifyingSet<>(new HashSet<IScope>(_scopeSet), _observer);
 		}
 
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #pop()
 	 */
 	@Override
-	public void pop() {
+	public IStatus stopSimulation() {
+		super.stopSimulation();
 		_logger.info("Popping current PIP state...");
 		_scopeSet = _scopeSetBackup;
 		_scopeSetBackup = null;
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #openScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
@@ -124,7 +134,7 @@ public final class ScopeInformationFlowModel extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #closeScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
@@ -143,7 +153,7 @@ public final class ScopeInformationFlowModel extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #isScopeOpened(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
@@ -155,7 +165,7 @@ public final class ScopeInformationFlowModel extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #getOpenedScope(de.tum.in.i22.uc.pip.extensions.crosslayer.Scope)
@@ -168,13 +178,13 @@ public final class ScopeInformationFlowModel extends
 				//if a mathc is found return the existing one
 				if (scope.equals(s)) return s;
 		}
-		
+
 		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.tum.in.i22.uc.pip.extensions.crosslayer.IScopeInformationFlowModel
 	 * #niceString()
@@ -247,4 +257,8 @@ public final class ScopeInformationFlowModel extends
 		return eventHandler;
 	}
 
+	@Override
+	public boolean isSimulating() {
+		return _scopeSetBackup != null;
+	}
 }

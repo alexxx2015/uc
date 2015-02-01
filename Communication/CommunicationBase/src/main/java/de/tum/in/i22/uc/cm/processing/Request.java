@@ -10,9 +10,16 @@ package de.tum.in.i22.uc.cm.processing;
  * @param <ProcessorType> the type of the processor by which this event is to be processed.
  */
 public abstract class Request<ResponseType, ProcessorType extends Processor<?,?>> {
+
+	private final ERequestType _type;
+
 	private ResponseType _response;
 
 	private boolean _responseReady = false;
+
+	public Request(ERequestType type) {
+		_type = type;
+	}
 
 	/**
 	 * Sets the response. Will throw a ClassCastException if specified response
@@ -54,6 +61,10 @@ public abstract class Request<ResponseType, ProcessorType extends Processor<?,?>
 	@Override
 	public String toString() {
 		return this.getClass().toString();
+	}
+
+	public ERequestType getRequestType() {
+		return _type;
 	}
 }
 

@@ -79,13 +79,6 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 	}
 
 	@Override
-	public TStatus deployPolicyURI(String policyFilePath) throws TException {
-		_logger.debug("TAny2Pdp: deployPolicy");
-		IStatus status = _requestHandler.deployPolicyURIPmp(policyFilePath);
-		return ThriftConverter.toThrift(status);
-	}
-
-	@Override
 	public Map<String, Set<String>> listMechanisms() throws TException {
 		_logger.debug("TAny2Pdp: listMech");
 		return _requestHandler.listMechanismsPmp();

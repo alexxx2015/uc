@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamodelv4:domain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:metamodelv4="http://metamodelone/4.0">
+	<pims name="SNS_PIM">
+		<pimactions name="duplicate" seq="0" actionRefmnt="//@psms/@psmtransformers.1" paramData="//@pims/@pimdata.0" synonym="replicate"/>
+		
+		<pimdata storedin="//@psms/@psmcontainers.0 //@psms/@psmcontainers.1" name="photo"/>
+	</pims>
+
+	<psms name="SNS_PSM">
+		
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.4" name="file"/>
+		<psmcontainers containersassociation="//@psms/@psmcontainers.0" contimplementedas="//@isms/@ismcontainers.5" name="directory"/>
+		<psmcontainers contimplementedas="//@isms/@ismcontainers.1" name="clipboard"/>
+		
+		<!--0 -->
+		<psmtransformers name="copy_paste" seq="0" outputcontainer="//@psms/@psmcontainers.1" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.0"/>
+		<!--1 -->
+		<psmtransformers name="copyFile" seq="0" outputcontainer="//@psms/@psmcontainers.0" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.6 "/>
+		<!--2 -->
+		<psmtransformers name="screenshot" seq="0" outputcontainer="//@psms/@psmcontainers.2" inputcontainer="//@psms/@psmcontainers.0" crossPsmRefmnt="//@isms/@ismtransformers.5"/>
+		
+		<psmsystems systemtransformers="//@psms/@psmtransformers.0" sysimplementedas="//@isms/@ismsystems.0" name="webBrowser"/>
+		<psmsystems systemtransformers="//@psms/@psmtransformers.2" sysimplementedas="//@isms/@ismsystems.2" name="fileSystem"/>
+		<psmsystems systemtransformers="//@psms/@psmtransformers.1" sysimplementedas="//@isms/@ismsystems.1" name="windowsSys"/>
+		
+	</psms>
+
+	<isms name="SNS_ISM">
+		<ismcontainers name="htmlEle"/>
+		<ismcontainers name="xclipboard"/>
+		<ismcontainers name="procMem"/>
+		<ismcontainers name="drawable"/>
+		<ismcontainers name="unixfile"/>
+		<ismcontainers implecontainerassociation="//@isms/@ismcontainers.4" name="unixDir"/>
+		
+		
+<!--0--><ismtransformers name="copy_cmd" seq="0" ismRefmnt="//@isms/@ismtransformers.7" inputimplecontainer="//@isms/@ismcontainers.0" outputimplecontainer="//@isms/@ismcontainers.1"/>
+<!--1--><ismtransformers name="open" seq="1" inputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--2--><ismtransformers name="read" seq="2" inputimplecontainer="//@isms/@ismcontainers.4" outputimplecontainer="//@isms/@ismcontainers.2"/>
+<!--3--><ismtransformers name="write" seq="3" inputimplecontainer="//@isms/@ismcontainers.2" outputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--4--><ismtransformers name="close" seq="4" inputimplecontainer="//@isms/@ismcontainers.4"/>
+<!--5--><ismtransformers name="getImage" seq="0" inputimplecontainer="//@isms/@ismcontainers.3" outputimplecontainer="//@isms/@ismcontainers.1"/>
+
+		<!-- seq: open open read write write close -->
+<!--6--><ismtransformers name="copy_seq" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
+<!--7--><ismtransformers name="copy_seq1" seq="0" refType="seqRefmnt" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4"/>
+		
+<!--8--><ismtransformers name="deleteFile1" seq="0" outputcontainer="" inputcontainer="" ismRefmnt="//@isms/@ismtransformers.4"/>		
+		
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.0" name="firefox"/>
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.5 //@isms/@ismtransformers.8" name="x11"/>
+		<ismsystems implesystemtransformers="//@isms/@ismtransformers.1 //@isms/@ismtransformers.2 //@isms/@ismtransformers.3 //@isms/@ismtransformers.4 //@isms/@ismtransformers.6 //@isms/@ismtransformers.7" name="unix"/>
+	</isms>
+</metamodelv4:domain>

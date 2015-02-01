@@ -17,7 +17,7 @@
 			<plugin>
 				<groupId>org.apache.thrift.tools</groupId>
 				<artifactId>maven-thrift-plugin</artifactId>
-				<version>0.1.10</version>
+				<version>0.1.11</version>
 				<executions>					
 					<execution>
 						<id>thrift-sources</id>
@@ -39,11 +39,40 @@
 							<outputDirectory>${basedir}/src/main/csharp</outputDirectory>
 							<compileOutput>false</compileOutput>
 						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					
+					<execution>
+						<id>thrift-cpp-generation</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generator>cpp</generator>
+							<outputDirectory>${basedir}/src/main/cpp</outputDirectory>
+							<compileOutput>false</compileOutput>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>thrift-cocoa-generation</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generator>cocoa</generator>
+							<outputDirectory>${basedir}/src/main/cocoa</outputDirectory>
+							<compileOutput>false</compileOutput>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
 
 		</plugins>
+		
 	</build>
 
 

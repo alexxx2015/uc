@@ -1,23 +1,18 @@
 package de.tum.in.i22.uc.thrift.server;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
-import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
+import de.tum.in.i22.uc.thrift.types.TPtpResponse;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
 
@@ -29,22 +24,11 @@ import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
  */
 class TAny2PmpThriftServer extends ThriftServerHandler implements
 TAny2Pmp.Iface {
-	private static Logger _logger = LoggerFactory
-			.getLogger(TAny2PmpThriftServer.class);
 
 	private final IAny2Pmp _handler;
 
 	TAny2PmpThriftServer(IAny2Pmp handler) {
 		_handler = handler;
-	}
-
-	@Override
-	public TStatus informRemoteDataFlow(String srcAddress, int srcPort,
-			String dstAddress, int dstPort, Set<TData> data) throws TException {
-		Set<IData> d = ThriftConverter.fromThriftDataSet(data);
-		IStatus status = _handler.informRemoteDataFlow(new IPLocation(
-				srcAddress, srcPort), new IPLocation(dstAddress, dstPort), d);
-		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
@@ -91,12 +75,25 @@ TAny2Pmp.Iface {
 	}
 
 	@Override
-	public TStatus specifyPolicyFor(Set<TContainer> representations,
-			String dataClass) throws TException {
-		Set<IContainer> representationsI = new HashSet<IContainer>();
-		for (TContainer cont : representations)
-			representationsI.add(ThriftConverter.fromThrift(cont));
-		return ThriftConverter.toThrift(_handler.specifyPolicyFor(
-				representationsI, dataClass));
+	public TPtpResponse translatePolicy(String requestId, Map<String, String> parameters, TXmlPolicy xmlPolicy) throws TException {
+		IPtpResponse response = _handler.translatePolicy(requestId, parameters, ThriftConverter.fromThrift(xmlPolicy));
+		return ThriftConverter.toThrift(response);
+	}
+
+	@Override
+	public TPtpResponse updateDomainModel(String requestId, Map<String, String> parameters, TXmlPolicy xmlDomainModel)
+			throws TException {
+		return ThriftConverter.toThrift(_handler.updateDomainModel(requestId, parameters, ThriftConverter.fromThrift(xmlDomainModel)));
+	}
+
+	@Override
+	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
+		Set<XmlPolicy> policies = _handler.listPoliciesPmp();
+		return ThriftConverter.toThriftPoliciesSet(policies);
+	}
+
+	@Override
+	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
+		return ThriftConverter.toThrift(_handler.remotePolicyTransfer(xml, from));
 	}
 }

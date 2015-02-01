@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.apache.commons.validator.routines.InetAddressValidator;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import com.google.common.base.MoreObjects;
 
 
 public class IPLocation extends Location {
@@ -71,7 +71,7 @@ public class IPLocation extends Location {
 
 	@Override
 	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("_host", _host)
 				.add("_port", _port)
 				.toString();
@@ -89,7 +89,7 @@ public class IPLocation extends Location {
 
 	@Override
 	public int hashCode() {
-		return _host.hashCode() ^ _port;
+		return Objects.hash(_host, _port);
 	}
 
 	public String getHost() {
@@ -111,15 +111,5 @@ public class IPLocation extends Location {
 	@Override
 	public String asString() {
 		return _host + "#" + _port;
-	}
-
-	/**
-	 * As prescribed by {@link IName}.
-	 * Returns this {@link IPLocation}'s host
-	 * prefixed by {@link Location#PREFIX_LOCATION}.
-	 */
-	@Override
-	public String getName() {
-		return PREFIX_LOCATION + _host;
 	}
 }

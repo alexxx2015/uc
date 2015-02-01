@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.cm.datatypes.interfaces;
 
-public interface ICondition {
-	public IOslFormula getCondition();
-	public ISimplifiedTemporalLogic getConditionSimp();
+import de.tum.in.i22.uc.generic.Simulatable;
+
+public interface ICondition extends Simulatable {
+	boolean tick(boolean endOfTimestep);
 }

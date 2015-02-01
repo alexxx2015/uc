@@ -1,8 +1,6 @@
 package de.tum.in.i22.uc.cm.distribution;
 
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-
-public abstract class Location implements IName {
+public abstract class Location {
 	private final ELocation _location;
 
 	protected static final String PREFIX_LOCATION = " LOC_";
@@ -25,8 +23,6 @@ public abstract class Location implements IName {
 	public ELocation getLocation() {
 		return _location;
 	}
-
-
 
 	public enum ELocation {
 		LOCAL,

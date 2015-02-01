@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.cm.settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,12 +12,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.datastax.driver.core.ConsistencyLevel;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.distribution.ECommunicationProtocol;
-import de.tum.in.i22.uc.cm.distribution.EDistributionStrategy;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
@@ -44,6 +45,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_pipListenerPort = "pipListenerPort";
 	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 
+	public static final String PROP_NAME_pepListenerPort = "pepListenerPort";
 	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
 	public static final String PROP_NAME_anyListenerEnabled = "anyListenerEnabled";
 
@@ -71,17 +73,6 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
-	public static final String PROP_NAME_communicationProtocol = "communicationProtocol";
-
-	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
-
-	public static final String PROP_NAME_distributionStrategy = "distributionStrategy";
-	public static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
-
-	public static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
-
-	public static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
-
 	public static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
 
 	public static final String PROP_NAME_starEvent = "starEvent";
@@ -97,25 +88,55 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
 
+	public static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
+	public static final String PROP_NAME_excelListSeparator = "excelListSeparator";
+	public static final String PROP_NAME_excelOcbName = "excelOcbName";
+	public static final String PROP_NAME_excelScbName = "excelScbName";
+
+	public static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
+	public static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
+
+	public static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
+
+	public static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
+
+	public static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
+
+	public static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+
+	public static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
+
+	public static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
+	public static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
+
+	public static final String PROP_NAME_ptpResources = "ptpResources";
+	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
+
+	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+
+	/**
+	 * The number of milliseconds to wait between re-trying to read/write the distributed database in case of failure
+	 */
+	public static final String PROP_NAME_distributionRetryInterval = "distributionRetryInterval";
+
+	public static final String PROP_NAME_distributionSeedFile = "distributionSeedFile";
+
+	/**
+	 * Choose one value of enum
+	 * com.datastax.driver.core.ConsistencyLevel
+	 */
+	public static final String PROP_NAME_distributionWriteConsistency = "distributionWriteConsistency";
+	public static final String PROP_NAME_distributionReadConsistency = "distributionReadConsistency";
+	public static final String PROP_NAME_distributionDefaultConsistency = "distributionDefaultConsistency";
+
+	public static final String PROP_NAME_sslEnabled = "sslEnabled";
+	public static final String PROP_NAME_sslTruststore = "sslTruststore";
+	public static final String PROP_NAME_sslKeystore = "sslKeystore";
+	public static final String PROP_NAME_sslKeystorePassword = "sslKeystorePassword";
+	public static final String PROP_NAME_sslTruststorePassword = "sslTruststorePassword";
 
 
-	private static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
-	private static final String PROP_NAME_excelListSeparator = "excelListSeparator";
-	private static final String PROP_NAME_excelOcbName = "excelOcbName";
-	private static final String PROP_NAME_excelScbName = "excelScbName";
 
-	private static final String PROP_NAME_joanaDelimiter1 = "joanaDelimiter1";
-	private static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
-
-	private static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
-
-	private static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
-
-	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
-
-	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
-	
-	private static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -141,7 +162,7 @@ public class Settings extends SettingsLoader {
 			}
 		}
 
-		if (success) {
+		if (!success) {
 			_logger.warn("Must set properties file before getting the first Settings instance.");
 		}
 	}
@@ -170,6 +191,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_anyListenerPort, 21004);
 
 		loadSetting(PROP_NAME_pxpListenerPort, 30003);
+		loadSetting(PROP_NAME_pepListenerPort, 30005);
+
 		loadSetting(PROP_NAME_anyListenerEnabled, true);
 
 		loadSetting(PROP_NAME_pdpLocation, LocalLocation.getInstance());
@@ -182,7 +205,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pipEventHandlerPackage,
 				"de.tum.in.i22.uc.pip.eventdef.");
 		loadSetting(PROP_NAME_pipInitializerEvent, "SchemaInitializer");
-		loadSetting(PROP_NAME_pipPersistenceDirectory, "pipdb");
+		loadSetting(PROP_NAME_pipPersistenceDirectory, ".pipdb");
 
 		loadSetting(PROP_NAME_pipPrintAfterUpdate, true);
 
@@ -194,8 +217,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_prefixSeparator, "_");
 
 		loadSetting(PROP_NAME_pep, "PEP");
-		loadSetting(PROP_NAME_allowImpliesActual,
-				"false");
+		loadSetting(PROP_NAME_allowImpliesActual, false);
 
 		loadSetting(PROP_NAME_pipInitialRepresentations,
 				new HashMap<IName, IData>() {
@@ -205,18 +227,18 @@ public class Settings extends SettingsLoader {
 			}
 		});
 
-		loadSetting(PROP_NAME_communicationProtocol,
-				ECommunicationProtocol.THRIFT, ECommunicationProtocol.class);
-
-		loadSetting(PROP_NAME_distributionStrategy, EDistributionStrategy.PUSH,
-				EDistributionStrategy.class);
 		loadSetting(PROP_NAME_distributionEnabled, false);
+		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionReadConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionDefaultConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
+		loadSetting(PROP_NAME_distributionSeedFile, "cassandraSeeds.txt");
+		loadSetting(PROP_NAME_distributionRetryInterval, 50);
 
-		loadSetting(PROP_NAME_pipDistributionMaxConnections, 5);
-
-		loadSetting(PROP_NAME_pdpDistributionMaxConnections, 5);
-
-		loadSetting(PROP_NAME_pmpDistributionMaxConnections, 5);
+		loadSetting(PROP_NAME_sslEnabled, false);
+		loadSetting(PROP_NAME_sslTruststore, ".truststore");
+		loadSetting(PROP_NAME_sslKeystore, ".keystore");
+		loadSetting(PROP_NAME_sslKeystorePassword, "");
+		loadSetting(PROP_NAME_sslTruststorePassword, "");
 
 		loadSetting(PROP_NAME_connectionAttemptInterval, 1000);
 
@@ -248,7 +270,13 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
 		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
-		
+
+		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
+		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
+
+		loadSetting(PROP_NAME_ptpResources, ".");
+		loadSetting(PROP_NAME_ptEditorResources, ".");
+
 		loadSetting(PROP_NAME_javaPipMonitor, true);
 	}
 
@@ -268,8 +296,7 @@ public class Settings extends SettingsLoader {
 		return loadSettingFinalize(success, propName, loadedValue, defaultValue);
 	}
 
-	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue,
-			Class<E> cls) {
+	private <E extends Enum<E>> E loadSetting(String propName, E defaultValue, Class<E> cls) {
 		E loadedValue = defaultValue;
 
 		boolean success = false;
@@ -377,6 +404,10 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pipListenerPort);
 	}
 
+	public int getPepListenerPort() {
+		return getValue(PROP_NAME_pepListenerPort);
+	}
+
 	public int getPdpListenerPort() {
 		return getValue(PROP_NAME_pdpListenerPort);
 	}
@@ -406,14 +437,6 @@ public class Settings extends SettingsLoader {
 
 	public boolean isAnyListenerEnabled() {
 		return getValue(PROP_NAME_anyListenerEnabled);
-	}
-
-	public EDistributionStrategy getDistributionStrategy() {
-		return getValue(PROP_NAME_distributionStrategy);
-	}
-
-	public boolean getDistributionEnabled() {
-		return getValue(PROP_NAME_distributionEnabled);
 	}
 
 	public String getPipEventHandlerPackage() {
@@ -453,25 +476,32 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pipPrintAfterUpdate);
 	}
 
-	public ECommunicationProtocol getCommunicationProtocol() {
-		return getValue(PROP_NAME_communicationProtocol);
-	}
-
-	@SuppressWarnings("unchecked")
 	public Map<IName, IData> getPipInitialRepresentations() {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}
 
-	public int getPipDistributionMaxConnections() {
-		return getValue(PROP_NAME_pipDistributionMaxConnections);
+	public boolean getDistributionEnabled() {
+		return getValue(PROP_NAME_distributionEnabled);
 	}
 
-	public int getPdpDistributionMaxConnections() {
-		return getValue(PROP_NAME_pdpDistributionMaxConnections);
+	public ConsistencyLevel getDistributionWriteConsistency() {
+		return getValue(PROP_NAME_distributionWriteConsistency);
 	}
 
-	public int getPmpDistributionMaxConnections() {
-		return getValue(PROP_NAME_pmpDistributionMaxConnections);
+	public ConsistencyLevel getDistributionReadConsistency() {
+		return getValue(PROP_NAME_distributionReadConsistency);
+	}
+
+	public ConsistencyLevel getDistributionDefaultConsistency() {
+		return getValue(PROP_NAME_distributionDefaultConsistency);
+	}
+
+	public String getDistributionSeedFile() {
+		return getValue(PROP_NAME_distributionSeedFile);
+	}
+
+	public int getDistributionRetryInterval() {
+		return getValue(PROP_NAME_distributionRetryInterval);
 	}
 
 	public int getConnectionAttemptInterval() {
@@ -494,7 +524,7 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pep);
 	}
 
-	public String getAllowImpliesActual() {
+	public boolean getAllowImpliesActual() {
 		return getValue(PROP_NAME_allowImpliesActual);
 	}
 
@@ -585,9 +615,52 @@ public class Settings extends SettingsLoader {
 	public Set<String> getPmpInitialPolicies() {
 		return getValue(PROP_NAME_pmpInitialPolicies);
 	}
-	
+
+	public String getPdpJaxbContext() {
+		return getValue(PROP_NAME_pdpJaxbContext);
+	}
+
+	public String getPmpJaxbContext() {
+		return getValue(PROP_NAME_pmpJaxbContext);
+	}
+
+	public String getPtpResources(){
+		String path = getValue(PROP_NAME_ptpResources);
+
+		// for Windows
+		path = path.replace("\\", File.separator);
+
+		// for Unix
+		path = path.replace("/", File.separator);
+
+		return path;
+	}
+
+	public String getPtEditorResources(){
+		return getValue(PROP_NAME_ptEditorResources);
+	}
+
 	public boolean getJavaPipMonitor() {
 		return getValue(PROP_NAME_javaPipMonitor);
 	}
-	
+
+	public boolean isSslEnabled() {
+		return getValue(PROP_NAME_sslEnabled);
+	}
+
+	public String getSslTruststore() {
+		return getValue(PROP_NAME_sslTruststore);
+	}
+
+	public String getSslKeystore() {
+		return getValue(PROP_NAME_sslKeystore);
+	}
+
+	public String getSslTruststorePassword() {
+		return getValue(PROP_NAME_sslTruststorePassword);
+	}
+
+	public String getSslKeystorePassword() {
+		return getValue(PROP_NAME_sslKeystorePassword);
+	}
 }

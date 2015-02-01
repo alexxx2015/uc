@@ -1,0 +1,60 @@
+<?xml version='1.0' standalone='yes' ?>
+<policy xmlns="http://www22.in.tum.de/enforcementLanguage"
+	xmlns:tns="http://www22.in.tum.de/enforcementLanguage" xmlns:a="http://www22.in.tum.de/action"
+	xmlns:e="http://www22.in.tum.de/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	name="minoccur">
+
+	<initialRepresentations>
+		<container name="FILE_distr1./home/alice/sensitive">
+			<dataId>D1</dataId>
+		</container>
+		<container name="FILE_distr1./home/alice/sensitive2">
+			<dataId>D2</dataId>
+		</container>
+	</initialRepresentations>
+
+
+	<preventiveMechanism name="testTUM2">
+		<description>...</description>
+		<timestep amount="5" unit="SECONDS" />
+
+		<trigger action="*" tryEvent="true">
+		</trigger>
+
+		<condition>
+			<occurMinEvent amount="13" unit="SECONDS" limit="2">
+				<event action="Execve" tryEvent="false">
+					<paramMatch name="filename" value="/bin/ls"/>
+				</event>
+			</occurMinEvent>
+		</condition>
+
+		<authorizationAction name="default" start="true">
+			<allow />
+		</authorizationAction>
+
+	</preventiveMechanism>
+
+
+	<preventiveMechanism name="testTUM1">
+		<description>...</description>
+		<timestep amount="5" unit="SECONDS" />
+
+		<trigger action="*" tryEvent="true">
+		</trigger>
+
+		<condition>
+			<occurMinEvent amount="13" unit="SECONDS" limit="2">
+				<event action="Execve" tryEvent="false">
+					<paramMatch name="filename" value="/bin/ls"/>
+				</event>
+			</occurMinEvent>
+		</condition>
+
+		<authorizationAction name="default" start="true">
+			<allow />
+		</authorizationAction>
+
+	</preventiveMechanism>
+</policy>

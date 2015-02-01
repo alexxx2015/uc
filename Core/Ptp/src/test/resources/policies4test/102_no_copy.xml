@@ -1,0 +1,1 @@
+<Policy Subject="friend"><Obligation><always><not><Action name="replicate" type="desiredEv"><Params><Param class="town" name="object" policyType="dataUsage" value="@{object}@"/></Params></Action></not></always></Obligation></Policy>

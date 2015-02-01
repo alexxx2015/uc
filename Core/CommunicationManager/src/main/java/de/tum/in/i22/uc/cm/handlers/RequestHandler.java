@@ -19,6 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.DistributionManagerFactory;
@@ -38,7 +39,6 @@ import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PdpHandler;
-import de.tum.in.i22.uc.pdp.requests.DeployPolicyURIPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.ListMechanismsPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.NotifyEventPdpRequest;
@@ -55,10 +55,6 @@ import de.tum.in.i22.uc.pip.requests.GetDataFromIdPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetStructureOfPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAllContainersPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAllDataPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAnyContainerPipRequest;
-import de.tum.in.i22.uc.pip.requests.HasAnyDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
@@ -68,17 +64,18 @@ import de.tum.in.i22.uc.pip.requests.StartSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.StopSimulationPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdateInformationFlowSemanticsPipRequest;
 import de.tum.in.i22.uc.pip.requests.UpdatePipRequest;
-import de.tum.in.i22.uc.pip.requests.WhoHasDataPipRequest;
 import de.tum.in.i22.uc.pmp.PmpHandler;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyRawXmlPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyURIPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.InformRemoteDataFlowPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.ListPoliciesPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.RemotePolicyTransferPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.SpecifyPolicyForPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.TranslatePolicyPmpRequest;
+import de.tum.in.i22.uc.pmp.requests.UpdateDomainModelPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -295,9 +292,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public void stop() {
 		_requestQueueManager.stop();
-		this._pdp.stop();
-		this._pip.stop();
-		this._pmp.stop();
 	}
 
 
@@ -330,13 +324,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		RevokeMechanismPdpRequest request = new RevokeMechanismPdpRequest(policyName, mechName);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		DeployPolicyURIPdpRequest request = new DeployPolicyURIPdpRequest(policyFilePath);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -460,34 +447,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		HasAllDataPipRequest request = new HasAllDataPipRequest(data);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		HasAnyDataPipRequest request = new HasAnyDataPipRequest(data);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> names) {
-		HasAllContainersPipRequest request = new HasAllContainersPipRequest(names);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> names) {
-		HasAnyContainerPipRequest request = new HasAnyContainerPipRequest(names);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
 	public IStatus update(IEvent event) {
 		UpdatePipRequest request = new UpdatePipRequest(event);
 		_requestQueueManager.addRequest(request, this);
@@ -504,20 +463,6 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IData newInitialRepresentation(IName containerName) {
 		NewInitialRepresentationPipRequest request = new NewInitialRepresentationPipRequest(containerName);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation, Location dstLocation, Set<IData> dataflow) {
-		InformRemoteDataFlowPmpRequest request = new InformRemoteDataFlowPmpRequest(srcLocation, dstLocation, dataflow);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
-	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		WhoHasDataPipRequest request = new WhoHasDataPipRequest(data, recursionDepth);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -575,19 +520,33 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return this.notifyEventSync(pepEvent);
 	}
 
-
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		SpecifyPolicyForPmpRequest request = new SpecifyPolicyForPmpRequest(representations,dataClass);
+	public IData getDataFromId(String id) {
+		GetDataFromIdPipRequest request = new GetDataFromIdPipRequest(id);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
 
 
 	@Override
-	public IData getDataFromId(String id) {
-		GetDataFromIdPipRequest request = new GetDataFromIdPipRequest(id);
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		TranslatePolicyPmpRequest request = new TranslatePolicyPmpRequest(requestId, parameters, xmlPolicy);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		UpdateDomainModelPmpRequest request = new UpdateDomainModelPmpRequest(requestId, parameters, xmlDomainModel);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		ListPoliciesPmpRequest request = new ListPoliciesPmpRequest();
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
@@ -604,6 +563,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus setUpdateFrequency(int msec, String id) {
 		SetUpdateFrequencyPipRequest request = new SetUpdateFrequencyPipRequest(msec, id);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

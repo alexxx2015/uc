@@ -60,7 +60,7 @@
 
 	<complexType name="ConditionType">
 		<sequence>
-			<group ref="tns:Operators" minOccurs="1" maxOccurs="1" />
+			<group ref="tns:Operators" />
 		</sequence>
 	</complexType>
 
@@ -159,6 +159,28 @@
 		</sequence>
 		<attribute name="limit" type="long" use="required" />
 	</complexType>
+	
+	<!-- 
+		The operator OccurMinEventType corresponds to the
+	 	repmin-Operator introduced in the CANS'14 paper.
+	 	It specifies that an event must have happened at least m
+	 	times in the last j timesteps.
+	 -->
+	<complexType name="OccurMinEventType">
+		<sequence>
+			<element name="event" type="tns:EventMatchingOperatorType" minOccurs="1" maxOccurs="1" />
+		</sequence>
+		<attributeGroup ref="time:TimeAmountAttributeGroup" />
+		<attribute name="limit" type="long" use="required" />
+	</complexType>	
+
+	<complexType name="IsMaxInType">
+		<sequence>
+			<element name="dataId" type="string" minOccurs="1" maxOccurs="1" />
+			<element name="container" type="tns:ContainerType" minOccurs="1" maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="limit" type="long" use="required"/>
+	</complexType>
 
 	<complexType name="StateBasedOperatorType">
 		<attribute name="operator" type="string" use="required" />
@@ -198,6 +220,10 @@
 
 			<element name="stateBasedFormula" type="tns:StateBasedOperatorType" />
 			<element name="eval" type="tns:EvalOperatorType" />
+			
+			<!-- As introduced in CANS' 14 paper (occurMinEvent == repmin) -->
+			<element name="occurMinEvent" type="tns:OccurMinEventType"/>
+			<element name="isMaxIn" type="tns:IsMaxInType"/>
 		</choice>
 	</group>
 
@@ -334,9 +360,10 @@
 
 	<complexType name="ContainerType">
 		<sequence>
-			<element name="dataId" type="string" minOccurs="1" maxOccurs="unbounded" />
+			<element name="dataId" type="string" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
+		<attribute name="cmpOp" type="tns:ComparisonOperatorTypes" use="optional" default="equals" />
 	</complexType>
 
 

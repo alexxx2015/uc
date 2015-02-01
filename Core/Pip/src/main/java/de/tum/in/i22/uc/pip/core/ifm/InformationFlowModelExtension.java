@@ -2,26 +2,19 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Objects;
 
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
-
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
 /**
  *
  * @author Florian Kelbert
  *
  */
-public abstract class InformationFlowModelExtension {
+public abstract class InformationFlowModelExtension extends InformationFlowModel {
 
-	protected abstract void reset();
-	protected abstract void push();
-	protected abstract void pop();
-	protected abstract String niceString();
+	protected IAnyInformationFlowModel _ifModel;
 
-	protected IInformationFlowModel _ifModel;
-	
-	protected InformationFlowModelExtension(
-			InformationFlowModelManager informationFlowModelManager) {
-		_ifModel=informationFlowModelManager;
+	protected InformationFlowModelExtension(InformationFlowModelManager informationFlowModelManager) {
+		_ifModel = informationFlowModelManager;
 	}
 
 	@Override
@@ -31,8 +24,6 @@ public abstract class InformationFlowModelExtension {
 
 	@Override
 	public final boolean equals(Object obj) {
-		return obj != null
-				? this.getClass().equals(obj.getClass())
-				: false;
+		return obj != null ? this.getClass().equals(obj.getClass()) : false;
 	}
 }

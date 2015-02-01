@@ -113,11 +113,6 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	}
 
 	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		return _impl.deployPolicyURI(policyFilePath);
-	}
-
-	@Override
 	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
 		return _impl.deployPolicyXML(XMLPolicy);
 	}
@@ -136,11 +131,4 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	public IResponse processEventSync(IEvent pepEvent) {
 		return _impl.processEventSync(pepEvent);
 	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

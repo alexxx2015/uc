@@ -5,11 +5,13 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
+import de.tum.in.i22.uc.thrift.types.TAny2Pep;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
@@ -70,16 +72,21 @@ public class ThriftServerFactory {
 				new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(handler)));
 	}
 
+
 	/**
-	 * Creates a Any Thrift server listening on the specified port and redirecting
-	 * requests to the specified Pdp/Pip/Pmp servers.
+	 * Creates a Pep Thrift server listening on the specified port and redirecting
+	 * requests to the specified {@link IAny2Pep} handler.
 	 *
 	 * The server's run method will not yet be executed.
 	 *
 	 * @param port the port to listen on
-	 * @param requestHandler the {@link IRequestHandler} to which requests are dispatched
+	 * @param handler the {@link IAny2Pep} handler to which requests are dispatched
 	 * @return the server instance on success, null on failure
 	 */
+	public static IThriftServer createPepThriftServer(int port, IAny2Pep handler) {
+		return createThriftServer(port,
+				new TAny2Pep.Processor<TAny2PepThriftServer>(new TAny2PepThriftServer(handler)));
+	}
 
 	/**
 	 * Creates a Any Thrift server listening on the specified port and redirecting
@@ -110,7 +117,7 @@ public class ThriftServerFactory {
 		return createThriftServer(port,
 				new TAny2Pxp.Processor<TAny2PxpThriftServer>(new TAny2PxpThriftServer()));
 	}
-	
+
 	public static <T extends TAny2Pxp.Iface> IThriftServer createPxpThriftServer(int port, T pxpProcessor) {
 		return createThriftServer(port,
 				new TAny2Pxp.Processor<T>(pxpProcessor));
@@ -128,14 +135,14 @@ public class ThriftServerFactory {
 		return createThriftServer(port,
 				new TPip2JPip.Processor<TAny2JPipThriftServer>(new TAny2JPipThriftServer()));
 	}
-	
+
 	public static <T extends TPip2JPip.Iface> IThriftServer createJPipThriftServer(int port, T jPipProcessor) {
 		return createThriftServer(port,
 				new TPip2JPip.Processor<T>(jPipProcessor));
-	}	
-	
-	
-	
+	}
+
+
+
 	private static IThriftServer createThriftServer(int port, TProcessor processor) {
 		ThriftServer server;
 

@@ -19,15 +19,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2JPipClient;
-import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 /**
  * Manager for Java Pips.
- * 
- * 
+ *
+ *
  * @author Lovat
- * 
+ *
  */
 
 public class JavaPipManager implements Runnable {
@@ -56,7 +55,7 @@ public class JavaPipManager implements Runnable {
 		Map<String, String> pars=ev.getParameters();
 		addJPIPListener(pars.get("ip"), Integer.valueOf(pars.get("port")), pars.get("id"), pars.get("filter"));
 	}
-	
+
 	private IStatus addJPIPListener(String ip, int port, String id, String filter) {
 		// TODO: sanitize inputs
 
@@ -72,13 +71,13 @@ public class JavaPipManager implements Runnable {
 		return new StatusBasic(EStatus.OKAY);
 	}
 
-	
-	
+
+
 	private void setUpdateFrequency(IEvent ev) {
 		Map<String, String> pars=ev.getParameters();
 		setUpdateFrequency(Integer.valueOf(pars.get("msec")), pars.get("id"));
-	}	
-	
+	}
+
 	private IStatus setUpdateFrequency(int msec, String id) {
 		// TODO: sanitize inputs
 		_pool.get(id).setFrequency(msec);
@@ -94,7 +93,7 @@ public class JavaPipManager implements Runnable {
 				try {
 					BlockingQueue<IEvent> q=_pool.get(id).getQueue();
 					synchronized (q) {
-						q.put(ev);	
+						q.put(ev);
 					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -102,10 +101,10 @@ public class JavaPipManager implements Runnable {
 				}
 			}
 		}
-	
-	
+
+
 	}
-	
+
 	private boolean eventMatchesFilter(IEvent ev, String filter){
 		//TODO: Sanitize inputs
 		if (filter.startsWith("PID")){
@@ -114,16 +113,20 @@ public class JavaPipManager implements Runnable {
 		return true;
 	}
 
-	
-	
+
+
+	@Override
 	public void run() {
 		_logger.debug("Java Pip Manager Started");
 		try {
 			while (true) {
-				IEvent ev = (IEvent)_masterQueue.take();
+				IEvent ev = _masterQueue.take();
 				_logger.debug("event ("+ev+") taken from the queue. new size="+_masterQueue.size());
-				
+
 				switch (ev.getName()){
+				case "AddListener":
+					addListener(ev);
+				break;
 				case "addJPIPListener": 
 					addJPIPListener(ev);
 					break;
@@ -173,7 +176,7 @@ public class JavaPipManager implements Runnable {
 
 				synchronized (_queue) {
 					while (i.hasNext()) {
-						eventList.add((IEvent) i.next());
+						eventList.add(i.next());
 					}
 					_queue.clear();
 				}

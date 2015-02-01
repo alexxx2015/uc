@@ -3,7 +3,6 @@ package de.tum.in.i22.uc.pip.test;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -13,10 +12,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
+import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IBasicInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelManager;
 
 public class InformationFlowModelTest {
@@ -68,4 +71,27 @@ public class InformationFlowModelTest {
 		Assert.assertEquals(expectedClosure, aliasClosure);
 	}
 
+	@Test
+	public void getAllNamesTest() {
+		_ifModel.addName(new NameBasic("basic1"), new ContainerBasic("c1"));
+		_ifModel.addName(new NameBasic("basic2"), new ContainerBasic("c1"));
+		_ifModel.addName(new NameBasic("basic3"), new ContainerBasic("c1"));
+		_ifModel.addName(new NameBasic("basic4"), new ContainerBasic("c1"));
+		_ifModel.addName(new NameBasic("basic5"), new ContainerBasic("c1"));
+
+		_ifModel.addName(FilenameName.create("host1", "file1"), new ContainerBasic("c1"));
+		_ifModel.addName(FilenameName.create("host1", "file2"), new ContainerBasic("c1"));
+		_ifModel.addName(FilenameName.create("host1", "file3"), new ContainerBasic("c1"));
+		_ifModel.addName(FilenameName.create("host1", "file4"), new ContainerBasic("c1"));
+
+		_ifModel.addName(ProcessName.create("host2", 531), new ContainerBasic("p1"));
+		_ifModel.addName(ProcessName.create("host2", 532), new ContainerBasic("p2"));
+		_ifModel.addName(ProcessName.create("host2", 533), new ContainerBasic("p3"));
+
+		Assert.assertEquals(12, _ifModel.getAllNames(NameBasic.class).size());
+		Assert.assertEquals(4, _ifModel.getAllNames(FilenameName.class).size());
+		Assert.assertEquals(3, _ifModel.getAllNames(ProcessName.class).size());
+
+		Assert.assertEquals(9, _ifModel.getAllNames(new ContainerBasic("c1")).size());
+	}
 }

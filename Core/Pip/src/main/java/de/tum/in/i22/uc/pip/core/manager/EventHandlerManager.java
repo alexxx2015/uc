@@ -23,7 +23,7 @@ public class EventHandlerManager {
 
 	private static Map<String, PipClassLoader> _classLoaderMap = new HashMap<>();
 
-	private static Map<String, IEventHandler> _evNameToHandler = new HashMap<String, IEventHandler>();
+	private static Map<String, IEventHandler> _evNameToHandler = new HashMap<>();
 
 	public static IEventHandler createEventHandler(IEvent event)
 			throws IllegalAccessException, InstantiationException,
@@ -34,48 +34,39 @@ public class EventHandlerManager {
 						+ "." : "") + event.getName() + EVENT_HANDLER_SUFFIX;
 
 		IEventHandler result = _evNameToHandler.get(className);
+
 		if (result == null) {
-			PipClassLoader pipClassLoader = _classLoaderMap.get(className);
-			if (pipClassLoader != null) {
-				_logger.trace("Load class (definition obtained from database): "
-						+ className);
-				Class<?> actionHandlerClass = pipClassLoader
-						.loadClass(className);
-				_logger.trace("Create class " + className + " instance");
-				result = (IEventHandler) actionHandlerClass.newInstance();
-				_evNameToHandler.put(className, result);
-				return result;
-			} else {
+			ClassLoader classLoader = _classLoaderMap.get(className);
+
+			if (classLoader != null) {
+				_logger.trace("Load class (definition obtained from database): " + className);
+			}
+			else {
 				// The specified class is not found in the database.
 				// Try to load it from the class path.
 				try {
-					ClassLoader classLoader = EventHandlerManager.class
-							.getClassLoader();
+					classLoader = EventHandlerManager.class.getClassLoader();
 					_logger.trace("Load class from class path: " + className);
-					Class<?> actionHandlerClass = classLoader
-							.loadClass(className);
-					_logger.trace("Create class " + className + " instance");
-					result = (IEventHandler) actionHandlerClass.newInstance();
-					_evNameToHandler.put(className, result);
-					return result;
 				} catch (Exception e) {
-					_logger.warn("Class " + className + " not found. Error: "
-							+ e.getMessage());
+					_logger.warn("Class " + className + " not found. Error: " + e.getMessage());
 					return null;
 				}
 			}
+
+			Class<?> actionHandlerClass = classLoader.loadClass(className);
+			_logger.trace("Create class " + className + " instance");
+			result = (IEventHandler) actionHandlerClass.newInstance();
+			_evNameToHandler.put(className, result);
 		} else {
-			_logger.trace("Loaded class " + className
-					+ " instance from hashtable");
-			result.reset();
-			return result;
+			_logger.trace("Loaded class " + className + " instance from hashtable.");
 		}
+
+		result.reset();
+		return result;
 	}
 
-	public static void setClassToBeLoaded(
-			EventHandlerDefinition eventHandlerDefinition) {
-		_logger.debug("Creating class loader for class: "
-				+ eventHandlerDefinition.getClassName());
+	public static void setClassToBeLoaded(EventHandlerDefinition eventHandlerDefinition) {
+		_logger.debug("Creating class loader for class: " + eventHandlerDefinition.getClassName());
 		String className = eventHandlerDefinition.getClassName();
 
 		PipClassLoader pipClassLoader = new PipClassLoader(
@@ -83,7 +74,6 @@ public class EventHandlerManager {
 				eventHandlerDefinition.getClassFile());
 
 		_classLoaderMap.put(className, pipClassLoader);
-
 	}
 
 	public static void clearDefinitions() {

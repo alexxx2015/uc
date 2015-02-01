@@ -3,6 +3,7 @@ package de.tum.in.i22.uc;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,13 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
+
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -20,9 +25,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -41,10 +46,12 @@ public class Controller implements IRequestHandler  {
 	protected IRequestHandler _requestHandler;
 
 	public Controller() {
+		this(new String[0]);
 	}
 
 	public Controller(String[] args) {
 		_args = args;
+		loadProperties(_args);
 	}
 
 	public static void main(String[] args) {
@@ -59,9 +66,6 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean start() {
-		// Load properties (if provided via parameter)
-		loadProperties(_args);
-
 		// If ports are available...
 		if (arePortsAvailable()) {
 			// ..start UC infrastructure
@@ -89,6 +93,7 @@ public class Controller implements IRequestHandler  {
 				_logger.info("... waiting ...");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				_logger.info(e.getMessage());
 			}
 		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
@@ -96,16 +101,10 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean isStarted() {
-		if (Settings.getInstance() == null)
-			return false;
-		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer
-				.started())
-				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer
-				.started())
-				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer
-				.started())
-				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer
-				.started());
+		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer.started())
+				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
+				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())
+				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started());
 	}
 
 	/**
@@ -113,8 +112,21 @@ public class Controller implements IRequestHandler  {
 	 */
 	private void deployInitialPolicies() {
 		for (String uri : Settings.getInstance().getPmpInitialPolicies()) {
-			deployPolicyURIPmp(uri);
-			_logger.info(" ... deployed " + uri);
+			IStatus status;
+
+			/*
+			 * Just calling deployPolicyURIPmp(uri)
+			 * is _not_ OK, since this might be a remote
+			 * method invocation and the URI would be resolved remotely.
+			 * Instead, read the file locally and deploy as follows: -FK-
+			 */
+			try {
+				status = deployPolicyRawXMLPmp(Files.toString(new File(uri), Charset.defaultCharset()));
+			} catch (Exception e) {
+				status = new StatusBasic(EStatus.ERROR, e.getMessage());
+			}
+
+			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully." : "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
 		}
 	}
 
@@ -130,7 +142,6 @@ public class Controller implements IRequestHandler  {
 			_anyServer.stop();
 		if(_requestHandler != null)
 			_requestHandler.stop();
-		//System.exit(0);
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
@@ -241,6 +252,12 @@ public class Controller implements IRequestHandler  {
 					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
+		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
+			Settings.getInstance()
+			.loadSetting(
+					CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
+		}
 	}
 
 	protected static void lock() {
@@ -297,11 +314,6 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus revokeMechanism(String policyName, String mechName) {
 		return _requestHandler.revokeMechanism(policyName, mechName);
-	}
-
-	@Override
-	public IStatus deployPolicyURI(String policyFilePath) {
-		return _requestHandler.deployPolicyURI(policyFilePath);
 	}
 
 	@Override
@@ -362,44 +374,13 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public boolean hasAllData(Set<IData> data) {
-		return _requestHandler.hasAllData(data);
-	}
-
-	@Override
-	public boolean hasAnyData(Set<IData> data) {
-		return _requestHandler.hasAnyData(data);
-	}
-
-	@Override
-	public boolean hasAllContainers(Set<IName> container) {
-		return _requestHandler.hasAllContainers(container);
-	}
-
-	@Override
-	public boolean hasAnyContainer(Set<IName> container) {
-		return _requestHandler.hasAnyContainer(container);
-	}
-
-	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
 		return _requestHandler.initialRepresentation(containerName, data);
 	}
 
 	@Override
-	public Set<Location> whoHasData(Set<IData> data, int recursionDepth) {
-		return _requestHandler.whoHasData(data, recursionDepth);
-	}
-
-	@Override
 	public IData newInitialRepresentation(IName containerName) {
 		return _requestHandler.newInitialRepresentation(containerName);
-	}
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-		return _requestHandler.informRemoteDataFlow(srcLocation, dstLocation, dataflow);
 	}
 
 	@Override
@@ -473,14 +454,23 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		return _requestHandler.specifyPolicyFor(representations, dataClass);
+	public IData getDataFromId(String id) {
+		return _requestHandler.getDataFromId(id);
 	}
 
 	@Override
-	public IData getDataFromId(String id) {
-		return _requestHandler.getDataFromId(id);
+	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		return _requestHandler.translatePolicy(requestId, parameters, xmlPolicy);
+	}
+
+	@Override
+	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel);
+	}
+
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		return _requestHandler.listPoliciesPmp();
 	}
 
 	@Override
@@ -491,6 +481,11 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus setUpdateFrequency(int msec, String id) {
 		return _requestHandler.setUpdateFrequency(msec, id);
+	}
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		return _requestHandler.remotePolicyTransfer(xml, from);
 	}
 
 }

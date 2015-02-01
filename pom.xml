@@ -8,6 +8,10 @@
 	<packaging>pom</packaging>
 	<version>1.0</version>
 
+	<prerequisites>
+		<maven>2.2.1</maven>
+	</prerequisites>
+
 	<modules>
 		<module>Communication</module>
 		<module>Core</module>
@@ -18,7 +22,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     	<root.path>${basedir}</root.path>
+		<root.path>${basedir}</root.path>
 		<nologging.code>if \(\/\*nologging\*\/false\/\*nologging\*\/\)</nologging.code>
 		<nologging.enable></nologging.enable>
 		<nologging.files>${basedir}/**/**.java</nologging.files>
@@ -47,22 +51,22 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>17.0</version>
+			<version>18.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
+			<version>1.7.9</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.thrift</groupId>
 			<artifactId>libthrift</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -75,19 +79,24 @@
 			<version>2.4</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>0.6.5.1</version>
+			<version>0.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
-			<version>10.10.2.0</version>
+			<version>10.11.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
-			<version>2.5.2</version>
+			<version>2.6.0-M3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -108,11 +117,36 @@
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.4.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
-			<version>2.1.0-beta1</version>
+			<version>2.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cassandra</groupId>
+			<artifactId>cassandra-all</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jgoodies</groupId>
+			<artifactId>jgoodies-forms</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-swing</artifactId>
+			<version>5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 
@@ -122,10 +156,65 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.2</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.18</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.6.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.jvnet.jaxb2.maven2</groupId>
+					<artifactId>maven-jaxb2-plugin</artifactId>
+					<version>0.11.0</version>
 				</plugin>
 
 				<plugin>
@@ -144,63 +233,63 @@
 								<goal>replace</goal>
 							</goals>
 							<configuration>
-							    <includes>
-							        <include>${nologging.files}</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
+								<includes>
+									<include>${nologging.files}</include>
+								</includes>
+								<regex>true</regex>
+								<replacements>
 									<replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							    </replacements>
+										<token>(${nologging.code})+</token>
+										<value></value>
+									</replacement>
+								</replacements>
 							</configuration>
 						</execution>
 
 						<execution>
-							<!-- Change the source code such that all logging methods will not be executed.
-								This is done _before_ compilation phase. -->
+							<!-- Change the source code such that all logging methods will not 
+								be executed. This is done _before_ compilation phase. -->
 							<id>do-nologging</id>
 							<goals>
 								<goal>replace</goal>
 							</goals>
 							<configuration>
-							    <includes>
-							        <include>${nologging.files}</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
+								<includes>
+									<include>${nologging.files}</include>
+								</includes>
+								<regex>true</regex>
+								<replacements>
 									<replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							        <replacement>
-							            <token>(_?log(ger)?\.(warn|debug|error|fatal|info|trace))</token>
-							            <value>${nologging.enable}$1</value>
-							        </replacement>
-							    </replacements>
+										<token>(${nologging.code})+</token>
+										<value></value>
+									</replacement>
+									<replacement>
+										<token>(_?log(ger)?\.(warn|debug|error|fatal|info|trace))</token>
+										<value>${nologging.enable}$1</value>
+									</replacement>
+								</replacements>
 							</configuration>
 						</execution>
 
-						<!-- Undo changes to the source code for disabling logging.
-							This is done _after_ compilation phase and _before_ test-compilation phase.
-							THUS: Logging is _NOT_ disabled for test classes. -->
+						<!-- Undo changes to the source code for disabling logging. This is 
+							done _after_ compilation phase and _before_ test-compilation phase. THUS: 
+							Logging is _NOT_ disabled for test classes. -->
 						<execution>
 							<id>undo-nologging</id>
 							<goals>
 								<goal>replace</goal>
 							</goals>
 							<configuration>
-							    <includes>
-							        <include>${nologging.files}</include>
-							    </includes>
-							    <regex>true</regex>
-							    <replacements>
-							        <replacement>
-							            <token>(${nologging.code})+</token>
-							            <value></value>
-							        </replacement>
-							    </replacements>
+								<includes>
+									<include>${nologging.files}</include>
+								</includes>
+								<regex>true</regex>
+								<replacements>
+									<replacement>
+										<token>(${nologging.code})+</token>
+										<value></value>
+									</replacement>
+								</replacements>
 							</configuration>
 						</execution>
 					</executions>

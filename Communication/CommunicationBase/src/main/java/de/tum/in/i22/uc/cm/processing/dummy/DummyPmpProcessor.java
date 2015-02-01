@@ -28,12 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
-import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
@@ -42,15 +41,6 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	private static Logger _logger = LoggerFactory.getLogger(DummyPmpProcessor.class);
-
-	@Override
-	public IStatus informRemoteDataFlow(Location srcLocation,
-			Location dstLocation, Set<IData> dataflow) {
-		// TODO Auto-generated method stub
-		_logger.error("PmpProcessor DUMMY Implementation");
-		_logger.error("informRemoteDataFlow method invoked");
-		return null;
-	}
 
 	@Override
 	public IMechanism exportMechanismPmp(String par) {
@@ -117,17 +107,32 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
+	public IPtpResponse translatePolicy(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlPolicy) {
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("translatePolicy method invoked");
+		return null;
 	}
 
 	@Override
-	public IStatus specifyPolicyFor(Set<IContainer> representations,
-			String dataClass) {
-		// TODO Auto-generated method stub
+	public IPtpResponse updateDomainModel(String requestId,
+			Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		_logger.error("PmpProcessor DUMMY Implementation");
-		_logger.error("specifyPolicyFor method invoked");
+		_logger.error("updateDomainModel method invoked");
+		return null;
+	}
+
+	@Override
+	public Set<XmlPolicy> listPoliciesPmp() {
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("listPoliciesPmp method invoked");
+		return null;
+	}
+
+	@Override
+	public IStatus remotePolicyTransfer(String xml, String from) {
+		_logger.error("PmpProcessor DUMMY Implementation");
+		_logger.error("remotePolicyTransfer method invoked");
 		return null;
 	}
 

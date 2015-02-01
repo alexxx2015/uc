@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.factories.IMessageFactory;
 import de.tum.in.i22.uc.cm.factories.MessageFactoryCreator;
-import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
+import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 
 
@@ -18,7 +19,8 @@ public abstract class BaseEventHandler implements IEventHandler {
 
 	protected IEvent _event;
 
-	protected IInformationFlowModel _informationFlowModel;
+	protected IAnyInformationFlowModel _informationFlowModel;
+	protected IDistributionManager _distributionManager;
 
 	protected final IStatus STATUS_OKAY = _messageFactory.createStatus(EStatus.OKAY);
 	protected final IStatus STATUS_ERROR = _messageFactory.createStatus(EStatus.ERROR);
@@ -58,12 +60,21 @@ public abstract class BaseEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public final void setInformationFlowModel(IInformationFlowModel ifm) {
+	public final void setInformationFlowModel(IAnyInformationFlowModel ifm) {
 		if (_informationFlowModel != null) {
 			throw new RuntimeException("Information Flow Model already set. Can only be set once.");
 		}
 
 		_informationFlowModel = ifm;
+	}
+
+
+	@Override
+	public void setDistributionManager(IDistributionManager distributionManager) {
+		if (_distributionManager != null) {
+			throw new RuntimeException("DistributionManager already set. Can only be set once.");
+		}
+		_distributionManager = distributionManager;
 	}
 
 	protected final String getParameterValue(String key) throws ParameterNotFoundException {
@@ -79,5 +90,6 @@ public abstract class BaseEventHandler implements IEventHandler {
 	public void reset(){
 		_event = null;
 		_informationFlowModel = null;
+		_distributionManager = null;
 	}
 }

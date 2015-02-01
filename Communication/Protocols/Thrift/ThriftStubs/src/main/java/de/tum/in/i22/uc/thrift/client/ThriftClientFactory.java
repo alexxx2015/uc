@@ -7,13 +7,12 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2JPipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pip2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
@@ -122,14 +121,6 @@ public class ThriftClientFactory implements IClientFactory {
 	}
 
 	@Override
-	public Pip2PmpClient createPip2PmpClient(Location location) {
-		if (location instanceof IPLocation) {
-			return new ThriftPip2PmpClient((IPLocation) location);
-		}
-		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
-	}
-
-	@Override
 	public Pmp2PmpClient createPmp2PmpClient(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPmp2PmpClient((IPLocation) location);
@@ -149,6 +140,13 @@ public class ThriftClientFactory implements IClientFactory {
 	public Pxp2PdpClient createPxp2PdpClient(Location location) {
 		if (location instanceof IPLocation) {
 			return new ThriftPxp2PdpClient((IPLocation) location);
+		}
+		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
+	}
+
+	public Pdp2PepClient createPdp2PepClient(Location location) {
+		if (location instanceof IPLocation) {
+			return new ThriftPdp2PepClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}
