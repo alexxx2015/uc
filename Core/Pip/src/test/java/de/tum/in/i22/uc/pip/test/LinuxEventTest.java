@@ -157,6 +157,7 @@ public class LinuxEventTest {
 				put("host", host);
 				put("pid", pid+"");
 				put("filename", filename);
+				put("cmdline","");
 			}},
 			isActual);
 	}

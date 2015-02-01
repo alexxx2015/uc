@@ -124,9 +124,6 @@ public class JavaPipManager implements Runnable {
 				_logger.debug("event ("+ev+") taken from the queue. new size="+_masterQueue.size());
 
 				switch (ev.getName()){
-				case "AddListener":
-					addListener(ev);
-				break;
 				case "addJPIPListener": 
 					addJPIPListener(ev);
 					break;

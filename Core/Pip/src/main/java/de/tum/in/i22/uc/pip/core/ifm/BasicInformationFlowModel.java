@@ -714,11 +714,16 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 	public Collection<IName> getAllNames(IContainer container) {
 		Collection<IName> result = new LinkedList<>();
 
-		_namingMap.entrySet().forEach(e -> {
-			if (e.getValue().equals(container))
-				result.add(e.getKey());
-		});
+//		_namingMap.entrySet().forEach(e -> {
+//			if (e.getValue().equals(container))
+//				result.add(e.getKey());
+//		});
 
+		
+		for (Entry<IName, IContainer> e: _namingMap.entrySet()){
+			if (e.getValue().equals(container)) result.add(e.getKey());
+		}
+		
 		return Collections.unmodifiableCollection(result);
 	}
 

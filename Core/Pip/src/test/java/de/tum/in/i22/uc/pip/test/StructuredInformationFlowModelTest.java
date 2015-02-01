@@ -92,6 +92,8 @@ public class StructuredInformationFlowModelTest {
 		IData structData = _structureIfm.newStructuredData(map);
 		Assert.assertNotNull(structData);
 
+		System.out.println(_structureIfm.niceString());
+		
 		res=_structureIfm.getStructureOf(a);
 		Assert.assertNotNull(res);
 		Assert.assertEquals(res.size(),0);

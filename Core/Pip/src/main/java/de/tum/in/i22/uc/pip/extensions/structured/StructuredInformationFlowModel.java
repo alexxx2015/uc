@@ -9,8 +9,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
+import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -41,7 +41,7 @@ public final class StructuredInformationFlowModel extends
 
 	// BACKUP TABLES FOR SIMULATION
 	private Map<IData, Map<String, Set<IData>>> _structureBackup;
-
+	
 	/**
 	 * Basic constructor. Here we initialize the reference to the basic
 	 * information flow model and the tables to store the structured data
@@ -76,9 +76,9 @@ public final class StructuredInformationFlowModel extends
 				Map<String, Set<IData>> mbackup = new NotifyingMap<>(new HashMap<String, Set<IData>>(), _observer);
 				if (m != null) {
 					for (String s : m.keySet()) {
-						Set<IData> set= mbackup.get(d);
+						Set<IData> set= m.get(s);
 						if (set==null) set = new NotifyingSet<>(new HashSet<IData>(), _observer);
-						mbackup.put(s, new NotifyingSet<>(new HashSet<IData>(set), _observer));
+						mbackup.put(s, set);
 					}
 				}
 				_structureBackup.put(d, mbackup);
@@ -217,7 +217,7 @@ public final class StructuredInformationFlowModel extends
 		}
 		return res;
 	}
-
+	
 	@Override
 	public String niceString() {
 		StringBuilder sb = new StringBuilder();
@@ -249,7 +249,7 @@ public final class StructuredInformationFlowModel extends
 		}
 		return sb.toString();
 	}
-
+	
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)

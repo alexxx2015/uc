@@ -47,7 +47,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		return toRealPath(file, "");
 	}
 
-	private static String toRealPath(String dir, String file) {
+	public static String toRealPath(String dir, String file) {
 		Path p = new File(dir, new File(file).getName()).toPath();
 		try {
 			return p.toRealPath().toString();
