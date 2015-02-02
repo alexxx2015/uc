@@ -167,9 +167,9 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
 		_logger.error("PipProcessor DUMMY Implementation");
-		_logger.error("addListener method invoked");
+		_logger.error("addJPIPListener method invoked");
 		return null;
 	}
 

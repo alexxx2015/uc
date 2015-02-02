@@ -307,7 +307,7 @@ public class PipHandler extends PipProcessor {
 	}
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
 		//we use event objects to communicate with the updater thread manager
 		Map<String,String> pars = new HashMap<String,String>();
 		pars.put("ip", ip);
@@ -315,7 +315,7 @@ public class PipHandler extends PipProcessor {
 		pars.put("id", id);
 		pars.put("filter", filter);
 
-		IEvent ev= new EventBasic("AddListener",pars);
+		IEvent ev= new EventBasic("addJPIPListener",pars);
 
 		try {
 			BlockingQueue<IEvent> q=_javaPipManager.getMasterQueue();

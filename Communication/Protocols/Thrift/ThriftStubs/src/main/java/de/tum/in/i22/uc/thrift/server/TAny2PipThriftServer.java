@@ -161,10 +161,10 @@ TAny2Pip.Iface {
 	}
 
 	@Override
-	public TStatus addListener(String ip, int port, String id, String filter)
+	public TStatus addJPIPListener(String ip, int port, String id, String filter)
 			throws TException {
-		_logger.debug("TAny2Pip: addListener");
-		return ThriftConverter.toThrift(_handler.addListener(ip,port,id, filter));
+		_logger.debug("TAny2Pip: addJPIPListener");
+		return ThriftConverter.toThrift(_handler.addJPIPListener(ip,port,id, filter));
 	}
 
 	@Override

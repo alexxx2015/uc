@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
-import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
@@ -25,23 +25,30 @@ public class JPipTest extends GenericTest {
 	public void testJPip() {
 		sayMyName(Thread.currentThread().getStackTrace()[1].getMethodName());
 		
-		int port=55666;
+		int port=PIP_SERVER_PORT;
 		String id="Mylistener";
 		
-		IThriftServer srv= ThriftServerFactory.createJPipThriftServer(port);
-		new Thread(srv).start();
+		
+//		IThriftServer srv= ThriftServerFactory.createJPipThriftServer(port);
+//		new Thread(srv).start();
 		
 
+		
+		
+		
+		
+		
+		
 		ThriftClientFactory tcf = new ThriftClientFactory();
-		Any2PipClient client = tcf.createAny2PipClient(new IPLocation("localhost", port));
+		JPip2PipClient client = tcf.createJPip2PipClient(new IPLocation("localhost", port));
 		try {
 			client.connect();
-			client.addListener("localhost", port, id, " ");
+			client.addJPIPListener("localhost", port, id, " ");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-//		pip.addListener("localhost", port, id, " ");
+//		pip.addJPIPListener("localhost", port, id, " ");
 		
 		pip.setUpdateFrequency(2000, id);
 		

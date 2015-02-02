@@ -50,13 +50,13 @@ public class JavaPipManager implements Runnable {
 		return _masterQueue;
 	}
 
-	private  void addListener(IEvent ev) {
+	private  void addJPIPListener(IEvent ev) {
 		//TODO: sanitize inputs
 		Map<String, String> pars=ev.getParameters();
-		addListener(pars.get("ip"), Integer.valueOf(pars.get("port")), pars.get("id"), pars.get("filter"));
+		addJPIPListener(pars.get("ip"), Integer.valueOf(pars.get("port")), pars.get("id"), pars.get("filter"));
 	}
 
-	private IStatus addListener(String ip, int port, String id, String filter) {
+	private IStatus addJPIPListener(String ip, int port, String id, String filter) {
 		// TODO: sanitize inputs
 
 		Location loc = new IPLocation(ip, port);
@@ -124,8 +124,8 @@ public class JavaPipManager implements Runnable {
 				_logger.debug("event ("+ev+") taken from the queue. new size="+_masterQueue.size());
 
 				switch (ev.getName()){
-				case "AddListener":
-					addListener(ev);
+				case "addJPIPListener": 
+					addJPIPListener(ev);
 					break;
 				case "SetUpdateFrequency":
 					setUpdateFrequency(ev);

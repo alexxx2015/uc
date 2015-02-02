@@ -182,9 +182,9 @@ class ThriftAny2PipImpl implements IAny2Pip {
 	}
 
 	@Override
-	public IStatus addListener(String ip, int port, String id, String filter) {
+	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
 		try {
-			return ThriftConverter.fromThrift(_handle.addListener(ip, port, id, filter));
+			return ThriftConverter.fromThrift(_handle.addJPIPListener(ip, port, id, filter));
 		} catch (TException e) {
 			e.printStackTrace();
 		}

@@ -6,8 +6,12 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
+<<<<<<< HEAD
 import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
+=======
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
+>>>>>>> dev-fk
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PipClient;
