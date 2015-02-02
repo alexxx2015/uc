@@ -170,18 +170,18 @@ public class Since extends SinceType {
 
 	@Override
 	public boolean isAtomic() {
-		return true;
+		return false;
 	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return true;
+//	}
 
 	@Override
-	public boolean isDNF() {
-		return true;
-	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		opA.setRelevant(relevant);
-		opB.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		opA.setRelevance(relevant);
+		opB.setRelevance(relevant);
 	}
 }

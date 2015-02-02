@@ -25,7 +25,7 @@ public interface IOperator extends Simulatable {
 
 	public EOperatorType getOperatorType();
 
-	boolean isDNF();
+//	boolean isDNF();
 
 	boolean isAtomic();
 }

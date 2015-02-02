@@ -90,9 +90,9 @@ public class ConditionParamMatchOperator extends ConditionParamMatchType impleme
 	public boolean isAtomic() {
 		return true;
 	}
-
-	@Override
-	public boolean isDNF() {
-		return true;
-	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return true;
+//	}
 }

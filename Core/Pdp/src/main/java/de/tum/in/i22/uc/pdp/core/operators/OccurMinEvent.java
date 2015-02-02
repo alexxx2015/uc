@@ -34,8 +34,8 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 		event = (EventMatchOperator) getEvent();
 		event.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
-		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimestepInterval());
-		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
+		CircularArray<Integer> stateCircArray = new CircularArray<>(_timeAmount.getTimesteps());
+		for (int a = 0; a < _timeAmount.getTimesteps(); a++) {
 			stateCircArray.set(0, a);
 		}
 
@@ -102,7 +102,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 * If this result is not sufficient, ask remotely!
 			 */
 			return limit <= _pdp.getDistributionManager().howOftenNotifiedSinceTimestep(event,
-								_mechanism.getTimestep() - _timeAmount.getTimestepInterval());
+								_mechanism.getTimestep() - _timeAmount.getTimesteps());
 		}
 
 		return result;
@@ -135,16 +135,16 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 	public boolean isAtomic() {
 		return true;
 	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return true;
+//	}
 
 	@Override
-	public boolean isDNF() {
-		return true;
-	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		event.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		event.setRelevance(relevant);
 	}
 
 	@Override

@@ -90,8 +90,8 @@ public class RepMax extends RepMaxType {
 	}
 
 	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op.setRelevance(relevant);
 	}
 }

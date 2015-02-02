@@ -51,7 +51,6 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		_state.set(StateVariable.SINCE_LAST_TICK, 0);
-
 		_state.set(StateVariable.SINCE_UPDATE, Trilean.UNDEF);
 
 		return valueAtLastTick > 0;
@@ -73,7 +72,7 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 	@Override
 	public void update(IEvent ev) {
 
-		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
+		if (!getRelevance()) {
 			return;
 		}
 
@@ -123,9 +122,9 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 	public boolean isAtomic() {
 		return true;
 	}
-
-	@Override
-	public boolean isDNF() {
-		return true;
-	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return true;
+//	}
 }

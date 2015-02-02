@@ -200,7 +200,7 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	@Override
 	public void update(IEvent ev) {
-		if (!(boolean) _state.get(StateVariable.RELEVANT)) {
+		if (!getRelevance()) {
 			return;
 		}
 
@@ -255,11 +255,6 @@ public class StateBasedOperator extends StateBasedOperatorType implements Atomic
 
 	@Override
 	public boolean isAtomic() {
-		return true;
-	}
-
-	@Override
-	public boolean isDNF() {
 		return true;
 	}
 }

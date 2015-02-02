@@ -199,21 +199,21 @@ public class OSLOr extends OrType {
 	public boolean isAtomic() {
 		return false;
 	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		try {
+//			ensureDNF();
+//			return true;
+//		} catch (InvalidOperatorException e) {
+//			return false;
+//		}
+//	}
 
 	@Override
-	public boolean isDNF() {
-		try {
-			ensureDNF();
-			return true;
-		} catch (InvalidOperatorException e) {
-			return false;
-		}
-	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op1.setRelevant(relevant);
-		op2.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op1.setRelevance(relevant);
+		op2.setRelevance(relevant);
 	}
 }

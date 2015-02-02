@@ -4,6 +4,7 @@
 .log
 logging
 pipdb/
+.pipdb/
 derby.log
 log
 logs

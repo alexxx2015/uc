@@ -31,8 +31,8 @@ public class RepLim extends RepLimType {
 		op = (Operator) operators;
 		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 
-		CircularArray<Boolean> circArray = new CircularArray<>(_timeAmount.getTimestepInterval());
-		for (int a = 0; a < _timeAmount.getTimestepInterval(); a++) {
+		CircularArray<Boolean> circArray = new CircularArray<>(_timeAmount.getTimesteps());
+		for (int a = 0; a < _timeAmount.getTimesteps(); a++) {
 			circArray.set(false, a);
 		}
 
@@ -109,15 +109,15 @@ public class RepLim extends RepLimType {
 	public boolean isAtomic() {
 		return op.isAtomic();
 	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return op.isAtomic();
+//	}
 
 	@Override
-	public boolean isDNF() {
-		return op.isAtomic();
-	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op.setRelevance(relevant);
 	}
 }

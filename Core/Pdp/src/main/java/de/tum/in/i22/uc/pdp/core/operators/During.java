@@ -32,7 +32,7 @@ public class During extends DuringType {
 		op = (Operator) operators;
 		op.init(mech, this, ttl);
 
-		_initialCounterValue = timeAmount.getTimestepInterval() + 1;
+		_initialCounterValue = timeAmount.getTimesteps() + 1;
 
 		/*
 		 * The During Operator evaluates to true,
@@ -113,15 +113,15 @@ public class During extends DuringType {
 	public boolean isAtomic() {
 		return op.isAtomic();
 	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return op.isAtomic();
+//	}
 
 	@Override
-	public boolean isDNF() {
-		return op.isAtomic();
-	}
-
-	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op.setRelevance(relevant);
 	}
 }

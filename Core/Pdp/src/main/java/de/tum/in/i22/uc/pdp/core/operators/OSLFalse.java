@@ -50,11 +50,11 @@ public class OSLFalse extends FalseType implements AtomicOperator {
 	@Override
 	public void update(IEvent event) {
 	}
-
-	@Override
-	public boolean isDNF() {
-		return true;
-	}
+//
+//	@Override
+//	public boolean isDNF() {
+//		return true;
+//	}
 
 	@Override
 	public boolean isAtomic() {

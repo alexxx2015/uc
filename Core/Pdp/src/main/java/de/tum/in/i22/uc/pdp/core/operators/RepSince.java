@@ -118,9 +118,9 @@ public class RepSince extends RepSinceType {
 	}
 
 	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op1.setRelevant(relevant);
-		op2.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op1.setRelevance(relevant);
+		op2.setRelevance(relevant);
 	}
 }

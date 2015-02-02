@@ -75,7 +75,7 @@ public abstract class Operator extends Observable implements IOperator {
 		_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 		_state.set(StateVariable.RELEVANT, true);
 		_initialized = false;
-		_backupStates = new ArrayDeque<>(2);
+		_backupStates = new ArrayDeque<>(1);
 	}
 
 	public final void init(Mechanism mechanism) throws InvalidOperatorException {
@@ -230,12 +230,16 @@ public abstract class Operator extends Observable implements IOperator {
 		throw new UnsupportedOperationException("Not allowed to call isAtomic() on " + Operator.class);
 	}
 
-	@Override
-	public boolean isDNF() {
-		throw new UnsupportedOperationException("Not allowed to call isDNF() on " + Operator.class);
+//	@Override
+//	public boolean isDNF() {
+//		throw new UnsupportedOperationException("Not allowed to call isDNF() on " + Operator.class);
+//	}
+
+	protected void setRelevance(boolean relevant) {
+		_state.set(StateVariable.RELEVANT, relevant);
 	}
 
-	protected void setRelevant(boolean relevant) {
-		_state.set(StateVariable.RELEVANT, relevant);
+	protected boolean getRelevance() {
+		return _state.get(StateVariable.RELEVANT);
 	}
 }

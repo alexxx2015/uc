@@ -17,7 +17,7 @@ public class TimeAmount {
 	 * The interval in milliseconds
 	 */
 	private final long _interval;
-	private final long _timestepInterval;
+	private final long _timesteps;
 
 	public TimeAmount(long amount, TimeUnitType tu, long mechanismTimestepSize) throws InvalidOperatorException {
 		if (amount <= 0) {
@@ -27,17 +27,17 @@ public class TimeAmount {
 		_amount = amount;
 		_unit = tu.value();
 		_interval = amount * getTimeUnitMultiplier(tu);
-		_timestepInterval = _interval / mechanismTimestepSize;
+		_timesteps = _interval / mechanismTimestepSize;
 
-		if (_timestepInterval <= 0) {
-			throw new InvalidOperatorException("Arguments must result in a positive timestepInterval.");
+		if (_timesteps <= 0) {
+			throw new InvalidOperatorException("Arguments must result in a positive number of timesteps.");
 		}
 
-		_logger.debug("Interval: {}, timestepInterval: {}", _interval, _timestepInterval);
+		_logger.debug("Entire interval: {}, timesteps: {}", _interval, _timesteps);
 	}
 
-	public long getTimestepInterval() {
-		return _timestepInterval;
+	public long getTimesteps() {
+		return _timesteps;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class TimeAmount {
 
 	@Override
 	public String toString() {
-		return _amount + " " + _unit + "(" + _timestepInterval + ")";
+		return _amount + " " + _unit + "(" + _timesteps + " timesteps)";
 	}
 
 	public long getAmount() {

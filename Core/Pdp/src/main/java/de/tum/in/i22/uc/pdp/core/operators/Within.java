@@ -38,7 +38,7 @@ public class Within extends WithinType {
 
 		_timeAmount = new TimeAmount(amount, unit, mech.getTimestepSize());
 
-		_maxCounterValue = _timeAmount.getTimestepInterval() + 1;
+		_maxCounterValue = _timeAmount.getTimesteps() + 1;
 	}
 
 	@Override
@@ -113,14 +113,14 @@ public class Within extends WithinType {
 		return op.isAtomic();
 	}
 
-	@Override
-	public boolean isDNF() {
-		return op.isAtomic();
-	}
+//	@Override
+//	public boolean isDNF() {
+//		return op.isAtomic();
+//	}
 
 	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op.setRelevance(relevant);
 	}
 }

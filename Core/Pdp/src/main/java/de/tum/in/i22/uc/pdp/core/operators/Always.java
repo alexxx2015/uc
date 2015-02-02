@@ -53,7 +53,7 @@ public class Always extends AlwaysType {
 				_state.set(StateVariable.VALUE_AT_LAST_TICK, false);
 				_logger.debug("ALWAYS: activating IMMUTABILITY");
 				_state.set(StateVariable.IMMUTABLE, true);
-				op.setRelevant(false);
+				op.setRelevance(false);
 			}
 
 			return valueAtLastTick;
@@ -98,8 +98,8 @@ public class Always extends AlwaysType {
 		return op.isAtomic();
 	}
 
-	@Override
-	public boolean isDNF() {
-		return op.isAtomic();
-	}
+//	@Override
+//	public boolean isDNF() {
+//		return op.isAtomic();
+//	}
 }

@@ -110,16 +110,16 @@ public class OSLNot extends NotType {
 		return EOperatorType.OSL_NOT;
 	}
 
-	@Override
-	public boolean isDNF() {
-		try {
-			ensureDNF();
-			return true;
-		}
-		catch (InvalidOperatorException e) {
-			return false;
-		}
-	}
+//	@Override
+//	public boolean isDNF() {
+//		try {
+//			ensureDNF();
+//			return true;
+//		}
+//		catch (InvalidOperatorException e) {
+//			return false;
+//		}
+//	}
 
 	@Override
 	public boolean isAtomic() {
@@ -127,8 +127,8 @@ public class OSLNot extends NotType {
 	}
 
 	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op.setRelevance(relevant);
 	}
 }

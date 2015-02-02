@@ -118,10 +118,10 @@ public class OSLImplies extends ImpliesType {
 		return EOperatorType.OSL_IMPLIES;
 	}
 
-	@Override
-	public boolean isDNF() {
-		return false;
-	}
+//	@Override
+//	public boolean isDNF() {
+//		return false;
+//	}
 
 	@Override
 	public boolean isAtomic() {
@@ -129,9 +129,9 @@ public class OSLImplies extends ImpliesType {
 	}
 
 	@Override
-	protected void setRelevant(boolean relevant) {
-		super.setRelevant(relevant);
-		op1.setRelevant(relevant);
-		op2.setRelevant(relevant);
+	protected void setRelevance(boolean relevant) {
+		super.setRelevance(relevant);
+		op1.setRelevance(relevant);
+		op2.setRelevance(relevant);
 	}
 }
