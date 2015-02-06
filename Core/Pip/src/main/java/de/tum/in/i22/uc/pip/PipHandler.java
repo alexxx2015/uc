@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.exceptions.InvalidStateBasedFormulaException;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -350,5 +351,25 @@ public class PipHandler extends PipProcessor {
 		}
 
 		return new StatusBasic(EStatus.OKAY);
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		return _ifModelManager.newChecksum(data, checksum, overwrite);
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		return _ifModelManager.getChecksumOf(data);
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		return _ifModelManager.deleteChecksum(d);
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		return _ifModelManager.deleteStructure(d);
 	}
 }

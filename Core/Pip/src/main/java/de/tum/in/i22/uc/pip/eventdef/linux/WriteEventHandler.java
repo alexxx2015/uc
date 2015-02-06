@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
+import de.tum.in.i22.uc.cm.datatypes.linux.FilenameName;
 import de.tum.in.i22.uc.cm.datatypes.linux.OSInternalName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
@@ -53,9 +55,12 @@ public class WriteEventHandler extends LinuxEvents {
 		if (dstCont == null) {
 			dstCont = _informationFlowModel.getContainer(OSInternalName.create(host, filename));
 
-			if (dstCont == null) {
-				return STATUS_ERROR;
-			}
+//			if (dstCont == null) {
+//				//last attempt using filename instead?
+//				if ((filename!=null)&&(new File(filename).getName()!=null)) dstCont=_informationFlowModel.getContainer(FilenameName.create(host, LinuxEvents.toRealPath(filename)));
+				
+				if (dstCont==null) return STATUS_ERROR;
+//			}
 
 			_informationFlowModel.addName(dstFdName, dstCont);
 		}

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
@@ -16,15 +15,15 @@ import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
 import de.tum.in.i22.uc.cm.pip.EInformationFlowModel;
 import de.tum.in.i22.uc.cm.settings.Settings;
-import de.tum.in.i22.uc.pip.eventdef.BaseEventHandler;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.pip.eventdef.scope.AbstractScopeEventHandler;
 
 /**
  * 
  * @author Florian Kelbert
  * 
  */
-public class ExecveEventHandler extends BaseEventHandler {
+public class ExecveEventHandler extends AbstractScopeEventHandler {
 
 	@Override
 	protected IStatus update() {
@@ -55,6 +54,8 @@ public class ExecveEventHandler extends BaseEventHandler {
 
 		boolean performUsualSemantics = true;
 
+		//TODO move the following code in a separated method
+		
 		if (cmdline != null) {
 			String[] cmds = cmdline.split(" ");
 
@@ -72,7 +73,7 @@ public class ExecveEventHandler extends BaseEventHandler {
 				// 3: decide according to its parameters
 
 				if (cmds[1].contains("c")) { // MERGER
-					dst = new NameBasic(LinuxEvents.toRealPath(filename, cmds[2]));
+					dst = FilenameName.create(host,LinuxEvents.toRealPath(filename, cmds[2]));
 					dstCont = _informationFlowModel.getContainer(dst);
 
 					if (dstCont == null) {
@@ -88,7 +89,7 @@ public class ExecveEventHandler extends BaseEventHandler {
 						
 						for (int i = 3; i < cmds.length; i++) {
 							performUsualSemantics = false;
-							src = new NameBasic(LinuxEvents.toRealPath(filename, cmds[i]));
+							src = FilenameName.create(host,LinuxEvents.toRealPath(filename, cmds[i]));
 							srcCont = _informationFlowModel.getContainer(src);
 
 							if (srcCont != null) {
@@ -109,14 +110,19 @@ public class ExecveEventHandler extends BaseEventHandler {
 						
 					}
 				} else if (cmds[1].contains("x")) { // SPLITTER
-					src = new NameBasic(LinuxEvents.toRealPath(filename, cmds[2]));
+					src = FilenameName.create(host,LinuxEvents.toRealPath(filename, cmds[2]));
 					srcCont = _informationFlowModel.getContainer(src);
 
 					if ((srcCont != null) && (cmds.length > 3)) {
 						for (int i = 3; i < cmds.length; i++) {
 							performUsualSemantics = false;
-							dst = new NameBasic(LinuxEvents.toRealPath(filename, cmds[i]));
+							dst = FilenameName.create(host,LinuxEvents.toRealPath(filename, cmds[i]));
 							dstCont = _informationFlowModel.getContainer(dst);
+
+							if (dstCont == null) {
+								dstCont = new FileContainer();
+								_informationFlowModel.addName(dst, dstCont);
+							}
 
 							if (srcCont != null) {
 								// 3: check if structure modeling is enabled

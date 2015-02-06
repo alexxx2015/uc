@@ -41,6 +41,10 @@ enum TAttributeName {
 	SIZE = 7
 }
 
+struct TChecksum {
+	1: required tlong val,
+}
+
 struct TAttribute {
 	1: required TAttributeName name,
 	2: required string value

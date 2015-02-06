@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.AttributeBasic.EAttributeName;
+import de.tum.in.i22.uc.cm.datatypes.basic.ChecksumBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.EventBasic;
@@ -24,6 +25,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IAttribute;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -36,6 +38,7 @@ import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.thrift.types.TAttribute;
 import de.tum.in.i22.uc.thrift.types.TAttributeName;
+import de.tum.in.i22.uc.thrift.types.TChecksum;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -98,6 +101,14 @@ public final class ThriftConverter {
 		}
 	}
 
+	public static IChecksum fromThrift(TChecksum c) {
+		if (c == null) {
+			_logger.debug("TChecksum was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
+		}
+		return new ChecksumBasic(c.getVal());
+	}
+	
 	public static IData fromThrift(TData d) {
 		if (d == null) {
 			_logger.debug("TData was null.");
@@ -252,6 +263,16 @@ public final class ThriftConverter {
 		return new TContainer(c.getId(), ThriftConverter.toThriftAttributeList(c.getAttributes()));
 	}
 
+	
+	public static TChecksum toThrift(IChecksum c) {
+		if (c == null) {
+			_logger.debug("IChecksum was null.");
+			throw new RuntimeException("Thrift is not able to handle null values. Better crash now and fix this problem.");
+		}
+		return new TChecksum(c.getVal());
+	}
+	
+	
 	public static TData toThrift(IData d) {
 		if (d == null) {
 			_logger.debug("IData was null.");

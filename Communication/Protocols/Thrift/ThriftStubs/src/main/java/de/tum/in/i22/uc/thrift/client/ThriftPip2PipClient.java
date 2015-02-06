@@ -7,6 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -37,7 +38,6 @@ class ThriftPip2PipClient extends Pip2PipClient {
 		super(connector);
 		_connector = connector;
 	}
-
 
 	@Override
 	public void connect() throws IOException {
@@ -88,5 +88,25 @@ class ThriftPip2PipClient extends Pip2PipClient {
 	@Override
 	public IData getDataFromId(String id) {
 		return _impl.getDataFromId(id);
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		return _impl.newChecksum(data, checksum, overwrite);
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		return _impl.getChecksumOf(data);
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		return _impl.deleteChecksum(d);
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		return _impl.deleteStructure(d);
 	}
 }

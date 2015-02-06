@@ -10,6 +10,7 @@ import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -431,4 +432,32 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 			ifme.clearChanged();
 		}
 	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE)))
+				.newChecksum(data, checksum, overwrite);
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE)))
+				.getChecksumOf(data);
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE)))
+				.deleteChecksum(d);
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		return ((StructuredInformationFlowModel) (_ifModelExtensions
+				.get(EInformationFlowModel.STRUCTURE)))
+				.deleteStructure(d);
+		}
 }

@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
+import de.tum.in.i22.uc.thrift.types.TChecksum;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -150,6 +151,7 @@ TAny2Pip.Iface {
 
 	@Override
 	public Set<TData> flattenStructure(TData data) throws TException {
+		_logger.debug("TAny2Pip: flattenDtructure");
 		return ThriftConverter.toThriftDataSet(_handler
 				.flattenStructure(ThriftConverter.fromThrift(data)));
 	}
@@ -171,5 +173,32 @@ TAny2Pip.Iface {
 	public TStatus setUpdateFrequency(int msec, String id) throws TException {
 		_logger.debug("TAny2Pip: setUpdateFrequence");
 		return ThriftConverter.toThrift(_handler.setUpdateFrequency(msec,id));
+	}
+
+	@Override
+	public boolean deleteStructure(TData d) throws TException {
+		_logger.debug("TAny2Pip: deleteStructure");
+		return _handler
+				.deleteStructure(ThriftConverter.fromThrift(d));
+	}
+
+	@Override
+	public boolean deleteChecksum(TData d) throws TException {
+		_logger.debug("TAny2Pip: deleteChecksum");
+		return _handler
+				.deleteChecksum(ThriftConverter.fromThrift(d));
+	}
+
+	@Override
+	public TChecksum getChecksumOf(TData data) throws TException {
+		_logger.debug("TAny2Pip: getChecksumOf");
+		return ThriftConverter.toThrift(_handler.getChecksumOf(ThriftConverter.fromThrift(data)));
+	}
+
+	@Override
+	public boolean newChecksum(TData data, TChecksum checksum, boolean overwrite) throws TException {
+		_logger.debug("TAny2Pip: newChecksum");
+		return _handler
+				.newChecksum(ThriftConverter.fromThrift(data),ThriftConverter.fromThrift(checksum),overwrite);
 	}
 }

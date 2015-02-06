@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -197,6 +198,43 @@ class ThriftAny2PipImpl implements IAny2Pip {
 			return ThriftConverter.fromThrift(_handle.setUpdateFrequency(msec, id));
 		} catch (TException e) {
 			e.printStackTrace();
-		}		return null;
+		}		
+		return null;
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		try {
+			return _handle.newChecksum(ThriftConverter.toThrift(data),ThriftConverter.toThrift(checksum),overwrite);
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}	
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		try {
+			return ThriftConverter.fromThrift(_handle.getChecksumOf(ThriftConverter.toThrift(data)));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}		
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		try {
+			return _handle.deleteChecksum(ThriftConverter.toThrift(d));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}				
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		try {
+			return _handle.deleteStructure(ThriftConverter.toThrift(d));
+		} catch (TException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}				
 	}
 }
