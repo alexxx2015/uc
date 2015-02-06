@@ -166,6 +166,7 @@ public class WriteEventHandler extends LinuxEvents {
 		EScopeType type;
 
 
+		
 		// TEST : GENERIC BINARY APP WRITING TO THIS FILE?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
