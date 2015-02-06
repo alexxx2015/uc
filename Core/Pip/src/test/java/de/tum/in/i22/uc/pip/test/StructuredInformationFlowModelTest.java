@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -181,9 +182,6 @@ public class StructuredInformationFlowModelTest {
 		IData structData = _structureIfm.newStructuredData(map);
 		Map<String,Set<IData>> res=_structureIfm.getStructureOf(structData);
 		Assert.assertNotNull(res);
-		Assert.assertEquals(res.size(),0);
-
-		
 		
 		// Check current checksum (empty)
 		IChecksum check= _structureIfm.getChecksumOf(structData);
@@ -223,7 +221,7 @@ public class StructuredInformationFlowModelTest {
 		map2.put("lbl2",set2);
 		IData structData2 = _structureIfm.newStructuredData(map2);
 		Assert.assertTrue(_structureIfm.deleteStructure(structData));
-		Assert.assertNull(_structureIfm.getStructureOf(structData));
+		Assert.assertEquals(_structureIfm.getStructureOf(structData),Collections.emptyMap());
 		
 		// Make sure also checksum got deleted
 		Assert.assertNull(_structureIfm.getChecksumOf(structData));

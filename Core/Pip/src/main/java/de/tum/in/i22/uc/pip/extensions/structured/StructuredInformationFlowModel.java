@@ -165,7 +165,8 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 			return false;
 		}
 
-		if (getStructureOf(data) == null) {
+		Map <String,Set<IData>> map = getStructureOf(data);
+		if ((map == null)||(map.equals(Collections.emptyMap()))) {
 			_logger.debug("impossible to store checksum for unstructred data " + data + ".");
 			return false;
 		}
