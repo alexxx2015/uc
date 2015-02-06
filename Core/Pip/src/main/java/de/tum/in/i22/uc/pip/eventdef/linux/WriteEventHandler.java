@@ -31,7 +31,7 @@ public class WriteEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
-		String host = null;
+/*		String host = null;
 		int pid;
 		int fd;
 		String filename = null;
@@ -65,8 +65,8 @@ public class WriteEventHandler extends LinuxEvents {
 			_informationFlowModel.addName(dstFdName, dstCont);
 		}
 
-		return copyDataTransitive(srcCont, dstCont);
-//		return update(EBehavior.INTRA, null);
+		return copyDataTransitive(srcCont, dstCont); */
+		return update(EBehavior.INTRA, null);
 
 	}
 	@Override

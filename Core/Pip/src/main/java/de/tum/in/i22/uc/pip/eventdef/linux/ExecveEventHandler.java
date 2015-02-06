@@ -54,7 +54,7 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 
 		boolean performUsualSemantics = true;
 
-		//TODO move the following code in a separated method
+		//TODO move the following code in a separate method
 		
 		if (cmdline != null) {
 			String[] cmds = cmdline.split(" ");
