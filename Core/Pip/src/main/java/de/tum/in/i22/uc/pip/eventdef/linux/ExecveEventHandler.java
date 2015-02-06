@@ -68,8 +68,7 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 				boolean structActive = Settings.getInstance().getEnabledInformationFlowModels()
 						.contains(EInformationFlowModel.STRUCTURE);
 				Map<String,Set<IData>> map=null;
-				
-				
+								
 				// 3: decide according to its parameters
 
 				if (cmds[1].contains("c")) { // MERGER
