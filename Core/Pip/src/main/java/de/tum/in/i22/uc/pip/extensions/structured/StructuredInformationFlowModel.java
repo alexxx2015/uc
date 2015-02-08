@@ -385,4 +385,7 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 		return _structureBackup != null;
 	}
 
+	public String computeChecksumOf(Object object){
+		return "CHK_"+object.hashCode();
+	}
 }

@@ -54,7 +54,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 		}
 
 		@Override
-		protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+		protected Set<Pair<EScopeState, IScope>> XDelim() {
 			try {
 				_delimiter = getParameterValue(_delimiterName);
 
@@ -79,7 +79,7 @@ public class SaveEventHandler extends AbstractScopeEventHandler {
 		}
 
 		@Override
-		protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+		protected Pair<EBehavior, IScope> XBehav() {
 			IScope scope = buildScope();
 			if ((scope == null) || !( _closeDelimiter.equals(_delimiter)))
 				return Pair.of(EBehavior.UNKNOWN, null);

@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.cm.pip.interfaces;
 
 public enum EScopeType {
 	UNKNOWN, 
+	SPECIAL, //for the time being this is used to return multiple scopes as attributes of one scope
 	SAVE_FILE, 
 	LOAD_FILE, 
 	COPY_CLIPBOARD, 

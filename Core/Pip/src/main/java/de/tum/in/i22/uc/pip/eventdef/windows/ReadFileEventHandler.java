@@ -104,7 +104,7 @@ public class ReadFileEventHandler extends WindowsEvents {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		String filename;
 		String fileDescriptor;
 		String pid;

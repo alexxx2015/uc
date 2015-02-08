@@ -76,7 +76,7 @@ public class BinSourceEventHandler extends BinDftEventHandler {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		String delimiter = null;
 		try {
 			delimiter = getParameterValue(_delimiterName);

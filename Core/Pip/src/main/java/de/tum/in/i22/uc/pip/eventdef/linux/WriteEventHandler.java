@@ -69,6 +69,8 @@ public class WriteEventHandler extends LinuxEvents {
 		return update(EBehavior.INTRA, null);
 
 	}
+	
+	
 	@Override
 	protected IStatus update(EBehavior direction, IScope scope) {
 		String host = null;
@@ -143,7 +145,7 @@ public class WriteEventHandler extends LinuxEvents {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		int pid;
 		int fd;
 		String filename = null;
@@ -166,8 +168,7 @@ public class WriteEventHandler extends LinuxEvents {
 		EScopeType type;
 
 
-		
-		// TEST : GENERIC BINARY APP WRITING TO THIS FILE?
+		// TEST 1: GENERIC BINARY APP WRITING TO THIS FILE?
 		// If so behave as IN
 		attributes = new HashMap<String, Object>();
 		type = EScopeType.BIN_GENERIC_SAVE;
@@ -184,7 +185,50 @@ public class WriteEventHandler extends LinuxEvents {
 			_logger.debug("Test2 failed. Generic binary App is NOT writing to file "
 					+ filename);
 		}
-
+		
+		// TEST 2 : IS THIS WRITE EVENT PART OF A MERGE OR SPLIT EVENT?
+		// If so behave as IN
+		
+		// NB: no checksum check so far
+		
+		attributes = new HashMap<String, Object>();
+		type = EScopeType.TAR_MERGE;
+		attributes.put("intermediateContainerName", filename);
+		attributes.put("pid", pid);
+		scopeToCheck = new ScopeBasic("Testing scope for merge event", type,
+				attributes);
+		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		
+		if (existingScope != null) {
+			_logger.debug("Test2m succeeded. This write is part of a merge to "
+					+ filename);
+			return Pair.of(EBehavior.IN, existingScope);
+		} else {
+			_logger.debug("Test2m failed. This write does not seem to be part of a merge to "
+					+ filename);
+		
+		}
+		
+		attributes = new HashMap<String, Object>();
+		type = EScopeType.TAR_SPLIT;
+		attributes.put("destContainerName", filename);
+		attributes.put("pid", pid);
+		scopeToCheck = new ScopeBasic("Testing scope for split event", type,
+				attributes);
+		existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
+		
+		if (existingScope != null) {
+			_logger.debug("Test2s succeeded. This write is part of a split event to "
+					+ filename);
+			return Pair.of(EBehavior.IN, existingScope);
+		} else {
+			_logger.debug("Test2s failed. This write does not seem to be part of a split to "
+					+ filename);
+		
+		}
+		
+		
+		
 		// OTHERWISE
 		// behave as INTRA
 		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");

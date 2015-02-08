@@ -67,7 +67,7 @@ public abstract class BinDftEventHandler extends AbstractScopeEventHandler {
 	 * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
 	 */
 	@Override
-	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+	protected Set<Pair<EScopeState, IScope>> XDelim() {
 		String delimiter = null;
 		try {
 			delimiter = getParameterValue(_delimiterName);

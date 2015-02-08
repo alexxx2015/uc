@@ -77,7 +77,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 	 * scopes opened/closed.
 	 */
 	private final int createScope() {
-		Set<Pair<EScopeState, IScope>> scopeChanges = XDelim(_event);
+		Set<Pair<EScopeState, IScope>> scopeChanges = XDelim();
 		if ((scopeChanges == null) || (scopeChanges.size() == 0))
 			return 0;
 		int res = 0;
@@ -178,7 +178,7 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 		_logger.info(this.getClass().getSimpleName() + " event handler execute");
 
-		Pair<EBehavior, IScope> xlBehavior = XBehav(_event);
+		Pair<EBehavior, IScope> xlBehavior = XBehav();
 		IStatus resStatus = null;
 
 		if (xlBehavior != null) {
@@ -217,16 +217,16 @@ public abstract class AbstractScopeEventHandler extends BaseEventHandler {
 
 	}
 
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		return Pair.of(EBehavior.INTRA, null);
 	}
 
-	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+	protected Set<Pair<EScopeState, IScope>> XDelim() {
 		return new HashSet<Pair<EScopeState, IScope>>();
 	}
 
 	// TODO: XAlias not defined yet
-	protected Map<IContainer, Set<IContainer>> XAlias(IEvent event) {
+	protected Map<IContainer, Set<IContainer>> XAlias() {
 		return new HashMap<IContainer, Set<IContainer>>();
 	}
 

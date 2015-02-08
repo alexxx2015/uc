@@ -273,7 +273,7 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 
 	@Override
 	public IScope getOpenedScope(IScope scope) {
-		_logger.error("Method getOpenedScope() not implemented.");
+		_logger.error("Method () not implemented.");
 		return null;
 	}
 
@@ -375,5 +375,11 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	public boolean deleteStructure(IData d) {
 		_logger.error("Method deleteStructure() not implemented.");
 		return false;
+	}
+
+	@Override
+	public Set<IScope> getAllOpenedScopes() {
+		_logger.error("Method getAllOpenedScopes() not implemented.");
+		return null;
 	}
 }

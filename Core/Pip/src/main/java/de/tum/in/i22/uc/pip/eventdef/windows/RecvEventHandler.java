@@ -104,7 +104,7 @@ public class RecvEventHandler extends WindowsEvents {
 
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		_logger.debug("XBehav function of Recv");
 		String socketHandle = null;
 		String pid = null;
