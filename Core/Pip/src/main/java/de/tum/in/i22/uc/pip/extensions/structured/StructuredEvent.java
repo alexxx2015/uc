@@ -45,7 +45,8 @@ public abstract class StructuredEvent {
 					for (int i = 3; i < cmds.length; i++) {
 						src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[i]));
 						srcCont = _informationFlowModel.getContainer(src);
-						labelContMap.put(src.getName(), src);
+						//labelContMap.put(src.getName(), src);
+						labelContMap.put(cmds[i], src);
 					}
 				}
 
@@ -65,7 +66,8 @@ public abstract class StructuredEvent {
 							_informationFlowModel.addName(dst, dstCont);
 						}
 						
-						labelContMap.put(dst.getName(), dst);
+						//labelContMap.put(dst.getName(), dst);
+						labelContMap.put(cmds[i], dst);
 					}
 					return new Splitter("tar Splitter", src, labelContMap, _informationFlowModel);
 				}

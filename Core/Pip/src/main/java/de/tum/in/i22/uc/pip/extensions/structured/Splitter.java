@@ -16,12 +16,21 @@ public class Splitter extends StructuredEvent {
 		_informationFlowModel = informationFlowModel;
 	}
 
-	public Map<String, IName> getDestination() {
+	public Map<String, IName> getDestinations() {
 		return _dst;
 	}
 
 	public IName getIntermediateContainer() {
 		return _src;
+	}
+
+	/**
+	 * return the name of the destination container associated to a specific label
+	 * @param label
+	 * @return
+	 */
+	public IName getDestination(String label) {
+		return _dst.get(label);
 	}
 
 }

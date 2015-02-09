@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -142,7 +143,7 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 					EScopeType.TAR_MERGE, attributes));
 
 		} else if (_structuredEvent instanceof Splitter) {
-			for (Entry<String, IName> structEntry : ((Splitter) _structuredEvent).getDestination().entrySet()) {
+			for (Entry<String, IName> structEntry : ((Splitter) _structuredEvent).getDestinations().entrySet()) {
 				Map<String, Object> attributes = new HashMap<String, Object>();
 				attributes.put("app", newProcessName);
 				attributes.put("host", host);
@@ -150,7 +151,7 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 				attributes.put("destContainerName", structEntry.getValue());
 				attributes.put("destContainerLabel", structEntry.getKey());
 				result.add(new ScopeBasic(newProcessName + " splitting into destination container "
-						+ structEntry.getValue(), EScopeType.TAR_SPLIT, attributes));
+						+ structEntry.getValue().getName(), EScopeType.TAR_SPLIT, attributes));
 			}
 
 		} else
@@ -185,28 +186,45 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 				// parameters of the structured event
 				Set<IData> sd = _informationFlowModel.getData(((Splitter) _structuredEvent).getIntermediateContainer());
 
-				for (IScope s : (Set<IScope>) scope.getAttribute("scopes")) { // Retrieve
+				for (IScope sc : (Set<IScope>) scope.getAttribute("scopes")) { // Retrieve
 																				// all
 																				// the
 																				// scopes
-					IContainer splitDest = _informationFlowModel.getContainer(new NameBasic(s.getId()));
-
+					
+					IScope s = _informationFlowModel.getOpenedScope(sc);
+					IContainer scopeCont = _informationFlowModel.getContainer(new NameBasic(s.getId()));
+					
+					String destLabel=(String)sc.getAttribute("destContainerLabel");
+					
+					
+					IName destName=(IName)sc.getAttribute("destContainerName");
+					IContainer destCont= _informationFlowModel.getContainer(destName);
+					
+					if (destCont==null){
+						destCont=new ContainerBasic();
+						_informationFlowModel.addName(destName, destCont);
+					}
+					
 					for (IData d : sd) {
 						Map<String, Set<IData>> struct = _informationFlowModel.getStructureOf(d);
 						if (struct != null) {
-							_informationFlowModel.addData(
-									struct.get(((Splitter) _structuredEvent).getIntermediateContainer().toString()),
-									splitDest);
+							Set<IData> splittedData = struct.get(destLabel);
+							_informationFlowModel.addData(splittedData,scopeCont);
 						} else {
-							_informationFlowModel.addData(d, splitDest);
+							_informationFlowModel.addData(d, scopeCont);
 						}
 					}
 
 				}
 			} else { // MERGER
 
-				_informationFlowModel.addData(_structData,
-						_informationFlowModel.getContainer(new NameBasic(scope.getId())));
+				IName intName =new NameBasic(scope.getId());
+				IContainer intCont = _informationFlowModel.getContainer(intName);
+				if (intCont==null) {
+					intCont=new ContainerBasic();
+					_informationFlowModel.addName(intName, intCont);
+				}
+				_informationFlowModel.addData(_structData,intCont);
 			}
 		}
 		return STATUS_OKAY;
@@ -231,7 +249,7 @@ public class ExecveEventHandler extends AbstractScopeEventHandler {
 						+ scopes.size());
 				return Pair.of(EBehavior.UNKNOWN, null);
 			}
-			return Pair.of(EBehavior.OUT, scopes.iterator().next());
+			return Pair.of(EBehavior.OUT, _informationFlowModel.getOpenedScope(scopes.iterator().next()));
 		} else if (_structuredEvent instanceof Splitter) {
 			Set<IScope> scopes = buildScopes();
 			if (scopes == null) {
