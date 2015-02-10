@@ -45,12 +45,11 @@ public abstract class StructuredEvent {
 					for (int i = 3; i < cmds.length; i++) {
 						src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[i]));
 						srcCont = _informationFlowModel.getContainer(src);
-						//labelContMap.put(src.getName(), src);
+						// labelContMap.put(src.getName(), src);
 						labelContMap.put(cmds[i], src);
 					}
+					return new Merger("tar Merger", labelContMap, dst, _informationFlowModel);
 				}
-
-				return new Merger("tar Merger", labelContMap, dst, _informationFlowModel);
 
 			} else if (cmds[1].contains("x")) { // SPLITTER
 				src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[2]));
@@ -65,16 +64,50 @@ public abstract class StructuredEvent {
 							dstCont = new FileContainer();
 							_informationFlowModel.addName(dst, dstCont);
 						}
-						
-						//labelContMap.put(dst.getName(), dst);
+
+						// labelContMap.put(dst.getName(), dst);
 						labelContMap.put(cmds[i], dst);
 					}
 					return new Splitter("tar Splitter", src, labelContMap, _informationFlowModel);
 				}
 			}
+		} else if ((cmds[0].equals("zip")) || (cmds[0].equals("/usr/bin/zip"))) {
+			dst = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[1]));
+			dstCont = _informationFlowModel.getContainer(dst);
+			if (dstCont == null) {
+				dstCont = new FileContainer();
+				_informationFlowModel.addName(dst, dstCont);
+			}
+			if (cmds.length > 2) {
+				for (int i = 2; i < cmds.length; i++) {
+					src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[i]));
+					srcCont = _informationFlowModel.getContainer(src);
+					// labelContMap.put(src.getName(), src);
+					labelContMap.put(cmds[i], src);
+				}
+				return new Merger("tar Merger", labelContMap, dst, _informationFlowModel);
+			}
+		} else if ((cmds[0].equals("unzip")) || (cmds[0].equals("/usr/bin/unzip"))) {
+			src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[1]));
+			srcCont = _informationFlowModel.getContainer(src);
+
+			if ((srcCont != null) && (cmds.length > 2)) {
+				for (int i = 2; i < cmds.length; i++) {
+					dst = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[i]));
+					dstCont = _informationFlowModel.getContainer(dst);
+
+					if (dstCont == null) {
+						dstCont = new FileContainer();
+						_informationFlowModel.addName(dst, dstCont);
+					}
+
+					// labelContMap.put(dst.getName(), dst);
+					labelContMap.put(cmds[i], dst);
+				}
+				return new Splitter("tar Splitter", src, labelContMap, _informationFlowModel);
+			}
 		}
 		return null;
 	}
-
 
 }

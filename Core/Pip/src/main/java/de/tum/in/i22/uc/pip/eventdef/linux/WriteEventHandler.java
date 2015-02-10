@@ -175,7 +175,20 @@ public class WriteEventHandler extends LinuxEvents {
 
 		// NB: no checksum check so far
 
-		if (filename.contains(":[")) {
+		
+		// We check if filename is the name of a file or if it's something like
+		// pipe:[...] by trying to retrieve the container from the fd.
+		// if we get a null, it means the file descriptor has not been created
+		// with an open, thus it's not a "file"
+		
+		//NOT WORKING
+		//IContainer checkIfFilenameIsAFileOrAPipe = _informationFlowModel.getContainer(FiledescrName.create(host, pid,fd));
+		
+		
+		if (
+				//(checkIfFilenameIsAFileOrAPipe == null)||
+				(filename.contains(":["))
+				) {
 			_logger.debug("writing on pipe, no need for more tests");
 		} else {
 			attributes = new HashMap<String, Object>();
@@ -202,7 +215,8 @@ public class WriteEventHandler extends LinuxEvents {
 			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);
 
 			if (existingScope != null) {
-				_logger.debug("Test2s succeeded. This write is part of a split event to " + FilenameName.create(host, LinuxEvents.toRealPath(filename)));
+				_logger.debug("Test2s succeeded. This write is part of a split event to "
+						+ FilenameName.create(host, LinuxEvents.toRealPath(filename)));
 				return Pair.of(EBehavior.IN, existingScope);
 			} else {
 				_logger.debug("Test2s failed. This write does not seem to be part of a split to " + filename);
