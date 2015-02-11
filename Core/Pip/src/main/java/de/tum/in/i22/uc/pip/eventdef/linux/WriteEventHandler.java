@@ -175,26 +175,34 @@ public class WriteEventHandler extends LinuxEvents {
 
 		// NB: no checksum check so far
 
-		
 		// We check if filename is the name of a file or if it's something like
 		// pipe:[...] by trying to retrieve the container from the fd.
 		// if we get a null, it means the file descriptor has not been created
 		// with an open, thus it's not a "file"
-		
-		//NOT WORKING
-		//IContainer checkIfFilenameIsAFileOrAPipe = _informationFlowModel.getContainer(FiledescrName.create(host, pid,fd));
-		
-		
+
+		// NOT WORKING
+		// IContainer checkIfFilenameIsAFileOrAPipe =
+		// _informationFlowModel.getContainer(FiledescrName.create(host,
+		// pid,fd));
+
 		if (
-				//(checkIfFilenameIsAFileOrAPipe == null)||
-				(filename.contains(":["))
-				) {
+		// (checkIfFilenameIsAFileOrAPipe == null)||
+		(filename.contains(":["))) {
 			_logger.debug("writing on pipe, no need for more tests");
 		} else {
 			attributes = new HashMap<String, Object>();
 			type = EScopeType.TAR_MERGE;
-			attributes.put("intermediateContainerName", FilenameName.create(host, LinuxEvents.toRealPath(filename))
-					.getName());
+
+			// This check is removed because zip does not save in the
+			// destination file but in a temporary file and then renames the
+			// result.
+			// Thus, the intermediate ocntainer in the scope won't match
+			//
+			// attributes.put("intermediateContainerName",
+			// FilenameName.create(host,
+			// LinuxEvents.toRealPath(filename)).getName());
+			
+			
 			attributes.put("pid", pid);
 			scopeToCheck = new ScopeBasic("Testing scope for merge event", type, attributes);
 			existingScope = _informationFlowModel.getOpenedScope(scopeToCheck);

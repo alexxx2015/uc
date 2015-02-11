@@ -45,6 +45,7 @@ public class ScopeBasic implements IScope {
 
 	@Override
 	public boolean isRefinedBy(IScope s) {
+		if ((s==null)||(s.getScopeType()==null ) || (!(s.getScopeType().equals(this._scopeType)))) return false; 
 		for (Entry<String, Object> entry : _attributes.entrySet()) {
 			Object o1 = entry.getValue();
 			Object o2 = s.getAttribute(entry.getKey());
