@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.pip.eventdef.linux;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
@@ -100,15 +98,24 @@ public class WriteEventHandler extends LinuxEvents {
 			dstFdName = FiledescrName.create(host, pid, fd);
 
 			dstCont = _informationFlowModel.getContainer(dstFdName);
-
+			
 			if (dstCont == null) {
+				//either it's a pipe/socket...
 				dstCont = _informationFlowModel.getContainer(OSInternalName.create(host, filename));
 
 				if (dstCont == null) {
-					return STATUS_ERROR;
+					//or it's a special file that has not bben opened, like when using >>
+					dstCont=_informationFlowModel.getContainer(FilenameName.create(host, filename));
+
+					if (dstCont == null) {
+						return STATUS_ERROR;
+					}
+					_informationFlowModel.addName(FilenameName.create(host, filename), dstCont);
+
+				} else {
+					_informationFlowModel.addName(dstFdName, dstCont);
 				}
 
-				_informationFlowModel.addName(dstFdName, dstCont);
 			}
 		}
 

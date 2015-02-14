@@ -28,8 +28,9 @@ public class TraceGenerator {
 	
 	private static double pZip = 5;
 	private static double pUnzip = 5;
-	private static double pCopy = 2;
-	private static double pDelete = 10;
+	private static double pCopy = 5;
+	private static double pDelete = 5;
+	private static double pMerge = 5;
 	
 	private static int INITFILES = 10;
 	private static int MAXFILES = 100;
@@ -116,18 +117,21 @@ public class TraceGenerator {
 
 
 	private static final String ZIPCMD = "zip";
-	private static final String UNZIPCMD = "unzip";
+	private static final String UNZIPCMD = "unzip -o";
 	private static final String COPYCMD = "cp";
 	private static final String DELETECMD = "rm";
-	private static double sumOfP = pZip + pCopy + pDelete + pUnzip;
+	private static final String MERGECMD = "cat";
+	
+	private static double sumOfP = pZip + pCopy + pDelete + pUnzip + pMerge;
 
 	// mapping commands - probabilities execution
-	public static final Map<String, Double> COMMANDS = new HashMap<>(4);
+	public static final Map<String, Double> COMMANDS = new HashMap<>(5);
 	static {
 		COMMANDS.put(ZIPCMD, pZip);
 		COMMANDS.put(UNZIPCMD, pUnzip);
 		COMMANDS.put(COPYCMD, pCopy);
 		COMMANDS.put(DELETECMD, pDelete);
+		COMMANDS.put(MERGECMD, pMerge);
 	}
 
 	private static Set<String> existingNormalFiles = new HashSet<String>();
@@ -212,6 +216,15 @@ public class TraceGenerator {
 		return result;
 	}
 
+	
+	static private List<String> getListOfExistingNormalFiles(int length) {
+		List<String> result = new LinkedList<String>();
+		for (int i = 0; i < length; i++) {
+			result.add(getExistingNormalFile());
+		}
+		return result;
+	}
+
 	static private List<String> getListOfRandomFilesFromZip(ZipObject zip, int numOfFilesToSplit) {
 		if (zip == null) {
 			// throw an exception
@@ -260,13 +273,10 @@ public class TraceGenerator {
 	}
 
 	static private String getExistingFile(boolean normal) {
-		String extension;
 		int size = 0;
 		if (normal) {
-			extension = NORMALEXTENSION;
 			size = existingNormalFiles.size();
 		} else {
-			extension = ZIPEXTENSION;
 			size = existingZipFiles.size();
 		}
 
@@ -423,6 +433,20 @@ public class TraceGenerator {
 
 				break;
 
+			case MERGECMD:
+				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
+					String dst = getFreshNormalFile();
+					int numSrc = rand.nextInt(MAXMERGE) + 1;
+					List<String> srcPars = getListOfExistingNormalFiles(numSrc);
+
+					listOfFinalFiles.add(dst);
+
+					traceCommand = MERGECMD + " " + listAsString(srcPars) + " >> " + dst;
+				} else {
+					l--;
+				}
+				break;
+
 			}
 
 			if (!traceCommand.equals("")) {
@@ -492,6 +516,12 @@ public class TraceGenerator {
 				i++;
 				break;
 
+			case "--pMerge":
+				pMerge = Double.valueOf(args[i + 1]);
+				i++;
+				i++;
+				break;
+
 			case "--traceLength":
 				traceLength = Integer.valueOf(args[i + 1]);
 				i++;
@@ -551,6 +581,7 @@ System.out.println("\t--pZip w");
 System.out.println("\t--pUnzip w");
 System.out.println("\t--pDelete w");
 System.out.println("\t--pCopy w");
+System.out.println("\t--pMerge w");
 System.out.println("\t\t Set the likelihood of a certain event. The next event on the trace is of type T with probability w/(sum of all ws) (double)\n");
 
 
@@ -599,11 +630,30 @@ break;
 		init();
 		generate(traceLength);
 
-		System.out.println("---------------");
+//		System.out.println("---------------");
+	
+		System.out.println("CONFIG:seed:"+SEED);		
+		System.out.println("CONFIG:tracelength:"+traceLength);
+		System.out.println("CONFIG:----------");
+		System.out.println("CONFIG:pZip:"+pZip);
+		System.out.println("CONFIG:pUnzip:"+pUnzip);
+		System.out.println("CONFIG:pCopy:"+pCopy);
+		System.out.println("CONFIG:pDelete:"+pDelete);
+		System.out.println("CONFIG:----------");
+		System.out.println("CONFIG:maxretry:"+MAXRETRY);
+		System.out.println("CONFIG:initfiles:"+INITFILES);
+		System.out.println("CONFIG:maxfiles:"+MAXFILES);
+		System.out.println("CONFIG:maxmerge:"+MAXMERGE);
+		System.out.println("CONFIG:----------");
+		System.out.println("CONFIG:fileprefix:"+FILEPREFIX);
+		System.out.println("CONFIG:zipextension:"+ZIPEXTENSION);
+		System.out.println("CONFIG:normalextension:"+NORMALEXTENSION);
+		System.out.println("CONFIG:----------");		
+		System.out.println("INFO:filesNummber:"+listOfFinalFiles.size());
 		for (String s : listOfFinalFiles) {
-			System.out.println(s);
+			System.out.println("F:"+s);
 		}
-		System.out.println("---------------");
+//		System.out.println("---------------");
 
 		int i = 0;
 		for (String s : trace) {
