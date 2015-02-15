@@ -19,29 +19,31 @@ import com.google.common.collect.Lists;
 public class TraceGenerator {
 
 	// not final because configurable via commandline parameters
-	
+
 	private static final boolean DEBUG = false;
 
 	private static int traceLength = 20;
 	private static long SEED = 1;
 	private static int MAXRETRY = 50;
-	
+
 	private static double pZip = 5;
 	private static double pUnzip = 5;
 	private static double pCopy = 5;
 	private static double pDelete = 5;
+
 	private static double pMerge = 5;
-	
+	private static double pNew = 0.5;
+	private static int numLinesToMerge = 10;
+
 	private static int INITFILES = 10;
 	private static int MAXFILES = 100;
 	private static int MAXMERGE = 4;
-	
+
 	private static String ZIPEXTENSION = ".zip";
 	private static String NORMALEXTENSION = ".txt";
-	
+
 	private static String FILEPREFIX = "file";
 	private static String DATAPREFIX = "DATA";
-	
 
 	private static class ZipObject {
 		private String filename;
@@ -115,13 +117,12 @@ public class TraceGenerator {
 
 	}
 
-
 	private static final String ZIPCMD = "zip";
 	private static final String UNZIPCMD = "unzip -o";
 	private static final String COPYCMD = "cp";
 	private static final String DELETECMD = "rm";
-	private static final String MERGECMD = "cat";
-	
+	private static final String MERGECMD = "python pymerge.py";
+
 	private static double sumOfP = pZip + pCopy + pDelete + pUnzip + pMerge;
 
 	// mapping commands - probabilities execution
@@ -152,7 +153,7 @@ public class TraceGenerator {
 		existingNormalFiles = new HashSet<String>();
 		existingZipFiles = new HashSet<ZipObject>();
 		listOfFinalFiles = new HashSet<String>();
-		
+
 		// initialize list of used files
 		for (int x = 0; x < INITFILES; x++) {
 			String file = getFreshNormalFile();
@@ -216,7 +217,6 @@ public class TraceGenerator {
 		return result;
 	}
 
-	
 	static private List<String> getListOfExistingNormalFiles(int length) {
 		List<String> result = new LinkedList<String>();
 		for (int i = 0; i < length; i++) {
@@ -337,16 +337,19 @@ public class TraceGenerator {
 	}
 
 	static private void generate(int length) {
-		int retry=0;
+		int retry = 0;
 		for (int l = 0; l < length; l++) {
 
 			if (existingZipFiles.size() + existingNormalFiles.size() == 0) {
 				retry++;
-				if (retry>MAXRETRY) throw new RuntimeException ("Enough! With this settings it was not possible to generate a good trace within "+ MAXRETRY+" attempts!");
+				if (retry > MAXRETRY)
+					throw new RuntimeException(
+							"Enough! With this settings it was not possible to generate a good trace within "
+									+ MAXRETRY + " attempts!");
 				SEED = SEED + rand.nextInt();
 				l = 0;
-				System.err.println("Attempts number "+retry+": Every file has been deleted. Let's try again with another trace (new seed=" + SEED
-						+ ")");
+				System.err.println("Attempts number " + retry
+						+ ": Every file has been deleted. Let's try again with another trace (new seed=" + SEED + ")");
 				init();
 			}
 
@@ -410,7 +413,7 @@ public class TraceGenerator {
 					listOfFinalFiles.add(dstString);
 
 					traceCommand = COPYCMD + " " + srcString + " " + dstString;
-				} else{
+				} else {
 					l--;
 				}
 				break;
@@ -435,13 +438,19 @@ public class TraceGenerator {
 
 			case MERGECMD:
 				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
-					String dst = getFreshNormalFile();
+					String dst = "";
+					if (rand.nextDouble() <= pNew) {
+						dst = getFreshNormalFile();
+					} else {
+						dst = getExistingNormalFile();
+					}
+
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
 					List<String> srcPars = getListOfExistingNormalFiles(numSrc);
 
 					listOfFinalFiles.add(dst);
 
-					traceCommand = MERGECMD + " " + listAsString(srcPars) + " >> " + dst;
+					traceCommand = MERGECMD + " " + dst + " " + numLinesToMerge + " " + listAsString(srcPars);
 				} else {
 					l--;
 				}
@@ -522,6 +531,18 @@ public class TraceGenerator {
 				i++;
 				break;
 
+			case "--pNew":
+				pNew = Double.valueOf(args[i + 1]);
+				i++;
+				i++;
+				break;
+				
+			case "--numLinesToMerge":
+				numLinesToMerge = Integer.valueOf(args[i + 1]);
+				i++;
+				i++;
+				break;
+			
 			case "--traceLength":
 				traceLength = Integer.valueOf(args[i + 1]);
 				i++;
@@ -571,52 +592,64 @@ public class TraceGenerator {
 				break;
 
 			case "--help":
-System.out.println("\nUsage: java TraceGenerator [OPTIONS] ");
-System.out.println("\n");
-System.out.println("OPTIONS:\n");
-System.out.println("\t--seed n");
-System.out.println("\t\t Set the seed to n (Integer)\n");
+				System.out.println("\nUsage: java TraceGenerator [OPTIONS] ");
+				System.out.println("\n");
+				System.out.println("OPTIONS:\n");
+				System.out.println("\t--seed n");
+				System.out.println("\t\t Set the seed to n (Integer)\n");
 
-System.out.println("\t--pZip w");
-System.out.println("\t--pUnzip w");
-System.out.println("\t--pDelete w");
-System.out.println("\t--pCopy w");
-System.out.println("\t--pMerge w");
-System.out.println("\t\t Set the likelihood of a certain event. The next event on the trace is of type T with probability w/(sum of all ws) (double)\n");
+				System.out.println("\t--pZip w");
+				System.out.println("\t--pUnzip w");
+				System.out.println("\t--pDelete w");
+				System.out.println("\t--pCopy w");
+				System.out.println("\t--pMerge w");
+				System.out
+						.println("\t\t Set the likelihood of a certain event. The next event on the trace is of type T with probability w/(sum of all ws) (double)\n");
 
+				System.out.println("\t--pNew p");
+				System.out
+						.println("\t\t Set the probability that a merge event will append to an existing file vs creating a fresh file. p must be within 0 and 1. (double)\n");
 
-System.out.println("\t--traceLength n");
-System.out.println("\t\t Set the length of the generated trace to n (Integer)\n");
+				System.out.println("\t--numLinesToMerge p");
+				System.out
+						.println("\t\t Set the number of lines to be randomly picked from any of the source files during a merge event. (integer)\n");
 
-System.out.println("\t--maxMerge n");
-System.out.println("\t\t Set the maximum number of sources for a merge event to n (Integer)\n");
+				System.out.println("\t--traceLength n");
+				System.out.println("\t\t Set the length of the generated trace to n (Integer)\n");
 
-System.out.println("\t--zipExtension s");
-System.out.println("\t\t Set the extension of archive files resulting after a merge event to s (String)\n");
+				System.out.println("\t--maxMerge n");
+				System.out.println("\t\t Set the maximum number of sources for a merge event to n (Integer)\n");
 
-System.out.println("\t--normalExtension s");
-System.out.println("\t\t Set the extension of non-archive files to s (String)\n");
+				System.out.println("\t--zipExtension s");
+				System.out
+						.println("\t\t Set the extension of archive files resulting after a merge event to s (String)\n");
 
-System.out.println("\t--filePrefix f");
-System.out.println("\t\t Set the prefix for file names to f (String)\n");
+				System.out.println("\t--normalExtension s");
+				System.out.println("\t\t Set the extension of non-archive files to s (String)\n");
 
-System.out.println("\t--initFiles n");
-System.out.println("\t\t Set the number of initial files to n (Integer)\n");
+				System.out.println("\t--filePrefix f");
+				System.out.println("\t\t Set the prefix for file names to f (String)\n");
 
-System.out.println("\t--maxFiles n");
-System.out.println("\t\t Set the maximum number of files allowed in the system to n (Integer)\n");
+				System.out.println("\t--initFiles n");
+				System.out.println("\t\t Set the number of initial files to n (Integer)\n");
 
-System.out.println("\t--maxRetry n");
-System.out.println("\t\t If at a certain point, the trace results in the situation in which every file has been deleted, the program generates a ne random seed and restarts. This option sets the maximum number of restarts allowed before giving up to n (Integer)\n");
+				System.out.println("\t--maxFiles n");
+				System.out.println("\t\t Set the maximum number of files allowed in the system to n (Integer)\n");
 
-System.out.println("\t--help");
-System.out.println("\t\t Prints this help\n");
+				System.out.println("\t--maxRetry n");
+				System.out
+						.println("\t\t If at a certain point, the trace results in the situation in which every file has been deleted, the program generates a ne random seed and restarts. This option sets the maximum number of restarts allowed before giving up to n (Integer)\n");
 
-System.exit(0);
-break;
+				System.out.println("\t--help");
+				System.out.println("\t\t Prints this help\n");
+
+				System.exit(0);
+				break;
 
 			default:
-				System.out.println(args[i]+" does not seem to be a valid option. Type \"java TraceGenerator --help\" for a list of valid options.");
+				System.out
+						.println(args[i]
+								+ " does not seem to be a valid option. Type \"java TraceGenerator --help\" for a list of valid options.");
 				System.exit(1);
 				break;
 			}
@@ -630,30 +663,30 @@ break;
 		init();
 		generate(traceLength);
 
-//		System.out.println("---------------");
-	
-		System.out.println("CONFIG:seed:"+SEED);		
-		System.out.println("CONFIG:tracelength:"+traceLength);
+		// System.out.println("---------------");
+
+		System.out.println("CONFIG:seed:" + SEED);
+		System.out.println("CONFIG:tracelength:" + traceLength);
 		System.out.println("CONFIG:----------");
-		System.out.println("CONFIG:pZip:"+pZip);
-		System.out.println("CONFIG:pUnzip:"+pUnzip);
-		System.out.println("CONFIG:pCopy:"+pCopy);
-		System.out.println("CONFIG:pDelete:"+pDelete);
+		System.out.println("CONFIG:pZip:" + pZip);
+		System.out.println("CONFIG:pUnzip:" + pUnzip);
+		System.out.println("CONFIG:pCopy:" + pCopy);
+		System.out.println("CONFIG:pDelete:" + pDelete);
 		System.out.println("CONFIG:----------");
-		System.out.println("CONFIG:maxretry:"+MAXRETRY);
-		System.out.println("CONFIG:initfiles:"+INITFILES);
-		System.out.println("CONFIG:maxfiles:"+MAXFILES);
-		System.out.println("CONFIG:maxmerge:"+MAXMERGE);
+		System.out.println("CONFIG:maxretry:" + MAXRETRY);
+		System.out.println("CONFIG:initfiles:" + INITFILES);
+		System.out.println("CONFIG:maxfiles:" + MAXFILES);
+		System.out.println("CONFIG:maxmerge:" + MAXMERGE);
 		System.out.println("CONFIG:----------");
-		System.out.println("CONFIG:fileprefix:"+FILEPREFIX);
-		System.out.println("CONFIG:zipextension:"+ZIPEXTENSION);
-		System.out.println("CONFIG:normalextension:"+NORMALEXTENSION);
-		System.out.println("CONFIG:----------");		
-		System.out.println("INFO:filesNummber:"+listOfFinalFiles.size());
+		System.out.println("CONFIG:fileprefix:" + FILEPREFIX);
+		System.out.println("CONFIG:zipextension:" + ZIPEXTENSION);
+		System.out.println("CONFIG:normalextension:" + NORMALEXTENSION);
+		System.out.println("CONFIG:----------");
+		System.out.println("INFO:filesNummber:" + listOfFinalFiles.size());
 		for (String s : listOfFinalFiles) {
-			System.out.println("F:"+s);
+			System.out.println("F:" + s);
 		}
-//		System.out.println("---------------");
+		// System.out.println("---------------");
 
 		int i = 0;
 		for (String s : trace) {
