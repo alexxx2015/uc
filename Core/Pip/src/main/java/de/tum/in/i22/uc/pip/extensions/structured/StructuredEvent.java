@@ -88,11 +88,11 @@ public abstract class StructuredEvent {
 				return new Merger("tar Merger", labelContMap, dst, _informationFlowModel);
 			}
 		} else if ((cmds[0].equals("unzip")) || (cmds[0].equals("/usr/bin/unzip"))) {
-			src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[1]));
+			src = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[2]));
 			srcCont = _informationFlowModel.getContainer(src);
 
-			if ((srcCont != null) && (cmds.length > 2)) {
-				for (int i = 2; i < cmds.length; i++) {
+			if ((srcCont != null) && (cmds.length > 3)) {
+				for (int i = 3; i < cmds.length; i++) {
 					dst = FilenameName.create(host, LinuxEvents.toRealPath(filename, cmds[i]));
 					dstCont = _informationFlowModel.getContainer(dst);
 
@@ -105,6 +105,7 @@ public abstract class StructuredEvent {
 					labelContMap.put(cmds[i], dst);
 				}
 				return new Splitter("tar Splitter", src, labelContMap, _informationFlowModel);
+			
 			}
 		}
 		return null;

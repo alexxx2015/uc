@@ -30,4 +30,12 @@ public interface IPmp2Pdp {
 
 	@AThriftMethod(signature="map<string,set<string>> listMechanisms()")
 	public Map<String, Set<String>> listMechanisms();
+	
+	
+	/********
+	 * ADDED HERE BUT APPLIES TO THE COMPLETE INFRASTRUCTURE
+	 *****/
+	@AThriftMethod(signature="bool reset()")
+	public boolean reset();
+	
 }

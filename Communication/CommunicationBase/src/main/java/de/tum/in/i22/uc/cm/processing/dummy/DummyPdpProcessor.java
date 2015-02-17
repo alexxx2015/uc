@@ -114,4 +114,11 @@ public class DummyPdpProcessor extends PdpProcessor implements IDummyProcessor {
 		_logger.error("processEventSync method invoked");
 		return new ResponseBasic(new StatusBasic(EStatus.ALLOW));
 	}
+
+	@Override
+	public boolean reset() {
+		_logger.error("PdpProcessor DUMMY Implementation");
+		_logger.error("reset method invoked");
+		return true;
+	}
 }

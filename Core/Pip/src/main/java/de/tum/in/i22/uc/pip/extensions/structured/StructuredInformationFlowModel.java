@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.extensions.structured;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +18,10 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.pip.ifm.IStructuredInformationFlowModel;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.generic.observable.NotifyingMap;
 import de.tum.in.i22.uc.generic.observable.NotifyingSet;
 import de.tum.in.i22.uc.pip.core.ifm.InformationFlowModelExtension;
@@ -165,8 +168,8 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 			return false;
 		}
 
-		Map <String,Set<IData>> map = getStructureOf(data);
-		if ((map == null)||(map.equals(Collections.emptyMap()))) {
+		Map<String, Set<IData>> map = getStructureOf(data);
+		if ((map == null) || (map.equals(Collections.emptyMap()))) {
 			_logger.debug("impossible to store checksum for unstructred data " + data + ".");
 			return false;
 		}
@@ -277,7 +280,16 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 			loopAgain = res.addAll(tmp);
 			_logger.debug("loopAgain=" + loopAgain + ". resultSet(" + res.size() + ")=[" + res + "]");
 		} while (loopAgain);
-		return res;
+
+		HashSet<IData> resPurged = new HashSet<IData>();
+
+		for (IData d : res) {
+			// remove all the IDs corresponding to structures from the result
+			if (_structureMap.get(d) == null)
+				resPurged.add(d);
+		}
+
+		return resPurged;
 	}
 
 	private Set<IData> getDataInStructure(Map<String, Set<IData>> structure) {
@@ -321,6 +333,38 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 				sb.append(nl);
 			}
 		}
+
+		sb.append(nl);
+		// show exploded data
+		if (Settings.getInstance().getShowFlattenedData()) {
+			sb.append("  Flattened:" + nl);
+			int nameLength = 0;
+
+			Collection<IName> nameSet=_ifModel.getAllNames();
+			
+			for (IName name : nameSet) {
+				Set<IData> ds = _ifModel.getData(name);
+				if ((ds != null) && (ds.size() > 0)) {
+					int currLength = name.getName().toString().length();
+					if (currLength > nameLength)
+						nameLength = currLength;
+				}
+			}
+			for (IName name : nameSet) {
+				Set<IData> d2f = _ifModel.getData(name);
+				if (d2f != null && d2f.size() != 0) {
+					Set<IData> ds = new HashSet<IData>();
+					for (IData d : d2f)
+						ds.addAll(_ifModel.flattenStructure(d));
+					sb.append("    " + String.format("%1$" + nameLength + "s", name.getName()) + arrow);
+					for (IData d : ds)
+						sb.append(d.getId() + ",");
+					sb.append(nl);
+				}
+			}
+			sb.append(nl);
+		}
+
 		return sb.toString();
 	}
 
@@ -385,7 +429,7 @@ public final class StructuredInformationFlowModel extends InformationFlowModelEx
 		return _structureBackup != null;
 	}
 
-	public String computeChecksumOf(Object object){
-		return "CHK_"+object.hashCode();
+	public String computeChecksumOf(Object object) {
+		return "CHK_" + object.hashCode();
 	}
 }

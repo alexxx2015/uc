@@ -209,20 +209,34 @@ public class TraceGenerator {
 		return new AbstractMap.SimpleEntry<String, Boolean>(getExistingFile(normal), normal);
 	}
 
-	static private List<Entry<String, Boolean>> getListOfExistingRandomFiles(int length) {
-		List<Entry<String, Boolean>> result = new LinkedList<Entry<String, Boolean>>();
-		for (int i = 0; i < length; i++) {
-			result.add(getExistingRandomFile());
+	static private List<String> getListOfExistingRandomFiles(int length) {
+		List<String> result = new LinkedList<String>();
+		List<String> shuffledNormal = new LinkedList<String>(existingNormalFiles);
+		List<ZipObject> shuffledZip = new LinkedList<ZipObject>(existingZipFiles);
+
+		int half = rand.nextInt(length);
+		
+		Collections.shuffle(shuffledNormal, rand);
+		Collections.shuffle(shuffledZip, rand);
+
+		result.addAll(shuffledNormal.subList(0, Math.min(half,shuffledNormal.size())));
+		for (ZipObject z : shuffledZip.subList(0, Math.min(length-half,shuffledZip.size()))){
+			result.add(z.getFilename());
 		}
+		
+		
+		Collections.shuffle(result, rand);
+
+		
 		return result;
 	}
 
 	static private List<String> getListOfExistingNormalFiles(int length) {
-		List<String> result = new LinkedList<String>();
-		for (int i = 0; i < length; i++) {
-			result.add(getExistingNormalFile());
-		}
-		return result;
+		List<String> shuffledContent = new LinkedList<String>(existingNormalFiles);
+
+		Collections.shuffle(shuffledContent, rand);
+
+		return shuffledContent.subList(0, Math.min(length,shuffledContent.size()));
 	}
 
 	static private List<String> getListOfRandomFilesFromZip(ZipObject zip, int numOfFilesToSplit) {
@@ -241,7 +255,7 @@ public class TraceGenerator {
 
 		Collections.shuffle(shuffledContent, rand);
 
-		return shuffledContent.subList(0, num);
+		return shuffledContent.subList(0, Math.min(shuffledContent.size(),num));
 	}
 
 	static private String getFreshFile(boolean normal) {
@@ -374,11 +388,11 @@ public class TraceGenerator {
 				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
 					String dst = getFreshZipFile();
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
-					List<Entry<String, Boolean>> srcParsPairs = getListOfExistingRandomFiles(numSrc);
+					List<String> srcPars = getListOfExistingRandomFiles(numSrc);
 
-					List<String> srcPars = new LinkedList<String>();
-					for (Entry<String, Boolean> srcParsPair : srcParsPairs)
-						srcPars.add(srcParsPair.getKey());
+//					List<String> srcPars = new LinkedList<String>();
+//					for (Entry<String, Boolean> srcParsPair : srcParsPairs)
+//						srcPars.add(srcParsPair.getKey());
 
 					// create new ZipObject file
 					existingZipFiles.add(new TraceGenerator.ZipObject(dst, srcPars));

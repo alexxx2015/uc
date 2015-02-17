@@ -87,7 +87,10 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_showFullIFModel = "showFullIFModel";
 	public static final String PROP_NAME_showIFNamesInsteadOfContainer = "showIFNamesInsteadOfContainers";
 	public static final String PROP_NAME_sortStorageNames = "sortStorageNames";
+	public static final String PROP_NAME_showFlattenedData= "showFlattenedData";
 
+	
+	
 	public static final String PROP_NAME_excelCoordinatesSeparator = "excelCoordinatesSeparator";
 	public static final String PROP_NAME_excelListSeparator = "excelListSeparator";
 	public static final String PROP_NAME_excelOcbName = "excelOcbName";
@@ -256,7 +259,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_showFullIFModel, true);
 		loadSetting(PROP_NAME_showIFNamesInsteadOfContainer, true);
 		loadSetting(PROP_NAME_sortStorageNames, true);
-
+		loadSetting(PROP_NAME_showFlattenedData, false);
+		
+		
 		loadSetting(PROP_NAME_excelCoordinatesSeparator, "!");
 		loadSetting(PROP_NAME_excelListSeparator, "\\*");
 
@@ -568,6 +573,10 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_showFullIFModel);
 	}
 
+	public boolean getShowFlattenedData() {
+		return getValue(PROP_NAME_showFlattenedData);
+	}
+		
 	public String getPolicySpecificationStarDataClass() {
 		return getValue(PROP_NAME_policySpecificationStarDataClass);
 	}

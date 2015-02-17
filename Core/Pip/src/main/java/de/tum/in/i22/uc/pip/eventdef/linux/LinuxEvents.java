@@ -43,7 +43,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 	 *some file descriptors close automatically on execve()
 	 */
 
-	static String toRealPath(String file) {
+	public static String toRealPath(String file) {
 		return toRealPath(file, "");
 	}
 

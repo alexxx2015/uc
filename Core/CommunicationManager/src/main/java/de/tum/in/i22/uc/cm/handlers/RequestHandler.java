@@ -289,9 +289,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 
 	@Override
-	public void reset() {
+	public boolean reset() {
 		_requestQueueManager.stop();
 		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
+		return true;
 	}
 
 	@Override

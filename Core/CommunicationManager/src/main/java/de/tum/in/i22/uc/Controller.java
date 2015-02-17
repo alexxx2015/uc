@@ -279,12 +279,13 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public void reset() {
+	public boolean reset() {
 		synchronized (this) {
 			stop();
 			resetOnlyRequestHandler();
 			start();
 		}
+		return true;
 	}
 
 	@Override

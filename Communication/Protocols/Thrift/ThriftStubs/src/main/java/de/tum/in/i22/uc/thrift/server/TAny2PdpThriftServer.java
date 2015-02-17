@@ -141,4 +141,10 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		_requestHandler.processEventAsync(ev);
 	}
 
+	@Override
+	public boolean reset() throws TException {
+		_logger.debug("TAny2Pdp: reset()");
+		return _requestHandler.reset();
+	}
+
 }

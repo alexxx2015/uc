@@ -282,4 +282,13 @@ TAny2Any.Iface {
 	public boolean newChecksum(TData data, TChecksum checksum, boolean overwrite) throws TException {
 		return _pipServer.newChecksum(data, checksum, overwrite); 
 	}
+
+	@Override
+	public boolean reset() throws TException {
+		/**
+		 * NOTE: This code should be invoked over the whole infrastructure, not just the pdp.
+		 * This means that it makes sense only if all the three server are running as a single controller
+		 */
+		return _pdpServer.reset();
+	}
 }

@@ -118,7 +118,9 @@ public class StructuredInformationFlowModelTest {
 		Assert.assertEquals(flat.contains(a), true);
 		Assert.assertEquals(flat.contains(b), true);
 		Assert.assertEquals(flat.contains(c), true);
-		Assert.assertEquals(flat.contains(structData), true);
+
+		// flattened results now contain only atomic data
+		//Assert.assertEquals(flat.contains(structData), true);
 
 	
 		HashSet<IData> set4= new HashSet<IData>();
@@ -139,7 +141,8 @@ public class StructuredInformationFlowModelTest {
 		Assert.assertEquals(flat.contains(a), true);
 		Assert.assertEquals(flat.contains(b), true);
 		Assert.assertEquals(flat.contains(c), true);
-		Assert.assertEquals(flat.contains(structData), true);
+		// flattened results now contain only atomic data
+		// Assert.assertEquals(flat.contains(structData), true);
 
 	}
 

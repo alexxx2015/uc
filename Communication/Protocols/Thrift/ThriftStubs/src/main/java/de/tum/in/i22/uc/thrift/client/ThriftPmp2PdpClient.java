@@ -68,4 +68,9 @@ class ThriftPmp2PdpClient extends Pmp2PdpClient {
 	public Map<String, Set<String>> listMechanisms() {
 		return _impl.listMechanisms();
 	}
+
+	@Override
+	public boolean reset() {
+		return _impl.reset();
+	}
 }

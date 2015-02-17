@@ -123,4 +123,15 @@ public class PdpHandler extends PdpProcessor {
 	public IResponse processEventSync(IEvent pepEvent) {
 		return notifyEventSync(pepEvent);
 	}
+
+	@Override
+	public boolean reset() {
+		_logger.debug("Resetting PDP Handler...");
+		_logger.debug("...");
+		_logger.debug("...");
+		_logger.debug("... TO BE IMPLEMENTED!!!!");
+		_logger.debug("...");
+		_logger.debug("...");		
+		return false;
+	}
 }
