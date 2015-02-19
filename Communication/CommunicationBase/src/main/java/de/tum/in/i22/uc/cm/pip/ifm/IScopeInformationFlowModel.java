@@ -41,6 +41,15 @@ public interface IScopeInformationFlowModel extends IInformationFlowModel {
 	 *
 	 */
 	boolean isScopeOpened(IScope scope);
+	
+	/**
+	 * Get the list of active scopes in the current state
+	 *
+	 * @return true if the scope is in the set. false otherwise.
+	 *
+	 */
+	Set<IScope> getAllOpenedScopes();
+	
 
 	/**
 	 * Returns the only element that should match the (possibly under-specified)

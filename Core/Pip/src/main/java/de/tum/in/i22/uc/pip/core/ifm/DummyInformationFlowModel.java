@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
@@ -272,7 +273,7 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 
 	@Override
 	public IScope getOpenedScope(IScope scope) {
-		_logger.error("Method getOpenedScope() not implemented.");
+		_logger.error("Method () not implemented.");
 		return null;
 	}
 
@@ -350,5 +351,35 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 	@Override
 	public void clearChanged() {
 		_logger.error("Method clearChanged() not implemented.");
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		_logger.error("Method newChecksum() not implemented.");
+		return false;
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		_logger.error("Method getChecksumOf() not implemented.");
+		return null;
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		_logger.error("Method deleteChecksum() not implemented.");
+		return false;
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		_logger.error("Method deleteStructure() not implemented.");
+		return false;
+	}
+
+	@Override
+	public Set<IScope> getAllOpenedScopes() {
+		_logger.error("Method getAllOpenedScopes() not implemented.");
+		return null;
 	}
 }

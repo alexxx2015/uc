@@ -6,12 +6,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
+import de.tum.in.i22.uc.thrift.types.TChecksum;
 import de.tum.in.i22.uc.thrift.types.TContainer;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -32,11 +35,13 @@ import de.tum.in.i22.uc.thrift.types.TobiasResponse;
  */
 class TAny2AnyThriftServer extends ThriftServerHandler implements
 TAny2Any.Iface {
-
+	
 	private TAny2Pdp.Iface _pdpServer;
 	private TAny2Pip.Iface _pipServer;
 	private TAny2Pmp.Iface _pmpServer;
 
+	private static Logger _logger = LoggerFactory.getLogger(TAny2AnyThriftServer.class);
+	
 	TAny2AnyThriftServer(int pdpPort, int pipPort, int pmpPort) {
 		try {
 			_pdpServer = new ThriftConnector<>("localhost", pdpPort,
@@ -138,13 +143,12 @@ TAny2Any.Iface {
 
 	@Override
 	public void executeAsync(List<TEvent> eventList) throws TException {
-		// TODO Auto-generated method stub
-
+		_logger.error("TAny2Any server: method executeAsync (list of events) not implemented");
 	}
 
 	@Override
 	public TStatus executeSync(List<TEvent> eventList) throws TException {
-		// TODO Auto-generated method stub
+		_logger.error("TAny2Any server: method executeSync (list of events) not implemented");
 		return null;
 	}
 
@@ -257,5 +261,34 @@ TAny2Any.Iface {
 	@Override
 	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
 		return _pmpServer.remotePolicyTransfer(xml, from);
+	}
+
+	@Override
+	public boolean deleteStructure(TData d) throws TException {
+		return _pipServer.deleteStructure(d);
+	}
+
+	@Override
+	public boolean deleteChecksum(TData d) throws TException {
+		return _pipServer.deleteChecksum(d);
+	}
+
+	@Override
+	public TChecksum getChecksumOf(TData data) throws TException {
+		return _pipServer.getChecksumOf(data);
+	}
+
+	@Override
+	public boolean newChecksum(TData data, TChecksum checksum, boolean overwrite) throws TException {
+		return _pipServer.newChecksum(data, checksum, overwrite); 
+	}
+
+	@Override
+	public boolean reset() throws TException {
+		/**
+		 * NOTE: This code should be invoked over the whole infrastructure, not just the pdp.
+		 * This means that it makes sense only if all the three server are running as a single controller
+		 */
+		return _pdpServer.reset();
 	}
 }

@@ -19,6 +19,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -278,12 +279,13 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public void reset() {
+	public boolean reset() {
 		synchronized (this) {
 			stop();
 			resetOnlyRequestHandler();
 			start();
 		}
+		return true;
 	}
 
 	@Override
@@ -486,6 +488,26 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		return _requestHandler.remotePolicyTransfer(xml, from);
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		return _requestHandler.newChecksum(data, checksum, overwrite);
+	}
+
+	@Override	
+	public IChecksum getChecksumOf(IData data) {
+		return getChecksumOf(data);
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		return deleteChecksum(d);
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		return deleteStructure(d);
 	}
 
 }

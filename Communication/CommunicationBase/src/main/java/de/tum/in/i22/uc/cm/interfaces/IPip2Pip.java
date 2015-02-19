@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.interfaces;
 import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -43,8 +44,23 @@ public interface IPip2Pip {
 
 	@AThriftMethod(signature="map<string,set<Types.TData>> getStructureOf(1: Types.TData data)")
 	public Map<String,Set<IData>>  getStructureOf(IData data);
-
+	
 	@AThriftMethod(signature="set<Types.TData> flattenStructure(1: Types.TData data)")
 	public Set<IData>  flattenStructure(IData data);
 
+	@AThriftMethod(signature="bool newChecksum(1: Types.TData data, 2:Types.TChecksum checksum, 3:bool overwrite)")
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite);
+
+	@AThriftMethod(signature="Types.TChecksum getChecksumOf(1:Types.TData data)")
+	public IChecksum getChecksumOf(IData data);
+
+	@AThriftMethod(signature="bool deleteChecksum(1:Types.TData d)")
+	public boolean deleteChecksum(IData d);
+	
+	@AThriftMethod(signature="bool deleteStructure(1:Types.TData d)")
+	public boolean deleteStructure(IData d) ;
+
+
+	
+	
 }

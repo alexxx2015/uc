@@ -182,4 +182,16 @@ class ThriftAny2PdpImpl implements IAny2Pdp {
 		}
 		return new ResponseBasic(new StatusBasic(resStatus), null, null);
 	}
+
+
+	@Override
+	public boolean reset() {
+		_logger.debug("reset (Pdp client)");
+		try {
+			return _handle.reset();
+		} catch (TException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

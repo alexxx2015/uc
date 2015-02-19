@@ -131,4 +131,9 @@ class ThriftAny2PdpClient extends Any2PdpClient {
 	public IResponse processEventSync(IEvent pepEvent) {
 		return _impl.processEventSync(pepEvent);
 	}
+
+	@Override
+	public boolean reset() {
+		return _impl.reset();
+	}
 }

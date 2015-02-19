@@ -136,7 +136,7 @@ public class ReadEventHandler extends LinuxEvents {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		int pid;
 		int fd;
 		String filename;

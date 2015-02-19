@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -47,9 +48,12 @@ import de.tum.in.i22.uc.pdp.requests.RevokeMechanismPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
 import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.requests.AddJPIPListenerPipRequest;
+import de.tum.in.i22.uc.pip.requests.DeleteChecksumPipRequest;
+import de.tum.in.i22.uc.pip.requests.DeleteStructurePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
+import de.tum.in.i22.uc.pip.requests.GetChecksumOfPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataFromIdPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
@@ -57,6 +61,7 @@ import de.tum.in.i22.uc.pip.requests.GetIfModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetStructureOfPipRequest;
 import de.tum.in.i22.uc.pip.requests.InitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.IsSimulatingPipRequest;
+import de.tum.in.i22.uc.pip.requests.NewChecksumPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewInitialRepresentationPipRequest;
 import de.tum.in.i22.uc.pip.requests.NewStructuredDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.SetUpdateFrequencyPipRequest;
@@ -284,9 +289,10 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 
 	@Override
-	public void reset() {
+	public boolean reset() {
 		_requestQueueManager.stop();
 		init(_pdp.getLocation(),_pip.getLocation(),_pmp.getLocation());
+		return true;
 	}
 
 	@Override
@@ -571,6 +577,38 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		NewChecksumPipRequest request = new NewChecksumPipRequest(data, checksum, overwrite);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		GetChecksumOfPipRequest request = new GetChecksumOfPipRequest(data);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		DeleteChecksumPipRequest request = new DeleteChecksumPipRequest(d);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		DeleteStructurePipRequest request = new DeleteStructurePipRequest(d);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

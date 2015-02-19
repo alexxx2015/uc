@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -178,6 +179,38 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		_logger.error("PipProcessor DUMMY Implementation");
 		_logger.error("setUpdateFrequency method invoked");
 		return null;
+	}
+
+	@Override
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("newChecksum method invoked");
+		return false;
+	}
+
+	@Override
+	public IChecksum getChecksumOf(IData data) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("getChecksumOf method invoked");
+		return null;
+	}
+
+	@Override
+	public boolean deleteChecksum(IData d) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("deleteChecksum method invoked");
+		return false;
+	}
+
+	@Override
+	public boolean deleteStructure(IData d) {
+		// TODO Auto-generated method stub
+		_logger.error("PipProcessor DUMMY Implementation");
+		_logger.error("deleteStructure method invoked");
+		return false;
 	}
 
 }

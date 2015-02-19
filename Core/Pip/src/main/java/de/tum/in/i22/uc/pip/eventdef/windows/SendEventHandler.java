@@ -108,7 +108,7 @@ public class SendEventHandler extends WindowsEvents {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		_logger.debug("XBehav function of Send");
 		String socketHandle = null;
 		String pid = null;

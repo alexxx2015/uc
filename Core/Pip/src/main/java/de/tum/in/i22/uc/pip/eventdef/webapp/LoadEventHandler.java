@@ -49,7 +49,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 	}
 
 	@Override
-	protected Set<Pair<EScopeState, IScope>> XDelim(IEvent event) {
+	protected Set<Pair<EScopeState, IScope>> XDelim() {
 		String delimiter;
 		try {
 			delimiter = getParameterValue(_delimiterName);
@@ -75,7 +75,7 @@ public class LoadEventHandler extends AbstractScopeEventHandler {
 	}
 
 	@Override
-	protected Pair<EBehavior, IScope> XBehav(IEvent event) {
+	protected Pair<EBehavior, IScope> XBehav() {
 		IScope scope = buildScope();
 		String _delimiter;
 		try {

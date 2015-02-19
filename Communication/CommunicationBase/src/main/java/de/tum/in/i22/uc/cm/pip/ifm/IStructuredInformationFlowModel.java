@@ -1,8 +1,13 @@
 package de.tum.in.i22.uc.cm.pip.ifm;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 
 public interface IStructuredInformationFlowModel extends IInformationFlowModel {
@@ -36,4 +41,44 @@ public interface IStructuredInformationFlowModel extends IInformationFlowModel {
 	 *
 	 */
 	Set<IData> flattenStructure(IData data);
+	
+	
+	/**
+	 * This method takes as parameter a structured data, a valid checksum for it
+	 * and a flag that states whether the new checksum should overwrite an
+	 * existing value, if present. If data is <code>null</code>, not structured,
+	 * if new checksum is <code>null</code>, or if an existing checksum already
+	 * exists and the boolean flag is false, the method returns false. Otherwise
+	 * it returns true.
+	 *
+	 */
+	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite);
+
+	/**
+	 * This method takes as parameter a data item and returns the checksum
+	 * associated to it. If no checksum for it exists, then the
+	 * <code>null</code> value is returned.
+	 */
+	public IChecksum getChecksumOf(IData data);
+
+
+	/**
+	 * This method delete the checksum for a given data. If data is
+	 * <code>null</code> or has no checksum associated to it, the method returns
+	 * false. Otherwise it returns true.
+	 *
+	 */
+	public boolean deleteChecksum(IData d);
+	
+	
+	/**
+	 * This method delete the structure for a given data. If data is
+	 * <code>null</code> or has no structure associated to it, the method
+	 * returns false. Otherwise it returns true. Note that deleting the
+	 * structure also delete the respective checksum.
+	 *
+	 */
+	
+	public boolean deleteStructure(IData d) ;
+	
 }
