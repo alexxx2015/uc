@@ -70,8 +70,8 @@ public class PmpHandler extends PmpProcessor {
 	private final Marshaller _marshaller;
 	private final Unmarshaller _unmarshaller;
 
-	private IPmp2Ptp _ptp;
-	private PolicyManager _policymanager;
+	private final IPmp2Ptp _ptp;
+	private final PolicyManager _policymanager;
 
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
@@ -347,7 +347,7 @@ public class PmpHandler extends PmpProcessor {
 		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
 		return deployPolicyXMLPmp(xmlPolicy);
 	}
-	
+
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		_logger.debug("remotePolicyTransfer invoked [{}, {}]", xml, from);
@@ -360,19 +360,19 @@ public class PmpHandler extends PmpProcessor {
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
 		return deployPolicyXMLPmp(xmlPolicy, null);
 	}
-	
+
 	private IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy, String from) {
 		Pair<IStatus,XmlPolicy> status = deployPolicyXMLPmp_impl(xmlPolicy);
-		
+
 		if (status.getLeft().isStatus(EStatus.OKAY)
 				&& status.getRight() != null
 				&& Settings.getInstance().getDistributionEnabled()) {
 			_distributionManager.register(status.getRight(), from);
 		}
-		
+
 		return status.getLeft();
 	}
-	
+
 	private Pair<IStatus,XmlPolicy> deployPolicyXMLPmp_impl(XmlPolicy xmlPolicy) {
 
 		String xml = xmlPolicy.getXml();
