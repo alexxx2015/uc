@@ -351,7 +351,8 @@ public class TraceGenerator {
 
 	static private void generate(int length) {
 		int retry = 0;
-		for (int l = 0; l < length; l++) {
+		int l=0;
+		while (l < length) {
 
 			if (existingZipFiles.size() + existingNormalFiles.size() == 0) {
 				retry++;
@@ -394,6 +395,8 @@ public class TraceGenerator {
 					existingZipFiles.add(dst);
 					listOfFinalFiles.add(dst.filename);
 
+					trace.add(DELETECMD+" "+dst); //ZIP ONLY APPENDS --> need to manually delete the file.
+					l++;
 					traceCommand = ZIPCMD + " " + dst + " " + listAsString(srcPars);
 				} else {
 					l--;
@@ -492,6 +495,7 @@ public class TraceGenerator {
 					System.out.println("");
 				}
 			}
+		l++;
 		}
 
 	}
