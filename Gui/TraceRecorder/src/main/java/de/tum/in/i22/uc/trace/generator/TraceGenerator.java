@@ -123,7 +123,7 @@ public class TraceGenerator {
 	private static final String ZIPCMD = "zip";
 	private static final String UNZIPCMD = "unzip -o";
 	private static final String COPYCMD = "cp";
-	private static final String DELETECMD = "rm";
+	private static final String DELETECMD = "rm -r";
 	private static final String MERGECMD = "python pymerge.py";
 
 	private static double sumOfP;
