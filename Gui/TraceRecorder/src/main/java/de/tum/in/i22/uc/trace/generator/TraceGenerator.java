@@ -12,6 +12,9 @@ import java.util.Set;
 
 import org.junit.Assert;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+
 /*****
  * Bug: if one zip file is extracted from within another zip file, the list of
  * its content is wrong.
@@ -47,7 +50,7 @@ public class TraceGenerator {
 	private static String ZIPEXTENSION = ".zip";
 	private static String NORMALEXTENSION = ".txt";
 
-	private static String FILEPREFIX = "file";
+	private static String FILEPREFIX = "file0";
 
 	private static class FileObject {
 		private String filename;
@@ -140,6 +143,8 @@ public class TraceGenerator {
 	private static LinkedList<String> trace = new LinkedList<String>();
 
 	private static Random rand = new Random();
+	
+	private static String pad;
 
 	static private void init() {
 		// initialize randomization
@@ -157,6 +162,7 @@ public class TraceGenerator {
 		COMMANDS.put(MERGECMD, pMerge);
 
 		sumOfP = pZip + pCopy + pDelete + pUnzip + pMerge;
+		pad = "%s%0" + Math.round(Math.ceil(Math.log10(INITFILES))) + "d%s";
 
 		// initialize list of used files
 		for (int x = 0; x < INITFILES; x++) {
@@ -165,6 +171,8 @@ public class TraceGenerator {
 			listOfFinalFiles.add(file.getFilename());
 		}
 
+
+		
 	}
 
 	static private FileObject getFreshNormalFile() {
@@ -257,7 +265,8 @@ public class TraceGenerator {
 		}
 
 		for (int x = 0; x < MAXFILES; x++) {
-			String file = String.format("%s%03d%s", FILEPREFIX, x, extension);
+
+			String file = String.format(pad, FILEPREFIX, x, extension);
 
 			Set<FileObject> set;
 
