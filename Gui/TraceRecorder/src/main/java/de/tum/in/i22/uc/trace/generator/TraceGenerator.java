@@ -206,12 +206,16 @@ public class TraceGenerator {
 		Collections.shuffle(shuffledNormal, rand);
 		Collections.shuffle(shuffledZip, rand);
 
-		result.addAll(shuffledNormal.subList(0, Math.min(half, shuffledNormal.size())));
-		result.addAll(shuffledZip.subList(0, Math.min(length - half, shuffledZip.size())));
-
+		if (shuffledNormal.size()==0){
+			result.addAll(shuffledZip.subList(0, Math.min(length, shuffledNormal.size())));
+		} else if (shuffledZip.size()==0){
+			result.addAll(shuffledNormal.subList(0, Math.min(length, shuffledNormal.size())));
+		} else {
+			result.addAll(shuffledNormal.subList(0, Math.min(half, shuffledNormal.size())));
+			result.addAll(shuffledZip.subList(0, Math.min(length - half, shuffledZip.size())));
+		}
+		
 		Collections.shuffle(result, rand);
-
-		Assert.assertTrue((result.size() > 0));
 
 		return result;
 	}
@@ -390,14 +394,16 @@ public class TraceGenerator {
 					FileObject dst = getFreshZipFile();
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
 					List<FileObject> srcPars = getListOfExistingRandomFiles(numSrc);
-
-					dst.setContent(srcPars);
-					existingZipFiles.add(dst);
-					listOfFinalFiles.add(dst.filename);
-
-					trace.add(DELETECMD+" "+dst); //ZIP ONLY APPENDS --> need to manually delete the file.
-					l++;
-					traceCommand = ZIPCMD + " " + dst + " " + listAsString(srcPars);
+					if (srcPars.size()==0) {
+						l--;
+					} else {
+						dst.setContent(srcPars);
+						existingZipFiles.add(dst);
+						listOfFinalFiles.add(dst.filename);
+						trace.add(DELETECMD+" "+dst); //ZIP ONLY APPENDS --> need to manually delete the file.
+						l++;
+						traceCommand = ZIPCMD + " " + dst + " " + listAsString(srcPars);
+					}
 				} else {
 					l--;
 				}
@@ -427,7 +433,7 @@ public class TraceGenerator {
 				break;
 
 			case DELETECMD:
-				if (existingNormalFiles.size() + existingZipFiles.size() > 0) {
+				if (existingNormalFiles.size() + existingZipFiles.size() > 1) { //we can't delete the last file
 					FileObject del = getExistingRandomFile();
 
 					if (!del.isZip()) {
@@ -451,11 +457,13 @@ public class TraceGenerator {
 						dst = getFreshNormalFile();
 					} else {
 						dst = getExistingNormalFile();
+						if (dst==null) dst = getFreshNormalFile();
 					}
 
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
 					List<FileObject> srcPars = getListOfExistingNormalFiles(numSrc);
-
+					
+					
 					listOfFinalFiles.add(dst.getFilename());
 
 					traceCommand = MERGECMD + " " + dst + " " + numLinesToMerge + " " + listAsString(srcPars);
@@ -692,7 +700,7 @@ public class TraceGenerator {
 		System.out.println("CONFIG:zipextension:" + ZIPEXTENSION);
 		System.out.println("CONFIG:normalextension:" + NORMALEXTENSION);
 		System.out.println("CONFIG:----------");
-		System.out.println("INFO:filesNummber:" + listOfFinalFiles.size());
+		System.out.println("INFO:NumberOfFiles:" + listOfFinalFiles.size());
 		for (String s : listOfFinalFiles) {
 			System.out.println("F:" + s);
 		}
