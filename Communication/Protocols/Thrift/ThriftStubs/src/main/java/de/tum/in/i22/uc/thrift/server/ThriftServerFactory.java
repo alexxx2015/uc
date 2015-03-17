@@ -5,11 +5,14 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManagerPublic;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
+import de.tum.in.i22.uc.thrift.types.TAny2Distr;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pep;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -103,6 +106,11 @@ public class ThriftServerFactory {
 	public static IThriftServer createAnyThriftServer(int port, int pdpPort, int pipPort, int pmpPort) {
 		return createThriftServer(port,
 				new TAny2Any.Processor<TAny2AnyThriftServer>(new TAny2AnyThriftServer(pdpPort, pipPort, pmpPort)));
+	}
+	
+	public static IThriftServer createDistributionThriftServer(int port, IDistributionManagerPublic handler) {
+		return createThriftServer(port,
+				new TAny2Distr.Processor<TAny2DistrThriftServer>(new TAny2DistrThriftServer(handler)));
 	}
 
 	/**

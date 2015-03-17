@@ -366,7 +366,7 @@ public class PmpHandler extends PmpProcessor {
 		
 		if (status.getLeft().isStatus(EStatus.OKAY)
 				&& status.getRight() != null
-				&& Settings.getInstance().getDistributionEnabled()) {
+				&& Settings.getInstance().isDistributionEnabled()) {
 			_distributionManager.register(status.getRight(), from);
 		}
 		

@@ -44,6 +44,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_pmpListenerPort = "pmpListenerPort";
 	public static final String PROP_NAME_pipListenerPort = "pipListenerPort";
 	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
+	public static final String PROP_NAME_distrListenerPort = "distrListenerPort";
 
 	public static final String PROP_NAME_pepListenerPort = "pepListenerPort";
 	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
@@ -189,6 +190,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pipListenerPort, 21002);
 		loadSetting(PROP_NAME_pdpListenerPort, 21003);
 		loadSetting(PROP_NAME_anyListenerPort, 21004);
+		loadSetting(PROP_NAME_distrListenerPort, 21005);
 
 		loadSetting(PROP_NAME_pxpListenerPort, 30003);
 		loadSetting(PROP_NAME_pepListenerPort, 30005);
@@ -420,6 +422,10 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_anyListenerPort);
 	}
 
+	public int getDistrListenerPort() {
+		return getValue(PROP_NAME_distrListenerPort);
+	}
+
 	public boolean isPmpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pmpLocation);
 		return l == null ? false : l.getLocation() == ELocation.LOCAL;
@@ -438,7 +444,7 @@ public class Settings extends SettingsLoader {
 	public boolean isAnyListenerEnabled() {
 		return getValue(PROP_NAME_anyListenerEnabled);
 	}
-
+	
 	public String getPipEventHandlerPackage() {
 		return getValue(PROP_NAME_pipEventHandlerPackage);
 	}
@@ -480,7 +486,7 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_pipInitialRepresentations);
 	}
 
-	public boolean getDistributionEnabled() {
+	public boolean isDistributionEnabled() {
 		return getValue(PROP_NAME_distributionEnabled);
 	}
 

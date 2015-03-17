@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
+import de.tum.in.i22.uc.cm.distribution.requests.RemoteTransferDistributionRequest;
 import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
@@ -571,6 +572,15 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
+		_requestQueueManager.addRequest(request, this);
+		return waitForResponse(request);
+	}
+
+
+	@Override
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
+			IName containerName, Set<IData> data) {
+		RemoteTransferDistributionRequest request = new RemoteTransferDistributionRequest(policies, fromHost, containerName, data);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}

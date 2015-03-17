@@ -41,6 +41,7 @@ public class Controller implements IRequestHandler  {
 	private IThriftServer _pipServer;
 	private IThriftServer _pmpServer;
 	private IThriftServer _anyServer;
+	private IThriftServer _distrServer;
 
 	private String[] _args = null;
 	protected IRequestHandler _requestHandler;
@@ -104,7 +105,8 @@ public class Controller implements IRequestHandler  {
 		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer.started())
 				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
 				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())
-				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started());
+				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started())
+				&& (!Settings.getInstance().isDistributionEnabled() || _distrServer != null && _distrServer.started());
 	}
 
 	/**
@@ -140,6 +142,8 @@ public class Controller implements IRequestHandler  {
 			_pmpServer.stop();
 		if (_anyServer != null)
 			_anyServer.stop();
+		if (_distrServer != null)
+			_distrServer.stop();
 		if(_requestHandler != null)
 			_requestHandler.stop();
 	}
@@ -183,6 +187,15 @@ public class Controller implements IRequestHandler  {
 				new Thread(_anyServer).start();
 			}
 		}
+
+		if (Settings.getInstance().isDistributionEnabled()) {
+			_distrServer = ThriftServerFactory.createDistributionThriftServer(
+					Settings.getInstance().getDistrListenerPort(), requestHandler);
+
+			if (_distrServer != null) {
+				new Thread(_distrServer).start();
+			}
+		}
 	}
 
 	private boolean arePortsAvailable() {
@@ -194,9 +207,11 @@ public class Controller implements IRequestHandler  {
 				|| isPortAvailable(Settings.getInstance().getPmpListenerPort());
 		boolean isAnyPortAvailable = !Settings.getInstance().isAnyListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getAnyListenerPort());
+		boolean isDistrPortAvailable = !Settings.getInstance().isDistributionEnabled()
+				|| isPortAvailable(Settings.getInstance().getDistrListenerPort());
 
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable
-				|| !isAnyPortAvailable) {
+				|| !isAnyPortAvailable || ! isDistrPortAvailable) {
 			_logger.error("One of the ports is not available.");
 			_logger.error("\nAre you sure you are not running another instance on the same ports?");
 			return false;
@@ -486,6 +501,12 @@ public class Controller implements IRequestHandler  {
 	@Override
 	public IStatus remotePolicyTransfer(String xml, String from) {
 		return _requestHandler.remotePolicyTransfer(xml, from);
+	}
+
+	@Override
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
+			IName containerName, Set<IData> data) {
+		return _requestHandler.remoteTransfer(policies, fromHost, containerName, data);
 	}
 
 }

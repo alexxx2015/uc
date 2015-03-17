@@ -25,7 +25,9 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
@@ -221,9 +223,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	}
 
 
-
 	@Override
-	public void dataTransfer(RemoteDataFlowInfo dataflow) {
+	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
 
 		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
@@ -338,6 +339,14 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_responsiblePdps.put(ip, result);
 
 		return result;
+	}
+
+
+	@Override
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
+			IName containerName, Set<IData> data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	public void awaitPolicyTransfer(String policyName) {

@@ -35,7 +35,7 @@ public class OSLImplies extends ImpliesType {
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
 
-		if (Settings.getInstance().getDistributionEnabled()) {
+		if (Settings.getInstance().isDistributionEnabled()) {
 			throw new InvalidOperatorException(getClass() + " operator is not allowed if parameter 'distributionEnabled' is true. Shouldn't be to hard to be rewritten as DNF.");
 		}
 	}

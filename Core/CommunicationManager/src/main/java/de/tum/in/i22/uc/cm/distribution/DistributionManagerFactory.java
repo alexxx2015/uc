@@ -7,7 +7,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 public class DistributionManagerFactory {
 
 	public static IDistributionManager createDistributionManager() {
-		if (Settings.getInstance().getDistributionEnabled()) {
+		if (Settings.getInstance().isDistributionEnabled()) {
 			return new CassandraDistributionManager();
 		}
 

@@ -39,7 +39,7 @@ public class OSLOr extends OrType {
 		op1.init(mech, this, ttl);
 		op2.init(mech, this, ttl);
 
-		if (Settings.getInstance().getDistributionEnabled()) {
+		if (Settings.getInstance().isDistributionEnabled()) {
 			ensureDNF();
 		}
 

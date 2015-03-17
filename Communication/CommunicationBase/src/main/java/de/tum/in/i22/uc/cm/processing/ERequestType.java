@@ -4,5 +4,6 @@ public enum ERequestType {
 	PDP_REQUEST,
 	PIP_REQUEST,
 	PMP_REQUEST,
+	DISTR_REQUEST,
 	POISON_PILL;
 }

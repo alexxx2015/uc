@@ -50,20 +50,20 @@ class ThriftPip2PipClient extends Pip2PipClient {
 		_impl = null;
 	}
 
-	@Override
-	public Set<IContainer> getContainersForData(IData data) {
-		return _impl.getContainersForData(data);
-	}
-
-	@Override
-	public Set<IData> getDataInContainer(IName containerName) {
-		return _impl.getDataInContainer(containerName);
-	}
-
-	@Override
-	public IStatus update(IEvent event) {
-		return _impl.update(event);
-	}
+//	@Override
+//	public Set<IContainer> getContainersForData(IData data) {
+//		return _impl.getContainersForData(data);
+//	}
+//
+//	@Override
+//	public Set<IData> getDataInContainer(IName containerName) {
+//		return _impl.getDataInContainer(containerName);
+//	}
+//
+//	@Override
+//	public IStatus update(IEvent event) {
+//		return _impl.update(event);
+//	}
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
