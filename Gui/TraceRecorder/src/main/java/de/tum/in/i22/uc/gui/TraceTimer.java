@@ -354,10 +354,9 @@ class MyProcessor implements IRequestHandler {
 public class TraceTimer {
 
 	public static void main(String[] args) {
-		if ((args.length < 2) || (args.length > 3)
+		if ((args.length < 2) || (args.length > 4)
 				|| !((args[0].equalsIgnoreCase("play")) || (args[0].equalsIgnoreCase("rec")))) {
-			System.out.println("Usage: TraceTimer play <input trace file>");
-			System.out.println("Usage: TraceTimer rec <output trace file> <port>");
+			System.out.println("Usage: TraceTimer {rec|play} <trace File> [port] [uc.properties path]");
 			System.exit(-1);
 		}
 
@@ -367,8 +366,35 @@ public class TraceTimer {
 		if (args.length > 2)
 			port = Integer.valueOf(args[2]);
 
+		String pp = "";
+		if (args.length > 3)
+			pp = args[3];
+		
+		
+		
 		if (command.equalsIgnoreCase("play")) {
 			LinkedList<IEvent> list = new LinkedList<IEvent>();
+
+			Controller c;
+			if (pp.equals("")) c= new Controller();
+			else {
+				String[] par = new String[2];
+				par[0]="-pp";
+				par[1]=pp;
+				c=new Controller(par);
+			}
+			c.start();
+
+			while (!c.isStarted()) {
+				System.out.println("Waiting for controller to start...");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 
 			try {
 				FileInputStream fin = new FileInputStream(file);
@@ -382,20 +408,8 @@ public class TraceTimer {
 				System.out.println(e);
 				System.exit(-1);
 			}
-
-			Controller c = new Controller();
-			c.start();
-
-			while (!c.isStarted()) {
-				System.out.println("Waiting for controller to start...");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
+			
+			
 			long startTime = System.nanoTime();
 			for (IEvent e : list) {
 				if (e.isActual())
