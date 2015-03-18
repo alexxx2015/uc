@@ -410,17 +410,28 @@ public class TraceTimer {
 			}
 			
 			
-			long startTime = System.nanoTime();
-			for (IEvent e : list) {
-				if (e.isActual())
-					handler.notifyEventAsync(e);
-				else
-					handler.notifyEventSync(e);
+			long average=0;
+			
+			int iterations=30;
+			
+			for (int count=0; count<iterations; count++){
+				System.out.println ("Iteration "+count + ". Current average = " + average);
+				long startTime = System.nanoTime();
+				for (IEvent e : list) {
+					if (e.isActual())
+						handler.notifyEventAsync(e);
+					else
+						handler.notifyEventSync(e);
+				}
+				long endTime = System.nanoTime();
+				handler.reset();
+				average+=(endTime-startTime);
 			}
-			long endTime = System.nanoTime();
 
-			System.out.println("Total time (" + list.size() + " events): " + (endTime - startTime) / 1000 / 1000);
-			System.err.println((endTime - startTime) / 1000 / 1000);
+			average=average/iterations;
+			
+			System.out.println("Total time (" + list.size() + " events): " + average / 1000 / 1000);
+			System.err.println(average / 1000 / 1000);
 			System.exit(0);
 
 		} else {
