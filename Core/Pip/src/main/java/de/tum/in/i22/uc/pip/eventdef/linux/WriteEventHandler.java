@@ -29,39 +29,6 @@ public class WriteEventHandler extends LinuxEvents {
 
 	@Override
 	protected IStatus update() {
-		/*
-		 * String host = null; int pid; int fd; String filename = null;
-		 * 
-		 * try { host = getParameterValue("host"); pid =
-		 * Integer.valueOf(getParameterValue("pid")); fd =
-		 * Integer.valueOf(getParameterValue("fd")); filename =
-		 * getParameterValue("filename"); } catch (ParameterNotFoundException e)
-		 * { _logger.error(e.getMessage()); return
-		 * _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING,
-		 * e.getMessage()); }
-		 * 
-		 * 
-		 * IName dstFdName = FiledescrName.create(host, pid, fd);
-		 * 
-		 * IContainer srcCont =
-		 * _informationFlowModel.getContainer(ProcessName.create(host, pid));
-		 * IContainer dstCont = _informationFlowModel.getContainer(dstFdName);
-		 * 
-		 * if (dstCont == null) { dstCont =
-		 * _informationFlowModel.getContainer(OSInternalName.create(host,
-		 * filename));
-		 * 
-		 * // if (dstCont == null) { // //last attempt using filename instead?
-		 * // if ((filename!=null)&&(new File(filename).getName()!=null))
-		 * dstCont=_informationFlowModel.getContainer(FilenameName.create(host,
-		 * LinuxEvents.toRealPath(filename)));
-		 * 
-		 * if (dstCont==null) return STATUS_ERROR; // }
-		 * 
-		 * _informationFlowModel.addName(dstFdName, dstCont); }
-		 * 
-		 * return copyDataTransitive(srcCont, dstCont);
-		 */
 		return update(EBehavior.INTRA, null);
 
 	}

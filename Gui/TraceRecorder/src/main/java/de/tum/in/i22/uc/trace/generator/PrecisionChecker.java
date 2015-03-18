@@ -168,6 +168,8 @@ public class PrecisionChecker {
 			}
 		}
 
+		System.out.println("------------------------");
+		System.out.println("ACTUAL:");
 		for (String key : actual.keySet()) {
 			System.out.print(key + ": ");
 			TreeSet<String> dl = (TreeSet<String>) actual.get(key);
@@ -180,28 +182,61 @@ public class PrecisionChecker {
 			}
 			System.out.println("");
 		}
+		
+		System.out.println("------------------------");
+		System.out.println("ESTIMATED:");
 
 		for (String file : actual.keySet()) {
 			boolean estimationIsCorrect = true;
 
 			IName filename = FilenameName.create("distr1", LinuxEvents.toRealPath(file));
 			Set<IData> ds = pipClient.getDataInContainer(filename);
+			System.out.print(filename.getName()+":");
+		
+			
 			if (ds == null)
 				ds = new HashSet<IData>();
 
-			Set<String> actualIds = actual.get(file);
-			for (IData d : ds) {
-				if (!actualIds.contains(d.getId()))
-					estimationIsCorrect = false;
+			
+			TreeSet<String> dl = new TreeSet<String>();
+			Set<IData> flat = new HashSet<IData>();
+			Set<IData> allflat = new HashSet<IData>();
+			
+			
+			for (IData d: ds) {
+				flat = pipClient.flattenStructure(d);
+				allflat.addAll(flat);
+				for (IData fd: flat) {
+					dl.add(fd.getId());
+				}
 			}
+			
+			ds=allflat;
+			
+			if (dl != null) {
+				for (String s : dl) {
+					System.out.print(s);
+					if (!s.equals(dl.last()))
+						System.out.print(",");
+				}
+			}
+			System.out.println("");
 
+			
+			
+			Set<String> actualIds = actual.get(file);
+			for (String s : actualIds){
+				if (!dl.contains(s)) estimationIsCorrect=false;
+			}
+			
 			precision.put(filename.getName(), new Info(estimationIsCorrect, actualIds.size(), ds.size(),
-					((double) (ds.size()) / ((double) (actualIds.size())))));
+					(((double) (actualIds.size())/(double) (ds.size())))));
 		}
 
 		Set<String> sortedNames = new TreeSet<String>();
 		sortedNames.addAll(precision.keySet());
 
+		System.out.println("------------------------");
 		System.out.println("\n\nPRECISION:");
 		PrintWriter writer;
 		
@@ -209,7 +244,7 @@ public class PrecisionChecker {
 		double sum=0;
 		int i=0;
 		try {
-			writer = new PrintWriter("output.csv");
+			writer = new PrintWriter(OUTPUT_FILE);
 
 			for (String s : sortedNames) {
 				Info element = (Info) precision.get(s);

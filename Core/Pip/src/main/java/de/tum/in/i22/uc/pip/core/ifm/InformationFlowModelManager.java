@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -367,8 +368,14 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 
 	@Override
 	public Set<IData> flattenStructure(IData data) {
+		if (_ifModelExtensions.containsKey(EInformationFlowModel.STRUCTURE))
 		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
 				.flattenStructure(data);
+		else {
+			Set<IData> res=new HashSet<IData>();
+			res.add(data);
+			return res;
+		}
 	}
 
 	@Override

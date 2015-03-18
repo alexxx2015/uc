@@ -1,6 +1,5 @@
 package de.tum.in.i22.uc.trace.generator;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,8 +12,17 @@ import java.util.Set;
 
 import org.junit.Assert;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
+
+/*****
+ * Bug: if one zip file is extracted from within another zip file, the list of
+ * its content is wrong.
+ * 
+ * 
+ * @author moka
+ *
+ */
 
 public class TraceGenerator {
 
@@ -42,40 +50,38 @@ public class TraceGenerator {
 	private static String ZIPEXTENSION = ".zip";
 	private static String NORMALEXTENSION = ".txt";
 
-	private static String FILEPREFIX = "file";
-	private static String DATAPREFIX = "DATA";
+	private static String FILEPREFIX = "file0";
 
-	private static class ZipObject {
+	private static class FileObject {
 		private String filename;
-		private List<String> content;
-		private boolean exists = true;
+		private List<FileObject> content;
+		private boolean isZip = true;
 
-		public ZipObject(String filename, List<String> content) {
+		public FileObject(String filename, List<FileObject> content, boolean isZip) {
 			this.filename = filename;
 			this.content = content;
+			this.isZip = isZip;
 		}
 
-		public boolean getExists() {
-			return exists;
+		public FileObject(FileObject src) {
+			this.filename = src.filename;
+			this.content = new LinkedList<FileObject>(src.content);
+			this.isZip = src.isZip;
 		}
 
-		public void setExists(boolean b) {
-			exists = b;
+		public boolean isZip() {
+			return isZip;
 		}
 
 		public String getFilename() {
 			return filename;
 		}
 
-		public void setFilename(String filename) {
-			this.filename = filename;
-		}
-
-		public List<String> getContent() {
+		public List<FileObject> getContent() {
 			return content;
 		}
 
-		public void setContent(List<String> content) {
+		public void setContent(List<FileObject> content) {
 			this.content = content;
 		}
 
@@ -99,9 +105,9 @@ public class TraceGenerator {
 				return true;
 			if (obj == null)
 				return false;
-			if (!(obj instanceof ZipObject))
+			if (getClass() != obj.getClass())
 				return false;
-			ZipObject other = (ZipObject) obj;
+			FileObject other = (FileObject) obj;
 			if (filename == null) {
 				if (other.filename != null)
 					return false;
@@ -120,23 +126,16 @@ public class TraceGenerator {
 	private static final String ZIPCMD = "zip";
 	private static final String UNZIPCMD = "unzip -o";
 	private static final String COPYCMD = "cp";
-	private static final String DELETECMD = "rm";
+	private static final String DELETECMD = "rm -f";
 	private static final String MERGECMD = "python pymerge.py";
 
-	private static double sumOfP = pZip + pCopy + pDelete + pUnzip + pMerge;
+	private static double sumOfP;
 
 	// mapping commands - probabilities execution
 	public static final Map<String, Double> COMMANDS = new HashMap<>(5);
-	static {
-		COMMANDS.put(ZIPCMD, pZip);
-		COMMANDS.put(UNZIPCMD, pUnzip);
-		COMMANDS.put(COPYCMD, pCopy);
-		COMMANDS.put(DELETECMD, pDelete);
-		COMMANDS.put(MERGECMD, pMerge);
-	}
 
-	private static Set<String> existingNormalFiles = new HashSet<String>();
-	private static Set<ZipObject> existingZipFiles = new HashSet<ZipObject>();
+	private static Set<FileObject> existingNormalFiles = new HashSet<FileObject>();
+	private static Set<FileObject> existingZipFiles = new HashSet<FileObject>();
 
 	private static Set<String> listOfFinalFiles = new HashSet<String>();
 
@@ -144,61 +143,57 @@ public class TraceGenerator {
 	private static LinkedList<String> trace = new LinkedList<String>();
 
 	private static Random rand = new Random();
+	
+	private static String pad;
 
 	static private void init() {
 		// initialize randomization
 		rand = new Random(SEED);
 
 		trace = new LinkedList<String>();
-		existingNormalFiles = new HashSet<String>();
-		existingZipFiles = new HashSet<ZipObject>();
+		existingNormalFiles = new HashSet<FileObject>();
+		existingZipFiles = new HashSet<FileObject>();
 		listOfFinalFiles = new HashSet<String>();
+
+		COMMANDS.put(ZIPCMD, pZip);
+		COMMANDS.put(UNZIPCMD, pUnzip);
+		COMMANDS.put(COPYCMD, pCopy);
+		COMMANDS.put(DELETECMD, pDelete);
+		COMMANDS.put(MERGECMD, pMerge);
+
+		sumOfP = pZip + pCopy + pDelete + pUnzip + pMerge;
+		pad = "%s%0" + Math.round(Math.ceil(Math.log10(INITFILES))) + "d%s";
 
 		// initialize list of used files
 		for (int x = 0; x < INITFILES; x++) {
-			String file = getFreshNormalFile();
+			FileObject file = getFreshNormalFile();
 			existingNormalFiles.add(file);
-			listOfFinalFiles.add(file);
+			listOfFinalFiles.add(file.getFilename());
 		}
 
+
+		
 	}
 
-	static private String getFreshNormalFile() {
+	static private FileObject getFreshNormalFile() {
 		return getFreshFile(true);
 	}
 
-	static private String getFreshZipFile() {
+	static private FileObject getFreshZipFile() {
 		return getFreshFile(false);
 	}
 
-	static private String getExistingNormalFile() {
+	static private FileObject getExistingNormalFile() {
 		return getExistingFile(true);
 	}
 
-	static private ZipObject getExistingZipObject(String filename) {
-		if (existingZipFiles.size() > 0) {
-			for (ZipObject z : existingZipFiles)
-				if (z.getFilename().equals(filename))
-					return z;
-		}
-		// at least one object should match, so we should never arrive here
-
-		// throw an exception
-		Assert.assertTrue("Didn't find a zipObject with filename " + filename
-				+ ". weird, isn't it? Could it be because size of existingZipFiles==" + existingZipFiles.size() + "?",
-				false);
-		// never reached
-		return null;
-	}
-
-	static private ZipObject getExistingZipFile() {
+	static private FileObject getExistingZipFile() {
 		if ((existingZipFiles == null) || (existingZipFiles.size() == 0))
 			return null;
-		String zs = getExistingFile(false);
-		return getExistingZipObject(zs);
+		return getExistingFile(false);
 	}
 
-	static private Entry<String, Boolean> getExistingRandomFile() {
+	static private FileObject getExistingRandomFile() {
 		int sn = existingNormalFiles.size();
 		int sz = existingZipFiles.size();
 
@@ -206,40 +201,42 @@ public class TraceGenerator {
 
 		boolean normal = (r <= sn);
 
-		return new AbstractMap.SimpleEntry<String, Boolean>(getExistingFile(normal), normal);
+		return getExistingFile(normal);
 	}
 
-	static private List<String> getListOfExistingRandomFiles(int length) {
-		List<String> result = new LinkedList<String>();
-		List<String> shuffledNormal = new LinkedList<String>(existingNormalFiles);
-		List<ZipObject> shuffledZip = new LinkedList<ZipObject>(existingZipFiles);
+	static private List<FileObject> getListOfExistingRandomFiles(int length) {
+		List<FileObject> result = new LinkedList<FileObject>();
+		List<FileObject> shuffledNormal = new LinkedList<FileObject>(existingNormalFiles);
+		List<FileObject> shuffledZip = new LinkedList<FileObject>(existingZipFiles);
 
-		int half = rand.nextInt(length);
-		
+		int half = rand.nextInt(length) + 1;
+
 		Collections.shuffle(shuffledNormal, rand);
 		Collections.shuffle(shuffledZip, rand);
 
-		result.addAll(shuffledNormal.subList(0, Math.min(half,shuffledNormal.size())));
-		for (ZipObject z : shuffledZip.subList(0, Math.min(length-half,shuffledZip.size()))){
-			result.add(z.getFilename());
+		if (shuffledNormal.size()==0){
+			result.addAll(shuffledZip.subList(0, Math.min(length, shuffledNormal.size())));
+		} else if (shuffledZip.size()==0){
+			result.addAll(shuffledNormal.subList(0, Math.min(length, shuffledNormal.size())));
+		} else {
+			result.addAll(shuffledNormal.subList(0, Math.min(half, shuffledNormal.size())));
+			result.addAll(shuffledZip.subList(0, Math.min(length - half, shuffledZip.size())));
 		}
-		
 		
 		Collections.shuffle(result, rand);
 
-		
 		return result;
 	}
 
-	static private List<String> getListOfExistingNormalFiles(int length) {
-		List<String> shuffledContent = new LinkedList<String>(existingNormalFiles);
+	static private List<FileObject> getListOfExistingNormalFiles(int length) {
+		List<FileObject> shuffledContent = new LinkedList<FileObject>(existingNormalFiles);
 
 		Collections.shuffle(shuffledContent, rand);
 
-		return shuffledContent.subList(0, Math.min(length,shuffledContent.size()));
+		return shuffledContent.subList(0, Math.min(length, shuffledContent.size()));
 	}
 
-	static private List<String> getListOfRandomFilesFromZip(ZipObject zip, int numOfFilesToSplit) {
+	static private List<FileObject> getListOfRandomFilesFromZip(FileObject zip, int numOfFilesToSplit) {
 		if (zip == null) {
 			// throw an exception
 			Assert.assertTrue("Cannot extract files from a null zip object, can I?", false);
@@ -251,14 +248,14 @@ public class TraceGenerator {
 		if (num < numOfFilesToSplit)
 			num = numOfFilesToSplit;
 
-		List<String> shuffledContent = zip.getContent();
+		List<FileObject> shuffledContent = zip.getContent();
 
 		Collections.shuffle(shuffledContent, rand);
 
-		return shuffledContent.subList(0, Math.min(shuffledContent.size(),num));
+		return shuffledContent.subList(0, Math.min(shuffledContent.size(), num));
 	}
 
-	static private String getFreshFile(boolean normal) {
+	static private FileObject getFreshFile(boolean normal) {
 		String extension;
 		if (normal) {
 			extension = NORMALEXTENSION;
@@ -268,13 +265,28 @@ public class TraceGenerator {
 		}
 
 		for (int x = 0; x < MAXFILES; x++) {
-			String file = String.format("%s%03d%s", FILEPREFIX, x, extension);
 
-			// if the name has never been used or is not used anymore, use it
-			if ((normal && !existingNormalFiles.contains(file))
+			String file = String.format(pad, FILEPREFIX, x, extension);
 
-			|| (!normal && !existingZipFiles.contains(new TraceGenerator.ZipObject(file, null)))) {
-				return file;
+			Set<FileObject> set;
+
+			if (normal) {
+				set = existingNormalFiles;
+			} else
+				set = existingZipFiles;
+
+			boolean fileIsNew = true;
+
+			// I know, this part can be optimized
+			for (FileObject f : set) {
+				if (file.equals(f.getFilename())) {
+					fileIsNew = false;
+					break;
+				}
+			}
+
+			if (fileIsNew) {
+				return new FileObject(file, null, !normal);
 			}
 
 		}
@@ -286,7 +298,7 @@ public class TraceGenerator {
 		return null;
 	}
 
-	static private String getExistingFile(boolean normal) {
+	static private FileObject getExistingFile(boolean normal) {
 		int size = 0;
 		if (normal) {
 			size = existingNormalFiles.size();
@@ -302,15 +314,15 @@ public class TraceGenerator {
 		int i = 0;
 
 		if (normal) {
-			for (String s : existingNormalFiles) {
+			for (FileObject s : existingNormalFiles) {
 				if (i == randomIndex)
 					return s;
 				i = i + 1;
 			}
 		} else {
-			for (ZipObject z : existingZipFiles) {
+			for (FileObject z : existingZipFiles) {
 				if (i == randomIndex)
-					return z.getFilename();
+					return z;
 				i = i + 1;
 			}
 		}
@@ -321,11 +333,11 @@ public class TraceGenerator {
 		return null;
 	}
 
-	static private String listAsString(List<String> pars) {
+	static private String listAsString(List<FileObject> pars) {
 		String result = "";
 		if (pars == null)
 			return "";
-		for (String p : pars) {
+		for (FileObject p : pars) {
 			result = result + p + " ";
 		}
 		return result.trim(); // remove last space
@@ -352,7 +364,8 @@ public class TraceGenerator {
 
 	static private void generate(int length) {
 		int retry = 0;
-		for (int l = 0; l < length; l++) {
+		int l=0;
+		while (l < length) {
 
 			if (existingZipFiles.size() + existingNormalFiles.size() == 0) {
 				retry++;
@@ -374,10 +387,11 @@ public class TraceGenerator {
 
 			case UNZIPCMD:
 				if (existingZipFiles.size() > 0) {
-					ZipObject z = getExistingZipFile();
+					FileObject z = getExistingZipFile();
 					int numFilesToSplit = (rand.nextInt(z.getSizeOfContent())) + 1;
-					List<String> sourcePars = getListOfRandomFilesFromZip(z, numFilesToSplit);
-					listOfFinalFiles.addAll(sourcePars);
+					List<FileObject> sourcePars = getListOfRandomFilesFromZip(z, numFilesToSplit);
+					for (FileObject f : sourcePars)
+						listOfFinalFiles.add(f.filename);
 					traceCommand = UNZIPCMD + " " + z + " " + listAsString(sourcePars);
 				} else {
 					l--;
@@ -386,19 +400,19 @@ public class TraceGenerator {
 
 			case ZIPCMD:
 				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
-					String dst = getFreshZipFile();
+					FileObject dst = getFreshZipFile();
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
-					List<String> srcPars = getListOfExistingRandomFiles(numSrc);
-
-//					List<String> srcPars = new LinkedList<String>();
-//					for (Entry<String, Boolean> srcParsPair : srcParsPairs)
-//						srcPars.add(srcParsPair.getKey());
-
-					// create new ZipObject file
-					existingZipFiles.add(new TraceGenerator.ZipObject(dst, srcPars));
-					listOfFinalFiles.add(dst);
-
-					traceCommand = ZIPCMD + " " + dst + " " + listAsString(srcPars);
+					List<FileObject> srcPars = getListOfExistingRandomFiles(numSrc);
+					if (srcPars.size()==0) {
+						l--;
+					} else {
+						dst.setContent(srcPars);
+						existingZipFiles.add(dst);
+						listOfFinalFiles.add(dst.filename);
+						trace.add(DELETECMD+" "+dst); //ZIP ONLY APPENDS --> need to manually delete the file.
+						l++;
+						traceCommand = ZIPCMD + " " + dst + " " + listAsString(srcPars);
+					}
 				} else {
 					l--;
 				}
@@ -406,44 +420,39 @@ public class TraceGenerator {
 
 			case COPYCMD:
 				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
-					Entry<String, Boolean> src;
-					String srcString, dstString;
+					FileObject src, dst;
 
 					src = getExistingRandomFile();
-					srcString = src.getKey();
 
-					if (src.getValue()) {
-						dstString = getFreshNormalFile();
-						existingNormalFiles.add(dstString);
+					if (src.isZip) {
+						dst = getFreshZipFile();
+						dst.setContent(new LinkedList<FileObject>(src.getContent()));
+						existingZipFiles.add(dst);
 					} else {
-						dstString = getFreshZipFile();
-						// create new ZipObject
-						ZipObject srcZip = getExistingZipObject(srcString);
-						// clone content
-						existingZipFiles.add(new TraceGenerator.ZipObject(dstString, new LinkedList<String>(
-								srcZip.content)));
+						dst = getFreshNormalFile();
+						existingNormalFiles.add(dst);
 					}
 
-					listOfFinalFiles.add(dstString);
+					listOfFinalFiles.add(dst.getFilename());
 
-					traceCommand = COPYCMD + " " + srcString + " " + dstString;
+					traceCommand = COPYCMD + " " + src + " " + dst;
 				} else {
 					l--;
 				}
 				break;
 
 			case DELETECMD:
-				if (existingNormalFiles.size() + existingZipFiles.size() > 0) {
-					Entry<String, Boolean> del = getExistingRandomFile();
+				if (existingNormalFiles.size() + existingZipFiles.size() > 1) { //we can't delete the last file
+					FileObject del = getExistingRandomFile();
 
-					if (del.getValue()) {
-						existingNormalFiles.remove(del.getKey());
+					if (!del.isZip()) {
+						existingNormalFiles.remove(del);
 					} else {
-						existingZipFiles.remove(new TraceGenerator.ZipObject(del.getKey(), null));
+						existingZipFiles.remove(del);
 					}
 
-					listOfFinalFiles.remove(del.getKey());
-					traceCommand = DELETECMD + " " + del.getKey();
+					listOfFinalFiles.remove(del.getFilename());
+					traceCommand = DELETECMD + " " + del;
 				} else {
 					l--;
 				}
@@ -452,17 +461,19 @@ public class TraceGenerator {
 
 			case MERGECMD:
 				if (existingZipFiles.size() + existingNormalFiles.size() > 0) {
-					String dst = "";
+					FileObject dst;
 					if (rand.nextDouble() <= pNew) {
 						dst = getFreshNormalFile();
 					} else {
 						dst = getExistingNormalFile();
+						if (dst==null) dst = getFreshNormalFile();
 					}
 
 					int numSrc = rand.nextInt(MAXMERGE) + 1;
-					List<String> srcPars = getListOfExistingNormalFiles(numSrc);
-
-					listOfFinalFiles.add(dst);
+					List<FileObject> srcPars = getListOfExistingNormalFiles(numSrc);
+					
+					
+					listOfFinalFiles.add(dst.getFilename());
 
 					traceCommand = MERGECMD + " " + dst + " " + numLinesToMerge + " " + listAsString(srcPars);
 				} else {
@@ -480,12 +491,12 @@ public class TraceGenerator {
 				System.out.println(l + ": " + traceCommand);
 				if (l % 5 == 0) {
 					System.out.print("Normal: {");
-					for (String s : existingNormalFiles)
+					for (FileObject s : existingNormalFiles)
 						System.out.print(s + ",");
 					System.out.println("}");
 
 					System.out.print("Zip: {");
-					for (ZipObject z : existingZipFiles) {
+					for (FileObject z : existingZipFiles) {
 						System.out.print(z.getFilename() + "[" + z.getSizeOfContent() + "]");
 
 						// Print also content
@@ -501,6 +512,7 @@ public class TraceGenerator {
 					System.out.println("");
 				}
 			}
+		l++;
 		}
 
 	}
@@ -550,13 +562,13 @@ public class TraceGenerator {
 				i++;
 				i++;
 				break;
-				
+
 			case "--numLinesToMerge":
 				numLinesToMerge = Integer.valueOf(args[i + 1]);
 				i++;
 				i++;
 				break;
-			
+
 			case "--traceLength":
 				traceLength = Integer.valueOf(args[i + 1]);
 				i++;
@@ -686,6 +698,7 @@ public class TraceGenerator {
 		System.out.println("CONFIG:pUnzip:" + pUnzip);
 		System.out.println("CONFIG:pCopy:" + pCopy);
 		System.out.println("CONFIG:pDelete:" + pDelete);
+		System.out.println("CONFIG:pMerge:" + pMerge);
 		System.out.println("CONFIG:----------");
 		System.out.println("CONFIG:maxretry:" + MAXRETRY);
 		System.out.println("CONFIG:initfiles:" + INITFILES);
@@ -696,7 +709,7 @@ public class TraceGenerator {
 		System.out.println("CONFIG:zipextension:" + ZIPEXTENSION);
 		System.out.println("CONFIG:normalextension:" + NORMALEXTENSION);
 		System.out.println("CONFIG:----------");
-		System.out.println("INFO:filesNummber:" + listOfFinalFiles.size());
+		System.out.println("INFO:NumberOfFiles:" + listOfFinalFiles.size());
 		for (String s : listOfFinalFiles) {
 			System.out.println("F:" + s);
 		}
