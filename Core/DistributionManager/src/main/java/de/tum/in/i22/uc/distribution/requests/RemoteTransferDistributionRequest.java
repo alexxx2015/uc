@@ -15,8 +15,7 @@ public class RemoteTransferDistributionRequest extends DistributionRequest<IStat
 	private IName _containerName;
 	private Set<IData> _data;
 	
-	public RemoteTransferDistributionRequest(Set<XmlPolicy> policies,
-			String fromHost, IName containerName, Set<IData> data) {
+	public RemoteTransferDistributionRequest(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
 		_policies = policies;
 		_fromHost = fromHost;
 		_containerName = containerName;

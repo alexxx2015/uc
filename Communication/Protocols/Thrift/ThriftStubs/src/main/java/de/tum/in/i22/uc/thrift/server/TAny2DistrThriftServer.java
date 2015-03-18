@@ -3,17 +3,14 @@ package de.tum.in.i22.uc.thrift.server;
 import java.util.Set;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Distr;
 import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 
 
 /**
@@ -23,7 +20,6 @@ import de.tum.in.i22.uc.cm.processing.IRequestHandler;
  *
  */
 class TAny2DistrThriftServer extends ThriftServerHandler implements TAny2Distr.Iface {
-	private static Logger _logger = LoggerFactory.getLogger(TAny2DistrThriftServer.class);
 
 	private final IDistributionManagerExternal _requestHandler;
 

@@ -20,15 +20,6 @@ public interface IPip2Pip {
 	@AThriftMethod(signature="Types.TData getDataFromId(1: string id)")
     public IData getDataFromId (String id);
 
-//	@AThriftMethod(signature="Types.TStatus update(1:Types.TEvent updateEvent)")
-//	public IStatus update(IEvent updateEvent);
-//
-//	@AThriftMethod(signature="set<Types.TData> getDataInContainer(1:Types.TName containerName)")
-//	public Set<IData> getDataInContainer(IName containerName);
-//
-//	@AThriftMethod(signature="set<Types.TContainer> getContainerForData(1:Types.TData data)")
-//	public Set<IContainer> getContainersForData(IData data);
-
 	@AThriftMethod(signature="Types.TStatus initialRepresentation(1: Types.TName container,2: set<Types.TData> data)")
 	public IStatus initialRepresentation(IName containerName, Set<IData> data);
 
@@ -57,8 +48,4 @@ public interface IPip2Pip {
 	
 	@AThriftMethod(signature="bool deleteStructure(1:Types.TData d)")
 	public boolean deleteStructure(IData d) ;
-
-
-	
-	
 }

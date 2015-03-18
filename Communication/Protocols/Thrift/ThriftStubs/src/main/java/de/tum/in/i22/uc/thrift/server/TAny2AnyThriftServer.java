@@ -241,15 +241,13 @@ TAny2Any.Iface {
 	}
 
 	@Override
-
 	public Set<TXmlPolicy> listPoliciesPmp() throws TException {
 		Set<TXmlPolicy> policies = _pmpServer.listPoliciesPmp();
 		return policies;
 	}
 
 	@Override
-	public TStatus addJPIPListener(String ip, int port, String id, String filter)
-			throws TException {
+	public TStatus addJPIPListener(String ip, int port, String id, String filter) throws TException {
 		return _pipServer.addJPIPListener(ip, port, id, filter);
 	}
 
@@ -259,7 +257,7 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(String xml, String from) throws TException {
+	public TStatus remotePolicyTransfer(TXmlPolicy xml, String from) throws TException {
 		return _pmpServer.remotePolicyTransfer(xml, from);
 	}
 
@@ -286,7 +284,7 @@ TAny2Any.Iface {
 	@Override
 	public boolean reset() throws TException {
 		/**
-		 * NOTE: This code should be invoked over the whole infrastructure, not just the pdp.
+		 * NOTE: This code should be invoked on the entire infrastructure, not just the pdp.
 		 * This means that it makes sense only if all the three server are running as a single controller
 		 */
 		return _pdpServer.reset();

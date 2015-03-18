@@ -21,6 +21,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
@@ -33,9 +34,11 @@ import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.cm.distribution.client.Distr2DistrClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
+import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
@@ -53,7 +56,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 	protected static final Logger _logger = LoggerFactory.getLogger(CassandraDistributionManager.class);
 
 	static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-
+	
 	private PdpProcessor _pdp;
 	private PipProcessor _pip;
 	private PmpProcessor _pmp;
@@ -72,6 +75,8 @@ public class CassandraDistributionManager implements IDistributionManager {
 	private final SeedCollector _seedcollector;
 
 	private final Cluster _cluster;
+	
+	private final IClientFactory _clientFactory;
 
 	public CassandraDistributionManager() {
 		/*
@@ -97,6 +102,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_privateKeyspace = new PrivateKeyspace(_cluster);
 		_sharedKeyspaces = new SharedKeyspaceManager(_cluster);
 		_seedcollector = new SeedCollector();
+		_clientFactory = new ThriftClientFactory();
 	}
 
 
@@ -145,14 +151,14 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 			if (!ks.getLocations().contains(pmpLocation.getHost())) {
 				boolean success = true;
-				Pmp2PmpClient remotePmp = new ThriftClientFactory().createPmp2PmpClient(pmpLocation);
+				Pmp2PmpClient remotePmp = _clientFactory.createPmp2PmpClient(pmpLocation);
 
 				// if the location was not yet part of the keyspace, then we need to
 				// deploy the policy at the remote location
 				try {
 					remotePmp.connect();
 
-					if (!remotePmp.remotePolicyTransfer(policy.getXml(), IPLocation.localIpLocation.getHost()).isStatus(EStatus.OKAY)) {
+					if (!remotePmp.remotePolicyTransfer(policy, IPLocation.localIpLocation.getHost()).isStatus(EStatus.OKAY)) {
 						success = false;
 					}
 				} catch (IOException e) {
@@ -212,7 +218,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 		Pip2PipClient remotePip = null;
 
 		try {
-			remotePip = new ThriftClientFactory().createPip2PipClient(pipLocation);
+			remotePip = _clientFactory.createPip2PipClient(pipLocation);
 			remotePip.connect();
 			remotePip.initialRepresentation(socketName, data);
 		} catch (IOException e) {
@@ -245,7 +251,17 @@ public class CassandraDistributionManager implements IDistributionManager {
 				Set<XmlPolicy> policies = getAllPolicies(data);
 				
 				IPLocation distrLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getDistrListenerPort());
-				
+				Distr2DistrClient remoteDistr = _clientFactory.createDistr2DistrClient(distrLocation);
+
+				doCrossSystemDataTrackingCoarse(data, distrLocation);
+				try {
+					remoteDistr.connect();
+					remoteDistr.remoteTransfer(policies, IPLocation.localIpLocation.getHost(), dstSocket.getSocketName(), data);
+				} catch (IOException e) {
+					_logger.error("Unable to perform remote data and policy transfer to [" + distrLocation + "]: " + e.getMessage());
+				} finally {
+					remoteDistr.disconnect();
+				}
 			}
 		}
 	}
@@ -317,7 +333,7 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 		if (result == null) {
 			IPLocation loc = new IPLocation(ip, Settings.getInstance().getPepListenerPort());
-			Pdp2PepClient pdp2pep = new ThriftClientFactory().createPdp2PepClient(loc);
+			Pdp2PepClient pdp2pep = _clientFactory.createPdp2PepClient(loc);
 			try {
 				_logger.debug("Asking remotely for PdpLocation at {}.", loc);
 
@@ -348,10 +364,11 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 
 	@Override
-	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
-			IName containerName, Set<IData> data) {
-		// TODO Auto-generated method stub
-		return null;
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
+		_pip.initialRepresentation(containerName, data);
+		policies.forEach(p ->
+			_pmp.remotePolicyTransfer(p, fromHost));
+		return new StatusBasic(EStatus.OKAY);
 	}
 
 //	public void awaitPolicyTransfer(String policyName) {

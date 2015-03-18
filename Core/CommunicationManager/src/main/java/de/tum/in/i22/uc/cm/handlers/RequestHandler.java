@@ -156,7 +156,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 		_distributionManager.init(_pdp, _pip, _pmp);
 
-		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp);
+		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp, _distributionManager);
 		new Thread(_requestQueueManager).start();
 	}
 
@@ -576,7 +576,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml, String from) {
+	public IStatus remotePolicyTransfer(XmlPolicy xml, String from) {
 		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
