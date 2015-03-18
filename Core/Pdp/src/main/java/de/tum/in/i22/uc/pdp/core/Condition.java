@@ -51,7 +51,7 @@ public class Condition implements ICondition {
 		boolean res = _operator.tick(endOfTimestep);
 		_logger.debug("Local evaluation of condition: {}", res);
 
-		if (Settings.getInstance().getDistributionEnabled()) {
+		if (Settings.getInstance().isDistributionEnabled()) {
 			res = _operator.distributedTickPostprocessing(endOfTimestep);
 			_logger.debug("Distributed evaluation of condition: {}", res);
 		}

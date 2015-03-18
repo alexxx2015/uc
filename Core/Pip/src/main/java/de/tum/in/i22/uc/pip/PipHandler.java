@@ -142,7 +142,7 @@ public class PipHandler extends PipProcessor {
 			 * work, namely remote data flow tracking and policy shipment
 			 */
 			if (!isSimulating() && status instanceof DistributedPipStatus) {
-				_distributionManager.dataTransfer(((DistributedPipStatus) status).getDataflow());
+				_distributionManager.doDataTransfer(((DistributedPipStatus) status).getDataflow());
 			}
 
 			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {

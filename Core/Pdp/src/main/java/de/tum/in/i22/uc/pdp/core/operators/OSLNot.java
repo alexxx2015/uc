@@ -28,7 +28,7 @@ public class OSLNot extends NotType {
 		op = (Operator) operators;
 		op.init(mech, this, ttl);
 
-		if (Settings.getInstance().getDistributionEnabled()) {
+		if (Settings.getInstance().isDistributionEnabled()) {
 			ensureDNF();
 		}
 

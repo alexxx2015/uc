@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.cm.processing.dummy.IDummyProcessor;
  * @author Florian Kelbert
  *
  */
-public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor<?, ?>> {
+public abstract class Processor<I1 extends Processor<?, ?>, I2 extends Processor<?, ?>> implements IProcessor {
 	protected I1 _iface1;
 	protected I2 _iface2;
 	protected IDistributionManager _distributionManager;

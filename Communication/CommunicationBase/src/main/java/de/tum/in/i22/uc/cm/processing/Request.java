@@ -9,7 +9,7 @@ package de.tum.in.i22.uc.cm.processing;
  * @param <ResponseType> the type of this request's response.
  * @param <ProcessorType> the type of the processor by which this event is to be processed.
  */
-public abstract class Request<ResponseType, ProcessorType extends Processor<?,?>> {
+public abstract class Request<ResponseType, ProcessorType extends IProcessor> {
 
 	private final ERequestType _type;
 
