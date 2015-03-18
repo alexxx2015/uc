@@ -421,7 +421,7 @@ public class TraceTimer {
 			long endTime = System.nanoTime();
 
 			System.out.println("Total time (" + list.size() + " events): " + (endTime - startTime) / 1000 / 1000);
-
+			System.err.println((endTime - startTime) / 1000 / 1000);
 			System.exit(0);
 
 		} else {
