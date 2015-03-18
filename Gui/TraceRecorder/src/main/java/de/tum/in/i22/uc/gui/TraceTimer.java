@@ -36,6 +36,7 @@ import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 class MyProcessor implements IRequestHandler {
 	private static LinkedList<IEvent> list = new LinkedList<IEvent>();
 	public static String path = "";
+	public static boolean done=false;
 
 	public static void stopAndSave() {
 		FileOutputStream fout;
@@ -54,8 +55,8 @@ class MyProcessor implements IRequestHandler {
 		}
 		System.out.println("done!");
 		System.out.println("Exiting...");
-		System.exit(0);
 
+		done=true;
 	}
 
 	@Override
@@ -424,19 +425,23 @@ public class TraceTimer {
 			System.exit(0);
 
 		} else {
-			IThriftServer t = ThriftServerFactory.createPdpThriftServer(Integer.valueOf(args[2]), new MyProcessor());
+			IThriftServer t = ThriftServerFactory.createPdpThriftServer(port, new MyProcessor());
 			new Thread(t).start();
 
 			MyProcessor.path = args[1];
 
-			while (true) {
+			while (! MyProcessor.done) {
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-
+			
+			t.stop();
+			System.exit(0);
+			
 		}
 	}
 }
