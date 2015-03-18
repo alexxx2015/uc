@@ -13,7 +13,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.thrift.ThriftConverter;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TEvent;
@@ -35,17 +35,17 @@ import de.tum.in.i22.uc.thrift.types.TobiasStatusType;
 class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface {
 	private static Logger _logger = LoggerFactory.getLogger(TAny2PdpThriftServer.class);
 
-	private final IRequestHandler _requestHandler;
+	private final IAny2Pdp _handler;
 
-	TAny2PdpThriftServer(IRequestHandler requestHandler) {
-		_requestHandler = requestHandler;
+	TAny2PdpThriftServer(IAny2Pdp handler) {
+		_handler = handler;
 	}
 
 	@Override
 	public TResponse notifyEventSync(TEvent e) throws TException {
 		_logger.debug("TAny2Pdp: notifyEventSync");
 		IEvent ev = ThriftConverter.fromThrift(e);
-		IResponse r = _requestHandler.notifyEventSync(ev);
+		IResponse r = _handler.notifyEventSync(ev);
 		return ThriftConverter.toThrift(r);
 	}
 
@@ -54,40 +54,40 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		//identical to sync version, but discards the response
 		_logger.debug("TAny2Pdp: notifyEventAsync");
 		IEvent ev = ThriftConverter.fromThrift(e);
-		_requestHandler.notifyEventAsync(ev);
+		_handler.notifyEventAsync(ev);
 	}
 
 
 	@Override
 	public boolean registerPxp(TPxpSpec pxp) throws TException {
 		_logger.debug("TAny2Pdp: registerPxp");
-		return _requestHandler.registerPxp(ThriftConverter.fromThrift(pxp));
+		return _handler.registerPxp(ThriftConverter.fromThrift(pxp));
 	}
 
 	@Override
 	public TStatus revokePolicy(String policyName) throws TException {
 		_logger.debug("TAny2Pdp: revokePolicy");
-		IStatus status = _requestHandler.revokePolicyPmp(policyName);
+		IStatus status = _handler.revokePolicy(policyName);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public TStatus revokeMechanism(String policyName, String mechName) throws TException {
 		_logger.debug("TAny2Pdp: revokeMechanism");
-		IStatus status = _requestHandler.revokeMechanismPmp(policyName, mechName);
+		IStatus status = _handler.revokeMechanism(policyName, mechName);
 		return ThriftConverter.toThrift(status);
 	}
 
 	@Override
 	public Map<String, Set<String>> listMechanisms() throws TException {
 		_logger.debug("TAny2Pdp: listMech");
-		return _requestHandler.listMechanismsPmp();
+		return _handler.listMechanisms();
 	}
 
 	@Override
 	public TStatus deployPolicyXML(TXmlPolicy XMLPolicy) throws TException {
 		_logger.debug("TAny2Pdp: deployPolicy");
-		IStatus status = _requestHandler.deployPolicyXMLPmp(ThriftConverter.fromThrift(XMLPolicy));
+		IStatus status = _handler.deployPolicyXML(ThriftConverter.fromThrift(XMLPolicy));
 		return ThriftConverter.toThrift(status);
 	}
 
@@ -98,7 +98,7 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		Map<String,String> map = new HashMap<String,String>(e.getParameters());
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, false);
-		IResponse res = _requestHandler.processEventSync(ev);
+		IResponse res = _handler.processEventSync(ev);
 		EStatus st=null;
 		TobiasStatusType resStatus = null;
 		if (res!=null){
@@ -138,13 +138,13 @@ class TAny2PdpThriftServer extends ThriftServerHandler implements TAny2Pdp.Iface
 		Map<String,String> map = new HashMap<String,String>(e.getParameters());
 		map.put("senderID", senderID);
 		IEvent ev = new EventBasic(e.getName(), map, true);
-		_requestHandler.processEventAsync(ev);
+		_handler.processEventAsync(ev);
 	}
 
 	@Override
 	public boolean reset() throws TException {
 		_logger.debug("TAny2Pdp: reset()");
-		return _requestHandler.reset();
+		return _handler.reset();
 	}
 
 }

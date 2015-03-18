@@ -5,12 +5,11 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManagerPublic;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
-import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Distr;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
@@ -32,17 +31,17 @@ public class ThriftServerFactory {
 
 	/**
 	 * Creates a Pdp Thrift server listening on the specified port and redirecting
-	 * requests to the specified {@link IRequestHandler}.
+	 * requests to the specified {@link IAny2Pdp} handler.
 	 *
 	 * The server's run method will not yet be executed.
 	 *
 	 * @param port the port to listen on
-	 * @param requestHandler the {@link IRequestHandler} to which requests are dispatched
+	 * @param handler the {@link IAny2Pdp} to which requests are dispatched
 	 * @return the server instance on success, null on failure
 	 */
-	public static IThriftServer createPdpThriftServer(int port, IRequestHandler requestHandler) {
+	public static IThriftServer createPdpThriftServer(int port, IAny2Pdp handler) {
 		return createThriftServer(port,
-				new TAny2Pdp.Processor<TAny2PdpThriftServer>(new TAny2PdpThriftServer(requestHandler)));
+				new TAny2Pdp.Processor<TAny2PdpThriftServer>(new TAny2PdpThriftServer(handler)));
 	}
 
 	/**
