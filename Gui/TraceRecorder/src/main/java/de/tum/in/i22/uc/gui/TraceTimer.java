@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import de.tum.in.i22.uc.Controller;
@@ -29,7 +28,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.handlers.RequestHandler;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
+import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
@@ -376,25 +377,23 @@ public class TraceTimer {
 		if (command.equalsIgnoreCase("play")) {
 			LinkedList<IEvent> list = new LinkedList<IEvent>();
 
-			Controller c;
-			if (pp.equals("")) c= new Controller();
-			else {
-				String[] par = new String[2];
-				par[0]="-pp";
-				par[1]=pp;
-				c=new Controller(par);
-			}
-			c.start();
-
-			while (!c.isStarted()) {
-				System.out.println("Waiting for controller to start...");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			
+			RequestHandler handler;
+			
+			if (!pp.equals("")) 
+				Settings.setPropertiesFile(pp);
+			
+			handler= new RequestHandler();
+			
+//			while (!handler.isStarted()) {
+//				System.out.println("Waiting for controller to start...");
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 
 
 			try {
@@ -414,9 +413,9 @@ public class TraceTimer {
 			long startTime = System.nanoTime();
 			for (IEvent e : list) {
 				if (e.isActual())
-					c.notifyEventAsync(e);
+					handler.notifyEventAsync(e);
 				else
-					c.notifyEventSync(e);
+					handler.notifyEventSync(e);
 			}
 			long endTime = System.nanoTime();
 

@@ -87,18 +87,19 @@ public class Controller implements IRequestHandler {
 		deployInitialPolicies();
 		_logger.info("done.");
 
-		_logger.info("Starting up thrift servers");
-		startListeners(_requestHandler);
-		do {
-			try {
-				_logger.info("... waiting ...");
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				_logger.info(e.getMessage());
-			}
-		} while (!isStarted());
-		_logger.info("Done. Thrift servers started.");
-
+		if (Settings.getInstance().getStartServers()) {
+			_logger.info("Starting up thrift servers");
+			startListeners(_requestHandler);
+			do {
+				try {
+					_logger.info("... waiting ...");
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					_logger.info(e.getMessage());
+				}
+			} while (!isStarted());
+			_logger.info("Done. Thrift servers started.");
+		}
 	}
 
 	public boolean isStarted() {
@@ -147,42 +148,40 @@ public class Controller implements IRequestHandler {
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
-		if (Settings.getInstance().getStartServers()) {
-			if (Settings.getInstance().isPdpListenerEnabled()) {
-				_pdpServer = ThriftServerFactory.createPdpThriftServer(Settings.getInstance().getPdpListenerPort(),
-						requestHandler);
+		if (Settings.getInstance().isPdpListenerEnabled()) {
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(Settings.getInstance().getPdpListenerPort(),
+					requestHandler);
 
-				if (_pdpServer != null) {
-					new Thread(_pdpServer).start();
-				}
+			if (_pdpServer != null) {
+				new Thread(_pdpServer).start();
 			}
+		}
 
-			if (Settings.getInstance().isPipListenerEnabled()) {
-				_pipServer = ThriftServerFactory.createPipThriftServer(Settings.getInstance().getPipListenerPort(),
-						requestHandler);
+		if (Settings.getInstance().isPipListenerEnabled()) {
+			_pipServer = ThriftServerFactory.createPipThriftServer(Settings.getInstance().getPipListenerPort(),
+					requestHandler);
 
-				if (_pipServer != null) {
-					new Thread(_pipServer).start();
-				}
+			if (_pipServer != null) {
+				new Thread(_pipServer).start();
 			}
+		}
 
-			if (Settings.getInstance().isPmpListenerEnabled()) {
-				_pmpServer = ThriftServerFactory.createPmpThriftServer(Settings.getInstance().getPmpListenerPort(),
-						requestHandler);
+		if (Settings.getInstance().isPmpListenerEnabled()) {
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(Settings.getInstance().getPmpListenerPort(),
+					requestHandler);
 
-				if (_pmpServer != null) {
-					new Thread(_pmpServer).start();
-				}
+			if (_pmpServer != null) {
+				new Thread(_pmpServer).start();
 			}
+		}
 
-			if (Settings.getInstance().isAnyListenerEnabled()) {
-				_anyServer = ThriftServerFactory.createAnyThriftServer(Settings.getInstance().getAnyListenerPort(),
-						Settings.getInstance().getPdpListenerPort(), Settings.getInstance().getPipListenerPort(),
-						Settings.getInstance().getPmpListenerPort());
+		if (Settings.getInstance().isAnyListenerEnabled()) {
+			_anyServer = ThriftServerFactory.createAnyThriftServer(Settings.getInstance().getAnyListenerPort(),
+					Settings.getInstance().getPdpListenerPort(), Settings.getInstance().getPipListenerPort(), Settings
+							.getInstance().getPmpListenerPort());
 
-				if (_anyServer != null) {
-					new Thread(_anyServer).start();
-				}
+			if (_anyServer != null) {
+				new Thread(_anyServer).start();
 			}
 		}
 	}
