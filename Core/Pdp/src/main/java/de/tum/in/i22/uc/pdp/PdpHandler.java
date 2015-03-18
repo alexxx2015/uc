@@ -91,16 +91,14 @@ public class PdpHandler extends PdpProcessor {
 		IResponse res = _pdp.notifyEvent(event, true);
 
 		/*
-		 * If the event is *not* actual AND if the event was allowed by the
-		 * PDP AND if for this event allowance implies that the event is to be
-		 * considered as actual event, then we create the corresponding actual
-		 * event and signal it to both the PIP and the PDP as actual event.
+		 *     If the event is *not* actual
+		 * AND if the event was allowed by the PDP
+		 * AND if for this event allowance implies that the event is to be
+		 *     considered as actual event,
+		 * THEN we create the corresponding actual event and signal it to the PDP.
 		 */
-
-
 		if (!event.isActual() && res.isAuthorizationAction(EStatus.ALLOW) && event.allowImpliesActual()) {
-			IEvent ev2 = new EventBasic(event.getName(), event.getParameters(), true);
-			notifyEventAsync(ev2);
+			notifyEventSync(new EventBasic(event.getName(), event.getParameters(), true));
 		}
 
 		return res;
