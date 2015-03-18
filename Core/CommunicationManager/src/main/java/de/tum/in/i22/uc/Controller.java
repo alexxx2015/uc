@@ -525,8 +525,7 @@ public class Controller implements IRequestHandler  {
 		return deleteStructure(d);
 	}
 
-	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
-			IName containerName, Set<IData> data) {
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
 		return _requestHandler.remoteTransfer(policies, fromHost, containerName, data);
 	}
 }

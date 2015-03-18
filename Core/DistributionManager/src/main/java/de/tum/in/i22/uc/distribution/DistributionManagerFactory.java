@@ -1,5 +1,6 @@
-package de.tum.in.i22.uc.cm.distribution;
+package de.tum.in.i22.uc.distribution;
 
+import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.cassandra.CassandraDistributionManager;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
 import de.tum.in.i22.uc.cm.settings.Settings;

@@ -23,7 +23,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.DistributionManagerFactory;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
@@ -40,6 +39,7 @@ import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
+import de.tum.in.i22.uc.distribution.DistributionManagerFactory;
 import de.tum.in.i22.uc.pdp.PdpHandler;
 import de.tum.in.i22.uc.pdp.requests.DeployPolicyXMLPdpRequest;
 import de.tum.in.i22.uc.pdp.requests.ListMechanismsPdpRequest;
@@ -614,10 +614,8 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		return waitForResponse(request);
 	}
 
-	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
-			IName containerName, Set<IData> data) {
+	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
 		RemoteTransferDistributionRequest request = new RemoteTransferDistributionRequest(policies, fromHost, containerName, data);
-
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
