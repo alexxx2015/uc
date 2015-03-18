@@ -8,9 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
@@ -49,21 +47,6 @@ class ThriftPip2PipClient extends Pip2PipClient {
 		_connector.disconnect();
 		_impl = null;
 	}
-
-//	@Override
-//	public Set<IContainer> getContainersForData(IData data) {
-//		return _impl.getContainersForData(data);
-//	}
-//
-//	@Override
-//	public Set<IData> getDataInContainer(IName containerName) {
-//		return _impl.getDataInContainer(containerName);
-//	}
-//
-//	@Override
-//	public IStatus update(IEvent event) {
-//		return _impl.update(event);
-//	}
 
 	@Override
 	public IStatus initialRepresentation(IName containerName, Set<IData> data) {

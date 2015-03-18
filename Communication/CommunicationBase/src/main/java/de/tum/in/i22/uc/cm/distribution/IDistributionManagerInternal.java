@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
-interface IDistributionManagerPrivate {
+interface IDistributionManagerInternal {
 	/**
 	 * Invoked whenever a remote data transfer happens.
 	 * @param dataflow

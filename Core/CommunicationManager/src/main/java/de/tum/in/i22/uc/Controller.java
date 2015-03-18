@@ -68,18 +68,9 @@ public class Controller implements IRequestHandler  {
 	}
 
 	public boolean start() {
-		// If ports are available...
-		if (arePortsAvailable()) {
-			// ..start UC infrastructure
-			startUC();
-			return true;
+		if (!arePortsAvailable()) {
+			return false;
 		}
-
-		// ..otherwise return false
-		return false;
-	}
-
-	private void startUC() {
 
 		_requestHandler = new RequestHandler(Settings.getInstance().getPdpLocation(),
 				Settings.getInstance().getPipLocation(), Settings.getInstance().getPmpLocation());
@@ -100,6 +91,7 @@ public class Controller implements IRequestHandler  {
 		} while (!isStarted());
 		_logger.info("Done. Thrift servers started.");
 
+		return true;
 	}
 
 	public boolean isStarted() {

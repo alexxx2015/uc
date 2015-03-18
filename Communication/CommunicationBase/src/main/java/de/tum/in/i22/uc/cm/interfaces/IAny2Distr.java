@@ -1,11 +1,11 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerPublic;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
 import de.tum.in.i22.uc.thrift.generator.AThriftService;
 
 
 /**
- * Interface defining methods to be invoked on an {@link IDistributionManagerPublic}.
+ * Interface defining methods to be invoked on an {@link IDistributionManagerExternal}.
  * @author Kelbert
  *
  */

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.cassandra;
+package de.tum.in.i22.uc.distribution.cassandra;
 
 import java.util.Set;
 

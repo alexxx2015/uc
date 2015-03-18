@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.requests;
+package de.tum.in.i22.uc.distribution.requests;
 
 import java.util.Set;
 
@@ -6,7 +6,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerPublic;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
 
 public class RemoteTransferDistributionRequest extends DistributionRequest<IStatus> {
 	
@@ -24,7 +24,7 @@ public class RemoteTransferDistributionRequest extends DistributionRequest<IStat
 	}
 
 	@Override
-	public IStatus process(IDistributionManagerPublic processor) {
+	public IStatus process(IDistributionManagerExternal processor) {
 		return processor.remoteTransfer(_policies, _fromHost, _containerName, _data);
 	}
 }

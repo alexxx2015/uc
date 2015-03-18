@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.cassandra;
+package de.tum.in.i22.uc.distribution.cassandra;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -233,14 +233,19 @@ public class CassandraDistributionManager implements IDistributionManager {
 			for (Entry<SocketContainer, Set<IData>> dst : dsts.entrySet()) {
 
 				SocketContainer dstSocket = dst.getKey();
-				Set<IData> data = dst.getValue();
+				Set<IData> data = dst.getValue();				
 
-				IPLocation pipLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPipListenerPort());
-				IPLocation pmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPmpListenerPort());
-
-				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
-				doCrossSystemDataTrackingCoarse(data, pipLocation);
-				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
+//				IPLocation pipLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPipListenerPort());
+//				IPLocation pmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPmpListenerPort());
+//
+//				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
+//				doCrossSystemDataTrackingCoarse(data, pipLocation);
+//				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
+				
+				Set<XmlPolicy> policies = getAllPolicies(data);
+				
+				IPLocation distrLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getDistrListenerPort());
+				
 			}
 		}
 	}

@@ -12,7 +12,7 @@ import de.tum.in.i22.uc.thrift.types.TData;
 import de.tum.in.i22.uc.thrift.types.TName;
 import de.tum.in.i22.uc.thrift.types.TStatus;
 import de.tum.in.i22.uc.thrift.types.TXmlPolicy;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerPublic;
+import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 
 
@@ -25,9 +25,9 @@ import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 class TAny2DistrThriftServer extends ThriftServerHandler implements TAny2Distr.Iface {
 	private static Logger _logger = LoggerFactory.getLogger(TAny2DistrThriftServer.class);
 
-	private final IDistributionManagerPublic _requestHandler;
+	private final IDistributionManagerExternal _requestHandler;
 
-	TAny2DistrThriftServer(IDistributionManagerPublic requestHandler) {
+	TAny2DistrThriftServer(IDistributionManagerExternal requestHandler) {
 		_requestHandler = requestHandler;
 	}
 
