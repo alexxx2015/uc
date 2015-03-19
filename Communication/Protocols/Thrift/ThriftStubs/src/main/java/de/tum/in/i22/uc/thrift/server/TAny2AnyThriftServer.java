@@ -257,11 +257,6 @@ TAny2Any.Iface {
 	}
 
 	@Override
-	public TStatus remotePolicyTransfer(TXmlPolicy xml, String from) throws TException {
-		return _pmpServer.remotePolicyTransfer(xml, from);
-	}
-
-	@Override
 	public boolean deleteStructure(TData d) throws TException {
 		return _pipServer.deleteStructure(d);
 	}

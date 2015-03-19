@@ -1,24 +1,20 @@
 package de.tum.in.i22.uc.cm.handlers;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
+import de.tum.in.i22.uc.cm.processing.DmpProcessor;
 import de.tum.in.i22.uc.cm.processing.ERequestType;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
-import de.tum.in.i22.uc.cm.processing.IProcessor;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.processing.Processor;
 import de.tum.in.i22.uc.cm.processing.Request;
-import de.tum.in.i22.uc.distribution.requests.DistributionRequest;
+import de.tum.in.i22.uc.dmp.requests.DmpRequest;
 import de.tum.in.i22.uc.pdp.requests.PdpRequest;
 import de.tum.in.i22.uc.pip.requests.PipRequest;
 import de.tum.in.i22.uc.pmp.requests.PmpRequest;
@@ -34,11 +30,11 @@ class RequestQueueManager implements Runnable {
 	private final PdpProcessor _pdp;
 	private final PipProcessor _pip;
 	private final PmpProcessor _pmp;
-	private final IDistributionManager _distr;
+	private final DmpProcessor _distr;
 
 	private boolean run = true;
 
-	RequestQueueManager(PdpProcessor pdp, PipProcessor pip, PmpProcessor pmp, IDistributionManager distr) {
+	RequestQueueManager(PdpProcessor pdp, PipProcessor pip, PmpProcessor pmp, DmpProcessor distr) {
 		_requestQueue = new LinkedBlockingQueue<>();
 		
 		_pdp = pdp;
@@ -84,7 +80,7 @@ class RequestQueueManager implements Runnable {
 				response = ((PmpRequest<?>) request).process(_pmp);
 				break;
 			case DISTR_REQUEST:
-				response = ((DistributionRequest<?>) request).process(_distr);
+				response = ((DmpRequest<?>) request).process(_distr);
 				break;
 			case POISON_PILL:
 				response = ((PoisonPillRequest)request).process(new PoisonPillProcessor());
@@ -124,7 +120,7 @@ class RequestQueueManager implements Runnable {
 		_requestQueue.add(new RequestWrapper(new PoisonPillRequest(), null));
 	}
 
-	private class PoisonPillProcessor extends Processor<PoisonPillProcessor, PoisonPillProcessor>{
+	private class PoisonPillProcessor extends Processor<PoisonPillProcessor, PoisonPillProcessor, PoisonPillProcessor>{
 		public PoisonPillProcessor() {
 			super(null);
 		}

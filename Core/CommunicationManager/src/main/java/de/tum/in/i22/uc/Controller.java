@@ -19,17 +19,21 @@ import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
+import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -42,7 +46,7 @@ public class Controller implements IRequestHandler  {
 	private IThriftServer _pipServer;
 	private IThriftServer _pmpServer;
 	private IThriftServer _anyServer;
-	private IThriftServer _distrServer;
+	private IThriftServer _dmpServer;
 
 	private String[] _args = null;
 	protected IRequestHandler _requestHandler;
@@ -99,7 +103,7 @@ public class Controller implements IRequestHandler  {
 				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
 				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())
 				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started())
-				&& (!Settings.getInstance().isDistributionEnabled() || _distrServer != null && _distrServer.started());
+				&& (!Settings.getInstance().isDistributionEnabled() || _dmpServer != null && _dmpServer.started());
 	}
 
 	/**
@@ -135,8 +139,8 @@ public class Controller implements IRequestHandler  {
 			_pmpServer.stop();
 		if (_anyServer != null)
 			_anyServer.stop();
-		if (_distrServer != null)
-			_distrServer.stop();
+		if (_dmpServer != null)
+			_dmpServer.stop();
 		if(_requestHandler != null)
 			_requestHandler.stop();
 	}
@@ -182,11 +186,11 @@ public class Controller implements IRequestHandler  {
 		}
 
 		if (Settings.getInstance().isDistributionEnabled()) {
-			_distrServer = ThriftServerFactory.createDistributionThriftServer(
-					Settings.getInstance().getDistrListenerPort(), requestHandler);
+			_dmpServer = ThriftServerFactory.createDmpThriftServer(
+					Settings.getInstance().getDmpListenerPort(), requestHandler);
 
-			if (_distrServer != null) {
-				new Thread(_distrServer).start();
+			if (_dmpServer != null) {
+				new Thread(_dmpServer).start();
 			}
 		}
 	}
@@ -200,11 +204,11 @@ public class Controller implements IRequestHandler  {
 				|| isPortAvailable(Settings.getInstance().getPmpListenerPort());
 		boolean isAnyPortAvailable = !Settings.getInstance().isAnyListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getAnyListenerPort());
-		boolean isDistrPortAvailable = !Settings.getInstance().isDistributionEnabled()
-				|| isPortAvailable(Settings.getInstance().getDistrListenerPort());
+		boolean isDmpPortAvailable = !Settings.getInstance().isDistributionEnabled()
+				|| isPortAvailable(Settings.getInstance().getDmpListenerPort());
 
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable
-				|| !isAnyPortAvailable || ! isDistrPortAvailable) {
+				|| !isAnyPortAvailable || ! isDmpPortAvailable) {
 			_logger.error("One of the ports is not available.");
 			_logger.error("\nAre you sure you are not running another instance on the same ports?");
 			return false;
@@ -493,8 +497,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(XmlPolicy xml, String from) {
-		return _requestHandler.remotePolicyTransfer(xml, from);
+	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
+		return _requestHandler.incomingPolicyTransfer(xml, from);
 	}
 
 	@Override
@@ -504,20 +508,70 @@ public class Controller implements IRequestHandler  {
 
 	@Override	
 	public IChecksum getChecksumOf(IData data) {
-		return getChecksumOf(data);
+		return _requestHandler.getChecksumOf(data);
 	}
 
 	@Override
 	public boolean deleteChecksum(IData d) {
-		return deleteChecksum(d);
+		return _requestHandler.deleteChecksum(d);
 	}
 
 	@Override
 	public boolean deleteStructure(IData d) {
-		return deleteStructure(d);
+		return _requestHandler.deleteStructure(d);
 	}
 
 	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
 		return _requestHandler.remoteTransfer(policies, fromHost, containerName, data);
+	}
+
+	@Override
+	public void notify(IOperator operator, boolean endOfTimestep) {
+		_requestHandler.notify(operator, endOfTimestep);
+	}
+
+	@Override
+	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
+		_requestHandler.setFirstTick(policyName, mechanismName, firstTick);
+	}
+
+	@Override
+	public long getFirstTick(String policyName, String mechanismName) {
+		return _requestHandler.getFirstTick(policyName, mechanismName);
+	}
+
+	@Override
+	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		return _requestHandler.wasNotifiedAtTimestep(operator, timestep);
+	}
+
+	@Override
+	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		return _requestHandler.howOftenNotifiedAtTimestep(operator, timestep);
+	}
+
+	@Override
+	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
+		return _requestHandler.howOftenNotifiedSinceTimestep(operator, timestep);
+	}
+
+	@Override
+	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
+		_requestHandler.doDataTransfer(dataflow);
+	}
+
+	@Override
+	public IPLocation getResponsibleLocation(String ip) {
+		return _requestHandler.getResponsibleLocation(ip);
+	}
+
+	@Override
+	public void register(XmlPolicy policy, String from) {
+		_requestHandler.register(policy, from);
+	}
+
+	@Override
+	public void deregister(String policyName, IPLocation location) {
+		_requestHandler.deregister(policyName, location);
 	}
 }

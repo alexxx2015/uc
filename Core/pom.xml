@@ -17,6 +17,6 @@
 		<module>Pip</module>
 		<module>Pmp</module>
 		<module>Ptp</module>
-		<module>DistributionManager</module>
+		<module>Dmp</module>
 	</modules>
 </project>

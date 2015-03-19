@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>DistributionManager</artifactId>
+			<artifactId>Dmp</artifactId>
 			<version>1.0</version>
 		</dependency>
 		

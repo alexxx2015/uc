@@ -41,6 +41,7 @@ import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.interfaces.IPmp2Ptp;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -75,7 +76,7 @@ public class PmpHandler extends PmpProcessor {
 
 	public PmpHandler() {
 		super(LocalLocation.getInstance());
-		init(new DummyPipProcessor(), new DummyPdpProcessor());
+		init(new DummyPipProcessor(), new DummyPdpProcessor(), new DummyDmpProcessor());
 		_dataToPolicies = new ConcurrentHashMap<>();
 		_ptp = new PtpHandler();
 		_policymanager = new PolicyManager();
@@ -310,7 +311,7 @@ public class PmpHandler extends PmpProcessor {
 		IStatus status;
 
 		if (_policymanager.removePolicy(policyName)) {
-			_distributionManager.deregister(policyName, IPLocation.localIpLocation);
+			getDmp().deregister(policyName, IPLocation.localIpLocation);
 			status = getPdp().revokePolicy(policyName);
 		}
 		else {
@@ -349,10 +350,8 @@ public class PmpHandler extends PmpProcessor {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(XmlPolicy xml, String from) {
+	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
 		_logger.debug("remotePolicyTransfer invoked [{}, {}]", xml, from);
-
-//		XmlPolicy xmlPolicy = new XmlPolicy("", xml);
 		return deployPolicyXMLPmp(xml, from);
 	}
 
@@ -367,7 +366,7 @@ public class PmpHandler extends PmpProcessor {
 		if (status.getLeft().isStatus(EStatus.OKAY)
 				&& status.getRight() != null
 				&& Settings.getInstance().isDistributionEnabled()) {
-			_distributionManager.register(status.getRight(), from);
+			getDmp().register(status.getRight(), from);
 		}
 
 		return status.getLeft();

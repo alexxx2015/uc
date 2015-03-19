@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.pmp.PmpHandler;
@@ -29,7 +30,7 @@ public class PmpTest {
 		PipProcessor pip = new MyDummyPipProcessor();
 		PdpProcessor pdp = new DummyPdpProcessor();
 		PmpProcessor pmp = new PmpHandler();
-		pmp.init(pip, pdp);
+		pmp.init(pip, pdp, new DummyDmpProcessor());
 
 		String path = "src/test/resources/testPmp.xml";
 

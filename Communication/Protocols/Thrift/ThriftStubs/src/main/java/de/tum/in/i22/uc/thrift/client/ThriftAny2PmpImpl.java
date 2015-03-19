@@ -140,12 +140,8 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(XmlPolicy xml, String from) {
-		try {
-			return ThriftConverter.fromThrift(_handle.remotePolicyTransfer(ThriftConverter.toThrift(xml), from));
-		} catch (TException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
+		throw new UnsupportedOperationException("This method is for internal use only and not to be used via Thrift.");
 	}
 
 }

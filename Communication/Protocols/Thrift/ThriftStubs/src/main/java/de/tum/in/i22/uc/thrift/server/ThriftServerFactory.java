@@ -1,17 +1,18 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import org.apache.thrift.TProcessor;
+
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.tum.in.i22.uc.cm.distribution.IDistributionManagerExternal;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Dmp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
-import de.tum.in.i22.uc.thrift.types.TAny2Distr;
+import de.tum.in.i22.uc.thrift.types.TAny2Dmp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pep;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
@@ -107,9 +108,9 @@ public class ThriftServerFactory {
 				new TAny2Any.Processor<TAny2AnyThriftServer>(new TAny2AnyThriftServer(pdpPort, pipPort, pmpPort)));
 	}
 	
-	public static IThriftServer createDistributionThriftServer(int port, IDistributionManagerExternal handler) {
+	public static IThriftServer createDmpThriftServer(int port, IAny2Dmp handler) {
 		return createThriftServer(port,
-				new TAny2Distr.Processor<TAny2DistrThriftServer>(new TAny2DistrThriftServer(handler)));
+				new TAny2Dmp.Processor<TAny2DmpThriftServer>(new TAny2DmpThriftServer(handler)));
 	}
 
 	/**

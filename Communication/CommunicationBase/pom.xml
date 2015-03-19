@@ -36,28 +36,48 @@
 						<configuration>
 							<folder>${basedir}/target/classes</folder>
 							<interfaces>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPip2JPip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IJPip2Pip</param>
+								<!-- Any2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Any</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Dmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pep</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2PtEditor</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pxp</param>
+								
+								<!-- Pep2X -->
 								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pdp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pmp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pip</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pdp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pxp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pxp</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pmp</param>
+								
+								<!-- Pdp2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Dmp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pep</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pep</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Any</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2PtEditor</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Distr</param>
-								<param>de.tum.in.i22.uc.cm.interfaces.IDistr2Distr</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Pxp</param>
+								
+								<!-- Pip2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Dmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2JPip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPip2Pmp</param>
+								
+								<!-- JPip2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IJPip2Pip</param>
+								
+								<!-- Pmp2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Dmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPmp2Pmp</param>
+								
+								<!-- Pxp2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp</param>
+								
+								<!-- Dmp2X -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Dmp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Pip</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp</param>
 							</interfaces>
 							<includes>
 								<param>Types.thrift</param>

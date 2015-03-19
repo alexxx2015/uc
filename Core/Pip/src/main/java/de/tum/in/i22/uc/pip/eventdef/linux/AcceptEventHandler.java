@@ -70,7 +70,7 @@ public class AcceptEventHandler extends LinuxEvents {
 		// remote_socket_name := ((a,x),sn(e))
 		remoteSocketName = SocketName.create(remoteIP, remotePort, localIP, localPort);
 
-		IPLocation remoteResponsibleLocation = _distributionManager.getResponsibleLocation(remoteIP);
+		IPLocation remoteResponsibleLocation = _dmp.getResponsibleLocation(remoteIP);
 
 		if (!sameResponsibleLocation(remoteResponsibleLocation, IPLocation.localIpLocation)) {
 			// client is remote

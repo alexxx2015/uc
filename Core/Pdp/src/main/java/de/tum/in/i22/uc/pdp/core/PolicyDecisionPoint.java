@@ -31,10 +31,10 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Dmp;
 import de.tum.in.i22.uc.cm.interfaces.IPdp2Pip;
-import de.tum.in.i22.uc.cm.processing.dummy.DummyDistributionManager;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
@@ -49,7 +49,7 @@ public class PolicyDecisionPoint implements Observer {
 
 	private final ObserverManager _observerManager;
 	private final MechanismManager _mechanismManager;
-	private final IDistributionManager _distributionManager;
+	private final IPdp2Dmp _dmp;
 	private final PxpManager _pxpManager;
 
 	private final Unmarshaller _unmarshaller;
@@ -60,14 +60,14 @@ public class PolicyDecisionPoint implements Observer {
 	private final MechanismFactory _mechanismFactory;
 
 	public PolicyDecisionPoint() {
-		this(new DummyPipProcessor(), new PxpManager(), new DummyDistributionManager());
+		this(new DummyPipProcessor(), new PxpManager(), new DummyDmpProcessor());
 	}
 
-	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IDistributionManager distributionManager) {
+	public PolicyDecisionPoint(IPdp2Pip pip, PxpManager pxpManager, IPdp2Dmp dmp) {
 		_pip = pip;
 
 		_pxpManager = pxpManager;
-		_distributionManager = distributionManager;
+		_dmp = dmp;
 		_observerManager = new ObserverManager();
 		_mechanismManager = new MechanismManager();
 
@@ -394,15 +394,15 @@ public class PolicyDecisionPoint implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof IOperator) {
 			if (arg instanceof IEvent && ((IEvent) arg).isActual()) {
-				_distributionManager.notify((IOperator) o, false);
+				_dmp.notify((IOperator) o, false);
 			}
 			else if (arg == Mechanism.END_OF_TIMESTEP) {
-				_distributionManager.notify((IOperator) o, true);
+				_dmp.notify((IOperator) o, true);
 			}
 		}
 	}
 
-	public IDistributionManager getDistributionManager() {
-		return _distributionManager;
+	public IPdp2Dmp getDmp() {
+		return _dmp;
 	}
 }

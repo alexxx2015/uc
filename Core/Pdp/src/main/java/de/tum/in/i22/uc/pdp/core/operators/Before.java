@@ -128,7 +128,7 @@ public class Before extends BeforeType implements Observer {
 
 		if (endOfTimestep && !op.getPositivity().is(valueAtLastTick)) {
 			if (op.isAtomic()) {
-				valueAtLastTick = _pdp.getDistributionManager().wasNotifiedAtTimestep((AtomicOperator) op, _mechanism.getTimestep() - _timeAmount.getTimesteps());
+				valueAtLastTick = _pdp.getDmp().wasNotifiedAtTimestep((AtomicOperator) op, _mechanism.getTimestep() - _timeAmount.getTimesteps());
 				_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 			}
 			else {

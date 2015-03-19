@@ -6,7 +6,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
-import de.tum.in.i22.uc.cm.distribution.client.Distr2DistrClient;
+import de.tum.in.i22.uc.cm.distribution.client.Dmp2DmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
@@ -154,9 +154,9 @@ public class ThriftClientFactory implements IClientFactory {
 	}
 
 	@Override
-	public Distr2DistrClient createDistr2DistrClient(Location location) {
+	public Dmp2DmpClient createDmp2DmpClient(Location location) {
 		if (location instanceof IPLocation) {
-			return new ThriftDistr2DistrClient((IPLocation) location);
+			return new ThriftDmp2DmpClient((IPLocation) location);
 		}
 		throw new RuntimeException("Thrift client depends on " + IPLocation.class + ", but got " + location.getClass());
 	}

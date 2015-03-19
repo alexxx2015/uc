@@ -2,7 +2,7 @@ package de.tum.in.i22.uc.cm.pip.interfaces;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
+import de.tum.in.i22.uc.cm.interfaces.IPip2Dmp;
 import de.tum.in.i22.uc.cm.pip.ifm.IAnyInformationFlowModel;
 
 public interface IEventHandler {
@@ -23,5 +23,5 @@ public interface IEventHandler {
 	 */
 	public void reset();
 
-	public void setDistributionManager(IDistributionManager _distributionManager);
+	public void setDmp(IPip2Dmp _distributionManager);
 }

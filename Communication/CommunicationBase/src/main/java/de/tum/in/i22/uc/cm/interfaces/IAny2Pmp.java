@@ -9,5 +9,5 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
  *
  */
 @AThriftService(name = "TAny2Pmp")
-public interface IAny2Pmp extends IPmp2Pmp {
+public interface IAny2Pmp extends IPmp2Pmp, IDmp2Pmp {
 }
