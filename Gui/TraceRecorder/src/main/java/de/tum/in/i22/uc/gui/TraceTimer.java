@@ -418,9 +418,9 @@ public class TraceTimer {
 				System.out.println ("Iteration "+count + ". Current average = " + average);
 				long startTime = System.nanoTime();
 				for (IEvent e : list) {
-					if (e.isActual())
-						handler.notifyEventAsync(e);
-					else
+//					if (e.isActual())
+//						handler.notifyEventAsync(e);
+//				else
 						handler.notifyEventSync(e);
 				}
 				long endTime = System.nanoTime();
