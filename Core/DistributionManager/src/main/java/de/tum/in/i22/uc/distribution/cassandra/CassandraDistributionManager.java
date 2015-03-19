@@ -30,14 +30,11 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.linux.SocketContainer;
-import de.tum.in.i22.uc.cm.datatypes.linux.SocketName;
 import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.distribution.client.Distr2DistrClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pip2PipClient;
-import de.tum.in.i22.uc.cm.distribution.client.Pmp2PmpClient;
 import de.tum.in.i22.uc.cm.factories.IClientFactory;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -126,65 +123,65 @@ public class CassandraDistributionManager implements IDistributionManager {
 		_initialized = true;
 	}
 
-	/**
-	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
-	 * via Thrift interfaces.
-	 *
-	 * @param policies the policies to send
-	 * @param pmpLocation the location to which the policies are sent
-	 */
-	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
-		_logger.debug("doStickyPolicyTransfer invoked: " + pmpLocation + ": " + policies);
-
-		for (XmlPolicy policy : policies) {
-			/*
-			 * For each policy, the protocol is as follows:
-			 * (1) extend the keyspace with the given location
-			 * (2) if the keyspace was in fact extended
-			 *     (meaning that the provided location was not yet aware of the policy),
-			 *     then the policy is sent to the remote PMP.
-			 * (3) if remote deployment of the policy fails, then the given location
-			 *     is removed from the policy's keyspace
-			 */
-
-			ISharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
-
-			if (!ks.getLocations().contains(pmpLocation.getHost())) {
-				boolean success = true;
-				Pmp2PmpClient remotePmp = _clientFactory.createPmp2PmpClient(pmpLocation);
-
-				// if the location was not yet part of the keyspace, then we need to
-				// deploy the policy at the remote location
-				try {
-					remotePmp.connect();
-
-					if (!remotePmp.remotePolicyTransfer(policy, IPLocation.localIpLocation.getHost()).isStatus(EStatus.OKAY)) {
-						success = false;
-					}
-				} catch (IOException e) {
-					success = false;
-					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
-				} finally {
-					remotePmp.disconnect();
-				}
-
-
-				if (success) {
-					// If remote deployment succeeded, then
-					// this is a new seed.
-					_seedcollector.add(pmpLocation.getHost());
-				}
-
-				/*
-				 * TODO: We need to deal with the fact that success == false at this place.
-				 * Possible options: Retry, throw exception, cancel data transfer
-				 */
-			}
-			else {
-				_logger.debug("Not performing remote policy transfer. Policy should already be present remotely.");
-			}
-		}
-	}
+//	/**
+//	 * Transfers all specified {@link XmlPolicy}s to the specified {@link IPLocation}
+//	 * via Thrift interfaces.
+//	 *
+//	 * @param policies the policies to send
+//	 * @param pmpLocation the location to which the policies are sent
+//	 */
+//	private void doStickyPolicyTransfer(Set<XmlPolicy> policies, IPLocation pmpLocation) {
+//		_logger.debug("doStickyPolicyTransfer invoked: " + pmpLocation + ": " + policies);
+//
+//		for (XmlPolicy policy : policies) {
+//			/*
+//			 * For each policy, the protocol is as follows:
+//			 * (1) extend the keyspace with the given location
+//			 * (2) if the keyspace was in fact extended
+//			 *     (meaning that the provided location was not yet aware of the policy),
+//			 *     then the policy is sent to the remote PMP.
+//			 * (3) if remote deployment of the policy fails, then the given location
+//			 *     is removed from the policy's keyspace
+//			 */
+//
+//			ISharedKeyspace ks = _sharedKeyspaces.get(policy.getName());
+//
+//			if (!ks.getLocations().contains(pmpLocation.getHost())) {
+//				boolean success = true;
+//				Pmp2PmpClient remotePmp = _clientFactory.createPmp2PmpClient(pmpLocation);
+//
+//				// if the location was not yet part of the keyspace, then we need to
+//				// deploy the policy at the remote location
+//				try {
+//					remotePmp.connect();
+//
+//					if (!remotePmp.remotePolicyTransfer(policy, IPLocation.localIpLocation.getHost()).isStatus(EStatus.OKAY)) {
+//						success = false;
+//					}
+//				} catch (IOException e) {
+//					success = false;
+//					_logger.error("Unable to deploy XML policy remotely at [" + pmpLocation + "]: " + e.getMessage());
+//				} finally {
+//					remotePmp.disconnect();
+//				}
+//
+//
+//				if (success) {
+//					// If remote deployment succeeded, then
+//					// this is a new seed.
+//					_seedcollector.add(pmpLocation.getHost());
+//				}
+//
+//				/*
+//				 * TODO: We need to deal with the fact that success == false at this place.
+//				 * Possible options: Retry, throw exception, cancel data transfer
+//				 */
+//			}
+//			else {
+//				_logger.debug("Not performing remote policy transfer. Policy should already be present remotely.");
+//			}
+//		}
+//	}
 
 	/**
 	 * Perform cross-system data flow tracking on a per-location granularity, i.e.
@@ -204,29 +201,29 @@ public class CassandraDistributionManager implements IDistributionManager {
 	}
 
 
-	/**
-	 * Perform cross-system data flow tracking on a per-container basis.
-	 * The mapping between containers (more precisely: their names) and the
-	 * set of data being transferred to them is specified by parameter flows.
-	 *
-	 * @param pipLocation the location to which the data flow occurred.
-	 * @param flows maps the destination container name to set of data it is receiving
-	 */
-	private void doCrossSystemDataTrackingFine(IPLocation pipLocation, SocketName socketName, Set<IData> data) {
-		_logger.debug("doCrossSystemDataTrackingFine invoked: {}, {}, {}.", pipLocation, socketName, data);
-
-		Pip2PipClient remotePip = null;
-
-		try {
-			remotePip = _clientFactory.createPip2PipClient(pipLocation);
-			remotePip.connect();
-			remotePip.initialRepresentation(socketName, data);
-		} catch (IOException e) {
-			_logger.error("Unable to perform remote data transfer with [" + pipLocation + "]");
-		} finally {
-			remotePip.disconnect();
-		}
-	}
+//	/**
+//	 * Perform cross-system data flow tracking on a per-container basis.
+//	 * The mapping between containers (more precisely: their names) and the
+//	 * set of data being transferred to them is specified by parameter flows.
+//	 *
+//	 * @param pipLocation the location to which the data flow occurred.
+//	 * @param flows maps the destination container name to set of data it is receiving
+//	 */
+//	private void doCrossSystemDataTrackingFine(IPLocation pipLocation, SocketName socketName, Set<IData> data) {
+//		_logger.debug("doCrossSystemDataTrackingFine invoked: {}, {}, {}.", pipLocation, socketName, data);
+//
+//		Pip2PipClient remotePip = null;
+//
+//		try {
+//			remotePip = _clientFactory.createPip2PipClient(pipLocation);
+//			remotePip.connect();
+//			remotePip.initialRepresentation(socketName, data);
+//		} catch (IOException e) {
+//			_logger.error("Unable to perform remote data transfer with [" + pipLocation + "]");
+//		} finally {
+//			remotePip.disconnect();
+//		}
+//	}
 
 
 	@Override
@@ -240,27 +237,28 @@ public class CassandraDistributionManager implements IDistributionManager {
 
 				SocketContainer dstSocket = dst.getKey();
 				Set<IData> data = dst.getValue();				
-
-//				IPLocation pipLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPipListenerPort());
-//				IPLocation pmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getPmpListenerPort());
-//
-//				doStickyPolicyTransfer(getAllPolicies(data), pmpLocation);
-//				doCrossSystemDataTrackingCoarse(data, pipLocation);
-//				doCrossSystemDataTrackingFine(pipLocation, dstSocket.getSocketName(), data);
 				
 				Set<XmlPolicy> policies = getAllPolicies(data);
 				
 				IPLocation distrLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getDistrListenerPort());
 				Distr2DistrClient remoteDistr = _clientFactory.createDistr2DistrClient(distrLocation);
 
+				boolean success = true;
+				
 				doCrossSystemDataTrackingCoarse(data, distrLocation);
 				try {
 					remoteDistr.connect();
 					remoteDistr.remoteTransfer(policies, IPLocation.localIpLocation.getHost(), dstSocket.getSocketName(), data);
 				} catch (IOException e) {
+					success = false;
 					_logger.error("Unable to perform remote data and policy transfer to [" + distrLocation + "]: " + e.getMessage());
 				} finally {
 					remoteDistr.disconnect();
+				}
+				
+				if (success) {
+					// On success, the destination is a new seed node
+					_seedcollector.add(distrLocation.getHost());
 				}
 			}
 		}
