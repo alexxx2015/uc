@@ -35,6 +35,8 @@ import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.cm.distribution.client.Dmp2DmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
 import de.tum.in.i22.uc.cm.factories.IClientFactory;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.DmpProcessor;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
@@ -54,9 +56,8 @@ public class CassandraDmp extends DmpProcessor {
 
 	static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 	
-	private PdpProcessor _pdp;
-	private PipProcessor _pip;
-	private PmpProcessor _pmp;
+	private IDmp2Pip _pip;
+	private IDmp2Pmp _pmp;
 
 	private boolean _initialized = false;
 
@@ -104,12 +105,11 @@ public class CassandraDmp extends DmpProcessor {
 
 
 	@Override
-	public void init(PdpProcessor pdp, PipProcessor pip, PmpProcessor pmp) {
+	public void init(IDmp2Pip pip, IDmp2Pmp pmp) {
 		if (_initialized) {
 			throw new RuntimeException("Was already initialized");
 		}
 
-		_pdp = pdp;
 		_pip = pip;
 		_pmp = pmp;
 

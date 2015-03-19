@@ -157,7 +157,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		_pip.init(_pdp, _pmp, _dmp);
 		_pmp.init(_pip, _pdp, _dmp);
 
-		_dmp.init(_pdp, _pip, _pmp);
+		_dmp.init(_pip, _pmp);
 
 		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp, _dmp);
 		new Thread(_requestQueueManager).start();

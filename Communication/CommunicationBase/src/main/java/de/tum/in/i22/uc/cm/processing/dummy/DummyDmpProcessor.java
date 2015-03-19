@@ -14,18 +14,17 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.IPLocation;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.DmpProcessor;
-import de.tum.in.i22.uc.cm.processing.PdpProcessor;
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
-import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 
 public class DummyDmpProcessor extends DmpProcessor implements IDummyProcessor {
 	private static Logger _logger = LoggerFactory.getLogger(DummyDmpProcessor.class);
 
 
 	@Override
-	public void init(PdpProcessor _pdp, PipProcessor _pip, PmpProcessor _pmp) {
+	public void init(IDmp2Pip pip, IDmp2Pmp pmp) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("init method invoked");
 	}

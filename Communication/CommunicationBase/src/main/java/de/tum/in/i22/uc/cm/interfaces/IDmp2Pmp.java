@@ -14,6 +14,6 @@ import de.tum.in.i22.uc.cm.processing.DmpProcessor;
  * @author Florian Kelbert
  *
  */
-public interface IDmp2Pmp {
+public interface IDmp2Pmp extends IPmp2Pmp {
 	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from);
 }

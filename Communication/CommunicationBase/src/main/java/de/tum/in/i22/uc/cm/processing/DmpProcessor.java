@@ -1,6 +1,8 @@
 package de.tum.in.i22.uc.cm.processing;
 
 import de.tum.in.i22.uc.cm.interfaces.IAny2Dmp;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pip;
+import de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp;
 
 
 /**
@@ -10,5 +12,5 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Dmp;
  */
 public abstract class DmpProcessor implements IAny2Dmp, IProcessor {
 
-	public abstract void init(PdpProcessor _pdp, PipProcessor _pip, PmpProcessor _pmp);
+	public abstract void init(IDmp2Pip pip, IDmp2Pmp pmp);
 }
