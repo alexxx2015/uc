@@ -246,13 +246,13 @@ public class PolicyDecisionPoint implements Observer {
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		/*
-		 * Get all relevant Mechanisms to evaluate. This is done in a new Thread.
+		 * Retrieve all relevant Mechanisms to evaluate. This is done in a new Thread.
 		 */
 		Future<Collection<Mechanism>> futureMechanisms = Threading.instance().submit(() -> _observerManager.getMechanisms(event.getName()));
 		Collection<Mechanism> mechanisms;
 
 		/*
-		 * Get all relevant Operators that need to be updated. This is done in a new Thread.
+		 * Retrieve all relevant Operators that need to be updated. This is done in a new Thread.
 		 */
 		Future<Collection<AtomicOperator>> futureOperators = Threading.instance().submit(() -> _observerManager.getAtomicOperators(event.getName()));
 

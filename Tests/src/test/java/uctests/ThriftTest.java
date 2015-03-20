@@ -97,7 +97,7 @@ public class ThriftTest extends GenericTest {
 		 * Start the PDP server
 		 */
 		IThriftServer pdpServer = ThriftServerFactory.createPdpThriftServer(
-				PDP_SERVER_PORT + 100, new RequestHandler());
+				PDP_SERVER_PORT + 100, RequestHandler.newInstance());
 		new Thread(pdpServer).start();
 
 		//Thread.sleep(1000);

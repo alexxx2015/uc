@@ -1,6 +1,7 @@
 package de.tum.in.i22.uc.pip.core.ifm;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -426,31 +427,32 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 
 	@Override
 	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.newChecksum(data, checksum, overwrite);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);		
+		return ext == null ? false : ((StructuredInformationFlowModel) (ext)).newChecksum(data, checksum, overwrite);
 	}
 
 	@Override
 	public IChecksum getChecksumOf(IData data) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.getChecksumOf(data);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);
+		return ext == null ? null : ((StructuredInformationFlowModel) (ext)).getChecksumOf(data);
 	}
 
 	@Override
 	public boolean deleteChecksum(IData d) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.deleteChecksum(d);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);
+		return ext == null ? false : ((StructuredInformationFlowModel) (ext)).deleteChecksum(d);
 	}
 
 	@Override
 	public boolean deleteStructure(IData d) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.deleteStructure(d);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);
+		return ext == null ? false : ((StructuredInformationFlowModel) (ext)).deleteStructure(d);
 	}
 
 	@Override
 	public Set<IScope> getAllOpenedScopes() {
-		return ((ScopeInformationFlowModel) _ifModelExtensions.get(EInformationFlowModel.SCOPE)).getAllOpenedScopes();
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? Collections.emptySet() : ((ScopeInformationFlowModel) ext).getAllOpenedScopes();
 	}
 
 }

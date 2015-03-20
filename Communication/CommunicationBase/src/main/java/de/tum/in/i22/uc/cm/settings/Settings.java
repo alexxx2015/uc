@@ -110,7 +110,7 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
 
-	public static final String PROP_NAME_javaPipMonitor="javaPipMonitor";
+	public static final String PROP_NAME_javaPipMonitorEnabled = "javaPipMonitorEnabled";
 
 	public static final String PROP_NAME_pdpJaxbContext = "pdpJaxbContext";
 	public static final String PROP_NAME_pmpJaxbContext = "pmpJaxbContext";
@@ -280,7 +280,7 @@ public class Settings extends SettingsLoader {
 
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
-		loadSetting(PROP_NAME_pmpInitialPolicies, ":", new HashSet<String>());
+		loadSetting(PROP_NAME_pmpInitialPolicies, ":", Collections.emptySet());
 
 		loadSetting(PROP_NAME_pdpJaxbContext, "de.tum.in.i22.uc.pdp.xsd");
 		loadSetting(PROP_NAME_pmpJaxbContext, "de.tum.in.i22.uc.pmp.xsd");
@@ -288,7 +288,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_ptpResources, ".");
 		loadSetting(PROP_NAME_ptEditorResources, ".");
 
-		loadSetting(PROP_NAME_javaPipMonitor, true);
+		loadSetting(PROP_NAME_javaPipMonitorEnabled, true);
 	}
 
 	private Location loadSetting(String propName, Location defaultValue) {
@@ -663,8 +663,8 @@ public class Settings extends SettingsLoader {
 		return getValue(PROP_NAME_ptEditorResources);
 	}
 
-	public boolean getJavaPipMonitor() {
-		return getValue(PROP_NAME_javaPipMonitor);
+	public boolean isJavaPipMonitorEnabled() {
+		return getValue(PROP_NAME_javaPipMonitorEnabled);
 	}
 
 	public boolean isSslEnabled() {

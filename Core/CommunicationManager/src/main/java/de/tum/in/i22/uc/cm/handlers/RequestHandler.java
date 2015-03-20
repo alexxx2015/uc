@@ -103,29 +103,20 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 	private DmpProcessor _dmp;
 
 	/**
-	 * Creates a new {@link RequestHandler} by invoking
-	 * {@link RequestHandler#RequestHandler(Location, Location, Location)}
-	 * with all parameters set to {@link LocalLocation}.
+	 * Creates a new {@link RequestHandler} object, which
+	 * _must_ still be initialized by the caller via
+	 * {@link RequestHandler#init(Location, Location, Location)}.
 	 */
-	public RequestHandler() {
-		this(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
+	protected RequestHandler() {
 	}
 
-
-	/**
-	 * Creates a new RequestHandler. The parameters specify where the corresponding
-	 * components are run. If a location is an instance of {@link LocalLocation}, a
-	 * new local handler will be started. Otherwise, the {@link RequestHandler} will
-	 * connect to the remote location and make use of that remote handler.
-	 *
-	 * @param pdpLocation
-	 * @param pipLocation
-	 * @param pmpLocation
-	 */
-	public RequestHandler(Location pdpLocation, Location pipLocation, Location pmpLocation) {
-		init(pdpLocation, pipLocation, pmpLocation);
+	
+	public static RequestHandler newInstance() {
+		RequestHandler reqHandler = new RequestHandler();
+		reqHandler.init(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
+		return reqHandler;
 	}
-
+	
 
 	protected void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();

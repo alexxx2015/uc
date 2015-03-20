@@ -71,7 +71,7 @@ public class PipHandler extends PipProcessor {
 		_ifModel = _ifModelManager.getBasicInformationFlowModel();
 		_stateBasedPredicateManager = new StateBasedPredicateManager();
 
-		if (Settings.getInstance().getJavaPipMonitor()) {
+		if (Settings.getInstance().isJavaPipMonitorEnabled()) {
 			_javaPipManager = new JavaPipManager();
 			new Thread(_javaPipManager).start();
 		}
@@ -146,7 +146,7 @@ public class PipHandler extends PipProcessor {
 				getDmp().doDataTransfer(((DistributedPipStatus) status).getDataflow());
 			}
 
-			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {
+			if (Settings.getInstance().isJavaPipMonitorEnabled() && (status instanceof JavaPipStatus)) {
 				/*
 				 * TODO: Outsource this code.
 				 */

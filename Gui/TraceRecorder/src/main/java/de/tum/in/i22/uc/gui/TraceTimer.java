@@ -114,7 +114,7 @@ public class TraceTimer {
 			if (!pp.equals("")) 
 				Settings.setPropertiesFile(pp);
 			
-			handler= new RequestHandler();
+			handler = RequestHandler.newInstance();
 			
 //			while (!handler.isStarted()) {
 //				System.out.println("Waiting for controller to start...");
