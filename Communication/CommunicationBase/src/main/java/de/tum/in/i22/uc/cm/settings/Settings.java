@@ -53,7 +53,9 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_pdpLocation = "pdpLocation";
 	public static final String PROP_NAME_pipLocation = "pipLocation";
 	public static final String PROP_NAME_pmpLocation = "pmpLocation";
-
+	
+	public static final String PROP_NAME_startServers = "startServers";
+	
 	public static final String PROP_NAME_pipEnabledInformationFlowModels = "pipEnabledInformationFlowModels";
 	public static final String PROP_NAME_pipEventHandlerSuffix = "pipEventHandlerSuffix";
 	public static final String PROP_NAME_pipEventHandlerPackage = "pipEventHandlerPackage";
@@ -203,7 +205,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pdpLocation, LocalLocation.getInstance());
 		loadSetting(PROP_NAME_pipLocation, LocalLocation.getInstance());
 		loadSetting(PROP_NAME_pmpLocation, LocalLocation.getInstance());
-
+		
+		loadSetting(PROP_NAME_startServers, true);
+		
 		loadSetting(PROP_NAME_pipEnabledInformationFlowModels,
 				"scope@structure");
 		loadSetting(PROP_NAME_pipEventHandlerSuffix, "EventHandler");
@@ -474,7 +478,11 @@ public class Settings extends SettingsLoader {
 	public Location getPmpLocation() {
 		return getValue(PROP_NAME_pmpLocation);
 	}
-
+	
+	public boolean getStartServers() {
+		return getValue(PROP_NAME_startServers);
+	}
+	
 	public String getPipInitializerEvent() {
 		return getValue(PROP_NAME_pipInitializerEvent);
 	}

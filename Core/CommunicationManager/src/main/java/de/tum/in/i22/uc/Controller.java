@@ -35,7 +35,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class Controller implements IRequestHandler  {
+public class Controller implements IRequestHandler {
 	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
 	private IThriftServer _pdpServer;
@@ -81,25 +81,26 @@ public class Controller implements IRequestHandler  {
 
 	private void startUC() {
 
-		_requestHandler = new RequestHandler(Settings.getInstance().getPdpLocation(),
-				Settings.getInstance().getPipLocation(), Settings.getInstance().getPmpLocation());
+		_requestHandler = new RequestHandler(Settings.getInstance().getPdpLocation(), Settings.getInstance()
+				.getPipLocation(), Settings.getInstance().getPmpLocation());
 
 		_logger.info("Deploying initial policies ...");
 		deployInitialPolicies();
 		_logger.info("done.");
 
-		_logger.info("Starting up thrift servers");
-		startListeners(_requestHandler);
-		do {
-			try {
-				_logger.info("... waiting ...");
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				_logger.info(e.getMessage());
-			}
-		} while (!isStarted());
-		_logger.info("Done. Thrift servers started.");
-
+		if (Settings.getInstance().getStartServers()) {
+			_logger.info("Starting up thrift servers");
+			startListeners(_requestHandler);
+			do {
+				try {
+					_logger.info("... waiting ...");
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					_logger.info(e.getMessage());
+				}
+			} while (!isStarted());
+			_logger.info("Done. Thrift servers started.");
+		}
 	}
 
 	public boolean isStarted() {
@@ -118,10 +119,10 @@ public class Controller implements IRequestHandler  {
 			IStatus status;
 
 			/*
-			 * Just calling deployPolicyURIPmp(uri)
-			 * is _not_ OK, since this might be a remote
-			 * method invocation and the URI would be resolved remotely.
-			 * Instead, read the file locally and deploy as follows: -FK-
+			 * Just calling deployPolicyURIPmp(uri) is _not_ OK, since this
+			 * might be a remote method invocation and the URI would be resolved
+			 * remotely. Instead, read the file locally and deploy as follows:
+			 * -FK-
 			 */
 			try {
 				status = deployPolicyRawXMLPmp(Files.toString(new File(uri), Charset.defaultCharset()));
@@ -129,7 +130,8 @@ public class Controller implements IRequestHandler  {
 				status = new StatusBasic(EStatus.ERROR, e.getMessage());
 			}
 
-			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully." : "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
+			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully."
+					: "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
 		}
 	}
 
@@ -145,14 +147,14 @@ public class Controller implements IRequestHandler  {
 			_anyServer.stop();
 		if (_distrServer != null)
 			_distrServer.stop();
-		if(_requestHandler != null)
+		if (_requestHandler != null)
 			_requestHandler.stop();
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
 		if (Settings.getInstance().isPdpListenerEnabled()) {
-			_pdpServer = ThriftServerFactory.createPdpThriftServer(
-					Settings.getInstance().getPdpListenerPort(), requestHandler);
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(Settings.getInstance().getPdpListenerPort(),
+					requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -160,8 +162,8 @@ public class Controller implements IRequestHandler  {
 		}
 
 		if (Settings.getInstance().isPipListenerEnabled()) {
-			_pipServer = ThriftServerFactory.createPipThriftServer(
-					Settings.getInstance().getPipListenerPort(), requestHandler);
+			_pipServer = ThriftServerFactory.createPipThriftServer(Settings.getInstance().getPipListenerPort(),
+					requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -169,8 +171,8 @@ public class Controller implements IRequestHandler  {
 		}
 
 		if (Settings.getInstance().isPmpListenerEnabled()) {
-			_pmpServer = ThriftServerFactory.createPmpThriftServer(
-					Settings.getInstance().getPmpListenerPort(), requestHandler);
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(Settings.getInstance().getPmpListenerPort(),
+					requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -178,11 +180,9 @@ public class Controller implements IRequestHandler  {
 		}
 
 		if (Settings.getInstance().isAnyListenerEnabled()) {
-			_anyServer = ThriftServerFactory.createAnyThriftServer(
-					Settings.getInstance().getAnyListenerPort(),
-					Settings.getInstance().getPdpListenerPort(),
-					Settings.getInstance().getPipListenerPort(),
-					Settings.getInstance().getPmpListenerPort());
+			_anyServer = ThriftServerFactory.createAnyThriftServer(Settings.getInstance().getAnyListenerPort(),
+					Settings.getInstance().getPdpListenerPort(), Settings.getInstance().getPipListenerPort(), Settings
+							.getInstance().getPmpListenerPort());
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();
@@ -236,8 +236,7 @@ public class Controller implements IRequestHandler  {
 				try {
 					s.close();
 				} catch (IOException e) {
-					throw new RuntimeException("You should handle this error.",
-							e);
+					throw new RuntimeException("You should handle this error.", e);
 				}
 			}
 		}
@@ -246,32 +245,23 @@ public class Controller implements IRequestHandler  {
 	static void loadProperties(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
-			Settings.setPropertiesFile(cl
-					.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
+			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
 		}
 
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
-			Settings.getInstance()
-			.loadSetting(
-					CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
+			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
-			Settings.getInstance()
-			.loadSetting(
-					CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
-			Settings.getInstance()
-			.loadSetting(
-					CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
-			Settings.getInstance()
-			.loadSetting(
-					CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
 					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
 		}
 	}
@@ -344,8 +334,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(IEvent eventToSimulate,
-			String predicate) {
+	public boolean evaluatePredicateSimulatingNextState(IEvent eventToSimulate, String predicate) {
 		return _requestHandler.evaluatePredicateSimulatingNextState(eventToSimulate, predicate);
 	}
 
@@ -385,8 +374,8 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
-			File jarFile, EConflictResolution conflictResolutionFlag) {
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
+			EConflictResolution conflictResolutionFlag) {
 		return _requestHandler.updateInformationFlowSemantics(deployer, jarFile, conflictResolutionFlag);
 	}
 
@@ -481,7 +470,7 @@ public class Controller implements IRequestHandler  {
 	}
 
 	@Override
-	public IPtpResponse updateDomainModel(String requestId,	Map<String, String> parameters, XmlPolicy xmlDomainModel) {
+	public IPtpResponse updateDomainModel(String requestId, Map<String, String> parameters, XmlPolicy xmlDomainModel) {
 		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel);
 	}
 
@@ -510,7 +499,7 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.newChecksum(data, checksum, overwrite);
 	}
 
-	@Override	
+	@Override
 	public IChecksum getChecksumOf(IData data) {
 		return getChecksumOf(data);
 	}
