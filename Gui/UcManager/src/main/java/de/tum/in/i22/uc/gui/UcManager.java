@@ -377,7 +377,7 @@ public class UcManager extends Controller {
 			}
 		}
 
-		pipTextArea.setText(_requestHandler.getIfModel());
+		pipTextArea.setText(getIfModel());
 	}
 
 	private JPanel createPDPPanel() {
@@ -646,8 +646,7 @@ public class UcManager extends Controller {
 						public void run() {
 							while (true) {
 								if (ucIsRunning == true) {
-									pipTextArea.setText(_requestHandler
-											.getIfModel());
+									pipTextArea.setText(getIfModel());
 								}
 								pipInfoLabel.setText("REFRESHED!");
 								try {

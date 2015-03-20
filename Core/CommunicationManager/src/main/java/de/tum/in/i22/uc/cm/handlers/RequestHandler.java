@@ -13,14 +13,12 @@ import org.slf4j.LoggerFactory;
 import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
 import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
@@ -32,7 +30,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.factories.IClientFactory;
-import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
+import de.tum.in.i22.uc.cm.processing.AbstractRequestHandler;
 import de.tum.in.i22.uc.cm.processing.DmpProcessor;
 import de.tum.in.i22.uc.cm.processing.IForwarder;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
@@ -88,7 +86,7 @@ import de.tum.in.i22.uc.pmp.requests.UpdateDomainModelPmpRequest;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
-public class RequestHandler implements IRequestHandler, IForwarder {
+public class RequestHandler extends AbstractRequestHandler implements IRequestHandler, IForwarder {
 
 	private static Logger _logger = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -129,7 +127,7 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 	}
 
 
-	private void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
+	protected void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
 		_portsUsed = portsInUse();
 		_clientFactory = new ThriftClientFactory();
@@ -622,65 +620,5 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		RemoteTransferDmpRequest request = new RemoteTransferDmpRequest(policies, fromHost, containerName, data);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
-	}
-
-
-	@Override
-	public void notify(IOperator operator, boolean endOfTimestep) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public long getFirstTick(String policyName, String mechanismName) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public IPLocation getResponsibleLocation(String ip) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public void register(XmlPolicy policy, String from) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
-	}
-
-
-	@Override
-	public void deregister(String policyName, IPLocation location) {
-		throw new UnsupportedOperationException("This method must only be invoked locally.");
 	}
 }

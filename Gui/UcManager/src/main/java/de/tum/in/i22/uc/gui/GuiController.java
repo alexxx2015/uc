@@ -111,8 +111,7 @@ public class GuiController extends Controller {
 		// public void run() {
 		// while (true) {
 		if (isRunning()) {
-			this.sceneGenerator.txta_pipState.setText(_requestHandler
-					.getIfModel());
+			this.sceneGenerator.txta_pipState.setText(getIfModel());
 			this.sceneGenerator.txta_pipState.setStyle("-fx-font-family: monospace;");
 		}
 		// pipInfoLabel.setText("REFRESHED!");

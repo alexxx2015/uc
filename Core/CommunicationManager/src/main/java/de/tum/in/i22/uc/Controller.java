@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -14,32 +12,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import de.tum.in.i22.uc.cm.commandLineOptions.CommandLineOptions;
-import de.tum.in.i22.uc.cm.datatypes.basic.ConflictResolutionFlagBasic.EConflictResolution;
-import de.tum.in.i22.uc.cm.datatypes.basic.PxpSpec;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
-import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
-import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
 import de.tum.in.i22.uc.thrift.server.ThriftServerFactory;
 
-public class Controller implements IRequestHandler {
+public class Controller extends RequestHandler {
 	private static Logger _logger = LoggerFactory.getLogger(Controller.class);
 
 	private IThriftServer _pdpServer;
@@ -49,7 +31,6 @@ public class Controller implements IRequestHandler {
 	private IThriftServer _dmpServer;
 
 	private String[] _args = null;
-	protected IRequestHandler _requestHandler;
 
 	public Controller() {
 		this(new String[0]);
@@ -76,7 +57,7 @@ public class Controller implements IRequestHandler {
 			return false;
 		}
 
-		_requestHandler = new RequestHandler(Settings.getInstance().getPdpLocation(),
+		super.init(Settings.getInstance().getPdpLocation(),
 				Settings.getInstance().getPipLocation(), Settings.getInstance().getPmpLocation());
 
 		_logger.info("Deploying initial policies ...");
@@ -85,7 +66,7 @@ public class Controller implements IRequestHandler {
 
 		if (Settings.getInstance().getStartServers()) {
 			_logger.info("Starting up thrift servers");
-			startListeners(_requestHandler);
+			startListeners(this);
 			do {
 				try {
 					_logger.info("... waiting ...");
@@ -144,8 +125,8 @@ public class Controller implements IRequestHandler {
 			_anyServer.stop();
 		if (_dmpServer != null)
 			_dmpServer.stop();
-		if(_requestHandler != null)
-			_requestHandler.stop();
+		
+		super.stop();
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
@@ -276,7 +257,7 @@ public class Controller implements IRequestHandler {
 
 	public void resetOnlyRequestHandler() {
 		synchronized (this) {
-			_requestHandler.reset();
+			super.reset();
 		}
 	}
 
@@ -288,280 +269,5 @@ public class Controller implements IRequestHandler {
 			start();
 		}
 		return true;
-	}
-
-	@Override
-	public void notifyEventAsync(IEvent pepEvent) {
-		_requestHandler.notifyEventAsync(pepEvent);
-	}
-
-	@Override
-	public IResponse notifyEventSync(IEvent pepEvent) {
-		return _requestHandler.notifyEventSync(pepEvent);
-	}
-
-	@Override
-	public boolean registerPxp(PxpSpec pxp) {
-		return _requestHandler.registerPxp(pxp);
-	}
-
-	@Override
-	public IMechanism exportMechanism(String par) {
-		return _requestHandler.exportMechanism(par);
-	}
-
-	@Override
-	public IStatus revokePolicy(String policyName) {
-		return _requestHandler.revokePolicy(policyName);
-	}
-
-	@Override
-	public IStatus revokeMechanism(String policyName, String mechName) {
-		return _requestHandler.revokeMechanism(policyName, mechName);
-	}
-
-	@Override
-	public IStatus deployPolicyXML(XmlPolicy XMLPolicy) {
-		return _requestHandler.deployPolicyXML(XMLPolicy);
-	}
-
-	@Override
-	public Map<String, Set<String>> listMechanisms() {
-		return _requestHandler.listMechanisms();
-	}
-
-	@Override
-	public boolean evaluatePredicateSimulatingNextState(IEvent eventToSimulate, String predicate) {
-		return _requestHandler.evaluatePredicateSimulatingNextState(eventToSimulate, predicate);
-	}
-
-	@Override
-	public boolean evaluatePredicateCurrentState(String predicate) {
-		return _requestHandler.evaluatePredicateCurrentState(predicate);
-	}
-
-	@Override
-	public Set<IContainer> getContainersForData(IData data) {
-		return _requestHandler.getContainersForData(data);
-	}
-
-	@Override
-	public Set<IData> getDataInContainer(IName containerName) {
-		return _requestHandler.getDataInContainer(containerName);
-	}
-
-	@Override
-	public IStatus startSimulation() {
-		return _requestHandler.startSimulation();
-	}
-
-	@Override
-	public IStatus stopSimulation() {
-		return _requestHandler.stopSimulation();
-	}
-
-	@Override
-	public boolean isSimulating() {
-		return _requestHandler.isSimulating();
-	}
-
-	@Override
-	public IStatus update(IEvent updateEvent) {
-		return _requestHandler.update(updateEvent);
-	}
-
-	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
-			EConflictResolution conflictResolutionFlag) {
-		return _requestHandler.updateInformationFlowSemantics(deployer, jarFile, conflictResolutionFlag);
-	}
-
-	@Override
-	public IStatus initialRepresentation(IName containerName, Set<IData> data) {
-		return _requestHandler.initialRepresentation(containerName, data);
-	}
-
-	@Override
-	public IData newInitialRepresentation(IName containerName) {
-		return _requestHandler.newInitialRepresentation(containerName);
-	}
-
-	@Override
-	public IMechanism exportMechanismPmp(String par) {
-		return _requestHandler.exportMechanismPmp(par);
-	}
-
-	@Override
-	public IStatus revokePolicyPmp(String policyName) {
-		return _requestHandler.revokePolicyPmp(policyName);
-	}
-
-	@Override
-	public IStatus revokeMechanismPmp(String policyName, String mechName) {
-		return _requestHandler.revokeMechanismPmp(policyName, mechName);
-	}
-
-	@Override
-	public IStatus deployPolicyURIPmp(String policyFilePath) {
-		return _requestHandler.deployPolicyURIPmp(policyFilePath);
-	}
-
-	@Override
-	public IStatus deployPolicyXMLPmp(XmlPolicy XMLPolicy) {
-		return _requestHandler.deployPolicyXMLPmp(XMLPolicy);
-	}
-
-	@Override
-	public Map<String, Set<String>> listMechanismsPmp() {
-		return _requestHandler.listMechanismsPmp();
-	}
-
-	@Override
-	public String getIfModel() {
-		return _requestHandler.getIfModel();
-	}
-
-	@Override
-	public IData newStructuredData(Map<String, Set<IData>> structure) {
-		return _requestHandler.newStructuredData(structure);
-	}
-
-	@Override
-	public Map<String, Set<IData>> getStructureOf(IData data) {
-		return _requestHandler.getStructureOf(data);
-	}
-
-	@Override
-	public Set<IData> flattenStructure(IData data) {
-		return _requestHandler.flattenStructure(data);
-	}
-
-	@Override
-	public IStatus deployPolicyRawXMLPmp(String xml) {
-		return _requestHandler.deployPolicyRawXMLPmp(xml);
-	}
-
-	@Override
-	public Set<XmlPolicy> getPolicies(IData data) {
-		return _requestHandler.getPolicies(data);
-	}
-
-	@Override
-	public void processEventAsync(IEvent pepEvent) {
-		_requestHandler.processEventAsync(pepEvent);
-	}
-
-	@Override
-	public IResponse processEventSync(IEvent pepEvent) {
-		return _requestHandler.processEventSync(pepEvent);
-	}
-
-	@Override
-	public IData getDataFromId(String id) {
-		return _requestHandler.getDataFromId(id);
-	}
-
-	@Override
-	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
-		return _requestHandler.translatePolicy(requestId, parameters, xmlPolicy);
-	}
-
-	@Override
-	public IPtpResponse updateDomainModel(String requestId, Map<String, String> parameters, XmlPolicy xmlDomainModel) {
-		return _requestHandler.updateDomainModel(requestId, parameters, xmlDomainModel);
-	}
-
-	@Override
-	public Set<XmlPolicy> listPoliciesPmp() {
-		return _requestHandler.listPoliciesPmp();
-	}
-
-	@Override
-	public IStatus addJPIPListener(String ip, int port, String id, String filter) {
-		return _requestHandler.addJPIPListener(ip, port, id, filter);
-	}
-
-	@Override
-	public IStatus setUpdateFrequency(int msec, String id) {
-		return _requestHandler.setUpdateFrequency(msec, id);
-	}
-
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		return _requestHandler.incomingPolicyTransfer(xml, from);
-	}
-
-	@Override
-	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {
-		return _requestHandler.newChecksum(data, checksum, overwrite);
-	}
-
-	@Override
-	public IChecksum getChecksumOf(IData data) {
-		return _requestHandler.getChecksumOf(data);
-	}
-
-	@Override
-	public boolean deleteChecksum(IData d) {
-		return _requestHandler.deleteChecksum(d);
-	}
-
-	@Override
-	public boolean deleteStructure(IData d) {
-		return _requestHandler.deleteStructure(d);
-	}
-
-	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
-		return _requestHandler.remoteTransfer(policies, fromHost, containerName, data);
-	}
-
-	@Override
-	public void notify(IOperator operator, boolean endOfTimestep) {
-		_requestHandler.notify(operator, endOfTimestep);
-	}
-
-	@Override
-	public void setFirstTick(String policyName, String mechanismName, long firstTick) {
-		_requestHandler.setFirstTick(policyName, mechanismName, firstTick);
-	}
-
-	@Override
-	public long getFirstTick(String policyName, String mechanismName) {
-		return _requestHandler.getFirstTick(policyName, mechanismName);
-	}
-
-	@Override
-	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		return _requestHandler.wasNotifiedAtTimestep(operator, timestep);
-	}
-
-	@Override
-	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
-		return _requestHandler.howOftenNotifiedAtTimestep(operator, timestep);
-	}
-
-	@Override
-	public int howOftenNotifiedSinceTimestep(AtomicOperator operator, long timestep) {
-		return _requestHandler.howOftenNotifiedSinceTimestep(operator, timestep);
-	}
-
-	@Override
-	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
-		_requestHandler.doDataTransfer(dataflow);
-	}
-
-	@Override
-	public IPLocation getResponsibleLocation(String ip) {
-		return _requestHandler.getResponsibleLocation(ip);
-	}
-
-	@Override
-	public void register(XmlPolicy policy, String from) {
-		_requestHandler.register(policy, from);
-	}
-
-	@Override
-	public void deregister(String policyName, IPLocation location) {
-		_requestHandler.deregister(policyName, location);
 	}
 }
