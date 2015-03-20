@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.cassandra;
+package de.tum.in.i22.uc.dmp.cassandra;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -305,7 +305,7 @@ class SharedKeyspace extends Keyspace implements ISharedKeyspace {
 
 		if (doInsert) {
 			_logger.info("Updating Cassandra state at time {} with event {}",
-					CassandraDistributionManager.sdf.format(UUIDs.unixTimestamp(time)),
+					CassandraDmp.sdf.format(UUIDs.unixTimestamp(time)),
 					op.getFullId());
 
 			long ttl = op.getTTL();

@@ -13,6 +13,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
+			<artifactId>CommunicationBase</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>UsageControlSystem</groupId>
 			<artifactId>Pdp</artifactId>
 			<version>1.0</version>
 		</dependency>
@@ -28,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
-			<artifactId>CommunicationBase</artifactId>
+			<artifactId>Dmp</artifactId>
 			<version>1.0</version>
 		</dependency>
 		

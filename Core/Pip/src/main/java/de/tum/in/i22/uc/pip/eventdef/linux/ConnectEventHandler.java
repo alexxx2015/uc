@@ -67,7 +67,7 @@ public class ConnectEventHandler extends LinuxEvents {
 
 		remoteAcceptedSocket = (SocketContainer) _informationFlowModel.getContainer(remoteSocketName);
 
-		IPLocation remoteResponsibleLocation = _distributionManager.getResponsibleLocation(remoteIP);
+		IPLocation remoteResponsibleLocation = _dmp.getResponsibleLocation(remoteIP);
 
 
 		if (remoteAcceptedSocket != null && sameResponsibleLocation(remoteResponsibleLocation, IPLocation.localIpLocation)) {

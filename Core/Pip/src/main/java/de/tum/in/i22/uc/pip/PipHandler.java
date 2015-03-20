@@ -30,6 +30,7 @@ import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.IEventHandler;
 import de.tum.in.i22.uc.cm.pip.interfaces.IStateBasedPredicate;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPdpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -63,7 +64,7 @@ public class PipHandler extends PipProcessor {
 
 	public PipHandler(InformationFlowModelManager ifmModelManager) {
 		super(LocalLocation.getInstance());
-		init(new DummyPdpProcessor(), new DummyPmpProcessor());
+		init(new DummyPdpProcessor(), new DummyPmpProcessor(), new DummyDmpProcessor());
 
 		_pipManager = new PipManager();
 		_ifModelManager = ifmModelManager;
@@ -132,7 +133,7 @@ public class PipHandler extends PipProcessor {
 		else {
 			eventHandler.setEvent(event);
 			eventHandler.setInformationFlowModel(_ifModelManager);
-			eventHandler.setDistributionManager(_distributionManager);
+			eventHandler.setDmp(getDmp());
 
 			_logger.info("Executing PipHandler for " + event);
 			status = eventHandler.performUpdate();
@@ -142,7 +143,7 @@ public class PipHandler extends PipProcessor {
 			 * work, namely remote data flow tracking and policy shipment
 			 */
 			if (!isSimulating() && status instanceof DistributedPipStatus) {
-				_distributionManager.doDataTransfer(((DistributedPipStatus) status).getDataflow());
+				getDmp().doDataTransfer(((DistributedPipStatus) status).getDataflow());
 			}
 
 			if (Settings.getInstance().getJavaPipMonitor() && (status instanceof JavaPipStatus)) {

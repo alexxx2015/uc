@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-public abstract class GenericX2YClient implements IConnectable {
+abstract class GenericX2YClient implements IConnectable {
 
 	private final Connector<?> _connector;
 

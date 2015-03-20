@@ -11,11 +11,12 @@ import de.tum.in.i22.uc.thrift.generator.AThriftService;
 
 /**
  * Interface defining methods between remote DistributionManagers.
- * @author Kelbert
+ * 
+ * @author Florian Kelbert
  *
  */
-@AThriftService(name="TDistr2Distr")
-public interface IDistr2Distr {
+@AThriftService(name="TDmp2Dmp")
+public interface IDmp2Dmp {
 	
 	@AThriftMethod(signature="Types.TStatus remoteTransfer(1: set<Types.TXmlPolicy> policies, 2: string fromHost, 3: Types.TName containerName, 4: set<Types.TData> data)")
 	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data);

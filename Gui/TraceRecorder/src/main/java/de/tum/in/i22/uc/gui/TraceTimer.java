@@ -18,17 +18,21 @@ import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.AtomicOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IChecksum;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPtpResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.distribution.IPLocation;
 import de.tum.in.i22.uc.cm.handlers.RequestHandler;
+import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.server.IThriftServer;
@@ -322,12 +326,6 @@ class MyProcessor implements IRequestHandler {
 	}
 
 	@Override
-	public IStatus remotePolicyTransfer(String xml, String from) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IPtpResponse translatePolicy(String requestId, Map<String, String> parameters, XmlPolicy xmlPolicy) {
 		// TODO Auto-generated method stub
 		return null;
@@ -356,6 +354,74 @@ class MyProcessor implements IRequestHandler {
 			IName containerName, Set<IData> data) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void notify(IOperator operator, boolean endOfTimestep) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setFirstTick(String policyName, String mechanismName,
+			long firstTick) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long getFirstTick(String policyName, String mechanismName) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean wasNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int howOftenNotifiedAtTimestep(AtomicOperator operator, long timestep) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int howOftenNotifiedSinceTimestep(AtomicOperator operator,
+			long timestep) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IPLocation getResponsibleLocation(String ip) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void register(XmlPolicy policy, String from) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deregister(String policyName, IPLocation location) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

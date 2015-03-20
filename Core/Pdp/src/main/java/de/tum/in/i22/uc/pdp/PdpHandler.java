@@ -16,12 +16,13 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IResponse;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.distribution.IDistributionManager;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.distribution.Threading;
+import de.tum.in.i22.uc.cm.interfaces.IPdp2Dmp;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.dummy.DummyDmpProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPipProcessor;
 import de.tum.in.i22.uc.cm.processing.dummy.DummyPmpProcessor;
 import de.tum.in.i22.uc.pdp.core.PolicyDecisionPoint;
@@ -38,7 +39,7 @@ public class PdpHandler extends PdpProcessor {
 	public PdpHandler() {
 		super(LocalLocation.getInstance());
 		_pxpManager = new PxpManager();
-		init(new DummyPipProcessor(), new DummyPmpProcessor());
+		init(new DummyPipProcessor(), new DummyPmpProcessor(), new DummyDmpProcessor());
 	}
 
 	@Override
@@ -105,11 +106,11 @@ public class PdpHandler extends PdpProcessor {
 	}
 
 	@Override
-	public void init(PipProcessor iface1, PmpProcessor iface2, IDistributionManager distributionManager) {
-		super.init(iface1, iface2, distributionManager);
+	public void init(PipProcessor iface1, PmpProcessor iface2, IPdp2Dmp dmp) {
+		super.init(iface1, iface2, dmp);
 
 		_logger.debug("Initializing PDP. Pip reference is " + (iface1 != null ? "not " : "") + "NULL");
-		_pdp = new PolicyDecisionPoint(iface1, _pxpManager, distributionManager);
+		_pdp = new PolicyDecisionPoint(iface1, _pxpManager, dmp);
 	}
 
 	@Override

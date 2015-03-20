@@ -232,12 +232,12 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 	 */
 	private void initFirstTick() {
 		if (_firstTick == Long.MIN_VALUE) {
-			_firstTick = _pdp.getDistributionManager().getFirstTick(_policyName, _name);
+			_firstTick = _pdp.getDmp().getFirstTick(_policyName, _name);
 		}
 
 		if (_firstTick == Long.MIN_VALUE) {
 			_firstTick = System.currentTimeMillis() - _timestepSize;
-			Threading.instance().submit(() -> _pdp.getDistributionManager().setFirstTick(_policyName, _name, _firstTick));
+			Threading.instance().submit(() -> _pdp.getDmp().setFirstTick(_policyName, _name, _firstTick));
 		}
 	}
 

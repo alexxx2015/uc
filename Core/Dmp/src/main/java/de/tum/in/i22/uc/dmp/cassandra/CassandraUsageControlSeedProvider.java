@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.distribution.cassandra;
+package de.tum.in.i22.uc.dmp.cassandra;
 
 import java.io.File;
 import java.io.IOException;

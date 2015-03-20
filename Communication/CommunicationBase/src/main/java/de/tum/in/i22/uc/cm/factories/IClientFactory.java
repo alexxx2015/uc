@@ -5,7 +5,9 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PdpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
+import de.tum.in.i22.uc.cm.distribution.client.Dmp2DmpClient;
 import de.tum.in.i22.uc.cm.distribution.client.JPip2PipClient;
+import de.tum.in.i22.uc.cm.distribution.client.Pdp2PepClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PipClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pdp2PxpClient;
 import de.tum.in.i22.uc.cm.distribution.client.Pep2PdpClient;
@@ -27,15 +29,19 @@ public interface IClientFactory {
 	Pdp2PipClient createPdp2PipClient(Location location);
 	Pip2PipClient createPip2PipClient(Location location);
 	Pmp2PipClient createPmp2PipClient(Location location);
+	JPip2PipClient createJPip2PipClient(Location location);
 
 	Pep2PdpClient createPep2PdpClient(Location location);
 	Pmp2PdpClient createPmp2PdpClient(Location location);
+	Pxp2PdpClient createPxp2PdpClient(Location location);
 
 	Pmp2PmpClient createPmp2PmpClient(Location location);
 
 	Pdp2PxpClient createPdp2PxpClient(Location location);
-
-	Pxp2PdpClient createPxp2PdpClient(Location location);
+	
 	Pip2JPipClient createPip2JPipClient(Location location);
-	JPip2PipClient createJPip2PipClient(Location location);
+	
+	Pdp2PepClient createPdp2PepClient(Location location);
+	
+	Dmp2DmpClient createDmp2DmpClient(Location location);
 }

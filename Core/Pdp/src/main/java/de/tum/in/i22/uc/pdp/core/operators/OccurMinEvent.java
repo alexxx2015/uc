@@ -101,7 +101,7 @@ public class OccurMinEvent extends OccurMinEventType implements AtomicOperator {
 			 * CIRC_ARRAY counts locally only!
 			 * If this result is not sufficient, ask remotely!
 			 */
-			return limit <= _pdp.getDistributionManager().howOftenNotifiedSinceTimestep(event,
+			return limit <= _pdp.getDmp().howOftenNotifiedSinceTimestep(event,
 								_mechanism.getTimestep() - _timeAmount.getTimesteps());
 		}
 

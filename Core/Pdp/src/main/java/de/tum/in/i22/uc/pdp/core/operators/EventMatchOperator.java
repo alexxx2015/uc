@@ -61,7 +61,7 @@ public class EventMatchOperator extends EventMatch implements AtomicOperator {
 		int valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (valueAtLastTick == 0) {
-			valueAtLastTick = _pdp.getDistributionManager().howOftenNotifiedAtTimestep(this, _mechanism.getTimestep());
+			valueAtLastTick = _pdp.getDmp().howOftenNotifiedAtTimestep(this, _mechanism.getTimestep());
 
 			_state.set(StateVariable.VALUE_AT_LAST_TICK, valueAtLastTick);
 		}
