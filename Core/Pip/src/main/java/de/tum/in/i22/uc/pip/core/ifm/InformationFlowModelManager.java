@@ -337,34 +337,38 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 
 	@Override
 	public boolean openScope(IScope scope) {
-		return ((ScopeInformationFlowModel) _ifModelExtensions.get(EInformationFlowModel.SCOPE)).openScope(scope);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? false : ((ScopeInformationFlowModel) ext).openScope(scope);
 	}
 
 	@Override
 	public boolean closeScope(IScope scope) {
-		return ((ScopeInformationFlowModel) _ifModelExtensions.get(EInformationFlowModel.SCOPE)).closeScope(scope);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? false : ((ScopeInformationFlowModel) ext).closeScope(scope);
 	}
 
 	@Override
 	public boolean isScopeOpened(IScope scope) {
-		return ((ScopeInformationFlowModel) _ifModelExtensions.get(EInformationFlowModel.SCOPE)).isScopeOpened(scope);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? false : ((ScopeInformationFlowModel) ext).isScopeOpened(scope);
 	}
 
 	@Override
 	public IScope getOpenedScope(IScope scope) {
-		return ((ScopeInformationFlowModel) _ifModelExtensions.get(EInformationFlowModel.SCOPE)).getOpenedScope(scope);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? null : ((ScopeInformationFlowModel) ext).getOpenedScope(scope);
 	}
 
 	@Override
 	public IData newStructuredData(Map<String, Set<IData>> structure) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.newStructuredData(structure);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);
+		return ext == null ? null : ((StructuredInformationFlowModel) ext).newStructuredData(structure);
 	}
 
 	@Override
 	public Map<String, Set<IData>> getStructureOf(IData data) {
-		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
-				.getStructureOf(data);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.STRUCTURE);
+		return ext == null ? Collections.emptyMap() : ((StructuredInformationFlowModel) ext).getStructureOf(data);
 	}
 
 	@Override
@@ -373,7 +377,7 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 		return ((StructuredInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.STRUCTURE)))
 				.flattenStructure(data);
 		else {
-			Set<IData> res=new HashSet<IData>();
+			Set<IData> res = new HashSet<IData>();
 			res.add(data);
 			return res;
 		}
@@ -381,17 +385,20 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 
 	@Override
 	public Entry<EBehavior, IScope> XBehav(IEventHandler eventHandler) {
-		return ((ScopeInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.SCOPE))).XBehav(eventHandler);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? null : ((ScopeInformationFlowModel) (ext)).XBehav(eventHandler);
 	}
 
 	@Override
 	public Set<Entry<IScope, EScopeState>> XDelim(IEventHandler eventHandler) {
-		return ((ScopeInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.SCOPE))).XDelim(eventHandler);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? Collections.emptySet() : ((ScopeInformationFlowModel) (ext)).XDelim(eventHandler);
 	}
 
 	@Override
 	public Map<IContainer, Set<IContainer>> XAlias(IEventHandler eventHandler) {
-		return ((ScopeInformationFlowModel) (_ifModelExtensions.get(EInformationFlowModel.SCOPE))).XAlias(eventHandler);
+		InformationFlowModelExtension ext = _ifModelExtensions.get(EInformationFlowModel.SCOPE);
+		return ext == null ? Collections.emptyMap() : ((ScopeInformationFlowModel) (ext)).XAlias(eventHandler);
 	}
 
 	@Override
