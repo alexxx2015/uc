@@ -14,6 +14,12 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
+
+/**
+ * 
+ * @author Florian Kelbert
+ *
+ */
 class MechanismManager {
 	protected static Logger _logger = LoggerFactory.getLogger(MechanismManager.class);
 

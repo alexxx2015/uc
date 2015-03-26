@@ -84,7 +84,7 @@ class ThriftAny2DmpImpl implements IAny2Dmp {
 	}
 
 	@Override
-	public void register(XmlPolicy policy, String from) {
+	public void register(XmlPolicy policy) {
 		throw new UnsupportedOperationException("This method must only be invoked locally.");
 	}
 

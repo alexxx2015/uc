@@ -128,12 +128,4 @@ public class DummyPmpProcessor extends PmpProcessor implements IDummyProcessor {
 		_logger.error("listPoliciesPmp method invoked");
 		return null;
 	}
-
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		_logger.error("PmpProcessor DUMMY Implementation");
-		_logger.error("remotePolicyTransfer method invoked");
-		return null;
-	}
-
 }

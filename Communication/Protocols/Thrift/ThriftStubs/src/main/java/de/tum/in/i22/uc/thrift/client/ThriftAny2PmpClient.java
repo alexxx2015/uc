@@ -137,10 +137,4 @@ class ThriftAny2PmpClient extends Any2PmpClient {
 	public Set<XmlPolicy> listPoliciesPmp() {
 		return _impl.listPoliciesPmp();
 	}
-
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		return _impl.incomingPolicyTransfer(xml, from);
-	}
-
 }

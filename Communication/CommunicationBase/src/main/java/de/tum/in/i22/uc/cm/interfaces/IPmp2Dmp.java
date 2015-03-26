@@ -9,7 +9,7 @@ public interface IPmp2Dmp {
 	 *
 	 * @param policy the policy to be managed.
 	 */	
-	void register(XmlPolicy policy, String from);
+	void register(XmlPolicy policy);
 
 	void deregister(String policyName, IPLocation location);
 }

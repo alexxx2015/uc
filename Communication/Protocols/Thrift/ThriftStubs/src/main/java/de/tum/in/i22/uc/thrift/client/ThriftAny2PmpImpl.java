@@ -138,10 +138,4 @@ class ThriftAny2PmpImpl implements IAny2Pmp {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		throw new UnsupportedOperationException("This method is for internal use only and not to be used via Thrift.");
-	}
-
 }

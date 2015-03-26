@@ -36,7 +36,7 @@ public class DummyDmpProcessor extends DmpProcessor implements IDummyProcessor {
 	}
 
 	@Override
-	public void register(XmlPolicy policy, String from) {
+	public void register(XmlPolicy policy) {
 		_logger.error("DummyDistributionManager DUMMY Implementation");
 		_logger.error("register method invoked");
 	}

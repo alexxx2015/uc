@@ -42,6 +42,12 @@ import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
+
+/**
+ * 
+ * @author Florian Kelbert et al.
+ *
+ */
 public class PolicyDecisionPoint implements Observer {
 	private static final Logger _logger = LoggerFactory.getLogger(PolicyDecisionPoint.class);
 

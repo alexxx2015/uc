@@ -35,10 +35,6 @@ public class Before extends BeforeType implements Observer {
 		op.init(mech, this, Math.max(ttl, _timeAmount.getInterval() + mech.getTimestepSize()));
 		op.addObserver(this);
 
-//		if (Settings.getInstance().getDistributionEnabled()) {
-//			ensureDNF();
-//		}
-
 		CircularArray<Boolean> stateCircArray = new CircularArray<>(_timeAmount.getTimesteps());
 		for (int a = 0; a < _timeAmount.getTimesteps(); a++) {
 			stateCircArray.set(false, a);
@@ -48,21 +44,6 @@ public class Before extends BeforeType implements Observer {
 
 		_positivity = op.getPositivity();
 	}
-
-//	private void ensureDNF() throws InvalidOperatorException {
-//		/*
-//		 * The following formulas are equivalent:
-//		 * - not(a) before j 	== not(a before j)
-//		 * - (a and b) before j == (a before j) and (b before j)
-//		 * - (a or b) before j 	== (a before j) or (b before j)
-//		 *
-//		 */
-//		if (!(op instanceof AtomicOperator)) {
-//			throw new InvalidOperatorException(
-//					"Parameter 'distributionEnabled' is true, but ECA-Condition was not in disjunctive normal form (operand of "
-//							+ getClass() + " was not of type " + AtomicOperator.class + ").");
-//		}
-//	}
 
 	@Override
 	protected int initId(int id) {
@@ -104,26 +85,6 @@ public class Before extends BeforeType implements Observer {
 
 	@Override
 	public boolean distributedTickPostprocessing(boolean endOfTimestep) {
-//		CircularArray<Boolean> circArray = _state.get(StateVariable.CIRC_ARRAY);
-//
-//		if (!op.getPositivity().is(circArray.peekLast())) {
-//			/*
-//			 * If the value that we have pushed to the array is not equal to the operator's
-//			 * positivity, then we need to perform a remote lookup. We when remove
-//			 * the 'wrong' local evaluation result from the array and insert the correct (distributed) one.
-//			 * The inserted element will be popped when time is ripe (i.e. after timeAmount).
-//			 */
-//			boolean distributedTickProcess = op.distributedTickPostprocessing(endOfTimestep);
-//			_logger.debug("Result of distributed evaluation: {}", distributedTickProcess);
-//			if (op.getPositivity().is(distributedTickProcess)) {
-//				circArray.removeLast();
-//				circArray.push(distributedTickProcess);
-//			}
-//		}
-//
-//		// The actual result at _this_ timestep is not changed
-//		return _state.get(StateVariable.VALUE_AT_LAST_TICK);
-
 		boolean valueAtLastTick = _state.get(StateVariable.VALUE_AT_LAST_TICK);
 
 		if (endOfTimestep && !op.getPositivity().is(valueAtLastTick)) {
@@ -173,11 +134,6 @@ public class Before extends BeforeType implements Observer {
 	public boolean isAtomic() {
 		return op.isAtomic();
 	}
-
-//	@Override
-//	public boolean isDNF() {
-//		return op.isAtomic();
-//	}
 
 	@Override
 	protected void setRelevance(boolean relevant) {

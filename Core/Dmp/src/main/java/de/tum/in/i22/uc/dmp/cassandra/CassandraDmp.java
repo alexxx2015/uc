@@ -39,9 +39,6 @@ import de.tum.in.i22.uc.cm.interfaces.IDmp2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp;
 import de.tum.in.i22.uc.cm.pip.RemoteDataFlowInfo;
 import de.tum.in.i22.uc.cm.processing.DmpProcessor;
-import de.tum.in.i22.uc.cm.processing.PdpProcessor;
-import de.tum.in.i22.uc.cm.processing.PipProcessor;
-import de.tum.in.i22.uc.cm.processing.PmpProcessor;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
@@ -229,6 +226,11 @@ public class CassandraDmp extends DmpProcessor {
 	@Override
 	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
+		
+		/**
+		 * TODO: srcCont of RemoteDataFlowInfo is never used. Remove it.
+		 * FK, 2015/03/26
+		 */
 
 		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
 			Map<SocketContainer, Set<IData>> dsts = flow.getValue();
@@ -278,7 +280,12 @@ public class CassandraDmp extends DmpProcessor {
 	}
 
 	@Override
-	public void register(XmlPolicy policy, String from) {
+	public void register(XmlPolicy policy) {
+		register(policy, null);
+	}
+	
+
+	private void register(XmlPolicy policy, String from) {
 		ISharedKeyspace ks = _sharedKeyspaces.create(policy);
 		ks.enlargeBy(IPLocation.localIpLocation);
 
@@ -364,8 +371,10 @@ public class CassandraDmp extends DmpProcessor {
 	@Override
 	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
 		_pip.initialRepresentation(containerName, data);
-		policies.forEach(p ->
-			_pmp.incomingPolicyTransfer(p, fromHost));
+		policies.forEach(p -> {
+			_pmp.deployPolicyXMLPmp(p);
+			register(p, fromHost);	
+		});
 		return new StatusBasic(EStatus.OKAY);
 	}
 

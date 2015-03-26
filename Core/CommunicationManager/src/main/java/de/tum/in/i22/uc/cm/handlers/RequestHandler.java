@@ -78,7 +78,6 @@ import de.tum.in.i22.uc.pmp.requests.DeployPolicyXMLPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.GetPoliciesPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListMechanismsPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.ListPoliciesPmpRequest;
-import de.tum.in.i22.uc.pmp.requests.RemotePolicyTransferPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.TranslatePolicyPmpRequest;
@@ -565,15 +564,6 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
 	}
-
-
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		RemotePolicyTransferPmpRequest request = new RemotePolicyTransferPmpRequest(xml, from);
-		_requestQueueManager.addRequest(request, this);
-		return waitForResponse(request);
-	}
-
 
 	@Override
 	public boolean newChecksum(IData data, IChecksum checksum, boolean overwrite) {

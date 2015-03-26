@@ -1,7 +1,5 @@
 package de.tum.in.i22.uc.cm.interfaces;
 
-import de.tum.in.i22.uc.cm.datatypes.basic.XmlPolicy;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.processing.DmpProcessor;
 
 /**
@@ -15,5 +13,4 @@ import de.tum.in.i22.uc.cm.processing.DmpProcessor;
  *
  */
 public interface IDmp2Pmp extends IPmp2Pmp {
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from);
 }

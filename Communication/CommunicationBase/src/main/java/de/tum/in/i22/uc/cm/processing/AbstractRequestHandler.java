@@ -239,11 +239,6 @@ public abstract class AbstractRequestHandler implements IRequestHandler {
 	}
 
 	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		throw new UnsupportedOperationException("Method not implemented.");
-	}
-
-	@Override
 	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost,
 			IName containerName, Set<IData> data) {
 		throw new UnsupportedOperationException("Method not implemented.");
@@ -292,7 +287,7 @@ public abstract class AbstractRequestHandler implements IRequestHandler {
 	}
 
 	@Override
-	public void register(XmlPolicy policy, String from) {
+	public void register(XmlPolicy policy) {
 		throw new UnsupportedOperationException("Method not implemented.");
 	}
 

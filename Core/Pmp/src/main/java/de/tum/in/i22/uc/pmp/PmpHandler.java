@@ -349,29 +349,36 @@ public class PmpHandler extends PmpProcessor {
 		return deployPolicyXMLPmp(xmlPolicy);
 	}
 
-	@Override
-	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
-		_logger.debug("remotePolicyTransfer invoked [{}, {}]", xml, from);
-		return deployPolicyXMLPmp(xml, from);
-	}
+//	@Override
+//	public IStatus incomingPolicyTransfer(XmlPolicy xml, String from) {
+//		_logger.debug("remotePolicyTransfer invoked [{}, {}]", xml, from);
+//		return deployPolicyXMLPmp(xml, from);
+//	}
 
 	@Override
 	public IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy) {
-		return deployPolicyXMLPmp(xmlPolicy, null);
-	}
-
-	private IStatus deployPolicyXMLPmp(XmlPolicy xmlPolicy, String from) {
 		Pair<IStatus,XmlPolicy> status = deployPolicyXMLPmp_impl(xmlPolicy);
 
 		if (status.getLeft().isStatus(EStatus.OKAY)
 				&& status.getRight() != null
 				&& Settings.getInstance().isDistributionEnabled()) {
-			getDmp().register(status.getRight(), from);
+			getDmp().register(status.getRight());
 		}
 
 		return status.getLeft();
 	}
 
+	
+	/**
+	 * Deploys the specified policy and returns a pair of values consisting
+	 * of an {@link IStatus} object which indicates whether there was an error,
+	 * and an {@link XmlPolicy} which corresponds to the input policy but with
+	 * some changes for the implementation. If that second value is <code>null</code>,
+	 * then the policy had already been deployed.
+	 * 
+	 * @param xmlPolicy
+	 * @return
+	 */
 	private Pair<IStatus,XmlPolicy> deployPolicyXMLPmp_impl(XmlPolicy xmlPolicy) {
 
 		String xml = xmlPolicy.getXml();

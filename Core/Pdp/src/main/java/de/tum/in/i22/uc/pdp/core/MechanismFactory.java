@@ -17,6 +17,12 @@ import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 import de.tum.in.i22.uc.pdp.xsd.PreventiveMechanismType;
 
+
+/**
+ * 
+ * @author Florian Kelbert
+ *
+ */
 class MechanismFactory {
 	private static Logger _logger = LoggerFactory.getLogger(MechanismFactory.class);
 

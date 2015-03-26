@@ -32,6 +32,10 @@ public class RemoteDataFlowInfo {
 		_dataflow = new HashMap<>();
 	}
 
+	/**
+	 * TODO: srcCont of RemoteDataFlowInfo is never used. Remove it.
+	 * FK, 2015/03/26
+	 */
 
 	/**
 	 *
