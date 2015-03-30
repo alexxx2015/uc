@@ -5,8 +5,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IOperator;
 
 public interface IPdp2Dmp {
 
-	public void notify(IOperator operator, boolean endOfTimestep);
-
+	void notify(IOperator operator, boolean endOfTimestep);
 
 	void setFirstTick(String policyName, String mechanismName, long firstTick);
 	
