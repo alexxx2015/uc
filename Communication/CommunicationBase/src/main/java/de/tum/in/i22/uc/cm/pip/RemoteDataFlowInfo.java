@@ -26,41 +26,29 @@ public class RemoteDataFlowInfo {
 	/**
 	 * Maps the data flow that has occurred.
 	 */
-	private final Map<SocketContainer,Map<SocketContainer,Set<IData>>> _dataflow;
+	private final Map<SocketContainer,Set<IData>> _dataflow;
 
 	public RemoteDataFlowInfo() {
 		_dataflow = new HashMap<>();
 	}
 
 	/**
-	 * TODO: srcCont of RemoteDataFlowInfo is never used. Remove it.
-	 * FK, 2015/03/26
-	 */
-
-	/**
 	 *
-	 * @param srcCont
 	 * @param dstCont
 	 * @param data
 	 */
-	public void addFlow(SocketContainer srcCont, SocketContainer dstCont, Set<IData> data) {
-		_logger.info("addFlow: {}, {}, {}.", srcCont, dstCont, data);
+	public void addFlow(SocketContainer dstCont, Set<IData> data) {
+		_logger.info("addFlow: {}, {}.", dstCont, data);
 
-		Map<SocketContainer,Set<IData>> flows = _dataflow.get(srcCont);
-		if (flows == null) {
-			flows = new HashMap<>();
-			_dataflow.put(srcCont, flows);
-		}
-
-		Set<IData> oldData = flows.get(dstCont);
+		Set<IData> oldData = _dataflow.get(dstCont);
 		if (oldData == null) {
 			oldData = new HashSet<>();
-			flows.put(dstCont, oldData);
+			_dataflow.put(dstCont, oldData);
 		}
 		oldData.addAll(data);
 	}
 
-	public Map<SocketContainer,Map<SocketContainer,Set<IData>>> getFlows() {
+	public Map<SocketContainer,Set<IData>> getFlows() {
 		// TODO: inner elements can still be changed by caller.
 		return Collections.unmodifiableMap(_dataflow);
 	}

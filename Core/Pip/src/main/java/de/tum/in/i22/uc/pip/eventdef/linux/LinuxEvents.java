@@ -236,7 +236,7 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 				for (IContainer aliasCont : _informationFlowModel.getAliasesTo(c)) {
 					if (aliasCont instanceof SocketContainer
 							&& !sameResponsibleLocation((SocketContainer) aliasCont, (SocketContainer) c)) {
-						remoteDataFlow.addFlow((SocketContainer) aliasCont, (SocketContainer) c, data);
+						remoteDataFlow.addFlow((SocketContainer) c, data);
 					}
 				}
 			}

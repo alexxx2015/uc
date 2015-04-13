@@ -226,42 +226,33 @@ public class CassandraDmp extends DmpProcessor {
 	@Override
 	public void doDataTransfer(RemoteDataFlowInfo dataflow) {
 		_logger.info("dataTransfer: " + dataflow);
-		
-		/**
-		 * TODO: srcCont of RemoteDataFlowInfo is never used. Remove it.
-		 * FK, 2015/03/26
-		 */
 
-		for (Entry<SocketContainer, Map<SocketContainer, Set<IData>>> flow : dataflow.getFlows().entrySet()) {
-			Map<SocketContainer, Set<IData>> dsts = flow.getValue();
+		for (Entry<SocketContainer, Set<IData>> dst : dataflow.getFlows().entrySet()) {
 
-			for (Entry<SocketContainer, Set<IData>> dst : dsts.entrySet()) {
+			SocketContainer dstSocket = dst.getKey();
+			Set<IData> data = dst.getValue();				
+			
+			Set<XmlPolicy> policies = getAllPolicies(data);
+			
+			IPLocation dmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getDmpListenerPort());
+			Dmp2DmpClient remoteDmp = _clientFactory.createDmp2DmpClient(dmpLocation);
 
-				SocketContainer dstSocket = dst.getKey();
-				Set<IData> data = dst.getValue();				
-				
-				Set<XmlPolicy> policies = getAllPolicies(data);
-				
-				IPLocation dmpLocation = new IPLocation(dstSocket.getResponsibleLocation().getHost(), Settings.getInstance().getDmpListenerPort());
-				Dmp2DmpClient remoteDmp = _clientFactory.createDmp2DmpClient(dmpLocation);
-
-				boolean success = true;
-				
-				doCrossSystemDataTrackingCoarse(data, dmpLocation);
-				try {
-					remoteDmp.connect();
-					remoteDmp.remoteTransfer(policies, IPLocation.localIpLocation.getHost(), dstSocket.getSocketName(), data);
-				} catch (IOException e) {
-					success = false;
-					_logger.error("Unable to perform remote data and policy transfer to [" + dmpLocation + "]: " + e.getMessage());
-				} finally {
-					remoteDmp.disconnect();
-				}
-				
-				if (success) {
-					// On success, the destination is a new seed node
-					_seedcollector.add(dmpLocation.getHost());
-				}
+			boolean success = true;
+			
+			doCrossSystemDataTrackingCoarse(data, dmpLocation);
+			try {
+				remoteDmp.connect();
+				remoteDmp.remoteTransfer(policies, IPLocation.localIpLocation.getHost(), dstSocket.getSocketName(), data);
+			} catch (IOException e) {
+				success = false;
+				_logger.error("Unable to perform remote data and policy transfer to [" + dmpLocation + "]: " + e.getMessage());
+			} finally {
+				remoteDmp.disconnect();
+			}
+			
+			if (success) {
+				// On success, the destination is a new seed node
+				_seedcollector.add(dmpLocation.getHost());
 			}
 		}
 	}
