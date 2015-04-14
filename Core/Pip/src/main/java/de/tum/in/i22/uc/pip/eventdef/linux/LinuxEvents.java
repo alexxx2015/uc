@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.pip.eventdef.linux;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessName;
@@ -86,14 +88,34 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		IContainer cont = _informationFlowModel.getContainer(name);
 
 		_informationFlowModel.removeName(name);
-
-		/*
-		 * Don't do this as of now: The container might have been shared with
-		 * child processes. But: we need to do some cleanup at some point. To be fixed.
+		
+		/**
+		 * TODO: With the cleanup code below, cross-system data flow
+		 * tracking is not working for vsftpd. Probably the problem is
+		 * on the server side and likely the problem is related with
+		 * shared file descriptors. :-(
+		 * FK.
 		 */
-//		if (cont instanceof SocketContainer) {
-//			if (_informationFlowModel.getAllNames(cont, FiledescrName.class).size() == 0) {
-//				shutdownSocket((SocketContainer) cont, Shut.RDWR);
+		
+//		Collection<IName> allNames = _informationFlowModel.getAllNames(cont);
+//		
+//		if (allNames.isEmpty()) {
+//			// If this was the last name of the
+//			// container, then delete the container.
+//			_informationFlowModel.remove(cont);
+//		}
+//		else {
+//			if (cont instanceof SocketContainer) {
+//				boolean hasFiledescrName = false;
+//				for (IName n : allNames) {
+//					if (n instanceof FiledescrName) {
+//						hasFiledescrName = true;
+//						continue;
+//					}
+//				}
+//				if (!hasFiledescrName) {
+//					shutdownSocket((SocketContainer) cont, Shut.RDWR);
+//				}
 //			}
 //		}
 	}
@@ -126,13 +148,6 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 				_informationFlowModel.removeName(n);
 			}
 		}
-
-//		for (SocketName n : allSocketNames) {
-//			IContainer remoteContainer = _informationFlowModel.getContainer(n);
-//			if (remoteContainer instanceof RemoteSocketContainer) {
-//				notifyRemoteShutdown((RemoteSocketContainer) remoteContainer, how);
-//			}
-//		}
 	}
 
 //	private static void notifyRemoteShutdown(RemoteSocketContainer remoteContainer, Shut how) {

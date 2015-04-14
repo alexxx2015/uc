@@ -42,7 +42,7 @@ public class SharedFiledescr {
 	 * file descriptor names of the given process id. The result
 	 * of this method might either be a PID of another process
 	 * with which the specified process id shared their file descriptors
-	 * before, or the calling processes' pid itself, if the file descriptors
+	 * before, or the calling processes' PID itself, if the file descriptors
 	 * have not been shared with any other process.
 	 *
 	 * @param pid
