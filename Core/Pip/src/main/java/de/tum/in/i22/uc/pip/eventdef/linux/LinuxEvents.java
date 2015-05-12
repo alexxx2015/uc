@@ -17,6 +17,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.linux.Chroots;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IProcessRelativeName;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
@@ -66,6 +67,9 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		 * gets killed. Therefore, the resources would not be freed.
 		 */
 
+		SharedFiledescr.unshare(pid);
+		Chroots.exit(pid);
+
 		ProcessContainer procCont = (ProcessContainer) _informationFlowModel.getContainer(ProcessName.create(host, pid));
 		if (procCont == null) {
 			return;
@@ -79,8 +83,6 @@ public abstract class LinuxEvents extends AbstractScopeEventHandler {
 		for (IProcessRelativeName nm : getAllProcessRelativeNames(procCont.getPid())) {
 			close(nm);
 		}
-
-		SharedFiledescr.unshare(pid);
 	}
 
 

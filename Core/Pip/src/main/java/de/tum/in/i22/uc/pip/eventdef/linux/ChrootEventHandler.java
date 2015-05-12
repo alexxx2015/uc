@@ -15,47 +15,24 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
  * @author Florian Kelbert
  *
  */
-public class OpenEventHandler extends BaseEventHandler {
+public class ChrootEventHandler extends BaseEventHandler {
 
 	@Override
 	protected IStatus update() {
 		String host = null;
 		int pid;
-		int fd;
-		String filename = null;
-		boolean truncate = false;
+		String dir = null;
 
 		try {
 			host = getParameterValue("host");
 			pid = Integer.valueOf(getParameterValue("pid"));
-			fd = Integer.valueOf(getParameterValue("fd"));
-			filename = getParameterValue("filename");
-			truncate = Boolean.valueOf(getParameterValue("trunc"));
+			dir = getParameterValue("dir");
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
-		
-		if (filename.startsWith("/") && Chroots.isChrooted(pid)) {
-			filename = Chroots.directory(pid) + filename;
-		}
 
-		IName fdName = FiledescrName.create(host, pid, fd);
-		IName fnName = FilenameName.create(host, LinuxEvents.toRealPath(filename));
-
-		// get the file's container (if present)
-		IContainer cont = _informationFlowModel.getContainer(fnName);
-
-		if (cont == null) {
-			cont = new FileContainer();
-			_informationFlowModel.addName(fnName, cont);
-		}
-		else if (truncate) {
-			_informationFlowModel.emptyContainer(cont);
-		}
-
-		_informationFlowModel.addName(fdName, cont);
-
+		Chroots.chroot(pid, dir);
 		return STATUS_OKAY;
 	}
 

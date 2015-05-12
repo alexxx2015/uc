@@ -8,6 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.linux.Chroots;
 import de.tum.in.i22.uc.cm.datatypes.linux.FiledescrName;
 import de.tum.in.i22.uc.cm.datatypes.linux.IClonableForProcess;
 import de.tum.in.i22.uc.cm.datatypes.linux.ProcessContainer;
@@ -33,6 +34,10 @@ public class CloneEventHandler extends LinuxEvents {
 		} catch (ParameterNotFoundException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
+		}
+		
+		if (Chroots.isChrooted(parentPid)) {
+			Chroots.chroot(childPid, Chroots.directory(parentPid));
 		}
 
 		Set<String> flagSet = new HashSet<String>(Arrays.asList(flags.split("\\|")));

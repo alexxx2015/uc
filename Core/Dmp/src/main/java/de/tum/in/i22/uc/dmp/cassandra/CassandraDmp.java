@@ -361,6 +361,7 @@ public class CassandraDmp extends DmpProcessor {
 
 	@Override
 	public IStatus remoteTransfer(Set<XmlPolicy> policies, String fromHost, IName containerName, Set<IData> data) {
+		_logger.debug("remoteTransfer({}, {}, {}, {})", policies, fromHost, containerName, data);
 		_pip.initialRepresentation(containerName, data);
 		policies.forEach(p -> {
 			_pmp.deployPolicyXMLPmp(p);

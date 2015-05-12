@@ -67,11 +67,11 @@ public class WriteEventHandler extends LinuxEvents {
 			dstCont = _informationFlowModel.getContainer(dstFdName);
 			
 			if (dstCont == null) {
-				//either it's a pipe/socket...
+				// either it's a pipe/socket...
 				dstCont = _informationFlowModel.getContainer(OSInternalName.create(host, filename));
 
 				if (dstCont == null) {
-					//or it's a special file that has not bben opened, like when using >>
+					// or it's a special file that has not been opened, like when using >>
 					dstCont=_informationFlowModel.getContainer(FilenameName.create(host, filename));
 
 					if (dstCont == null) {
@@ -208,7 +208,7 @@ public class WriteEventHandler extends LinuxEvents {
 		}
 		// OTHERWISE
 		// behave as INTRA
-		_logger.debug("Any other test failed. Falling baack to default INTRA semantics");
+		_logger.debug("Any other test failed. Falling back to default INTRA semantics");
 
 		return Pair.of(EBehavior.INTRA, null);
 	}
