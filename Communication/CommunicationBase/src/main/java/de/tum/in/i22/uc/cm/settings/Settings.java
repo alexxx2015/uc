@@ -199,7 +199,7 @@ public class Settings extends SettingsLoader {
 				new HashMap<IName, IData>() {
 			private static final long serialVersionUID = -2810488356921449504L;
 			{
-				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
+				//put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
 			}
 		});
 

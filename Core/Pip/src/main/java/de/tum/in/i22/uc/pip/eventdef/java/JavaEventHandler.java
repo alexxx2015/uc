@@ -9,6 +9,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
@@ -44,7 +45,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			.getJoanaPidPoiSeparator();
 	protected final String _srcPrefix = "source";
 	protected final String _snkPrefix = "sink";
-
+	
+	protected final String DLM = "|";
 	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
@@ -154,5 +156,27 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 //				_informationFlowModel.removeName(new NameBasic(entry), true);
 //			}
 //		}
+	}
+	
+	protected IContainer addContainerIfNotExists(IName name, String identifier) {
+		return addContainerIfNotExists(name, identifier, null);
+	}
+	
+	protected IContainer addContainerIfNotExists(IName name) {
+		return addContainerIfNotExists(name, null, null);
+	}
+	
+	protected IContainer addContainerIfNotExists(IName name, IContainer parentContainer) {
+		return addContainerIfNotExists(name, null, parentContainer);
+	}
+	
+	protected IContainer addContainerIfNotExists(IName name, String identifier, IContainer parentContainer) {
+		IContainer container = _informationFlowModel.getContainer(name);
+		if (container == null) {
+			container = _messageFactory.createContainer(identifier);
+			_informationFlowModel.addName(name, container, false);
+		}
+		_informationFlowModel.addAlias(container, parentContainer);
+		return container;
 	}
 }
