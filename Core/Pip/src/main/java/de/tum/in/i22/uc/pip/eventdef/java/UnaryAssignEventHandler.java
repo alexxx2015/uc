@@ -18,17 +18,17 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 	protected IStatus update() {
 		
 		String threadId = null;
+		String pid = null;
 		String parentMethod = null;
 		String parentObject = null;
-		String parentClass = null;
 		String argument = null; // class@address or value
 		AssignChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
+			pid = getParameterValue("processId");
 			parentMethod = getParameterValue("parentMethod");
 			parentObject = getParameterValue("parentObject");
-			parentClass = getParameterValue("parentClass");
 			argument = getParameterValue("argument");
 			chopLabel = new AssignChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
@@ -43,18 +43,11 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 		}
 		
 		// Parent container (create if necessary)
-		
-		IName parentName;
-		if (parentObject.equals("class")) {
-			parentName = new NameBasic(threadId + DLM + "class" + DLM + parentClass);
-		} else {
-			parentName = new NameBasic(threadId + DLM + parentObject);
-		}
-		IContainer parentContainer = addContainerIfNotExists(parentName);
+		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
+		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
 		
 		// Argument container (create if necessary)
 		// no data flows if the operand is a constant, so cancel event right here
@@ -62,7 +55,7 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 		if (argumentVar.startsWith("#")) {
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
-		IName argumentName = new NameBasic(threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
+		IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
 		IContainer argumentContainer = addContainerIfNotExists(argumentName, argument, parentContainer);
 		
 		if (argument.contains("@")) {

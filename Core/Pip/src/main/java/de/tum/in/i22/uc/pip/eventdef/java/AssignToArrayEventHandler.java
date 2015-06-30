@@ -6,21 +6,20 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ReferenceChopNodeLabel;
+import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ModifyChopNodeLabel;
 
-public class AssignFromArrayEventHandler extends JavaEventHandler {
+public class AssignToArrayEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
-		
 		String threadId = null;
 		String pid = null;
 		String parentMethod = null;
 		String parentObject = null;
 		String array = null; // type@address
-		String arrayAtIndex = null; // type@address or value
 		String indexValue = null;
-		ReferenceChopNodeLabel chopLabel = null;
+		String valueToInsert = null; // type@address or value
+		ModifyChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
@@ -29,8 +28,8 @@ public class AssignFromArrayEventHandler extends JavaEventHandler {
 			parentObject = getParameterValue("parentObject");
 			array = getParameterValue("array");
 			indexValue = getParameterValue("index");
-			arrayAtIndex = getParameterValue("arrayAtIndex");
-			chopLabel = new ReferenceChopNodeLabel(getParameterValue("chopLabel"));
+			valueToInsert = getParameterValue("value");
+			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -45,8 +44,12 @@ public class AssignFromArrayEventHandler extends JavaEventHandler {
 		// Parent container (create if necessary)
 		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
-		// derive left side type from array type (Class types contain ";")
-		boolean leftSideIsReferenceType = array.contains(";");
+		boolean arrayIsReferenceType = valueToInsert.contains(";");
+		
+		// Right side container (create if necessary)
+		String rightSideVar = chopLabel.getRightSide();
+		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
+		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert, parentContainer);
 		
 		// Array container (create if necessary)
 		String arrayVar = chopLabel.getArray();
@@ -57,21 +60,17 @@ public class AssignFromArrayEventHandler extends JavaEventHandler {
 		// Array cell container (create if necessary)
 		// Not named by local variable, because it does not belong there, can be found globally
 		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
-		IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, arrayAtIndex, arrayContainer);
 		
-		// Left side name
-		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
+		// Put the right side data into the array cell container
 		
-		// 1. Put the array data into the left side container
-		
-		if (leftSideIsReferenceType) {
-			// reference type -> assign left side name to cell container
-			_informationFlowModel.addName(leftSideName, arrayCellContainer, false);;
+		if (arrayIsReferenceType) {
+			// reference type -> assign array cell name to right side container
+			_informationFlowModel.addName(arrayCellName, rightSideContainer, false);
+			_informationFlowModel.addAlias(rightSideContainer, arrayContainer);
 		} else {
-			// value type -> copy data from cell container
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
-			_informationFlowModel.copyData(arrayCellContainer, leftSideContainer);
+			// value type -> copy data from right side to array cell container (create if necessary)
+			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue, arrayContainer);
+			_informationFlowModel.copyData(rightSideContainer, arrayCellContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);

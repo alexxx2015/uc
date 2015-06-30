@@ -6,9 +6,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
-import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ReferenceChopNodeLabel;
+import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ModifyChopNodeLabel;
 
-public class AssignFromFieldEventHandler extends JavaEventHandler {
+public class AssignToFieldEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
@@ -20,8 +20,8 @@ public class AssignFromFieldEventHandler extends JavaEventHandler {
 		String fieldOwnerObject = null; // type@address
 		String fieldOwnerClass = null;
 		String field = null;
-		String fieldValue = null;
-		ReferenceChopNodeLabel chopLabel = null;
+		String assignee = null;
+		ModifyChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
@@ -31,8 +31,8 @@ public class AssignFromFieldEventHandler extends JavaEventHandler {
 			fieldOwnerObject = getParameterValue("fieldOwnerObject");
 			fieldOwnerClass = getParameterValue("fieldOwnerClass");
 			field = getParameterValue("fieldName");
-			fieldValue = getParameterValue("fieldValue");
-			chopLabel = new ReferenceChopNodeLabel(getParameterValue("chopLabel"));
+			assignee = getParameterValue("assignee");
+			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -47,13 +47,14 @@ public class AssignFromFieldEventHandler extends JavaEventHandler {
 		// Parent container (create if necessary)
 		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
-		// Left side name
-		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
-		
-		boolean fieldIsReferenceType = fieldValue.contains("@");
+		boolean fieldIsReferenceType = assignee.contains("@");
 		boolean fieldIsStatic = fieldOwnerObject.equals("null");
 		
+		// Right side container (create if necessary)
+		String rightSideVar = chopLabel.getRightSide();
+		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
+		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee, parentContainer);
+
 		// Get field owner container (only if instance field) (create if necessary)
 		IContainer fieldOwnerContainer = null;
 		if (!fieldIsStatic) { // instance field
@@ -68,16 +69,15 @@ public class AssignFromFieldEventHandler extends JavaEventHandler {
 		} else { // instance field
 			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
 		}
-		IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValue, fieldOwnerContainer);
 		
-		// Reference type -> make left side name also point to field container
-		// Value type -> just copy the data from field container to left side container (create it first)
+		// reference type -> name assignee as the field
+		// value type -> copy data from assignee into field
 		if (fieldIsReferenceType) {
-			_informationFlowModel.addName(leftSideName, fieldContainer, false);
-			_informationFlowModel.addAlias(fieldContainer, parentContainer);
+			_informationFlowModel.addName(fieldName, rightSideContainer, false);
+			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		} else {
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
-			_informationFlowModel.copyData(fieldContainer, leftSideContainer);
+			IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldOwnerContainer);
+			_informationFlowModel.copyData(rightSideContainer, fieldContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);

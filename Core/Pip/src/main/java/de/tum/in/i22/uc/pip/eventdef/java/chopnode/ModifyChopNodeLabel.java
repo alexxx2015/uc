@@ -1,16 +1,21 @@
 package de.tum.in.i22.uc.pip.eventdef.java.chopnode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ModifyChopNodeLabel {
 
 	private String rightSide;
 	private String array;
 	private String arrayIndex;
-	private String leftSideObject;
+	private String fieldOwner;
 	private String fieldName;
 	
 	public ModifyChopNodeLabel(String labelString) {
 		// Form 1: v2[v3] = v0
 		// Form 2: v2.fieldName = v0
+		// Form 3: package.class.fieldName = v0
 		
 		String[] leftAndRight = labelString.split(" = ");
 		String leftSide;
@@ -21,11 +26,13 @@ public class ModifyChopNodeLabel {
 			leftSide = labelString;
 		}
 		
-		// try to go for Form 2 (object.fieldname)
-		String[] objectAndField = leftSide.split("\\.");
-		if (objectAndField.length == 2) {
-			leftSideObject = objectAndField[0];
-			fieldName = objectAndField[1];
+		// try to go for Form 2 or 3 (ow.ner.fieldname)
+		// last component is fieldname, the ones before make up the owner class/object
+		String[] components = leftSide.split("\\.");
+		if (components.length >= 2) {
+			List<String> compList = new ArrayList<String>(Arrays.asList(components));
+			fieldName = compList.remove(compList.size()-1);
+			fieldOwner = String.join(".", compList);
 		}
 		
 		String[] arrayAndIndex = leftSide.split("\\[");
@@ -47,8 +54,8 @@ public class ModifyChopNodeLabel {
 		return arrayIndex;
 	}
 
-	public String getLeftSideObject() {
-		return leftSideObject;
+	public String getFieldOwner() {
+		return fieldOwner;
 	}
 	
 	public String getFieldName() {

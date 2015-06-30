@@ -22,10 +22,10 @@ public class ChopNodeLabelTest {
 	@Test
 	public void testChopNodes() {
 		//testCallChopNodes();
-		testAssignChopNodes();
+		//testAssignChopNodes();
 		//testCompoundChopNodes();
-		//testReferenceChopNodes();
-		//testModifyChopNodes();
+		testReferenceChopNodes();
+		testModifyChopNodes();
 	}
 	
 	public void testCallChopNodes() {
@@ -96,7 +96,7 @@ public class ChopNodeLabelTest {
 				"v18 = this.path",
 				"v11 = v6[v10]",
 				"v6 = this.data",
-				"v16 = p1.path"};
+				"v26 = test.DataMover.staticx"};
 		
 		for (String input : inputs) {
 			ReferenceChopNodeLabel cnl = new ReferenceChopNodeLabel(input);
@@ -116,7 +116,7 @@ public class ChopNodeLabelTest {
 				"p2[#(0)] = v11",
 				"this.path = #( )",
 				"v6[v10] = v11",
-				"this.data = p5"};
+				"test.DataMover.staticx = v14"};
 		
 		for (String input : inputs) {
 			ModifyChopNodeLabel cnl = new ModifyChopNodeLabel(input);
@@ -125,7 +125,7 @@ public class ChopNodeLabelTest {
 			System.out.println("rightside = " + (cnl.getRightSide() != null ? cnl.getRightSide() : "null"));
 			System.out.println("array = " + (cnl.getArray() != null ? cnl.getArray() : "null"));
 			System.out.println("arrayindex = " + (cnl.getArrayIndex() != null ? cnl.getArrayIndex() : "null"));
-			System.out.println("leftsideobject = " + (cnl.getLeftSideObject() != null ? cnl.getLeftSideObject() : "null"));
+			System.out.println("leftsideobject = " + (cnl.getFieldOwner() != null ? cnl.getFieldOwner() : "null"));
 			System.out.println("fieldname = " + (cnl.getFieldName() != null ? cnl.getFieldName() : "null"));
 		}
 	}

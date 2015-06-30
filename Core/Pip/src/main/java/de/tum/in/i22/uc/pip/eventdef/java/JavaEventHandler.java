@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
@@ -47,6 +48,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _snkPrefix = "sink";
 	
 	protected final String DLM = "|";
+	protected final String RET = "ret";
 	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
@@ -178,5 +180,19 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		}
 		_informationFlowModel.addAlias(container, parentContainer);
 		return container;
+	}
+	
+	/**
+	 * If {@code objectIdentifier} equals "class" then null is returned, otherwise the container named by {@code objectIdentifier}.
+	 * 
+	 * @param objectIdentifier
+	 * @return
+	 */
+	protected IContainer addParentObjectContainerIfNotExists(String objectIdentifier, String pid) {
+		if (!objectIdentifier.equals("class")) {
+			IName parentName = new NameBasic(pid + DLM + objectIdentifier);
+			return addContainerIfNotExists(parentName, objectIdentifier);
+		}
+		return null;
 	}
 }
