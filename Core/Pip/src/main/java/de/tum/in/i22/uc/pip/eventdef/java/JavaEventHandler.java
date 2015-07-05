@@ -160,6 +160,16 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 //		}
 	}
 	
+	private String getPID() {
+		try {
+			return getParameterValue("processId");
+		} catch (ParameterNotFoundException e) {
+			// TODO Auto-generated catch block
+			_logger.error(e.getMessage());
+		}
+		return null;
+	}
+	
 	protected IContainer addContainerIfNotExists(IName name, String identifier) {
 		return addContainerIfNotExists(name, identifier, null);
 	}
@@ -172,10 +182,18 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		return addContainerIfNotExists(name, null, parentContainer);
 	}
 	
-	protected IContainer addContainerIfNotExists(IName name, String identifier, IContainer parentContainer) {
+	// if identifier is class@address, then create additional name to identify container globally 
+	protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer parentContainer) {
 		IContainer container = _informationFlowModel.getContainer(name);
 		if (container == null) {
-			container = _messageFactory.createContainer(identifier);
+			if (globalIdentifier != null && globalIdentifier.contains("@")) {
+				// store reference type containers process-wide
+				container = _messageFactory.createContainer(globalIdentifier);
+				IName globalObjectName = new NameBasic(getPID() + DLM + globalIdentifier);
+				_informationFlowModel.addName(globalObjectName, container, false);
+			} else {
+				container = _messageFactory.createContainer();
+			}
 			_informationFlowModel.addName(name, container, false);
 		}
 		_informationFlowModel.addAlias(container, parentContainer);
