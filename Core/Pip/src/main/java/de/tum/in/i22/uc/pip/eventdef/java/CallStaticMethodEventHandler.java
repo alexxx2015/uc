@@ -46,13 +46,10 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 			parentObject = "class";
 		}
 		
-		// Get parent container
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		String outerArgNamePrefix = pid + DLM + threadId + DLM + parentObject + DLM + parentMethod;
 		String innerArgNamePrefix = pid + DLM + threadId + DLM + "class" + DLM + calledMethod;
 						
-		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, null, parentContainer);
+		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, null);
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

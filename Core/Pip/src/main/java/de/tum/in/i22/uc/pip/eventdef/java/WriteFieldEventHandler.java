@@ -44,23 +44,13 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		boolean fieldIsReferenceType = assignee.contains("@");
 		boolean fieldIsStatic = fieldOwnerObject.equals("null");
 		
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
 		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
-		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee, parentContainer);
-
-		// Get field owner container (only if instance field) (create if necessary)
-		IContainer fieldOwnerContainer = null;
-		if (!fieldIsStatic) { // instance field
-			IName fieldOwnerName = new NameBasic(pid + DLM + fieldOwnerObject);
-			fieldOwnerContainer = addContainerIfNotExists(fieldOwnerName);
-		}
+		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee);
 		
 		// Get field container (create if necessary)
 		IName fieldName;
@@ -74,9 +64,8 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		// value type -> copy data from assignee into field
 		if (fieldIsReferenceType) {
 			_informationFlowModel.addName(fieldName, rightSideContainer, false);
-			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		} else {
-			IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldOwnerContainer);
+			IContainer fieldContainer = addContainerIfNotExists(fieldName);
 			_informationFlowModel.copyData(rightSideContainer, fieldContainer);
 		}
 		

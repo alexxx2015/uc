@@ -41,20 +41,17 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		boolean arrayIsReferenceType = valueToInsert.contains(";");
 		
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
 		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
-		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert, parentContainer);
+		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert);
 		
 		// Array container (create if necessary)
 		String arrayVar = chopLabel.getArray();
 		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
-		IContainer arrayContainer = addContainerIfNotExists(arrayName, array, parentContainer);
+		IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
 		
 		// TODO: decide on data propagation from whole array to array cells
 		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
@@ -67,7 +64,8 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 			_informationFlowModel.addAlias(rightSideContainer, arrayContainer);
 		} else {
 			// value type -> copy data from right side to array cell container (create if necessary)
-			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue, arrayContainer);
+			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue);
+			_informationFlowModel.addAlias(arrayCellContainer, arrayContainer);
 			_informationFlowModel.copyData(rightSideContainer, arrayCellContainer);
 		}
 		

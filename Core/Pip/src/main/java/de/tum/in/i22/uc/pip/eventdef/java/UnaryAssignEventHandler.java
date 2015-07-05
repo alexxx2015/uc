@@ -42,9 +42,6 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
 		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
@@ -56,14 +53,14 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
 		IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
-		IContainer argumentContainer = addContainerIfNotExists(argumentName, argument, parentContainer);
+		IContainer argumentContainer = addContainerIfNotExists(argumentName, argument);
 		
 		if (argument.contains("@")) {
 			// reference type -> assign left side name to argument container
 			_informationFlowModel.addName(argumentName, leftSideName);			
 		} else {
 			// value type -> copy contents of argument container into left side container (create if necessary)
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
+			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 			_informationFlowModel.copyData(argumentContainer, leftSideContainer);
 		}
 		

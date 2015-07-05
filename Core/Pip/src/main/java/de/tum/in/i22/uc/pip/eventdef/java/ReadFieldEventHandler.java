@@ -44,22 +44,12 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
 		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
 		
 		boolean fieldIsReferenceType = fieldValue.contains("@");
 		boolean fieldIsStatic = fieldOwnerObject.equals("null");
-		
-		// Get field owner container (only if instance field) (create if necessary)
-		IContainer fieldOwnerContainer = null;
-		if (!fieldIsStatic) { // instance field
-			IName fieldOwnerName = new NameBasic(pid + DLM + fieldOwnerObject);
-			fieldOwnerContainer = addContainerIfNotExists(fieldOwnerName);
-		}
 		
 		// Get field container (create if necessary)
 		IName fieldName;
@@ -68,15 +58,14 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 		} else { // instance field
 			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
 		}
-		IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValue, fieldOwnerContainer);
+		IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValue);
 		
 		// Reference type -> make left side name also point to field container
 		// Value type -> just copy the data from field container to left side container (create it first)
 		if (fieldIsReferenceType) {
 			_informationFlowModel.addName(leftSideName, fieldContainer, false);
-			_informationFlowModel.addAlias(fieldContainer, parentContainer);
 		} else {
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
+			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 			_informationFlowModel.copyData(fieldContainer, leftSideContainer);
 		}
 		

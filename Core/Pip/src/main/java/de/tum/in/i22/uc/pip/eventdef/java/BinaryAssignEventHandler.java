@@ -40,9 +40,6 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
 		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
@@ -58,10 +55,10 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 			
 			// Argument container (create if necessary)
 			IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
-			IContainer argumentContainer = addContainerIfNotExists(argumentName, argument, parentContainer);
+			IContainer argumentContainer = addContainerIfNotExists(argumentName, argument);
 			
 			// value type -> copy contents of argument container into left side container (create if necessary)
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
+			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 			_informationFlowModel.copyData(argumentContainer, leftSideContainer);
 		}
 		

@@ -45,9 +45,6 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 		if (parentObject.equals("null")) {
 			parentObject = "class";
 		}
-				
-		// Get parent container
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
 		boolean retValIsReferenceType = returnValue.contains("@");
 		
@@ -63,17 +60,16 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 					if (retValIsReferenceType) {
 						// reference type
 						_informationFlowModel.addName(leftSideName, retContainer, false);
-						_informationFlowModel.addAlias(retContainer, parentContainer);
 					} else {
 						// value type
-						IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
+						IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 						_informationFlowModel.copyData(retContainer, leftSideContainer);
 					}
 				} // no retContainer -> no information flow
 			} else {
 				// For not instrumented classes, copy all data (or create alias) from the method parameters to the left side container
 				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
-						retValIsReferenceType ? returnValue : null, parentContainer);
+						retValIsReferenceType ? returnValue : null);
 				
 				// Lookup each parameter container
 				// argContainer is reference type -> copy data or create alias depending on return value

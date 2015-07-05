@@ -178,12 +178,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		return addContainerIfNotExists(name, null, null);
 	}
 	
-	protected IContainer addContainerIfNotExists(IName name, IContainer parentContainer) {
-		return addContainerIfNotExists(name, null, parentContainer);
-	}
-	
 	// if identifier is class@address, then create additional name to identify container globally 
-	protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer parentContainer) {
+	protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer aliasToContainer) {
 		IContainer container = _informationFlowModel.getContainer(name);
 		if (container == null) {
 			if (globalIdentifier != null && globalIdentifier.contains("@")) {
@@ -196,10 +192,11 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			}
 			_informationFlowModel.addName(name, container, false);
 		}
-		_informationFlowModel.addAlias(container, parentContainer);
+		_informationFlowModel.addAlias(container, aliasToContainer);
 		return container;
 	}
 	
+	// Not used anymore, kept if functionality is needed later
 	/**
 	 * If {@code objectIdentifier} equals "class" then null is returned, otherwise the container named by {@code objectIdentifier}.
 	 * 

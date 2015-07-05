@@ -68,6 +68,7 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 
 	private void cleanUpLocalVariable(IName varName, IContainer parentObjectContainer) {
 		IContainer localVarContainer = _informationFlowModel.getContainer(varName);
+		_informationFlowModel.removeAlias(localVarContainer, parentObjectContainer);
 		if (localVarContainer != null) {
 			// reference type -> remove name but keep alias to caller object
 			// value type -> remove whole container

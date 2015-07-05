@@ -38,15 +38,12 @@ public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// Parent container (create if necessary)
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		boolean returnValueIsReferenceType = returnValue.contains(";");
 		
 		// Variable to return
 		String var = chopLabel.getArgument();
 		IName varName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + var);
-		IContainer varContainer = addContainerIfNotExists(varName, returnValue, parentContainer);
+		IContainer varContainer = addContainerIfNotExists(varName, returnValue);
 		
 		// ret var name of the method
 		IName retVarName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + RET);
@@ -56,7 +53,7 @@ public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 		if (returnValueIsReferenceType) {
 			_informationFlowModel.addName(retVarName, varContainer, false);
 		} else {
-			IContainer retVarContainer = addContainerIfNotExists(retVarName, parentContainer);
+			IContainer retVarContainer = addContainerIfNotExists(retVarName);
 			_informationFlowModel.copyData(varContainer, retVarContainer);
 		}
 		

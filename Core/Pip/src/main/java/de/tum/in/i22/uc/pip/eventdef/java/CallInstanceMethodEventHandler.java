@@ -51,9 +51,6 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 			parentObject = "class";
 		}
 		
-		// Get parent container
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 		// if caller object class is a system class, get its container to add method parameters to it
 		IContainer callerObjectContainer = null;
 		if (!callerObjectClassIsInstrumented) {
@@ -67,7 +64,7 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 		String outerArgNamePrefix = pid + DLM + threadId + DLM + parentObject + DLM + parentMethod;
 		String innerArgNamePrefix = pid + DLM + threadId + DLM + callerObject + DLM + calledMethod;
 				
-		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, callerObjectContainer, parentContainer);	
+		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, callerObjectContainer);	
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}

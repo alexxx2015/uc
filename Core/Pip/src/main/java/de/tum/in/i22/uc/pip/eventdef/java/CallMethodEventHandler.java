@@ -24,7 +24,7 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 	 */
 	protected void insertArguments(String[] argNames, String[] argAddresses, 
 			String outerArgNamePrefix, String innerArgNamePrefix, 
-			IContainer callerObjectContainer, IContainer parentObjectContainer) {
+			IContainer callerObjectContainer) {
 		
 		for (int i = 0; i < argAddresses.length; i++) {
 			String argName = argNames[i];
@@ -57,7 +57,6 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 				_informationFlowModel.copyData(outerArgContainer, innerArgContainer);
 			}
 			
-			_informationFlowModel.addAlias(outerArgContainer, parentObjectContainer);
 			_informationFlowModel.addAlias(innerArgContainer, callerObjectContainer);
 		}	
 	}

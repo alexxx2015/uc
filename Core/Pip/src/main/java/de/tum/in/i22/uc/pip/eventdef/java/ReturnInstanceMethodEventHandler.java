@@ -45,10 +45,6 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 		if (parentObject.equals("null")) {
 			parentObject = "class";
 		}
-				
-		// Get parent container
-		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
-		
 
 		IName callerObjectName = new NameBasic(pid + DLM + callerObject);
 		IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
@@ -67,17 +63,16 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 					if (retValIsReferenceType) {
 						// reference type
 						_informationFlowModel.addName(leftSideName, retContainer, false);
-						_informationFlowModel.addAlias(retContainer, parentContainer);
 					} else {
 						// value type
-						IContainer leftSideContainer = addContainerIfNotExists(leftSideName, parentContainer);
+						IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 						_informationFlowModel.copyData(retContainer, leftSideContainer);
 					}
 				} // no retContainer -> no information flow
 			} else {
 				// For not instrumented classes, copy all data (or create alias) from the caller object to the left side container
 				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
-						retValIsReferenceType ? returnValue : null, parentContainer);
+						retValIsReferenceType ? returnValue : null);
 				if (retValIsReferenceType) {
 					_informationFlowModel.addAlias(callerObjectContainer, leftSideContainer);
 				} else {
