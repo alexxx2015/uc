@@ -8,17 +8,19 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ModifyChopNodeLabel;
 
-public class AssignToArrayEventHandler extends JavaEventHandler {
+public class WriteFieldEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
+		
 		String threadId = null;
 		String pid = null;
 		String parentMethod = null;
 		String parentObject = null;
-		String array = null; // type@address
-		String indexValue = null;
-		String valueToInsert = null; // type@address or value
+		String fieldOwnerObject = null; // type@address
+		String fieldOwnerClass = null;
+		String field = null;
+		String assignee = null;
 		ModifyChopNodeLabel chopLabel = null;
 		
 		try {
@@ -26,9 +28,10 @@ public class AssignToArrayEventHandler extends JavaEventHandler {
 			pid = getParameterValue("processId");
 			parentMethod = getParameterValue("parentMethod");
 			parentObject = getParameterValue("parentObject");
-			array = getParameterValue("array");
-			indexValue = getParameterValue("index");
-			valueToInsert = getParameterValue("value");
+			fieldOwnerObject = getParameterValue("fieldOwnerObject");
+			fieldOwnerClass = getParameterValue("fieldOwnerClass");
+			field = getParameterValue("fieldName");
+			assignee = getParameterValue("assignee");
 			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -44,33 +47,37 @@ public class AssignToArrayEventHandler extends JavaEventHandler {
 		// Parent container (create if necessary)
 		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
-		boolean arrayIsReferenceType = valueToInsert.contains(";");
+		boolean fieldIsReferenceType = assignee.contains("@");
+		boolean fieldIsStatic = fieldOwnerObject.equals("null");
 		
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
 		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
-		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert, parentContainer);
+		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee, parentContainer);
+
+		// Get field owner container (only if instance field) (create if necessary)
+		IContainer fieldOwnerContainer = null;
+		if (!fieldIsStatic) { // instance field
+			IName fieldOwnerName = new NameBasic(pid + DLM + fieldOwnerObject);
+			fieldOwnerContainer = addContainerIfNotExists(fieldOwnerName);
+		}
 		
-		// Array container (create if necessary)
-		String arrayVar = chopLabel.getArray();
-		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
-		IContainer arrayContainer = addContainerIfNotExists(arrayName, array, parentContainer);
+		// Get field container (create if necessary)
+		IName fieldName;
+		if (fieldIsStatic) {
+			fieldName = new NameBasic(pid + DLM + "class" + DLM + fieldOwnerClass + DLM + field);
+		} else { // instance field
+			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
+		}
 		
-		// TODO: decide on data propagation from whole array to array cells
-		// Array cell container (create if necessary)
-		// Not named by local variable, because it does not belong there, can be found globally
-		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
-		
-		// Put the right side data into the array cell container
-		
-		if (arrayIsReferenceType) {
-			// reference type -> assign array cell name to right side container
-			_informationFlowModel.addName(arrayCellName, rightSideContainer, false);
-			_informationFlowModel.addAlias(rightSideContainer, arrayContainer);
+		// reference type -> name assignee as the field
+		// value type -> copy data from assignee into field
+		if (fieldIsReferenceType) {
+			_informationFlowModel.addName(fieldName, rightSideContainer, false);
+			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		} else {
-			// value type -> copy data from right side to array cell container (create if necessary)
-			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue, arrayContainer);
-			_informationFlowModel.copyData(rightSideContainer, arrayCellContainer);
+			IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldOwnerContainer);
+			_informationFlowModel.copyData(rightSideContainer, fieldContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);

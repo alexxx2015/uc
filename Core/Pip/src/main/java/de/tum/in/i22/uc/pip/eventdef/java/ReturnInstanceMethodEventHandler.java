@@ -8,20 +8,19 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
 
-public class ReturnStaticEventHandler extends ReturnMethodEventHandler {
+public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	
 	@Override
 	protected IStatus update() {
-		
-		// static method : put parameters into return object
 		
 		String threadId = null;
 		String pid = null;
 		String parentMethod = null;
 		String calledMethod = null;
 		String parentObject = null;
+		String callerObject = null;
 		String returnValue = null;
-		Boolean callerClassIsInstrumented = false;
+		Boolean callerObjectClassIsInstrumented = false;
 		int argsCount = 0;
 		CallChopNodeLabel chopLabel = null;
 		
@@ -31,8 +30,9 @@ public class ReturnStaticEventHandler extends ReturnMethodEventHandler {
 			parentMethod = getParameterValue("parentMethod");
 			calledMethod = getParameterValue("calledMethod");
 			parentObject = getParameterValue("parentObject");
+			callerObject = getParameterValue("callerObject");
 			returnValue = getParameterValue("returnValue");
-			callerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerClassIsInstrumented"));
+			callerObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
 			argsCount = Integer.parseInt(getParameterValue("argsCount"));
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
@@ -49,15 +49,19 @@ public class ReturnStaticEventHandler extends ReturnMethodEventHandler {
 		// Get parent container
 		IContainer parentContainer = addParentObjectContainerIfNotExists(parentObject, pid);
 		
+
+		IName callerObjectName = new NameBasic(pid + DLM + callerObject);
+		IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
+		
 		boolean retValIsReferenceType = returnValue.contains("@");
 		
 		// Return value handling
 		String leftSide = chopLabel.getLeftSide();
 		if (leftSide != null) {
 			IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSide);			
-			if (callerClassIsInstrumented) {
+			if (callerObjectClassIsInstrumented) {
 				// For instrumented classes, assign the retContainer (if exists!) of the called method to the left side (or copy data if it is value type)
-				IName retVarName = new NameBasic(pid + DLM + threadId + DLM + "class" + DLM + calledMethod + DLM + RET);
+				IName retVarName = new NameBasic(pid + DLM + threadId + DLM + callerObject + DLM + calledMethod + DLM + RET);
 				IContainer retContainer = _informationFlowModel.getContainer(retVarName);
 				if (retContainer != null) {
 					if (retValIsReferenceType) {
@@ -71,37 +75,23 @@ public class ReturnStaticEventHandler extends ReturnMethodEventHandler {
 					}
 				} // no retContainer -> no information flow
 			} else {
-				// For not instrumented classes, copy all data (or create alias) from the method parameters to the left side container
+				// For not instrumented classes, copy all data (or create alias) from the caller object to the left side container
 				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
 						retValIsReferenceType ? returnValue : null, parentContainer);
-				
-				// Lookup each parameter container
-				// argContainer is reference type -> copy data or create alias depending on return value
-				// argContainer is value type -> only copy data
-				for (int i = 0; i < argsCount; i++) {
-					IName argName = new NameBasic(pid + DLM + threadId + DLM + "class" + DLM + calledMethod + DLM + "p" + (i+1));
-					IContainer argContainer = _informationFlowModel.getContainer(argName);
-					if (argContainer != null) {
-						if (argContainer.getId().contains("@")) {
-							if (retValIsReferenceType) {
-								_informationFlowModel.addAlias(argContainer, leftSideContainer);
-							} else {
-								_informationFlowModel.copyData(argContainer, leftSideContainer);
-							}
-						} else {
-							_informationFlowModel.copyData(argContainer, leftSideContainer);
-						}
-					}
+				if (retValIsReferenceType) {
+					_informationFlowModel.addAlias(callerObjectContainer, leftSideContainer);
+				} else {
+					_informationFlowModel.copyData(callerObjectContainer, leftSideContainer);
 				}
 			}
 		}
 		
 		// Clean up method parameters and local variables
 		
-		String methodVariablePrefix = pid + DLM + threadId + DLM + "class" + DLM + calledMethod;
+		String methodVariablePrefix = pid + DLM + threadId + DLM + callerObject + DLM + calledMethod;
 		
-		cleanUpParamsAndLocals(methodVariablePrefix, callerClassIsInstrumented, null, argsCount);
-		
+		cleanUpParamsAndLocals(methodVariablePrefix, callerObjectClassIsInstrumented, callerObjectContainer, argsCount);
+
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 }

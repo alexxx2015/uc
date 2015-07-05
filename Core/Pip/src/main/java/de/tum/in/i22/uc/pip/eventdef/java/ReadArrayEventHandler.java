@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ReferenceChopNodeLabel;
 
-public class AssignFromArrayEventHandler extends JavaEventHandler {
+public class ReadArrayEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
@@ -55,7 +55,6 @@ public class AssignFromArrayEventHandler extends JavaEventHandler {
 		
 		// TODO: decide on data propagation from whole array to array cells
 		// Array cell container (create if necessary)
-		// Not named by local variable, because it does not belong there, can be found globally
 		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
 		IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, arrayAtIndex, arrayContainer);
 		

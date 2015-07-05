@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CompoundChopNodeLabel;
 
-public class PrepareReturnEventHandler extends JavaEventHandler {
+public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {

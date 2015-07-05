@@ -5,7 +5,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
-public abstract class InvokeMethodEventHandler extends JavaEventHandler {
+public abstract class CallMethodEventHandler extends JavaEventHandler {
 
 	/**
 	 *	Copies values (data items) or references (adds names to containers) of variables with method parameters

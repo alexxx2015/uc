@@ -8,7 +8,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ReferenceChopNodeLabel;
 
-public class AssignFromFieldEventHandler extends JavaEventHandler {
+public class ReadFieldEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
