@@ -19,6 +19,7 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		String parentObject = null;
 		String fieldOwnerObject = null; // type@address
 		String fieldOwnerClass = null;
+		boolean fieldOwnerClassIsInstrumented = false;
 		String field = null;
 		String assignee = null;
 		ModifyChopNodeLabel chopLabel = null;
@@ -30,6 +31,7 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 			parentObject = getParameterValue("parentObject");
 			fieldOwnerObject = getParameterValue("fieldOwnerObject");
 			fieldOwnerClass = getParameterValue("fieldOwnerClass");
+			fieldOwnerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("fieldOwnerClassIsInstrumented"));
 			field = getParameterValue("fieldName");
 			assignee = getParameterValue("assignee");
 			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
@@ -67,6 +69,13 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		} else {
 			IContainer fieldContainer = addContainerIfNotExists(fieldName);
 			_informationFlowModel.copyData(rightSideContainer, fieldContainer);
+		}
+		
+		// add alias to fieldOwnerContainer if class not instrumented
+		// helps getting all data from that object because it is blackboxed
+		if (!fieldOwnerClassIsInstrumented && !fieldIsStatic) {
+			IContainer fieldOwnerContainer = addContainerIfNotExists(new NameBasic(pid + DLM + fieldOwnerObject));
+			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
