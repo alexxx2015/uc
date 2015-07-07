@@ -10,16 +10,15 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 	/**
 	 *	Copies values (data items) or references (adds names to containers) of variables with method parameters
 	 *	from the parent method to the called method.
-	 *	Adds aliases to corresponding object containers:
-	 *		inner in called object
-	 *		outer in parent object 
+	 *	Adds aliases from parameters to @{code callerObjectContainer}.
+	 *
 	 *	(last arguments can be null).
 	 * 
 	 * @param argNames
 	 * @param argAddresses
 	 * @param outerArgNamePrefix
 	 * @param innerArgNamePrefix
-	 * @param callerObjectContainer
+	 * @param callerObjectContainer is only != null if its class is not instrumented
 	 * @param parentObjectContainer
 	 */
 	protected void insertArguments(String[] argNames, String[] argAddresses, 
@@ -56,8 +55,10 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 				outerArgContainer = addContainerIfNotExists(outerArgName);
 				_informationFlowModel.copyData(outerArgContainer, innerArgContainer);
 			}
-			
-			_informationFlowModel.addAlias(innerArgContainer, callerObjectContainer);
+						
+			if (callerObjectContainer != null) {
+				_informationFlowModel.addAlias(innerArgContainer, callerObjectContainer);
+			}
 		}	
 	}
 

@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
 import de.tum.in.i22.uc.cm.datatypes.basic.ScopeBasic;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
@@ -170,6 +172,14 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		return null;
 	}
 	
+	protected boolean containerIsArray(IContainer container) {
+		return container != null && container.getId().contains("@") && container.getId().contains("[");
+	}
+	
+	protected boolean containerIsReference(IContainer container) {
+		return container != null && container.getId().contains("@");
+	}
+	
 	protected IContainer addContainerIfNotExists(IName name, String identifier) {
 		return addContainerIfNotExists(name, identifier, null);
 	}
@@ -182,7 +192,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer aliasToContainer) {
 		IContainer container = _informationFlowModel.getContainer(name);
 		if (container == null) {
-			if (globalIdentifier != null && globalIdentifier.contains("@")) {
+			if (globalIdentifier != null && globalIdentifier.contains("@")
+					&& !globalIdentifier.contains("|")) {
 				// store reference type containers process-wide
 				container = _messageFactory.createContainer(globalIdentifier);
 				IName globalObjectName = new NameBasic(getPID() + DLM + globalIdentifier);
@@ -209,5 +220,26 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 			return addContainerIfNotExists(parentName, objectIdentifier);
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * Traverses the alias graph and returns all data being "visible" in {@code container} in respect to the alias function.
+	 * @param container
+	 * @return
+	 */
+	protected Set<IData> getDataTransitively(IContainer container) {
+		Set<IData> result = new HashSet<>();
+		if (container == null) {
+			return result;
+		}
+		
+		result.addAll(_informationFlowModel.getData(container));
+		
+		for (IContainer c : _informationFlowModel.getAliasesTo(container)) {
+			result.addAll(getDataTransitively(c));
+		}
+		
+		return result;
 	}
 }

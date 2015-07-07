@@ -1,8 +1,11 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
+import java.util.Set;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -70,14 +73,11 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 					}
 				} // no retContainer -> no information flow
 			} else {
-				// For not instrumented classes, copy all data (or create alias) from the caller object to the left side container
+				// For not instrumented classes, copy all (transitively) data from the caller object to the left side container
 				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
 						retValIsReferenceType ? returnValue : null);
-				if (retValIsReferenceType) {
-					_informationFlowModel.addAlias(callerObjectContainer, leftSideContainer);
-				} else {
-					_informationFlowModel.copyData(callerObjectContainer, leftSideContainer);
-				}
+				Set<IData> data = getDataTransitively(callerObjectContainer);
+				_informationFlowModel.addData(data, leftSideContainer);
 			}
 		}
 		

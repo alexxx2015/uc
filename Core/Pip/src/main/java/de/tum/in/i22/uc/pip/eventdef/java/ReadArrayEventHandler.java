@@ -42,15 +42,14 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		// derive left side type from array type (Class types contain ";")
-		boolean leftSideIsReferenceType = array.contains(";");
+		// derive left side type from array type (array@index)
+		boolean leftSideIsReferenceType = array.contains("@");
 		
 		// Array container (create if necessary)
 		String arrayVar = chopLabel.getArray();
 		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
 		IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
 		
-		// TODO: decide on data propagation from whole array to array cells
 		// Array cell container (create if necessary)
 		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
 		IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, arrayAtIndex);
@@ -63,12 +62,14 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 		// 1. Put the array data into the left side container
 		
 		if (leftSideIsReferenceType) {
-			// reference type -> assign left side name to cell container
-			_informationFlowModel.addName(leftSideName, arrayCellContainer, false);;
+			// reference type -> assign left side name to cell container + copy data from array container (no other possibility)
+			_informationFlowModel.addName(leftSideName, arrayCellContainer, false);
+			_informationFlowModel.copyData(arrayContainer, arrayCellContainer);
 		} else {
-			// value type -> copy data from cell container
+			// value type -> copy data from cell AND array container
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 			_informationFlowModel.copyData(arrayCellContainer, leftSideContainer);
+			_informationFlowModel.copyData(arrayContainer, leftSideContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);

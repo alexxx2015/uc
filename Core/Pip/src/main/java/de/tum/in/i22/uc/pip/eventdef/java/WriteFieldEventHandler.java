@@ -56,25 +56,30 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		
 		// Get field container (create if necessary)
 		IName fieldName;
+		IContainer fieldOwnerContainer = null;
 		if (fieldIsStatic) {
 			fieldName = new NameBasic(pid + DLM + "class" + DLM + fieldOwnerClass + DLM + field);
 		} else { // instance field
 			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
+			fieldOwnerContainer = addContainerIfNotExists(new NameBasic(pid + DLM + fieldOwnerObject));
 		}
+
 		
 		// reference type -> name assignee as the field
 		// value type -> copy data from assignee into field
 		if (fieldIsReferenceType) {
+			// remove possible alias of previous object in that field
+			_informationFlowModel.removeAlias(_informationFlowModel.getContainer(fieldName), fieldOwnerContainer);
 			_informationFlowModel.addName(fieldName, rightSideContainer, false);
 		} else {
 			IContainer fieldContainer = addContainerIfNotExists(fieldName);
+			_informationFlowModel.emptyContainer(fieldContainer);
 			_informationFlowModel.copyData(rightSideContainer, fieldContainer);
 		}
 		
 		// add alias to fieldOwnerContainer if class not instrumented
 		// helps getting all data from that object because it is blackboxed
 		if (!fieldOwnerClassIsInstrumented && !fieldIsStatic) {
-			IContainer fieldOwnerContainer = addContainerIfNotExists(new NameBasic(pid + DLM + fieldOwnerObject));
 			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		}
 		

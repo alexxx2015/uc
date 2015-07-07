@@ -38,7 +38,7 @@ public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		boolean returnValueIsReferenceType = returnValue.contains(";");
+		boolean returnValueIsReferenceType = returnValue.contains("@");
 		
 		// Variable to return
 		String var = chopLabel.getArgument();

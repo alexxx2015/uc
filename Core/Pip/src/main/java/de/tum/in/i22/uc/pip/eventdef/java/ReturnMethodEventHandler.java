@@ -6,6 +6,7 @@ import java.util.Set;
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 
@@ -14,36 +15,10 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 	@Override
 	protected IStatus update() {
 		
-		/*
-		Todo:
-		1. Get the method argument containers
-		2. Put the method argument containers into the return object
-		3. Put the return object into the left side (if there is one), 
-			if class not instrumented, put the whole called object inside
-		4. Clean up: Remove method argument containers
-			clean all aliases from arguments to called object
-			remove names (p1, p2 ...) and remove unnamed containers
-
-
-		// Get left side container
-		String leftSide = chopLabel.getLeftSide();
-		IContainer leftSideContainer = null;
-		if (leftSide != null) {
-			IName leftSideName = new NameBasic(threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSide);
-			leftSideContainer = addContainerIfNotExists(leftSideName);
-						
-			// Put the left side container into the parent object container (if its not a class)
-			if (!parentObject.equals("class")) {
-				IName parentName = new NameBasic(threadId + DLM + parentObject);
-				IContainer parentContainer = addContainerIfNotExists(parentName);
-				_informationFlowModel.addAlias(leftSideContainer, parentContainer);
-			}
-		}
-		
-		*/
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
 	
+	// also copies data from caller object to reference type parameters if class of caller object is not instrumented
 	protected void cleanUpParamsAndLocals(String methodVariablePrefix, boolean classIsInstrumented,
 			IContainer callerObjectContainer, int argsCount) {
 		if (classIsInstrumented) {
@@ -54,29 +29,37 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 				}
 			}
 			for (IName name : namesToCleanUp) {
-				cleanUpLocalVariable(name, callerObjectContainer);
+				cleanUpLocalVariable(name);
 			}
 		} else {
 			// if class is not instrumented, there are only containers for parameters (no local variables)
 			// speed up by not iterating over all names
 			for (int i = 0; i < argsCount; i++) {
 				IName argName = new NameBasic(methodVariablePrefix + DLM + "p" + (i+1));
-				cleanUpLocalVariable(argName, callerObjectContainer);
+				cleanUpLocalVariable(argName);
+				copyDataFromCallerObjectToParam(argName, callerObjectContainer);
 			}
 		}
 	}
 
-	private void cleanUpLocalVariable(IName varName, IContainer parentObjectContainer) {
+	private void cleanUpLocalVariable(IName varName) {
 		IContainer localVarContainer = _informationFlowModel.getContainer(varName);
-		_informationFlowModel.removeAlias(localVarContainer, parentObjectContainer);
 		if (localVarContainer != null) {
-			// reference type -> remove name but keep alias to caller object
+			// reference type -> remove name
 			// value type -> remove whole container
-			if (localVarContainer.getId().contains("@")) {
+			if (containerIsReference(localVarContainer)) {
 				_informationFlowModel.removeName(varName);
 			} else {
 				_informationFlowModel.remove(localVarContainer);
 			}
+		}
+	}
+	
+	private void copyDataFromCallerObjectToParam(IName paramName, IContainer callerObjectContainer) {
+		IContainer paramContainer = _informationFlowModel.getContainer(paramName);
+		if (containerIsReference(paramContainer)) {
+			Set<IData> callerObjectData = getDataTransitively(callerObjectContainer);
+			_informationFlowModel.addData(callerObjectData, paramContainer);
 		}
 	}
 }

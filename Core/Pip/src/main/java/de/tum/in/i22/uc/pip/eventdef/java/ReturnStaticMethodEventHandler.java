@@ -1,8 +1,11 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
+import java.util.Set;
+
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
+import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -72,18 +75,15 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 						retValIsReferenceType ? returnValue : null);
 				
 				// Lookup each parameter container
-				// argContainer is reference type -> copy data or create alias depending on return value
+				// argContainer is reference type -> copy data transitively
 				// argContainer is value type -> only copy data
 				for (int i = 0; i < argsCount; i++) {
 					IName argName = new NameBasic(pid + DLM + threadId + DLM + "class" + DLM + calledMethod + DLM + "p" + (i+1));
 					IContainer argContainer = _informationFlowModel.getContainer(argName);
 					if (argContainer != null) {
-						if (argContainer.getId().contains("@")) {
-							if (retValIsReferenceType) {
-								_informationFlowModel.addAlias(argContainer, leftSideContainer);
-							} else {
-								_informationFlowModel.copyData(argContainer, leftSideContainer);
-							}
+						if (containerIsReference(argContainer)) {
+							Set<IData> data = getDataTransitively(argContainer);
+							_informationFlowModel.addData(data, leftSideContainer);
 						} else {
 							_informationFlowModel.copyData(argContainer, leftSideContainer);
 						}

@@ -41,7 +41,7 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 			parentObject = "class";
 		}
 		
-		boolean arrayIsReferenceType = valueToInsert.contains(";");
+		boolean arrayIsReferenceType = valueToInsert.contains("@");
 		
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
@@ -53,19 +53,21 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
 		IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
 		
-		// TODO: decide on data propagation from whole array to array cells
 		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
 		
 		// Put the right side data into the array cell container
 		
 		if (arrayIsReferenceType) {
 			// reference type -> assign array cell name to right side container
+			// remove alias to the array of previous object at that index
+			_informationFlowModel.removeAlias(_informationFlowModel.getContainer(arrayCellName), arrayContainer);
 			_informationFlowModel.addName(arrayCellName, rightSideContainer, false);
 			_informationFlowModel.addAlias(rightSideContainer, arrayContainer);
 		} else {
 			// value type -> copy data from right side to array cell container (create if necessary)
 			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue);
 			_informationFlowModel.addAlias(arrayCellContainer, arrayContainer);
+			_informationFlowModel.emptyContainer(arrayCellContainer);
 			_informationFlowModel.copyData(rightSideContainer, arrayCellContainer);
 		}
 		
