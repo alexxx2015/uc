@@ -15,25 +15,29 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
-		String fieldOwnerObject = null; // type@address
 		String fieldOwnerClass = null;
-		boolean fieldOwnerClassIsInstrumented = false;
+		String fieldOwnerAddress = null;
 		String field = null;
-		String assignee = null;
+		String assigneeClass = null;
+		String assigneeAddress = null;
+		boolean fieldOwnerClassIsInstrumented = false;
 		ModifyChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
-			fieldOwnerObject = getParameterValue("fieldOwnerObject");
+			fieldOwnerAddress = getParameterValue("fieldOwnerAddress");
 			fieldOwnerClass = getParameterValue("fieldOwnerClass");
-			fieldOwnerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("fieldOwnerClassIsInstrumented"));
 			field = getParameterValue("fieldName");
-			assignee = getParameterValue("assignee");
+			assigneeClass = getParameterValue("assigneeClass");
+			assigneeAddress = getParameterValue("assigneeAddress");
+			fieldOwnerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("fieldOwnerClassIsInstrumented"));
 			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -41,33 +45,26 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-		
-		boolean fieldIsReferenceType = assignee.contains("@");
-		boolean fieldIsStatic = fieldOwnerObject.equals("null");
-		
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String assignee = assigneeClass + DLM + assigneeAddress;
+		String fieldOwner = getClassOrObject(fieldOwnerClass, fieldOwnerAddress);
+				
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
-		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
+		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + rightSideVar);
 		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee);
 		
 		// Get field container (create if necessary)
-		IName fieldName;
+		IName fieldName = new NameBasic(pid + DLM + fieldOwner + DLM + field);
 		IContainer fieldOwnerContainer = null;
-		if (fieldIsStatic) {
-			fieldName = new NameBasic(pid + DLM + "class" + DLM + fieldOwnerClass + DLM + field);
-		} else { // instance field
-			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
-			fieldOwnerContainer = addContainerIfNotExists(new NameBasic(pid + DLM + fieldOwnerObject));
+		if (!fieldOwner.equals(fieldOwnerClass)) { // instance field
+			fieldOwnerContainer = addContainerIfNotExists(new NameBasic(pid + DLM + fieldOwner), fieldOwner);
 		}
 
 		
 		// reference type -> name assignee as the field
 		// value type -> copy data from assignee into field
-		if (fieldIsReferenceType) {
+		if (isReferenceType(assignee)) {
 			// remove possible alias of previous object in that field
 			_informationFlowModel.removeAlias(_informationFlowModel.getContainer(fieldName), fieldOwnerContainer);
 			_informationFlowModel.addName(fieldName, rightSideContainer, false);
@@ -79,7 +76,7 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 		
 		// add alias to fieldOwnerContainer if class not instrumented
 		// helps getting all data from that object because it is blackboxed
-		if (!fieldOwnerClassIsInstrumented && !fieldIsStatic) {
+		if (!fieldOwnerClassIsInstrumented) {
 			_informationFlowModel.addAlias(rightSideContainer, fieldOwnerContainer);
 		}
 		

@@ -19,21 +19,25 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	protected IStatus update() {
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
+		String callerObjectAddress = null;
+		String callerObjectClass = null;
 		String calledMethod = null;
-		String parentObject = null;
-		String callerObject = null;
 		Boolean callerObjectClassIsInstrumented = false;
-		String[] methodArgs = null; // [class@address, value]
+		String[] methodArgs = null; // [class|address, value]
 		CallChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
+			callerObjectAddress = getParameterValue("callerObjectAddress");
+			callerObjectClass = getParameterValue("callerObjectClass");
 			calledMethod = getParameterValue("calledMethod");
-			parentObject = getParameterValue("parentObject");
-			callerObject = getParameterValue("callerObject");
 			callerObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
 						
 			JSONArray methodArgsJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgs"));
@@ -46,10 +50,8 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String callerObject = callerObjectClass + DLM + callerObjectAddress;
 		
 		// if caller object class is a system class, get its container to add method parameters to it
 		IContainer callerObjectContainer = null;
@@ -57,11 +59,11 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 			IName callerObjectName = new NameBasic(pid + DLM + callerObject);
 			callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObject);
 			
-			IName callerObjectVarName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + chopLabel.getCaller());
+			IName callerObjectVarName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + chopLabel.getCaller());
 			_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
 		}
 		
-		String outerArgNamePrefix = pid + DLM + threadId + DLM + parentObject + DLM + parentMethod;
+		String outerArgNamePrefix = pid + DLM + threadId + DLM + parent + DLM + parentMethod;
 		String innerArgNamePrefix = pid + DLM + threadId + DLM + callerObject + DLM + calledMethod;
 				
 		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, callerObjectContainer);	

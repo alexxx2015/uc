@@ -15,8 +15,9 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 		// IMPORTANT: This event handler assumes that arguments are only of value type
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
 		String argument1 = null; // value
 		String argument2 = null; // value
 		AssignChopNodeLabel chopLabel = null;
@@ -25,7 +26,8 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			argument1 = getParameterValue("argument1");
 			argument2 = getParameterValue("argument2");
 			chopLabel = new AssignChopNodeLabel(getParameterValue("chopLabel"));
@@ -35,14 +37,11 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
+		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSideVar);
 		
 		for (int i = 0; i < 2; i++) {
 			String argumentVar = chopLabel.getOperands()[i];
@@ -54,8 +53,8 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 			}
 			
 			// Argument container (create if necessary)
-			IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
-			IContainer argumentContainer = addContainerIfNotExists(argumentName, argument);
+			IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + argumentVar);
+			IContainer argumentContainer = addContainerIfNotExists(argumentName);
 			
 			// value type -> copy contents of argument container into left side container (create if necessary)
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);

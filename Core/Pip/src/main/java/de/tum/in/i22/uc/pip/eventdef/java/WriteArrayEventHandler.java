@@ -14,21 +14,27 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 	protected IStatus update() {
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
-		String array = null; // type@address
+		String arrayClass = null;
+		String arrayAddress = null;
+		String valueClass = null;
+		String valueAddress = null;
 		String indexValue = null;
-		String valueToInsert = null; // type@address or value
 		ModifyChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
-			array = getParameterValue("array");
+			arrayClass = getParameterValue("arrayClass");
+			arrayAddress = getParameterValue("arrayAddress");
 			indexValue = getParameterValue("index");
-			valueToInsert = getParameterValue("value");
+			valueClass = getParameterValue("valueClass");
+			valueAddress = getParameterValue("valueAddress");
 			chopLabel = new ModifyChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -36,39 +42,36 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-		
-		boolean arrayIsReferenceType = valueToInsert.contains("@");
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String valueToInsert = valueClass + DLM + valueAddress;
+		String array = arrayClass + DLM + arrayAddress;
 		
 		// Right side container (create if necessary)
 		String rightSideVar = chopLabel.getRightSide();
-		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + rightSideVar);
+		IName rightSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + rightSideVar);
 		IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert);
 		
 		// Array container (create if necessary)
 		String arrayVar = chopLabel.getArray();
-		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
+		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + arrayVar);
 		IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
 		
-		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
+		IName elementName = new NameBasic(pid + DLM + array + DLM + indexValue);
 		
-		// Put the right side data into the array cell container
+		// Put the right side data into the array element container
 		
-		if (arrayIsReferenceType) {
-			// reference type -> assign array cell name to right side container
+		if (isReferenceType(valueToInsert)) {
+			// reference type -> assign array element name to right side container
 			// remove alias to the array of previous object at that index
-			_informationFlowModel.removeAlias(_informationFlowModel.getContainer(arrayCellName), arrayContainer);
-			_informationFlowModel.addName(arrayCellName, rightSideContainer, false);
+			_informationFlowModel.removeAlias(_informationFlowModel.getContainer(elementName), arrayContainer);
+			_informationFlowModel.addName(elementName, rightSideContainer, false);
 			_informationFlowModel.addAlias(rightSideContainer, arrayContainer);
 		} else {
-			// value type -> copy data from right side to array cell container (create if necessary)
-			IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, array + DLM + indexValue);
-			_informationFlowModel.addAlias(arrayCellContainer, arrayContainer);
-			_informationFlowModel.emptyContainer(arrayCellContainer);
-			_informationFlowModel.copyData(rightSideContainer, arrayCellContainer);
+			// value type -> copy data from right side to array element container (create if necessary)
+			IContainer elementContainer = addContainerIfNotExists(elementName, array + DLM + indexValue);
+			_informationFlowModel.addAlias(elementContainer, arrayContainer);
+			_informationFlowModel.emptyContainer(elementContainer);
+			_informationFlowModel.copyData(rightSideContainer, elementContainer);
 		}
 		
 		return _messageFactory.createStatus(EStatus.OKAY);

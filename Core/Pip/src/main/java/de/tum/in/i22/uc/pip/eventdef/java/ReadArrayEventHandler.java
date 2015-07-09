@@ -15,21 +15,27 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 		
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
-		String array = null; // type@address
-		String arrayAtIndex = null; // type@address or value
+		String arrayClass = null;
+		String arrayAddress = null;
+		String elementClass = null;
+		String elementAddress = null;
 		String indexValue = null;
 		ReferenceChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
-			array = getParameterValue("array");
+			arrayClass = getParameterValue("arrayClass");
+			arrayAddress = getParameterValue("arrayAddress");
 			indexValue = getParameterValue("index");
-			arrayAtIndex = getParameterValue("arrayAtIndex");
+			elementClass = getParameterValue("elementClass");
+			elementAddress = getParameterValue("elementAddress");
 			chopLabel = new ReferenceChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -37,38 +43,33 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-		
-		// derive left side type from array type (array@index)
-		boolean leftSideIsReferenceType = array.contains("@");
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String element = elementClass + DLM + elementAddress;
+		String array = arrayClass + DLM + arrayAddress;
 		
 		// Array container (create if necessary)
 		String arrayVar = chopLabel.getArray();
-		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + arrayVar);
+		IName arrayName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + arrayVar);
 		IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
 		
-		// Array cell container (create if necessary)
-		IName arrayCellName = new NameBasic(pid + DLM + array + DLM + indexValue);
-		IContainer arrayCellContainer = addContainerIfNotExists(arrayCellName, arrayAtIndex);
-		_informationFlowModel.addAlias(arrayCellContainer, arrayContainer);
+		// Array element container (create if necessary)
+		IName elementName = new NameBasic(pid + DLM + array + DLM + indexValue);
+		IContainer elementContainer = addContainerIfNotExists(elementName, isReferenceType(element) ? element : array + indexValue);
+		_informationFlowModel.addAlias(elementContainer, arrayContainer);
 		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
+		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSideVar);
 		
-		// 1. Put the array data into the left side container
 		
-		if (leftSideIsReferenceType) {
-			// reference type -> assign left side name to cell container + copy data from array container (no other possibility)
-			_informationFlowModel.addName(leftSideName, arrayCellContainer, false);
-			_informationFlowModel.copyData(arrayContainer, arrayCellContainer);
+		if (isReferenceType(element)) {
+			// reference type -> assign left side name to element container + copy data from array container (no other possibility)
+			_informationFlowModel.addName(leftSideName, elementContainer, false);
+			_informationFlowModel.copyData(arrayContainer, elementContainer);
 		} else {
-			// value type -> copy data from cell AND array container
+			// value type -> copy data from element AND array container
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
-			_informationFlowModel.copyData(arrayCellContainer, leftSideContainer);
+			_informationFlowModel.copyData(elementContainer, leftSideContainer);
 			_informationFlowModel.copyData(arrayContainer, leftSideContainer);
 		}
 		

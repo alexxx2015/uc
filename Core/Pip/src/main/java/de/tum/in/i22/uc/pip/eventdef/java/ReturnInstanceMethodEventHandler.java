@@ -18,11 +18,14 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 		
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
+		String callerObjectAddress = null;
+		String callerObjectClass = null;
 		String calledMethod = null;
-		String parentObject = null;
-		String callerObject = null;
-		String returnValue = null;
+		String returnValueClass = null;
+		String returnValueAddress = null;
 		Boolean callerObjectClassIsInstrumented = false;
 		int argsCount = 0;
 		CallChopNodeLabel chopLabel = null;
@@ -30,11 +33,14 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
+			callerObjectAddress = getParameterValue("callerObjectAddress");
+			callerObjectClass = getParameterValue("callerObjectClass");
 			calledMethod = getParameterValue("calledMethod");
-			parentObject = getParameterValue("parentObject");
-			callerObject = getParameterValue("callerObject");
-			returnValue = getParameterValue("returnValue");
+			returnValueClass = getParameterValue("returnValueClass");
+			returnValueAddress = getParameterValue("returnValueAddress");
 			callerObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
 			argsCount = Integer.parseInt(getParameterValue("argsCount"));
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
@@ -44,26 +50,23 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String callerObject = callerObjectClass + DLM + callerObjectAddress;
+		String returnValue = returnValueClass + DLM + returnValueAddress;
+		
 		IName callerObjectName = new NameBasic(pid + DLM + callerObject);
 		IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
-		
-		boolean retValIsReferenceType = returnValue.contains("@");
 		
 		// Return value handling
 		String leftSide = chopLabel.getLeftSide();
 		if (leftSide != null) {
-			IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSide);			
+			IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSide);			
 			if (callerObjectClassIsInstrumented) {
 				// For instrumented classes, assign the retContainer (if exists!) of the called method to the left side (or copy data if it is value type)
 				IName retVarName = new NameBasic(pid + DLM + threadId + DLM + callerObject + DLM + calledMethod + DLM + RET);
 				IContainer retContainer = _informationFlowModel.getContainer(retVarName);
 				if (retContainer != null) {
-					if (retValIsReferenceType) {
+					if (isReferenceType(returnValue)) {
 						// reference type
 						_informationFlowModel.addName(leftSideName, retContainer, false);
 					} else {
@@ -74,8 +77,7 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 				} // no retContainer -> no information flow
 			} else {
 				// For not instrumented classes, copy all (transitively) data from the caller object to the left side container
-				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
-						retValIsReferenceType ? returnValue : null);
+				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, returnValue);
 				Set<IData> data = getDataTransitively(callerObjectContainer);
 				_informationFlowModel.addData(data, leftSideContainer);
 			}

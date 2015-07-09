@@ -15,15 +15,16 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	
 	@Override
 	protected IStatus update() {
-		
-		// static method : put parameters into return object
-		
+				
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
+		String callerClass = null;
 		String calledMethod = null;
-		String parentObject = null;
-		String returnValue = null;
+		String returnValueClass = null;
+		String returnValueAddress = null;
 		Boolean callerClassIsInstrumented = false;
 		int argsCount = 0;
 		CallChopNodeLabel chopLabel = null;
@@ -31,10 +32,13 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
+			callerClass = getParameterValue("callerClass");
 			calledMethod = getParameterValue("calledMethod");
-			parentObject = getParameterValue("parentObject");
-			returnValue = getParameterValue("returnValue");
+			returnValueClass = getParameterValue("returnValueClass");
+			returnValueAddress = getParameterValue("returnValueAddress");
 			callerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerClassIsInstrumented"));
 			argsCount = Integer.parseInt(getParameterValue("argsCount"));
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
@@ -44,23 +48,19 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-		
-		boolean retValIsReferenceType = returnValue.contains("@");
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String returnValue = returnValueClass + DLM + returnValueAddress;
 		
 		// Return value handling
 		String leftSide = chopLabel.getLeftSide();
 		if (leftSide != null) {
-			IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSide);			
+			IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSide);			
 			if (callerClassIsInstrumented) {
 				// For instrumented classes, assign the retContainer (if exists!) of the called method to the left side (or copy data if it is value type)
-				IName retVarName = new NameBasic(pid + DLM + threadId + DLM + "class" + DLM + calledMethod + DLM + RET);
+				IName retVarName = new NameBasic(pid + DLM + threadId + DLM + callerClass + DLM + calledMethod + DLM + RET);
 				IContainer retContainer = _informationFlowModel.getContainer(retVarName);
 				if (retContainer != null) {
-					if (retValIsReferenceType) {
+					if (isReferenceType(returnValue)) {
 						// reference type
 						_informationFlowModel.addName(leftSideName, retContainer, false);
 					} else {
@@ -71,14 +71,13 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 				} // no retContainer -> no information flow
 			} else {
 				// For not instrumented classes, copy all data (or create alias) from the method parameters to the left side container
-				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, 
-						retValIsReferenceType ? returnValue : null);
+				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, returnValue);
 				
 				// Lookup each parameter container
 				// argContainer is reference type -> copy data transitively
 				// argContainer is value type -> only copy data
 				for (int i = 0; i < argsCount; i++) {
-					IName argName = new NameBasic(pid + DLM + threadId + DLM + "class" + DLM + calledMethod + DLM + "p" + (i+1));
+					IName argName = new NameBasic(pid + DLM + threadId + DLM + callerClass + DLM + calledMethod + DLM + "p" + (i+1));
 					IContainer argContainer = _informationFlowModel.getContainer(argName);
 					if (argContainer != null) {
 						if (containerIsReference(argContainer)) {
@@ -94,7 +93,7 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 		
 		// Clean up method parameters and local variables
 		
-		String methodVariablePrefix = pid + DLM + threadId + DLM + "class" + DLM + calledMethod;
+		String methodVariablePrefix = pid + DLM + threadId + DLM + callerClass + DLM + calledMethod;
 		
 		cleanUpParamsAndLocals(methodVariablePrefix, callerClassIsInstrumented, null, argsCount);
 		

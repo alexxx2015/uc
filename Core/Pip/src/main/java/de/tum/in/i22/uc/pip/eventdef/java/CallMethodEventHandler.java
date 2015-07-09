@@ -44,13 +44,11 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 			IContainer innerArgContainer;
 			IContainer outerArgContainer;
 			
-			if (argument.contains("@")) {
-				// reference type
+			if (isReferenceType(argument)) {
 				outerArgContainer = addContainerIfNotExists(outerArgName, argument);
 				innerArgContainer = outerArgContainer;
 				_informationFlowModel.addName(innerArgName, outerArgContainer, false);
 			} else {
-				// value type
 				innerArgContainer = addContainerIfNotExists(innerArgName);
 				outerArgContainer = addContainerIfNotExists(outerArgName);
 				_informationFlowModel.copyData(outerArgContainer, innerArgContainer);

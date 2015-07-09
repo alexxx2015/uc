@@ -15,23 +15,27 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 		
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
-		String fieldOwnerObject = null; // type@address
 		String fieldOwnerClass = null;
+		String fieldOwnerAddress = null;
 		String field = null;
-		String fieldValue = null;
+		String fieldValueClass = null;
+		String fieldValueAddress = null;
 		ReferenceChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
-			fieldOwnerObject = getParameterValue("fieldOwnerObject");
+			fieldOwnerAddress = getParameterValue("fieldOwnerAddress");
 			fieldOwnerClass = getParameterValue("fieldOwnerClass");
 			field = getParameterValue("fieldName");
-			fieldValue = getParameterValue("fieldValue");
+			fieldValueClass = getParameterValue("fieldValueClass");
+			fieldValueAddress = getParameterValue("fieldValueAddress");
 			chopLabel = new ReferenceChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -39,30 +43,21 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
-		
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String fieldValue = fieldValueClass + DLM + fieldValueAddress;
+		String fieldOwner = getClassOrObject(fieldOwnerClass, fieldOwnerAddress);
+
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
-		
-		boolean fieldIsReferenceType = fieldValue.contains("@");
-		boolean fieldIsStatic = fieldOwnerObject.equals("null");
-		
+		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSideVar);
+				
 		// Get field container (create if necessary)
-		IName fieldName;
-		if (fieldIsStatic) {
-			fieldName = new NameBasic(pid + DLM + "class" + DLM + fieldOwnerClass + DLM + field);
-		} else { // instance field
-			fieldName = new NameBasic(pid + DLM + fieldOwnerObject + DLM + field);
-		}
+		IName fieldName = new NameBasic(pid + DLM + fieldOwner + DLM + field);
 		IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValue);
 		
 		// Reference type -> make left side name also point to field container
 		// Value type -> just copy the data from field container to left side container (create it first)
-		if (fieldIsReferenceType) {
+		if (isReferenceType(fieldValue)) {
 			_informationFlowModel.addName(leftSideName, fieldContainer, false);
 		} else {
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);

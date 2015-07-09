@@ -172,12 +172,46 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		return null;
 	}
 	
+	/**
+	 * class|address => true
+	 * class|null => false
+	 * everything else => false
+	 * @param objectAtAddress
+	 * @return
+	 */
+	protected boolean isReferenceType(String objectAtAddress) {
+		String[] comps = objectAtAddress.split("\\" + DLM);
+		return comps.length == 2 && !comps[1].equals("null");
+	}
+	
+	private static boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isArrayElement(String objectAtAddress) {
+		String[] comps = objectAtAddress.split("\\" + DLM);
+		return comps.length == 3 && !comps[1].equals("null") && isInteger(comps[2]);
+	}
+	
+	protected String getClassOrObject(String className, String objectAddress) {
+		if (objectAddress.equals("null")) {
+			return className;
+		} else {
+			return className + DLM + objectAddress;
+		}
+	}
+	
 	protected boolean containerIsArray(IContainer container) {
-		return container != null && container.getId().contains("@") && container.getId().contains("[");
+		return container != null && container.getId().contains(DLM) && container.getId().contains("[");
 	}
 	
 	protected boolean containerIsReference(IContainer container) {
-		return container != null && container.getId().contains("@");
+		return container != null && container.getId().contains(DLM);
 	}
 	
 	protected IContainer addContainerIfNotExists(IName name, String identifier) {
@@ -192,8 +226,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer aliasToContainer) {
 		IContainer container = _informationFlowModel.getContainer(name);
 		if (container == null) {
-			if (globalIdentifier != null && globalIdentifier.contains("@")
-					&& !globalIdentifier.contains("|")) {
+			if (globalIdentifier != null && (isReferenceType(globalIdentifier) || isArrayElement(globalIdentifier))) {
 				// store reference type containers process-wide
 				container = _messageFactory.createContainer(globalIdentifier);
 				IName globalObjectName = new NameBasic(getPID() + DLM + globalIdentifier);

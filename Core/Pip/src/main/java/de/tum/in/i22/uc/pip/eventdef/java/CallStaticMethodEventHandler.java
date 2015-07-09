@@ -18,18 +18,22 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	protected IStatus update() {
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
+		String callerClass = null;
 		String calledMethod = null;
-		String parentObject = null;
 		String[] methodArgs = null; // [class@address, value]
 		CallChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
+			callerClass = getParameterValue("callerClass");
 			calledMethod = getParameterValue("calledMethod");
-			parentObject = getParameterValue("parentObject");
 						
 			JSONArray methodArgsJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgs"));
 			methodArgs = new String[methodArgsJSON.size()];
@@ -41,13 +45,10 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		
-		String outerArgNamePrefix = pid + DLM + threadId + DLM + parentObject + DLM + parentMethod;
-		String innerArgNamePrefix = pid + DLM + threadId + DLM + "class" + DLM + calledMethod;
+		String outerArgNamePrefix = pid + DLM + threadId + DLM + parent + DLM + parentMethod;
+		String innerArgNamePrefix = pid + DLM + threadId + DLM + callerClass + DLM + calledMethod;
 						
 		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, null);
 		

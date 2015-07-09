@@ -19,17 +19,21 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 		
 		String threadId = null;
 		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
 		String parentMethod = null;
-		String parentObject = null;
-		String argument = null; // class@address or value
+		String argumentClass = null;
+		String argumentAddress = null;
 		AssignChopNodeLabel chopLabel = null;
 		
 		try {
 			threadId = getParameterValue("threadId");
 			pid = getParameterValue("processId");
 			parentMethod = getParameterValue("parentMethod");
-			parentObject = getParameterValue("parentObject");
-			argument = getParameterValue("argument");
+			parentObjectAddress = getParameterValue("parentObjectAddress");
+			parentClass = getParameterValue("parentClass");
+			argumentClass = getParameterValue("argumentClass");
+			argumentAddress = getParameterValue("argumentAddress");
 			chopLabel = new AssignChopNodeLabel(getParameterValue("chopLabel"));
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -37,14 +41,12 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
-		// No parent object means that the parent method is a class method
-		if (parentObject.equals("null")) {
-			parentObject = "class";
-		}
+		String parent = getClassOrObject(parentClass, parentObjectAddress);
+		String argument = argumentClass + DLM + argumentAddress;
 		
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
-		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + leftSideVar);
+		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSideVar);
 		
 		// Argument container (create if necessary)
 		// no data flows if the operand is a constant, so cancel event right here
@@ -52,10 +54,10 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 		if (argumentVar.startsWith("#")) {
 			return _messageFactory.createStatus(EStatus.OKAY);
 		}
-		IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parentObject + DLM + parentMethod + DLM + argumentVar);
+		IName argumentName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + argumentVar);
 		IContainer argumentContainer = addContainerIfNotExists(argumentName, argument);
 		
-		if (argument.contains("@")) {
+		if (isReferenceType(argument)) {
 			// reference type -> assign left side name to argument container
 			_informationFlowModel.addName(argumentName, leftSideName);			
 		} else {
