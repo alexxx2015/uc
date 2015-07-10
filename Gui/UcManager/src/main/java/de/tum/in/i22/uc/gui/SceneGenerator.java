@@ -302,7 +302,7 @@ public class SceneGenerator {
 
 				FileChooser fc = new FileChooser();
 				fc.setTitle("Choose Policy");
-				fc.setInitialDirectory(new File("/home/alex/Policies"));
+				//fc.setInitialDirectory(new File("/home/alex/Policies"));
 				File f = fc.showOpenDialog(SceneGenerator.stage);
 				if (f != null) {
 					controller.deployPolicyURI(f.getAbsolutePath());

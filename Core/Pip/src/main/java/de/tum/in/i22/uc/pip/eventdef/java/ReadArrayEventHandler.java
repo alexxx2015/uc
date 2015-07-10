@@ -54,7 +54,7 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 		
 		// Array element container (create if necessary)
 		IName elementName = new NameBasic(pid + DLM + array + DLM + indexValue);
-		IContainer elementContainer = addContainerIfNotExists(elementName, isReferenceType(element) ? element : array + indexValue);
+		IContainer elementContainer = addContainerIfNotExists(elementName, isReferenceType(element) ? element : array + DLM + indexValue);
 		_informationFlowModel.addAlias(elementContainer, arrayContainer);
 		
 		// Left side name
@@ -69,6 +69,7 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 		} else {
 			// value type -> copy data from element AND array container
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+			_informationFlowModel.emptyContainer(leftSideContainer);
 			_informationFlowModel.copyData(elementContainer, leftSideContainer);
 			_informationFlowModel.copyData(arrayContainer, leftSideContainer);
 		}

@@ -21,8 +21,16 @@ import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 
 public class SourceEventHandler extends JavaEventHandler {
 
+	
 	@Override
 	protected IStatus update() {
+		
+		
+		
+		return _messageFactory.createStatus(EStatus.OKAY);
+	}
+	
+	protected IStatus _update() {
 		return update(EBehavior.INTRA, null);
 	}
 
@@ -106,6 +114,8 @@ public class SourceEventHandler extends JavaEventHandler {
 		//this line should never be reached
 		return new Pair<EBehavior, IScope>(EBehavior.UNKNOWN, null);
 	}
+
+	
 
 	
 }

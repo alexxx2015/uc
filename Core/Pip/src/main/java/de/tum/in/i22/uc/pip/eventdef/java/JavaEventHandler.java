@@ -51,6 +51,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	
 	protected final String DLM = "|";
 	protected final String RET = "ret";
+	protected final String OBJ = "obj";
 	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "

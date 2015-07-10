@@ -42,6 +42,8 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 		// Left side name
 		String leftSideVar = chopLabel.getLeftSide();
 		IName leftSideName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + leftSideVar);
+		IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+		_informationFlowModel.emptyContainer(leftSideContainer);
 		
 		for (int i = 0; i < 2; i++) {
 			String argumentVar = chopLabel.getOperands()[i];
@@ -57,7 +59,6 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 			IContainer argumentContainer = addContainerIfNotExists(argumentName);
 			
 			// value type -> copy contents of argument container into left side container (create if necessary)
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
 			_informationFlowModel.copyData(argumentContainer, leftSideContainer);
 		}
 		

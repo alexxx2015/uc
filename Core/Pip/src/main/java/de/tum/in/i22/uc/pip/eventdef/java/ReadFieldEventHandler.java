@@ -61,6 +61,7 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 			_informationFlowModel.addName(leftSideName, fieldContainer, false);
 		} else {
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+			_informationFlowModel.emptyContainer(leftSideContainer);
 			_informationFlowModel.copyData(fieldContainer, leftSideContainer);
 		}
 		

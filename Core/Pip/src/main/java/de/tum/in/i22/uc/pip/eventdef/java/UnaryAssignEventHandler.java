@@ -63,6 +63,7 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 		} else {
 			// value type -> copy contents of argument container into left side container (create if necessary)
 			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+			_informationFlowModel.emptyContainer(leftSideContainer);
 			_informationFlowModel.copyData(argumentContainer, leftSideContainer);
 		}
 		
