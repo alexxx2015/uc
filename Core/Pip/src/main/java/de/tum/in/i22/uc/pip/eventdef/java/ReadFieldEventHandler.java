@@ -43,6 +43,8 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		String fieldValue = fieldValueClass + DLM + fieldValueAddress;
 		String fieldOwner = getClassOrObject(fieldOwnerClass, fieldOwnerAddress);

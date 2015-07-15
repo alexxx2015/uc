@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String DLM = "|";
 	protected final String RET = "ret";
 	protected final String OBJ = "obj";
+	protected final String NOADDRESS = "implicit";
 	
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
 		return "Scope for generic "
@@ -197,6 +199,57 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	private boolean isArrayElement(String objectAtAddress) {
 		String[] comps = objectAtAddress.split("\\" + DLM);
 		return comps.length == 3 && !comps[1].equals("null") && isInteger(comps[2]);
+	}
+	
+	/**
+	 * Replaces all occurences of an uninitialized object identifier in names (and containers) for an object whose constructor was called but has not returned yet.
+	 * This method is called in every event handler and ensures that the model objects and names containing the object reference
+	 * 	 	added by a constructor call get the correct address.
+	 * Long scan of the names is only done once (ensured by checking if the name of the object itself has been fixed).
+	 * @param threadId
+	 * @param pid
+	 * @param className
+	 * @param objectAddress
+	 * @param methodName
+	 */
+	protected void addAddressToNamesAndContainerIfNeeded(String threadId, String pid, String className, String objectAddress, String methodName) {
+		if (objectAddress.equals("null")) return;
+		if (methodName.startsWith("<init>")) {
+			String addressReplacement = threadId + NOADDRESS;
+			
+			// object
+			IName oldObjectName = new NameBasic(pid + DLM + className + DLM + addressReplacement);
+			IContainer oldObjectContainer = _informationFlowModel.getContainer(oldObjectName);
+			if (oldObjectContainer != null) {
+				IName newObjectName = new NameBasic(pid + DLM + className + DLM + objectAddress);
+				IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className+DLM+objectAddress, null);
+				_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
+				for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
+					_informationFlowModel.addAlias(aliasFrom, newObjectContainer);
+				}
+				for (IContainer aliasTo : _informationFlowModel.getAliasesTo(oldObjectContainer)) {
+					_informationFlowModel.addAlias(newObjectContainer, aliasTo);
+				}
+				for (IName oldName : _informationFlowModel.getAllNames(oldObjectContainer)) {
+					_informationFlowModel.addName(oldName, newObjectContainer, false);
+				}
+				_informationFlowModel.removeName(oldObjectName, true);
+			} else return; // if there is no uninitialized object, then the replacement was already done 		
+			
+			// method locals
+			String paramPrefix = pid + DLM + threadId + DLM + className + DLM + addressReplacement;
+			Set<IName> namesToReplace = new HashSet<>();
+			for (IName name : _informationFlowModel.getAllNames()) {
+				if (name.getName().startsWith(paramPrefix)) {
+					namesToReplace.add(name);
+				}
+			}
+			for (IName oldName : namesToReplace) {
+				IName fixedName = new NameBasic(oldName.getName().replace(threadId + NOADDRESS, objectAddress));
+				_informationFlowModel.addName(oldName, fixedName);
+				_informationFlowModel.removeName(oldName);
+			}
+		}
 	}
 	
 	protected String getClassOrObject(String className, String objectAddress) {

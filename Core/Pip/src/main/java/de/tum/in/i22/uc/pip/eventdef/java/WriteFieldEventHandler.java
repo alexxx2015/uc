@@ -45,6 +45,8 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+		
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		String assignee = assigneeClass + DLM + assigneeAddress;
 		String fieldOwner = getClassOrObject(fieldOwnerClass, fieldOwnerAddress);

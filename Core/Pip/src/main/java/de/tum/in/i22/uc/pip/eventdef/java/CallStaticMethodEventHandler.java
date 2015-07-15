@@ -45,6 +45,8 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+		
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		
 		String outerArgNamePrefix = pid + DLM + threadId + DLM + parent + DLM + parentMethod;

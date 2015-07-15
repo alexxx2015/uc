@@ -43,6 +43,8 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		String element = elementClass + DLM + elementAddress;
 		String array = arrayClass + DLM + arrayAddress;

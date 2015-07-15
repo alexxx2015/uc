@@ -66,6 +66,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 		String callerObject = callerObjectClass + DLM + callerObjectAddress;
 		String returnValue = returnValueClass + DLM + returnValueAddress;
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, callerObjectClass, callerObjectAddress, calledMethod);
+		
 		IName callerObjectName = new NameBasic(pid + DLM + callerObject);
 		IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
 		

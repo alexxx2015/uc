@@ -42,6 +42,8 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+		
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		String valueToInsert = valueClass + DLM + valueAddress;
 		String array = arrayClass + DLM + arrayAddress;

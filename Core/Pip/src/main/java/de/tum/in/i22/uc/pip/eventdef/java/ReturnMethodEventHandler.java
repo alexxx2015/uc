@@ -29,27 +29,34 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 				}
 			}
 			for (IName name : namesToCleanUp) {
-				cleanUpLocalVariable(name);
+				cleanUpLocalVariable(name, null);
 			}
 		} else {
 			// if class is not instrumented, there are only containers for parameters (no local variables)
 			// speed up by not iterating over all names
 			for (int i = 0; i < argsCount; i++) {
 				IName argName = new NameBasic(methodVariablePrefix + DLM + "p" + (i+1));
-				cleanUpLocalVariable(argName);
 				copyDataFromCallerObjectToParam(argName, callerObjectContainer);
+				cleanUpLocalVariable(argName, callerObjectContainer);
 			}
 		}
 	}
 
-	private void cleanUpLocalVariable(IName varName) {
+	/**
+	 * 
+	 * @param varName
+	 * @param callerObjectContainer only pass container in here if you want to copy data from local var to this container
+	 */
+	private void cleanUpLocalVariable(IName varName, IContainer callerObjectContainer) {
 		IContainer localVarContainer = _informationFlowModel.getContainer(varName);
 		if (localVarContainer != null) {
 			// reference type -> remove name
 			// value type -> remove whole container
 			if (containerIsReference(localVarContainer)) {
+				// no need to copy data because this container will not be destroyed (all object containers are kept alive by global name)
 				_informationFlowModel.removeName(varName);
 			} else {
+				_informationFlowModel.addData(_informationFlowModel.getData(localVarContainer), callerObjectContainer);
 				_informationFlowModel.remove(localVarContainer);
 			}
 		}

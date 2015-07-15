@@ -25,7 +25,7 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 		String callerObjectAddress = null;
 		String callerObjectClass = null;
 		String calledMethod = null;
-		Boolean callerObjectClassIsInstrumented = false;
+		boolean callerObjectClassIsInstrumented = false;
 		String[] methodArgs = null; // [class|address, value]
 		CallChopNodeLabel chopLabel = null;
 		
@@ -50,23 +50,31 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 					EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+		
+		boolean isConstructor = calledMethod.startsWith("<init>");
+		if (isConstructor) {
+			// add the threadId to the identifier to know which thread has called the constructor
+			// enables to get the correct instance when the constructor has return
+			callerObjectAddress = threadId + NOADDRESS;
+		}
+		
 		String parent = getClassOrObject(parentClass, parentObjectAddress);
 		String callerObject = callerObjectClass + DLM + callerObjectAddress;
 		
 		// if caller object class is a system class, get its container to add method parameters to it
 		IContainer callerObjectContainer = null;
-		if (!callerObjectClassIsInstrumented) {
-			IName callerObjectName = new NameBasic(pid + DLM + callerObject);
-			callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObject);
-			
-			IName callerObjectVarName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + chopLabel.getCaller());
-			_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
-		}
+		IName callerObjectName = new NameBasic(pid + DLM + callerObject);
+		callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObject);
+		
+		IName callerObjectVarName = new NameBasic(pid + DLM + threadId + DLM + parent + DLM + parentMethod + DLM + chopLabel.getCaller());
+		_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
 		
 		String outerArgNamePrefix = pid + DLM + threadId + DLM + parent + DLM + parentMethod;
 		String innerArgNamePrefix = pid + DLM + threadId + DLM + callerObject + DLM + calledMethod;
 				
-		insertArguments(chopLabel.getArgs(), methodArgs, outerArgNamePrefix, innerArgNamePrefix, callerObjectContainer);	
+		insertArguments(chopLabel.getArgs(), methodArgs, 
+				outerArgNamePrefix, innerArgNamePrefix, callerObjectClassIsInstrumented ? null : callerObjectContainer);	
 		
 		return _messageFactory.createStatus(EStatus.OKAY);
 	}
