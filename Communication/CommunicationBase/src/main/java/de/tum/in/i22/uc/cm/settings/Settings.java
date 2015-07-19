@@ -114,6 +114,9 @@ public class Settings extends SettingsLoader {
 	private static final String PROP_NAME_policySpecificationStarDataClass = "policySpecificationStarDataClass";
 
 	private static final String PROP_NAME_pmpInitialPolicies = "pmpInitialPolicies";
+	
+	private static final String PROP_NAME_javaNamingDelimiter = "javaNamingDelimiter";
+	private static final String PROP_NAME_javaNull = "null";
 
 	private Settings() {
 		_settings = new HashMap<>();
@@ -242,6 +245,8 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_joanaDelimiter1, ":");
 		loadSetting(PROP_NAME_joanaDelimiter2, "#");
 		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
+		loadSetting(PROP_NAME_javaNamingDelimiter, "|");
+		loadSetting(PROP_NAME_javaNull, "null");
 
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
@@ -580,5 +585,13 @@ public class Settings extends SettingsLoader {
 
 	public Set<String> getPmpInitialPolicies() {
 		return getValue(PROP_NAME_pmpInitialPolicies);
+	}
+	
+	public String getJavaNamingDelimiter() {
+		return getValue(PROP_NAME_javaNamingDelimiter);
+	}
+	
+	public String getJavaNull() {
+		return getValue(PROP_NAME_javaNull);
 	}
 }
