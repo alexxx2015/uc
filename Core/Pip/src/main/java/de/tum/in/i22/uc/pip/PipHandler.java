@@ -2,6 +2,7 @@ package de.tum.in.i22.uc.pip;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -301,5 +302,11 @@ public class PipHandler extends PipProcessor {
 	public void stop() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    // TODO Auto-generated method stub
+	    return new HashMap<String, Set<Map<String,String>>>();
 	}
 }

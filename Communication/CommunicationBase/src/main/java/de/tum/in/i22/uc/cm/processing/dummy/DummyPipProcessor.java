@@ -205,4 +205,10 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		
 	}
 
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
 }

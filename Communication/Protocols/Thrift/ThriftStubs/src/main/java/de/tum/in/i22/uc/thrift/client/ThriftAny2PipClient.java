@@ -184,4 +184,9 @@ class ThriftAny2PipClient extends Any2PipClient {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    return _impl.filterModel(params);
+	}
 }

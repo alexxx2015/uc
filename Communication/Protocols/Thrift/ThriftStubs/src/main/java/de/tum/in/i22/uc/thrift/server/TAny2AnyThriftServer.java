@@ -260,4 +260,9 @@ TAny2Any.Iface {
 		return _pmpServer.specifyPolicyFor(representations, dataClass);
 	}
 
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) throws TException {
+	    return _pipServer.filterModel(params);
+	}
+
 }

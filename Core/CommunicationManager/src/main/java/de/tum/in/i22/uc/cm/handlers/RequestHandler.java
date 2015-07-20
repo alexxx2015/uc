@@ -48,6 +48,7 @@ import de.tum.in.i22.uc.pdp.requests.RevokePolicyPdpRequest;
 import de.tum.in.i22.uc.pip.PipHandler;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
+import de.tum.in.i22.uc.pip.requests.FilterModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetDataInContainerPipRequest;
@@ -579,6 +580,14 @@ public class RequestHandler implements IRequestHandler, IForwarder {
 		SpecifyPolicyForPmpRequest request = new SpecifyPolicyForPmpRequest(representations,dataClass);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
+	}
+
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    FilterModelPipRequest request = new FilterModelPipRequest(params);
+	    _requestQueueManager.addRequest(request, this);
+	    return waitForResponse(request);
 	}
 
 }

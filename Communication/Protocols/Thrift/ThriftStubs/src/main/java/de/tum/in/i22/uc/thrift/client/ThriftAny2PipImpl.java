@@ -220,4 +220,14 @@ class ThriftAny2PipImpl implements IAny2Pip {
 		}
 		return null;
 	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    try {
+		return _handle.filterModel(params);
+	    } catch (TException e) {
+		e.printStackTrace();
+	    }
+	    return null;
+	}
 }

@@ -189,4 +189,9 @@ TAny2Pip.Iface {
 		return ThriftConverter.toThriftDataSet(_handler
 				.flattenStructure(ThriftConverter.fromThrift(data)));
 	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) throws TException {
+	    return _handler.filterModel(params);
+	}
 }

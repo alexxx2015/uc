@@ -478,4 +478,9 @@ public class Controller implements IRequestHandler  {
 		return _requestHandler.specifyPolicyFor(representations, dataClass);
 	}
 
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    return _requestHandler.filterModel(params);
+	}
+
 }
