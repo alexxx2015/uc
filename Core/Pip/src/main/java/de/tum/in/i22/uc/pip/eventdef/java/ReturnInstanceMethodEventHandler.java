@@ -18,6 +18,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.ObjectName;
+import de.tum.in.i22.uc.cm.datatypes.java.SourceData;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
@@ -40,7 +41,7 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	String returnValueAddress = null;
 	Boolean callerObjectClassIsInstrumented = false;
 	int argsCount = -1;
-	Map<String, String> sourcesMap = null;
+	Map<String, Map<String, String>> sourcesMap = null;
 	CallChopNodeLabel chopLabel = null;
 
 	try {
@@ -71,14 +72,15 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
 
 	// Put data items corresponding to sources into parameters
-	for (Entry<String, String> sourceMapping : sourcesMap.entrySet()) {
+	for (Entry<String, Map<String, String>> sourceMapping : sourcesMap.entrySet()) {
 	    String param = sourceMapping.getKey();
 	    if (param.startsWith("p")) {
 		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, callerObjectClass,
 			callerObjectAddress, calledMethod, param);
 		IContainer paramContainer = _informationFlowModel.getContainer(paramName);
 		if (paramContainer != null && containerIsReference(paramContainer)) {
-		    IData sourceData = new DataBasic(sourceMapping.getValue());
+		    IData sourceData = new SourceData(sourceMapping.getValue().get("sourceId"),
+			    Long.valueOf(sourceMapping.getValue().get("timeStamp")));
 		    _informationFlowModel.addData(sourceData, paramContainer);
 		}
 	    }
@@ -86,7 +88,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 
 	// add source data to whole object if available
 	if (sourcesMap.containsKey(OBJ)) {
-	    IData sourceData = new DataBasic(sourcesMap.get(OBJ));
+	    IData sourceData = new SourceData(sourcesMap.get(OBJ).get("sourceId"), Long.valueOf(sourcesMap.get(OBJ)
+		    .get("timeStamp")));
 	    _informationFlowModel.addData(sourceData, callerObjectContainer);
 	}
 
@@ -105,7 +108,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 		if (retContainer != null) {
 		    // add source data to return value if available
 		    if (sourcesMap.containsKey(RET)) {
-			IData sourceData = new DataBasic(sourcesMap.get(RET));
+			IData sourceData = new SourceData(sourcesMap.get(RET).get("sourceId"), Long.valueOf(sourcesMap
+				.get(RET).get("timeStamp")));
 			_informationFlowModel.addData(sourceData, retContainer);
 		    }
 		    if (isReferenceType(returnValue)) {
@@ -130,7 +134,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 
 		// return value contains data
 		if (sourcesMap.containsKey(RET)) {
-		    IData sourceData = new DataBasic(sourcesMap.get(RET));
+		    IData sourceData = new SourceData(sourcesMap.get(RET).get("sourceId"), Long.valueOf(sourcesMap.get(
+			    RET).get("timeStamp")));
 		    _informationFlowModel.addData(sourceData, leftSideContainer);
 		}
 	    }
