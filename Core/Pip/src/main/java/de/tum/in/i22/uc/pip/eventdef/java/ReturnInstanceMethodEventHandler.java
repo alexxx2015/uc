@@ -17,8 +17,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.JavaNameFactory;
 import de.tum.in.i22.uc.cm.datatypes.java.ObjectName;
+import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
 

@@ -10,8 +10,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.InstanceMethodVariableName;
-import de.tum.in.i22.uc.cm.datatypes.java.JavaNameFactory;
 import de.tum.in.i22.uc.cm.datatypes.java.StaticMethodVariableName;
+import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 
 public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 
