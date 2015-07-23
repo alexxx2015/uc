@@ -43,8 +43,6 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	String argument = argumentClass + DLM + argumentAddress;
-
 	// Left side name
 	String leftSideVar = chopLabel.getLeftSide();
 	IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
@@ -59,15 +57,15 @@ public class UnaryAssignEventHandler extends JavaEventHandler {
 	}
 	IName argumentName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, argumentVar);
-	IContainer argumentContainer = addContainerIfNotExists(argumentName, argument);
+	IContainer argumentContainer = addContainerIfNotExists(argumentName, argumentClass, argumentAddress);
 
-	if (isReferenceType(argument)) {
+	if (isValidAddress(argumentAddress)) {
 	    // reference type -> assign left side name to argument container
 	    _informationFlowModel.addName(argumentName, leftSideName);
 	} else {
 	    // value type -> copy contents of argument container into left side
 	    // container (create if necessary)
-	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName, null, null);
 	    _informationFlowModel.emptyContainer(leftSideContainer);
 	    _informationFlowModel.copyData(argumentContainer, leftSideContainer);
 	}

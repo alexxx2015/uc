@@ -1,10 +1,10 @@
 package de.tum.in.i22.uc.cm.factories;
 
-import de.tum.in.i22.uc.cm.datatypes.java.InstanceFieldName;
-import de.tum.in.i22.uc.cm.datatypes.java.InstanceMethodVariableName;
-import de.tum.in.i22.uc.cm.datatypes.java.JavaName;
-import de.tum.in.i22.uc.cm.datatypes.java.StaticFieldName;
-import de.tum.in.i22.uc.cm.datatypes.java.StaticMethodVariableName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceFieldName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.StaticFieldName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.StaticMethodVariableName;
 import de.tum.in.i22.uc.cm.settings.Settings;
 
 public class JavaNameFactory {

@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.datatypes.java;
+package de.tum.in.i22.uc.cm.datatypes.java.data;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.DataBasic;
 import de.tum.in.i22.uc.cm.settings.Settings;

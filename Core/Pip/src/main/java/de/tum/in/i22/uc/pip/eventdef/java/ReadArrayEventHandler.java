@@ -5,7 +5,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.ArrayElementName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayElementName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ReferenceChopNodeLabel;
@@ -46,18 +46,15 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	String element = elementClass + DLM + elementAddress;
-
 	// Array container (create if necessary)
 	String arrayVar = chopLabel.getArray();
 	IName arrayName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, arrayVar);
-	IContainer arrayContainer = addContainerIfNotExists(arrayName, arrayClass + DLM + arrayAddress);
+	IContainer arrayContainer = addContainerIfNotExists(arrayName, arrayClass, arrayAddress);
 
 	// Array element container (create if necessary)
 	IName elementName = new ArrayElementName(pid, arrayClass, arrayAddress, index);
-	IContainer elementContainer = addContainerIfNotExists(elementName, isReferenceType(element) ? element
-		: arrayClass + DLM + arrayAddress + DLM + index);
+	IContainer elementContainer = addContainerIfNotExists(elementName, elementClass, elementAddress);
 	_informationFlowModel.addAlias(elementContainer, arrayContainer);
 
 	// Left side name
@@ -65,14 +62,14 @@ public class ReadArrayEventHandler extends JavaEventHandler {
 	IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, leftSideVar);
 
-	if (isReferenceType(element)) {
+	if (isValidAddress(elementAddress)) {
 	    // reference type -> assign left side name to element container +
 	    // copy data from array container (no other possibility)
 	    _informationFlowModel.addName(leftSideName, elementContainer, false);
 	    _informationFlowModel.copyData(arrayContainer, elementContainer);
 	} else {
 	    // value type -> copy data from element AND array container
-	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName, null, null);
 	    _informationFlowModel.emptyContainer(leftSideContainer);
 	    _informationFlowModel.copyData(elementContainer, leftSideContainer);
 	    _informationFlowModel.copyData(arrayContainer, leftSideContainer);

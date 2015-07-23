@@ -23,7 +23,8 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	String parentMethod = null;
 	String callerClass = null;
 	String calledMethod = null;
-	String[] methodArgs = null; // [class@address, value]
+	String[] methodArgTypes = null;
+	String[] methodArgAddresses = null;
 	CallChopNodeLabel chopLabel = null;
 
 	try {
@@ -35,9 +36,12 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	    callerClass = getParameterValue("callerClass");
 	    calledMethod = getParameterValue("calledMethod");
 
-	    JSONArray methodArgsJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgs"));
-	    methodArgs = new String[methodArgsJSON.size()];
-	    methodArgsJSON.toArray(methodArgs);
+	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
+	    methodArgTypes = new String[methodArgTypesJSON.size()];
+	    methodArgTypesJSON.toArray(methodArgTypes);
+	    JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
+	    methodArgAddresses = new String[methodArgAddressesJSON.size()];
+	    methodArgAddressesJSON.toArray(methodArgAddresses);
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 	} catch (ParseException | ParameterNotFoundException | ClassCastException e) {
 	    _logger.error(e.getMessage());
@@ -46,7 +50,7 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	insertArguments(chopLabel.getArgs(), methodArgs, pid, threadId, parentClass, parentObjectAddress, parentMethod,
+	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
 		callerClass, null, calledMethod, null);
 
 	return _messageFactory.createStatus(EStatus.OKAY);

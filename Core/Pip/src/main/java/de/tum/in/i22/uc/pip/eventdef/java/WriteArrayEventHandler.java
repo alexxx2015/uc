@@ -5,7 +5,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.ArrayElementName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayElementName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ModifyChopNodeLabel;
@@ -45,23 +45,20 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	String valueToInsert = valueClass + DLM + valueAddress;
-	String array = arrayClass + DLM + arrayAddress;
-
 	// Right side container (create if necessary)
 	String rightSideVar = chopLabel.getRightSide();
 	IName rightSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, rightSideVar);
-	IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueToInsert);
+	IContainer rightSideContainer = addContainerIfNotExists(rightSideName, valueClass, valueAddress);
 
 	// Array container (create if necessary)
 	IName arrayName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, chopLabel.getArray());
-	IContainer arrayContainer = addContainerIfNotExists(arrayName, array);
+	IContainer arrayContainer = addContainerIfNotExists(arrayName, arrayClass, arrayAddress);
 
 	IName elementName = new ArrayElementName(pid, arrayClass, arrayAddress, index);
 
 	// Put the right side data into the array element container
 
-	if (isReferenceType(valueToInsert)) {
+	if (isValidAddress(valueAddress)) {
 	    // reference type -> assign array element name to right side
 	    // container
 	    // remove alias to the array of previous object at that index
@@ -71,7 +68,7 @@ public class WriteArrayEventHandler extends JavaEventHandler {
 	} else {
 	    // value type -> copy data from right side to array element
 	    // container (create if necessary)
-	    IContainer elementContainer = addContainerIfNotExists(elementName, array + DLM + index);
+	    IContainer elementContainer = addContainerIfNotExists(elementName, null, null);
 	    _informationFlowModel.addAlias(elementContainer, arrayContainer);
 	    _informationFlowModel.emptyContainer(elementContainer);
 	    _informationFlowModel.copyData(rightSideContainer, elementContainer);

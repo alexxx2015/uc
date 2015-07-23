@@ -43,12 +43,11 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 	// Left side name
 	String leftSideVar = chopLabel.getLeftSide();
 	IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, leftSideVar);
-	IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+	IContainer leftSideContainer = addContainerIfNotExists(leftSideName, null, null);
 	_informationFlowModel.emptyContainer(leftSideContainer);
 
 	for (int i = 0; i < 2; i++) {
 	    String argumentVar = chopLabel.getOperands()[i];
-	    String argument = i == 0 ? argument1 : argument2;
 
 	    // no data flows if the operand is a constant, so skip to next
 	    // argument
@@ -58,7 +57,7 @@ public class BinaryAssignEventHandler extends JavaEventHandler {
 
 	    // Argument container (create if necessary)
 	    IName argumentName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, argumentVar);
-	    IContainer argumentContainer = addContainerIfNotExists(argumentName);
+	    IContainer argumentContainer = addContainerIfNotExists(argumentName, null, null);
 
 	    // value type -> copy contents of argument container into left side
 	    // container (create if necessary)

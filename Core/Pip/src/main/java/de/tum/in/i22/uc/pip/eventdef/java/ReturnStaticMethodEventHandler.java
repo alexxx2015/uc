@@ -16,7 +16,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.SourceData;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ReferenceContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
@@ -60,15 +61,13 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
 
-	String returnValue = returnValueClass + DLM + returnValueAddress;
-
 	// Put data items corresponding to sources into parameters
 	for (Entry<String, Map<String, String>> sourceMapping : sourcesMap.entrySet()) {
 	    String param = sourceMapping.getKey();
 	    if (param.startsWith("p")) {
 		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass, null, calledMethod, param);
 		IContainer paramContainer = _informationFlowModel.getContainer(paramName);
-		if (paramContainer != null && containerIsReference(paramContainer)) {
+		if (paramContainer != null && paramContainer instanceof ReferenceContainer) {
 		    IData sourceData = new SourceData(sourceMapping.getValue().get("sourceId"),
 			    Long.valueOf(sourceMapping.getValue().get("timeStamp")));
 		    _informationFlowModel.addData(sourceData, paramContainer);
@@ -95,12 +94,12 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 				    RET).get("timeStamp")));
 			_informationFlowModel.addData(sourceData, retContainer);
 		    }
-		    if (isReferenceType(returnValue)) {
+		    if (isValidAddress(returnValueAddress)) {
 			// reference type
 			_informationFlowModel.addName(leftSideName, retContainer, false);
 		    } else {
 			// value type
-			IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+			IContainer leftSideContainer = addContainerIfNotExists(leftSideName, null, null);
 			_informationFlowModel.emptyContainer(leftSideContainer);
 			_informationFlowModel.copyData(retContainer, leftSideContainer);
 		    }
@@ -108,8 +107,8 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	    } else {
 		// For not instrumented classes, copy all data (or create alias)
 		// from the method parameters to the left side container
-		IContainer leftSideContainer = addContainerIfNotExists(leftSideName, returnValue);
-		if (!isReferenceType(returnValue))
+		IContainer leftSideContainer = addContainerIfNotExists(leftSideName, returnValueClass, returnValueAddress);
+		if (!isValidAddress(returnValueAddress))
 		    _informationFlowModel.emptyContainer(leftSideContainer);
 
 		// return value contains data
@@ -127,7 +126,7 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 				null, calledMethod, "p" + (i + 1));
 		    IContainer argContainer = _informationFlowModel.getContainer(argName);
 		    if (argContainer != null) {
-			if (containerIsReference(argContainer)) {
+			if (argContainer instanceof ReferenceContainer) {
 			    Set<IData> data = getDataTransitively(argContainer);
 			    _informationFlowModel.addData(data, leftSideContainer);
 			} else {

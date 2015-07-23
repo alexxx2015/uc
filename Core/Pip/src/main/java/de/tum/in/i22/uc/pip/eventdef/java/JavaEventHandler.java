@@ -15,9 +15,14 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
-import de.tum.in.i22.uc.cm.datatypes.java.ArrayName;
-import de.tum.in.i22.uc.cm.datatypes.java.InstanceMethodVariableName;
-import de.tum.in.i22.uc.cm.datatypes.java.ObjectName;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ArrayContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ArrayElementContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ObjectContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ValueContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayElementName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
@@ -175,37 +180,15 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	}
 	return null;
     }
-
-    /**
-     * class|address => true class|null => false everything else => false
-     * 
-     * @param objectAtAddress
-     * @return
-     */
-    protected boolean isReferenceType(String objectAtAddress) {
-	String[] comps = objectAtAddress.split("\\" + DLM);
-	return comps.length == 2 && !comps[1].equals("null");
+    
+    protected boolean isValidAddress(String address) {
+	return address != null && !address.equals("null");
     }
     
-    protected boolean isArray(String objectAtAddress) {
-	String[] comps = objectAtAddress.split("\\" + DLM);
-	return comps.length == 2 && !comps[1].equals("null") && comps[0].contains("[");
+    protected boolean isArrayType(String className) {
+	return className.contains("[");
     }
-
-    private static boolean isInteger(String s) {
-	try {
-	    Integer.parseInt(s);
-	} catch (NumberFormatException e) {
-	    return false;
-	}
-	return true;
-    }
-
-    private boolean isArrayElement(String objectAtAddress) {
-	String[] comps = objectAtAddress.split("\\" + DLM);
-	return comps.length == 3 && !comps[1].equals("null") && isInteger(comps[2]);
-    }
-
+    
     /**
      * Replaces all occurences of an uninitialized object identifier in names
      * (and containers) for an object whose constructor was called but has not
@@ -233,8 +216,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	    IContainer oldObjectContainer = _informationFlowModel.getContainer(oldObjectName);
 	    if (oldObjectContainer != null) {
 		IName newObjectName = new ObjectName(pid, className, objectAddress);
-		IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className + DLM + objectAddress,
-			null);
+		IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className, objectAddress);
 		_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
 		for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
 		    _informationFlowModel.addAlias(aliasFrom, newObjectContainer);
@@ -271,44 +253,44 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	    }
 	}
     }
+    
+    /**
+     * Looks up in the InformationFlowModel if there is already a container with the specified name. true => return container.
+     * false => Create a new container based on provided className, address and name.
+     * If a value container is desired, className and address should be null.
+     * @param name
+     * @param className
+     * @param address
+     * @return
+     */
 
-    protected boolean containerIsArray(IContainer container) {
-	return container != null && container.getId().contains(DLM) && container.getId().contains("[");
-    }
-
-    protected boolean containerIsReference(IContainer container) {
-	return container != null && container.getId().contains(DLM);
-    }
-
-    protected IContainer addContainerIfNotExists(IName name, String identifier) {
-	return addContainerIfNotExists(name, identifier, null);
-    }
-
-    protected IContainer addContainerIfNotExists(IName name) {
-	return addContainerIfNotExists(name, null, null);
-    }
-
-    // if identifier is class@address, then create additional name to identify
-    // container globally
-    protected IContainer addContainerIfNotExists(IName name, String globalIdentifier, IContainer aliasToContainer) {
+    protected IContainer addContainerIfNotExists(IName name, String className, String address) {
 	IContainer container = _informationFlowModel.getContainer(name);
 	if (container == null) {
-	    if (globalIdentifier != null && (isReferenceType(globalIdentifier) || isArrayElement(globalIdentifier))) {
-		// store reference type containers process-wide
-		container = _messageFactory.createContainer(globalIdentifier);
-		IName globalObjectName;
-		if (isArray(globalIdentifier)) {
-		    globalObjectName = new ArrayName(getPID() + DLM + globalIdentifier);
+	    if (isValidAddress(address) && className != null) {
+		if (isArrayType(className)) {
+		    container = new ArrayContainer(getPID(), className, address);
+		    if (!(name instanceof ArrayName)) {
+			 ArrayName arrayName = new ArrayName(getPID(), className, address);
+			 _informationFlowModel.addName(arrayName, container, false);
+		    }
 		} else {
-		    globalObjectName = new ObjectName(getPID() + DLM + globalIdentifier);
+		    container = new ObjectContainer(getPID(), className, address);
+		    if (!(name instanceof ObjectName)) {
+			ObjectName objectName = new ObjectName(getPID(), className, address);
+			_informationFlowModel.addName(objectName, container, false);
+		    }
 		}
-		_informationFlowModel.addName(globalObjectName, container, false);
 	    } else {
-		container = _messageFactory.createContainer();
+		if (name instanceof ArrayElementName) {
+		    ArrayElementName aeName = (ArrayElementName)name;
+		    container = new ArrayElementContainer(getPID(), aeName.getType(), aeName.getAddress(), aeName.getIndex());
+		} else {
+		    container = new ValueContainer(getPID());
+		}
 	    }
 	    _informationFlowModel.addName(name, container, false);
 	}
-	_informationFlowModel.addAlias(container, aliasToContainer);
 	return container;
     }
 

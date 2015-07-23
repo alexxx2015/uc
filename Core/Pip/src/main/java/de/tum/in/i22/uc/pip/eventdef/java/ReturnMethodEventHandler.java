@@ -9,8 +9,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.InstanceMethodVariableName;
-import de.tum.in.i22.uc.cm.datatypes.java.StaticMethodVariableName;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ReferenceContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.StaticMethodVariableName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 
 public abstract class ReturnMethodEventHandler extends JavaEventHandler {
@@ -73,7 +74,7 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 	if (localVarContainer != null) {
 	    // reference type -> remove name
 	    // value type -> remove whole container
-	    if (containerIsReference(localVarContainer)) {
+	    if (localVarContainer instanceof ReferenceContainer) {
 		// no need to copy data because this container will not be
 		// destroyed (all object containers are kept alive by global
 		// name)
@@ -87,7 +88,7 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 
     private void copyDataFromCallerObjectToParam(IName paramName, IContainer callerObjectContainer) {
 	IContainer paramContainer = _informationFlowModel.getContainer(paramName);
-	if (containerIsReference(paramContainer)) {
+	if (paramContainer instanceof ReferenceContainer) {
 	    Set<IData> callerObjectData = getDataTransitively(callerObjectContainer);
 	    _informationFlowModel.addData(callerObjectData, paramContainer);
 	}

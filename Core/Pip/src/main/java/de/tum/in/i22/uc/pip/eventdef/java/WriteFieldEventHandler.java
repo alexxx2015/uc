@@ -5,7 +5,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.datatypes.java.ObjectName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.ModifyChopNodeLabel;
@@ -48,29 +48,27 @@ public class WriteFieldEventHandler extends JavaEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	String assignee = assigneeClass + DLM + assigneeAddress;
-
 	// Right side container (create if necessary)
 	String rightSideVar = chopLabel.getRightSide();
 	IName rightSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, rightSideVar);
-	IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assignee);
+	IContainer rightSideContainer = addContainerIfNotExists(rightSideName, assigneeClass, assigneeAddress);
 
 	// Get field container (create if necessary)
 	IName fieldName = JavaNameFactory.createFieldName(pid, fieldOwnerClass, fieldOwnerAddress, field);
 	IContainer fieldOwnerContainer = null;
-	if (!fieldOwnerAddress.equals("null")) { // instance field
+	if (isValidAddress(fieldOwnerAddress)) { // instance field
 	    IName fieldOwnerName = new ObjectName(pid, fieldOwnerClass, fieldOwnerAddress);
-	    fieldOwnerContainer = addContainerIfNotExists(fieldOwnerName, fieldOwnerClass + DLM + fieldOwnerAddress);
+	    fieldOwnerContainer = addContainerIfNotExists(fieldOwnerName, fieldOwnerClass, fieldOwnerAddress);
 	}
 
 	// reference type -> name assignee as the field
 	// value type -> copy data from assignee into field
-	if (isReferenceType(assignee)) {
+	if (isValidAddress(assigneeAddress)) {
 	    // remove possible alias of previous object in that field
 	    _informationFlowModel.removeAlias(_informationFlowModel.getContainer(fieldName), fieldOwnerContainer);
 	    _informationFlowModel.addName(fieldName, rightSideContainer, false);
 	} else {
-	    IContainer fieldContainer = addContainerIfNotExists(fieldName);
+	    IContainer fieldContainer = addContainerIfNotExists(fieldName, null, null);
 	    _informationFlowModel.emptyContainer(fieldContainer);
 	    _informationFlowModel.copyData(rightSideContainer, fieldContainer);
 	}

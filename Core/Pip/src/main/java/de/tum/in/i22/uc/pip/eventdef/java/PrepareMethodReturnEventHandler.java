@@ -37,22 +37,20 @@ public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
 
-	String returnValue = returnValueClass + DLM + returnValueAddress;
-
 	// Variable to return
 	String var = chopLabel.getArgument();
 	IName varName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, var);
-	IContainer varContainer = addContainerIfNotExists(varName, returnValue);
+	IContainer varContainer = addContainerIfNotExists(varName, returnValueClass, returnValueAddress);
 
 	// ret var name of the method
 	IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, RET);
 
 	// reference type -> add ret name to varContainer
 	// value type -> create ret container and copy data from varContainer
-	if (isReferenceType(returnValue)) {
+	if (isValidAddress(returnValueAddress)) {
 	    _informationFlowModel.addName(retVarName, varContainer, false);
 	} else {
-	    IContainer retVarContainer = addContainerIfNotExists(retVarName);
+	    IContainer retVarContainer = addContainerIfNotExists(retVarName, null, null);
 	    _informationFlowModel.copyData(varContainer, retVarContainer);
 	}
 

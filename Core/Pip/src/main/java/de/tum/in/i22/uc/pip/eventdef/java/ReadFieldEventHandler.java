@@ -45,8 +45,6 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
-	String fieldValue = fieldValueClass + DLM + fieldValueAddress;
-
 	// Left side name
 	String leftSideVar = chopLabel.getLeftSide();
 	IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
@@ -54,15 +52,15 @@ public class ReadFieldEventHandler extends JavaEventHandler {
 
 	// Get field container (create if necessary)
 	IName fieldName = JavaNameFactory.createFieldName(pid, fieldOwnerClass, fieldOwnerAddress, field);
-	IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValue);
+	IContainer fieldContainer = addContainerIfNotExists(fieldName, fieldValueClass, fieldValueAddress);
 
 	// Reference type -> make left side name also point to field container
 	// Value type -> just copy the data from field container to left side
 	// container (create it first)
-	if (isReferenceType(fieldValue)) {
+	if (isValidAddress(fieldValueAddress)) {
 	    _informationFlowModel.addName(leftSideName, fieldContainer, false);
 	} else {
-	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName);
+	    IContainer leftSideContainer = addContainerIfNotExists(leftSideName, null, null);
 	    _informationFlowModel.emptyContainer(leftSideContainer);
 	    _informationFlowModel.copyData(fieldContainer, leftSideContainer);
 	}

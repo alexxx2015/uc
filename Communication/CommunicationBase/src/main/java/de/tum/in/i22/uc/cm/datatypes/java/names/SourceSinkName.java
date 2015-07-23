@@ -1,4 +1,4 @@
-package de.tum.in.i22.uc.cm.datatypes.java;
+package de.tum.in.i22.uc.cm.datatypes.java.names;
 
 import org.junit.Assert;
 

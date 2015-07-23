@@ -23,13 +23,14 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
      *            is only != null if its class is not instrumented
      * @param parentObjectContainer
      */
-    protected void insertArguments(String[] argNames, String[] argAddresses, String pid, String threadId,
+    protected void insertArguments(String[] argNames, String[] argTypes, String[] argAddresses, String pid, String threadId,
 	    String parentClass, String parentObjectAddress, String parentMethod, String callerClass,
 	    String callerObjectAddress, String calledMethod, IContainer callerObjectContainer) {
 
 	for (int i = 0; i < argAddresses.length; i++) {
 	    String argName = argNames[i];
-	    String argument = argAddresses[i];
+	    String argType = argTypes[i];
+	    String argAddress = argAddresses[i];
 
 	    // constants as parameters -> no information flow, no outer arg
 	    // container needed
@@ -51,13 +52,13 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 	    IContainer innerArgContainer;
 	    IContainer outerArgContainer;
 
-	    if (isReferenceType(argument)) {
-		outerArgContainer = addContainerIfNotExists(outerArgName, argument);
+	    if (isValidAddress(argAddress)) {
+		outerArgContainer = addContainerIfNotExists(outerArgName, argType, argAddress);
 		innerArgContainer = outerArgContainer;
 		_informationFlowModel.addName(innerArgName, outerArgContainer, false);
 	    } else {
-		innerArgContainer = addContainerIfNotExists(innerArgName);
-		outerArgContainer = addContainerIfNotExists(outerArgName);
+		innerArgContainer = addContainerIfNotExists(innerArgName, null, null);
+		outerArgContainer = addContainerIfNotExists(outerArgName, null, null);
 		_informationFlowModel.copyData(outerArgContainer, innerArgContainer);
 	    }
 
