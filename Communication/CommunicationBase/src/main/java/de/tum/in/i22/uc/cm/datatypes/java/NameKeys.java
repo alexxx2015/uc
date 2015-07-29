@@ -17,7 +17,7 @@ public final class NameKeys {
     public static final String OBJECT_ADDRESS = "objectAddress";
     public static final String FIELD_NAME = "fieldName";
 
-    
+    public static final String NEW_ADDRESS = "newAddress";
 
 
     

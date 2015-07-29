@@ -1,6 +1,6 @@
 package de.tum.in.i22.uc.cm.datatypes.java.names;
 
-public class ArrayName extends JavaName {
+public class ArrayName extends ReferenceName {
 	
 	private String pid;
 	private String type;
@@ -26,9 +26,19 @@ public class ArrayName extends JavaName {
 	public String getType() {
 		return type;
 	}
-
+	
+	@Override
 	public String getAddress() {
 		return address;
 	}
+
+	/** Returns the same as getType().
+	 * 
+	 */
+	@Override
+	public String getClassOrType() {
+	    return getType();
+	}
+	
 	
 }
