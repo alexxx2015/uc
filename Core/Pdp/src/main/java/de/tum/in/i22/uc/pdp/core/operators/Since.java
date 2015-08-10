@@ -91,12 +91,12 @@ public class Since extends SinceType {
 
 		if (!opA.getPositivity().is(opA.getValueAtLastTick())) {
 			_logger.info("Performing distributed evaluation of A.");
-			opAFuture = Threading.instance().submit(() -> opA.distributedTickPostprocessing(endOfTimestep));
+			opAFuture = (Future<Boolean>) Threading.instance().submit(() -> opA.distributedTickPostprocessing(endOfTimestep));
 		}
 
 		if (!opB.getPositivity().is(opB.getValueAtLastTick())) {
 			_logger.info("Performing distributed evaluation of B.");
-			opBFuture = Threading.instance().submit(() -> opB.distributedTickPostprocessing(endOfTimestep));
+			opBFuture = (Future<Boolean>) Threading.instance().submit(() -> opB.distributedTickPostprocessing(endOfTimestep));
 		}
 
 		boolean valueAtLastTick;
