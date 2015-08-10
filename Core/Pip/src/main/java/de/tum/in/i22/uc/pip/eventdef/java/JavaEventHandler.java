@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.Pair;
@@ -22,10 +21,8 @@ import de.tum.in.i22.uc.cm.datatypes.java.containers.ObjectContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.containers.ValueContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayElementName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayName;
-import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceFieldName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
-import de.tum.in.i22.uc.cm.datatypes.java.names.ReferenceName;
 import de.tum.in.i22.uc.cm.interfaces.informationFlowModel.IInformationFlowModel;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeState;
 import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
@@ -77,7 +74,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
     }
 
     /*
-     * For this generic action the scope is only one and the "delimiter" (start/end) is given as a parameter
+     * For this generic action the scope is only one and the "delimiter"
+     * (start/end) is given as a parameter
      * 
      * @see de.tum.in.i22.pip.core.eventdef.BaseEventHandler#createScope()
      */
@@ -120,7 +118,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
     }
 
     /*
-     * Auxiliary function to support the creation of a scope for sources and sinks
+     * Auxiliary function to support the creation of a scope for sources and
+     * sinks
      */
     protected IScope buildScope(EScopeType type) {
 	String fileDescriptor;
@@ -146,8 +145,9 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
     }
 
     /**
-     * This method is invoked by the KillProcess Event Handler from Windows. The purpose of this method is to clean up
-     * the PIP removing all the Java-specific containers when the process dies.
+     * This method is invoked by the KillProcess Event Handler from Windows. The
+     * purpose of this method is to clean up the PIP removing all the
+     * Java-specific containers when the process dies.
      */
 
     public static void killProcess(String pid, IInformationFlowModel _informationFlowModel) {
@@ -180,135 +180,84 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	}
 	return null;
     }
-
+    
     protected boolean isValidAddress(String address) {
 	return address != null && !address.equals("null");
     }
-
+    
     protected boolean isArrayType(String className) {
 	return className.contains("[");
     }
-
+    
     /**
-     * Replaces all occurences of an uninitialized object identifier in names (and containers) for an object whose
-     * constructor was called but has not returned yet. This method is called in every event handler and ensures that
-     * the model objects and names containing the object reference added by a constructor call get the correct address.
-     * Long scan of the names is only done once (ensured by checking if the name of the object itself has been fixed).
+     * Replaces all occurences of an uninitialized object identifier in names
+     * (and containers) for an object whose constructor was called but has not
+     * returned yet. This method is called in every event handler and ensures
+     * that the model objects and names containing the object reference added by
+     * a constructor call get the correct address. Long scan of the names is
+     * only done once (ensured by checking if the name of the object itself has
+     * been fixed).
      * 
      * @param threadId
      * @param pid
      * @param className
      * @param objectAddress
-     * @param methodName has to start with {@literal "<init>"}
+     * @param methodName
      */
     protected void addAddressToNamesAndContainerIfNeeded(String threadId, String pid, String className,
 	    String objectAddress, String methodName) {
 	if (objectAddress.equals("null"))
 	    return;
 	if (methodName.startsWith("<init>")) {
-	    replaceAddressInNamesAndContainers(threadId, pid, className, threadId + NOADDRESS, objectAddress);
-	}
-    }
+	    String addressReplacement = threadId + NOADDRESS;
 
-    protected void replaceAddressInNamesAndContainers(String threadId, String pid, String classNameOrArrayType,
-	    String oldAddress, String newAddress) {
-	// object/array
-	boolean isArray = isArrayType(classNameOrArrayType);
+	    // object
+	    IName oldObjectName = new ObjectName(pid, className, addressReplacement);
+	    IContainer oldObjectContainer = _informationFlowModel.getContainer(oldObjectName);
+	    if (oldObjectContainer != null) {
+		IName newObjectName = new ObjectName(pid, className, objectAddress);
+		IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className, objectAddress);
+		_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
+		for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
+		    _informationFlowModel.addAlias(aliasFrom, newObjectContainer);
+		}
+		for (IContainer aliasTo : _informationFlowModel.getAliasesTo(oldObjectContainer)) {
+		    _informationFlowModel.addAlias(newObjectContainer, aliasTo);
+		}
+		for (IName oldName : _informationFlowModel.getAllNames(oldObjectContainer)) {
+		    _informationFlowModel.addName(oldName, newObjectContainer, false);
+		}
+		_informationFlowModel.removeName(oldObjectName, true);
+	    } else
+		return; // if there is no uninitialized object, then the
+			// replacement was already done
 
-	ReferenceName oldPrimaryName;
-	if (isArray) {
-	    oldPrimaryName = new ArrayName(pid, classNameOrArrayType, oldAddress);
-	} else {
-	    oldPrimaryName = new ObjectName(pid, classNameOrArrayType, oldAddress);
-	}
-	IContainer oldContainer = _informationFlowModel.getContainer(oldPrimaryName);
-	if (oldContainer == null)
-	    return;
-	// if there is no object with the old address, then the replacement for everything else like locals, fields,
-	// array elements, was already done
-
-	ReferenceName newPrimaryName;
-	if (isArray) {
-	    newPrimaryName = new ArrayName(pid, classNameOrArrayType, newAddress);
-	} else {
-	    newPrimaryName = new ObjectName(pid, classNameOrArrayType, newAddress);
-	}
-	IContainer newContainer = addContainerIfNotExists(newPrimaryName, classNameOrArrayType, newAddress);
-	_informationFlowModel.addData(_informationFlowModel.getData(oldContainer), newContainer);
-	_informationFlowModel.getAliasesFrom(oldContainer).forEach(
-		aliasTo -> _informationFlowModel.addAlias(newContainer, aliasTo));
-	_informationFlowModel.getAliasesTo(oldContainer).forEach(
-		aliasFrom -> _informationFlowModel.addAlias(aliasFrom, newContainer));
-	_informationFlowModel.getAllNames(oldContainer).forEach(
-		oldContainerName -> _informationFlowModel.addName(oldContainerName, newContainer, false));
-
-	_informationFlowModel.removeName(oldPrimaryName, true);
-
-	// replace associated names like fields, array elements, local variables
-	_informationFlowModel.getAllNames().stream().filter(
-		name -> {
-		    if (name instanceof InstanceMethodVariableName && threadId != null) {
-			InstanceMethodVariableName lVarName = (InstanceMethodVariableName) name;
-			return lVarName.getPid().equals(pid) && lVarName.getThreadId().equals(threadId)
-				&& lVarName.getClassName().equals(classNameOrArrayType)
-				&& lVarName.getObjectAddress().equals(oldAddress);
-		    } else if (name instanceof ArrayElementName) {
-			ArrayElementName aeName = (ArrayElementName) name;
-			return aeName.getPid().equals(pid) && aeName.getType().equals(classNameOrArrayType)
-				&& aeName.getAddress().equals(oldAddress);
-		    } else if (name instanceof InstanceFieldName) {
-			InstanceFieldName ifName = (InstanceFieldName) name;
-			return ifName.getPid().equals(pid) && ifName.getClassName().equals(classNameOrArrayType)
-				&& ifName.getObjectAddress().equals(oldAddress);
-		    } else
-			return false;
-		}).forEach(
-		oldName -> {
-		    if (oldName instanceof InstanceMethodVariableName) {
-			InstanceMethodVariableName oldlVarName = (InstanceMethodVariableName) oldName;
-			IName newlVarName = new InstanceMethodVariableName(pid, threadId, classNameOrArrayType,
-				newAddress, oldlVarName.getMethodName(), oldlVarName.getVarName());
-			_informationFlowModel.addName(oldlVarName, newlVarName);
-		    } else if (oldName instanceof ArrayElementName) {
-			ArrayElementName oldAEName = (ArrayElementName) oldName;
-			IName newAEName = new ArrayElementName(pid, classNameOrArrayType, newAddress, oldAEName
-				.getIndex());
-			IContainer oldAEContainer = _informationFlowModel.getContainer(oldAEName);
-			if (oldAEContainer instanceof ValueContainer) {
-			    // true only if array is of primitive type elements => container has one single name and
-			    // one alias to the corresponding array
-			    IContainer newAEContainer = addContainerIfNotExists(newAEName, null, null);
-			    _informationFlowModel.copyData(oldAEContainer, newAEContainer);
-			    _informationFlowModel.getAliasesFrom(oldAEContainer).forEach(
-				    aliasTo -> _informationFlowModel.addAlias(newAEContainer, aliasTo));
-			    _informationFlowModel.addName(newAEName, newAEContainer, false);
-			} else {
-			    _informationFlowModel.addName(oldAEName, newAEName);
-			}
-		    } else if (oldName instanceof InstanceFieldName) {
-			InstanceFieldName oldFieldName = (InstanceFieldName) oldName;
-			IName newFieldName = new InstanceFieldName(pid, classNameOrArrayType, newAddress, oldFieldName
-				.getFieldName());
-			IContainer oldFieldContainer = _informationFlowModel.getContainer(oldName);
-			if (oldFieldContainer instanceof ValueContainer) {
-			    IContainer newFieldContainer = addContainerIfNotExists(newFieldName, null, null);
-			    _informationFlowModel.copyData(oldFieldContainer, newFieldContainer);
-			    _informationFlowModel.getAliasesFrom(oldFieldContainer).forEach(
-				    aliasTo -> _informationFlowModel.addAlias(newFieldContainer, aliasTo));
-			    _informationFlowModel.addName(newFieldName, newFieldContainer, false);
-			} else {
-			    _informationFlowModel.addName(oldFieldName, newFieldName);
-			}
+	    // method locals
+	    Set<InstanceMethodVariableName> namesToReplace = new HashSet<>();
+	    for (IName name : _informationFlowModel.getAllNames()) {
+		if (name instanceof InstanceMethodVariableName) {
+		    InstanceMethodVariableName iVarName = (InstanceMethodVariableName) name;
+		    if (iVarName.getPid().equals(pid) && iVarName.getThreadId().equals(threadId)
+			    && iVarName.getClassName().equals(className)
+			    && iVarName.getObjectAddress().equals(addressReplacement)) {
+			namesToReplace.add(iVarName);
 		    }
-		    _informationFlowModel.removeName(oldName);
-		});
+		}
+	    }
+	    for (InstanceMethodVariableName oldName : namesToReplace) {
+		IName fixedName = new InstanceMethodVariableName(oldName.getPid(), oldName.getThreadId(),
+			oldName.getClassName(), objectAddress, oldName.getMethodName(),
+			oldName.getVarName());
+		_informationFlowModel.addName(oldName, fixedName);
+		_informationFlowModel.removeName(oldName);
+	    }
+	}
     }
-
+    
     /**
-     * Looks up in the InformationFlowModel if there is already a container with the specified name. true => return
-     * container. false => Create a new container based on provided className, address and name. If a value container is
-     * desired, className and address should be null.
-     * 
+     * Looks up in the InformationFlowModel if there is already a container with the specified name. true => return container.
+     * false => Create a new container based on provided className, address and name.
+     * If a value container is desired, className and address should be null.
      * @param name
      * @param className
      * @param address
@@ -322,8 +271,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		if (isArrayType(className)) {
 		    container = new ArrayContainer(getPID(), className, address);
 		    if (!(name instanceof ArrayName)) {
-			ArrayName arrayName = new ArrayName(getPID(), className, address);
-			_informationFlowModel.addName(arrayName, container, false);
+			 ArrayName arrayName = new ArrayName(getPID(), className, address);
+			 _informationFlowModel.addName(arrayName, container, false);
 		    }
 		} else {
 		    container = new ObjectContainer(getPID(), className, address);
@@ -334,9 +283,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 		}
 	    } else {
 		if (name instanceof ArrayElementName) {
-		    ArrayElementName aeName = (ArrayElementName) name;
-		    container = new ArrayElementContainer(getPID(), aeName.getType(), aeName.getAddress(), aeName
-			    .getIndex());
+		    ArrayElementName aeName = (ArrayElementName)name;
+		    container = new ArrayElementContainer(getPID(), aeName.getType(), aeName.getAddress(), aeName.getIndex());
 		} else {
 		    container = new ValueContainer(getPID());
 		}
@@ -347,8 +295,8 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
     }
 
     /**
-     * Traverses the alias graph and returns all data being "visible" in {@code container} in respect to the alias
-     * function.
+     * Traverses the alias graph and returns all data being "visible" in
+     * {@code container} in respect to the alias function.
      * 
      * @param container
      * @return
