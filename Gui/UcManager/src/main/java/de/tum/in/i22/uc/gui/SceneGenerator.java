@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -382,11 +383,16 @@ public class SceneGenerator {
 	}
 
 	protected void switchGuiCmp(boolean p) {
-		this.btn_deployPolicy.setDisable(!p);
-		this.btn_refreshPip.setDisable(!p);
-		this.btn_stop.setDisable(!p);
-		this.tabpane_center.setDisable(!p);
-		this.btn_start.setDisable(p);
+		Platform.runLater(new Runnable(){
+			@Override
+			public void run(){
+				btn_deployPolicy.setDisable(!p);
+				btn_refreshPip.setDisable(!p);
+				btn_stop.setDisable(!p);
+				tabpane_center.setDisable(!p);
+				btn_start.setDisable(p);				
+			}
+		});
 	}
 
 	public Node generateBottom(){

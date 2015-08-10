@@ -492,23 +492,23 @@ public class MainEventHandler {
 		File file = fc.showOpenDialog(btnBlacklist.getScene().getWindow());
 		if (file != null) {
 			ConfigProperties.setConfigFile(file.getAbsolutePath());
-			tfPdpHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PDP_HOST.toString()));
-			tfPdpPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PDP_PORT.toString()));
-			tfPipHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PIP_HOST.toString()));
-			tfPipPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PIP_PORT.toString()));
-			tfPmpHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PMP_HOST.toString()));
-			tfPmpPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PMP_PORT.toString()));
-			tfAnalysisReport.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.ANALYSIS_REPORT.toString()));
-			tfBlacklist.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.BLACKLIST.toString()));
-			tfInstClasspath.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.INSTRUMENTED_CLASS_PATH.toString()));
-			tfUcConfigStatistics.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.STATISTICS.toString()));
-			cbInst.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.INSTRUMENTATION.toString())));
-			cbEnf.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.ENFORCEMENT.toString())));
-			cbT1.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T1.toString())));
-			cbT2.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T2.toString())));
-			cbT3.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T3.toString())));
-			cbT4.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T4.toString())));
-			cbT5.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T5.toString())));
+			tfPdpHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PDP_HOST));
+			tfPdpPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PDP_PORT));
+			tfPipHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PIP_HOST));
+			tfPipPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PIP_PORT));
+			tfPmpHost.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PMP_HOST));
+			tfPmpPort.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.PMP_PORT));
+			tfAnalysisReport.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.ANALYSIS_REPORT));
+			tfBlacklist.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.BLACKLIST));
+			tfInstClasspath.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.INSTRUMENTED_CLASS_PATH));
+			tfUcConfigStatistics.setText(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.STATISTICS));
+			cbInst.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.INSTRUMENTATION)));
+			cbEnf.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.ENFORCEMENT)));
+			cbT1.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T1)));
+			cbT2.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T2)));
+			cbT3.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T3)));
+			cbT4.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T4)));
+			cbT5.setSelected(new Boolean(ConfigProperties.getProperty(ConfigProperties.PROPERTIES.TIMER_T5)));
 		}
 	}
 
