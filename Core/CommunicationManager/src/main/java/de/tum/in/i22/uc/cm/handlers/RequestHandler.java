@@ -109,13 +109,13 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 	protected RequestHandler() {
 	}
 
-	
+
 	public static RequestHandler newInstance() {
 		RequestHandler reqHandler = new RequestHandler();
 		reqHandler.init(LocalLocation.getInstance(), LocalLocation.getInstance(), LocalLocation.getInstance());
 		return reqHandler;
 	}
-	
+
 
 	protected void init(Location pdpLocation, Location pipLocation, Location pmpLocation) {
 		_settings = Settings.getInstance();
