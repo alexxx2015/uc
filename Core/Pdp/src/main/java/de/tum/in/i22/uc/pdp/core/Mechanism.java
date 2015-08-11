@@ -9,11 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.MoreObjects;
+import java.util.logging.Logger;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -21,7 +17,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidConditionException;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
-import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
 public abstract class Mechanism extends Observable implements Runnable, IMechanism {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);
@@ -141,6 +136,10 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 		_interrupted.set(true);
 	}
 
+	public boolean triggerEventMatches(IEvent ev) {
+		return _triggerEvent.matches(ev);
+	}
+
 	public boolean notifyEvent(IEvent event) {
 		return _triggerEvent.matches(event) && evaluateCondition(false);
 	}
@@ -243,8 +242,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 
 	private void initLastTick() {
 		long now = System.currentTimeMillis();
-		_lastTick = now - (now - _firstTick) % _timestepSize;
-		_timestep = 1 + (now - _firstTick) / _timestepSize;
+		_lastTick = now - ((now - _firstTick) % _timestepSize);
+		_timestep = 1 + ((now - _firstTick) / _timestepSize);
 	}
 
 	/**
@@ -276,7 +275,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 * is the amount of time that passed during the last tick()
 			 * and all associated overhead within this method.
 			 */
-			if (!sleep(_lastTick + _timestepSize - System.currentTimeMillis())) {
+			if (!sleep((_lastTick + _timestepSize) - System.currentTimeMillis())) {
 				/*
 				 * Sleep was interrupted and returned false.
 				 * There are two reasons why this might happen:
@@ -308,7 +307,7 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 						// In this cases the Mechanism was revoked (_interrupted.get() == true),
 						// which will result in termination of this method's main loop.
 					}
-					*/
+					 */
 				}
 
 				/*
@@ -339,8 +338,8 @@ public abstract class Mechanism extends Observable implements Runnable, IMechani
 			 */
 			_lastTick += _timestepSize;
 
-//			setChanged();
-//			notifyObservers(END_OF_TIMESTEP);
+			//			setChanged();
+			//			notifyObservers(END_OF_TIMESTEP);
 		}
 	}
 

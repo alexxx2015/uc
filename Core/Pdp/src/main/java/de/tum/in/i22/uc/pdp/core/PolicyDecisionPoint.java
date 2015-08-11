@@ -12,15 +12,12 @@ import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -40,11 +37,10 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
-import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
 
 /**
- * 
+ *
  * @author Florian Kelbert et al.
  *
  */
@@ -327,14 +323,27 @@ public class PolicyDecisionPoint implements Observer {
 			 * evaluation result.
 			 */
 
-			/* The first thing to do is to start the
+			/*
+			 * The first thing to do is to start the
 			 * simulation of the PIP and the Mechanisms.
-			 * This is done in parallel using a
-			 * ExecutorCompletionService.
+			 * This is done in parallel.
 			 */
 			_csMechanisms.submit(() -> _pip.startSimulation(), null);
 			mechanisms = Threading.resultOf(futureMechanisms);
-			mechanisms.forEach(m -> _csMechanisms.submit(() -> m.startSimulation(), null));
+
+			/*
+			 * We are processing desired events at this point.
+			 * Therefore start simulation only for those mechanisms
+			 * for which the trigger event actually matches.
+			 */
+			mechanisms.forEach(m -> {
+				if (m.triggerEventMatches(event)) {
+					_csMechanisms.submit(() -> m.startSimulation(), null);
+				}
+				else {
+					_csMechanisms.submit(() -> { return; }, null);
+				}
+			});
 			Threading.waitFor(mechanisms.size() + 1, _csMechanisms);
 
 			/*
@@ -356,10 +365,18 @@ public class PolicyDecisionPoint implements Observer {
 			 * effectively simulating the end of a timestep.
 			 * After getting the evaluation result, stop
 			 * the simulation.
+			 *
+			 * However, only notify to those mechanisms
+			 * for which the trigger event matches, saving
+			 * some evaluation cost.
 			 */
 			mechanisms.forEach(m -> _csMechanisms.submit(() -> {
-				boolean result = m.notifyEvent(event);
-				m.stopSimulation();
+				boolean result = false;
+
+				if (m.triggerEventMatches(event)) {
+					result = m.notifyEvent(event);
+					m.stopSimulation();
+				}
 				return Pair.of(m,result);
 			}));
 
@@ -399,7 +416,7 @@ public class PolicyDecisionPoint implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof IOperator) {
-			if (arg instanceof IEvent && ((IEvent) arg).isActual()) {
+			if ((arg instanceof IEvent) && ((IEvent) arg).isActual()) {
 				_dmp.notify((IOperator) o, false);
 			}
 			else if (arg == Mechanism.END_OF_TIMESTEP) {
