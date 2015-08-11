@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.MoreObjects;
 
 import de.tum.in.i22.uc.cm.datatypes.interfaces.ICondition;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
@@ -17,6 +21,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IMechanism;
 import de.tum.in.i22.uc.cm.distribution.Threading;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidConditionException;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidMechanismException;
+import de.tum.in.i22.uc.pdp.xsd.MechanismBaseType;
 
 public abstract class Mechanism extends Observable implements Runnable, IMechanism {
 	protected static Logger _logger = LoggerFactory.getLogger(Mechanism.class);

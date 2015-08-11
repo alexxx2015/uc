@@ -12,12 +12,15 @@ import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -37,6 +40,7 @@ import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.pdp.PxpManager;
 import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
+import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
 
 /**
