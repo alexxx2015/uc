@@ -1,9 +1,24 @@
 package de.tum.in.i22.uc.pip;
 
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.ADDRESS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.ARRAYS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.ARRAY_ELEMENTS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.CLASSNAME;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.FIELD_NAME;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.INDEX;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.INSTANCE_FIELDS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.OBJECTS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.OBJECT_ADDRESS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.PID;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.STATIC_FIELDS;
+import static de.tum.in.i22.uc.cm.datatypes.java.NameKeys.TYPE;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
@@ -24,6 +39,16 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ArrayContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ObjectContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.ValueContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayElementName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ArrayName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceFieldName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.StaticFieldName;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
 import de.tum.in.i22.uc.cm.factories.MessageFactory;
 import de.tum.in.i22.uc.cm.pip.ifm.IBasicInformationFlowModel;
@@ -372,5 +397,107 @@ public class PipHandler extends PipProcessor {
 	@Override
 	public boolean deleteStructure(IData d) {
 		return _ifModelManager.deleteStructure(d);
+	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(
+			Map<String, String> params) {
+		// TODO Auto-generated method stub
+		
+		String pid = params.get("processId");
+		String sourceId = params.get("sourceId");
+		long minTimeStamp = Long.valueOf(params.get("minTimeStamp"));
+		
+		Map<String, Set<Map<String, String>>> filteredModel = new HashMap<>();
+		filteredModel.put(OBJECTS, new HashSet<Map<String,String>>());
+		filteredModel.put(INSTANCE_FIELDS, new HashSet<Map<String,String>>());
+		filteredModel.put(STATIC_FIELDS, new HashSet<Map<String,String>>());
+		filteredModel.put(ARRAYS, new HashSet<Map<String,String>>());
+		filteredModel.put(ARRAY_ELEMENTS, new HashSet<Map<String,String>>());
+		
+		// collect all containers (with their names) where each name has the specified pid
+		// they should also contain data with specified sourceId and being older than minTimeStamp
+		Map<IContainer, Set<JavaName>> filteredContainers = new HashMap<IContainer, Set<JavaName>>();
+		
+		for (IName name : _ifModel.getAllNames()) {
+		    if (name instanceof JavaName) {
+			JavaName javaName = (JavaName) name;
+			if (javaName.getPid().equals(pid)) {
+			    IContainer container = _ifModel.getContainer(javaName);
+			    for (IData data : _ifModel.getData(container)) {
+				if (data instanceof SourceData) {
+				    SourceData sourceData = (SourceData)data;
+				    if (sourceData.getSourceId().equals(sourceId) && sourceData.getTimeStamp() < minTimeStamp) {
+					if (!filteredContainers.keySet().contains(container)) {
+					    filteredContainers.put(container, new HashSet<JavaName>());
+					}
+					filteredContainers.get(container).add(javaName);
+					break;
+				    }
+				}
+			    }
+			    
+			}
+		    }
+		}
+
+		// filter names for enforceable ones, one name per container is enough to enforce
+		// check if container value type -> it should have only ONE name
+		// container array type -> always has ONE ArrayName pointing to it
+		// container object type -> always has ONE ObjectName pointing to it
+		for (Entry<IContainer, Set<JavaName>> containerWithNames : filteredContainers.entrySet()) {
+		    IContainer container = containerWithNames.getKey();
+		    Set<JavaName> names = containerWithNames.getValue();
+		    if (container instanceof ValueContainer) {
+			if (!names.isEmpty()) {
+			    JavaName name = names.iterator().next();
+			    if (name instanceof ArrayElementName) {
+				ArrayElementName arrayElementName = (ArrayElementName) name;
+				Map<String, String> props = new HashMap<>();
+				props.put(PID, arrayElementName.getPid());
+				props.put(TYPE, arrayElementName.getType());
+				props.put(ADDRESS, arrayElementName.getAddress());
+				props.put(INDEX, String.valueOf(arrayElementName.getIndex()));
+				filteredModel.get(ARRAY_ELEMENTS).add(props);
+			    } else if (name instanceof InstanceFieldName) {
+				InstanceFieldName instanceFieldName = (InstanceFieldName) name;
+				Map<String, String> props = new HashMap<>();
+				props.put(PID, instanceFieldName.getPid());
+				props.put(CLASSNAME, instanceFieldName.getClassName());
+				props.put(OBJECT_ADDRESS, instanceFieldName.getObjectAddress());
+				props.put(FIELD_NAME, instanceFieldName.getFieldName());
+				filteredModel.get(INSTANCE_FIELDS).add(props);
+			    } else if (name instanceof StaticFieldName) {
+				StaticFieldName staticFieldName = (StaticFieldName) name;
+				Map<String, String> props = new HashMap<>();
+				props.put(PID, staticFieldName.getPid());
+				props.put(CLASSNAME, staticFieldName.getClassName());
+				props.put(FIELD_NAME, staticFieldName.getFieldName());
+				filteredModel.get(STATIC_FIELDS).add(props);
+			    }
+			}
+		    } else {
+			for (JavaName name : names) {
+			    if (container instanceof ObjectContainer && name instanceof ObjectName) {
+				ObjectName objectName = (ObjectName) name;
+				Map<String, String> props = new HashMap<>();
+				props.put(PID, objectName.getPid());
+				props.put(CLASSNAME, objectName.getClassName());
+				props.put(ADDRESS, objectName.getAddress());
+				filteredModel.get(OBJECTS).add(props);
+				break;
+			    } else if (container instanceof ArrayContainer && name instanceof ArrayName) {
+				ArrayName arrayName = (ArrayName) name;
+				Map<String, String> props = new HashMap<>();
+				props.put(PID, arrayName.getPid());
+				props.put(TYPE, arrayName.getType());
+				props.put(ADDRESS, arrayName.getAddress());
+				filteredModel.get(ARRAYS).add(props);
+				break;
+			    }
+			}
+		    }
+		}
+		return filteredModel;
 	}
 }

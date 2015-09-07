@@ -22,12 +22,11 @@ import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.thrift.ThriftConnector;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 
-
 /**
  * The client side of a remote Thrift {@link PipProcessor} server.
  *
- * Create a instance of this class, connects it
- * and does calls on a remote {@link PipProcessor}.
+ * Create a instance of this class, connects it and does calls on a remote
+ * {@link PipProcessor}.
  *
  * Use {@link ThriftClientFactory} to get an instance.
  *
@@ -35,33 +34,37 @@ import de.tum.in.i22.uc.thrift.types.TAny2Pip;
  *
  */
 class ThriftAny2PipClient extends Any2PipClient {
-	protected static final Logger _logger = LoggerFactory.getLogger(ThriftAny2PipClient.class);
+	protected static final Logger _logger = LoggerFactory
+			.getLogger(ThriftAny2PipClient.class);
 
 	private ThriftAny2PipImpl _impl;
 
 	private final ThriftConnector<TAny2Pip.Client> _connector;
 
 	/**
-	 * Creates a {@link ThriftAny2PipClient} that will be
-	 * connected (upon calling {@link Any2PipClient#connect()})
-	 * the the specified thrift server on the specified address/port.
+	 * Creates a {@link ThriftAny2PipClient} that will be connected (upon
+	 * calling {@link Any2PipClient#connect()}) the the specified thrift server
+	 * on the specified address/port.
 	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
-	 * @param address the address of the remote point
-	 * @param port the port of the remote point
+	 * @param address
+	 *            the address of the remote point
+	 * @param port
+	 *            the port of the remote point
 	 */
 	private ThriftAny2PipClient(String address, int port) {
 		this(new ThriftConnector<>(address, port, TAny2Pip.Client.class));
 	}
 
 	/**
-	 * Creates a new {@link ThriftAny2PipClient} that will be connected
-	 * to the specified {@link IPLocation}.
+	 * Creates a new {@link ThriftAny2PipClient} that will be connected to the
+	 * specified {@link IPLocation}.
 	 *
 	 * Use {@link ThriftClientFactory} to get an instance.
 	 *
-	 * @param location the location of the remote point
+	 * @param location
+	 *            the location of the remote point
 	 */
 	ThriftAny2PipClient(IPLocation location) {
 		this(location.getHost(), location.getPort());
@@ -84,7 +87,8 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public boolean evaluatePredicateSimulatingNextState(IEvent event, String predicate) {
+	public boolean evaluatePredicateSimulatingNextState(IEvent event,
+			String predicate) {
 		return _impl.evaluatePredicateSimulatingNextState(event, predicate);
 	}
 
@@ -124,9 +128,10 @@ class ThriftAny2PipClient extends Any2PipClient {
 	}
 
 	@Override
-	public IStatus updateInformationFlowSemantics(IPipDeployer deployer, File jarFile,
-			EConflictResolution flagForTheConflictResolution) {
-		return _impl.updateInformationFlowSemantics(deployer, jarFile, flagForTheConflictResolution);
+	public IStatus updateInformationFlowSemantics(IPipDeployer deployer,
+			File jarFile, EConflictResolution flagForTheConflictResolution) {
+		return _impl.updateInformationFlowSemantics(deployer, jarFile,
+				flagForTheConflictResolution);
 	}
 
 	@Override
@@ -187,5 +192,11 @@ class ThriftAny2PipClient extends Any2PipClient {
 	@Override
 	public boolean deleteStructure(IData d) {
 		return _impl.deleteStructure(d);
+	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(
+			Map<String, String> params) {
+		return _impl.filterModel(params);
 	}
 }

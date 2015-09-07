@@ -54,6 +54,7 @@ import de.tum.in.i22.uc.pip.requests.DeleteChecksumPipRequest;
 import de.tum.in.i22.uc.pip.requests.DeleteStructurePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateCurrentStatePipRequest;
 import de.tum.in.i22.uc.pip.requests.EvaluatePredicateSimulatingNextStatePipRequest;
+import de.tum.in.i22.uc.pip.requests.FilterModelPipRequest;
 import de.tum.in.i22.uc.pip.requests.FlattenStructurePipRequest;
 import de.tum.in.i22.uc.pip.requests.GetChecksumOfPipRequest;
 import de.tum.in.i22.uc.pip.requests.GetContainersForDataPipRequest;
@@ -601,5 +602,13 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 		RemoteTransferDmpRequest request = new RemoteTransferDmpRequest(policies, fromHost, containerName, data);
 		_requestQueueManager.addRequest(request, this);
 		return waitForResponse(request);
+	}
+
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) {
+	    FilterModelPipRequest request = new FilterModelPipRequest(params);
+	    _requestQueueManager.addRequest(request, this);
+	    return waitForResponse(request);
 	}
 }

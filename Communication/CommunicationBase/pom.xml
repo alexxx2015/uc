@@ -73,6 +73,7 @@
 								
 								<!-- Pxp2X -->
 								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Pdp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPxp2Pip</param>
 								
 								<!-- Dmp2X -->
 								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Dmp</param>

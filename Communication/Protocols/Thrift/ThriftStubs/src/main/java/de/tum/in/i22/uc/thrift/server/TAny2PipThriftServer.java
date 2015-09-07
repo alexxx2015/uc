@@ -201,4 +201,9 @@ TAny2Pip.Iface {
 		return _handler
 				.newChecksum(ThriftConverter.fromThrift(data),ThriftConverter.fromThrift(checksum),overwrite);
 	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(Map<String, String> params) throws TException {
+	    return _handler.filterModel(params);
+	}
 }

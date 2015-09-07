@@ -76,6 +76,17 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_pipInitialRepresentations = "pipInitialRepresentations";
 
+	public static final String PROP_NAME_communicationProtocol = "communicationProtocol";
+
+	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
+
+	public static final String PROP_NAME_distributionStrategy = "distributionStrategy";
+	public static final String PROP_NAME_pipDistributionMaxConnections = "pipDistributionMaxConnections";
+
+	public static final String PROP_NAME_pdpDistributionMaxConnections = "pdpDistributionMaxConnections";
+
+	public static final String PROP_NAME_pmpDistributionMaxConnections = "pmpDistributionMaxConnections";
+
 	public static final String PROP_NAME_connectionAttemptInterval = "connectionAttemptInterval";
 
 	public static final String PROP_NAME_starEvent = "starEvent";
@@ -103,6 +114,8 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_joanaDelimiter2 = "joanaDelimiter2";
 
 	public static final String PROP_NAME_joanaPidPoiSeparator = "joanaPidPoiSeparator";
+	public static final String PROP_NAME_javaNamingDelimiter = "javaNamingDelimiter";
+	public static final String PROP_NAME_javaNull = "javaNull";
 
 	public static final String PROP_NAME_cleanUpInterval = "cleanUpInterval";
 
@@ -117,8 +130,6 @@ public class Settings extends SettingsLoader {
 
 	public static final String PROP_NAME_ptpResources = "ptpResources";
 	public static final String PROP_NAME_ptEditorResources = "ptEditorResources";
-
-	public static final String PROP_NAME_distributionEnabled = "distributionEnabled";
 
 	/**
 	 * The number of milliseconds to wait between re-trying to read/write the distributed database in case of failure
@@ -277,6 +288,9 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_joanaDelimiter1, ":");
 		loadSetting(PROP_NAME_joanaDelimiter2, "#");
 		loadSetting(PROP_NAME_joanaPidPoiSeparator, "--");
+		loadSetting(PROP_NAME_javaNamingDelimiter, "|");
+		loadSetting(PROP_NAME_javaNull, "null");
+
 
 		loadSetting(PROP_NAME_cleanUpInterval, 10000);
 
@@ -629,6 +643,14 @@ public class Settings extends SettingsLoader {
 
 	public String getJoanaPidPoiSeparator(){
 		return getValue(PROP_NAME_joanaPidPoiSeparator);
+	}
+	
+	public String getJavaNamingDelimiter(){
+		return getValue(PROP_NAME_javaNamingDelimiter);
+	}
+	
+	public String getJavaNull(){
+		return getValue(PROP_NAME_javaNull);
 	}
 
 	public int getCleanUpInterval(){

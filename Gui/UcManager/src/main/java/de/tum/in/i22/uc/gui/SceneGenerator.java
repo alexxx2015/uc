@@ -126,13 +126,13 @@ public class SceneGenerator {
 			}
 		});
 
-//		final Tab pmpTab = new Tab();
-//		pmpTab.setClosable(false);
-//		pmpTab.setText("PMP");
-//		pmpTab.setId("PMPTAB");
-//		pmpTab.setContent(generatePmpTab());
+		final Tab pmpTab = new Tab();
+		pmpTab.setClosable(false);
+		pmpTab.setText("PMP");
+		pmpTab.setId("PMPTAB");
+		pmpTab.setContent(generatePmpTab());
 
-		this.tabpane_center.getTabs().addAll(pdpTab, pipTab);//, pmpTab);
+		this.tabpane_center.getTabs().addAll(pdpTab, pipTab, pmpTab);
 		return this.tabpane_center;
 	}
 
@@ -198,7 +198,6 @@ public class SceneGenerator {
 		AnchorPane.setLeftAnchor(hbox, 10.0);
 
 		this.txta_pipState = new TextArea();
-		this.txta_pipState.setStyle("-fx-font-family: 'Courier New', MONOSPACE;");
 		AnchorPane.setTopAnchor(this.txta_pipState, 45.0);
 		AnchorPane.setLeftAnchor(this.txta_pipState, 10.0);
 		AnchorPane.setBottomAnchor(this.txta_pipState, 10.0);
@@ -304,7 +303,7 @@ public class SceneGenerator {
 
 				FileChooser fc = new FileChooser();
 				fc.setTitle("Choose Policy");
-				fc.setInitialDirectory(new File("/home/alex/Policies"));
+				//fc.setInitialDirectory(new File("/home/alex/Policies"));
 				File f = fc.showOpenDialog(SceneGenerator.stage);
 				if (f != null) {
 					controller.deployPolicyURIPmp(f.getAbsolutePath());
@@ -383,16 +382,11 @@ public class SceneGenerator {
 	}
 
 	protected void switchGuiCmp(boolean p) {
-		Platform.runLater(new Runnable(){
-			@Override
-			public void run(){
-				btn_deployPolicy.setDisable(!p);
-				btn_refreshPip.setDisable(!p);
-				btn_stop.setDisable(!p);
-				tabpane_center.setDisable(!p);
-				btn_start.setDisable(p);				
-			}
-		});
+		this.btn_deployPolicy.setDisable(!p);
+		this.btn_refreshPip.setDisable(!p);
+		this.btn_stop.setDisable(!p);
+		this.tabpane_center.setDisable(!p);
+		this.btn_start.setDisable(p);
 	}
 
 	public Node generateBottom(){

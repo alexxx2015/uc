@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import de.tum.in.i22.uc.cm.datatypes.basic.ResponseBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
@@ -81,6 +83,13 @@ class MyProcessor extends AbstractRequestHandler {
 		else
 			list.add(pepEvent);
 		return new ResponseBasic(new StatusBasic(EStatus.ALLOW));
+	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(
+			Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

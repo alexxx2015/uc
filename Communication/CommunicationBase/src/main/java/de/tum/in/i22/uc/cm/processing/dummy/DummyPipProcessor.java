@@ -36,6 +36,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IPipDeployer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.distribution.LocalLocation;
+import de.tum.in.i22.uc.cm.distribution.Location;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 
 public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
@@ -211,6 +212,13 @@ public class DummyPipProcessor extends PipProcessor implements IDummyProcessor {
 		_logger.error("PipProcessor DUMMY Implementation");
 		_logger.error("deleteStructure method invoked");
 		return false;
+	}
+
+	@Override
+	public Map<String, Set<Map<String, String>>> filterModel(
+			Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
