@@ -73,12 +73,19 @@ public class SceneGenerator {
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				new Thread() {
-					@Override
+//				new Thread() {
+//					@Override
+//					public void run() {
+//						controller.startUc();
+//					}
+//				}.start();
+
+				Platform.runLater(new Runnable(){
+
 					public void run() {
 						controller.startUc();
 					}
-				}.start();
+				});
 			}
 		});
 		hb.getChildren().add(btn_start);
