@@ -70,9 +70,9 @@ public class DialogConsoleEventHandler {
 				this.process.getOutputStream().write(text.getBytes());
 				this.process.getOutputStream().flush();
 				tfInput.setText("");
-				if(!this.process.isAlive()){
-					this.close(null);
-				}
+//				if(!this.process.isAlive()){
+//					this.close(null);
+//				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 //				e.printStackTrace();
@@ -96,14 +96,14 @@ public class DialogConsoleEventHandler {
 		this.heartbeatThread = new Thread(){
 			public void run(){
 				while(!isInterrupted()){
-					if(!process.isAlive()){
+//					if(!process.isAlive()){
 						Platform.runLater(new Runnable(){
 							public void run(){
 								close(null);	
 							}
 						});
 						interrupt();
-					}
+//					}
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
