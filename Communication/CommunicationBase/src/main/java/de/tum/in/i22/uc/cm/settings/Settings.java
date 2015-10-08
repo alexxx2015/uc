@@ -239,13 +239,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pep, "PEP");
 		loadSetting(PROP_NAME_allowImpliesActual, false);
 
-		loadSetting(PROP_NAME_pipInitialRepresentations,
-				new HashMap<IName, IData>() {
-			private static final long serialVersionUID = -2810488356921449504L;
-			{
-				put(new NameBasic("TEST_C"), new DataBasic("TEST_D"));
-			}
-		});
+		loadSetting(PROP_NAME_pipInitialRepresentations, new HashMap<IName, IData>());
 
 		loadSetting(PROP_NAME_distributionEnabled, false);
 		loadSetting(PROP_NAME_distributionWriteConsistency, ConsistencyLevel.QUORUM, ConsistencyLevel.class);
