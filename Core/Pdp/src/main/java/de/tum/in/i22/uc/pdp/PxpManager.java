@@ -16,6 +16,7 @@ import de.tum.in.i22.uc.cm.distribution.client.Any2PxpClient;
 import de.tum.in.i22.uc.pdp.core.ExecuteAction;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
+import com.datastax.driver.core.ConsistencyLevel;
 /**
  * This class manages the connection with the Pxp. It handles the registrations
  * of Pxp components and it dispatches the to-be-executed action to the proper
