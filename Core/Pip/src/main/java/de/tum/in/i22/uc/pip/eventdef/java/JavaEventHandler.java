@@ -302,17 +302,24 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
      * @return
      */
     protected Set<IData> getDataTransitively(IContainer container) {
-	Set<IData> result = new HashSet<>();
-	if (container == null) {
-	    return result;
-	}
+    	return getDataTransitively(container, new HashSet<>());
+    }
+    
+    private Set<IData> getDataTransitively(IContainer container, Set<IContainer> visitedContainers) {
+    	Set<IData> result = new HashSet<>();
+    	if (container == null) {
+    	    return result;
+    	}
 
-	result.addAll(_informationFlowModel.getData(container));
+    	result.addAll(_informationFlowModel.getData(container));
 
-	for (IContainer c : _informationFlowModel.getAliasesTo(container)) {
-	    result.addAll(getDataTransitively(c));
-	}
+    	for (IContainer c : _informationFlowModel.getAliasesTo(container)) {
+    		if (!visitedContainers.contains(c)) {
+    			visitedContainers.add(c);
+    			result.addAll(getDataTransitively(c, visitedContainers));
+    		}
+    	}
 
-	return result;
+    	return result;
     }
 }
