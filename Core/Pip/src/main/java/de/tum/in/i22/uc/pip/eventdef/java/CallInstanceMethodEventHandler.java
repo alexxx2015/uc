@@ -24,10 +24,10 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String callerObjectAddress = null;
-	String callerObjectClass = null;
+	String calleeObjectAddress = null;
+	String calleeObjectClass = null;
 	String calledMethod = null;
-	boolean callerObjectClassIsInstrumented = false;
+	boolean calleeObjectClassIsInstrumented = false;
 	String[] methodArgTypes = null;
 	String[] methodArgAddresses = null;
 	CallChopNodeLabel chopLabel = null;
@@ -38,10 +38,10 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    callerObjectAddress = getParameterValue("callerObjectAddress");
-	    callerObjectClass = getParameterValue("callerObjectClass");
+	    calleeObjectAddress = getParameterValue("callerObjectAddress");
+	    calleeObjectClass = getParameterValue("callerObjectClass");
 	    calledMethod = getParameterValue("calledMethod");
-	    callerObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
+	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
 	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 	    methodArgTypes = new String[methodArgTypesJSON.size()];
 	    methodArgTypesJSON.toArray(methodArgTypes);
@@ -62,22 +62,22 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    // called the constructor
 	    // enables to get the correct instance when the constructor has
 	    // returned
-	    callerObjectAddress = threadId + NOADDRESS;
+	    calleeObjectAddress = threadId + NOADDRESS;
 	}
 
 	// if caller object class is a system class, get its container to add
 	// method parameters to it
-	IContainer callerObjectContainer = null;
-	IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
-	callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObjectClass, callerObjectAddress);
+	IContainer calleeObjectContainer = null;
+	IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
+	calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass, calleeObjectAddress);
 
-	IName callerObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
-		parentMethod, chopLabel.getCaller());
-	_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
+	IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+		parentMethod, chopLabel.getCallee());
+	_informationFlowModel.addName(calleeObjectVarName, calleeObjectContainer, false);
 
 	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
-		callerObjectClass, callerObjectAddress, calledMethod, callerObjectClassIsInstrumented ? null
-			: callerObjectContainer);
+		calleeObjectClass, calleeObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
+			: calleeObjectContainer);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }

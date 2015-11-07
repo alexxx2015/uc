@@ -44,26 +44,26 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 	    // to the container named by called method's parameter (create
 	    // container if necessary)
 
-	    IName outerArgName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+	    IName actualParamName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		    parentMethod, argName);
-	    IName innerArgName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass, callerObjectAddress,
+	    IName formalParamName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass, callerObjectAddress,
 		    calledMethod, "p" + (i + 1));
 
-	    IContainer innerArgContainer;
-	    IContainer outerArgContainer;
+	    IContainer formalParamContainer;
+	    IContainer actualParamContainer;
 
 	    if (isValidAddress(argAddress)) {
-		outerArgContainer = addContainerIfNotExists(outerArgName, argType, argAddress);
-		innerArgContainer = outerArgContainer;
-		_informationFlowModel.addName(innerArgName, outerArgContainer, false);
+		actualParamContainer = addContainerIfNotExists(actualParamName, argType, argAddress);
+		formalParamContainer = actualParamContainer;
+		_informationFlowModel.addName(formalParamName, actualParamContainer, false);
 	    } else {
-		innerArgContainer = addContainerIfNotExists(innerArgName, null, null);
-		outerArgContainer = addContainerIfNotExists(outerArgName, null, null);
-		_informationFlowModel.copyData(outerArgContainer, innerArgContainer);
+		formalParamContainer = addContainerIfNotExists(formalParamName, null, null);
+		actualParamContainer = addContainerIfNotExists(actualParamName, null, null);
+		_informationFlowModel.copyData(actualParamContainer, formalParamContainer);
 	    }
 
 	    if (callerObjectContainer != null) {
-		_informationFlowModel.addAlias(innerArgContainer, callerObjectContainer);
+		_informationFlowModel.addAlias(formalParamContainer, callerObjectContainer);
 	    }
 	}
     }

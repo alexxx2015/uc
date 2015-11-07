@@ -35,7 +35,7 @@ public class ChopNodeLabelTest {
 			System.out.println();
 			System.out.println("input = " + input);
 			System.out.println("assignee = " + (cnl.getLeftSide() != null ? cnl.getLeftSide() : "null"));
-			System.out.println("caller = " + (cnl.getCaller() != null ? cnl.getCaller() : "null"));
+			System.out.println("caller = " + (cnl.getCallee() != null ? cnl.getCallee() : "null"));
 			System.out.println("methodName = " + (cnl.getMethodName() != null ? cnl.getMethodName() : "null"));
 			System.out.println("args = " + (cnl.getArgs() != null ? formatStringArray(cnl.getArgs()) : "null"));
 		}

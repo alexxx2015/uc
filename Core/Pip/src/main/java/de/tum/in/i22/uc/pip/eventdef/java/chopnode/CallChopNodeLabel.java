@@ -75,7 +75,7 @@ public class CallChopNodeLabel {
 		return leftSide;
 	}
 	
-	public String getCaller() {
+	public String getCallee() {
 		return caller;
 	}
 	

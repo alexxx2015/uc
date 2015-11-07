@@ -1,115 +1,76 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import de.tum.in.i22.uc.cm.datatypes.basic.ContainerBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.NameBasic;
-import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic;
 import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IEvent;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
-import de.tum.in.i22.uc.cm.datatypes.interfaces.IScope;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
-import de.tum.in.i22.uc.cm.pip.interfaces.EBehavior;
-import de.tum.in.i22.uc.cm.pip.interfaces.EScopeType;
+import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
+import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
+import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
 
 public class SourceEventHandler extends JavaEventHandler {
 
 	@Override
 	protected IStatus update() {
-		return update(EBehavior.INTRA, null);
-	}
+		String threadId = null;
+		String pid = null;
+		String parentObjectAddress = null;
+		String parentClass = null;
+		String parentMethod = null;
+		String calledObjectAddress = null;
+		String calledObjectClass = null;
+		String calledMethod = null;
+		String returnObjectAddress = null;
+		String fileName = null;
+		String[] methodArgTypes = null;
+		String[] methodArgAddresses = null;		
+		CallChopNodeLabel chopLabel = null;
 
-	@Override
-	protected IScope buildScope(String delimiter) {
-		return buildScope(EScopeType.JBC_GENERIC_LOAD);
-	}
-
-
-	@Override
-	protected IStatus update(EBehavior direction, IScope scope) {
-		IName srcName=null;
-		Set<IData> scopeData = null;
 		try {
-//			String signature = getParameterValue("signature");
-//			String location = getParameterValue("location");
-			int pid = Integer.valueOf(getParameterValue("PID"));
-
-			String sourceId = ""+pid+_javaIFDelim+getParameterValue("id");
-
-//			String sourceId = pid+ _otherDelim + _srcPrefix+ _otherDelim + location + _javaIFDelim + signature;
-
-			if ((sourceId != null) && (!sourceId.equals(""))) {
-				srcName=new NameBasic(sourceId);
-				IContainer srcCnt = _informationFlowModel
-						.getContainer(srcName);
-
-				if (srcCnt==null){
-					srcCnt=new ContainerBasic();
-					_informationFlowModel.addName(srcName, srcCnt, true);
-					Set<IContainer> set = containersByPid.get(""+pid);
-					if (set==null) set = new HashSet<IContainer>();
-					set.add(srcCnt);
-					containersByPid.put(""+pid, set);
-				}
-
-
-				if ((direction.equals(EBehavior.IN))
-						|| (direction.equals(EBehavior.INTRAIN))) {
-
-					IScope os= _informationFlowModel.getOpenedScope(scope);
-					if (os!=null) scope=os;
-					IName scopeName = new NameBasic(scope.getId());
-					scopeData = _informationFlowModel.getData(scopeName);
-
-					_informationFlowModel.addDataTransitively(scopeData, srcCnt);
-				}
-
-				if ((direction.equals(EBehavior.OUT))
-						|| (direction.equals(EBehavior.INTRAOUT))) {
-					// ERROR: a sink event is never IN
-					return new StatusBasic(EStatus.ERROR,
-							"Error: A source event is never OUT");
-				}
-
-
-
-			}
-
-		} catch (ParameterNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    threadId = getParameterValue("threadId");
+		    pid = getParameterValue("processId");
+		    parentObjectAddress = getParameterValue("parentObjectAddress");
+		    parentClass = getParameterValue("parentClass");
+		    parentMethod = getParameterValue("parentMethod");
+		    calledObjectAddress = getParameterValue("calledObjectAddress");
+		    calledObjectClass = getParameterValue("calledObjectClass");
+		    calledMethod = getParameterValue("calledMethod");
+		    returnObjectAddress = getParameterValue("returnObjectAddress");
+		    fileName = getParameterValue("fileName");		    
+		    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
+//		    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
+//		    methodArgTypes = new String[methodArgTypesJSON.size()];
+//		    methodArgTypesJSON.toArray(methodArgTypes);
+//		    JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
+//		    methodArgAddresses = new String[methodArgAddressesJSON.size()];
+//		    methodArgAddressesJSON.toArray(methodArgAddresses);
+		} catch (ParameterNotFoundException | ClassCastException e) {
+		    _logger.error(e.getMessage());
+		    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
+		
+		// if caller object class is a system class, get its container to add
+		// method parameters to it
+		
+		IContainer callerObjectContainer = null;
+		IName callerObjectName = new ObjectName(pid, calledObjectClass, calledObjectAddress);
+		callerObjectContainer = addContainerIfNotExists(callerObjectName, calledObjectClass, calledObjectAddress);
+//
+		IName callerObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+			parentMethod, chopLabel.getCallee());
+		_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
+//
+//		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
+//			callerObjectClass, callerObjectAddress, calledMethod, callerObjectClassIsInstrumented ? null
+//				: callerObjectContainer);
 
-		if (direction.equals(EBehavior.INTRA)) return _messageFactory.createStatus(EStatus.OKAY);
-
-		return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
+		return _messageFactory.createStatus(EStatus.OKAY);
+//		return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}
-
-
-	@Override
-	protected Pair<EBehavior, IScope> XBehav() {
-		String delimiter = null;
-		try {
-			delimiter = getParameterValue(_delimiterName);
-		} catch (ParameterNotFoundException e) {
-			_logger.error(e.getMessage());
-			return null;
-		}
-		delimiter=delimiter.toLowerCase();
-		IScope scope = buildScope(delimiter);
-		if (scope==null)return Pair.of(EBehavior.UNKNOWN, null);
-		if (delimiter.equals(_openDelimiter)) Pair.of(EBehavior.INTRA, scope);
-		if (delimiter.equals(_closeDelimiter)) Pair.of(EBehavior.IN, scope);
-		//this line should never be reached
-		return Pair.of(EBehavior.UNKNOWN, null);
-	}
-
 
 }

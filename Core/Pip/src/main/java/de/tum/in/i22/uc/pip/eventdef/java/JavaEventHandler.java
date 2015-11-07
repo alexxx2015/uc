@@ -33,7 +33,6 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 
 	protected static Map<String, Set<IContainer>> containersByPid = new HashMap<String, Set<IContainer>>();
 
-
 	protected static Map<String, String> contextToObject = new HashMap<String, String>();
 
 	protected final String _paramId = "id";
@@ -50,22 +49,18 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	protected final String _paramThreadId = "ThreadId";
 
 	protected final String _javaIFDelim = ":";
-	protected final String _otherDelim = Settings.getInstance()
-			.getJoanaPidPoiSeparator();
+	protected final String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
 	protected final String _srcPrefix = "source";
 	protected final String _snkPrefix = "sink";
 
-    protected final String DLM = "|";
-    protected final String RET = "ret";
-    protected final String OBJ = "obj";
-    protected final String NOADDRESS = "implicit";
-
+	protected final String DLM = "|";
+	protected final String RET = "ret";
+	protected final String OBJ = "obj";
+	protected final String NOADDRESS = "implicit";
 
 	public String scopeName(EScopeType type, String fileDescriptor, String pid) {
-		return "Scope for generic "
-				+ (type.equals(EScopeType.JBC_GENERIC_LOAD) ? "source" : "sink")
-				+ " event with fileDescriptor + " + fileDescriptor + " (pid "
-				+ pid + ")";
+		return "Scope for generic " + (type.equals(EScopeType.JBC_GENERIC_LOAD) ? "source" : "sink")
+				+ " event with fileDescriptor + " + fileDescriptor + " (pid " + pid + ")";
 	}
 
 	@Override
@@ -152,174 +147,179 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	 * Java-specific containers when the process dies.
 	 */
 
-	public static void killProcess(String pid,
-			IAnyInformationFlowModel _informationFlowModel) {
+	public static void killProcess(String pid, IAnyInformationFlowModel _informationFlowModel) {
 		if ((pid == null) || (pid.equals(""))) {
 			_logger.error("Impossible to kill process with null PID");
 			return;
 		}
 
 		Set<IContainer> set = containersByPid.get(pid);
-		if (set!=null) for (IContainer c : set) _informationFlowModel.remove(c);
+		if (set != null)
+			for (IContainer c : set)
+				_informationFlowModel.remove(c);
 
-//		String _otherDelim = Settings.getInstance().getJoanaPidPoiSeparator();
-//		for (String entry : iFlow.keySet()) {
-//			String[] fields = entry.split(_otherDelim);
-//			if (fields[0].equals(pid)) {
-//				_informationFlowModel.removeName(new NameBasic(entry), true);
-//			}
-//		}
+		// String _otherDelim =
+		// Settings.getInstance().getJoanaPidPoiSeparator();
+		// for (String entry : iFlow.keySet()) {
+		// String[] fields = entry.split(_otherDelim);
+		// if (fields[0].equals(pid)) {
+		// _informationFlowModel.removeName(new NameBasic(entry), true);
+		// }
+		// }
 	}
 
-    private String getPID() {
-	try {
-	    return getParameterValue("processId");
-	} catch (ParameterNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    _logger.error(e.getMessage());
+	private String getPID() {
+		try {
+			return getParameterValue("processId");
+		} catch (ParameterNotFoundException e) {
+			// TODO Auto-generated catch block
+			_logger.error(e.getMessage());
+		}
+		return null;
 	}
-	return null;
-    }
-    
-    protected boolean isValidAddress(String address) {
-	return address != null && !address.equals("null");
-    }
-    
-    protected boolean isArrayType(String className) {
-	return className.contains("[");
-    }
-    
-    /**
-     * Replaces all occurences of an uninitialized object identifier in names
-     * (and containers) for an object whose constructor was called but has not
-     * returned yet. This method is called in every event handler and ensures
-     * that the model objects and names containing the object reference added by
-     * a constructor call get the correct address. Long scan of the names is
-     * only done once (ensured by checking if the name of the object itself has
-     * been fixed).
-     * 
-     * @param threadId
-     * @param pid
-     * @param className
-     * @param objectAddress
-     * @param methodName
-     */
-    protected void addAddressToNamesAndContainerIfNeeded(String threadId, String pid, String className,
-	    String objectAddress, String methodName) {
-	if (objectAddress.equals("null"))
-	    return;
-	if (methodName.startsWith("<init>")) {
-	    String addressReplacement = threadId + NOADDRESS;
 
-	    // object
-	    IName oldObjectName = new ObjectName(pid, className, addressReplacement);
-	    IContainer oldObjectContainer = _informationFlowModel.getContainer(oldObjectName);
-	    if (oldObjectContainer != null) {
-		IName newObjectName = new ObjectName(pid, className, objectAddress);
-		IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className, objectAddress);
-		_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
-		for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
-		    _informationFlowModel.addAlias(aliasFrom, newObjectContainer);
-		}
-		for (IContainer aliasTo : _informationFlowModel.getAliasesTo(oldObjectContainer)) {
-		    _informationFlowModel.addAlias(newObjectContainer, aliasTo);
-		}
-		for (IName oldName : _informationFlowModel.getAllNames(oldObjectContainer)) {
-		    _informationFlowModel.addName(oldName, newObjectContainer, false);
-		}
-		_informationFlowModel.removeName(oldObjectName, true);
-	    } else
-		return; // if there is no uninitialized object, then the
+	protected boolean isValidAddress(String address) {
+		return address != null && !address.equals("null");
+	}
+
+	protected boolean isArrayType(String className) {
+		return className.contains("[");
+	}
+
+	/**
+	 * Replaces all occurences of an uninitialized object identifier in names
+	 * (and containers) for an object whose constructor was called but has not
+	 * returned yet. This method is called in every event handler and ensures
+	 * that the model objects and names containing the object reference added by
+	 * a constructor call get the correct address. Long scan of the names is
+	 * only done once (ensured by checking if the name of the object itself has
+	 * been fixed).
+	 * 
+	 * @param threadId
+	 * @param pid
+	 * @param className
+	 * @param objectAddress
+	 * @param methodName
+	 */
+	protected void addAddressToNamesAndContainerIfNeeded(String threadId, String pid, String className,
+			String objectAddress, String methodName) {
+		if (objectAddress.equals("null"))
+			return;
+		if (methodName.startsWith("<init>")) {
+			String addressReplacement = threadId + NOADDRESS;
+
+			// object
+			IName oldObjectName = new ObjectName(pid, className, addressReplacement);
+			IContainer oldObjectContainer = _informationFlowModel.getContainer(oldObjectName);
+			if (oldObjectContainer != null) {
+				IName newObjectName = new ObjectName(pid, className, objectAddress);
+				IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className, objectAddress);
+				_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
+				for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
+					_informationFlowModel.addAlias(aliasFrom, newObjectContainer);
+				}
+				for (IContainer aliasTo : _informationFlowModel.getAliasesTo(oldObjectContainer)) {
+					_informationFlowModel.addAlias(newObjectContainer, aliasTo);
+				}
+				for (IName oldName : _informationFlowModel.getAllNames(oldObjectContainer)) {
+					_informationFlowModel.addName(oldName, newObjectContainer, false);
+				}
+				_informationFlowModel.removeName(oldObjectName, true);
+			} else
+				return; // if there is no uninitialized object, then the
 			// replacement was already done
 
-	    // method locals
-	    Set<InstanceMethodVariableName> namesToReplace = new HashSet<>();
-	    for (IName name : _informationFlowModel.getAllNames()) {
-		if (name instanceof InstanceMethodVariableName) {
-		    InstanceMethodVariableName iVarName = (InstanceMethodVariableName) name;
-		    if (iVarName.getPid().equals(pid) && iVarName.getThreadId().equals(threadId)
-			    && iVarName.getClassName().equals(className)
-			    && iVarName.getObjectAddress().equals(addressReplacement)) {
-			namesToReplace.add(iVarName);
-		    }
+			// method locals
+			// Add address to constructor parameters and local variables of constructur
+			Set<InstanceMethodVariableName> namesToReplace = new HashSet<>();
+			for (IName name : _informationFlowModel.getAllNames()) {
+				if (name instanceof InstanceMethodVariableName) {
+					InstanceMethodVariableName iVarName = (InstanceMethodVariableName) name;
+					if (iVarName.getPid().equals(pid) && iVarName.getThreadId().equals(threadId)
+							&& iVarName.getClassName().equals(className)
+							&& iVarName.getObjectAddress().equals(addressReplacement)) {
+						namesToReplace.add(iVarName);
+					}
+				}
+			}
+			for (InstanceMethodVariableName oldName : namesToReplace) {
+				IName fixedName = new InstanceMethodVariableName(oldName.getPid(), oldName.getThreadId(),
+						oldName.getClassName(), objectAddress, oldName.getMethodName(), oldName.getVarName());
+				_informationFlowModel.addName(oldName, fixedName);
+				_informationFlowModel.removeName(oldName);
+			}
 		}
-	    }
-	    for (InstanceMethodVariableName oldName : namesToReplace) {
-		IName fixedName = new InstanceMethodVariableName(oldName.getPid(), oldName.getThreadId(),
-			oldName.getClassName(), objectAddress, oldName.getMethodName(),
-			oldName.getVarName());
-		_informationFlowModel.addName(oldName, fixedName);
-		_informationFlowModel.removeName(oldName);
-	    }
 	}
-    }
-    
-    /**
-     * Looks up in the InformationFlowModel if there is already a container with the specified name. true => return container.
-     * false => Create a new container based on provided className, address and name.
-     * If a value container is desired, className and address should be null.
-     * @param name
-     * @param className
-     * @param address
-     * @return
-     */
 
-    protected IContainer addContainerIfNotExists(IName name, String className, String address) {
-	IContainer container = _informationFlowModel.getContainer(name);
-	if (container == null) {
-	    if (isValidAddress(address) && className != null) {
-		if (isArrayType(className)) {
-		    container = new ArrayContainer(getPID(), className, address);
-		    if (!(name instanceof ArrayName)) {
-			 ArrayName arrayName = new ArrayName(getPID(), className, address);
-			 _informationFlowModel.addName(arrayName, container, false);
-		    }
-		} else {
-		    container = new ObjectContainer(getPID(), className, address);
-		    if (!(name instanceof ObjectName)) {
-			ObjectName objectName = new ObjectName(getPID(), className, address);
-			_informationFlowModel.addName(objectName, container, false);
-		    }
+	/**
+	 * Looks up in the InformationFlowModel if there is already a container with
+	 * the specified name. true => return container. false => Create a new
+	 * container based on provided className, address and name. If a value
+	 * container is desired, className and address should be null.
+	 * 
+	 * @param name
+	 * @param className
+	 * @param address
+	 * @return
+	 */
+
+	protected IContainer addContainerIfNotExists(IName name, String className, String address) {
+		IContainer container = _informationFlowModel.getContainer(name);
+		if (container == null) {
+			if (isValidAddress(address) && className != null) {
+				if (isArrayType(className)) {
+					container = new ArrayContainer(getPID(), className, address);
+					if (!(name instanceof ArrayName)) {
+						ArrayName arrayName = new ArrayName(getPID(), className, address);
+						_informationFlowModel.addName(arrayName, container, false);
+					}
+				} else {
+					container = new ObjectContainer(getPID(), className, address);
+					if (!(name instanceof ObjectName)) {
+						ObjectName objectName = new ObjectName(getPID(), className, address);
+						_informationFlowModel.addName(objectName, container, false);
+					}
+				}
+			} else {
+				if (name instanceof ArrayElementName) {
+					ArrayElementName aeName = (ArrayElementName) name;
+					container = new ArrayElementContainer(getPID(), aeName.getType(), aeName.getAddress(),
+							aeName.getIndex());
+				} else {
+					container = new ValueContainer(getPID());
+				}
+			}
+			_informationFlowModel.addName(name, container, false);
 		}
-	    } else {
-		if (name instanceof ArrayElementName) {
-		    ArrayElementName aeName = (ArrayElementName)name;
-		    container = new ArrayElementContainer(getPID(), aeName.getType(), aeName.getAddress(), aeName.getIndex());
-		} else {
-		    container = new ValueContainer(getPID());
-		}
-	    }
-	    _informationFlowModel.addName(name, container, false);
+		return container;
 	}
-	return container;
-    }
 
-    /**
-     * Traverses the alias graph and returns all data being "visible" in
-     * {@code container} in respect to the alias function.
-     * 
-     * @param container
-     * @return
-     */
-    protected Set<IData> getDataTransitively(IContainer container) {
-    	return getDataTransitively(container, new HashSet<>());
-    }
-    
-    private Set<IData> getDataTransitively(IContainer container, Set<IContainer> visitedContainers) {
-    	Set<IData> result = new HashSet<>();
-    	if (container == null) {
-    	    return result;
-    	}
+	/**
+	 * Traverses the alias graph and returns all data being "visible" in
+	 * {@code container} in respect to the alias function.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	protected Set<IData> getDataTransitively(IContainer container) {
+		return getDataTransitively(container, new HashSet<>());
+	}
 
-    	result.addAll(_informationFlowModel.getData(container));
+	private Set<IData> getDataTransitively(IContainer container, Set<IContainer> visitedContainers) {
+		Set<IData> result = new HashSet<>();
+		if (container == null) {
+			return result;
+		}
 
-    	for (IContainer c : _informationFlowModel.getAliasesTo(container)) {
-    		if (!visitedContainers.contains(c)) {
-    			visitedContainers.add(c);
-    			result.addAll(getDataTransitively(c, visitedContainers));
-    		}
-    	}
+		result.addAll(_informationFlowModel.getData(container));
 
-    	return result;
-    }
+		for (IContainer c : _informationFlowModel.getAliasesTo(container)) {
+			if (!visitedContainers.contains(c)) {
+				visitedContainers.add(c);
+				result.addAll(getDataTransitively(c, visitedContainers));
+			}
+		}
+
+		return result;
+	}
 }
