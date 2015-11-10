@@ -9,7 +9,9 @@ public class CallChopNodeLabel {
 	private String methodName;
 	private String[] args;
 	private String leftSide;
-	private String caller;
+	private String callee;
+	
+	private String label;
 	
 	public CallChopNodeLabel(String labelString) {
 		// Form 1: method(arg1, arg2, ...)
@@ -17,7 +19,9 @@ public class CallChopNodeLabel {
 		// Form 3: assignee = caller.method(arg1, arg2 ...)
 		// Form 4: assignee = method(arg1, arg2, ...)
 		// There can also be no arguments at all
-		
+		this.label = labelString;
+		if("".equals(labelString))
+			return;
 		
 		String[] leftAndRight = labelString.split(" = ");
 		String methodCall;
@@ -31,7 +35,7 @@ public class CallChopNodeLabel {
 		leftAndRight = methodCall.split("\\.");
 		String methodWithArgs;
 		if (leftAndRight.length == 2) {
-			caller = leftAndRight[0];
+			callee = leftAndRight[0];
 			methodWithArgs = leftAndRight[1];
 		} else {
 			methodWithArgs = methodCall;
@@ -76,7 +80,12 @@ public class CallChopNodeLabel {
 	}
 	
 	public String getCallee() {
-		return caller;
+		return callee;
+	}
+	
+	@Override
+	public String toString(){
+		return this.leftSide + "--"+this.callee + "--"+this.methodName+" == "+this.label;
 	}
 	
 	class MatchLocation {
@@ -86,5 +95,4 @@ public class CallChopNodeLabel {
 			this.from = from; this.to = to;
 		}
 	}
-	
 }

@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.factories;
 import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceFieldName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.SourceSinkName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.StaticFieldName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.StaticMethodVariableName;
 import de.tum.in.i22.uc.cm.settings.Settings;
@@ -27,4 +28,19 @@ public class JavaNameFactory {
 	}
     }
 
+
+    public static JavaName createSourceName(String pid, String threadId, String className, String objectAddress,
+	    String methodName, String varName, String sinkSourceId) {
+    	SourceSinkName _return =  new SourceSinkName(pid, threadId, className, objectAddress, methodName, varName);
+    	_return.setSourceSinkId(sinkSourceId, SourceSinkName.Type.SOURCE);    	
+    	return _return;
+    }
+
+
+    public static JavaName createSinkName(String pid, String threadId, String className, String objectAddress,
+	    String methodName, String varName, String sinkSourceId) {
+    	SourceSinkName _return =  new SourceSinkName(pid, threadId, className, objectAddress, methodName, varName);
+    	_return.setSourceSinkId(sinkSourceId, SourceSinkName.Type.SINK);    	
+    	return _return;
+    }
 }

@@ -12,14 +12,15 @@ import de.tum.in.i22.uc.cm.settings.Settings;
  * @author Enrico Lovat
  * 
  */
-public class SourceSinkName extends NameBasic {
+@Deprecated
+public class SourceSinkNameOld extends NameBasic {
 	private static final String sep = Settings.getInstance()
 			.getJoanaPidPoiSeparator();
 	private int pid = -1;
 	private String poiName = "";
 	private String type="";
 	
-	public SourceSinkName(String poiName) {
+	public SourceSinkNameOld(String poiName) {
 		super(poiName);
 		Assert.assertNotNull(poiName);
 		Assert.assertNotEquals(poiName, "");
@@ -32,11 +33,11 @@ public class SourceSinkName extends NameBasic {
 		poiName = parts[2];
 	}
 
-	public SourceSinkName(int pid, String type, String poiName) {
+	public SourceSinkNameOld(int pid, String type, String poiName) {
 		this(pid + sep + type+ sep + poiName);
 	}
 
-	public SourceSinkName(String pid, String type, String poiName) {
+	public SourceSinkNameOld(String pid, String type, String poiName) {
 		this(pid + sep + type+ sep + poiName);
 	}
 
