@@ -54,13 +54,13 @@ public class SinkEventHandler extends JavaEventHandler {
 			sinkId = getParameterValue("sinkId");
 			dependsOnSources = (JSONArray) new JSONParser().parse(getParameterValue("dependsOnSources"));
 		    
-//		    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
-//		    methodArgTypes = new String[methodArgTypesJSON.size()];
-//		    methodArgTypesJSON.toArray(methodArgTypes);
-//		    JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
-//		    methodArgAddresses = new String[methodArgAddressesJSON.size()];
-//		    methodArgAddressesJSON.toArray(methodArgAddresses);
-			System.out.println("SinkEventHandler: "+chopLabel.toString());
+		    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
+		    methodArgTypes = new String[methodArgTypesJSON.size()];
+		    methodArgTypesJSON.toArray(methodArgTypes);
+		    
+		    JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
+		    methodArgAddresses = new String[methodArgAddressesJSON.size()];
+		    methodArgAddressesJSON.toArray(methodArgAddresses);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 		    _logger.error(e.getMessage());
 		    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

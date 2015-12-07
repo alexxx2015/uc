@@ -1,5 +1,6 @@
 package de.tum.in.i22.uc.pip.eventdef.java;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -53,15 +54,14 @@ public class SourceEventHandler extends JavaEventHandler {
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 			sourceParam = getParameterValue("sourceParam");
 			sourceId = getParameterValue("sourceId");
-			// JSONArray methodArgTypesJSON = (JSONArray) new
-			// JSONParser().parse(getParameterValue("methodArgTypes"));
-			// methodArgTypes = new String[methodArgTypesJSON.size()];
-			// methodArgTypesJSON.toArray(methodArgTypes);
-			// JSONArray methodArgAddressesJSON = (JSONArray) new
-			// JSONParser().parse(getParameterValue("methodArgAddresses"));
-			// methodArgAddresses = new String[methodArgAddressesJSON.size()];
-			// methodArgAddressesJSON.toArray(methodArgAddresses);
-			System.out.println("SourceEventHandler: " + chopLabel.toString());
+			
+			JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
+			methodArgTypes = new String[methodArgTypesJSON.size()];
+			methodArgTypesJSON.toArray(methodArgTypes);
+			
+			JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
+			methodArgAddresses = new String[methodArgAddressesJSON.size()];
+			methodArgAddressesJSON.toArray(methodArgAddresses);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -93,7 +93,8 @@ public class SourceEventHandler extends JavaEventHandler {
 		IName sourceObjectVarName = JavaNameFactory.createSourceName(pid,
 				threadId, sourceObjectClass, sourceObjectAddress, parentMethod, sourceParam, sourceId);
 		IContainer sourceObjectContainer = addContainerIfNotExists(sourceObjectVarName, sourceObjectClass, sourceObjectAddress);
-		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
+//		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
+		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
 		_informationFlowModel.addData(sourceData, sourceObjectContainer);
 
 		// insertArguments(chopLabel.getArgs(), methodArgTypes,
