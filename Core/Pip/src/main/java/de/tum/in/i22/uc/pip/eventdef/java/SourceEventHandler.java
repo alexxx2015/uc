@@ -47,13 +47,12 @@ public class SourceEventHandler extends JavaEventHandler {
 			calleeObjectAddress = getParameterValue("calleeObjectAddress");
 			calleeObjectClass = getParameterValue("calleeObjectClass");
 			calleeMethod = getParameterValue("calleeMethod");
-			sourceObjectAddress = getParameterValue("returnObjectAddress");
-			sourceObjectClass = getParameterValue("returnObjectClass");
-			contextInfo = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
-			//e.g. v23 = v8.readLine()
-			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
+			sourceObjectAddress = getParameterValue("sourceObjectAddress");
+			sourceObjectClass = getParameterValue("sourceObjectClass");
 			sourceParam = getParameterValue("sourceParam");
 			sourceId = getParameterValue("sourceId");
+			contextInfo = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
+			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));//e.g. v23 = v8.readLine()
 			
 			JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 			methodArgTypes = new String[methodArgTypesJSON.size()];
@@ -69,7 +68,10 @@ public class SourceEventHandler extends JavaEventHandler {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}	
+		
+		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
+
 
 		// if caller object class is a system class, get its container to add
 		// method parameters to it
