@@ -11,6 +11,8 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
+import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
@@ -32,7 +34,11 @@ public class SourceEventHandler extends JavaEventHandler {
 		String sourceObjectAddress = null;
 		String sourceObjectClass = null;
 		JSONObject contextInfo = null;
+		JSONArray methodArgTypesJSON;
+		JSONArray methodArgValuesJSON;
+		JSONArray methodArgAddressesJSON;
 		String[] methodArgTypes = null;
+		String[] methodArgValues = null;
 		String[] methodArgAddresses = null;
 		CallChopNodeLabel chopLabel = null;
 		String sourceParam = null;
@@ -54,13 +60,17 @@ public class SourceEventHandler extends JavaEventHandler {
 			contextInfo = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));//e.g. v23 = v8.readLine()
 			
-			JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
+			methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 			methodArgTypes = new String[methodArgTypesJSON.size()];
 			methodArgTypesJSON.toArray(methodArgTypes);
 			
-			JSONArray methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
+			methodArgAddressesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgAddresses"));
 			methodArgAddresses = new String[methodArgAddressesJSON.size()];
 			methodArgAddressesJSON.toArray(methodArgAddresses);
+			
+			methodArgValuesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgValues"));
+			methodArgValues = new String[methodArgValuesJSON.size()];
+			methodArgValuesJSON.toArray(methodArgValues);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -68,10 +78,9 @@ public class SourceEventHandler extends JavaEventHandler {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 		
-		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
-
+//		addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
 		// if caller object class is a system class, get its container to add
 		// method parameters to it
@@ -86,7 +95,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		_informationFlowModel.addName(calleeObjectVarName,
 				calleeObjectContainer, false);
 		
-		if(sourceParam.toLowerCase().equals("ret")){
+		if(sourceParam.toLowerCase().equals("ret") && !"".equals(chopLabel.getLeftSide())){
 			sourceParam = chopLabel.getLeftSide();
 		} else if ((Integer.valueOf(sourceParam) > 0) && (chopLabel.getArgs() != null) && (chopLabel.getArgs().length > 0)){
 			sourceParam = chopLabel.getArgs()[Integer.valueOf(sourceParam) -1];
@@ -94,10 +103,23 @@ public class SourceEventHandler extends JavaEventHandler {
 		
 		IName sourceObjectVarName = JavaNameFactory.createSourceName(pid,
 				threadId, sourceObjectClass, sourceObjectAddress, parentMethod, sourceParam, sourceId);
-		IContainer sourceObjectContainer = addContainerIfNotExists(sourceObjectVarName, sourceObjectClass, sourceObjectAddress);
+		IContainer sourceContainer = addContainerIfNotExists(sourceObjectVarName, sourceObjectClass, sourceObjectAddress);
 //		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
 		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
-		_informationFlowModel.addData(sourceData, sourceObjectContainer);
+		_informationFlowModel.addData(sourceData, sourceContainer);
+		
+		IName sourceNamingIdentifier = new BasicJavaName(sourceId);
+		_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+
+		
+		if(calleeMethod.toLowerCase().equals("get") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap") || calleeObjectClass.toLowerCase().equals("java.util.map"))){
+			String key = methodArgValues[0];
+			sourceNamingIdentifier = new BasicJavaName(pid,calleeObjectAddress,key);
+			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+		}
+		
+
+		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
 
 		// insertArguments(chopLabel.getArgs(), methodArgTypes,
 		// methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,

@@ -17,13 +17,13 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
      * @param argAddresses
      * @param outerArgNamePrefix
      * @param innerArgNamePrefix
-     * @param callerObjectContainer
+     * @param calleeObjectContainer
      *            is only != null if its class is not instrumented
      * @param parentObjectContainer
      */
     protected void insertArguments(String[] argNames, String[] argTypes, String[] argAddresses, String pid, String threadId,
-	    String parentClass, String parentObjectAddress, String parentMethod, String callerClass,
-	    String callerObjectAddress, String calledMethod, IContainer callerObjectContainer) {
+	    String parentClass, String parentObjectAddress, String parentMethod, String calleeClass,
+	    String calleeObjectAddress, String calledMethod, IContainer calleeObjectContainer) {
 
 	for (int i = 0; i < argAddresses.length; i++) {
 	    String argName = argNames[i];
@@ -44,7 +44,7 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 
 	    IName actualParamName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		    parentMethod, argName);
-	    IName formalParamName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass, callerObjectAddress,
+	    IName formalParamName = JavaNameFactory.createLocalVarName(pid, threadId, calleeClass, calleeObjectAddress,
 		    calledMethod, "p" + (i + 1));
 
 	    IContainer formalParamContainer;
@@ -60,8 +60,8 @@ public abstract class CallMethodEventHandler extends JavaEventHandler {
 		_informationFlowModel.copyData(actualParamContainer, formalParamContainer);
 	    }
 
-	    if (callerObjectContainer != null) {
-		_informationFlowModel.addAlias(formalParamContainer, callerObjectContainer);
+	    if (calleeObjectContainer != null) {
+		_informationFlowModel.addAlias(formalParamContainer, calleeObjectContainer);
 	    }
 	}
     }

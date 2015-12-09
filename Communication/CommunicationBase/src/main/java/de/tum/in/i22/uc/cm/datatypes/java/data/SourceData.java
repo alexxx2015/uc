@@ -14,7 +14,9 @@ public class SourceData extends JavaData {
     }
 
     public SourceData(String sourceId, long timeStamp) {
-	this(sourceId + DLM + timeStamp);
+//	this(sourceId + DLM + timeStamp);
+    	super(sourceId);
+    	this.timeStamp = timeStamp;
     }
 
     public String getSourceId() {
