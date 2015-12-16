@@ -14,6 +14,7 @@ import de.tum.in.i22.uc.cm.datatypes.basic.StatusBasic.EStatus;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.SinkSourceContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.SourceSinkName;
@@ -81,23 +82,25 @@ public class SinkEventHandler extends JavaEventHandler {
 			e.printStackTrace();
 		}
 
-		// if caller object class is a system class, get its container to add
-		// method parameters to it
+		String sinkAddress = "";
+		if ((Integer.parseInt(sinkParam) > 0) && (methodArgAddresses.length  >= Integer.parseInt(sinkParam))){
+			sinkAddress = methodArgAddresses[Integer.parseInt(sinkParam)-1];
+		}		
 		if (sinkParam.toLowerCase().equals("ret")) {
 			sinkParam = chopLabel.getLeftSide();
 		} else if ((Integer.valueOf(sinkParam) > 0) && (chopLabel.getArgs() != null)
 				&& (chopLabel.getArgs().length > 0)) {
 			sinkParam = chopLabel.getArgs()[Integer.valueOf(sinkParam) - 1];
 		}
-
-		IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
-		IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass,
-				calleeObjectAddress);
-
-		IName calleeObjectVarName = JavaNameFactory.createSinkName(pid, threadId, parentClass, parentObjectAddress,
-				parentMethod, sinkParam, sinkId);
-		_informationFlowModel.addName(calleeObjectVarName, calleeObjectContainer, false);
-
+		
+		IName sinkVarName = JavaNameFactory.createSinkName(pid, threadId, parentClass, parentMethod, chopLabel.getCallee(), sinkId, calleeObjectAddress);		
+		IContainer sinkContainer = _informationFlowModel.getContainer(sinkVarName);
+		if(sinkContainer == null){
+			sinkContainer = new SinkSourceContainer(pid,threadId,sinkId,calleeObjectAddress);			
+			_informationFlowModel.addName(sinkVarName, sinkContainer, false);
+		}
+		
+		//Copy all data items from the source container to the sink container
 		Collection<IName> _names = _informationFlowModel.getAllNames();
 		Iterator<IName> _namesIt = _names.iterator();
 		List<SourceSinkName> sourceSinkName = new LinkedList<SourceSinkName>();
@@ -114,30 +117,33 @@ public class SinkEventHandler extends JavaEventHandler {
 		}
 
 		if (sourceSinkName.size() > 0) {
+			for(SourceSinkName s : sourceSinkName)
+				_informationFlowModel.copyData(s, sinkVarName);
+			
 			if (calleeMethod.toLowerCase().equals("put") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
 					|| calleeObjectClass.toLowerCase().equals("java.util.map"))) {
 				String key = methodArgValues[0];
 				String value = methodArgValues[1];
 
-				IName covn = new BasicJavaName(pid, calleeObjectAddress, key);
-				for(SourceSinkName s : sourceSinkName)
-					_informationFlowModel.addName(covn, _informationFlowModel.getContainer(s));
-			} else {
-				for(SourceSinkName s : sourceSinkName)
-					_informationFlowModel.copyData(s, calleeObjectVarName);
-				// _informationFlowModel.addData(_informationFlowModel.getData(s),
-				// calleeObjectContainer);
-			}
+				IName covn = new BasicJavaName(pid, calleeObjectAddress, calleeObjectClass, key);
+				IContainer c = _informationFlowModel.getContainer(covn);
+				if(c == null)
+					_informationFlowModel.addName(covn, sinkContainer);
+				else
+					_informationFlowModel.addData(_informationFlowModel.getData(covn), c);
+			} 
 		}
 
-		// insertArguments(chopLabel.getArgs(), methodArgTypes,
-		// methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,
-		// parentMethod,
-		// callerObjectClass, callerObjectAddress, calledMethod,
-		// callerObjectClassIsInstrumented ? null
-		// : callerObjectContainer);
-
 		return _messageFactory.createStatus(EStatus.OKAY);
-		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
+//		return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}
 }
+//IContainer sinkContainer = addContainerIfNotExists(sinkVarName, calleeObjectClass, calleeObjectAddress);
+//IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
+//IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass,calleeObjectAddress);
+// insertArguments(chopLabel.getArgs(), methodArgTypes,
+// methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,
+// parentMethod,
+// callerObjectClass, callerObjectAddress, calledMethod,
+// callerObjectClassIsInstrumented ? null
+// : callerObjectContainer);

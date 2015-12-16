@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IContainer;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.SinkSourceContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
 import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
@@ -84,49 +85,55 @@ public class SourceEventHandler extends JavaEventHandler {
 
 		// if caller object class is a system class, get its container to add
 		// method parameters to it
-		IName calleeObjectName = new ObjectName(pid, calleeObjectClass,
-				calleeObjectAddress);
-		IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName,
-				calleeObjectClass, calleeObjectAddress);
+//		IName calleeObjectName = new ObjectName(pid, calleeObjectClass,
+//				calleeObjectAddress);
+//		IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName,
+//				calleeObjectClass, calleeObjectAddress);
 
-		IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid,
-				threadId, parentClass, parentObjectAddress, parentMethod,
-				chopLabel.getCallee());
-		_informationFlowModel.addName(calleeObjectVarName,
-				calleeObjectContainer, false);
+//		IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid,
+//				threadId, parentClass, parentObjectAddress, parentMethod,
+//				chopLabel.getCallee());
+//		_informationFlowModel.addName(calleeObjectVarName,
+//				calleeObjectContainer, false);
+
+
+		IName sourceNamingIdentifier = new BasicJavaName(sourceId);
+		IContainer sourceContainer = _informationFlowModel.getContainer(sourceNamingIdentifier);
+		if(sourceContainer == null){
+			sourceContainer = new SinkSourceContainer(pid,threadId,sourceId,sourceObjectAddress);
+			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+		}
+		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
+		_informationFlowModel.addData(sourceData, sourceContainer);
 		
 		if(sourceParam.toLowerCase().equals("ret") && !"".equals(chopLabel.getLeftSide())){
 			sourceParam = chopLabel.getLeftSide();
 		} else if ((Integer.valueOf(sourceParam) > 0) && (chopLabel.getArgs() != null) && (chopLabel.getArgs().length > 0)){
 			sourceParam = chopLabel.getArgs()[Integer.valueOf(sourceParam) -1];
 		}
-		
-		IName sourceObjectVarName = JavaNameFactory.createSourceName(pid,
-				threadId, sourceObjectClass, sourceObjectAddress, parentMethod, sourceParam, sourceId);
-		IContainer sourceContainer = addContainerIfNotExists(sourceObjectVarName, sourceObjectClass, sourceObjectAddress);
-//		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
-		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
-		_informationFlowModel.addData(sourceData, sourceContainer);
-		
-		IName sourceNamingIdentifier = new BasicJavaName(sourceId);
-		_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+		IName sourceObjectVarName = JavaNameFactory.createSourceName(pid, threadId, parentClass, parentMethod, sourceParam, sourceId, sourceObjectAddress);
+		_informationFlowModel.addName(sourceObjectVarName, sourceContainer);
 
+//		IContainer sourceContainer = addContainerIfNotExists(sourceObjectVarName, sourceObjectClass, sourceObjectAddress);
+//		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
 		
 		if(calleeMethod.toLowerCase().equals("get") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap") || calleeObjectClass.toLowerCase().equals("java.util.map"))){
+			System.out.println("---BEFORE-HASHMAP---");
+			System.out.println(_informationFlowModel.niceString());
 			String key = methodArgValues[0];
-			sourceNamingIdentifier = new BasicJavaName(pid,calleeObjectAddress,key);
-			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+			sourceNamingIdentifier = new BasicJavaName(pid,calleeObjectAddress,calleeObjectClass,key);
+			IContainer c = _informationFlowModel.getContainer(sourceNamingIdentifier);
+			if(c == null){
+				_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+			}
+			else{
+				_informationFlowModel.addData(_informationFlowModel.getData(c), sourceContainer);
+			}
+			System.out.println("---AFTER-HASHMAP---");
+			System.out.println(_informationFlowModel.niceString());
 		}
-		
-
-		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
-
-		// insertArguments(chopLabel.getArgs(), methodArgTypes,
-		// methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,
-		// parentMethod,
-		// calleeObjectClass, calleeObjectAddress, calleeMethod,
-		// calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:
-		// calleeObjectContainer
+//		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
+//		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,parentMethod,calleeObjectClass, calleeObjectAddress, calleeMethod,calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:	calleeObjectContainer
 
 		return _messageFactory.createStatus(EStatus.OKAY);
 		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);

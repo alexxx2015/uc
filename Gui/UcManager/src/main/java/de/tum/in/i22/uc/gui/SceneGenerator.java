@@ -113,6 +113,17 @@ public class SceneGenerator {
 		pdpTab.setText("PDP");
 		pdpTab.setId("PDPTAB");
 		pdpTab.setContent(generatePdpTab());
+		pdpTab.setOnSelectionChanged(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				if(pdpTab.isSelected() && controller.isRunning()){
+					updateDeployedPolicies(controller.listMechanisms());
+				}
+			}
+			
+		});
 
 		final Tab pipTab = new Tab();
 		pipTab.setClosable(false);
@@ -125,7 +136,6 @@ public class SceneGenerator {
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
 				if (pipTab.isSelected()) {
-					System.out.println("ddd");
 					controller.refreshPipState();
 
 					lab_info.setText("PIP refreshed");

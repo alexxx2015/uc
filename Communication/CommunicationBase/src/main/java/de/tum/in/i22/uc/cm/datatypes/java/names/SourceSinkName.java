@@ -6,9 +6,9 @@ public class SourceSinkName extends JavaName {
 	
 	private String pid;
 	private String threadId;
-	private String className;
-	private String objectAddress;
-	private String methodName;
+	private String parentClass;
+	private String parentMethod;
+	private String sourceObjectAddress;
 	private String varName;
 	private String sourceSinkId;
 	private Type type;
@@ -19,14 +19,14 @@ public class SourceSinkName extends JavaName {
 		String[] comps = methodVarName.split("\\" + DLM);
 		pid = comps[0];
 		threadId = comps[1];
-		className = comps[2];
-		objectAddress = comps[3];
-		methodName = comps[4];
-		varName = comps[5];
+		parentClass = comps[2];
+		parentMethod = comps[3];
+		varName = comps[4];
+		sourceObjectAddress = comps[5];
 	}
 
-	public SourceSinkName(String pid, String threadId, String className, String objectAddress, String methodName, String varName) {
-		this(pid + DLM + threadId + DLM + className + DLM + objectAddress + DLM + methodName + DLM + varName);
+	public SourceSinkName(String pid, String threadId, String parentClass, String parentMethod, String varName, String objectAddress) {
+		this(pid + DLM + threadId + DLM + parentClass + DLM + parentMethod + DLM + varName+ DLM +objectAddress);
 	}
 
 	public String getPid() {
@@ -38,15 +38,15 @@ public class SourceSinkName extends JavaName {
 	}
 
 	public String getClassName() {
-		return className;
+		return parentClass;
 	}
 
 	public String getObjectAddress() {
-		return objectAddress;
+		return sourceObjectAddress;
 	}
 
 	public String getMethodName() {
-		return methodName;
+		return parentMethod;
 	}
 
 	public String getVarName() {

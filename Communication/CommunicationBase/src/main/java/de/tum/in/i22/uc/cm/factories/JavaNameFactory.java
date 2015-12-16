@@ -28,16 +28,15 @@ public class JavaNameFactory {
 		}
 	}
 
-	public static JavaName createSourceName(String pid, String threadId, String className, String objectAddress,
-			String methodName, String varName, String sinkSourceId) {
-		SourceSinkName _return = new SourceSinkName(pid, threadId, className, objectAddress, methodName, varName);
+	public static JavaName createSourceName(String pid, String threadId, String parentClass,
+			String parentMethod, String varName, String sinkSourceId,String sourceObjectAddress) {
+		SourceSinkName _return = new SourceSinkName(pid, threadId, parentClass, parentMethod, varName, sourceObjectAddress);
 		_return.setSourceSinkId(sinkSourceId, SourceSinkName.Type.SOURCE);
 		return _return;
 	}
 
-	public static JavaName createSinkName(String pid, String threadId, String className, String objectAddress,
-			String methodName, String varName, String sinkSourceId) {
-		SourceSinkName _return = new SourceSinkName(pid, threadId, className, objectAddress, methodName, varName);
+	public static JavaName createSinkName(String pid, String threadId, String parentClass, String parentMethod, String varName, String sinkSourceId, String sourceObjectAddress) {
+		SourceSinkName _return = new SourceSinkName(pid, threadId, parentClass, parentMethod, varName, sourceObjectAddress);
 		_return.setSourceSinkId(sinkSourceId, SourceSinkName.Type.SINK);
 		return _return;
 	}
