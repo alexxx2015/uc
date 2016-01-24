@@ -93,9 +93,9 @@ public class UcManager extends Controller {
 	}
 
 	public static void main(String args[]) {
-		UcManagerFX.main(args);
-//		UcManager myUCC = new UcManager(args);
-//		myUCC.showGUI();
+//		UcManagerFX.main(args);
+		UcManager myUCC = new UcManager(args);
+		myUCC.showGUI();
 	}
 
 	private void showGUI() {

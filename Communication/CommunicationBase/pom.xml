@@ -45,6 +45,7 @@
 								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pmp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IAny2PtEditor</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Pxp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IAny2Prp</param>
 								
 								<!-- Pep2X -->
 								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Pdp</param>
@@ -79,6 +80,10 @@
 								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Dmp</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Pip</param>
 								<param>de.tum.in.i22.uc.cm.interfaces.IDmp2Pmp</param>
+								
+								<!-- X2Prp -->
+								<param>de.tum.in.i22.uc.cm.interfaces.IPdp2Prp</param>
+								<param>de.tum.in.i22.uc.cm.interfaces.IPep2Prp</param>
 							</interfaces>
 							<includes>
 								<param>Types.thrift</param>

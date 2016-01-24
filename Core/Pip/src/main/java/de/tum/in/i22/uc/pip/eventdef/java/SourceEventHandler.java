@@ -13,8 +13,6 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.containers.SinkSourceContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
 import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
-import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
-import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
