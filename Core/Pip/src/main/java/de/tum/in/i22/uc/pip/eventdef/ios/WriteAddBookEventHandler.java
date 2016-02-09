@@ -81,8 +81,8 @@ public class WriteAddBookEventHandler extends BaseEventHandler {
 					.getContainer(new NameBasic(originalContainerName));
 			Set<IData> ucData = _informationFlowModel
 					.getData(dataOrgiContainer);
-			System.out.println("process container is  : " + dataOrgiContainer);
-			System.out.println("data of the original container : " + ucData);
+//			System.out.println("process container is  : " + dataOrgiContainer);
+//			System.out.println("data of the original container : " + ucData);
 			_informationFlowModel.addData(ucData, desContainer);
 
 		}

@@ -118,8 +118,6 @@ public class SourceEventHandler extends JavaEventHandler {
 //		IData sourceData = new SourceData(sourceId+"-"+contextInfo.get("path"),System.currentTimeMillis());
 		
 		if(calleeMethod.toLowerCase().equals("get") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap") || calleeObjectClass.toLowerCase().equals("java.util.map"))){
-			System.out.println("---BEFORE-HASHMAP---");
-			System.out.println(_informationFlowModel.niceString());
 			String key = methodArgValues[0];
 			sourceNamingIdentifier = new BasicJavaName(pid,calleeObjectAddress,calleeObjectClass,key);
 			IContainer c = _informationFlowModel.getContainer(sourceNamingIdentifier);
@@ -129,8 +127,6 @@ public class SourceEventHandler extends JavaEventHandler {
 			else{
 				_informationFlowModel.addData(_informationFlowModel.getData(c), sourceContainer);
 			}
-			System.out.println("---AFTER-HASHMAP---");
-			System.out.println(_informationFlowModel.niceString());
 		}
 //		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
 //		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,parentMethod,calleeObjectClass, calleeObjectAddress, calleeMethod,calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:	calleeObjectContainer
