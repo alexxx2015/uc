@@ -1,7 +1,6 @@
 package de.tum.in.i22.uc.thrift.server;
 
 import org.apache.thrift.TProcessor;
-
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +10,14 @@ import de.tum.in.i22.uc.cm.interfaces.IAny2Pdp;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pep;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pip;
 import de.tum.in.i22.uc.cm.interfaces.IAny2Pmp;
+import de.tum.in.i22.uc.cm.interfaces.IAny2Prp;
 import de.tum.in.i22.uc.thrift.types.TAny2Any;
 import de.tum.in.i22.uc.thrift.types.TAny2Dmp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pdp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pep;
 import de.tum.in.i22.uc.thrift.types.TAny2Pip;
 import de.tum.in.i22.uc.thrift.types.TAny2Pmp;
+import de.tum.in.i22.uc.thrift.types.TAny2Prp;
 import de.tum.in.i22.uc.thrift.types.TAny2Pxp;
 import de.tum.in.i22.uc.thrift.types.TPip2JPip;
 
@@ -129,6 +130,12 @@ public class ThriftServerFactory {
 	public static <T extends TAny2Pxp.Iface> IThriftServer createPxpThriftServer(int port, T pxpProcessor) {
 		return createThriftServer(port,
 				new TAny2Pxp.Processor<T>(pxpProcessor));
+	}
+	
+
+	
+	public static IThriftServer createPrpThriftServer(int port, IAny2Prp handler){
+		return createThriftServer(port, new TAny2Prp.Processor<TAny2PrpThriftServer>(new TAny2PrpThriftServer(handler)));
 	}
 
 	/**

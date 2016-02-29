@@ -3,6 +3,7 @@ package de.tum.in.i22.uc.cm.handlers;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import de.tum.in.i22.uc.cm.processing.IRequestHandler;
 import de.tum.in.i22.uc.cm.processing.PdpProcessor;
 import de.tum.in.i22.uc.cm.processing.PipProcessor;
 import de.tum.in.i22.uc.cm.processing.PmpProcessor;
+import de.tum.in.i22.uc.cm.processing.PrpProcessor;
 import de.tum.in.i22.uc.cm.processing.Request;
 import de.tum.in.i22.uc.cm.settings.Settings;
 import de.tum.in.i22.uc.dmp.DmpFactory;
@@ -83,6 +85,7 @@ import de.tum.in.i22.uc.pmp.requests.RevokeMechanismPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.RevokePolicyPmpPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.TranslatePolicyPmpRequest;
 import de.tum.in.i22.uc.pmp.requests.UpdateDomainModelPmpRequest;
+import de.tum.in.i22.uc.prp.PrpHandler;
 import de.tum.in.i22.uc.thrift.client.ThriftClientFactory;
 
 
@@ -101,6 +104,7 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 	private PmpProcessor _pmp;
 
 	private DmpProcessor _dmp;
+	private PrpProcessor _prp;
 
 	/**
 	 * Creates a new {@link RequestHandler} object, which
@@ -141,12 +145,14 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 		}
 
 		_dmp = DmpFactory.createDmp();
+		_prp = PrpHandler.getInstance();
 
 		_pdp.init(_pip, _pmp, _dmp);
 		_pip.init(_pdp, _pmp, _dmp);
 		_pmp.init(_pip, _pdp, _dmp);
 
 		_dmp.init(_pip, _pmp);
+		_prp.init(_pdp);
 
 		_requestQueueManager = new RequestQueueManager(_pdp, _pip, _pmp, _dmp);
 		new Thread(_requestQueueManager).start();
@@ -610,5 +616,19 @@ public class RequestHandler extends AbstractRequestHandler implements IRequestHa
 	    FilterModelPipRequest request = new FilterModelPipRequest(params);
 	    _requestQueueManager.addRequest(request, this);
 	    return waitForResponse(request);
+	}
+
+
+	@Override
+	public void deployReleaseMechanism(ByteBuffer mechanism) {
+		// TODO Auto-generated method stub
+		_prp.deployReleaseMechanism(mechanism);
+	}
+
+
+	@Override
+	public ByteBuffer getMechanism(String mechanismName) {
+		// TODO Auto-generated method stub
+		return _prp.getMechanism(mechanismName);
 	}
 }

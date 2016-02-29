@@ -29,6 +29,7 @@ public class Controller extends RequestHandler {
 	private IThriftServer _pmpServer;
 	private IThriftServer _anyServer;
 	private IThriftServer _dmpServer;
+	private IThriftServer _prpServer;
 
 	private String[] _args = null;
 
@@ -57,8 +58,9 @@ public class Controller extends RequestHandler {
 			return false;
 		}
 
-		super.init(Settings.getInstance().getPdpLocation(),
-				Settings.getInstance().getPipLocation(), Settings.getInstance().getPmpLocation());
+		super.init(Settings.getInstance().getPdpLocation(), Settings
+				.getInstance().getPipLocation(), Settings.getInstance()
+				.getPmpLocation());
 
 		_logger.info("Deploying initial policies ...");
 		deployInitialPolicies();
@@ -82,11 +84,16 @@ public class Controller extends RequestHandler {
 	}
 
 	public boolean isStarted() {
-		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null && _pdpServer.started())
-				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null && _pipServer.started())
-				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null && _pmpServer.started())
-				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null && _anyServer.started())
-				&& (!Settings.getInstance().isDistributionEnabled() || _dmpServer != null && _dmpServer.started());
+		return (!Settings.getInstance().isPdpListenerEnabled() || _pdpServer != null
+				&& _pdpServer.started())
+				&& (!Settings.getInstance().isPipListenerEnabled() || _pipServer != null
+						&& _pipServer.started())
+				&& (!Settings.getInstance().isPmpListenerEnabled() || _pmpServer != null
+						&& _pmpServer.started())
+				&& (!Settings.getInstance().isAnyListenerEnabled() || _anyServer != null
+						&& _anyServer.started())
+				&& (!Settings.getInstance().isDistributionEnabled() || _dmpServer != null
+						&& _dmpServer.started());
 	}
 
 	/**
@@ -103,13 +110,15 @@ public class Controller extends RequestHandler {
 			 * -FK-
 			 */
 			try {
-				status = deployPolicyRawXMLPmp(Files.toString(new File(uri), Charset.defaultCharset()));
+				status = deployPolicyRawXMLPmp(Files.toString(new File(uri),
+						Charset.defaultCharset()));
 			} catch (Exception e) {
 				status = new StatusBasic(EStatus.ERROR, e.getMessage());
 			}
 
-			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy " + uri + " successfully."
-					: "Error deploying policy " + uri + ": " + status.getErrorMessage() + ".");
+			_logger.info(status.isStatus(EStatus.OKAY) ? "Deployed policy "
+					+ uri + " successfully." : "Error deploying policy " + uri
+					+ ": " + status.getErrorMessage() + ".");
 		}
 	}
 
@@ -125,14 +134,14 @@ public class Controller extends RequestHandler {
 			_anyServer.stop();
 		if (_dmpServer != null)
 			_dmpServer.stop();
-		
+
 		super.stop();
 	}
 
 	private void startListeners(IRequestHandler requestHandler) {
 		if (Settings.getInstance().isPdpListenerEnabled()) {
-			_pdpServer = ThriftServerFactory.createPdpThriftServer(Settings.getInstance().getPdpListenerPort(),
-					requestHandler);
+			_pdpServer = ThriftServerFactory.createPdpThriftServer(Settings
+					.getInstance().getPdpListenerPort(), requestHandler);
 
 			if (_pdpServer != null) {
 				new Thread(_pdpServer).start();
@@ -140,8 +149,8 @@ public class Controller extends RequestHandler {
 		}
 
 		if (Settings.getInstance().isPipListenerEnabled()) {
-			_pipServer = ThriftServerFactory.createPipThriftServer(Settings.getInstance().getPipListenerPort(),
-					requestHandler);
+			_pipServer = ThriftServerFactory.createPipThriftServer(Settings
+					.getInstance().getPipListenerPort(), requestHandler);
 
 			if (_pipServer != null) {
 				new Thread(_pipServer).start();
@@ -149,8 +158,8 @@ public class Controller extends RequestHandler {
 		}
 
 		if (Settings.getInstance().isPmpListenerEnabled()) {
-			_pmpServer = ThriftServerFactory.createPmpThriftServer(Settings.getInstance().getPmpListenerPort(),
-					requestHandler);
+			_pmpServer = ThriftServerFactory.createPmpThriftServer(Settings
+					.getInstance().getPmpListenerPort(), requestHandler);
 
 			if (_pmpServer != null) {
 				new Thread(_pmpServer).start();
@@ -158,9 +167,11 @@ public class Controller extends RequestHandler {
 		}
 
 		if (Settings.getInstance().isAnyListenerEnabled()) {
-			_anyServer = ThriftServerFactory.createAnyThriftServer(Settings.getInstance().getAnyListenerPort(),
-					Settings.getInstance().getPdpListenerPort(), Settings.getInstance().getPipListenerPort(), Settings
-							.getInstance().getPmpListenerPort());
+			_anyServer = ThriftServerFactory.createAnyThriftServer(Settings
+					.getInstance().getAnyListenerPort(), Settings.getInstance()
+					.getPdpListenerPort(), Settings.getInstance()
+					.getPipListenerPort(), Settings.getInstance()
+					.getPmpListenerPort());
 
 			if (_anyServer != null) {
 				new Thread(_anyServer).start();
@@ -168,29 +179,42 @@ public class Controller extends RequestHandler {
 		}
 
 		if (Settings.getInstance().isDistributionEnabled()) {
-			_dmpServer = ThriftServerFactory.createDmpThriftServer(
-					Settings.getInstance().getDmpListenerPort(), requestHandler);
+			_dmpServer = ThriftServerFactory.createDmpThriftServer(Settings
+					.getInstance().getDmpListenerPort(), requestHandler);
 
 			if (_dmpServer != null) {
 				new Thread(_dmpServer).start();
 			}
 		}
+
+		if (Settings.getInstance().isPrpListenerEnabled()) {
+			_prpServer = ThriftServerFactory.createPrpThriftServer(Settings
+					.getInstance().getPrpListenerPort(), requestHandler);
+			if (_prpServer != null) {
+				new Thread(_prpServer).start();
+			}
+		}
 	}
 
 	private boolean arePortsAvailable() {
-		boolean isPdpPortAvailable = !Settings.getInstance().isPdpListenerEnabled()
+		boolean isPdpPortAvailable = !Settings.getInstance()
+				.isPdpListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getPdpListenerPort());
-		boolean isPipPortAvailable = !Settings.getInstance().isPipListenerEnabled()
+		boolean isPipPortAvailable = !Settings.getInstance()
+				.isPipListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getPipListenerPort());
-		boolean isPmpPortAvailable = !Settings.getInstance().isPmpListenerEnabled()
+		boolean isPmpPortAvailable = !Settings.getInstance()
+				.isPmpListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getPmpListenerPort());
-		boolean isAnyPortAvailable = !Settings.getInstance().isAnyListenerEnabled()
+		boolean isAnyPortAvailable = !Settings.getInstance()
+				.isAnyListenerEnabled()
 				|| isPortAvailable(Settings.getInstance().getAnyListenerPort());
-		boolean isDmpPortAvailable = !Settings.getInstance().isDistributionEnabled()
+		boolean isDmpPortAvailable = !Settings.getInstance()
+				.isDistributionEnabled()
 				|| isPortAvailable(Settings.getInstance().getDmpListenerPort());
 
 		if (!isPdpPortAvailable || !isPipPortAvailable || !isPmpPortAvailable
-				|| !isAnyPortAvailable || ! isDmpPortAvailable) {
+				|| !isAnyPortAvailable || !isDmpPortAvailable) {
 			_logger.error("One of the ports is not available.");
 			_logger.error("\nAre you sure you are not running another instance on the same ports?");
 			return false;
@@ -214,7 +238,8 @@ public class Controller extends RequestHandler {
 				try {
 					s.close();
 				} catch (IOException e) {
-					throw new RuntimeException("You should handle this error.", e);
+					throw new RuntimeException("You should handle this error.",
+							e);
 				}
 			}
 		}
@@ -223,24 +248,41 @@ public class Controller extends RequestHandler {
 	static void loadProperties(String[] args) {
 		CommandLine cl = CommandLineOptions.init(args);
 		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_PROPFILE)) {
-			Settings.setPropertiesFile(cl.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
+			Settings.setPropertiesFile(cl
+					.getOptionValue(CommandLineOptions.OPTION_PROPFILE));
 		}
 
-		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
-			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
-					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
+		if (cl != null
+				&& cl.hasOption(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)) {
+			Settings.getInstance()
+					.loadSetting(
+							CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT_LONG,
+							Integer.valueOf(cl
+									.getOptionValue(CommandLineOptions.OPTION_LOCAL_PDP_LISTENER_PORT)));
 		}
-		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
-			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
-					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
+		if (cl != null
+				&& cl.hasOption(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)) {
+			Settings.getInstance()
+					.loadSetting(
+							CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT_LONG,
+							Integer.valueOf(cl
+									.getOptionValue(CommandLineOptions.OPTION_LOCAL_PIP_LISTENER_PORT)));
 		}
-		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
-			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
-					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
+		if (cl != null
+				&& cl.hasOption(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)) {
+			Settings.getInstance()
+					.loadSetting(
+							CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT_LONG,
+							Integer.valueOf(cl
+									.getOptionValue(CommandLineOptions.OPTION_LOCAL_PMP_LISTENER_PORT)));
 		}
-		if (cl != null && cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
-			Settings.getInstance().loadSetting(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
-					Integer.valueOf(cl.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
+		if (cl != null
+				&& cl.hasOption(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)) {
+			Settings.getInstance()
+					.loadSetting(
+							CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT_LONG,
+							Integer.valueOf(cl
+									.getOptionValue(CommandLineOptions.OPTION_LOCAL_ANY_LISTENER_PORT)));
 		}
 	}
 

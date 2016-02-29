@@ -45,6 +45,7 @@ public class Settings extends SettingsLoader {
 	public static final String PROP_NAME_pipListenerPort = "pipListenerPort";
 	public static final String PROP_NAME_anyListenerPort = "anyListenerPort";
 	public static final String PROP_NAME_dmpListenerPort = "dmpListenerPort";
+	public static final String PROP_NAME_prpListenerPort = "prpListenerPort";
 
 	public static final String PROP_NAME_pepListenerPort = "pepListenerPort";
 	public static final String PROP_NAME_pxpListenerPort = "pxpListenerPort";
@@ -207,6 +208,7 @@ public class Settings extends SettingsLoader {
 		loadSetting(PROP_NAME_pdpListenerPort, 21003);
 		loadSetting(PROP_NAME_anyListenerPort, 21004);
 		loadSetting(PROP_NAME_dmpListenerPort, 21005);
+		loadSetting(PROP_NAME_prpListenerPort, 21006);
 
 		loadSetting(PROP_NAME_pxpListenerPort, 30003);
 		loadSetting(PROP_NAME_pepListenerPort, 30005);
@@ -434,6 +436,10 @@ public class Settings extends SettingsLoader {
 	public int getPxpListenerPort() {
 		return getValue(PROP_NAME_pxpListenerPort);
 	}
+	
+	public int getPrpListenerPort(){
+		return getValue(PROP_NAME_prpListenerPort);
+	}
 
 	public int getAnyListenerPort() {
 		return getValue(PROP_NAME_anyListenerPort);
@@ -456,6 +462,10 @@ public class Settings extends SettingsLoader {
 	public boolean isPdpListenerEnabled() {
 		Location l = getValue(PROP_NAME_pdpLocation);
 		return l == null ? false : l.getLocation() == ELocation.LOCAL;
+	}
+	
+	public boolean isPrpListenerEnabled(){
+		return getValue(PROP_NAME_prpListenerPort) != null;
 	}
 
 	public boolean isAnyListenerEnabled() {
