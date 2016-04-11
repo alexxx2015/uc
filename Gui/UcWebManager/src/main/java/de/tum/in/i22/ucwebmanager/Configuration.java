@@ -12,8 +12,7 @@ public class Configuration {
 	public static final String LOCAL_FILE_SEPARATOR="::";
 	
 	//Web app root directory
-	public static final String WebAppRoot = VaadinServlet.getCurrent().getServletContext()
-	.getRealPath("/");
+	public static final String WebAppRoot = VaadinServlet.getCurrent().getServletContext().getRealPath("/");
 	
 	// Return ths 'apps' directory path where all applications have to be stored
 	// webapp/app/

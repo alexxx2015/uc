@@ -88,11 +88,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			tblpointstoexclude, tblsourcensinks;
 
 	CheckBox chkMultithreaded, chkcomputechops, chkObjectsensitivenes,
-			chkindirectflows, chkSystemOut;
+			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
 			txtLogFile, txtFldEntryPoint;
-	ComboBox cmbmode, cmbStub, cmbPointstoPolicy;
+	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
 	Upload uploadSDGFile, uploadCGFile;
 	Button btnsave, btnrun, btnselectsnsFile;
 
@@ -158,6 +158,13 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			}
 
 		});
+		
+		cmbPruningPolicy = new ComboBox("Pruning Policy");
+		cmbPruningPolicy.setWidth("100%");
+		cmbPruningPolicy.setNullSelectionAllowed(false);
+		cmbPruningPolicy.addItem("app");
+		cmbPruningPolicy.addItem("off");
+		cmbPruningPolicy.setValue("off");
 
 		cmbStub = new ComboBox("Stubs");
 		cmbStub.setWidth("100%");
@@ -399,7 +406,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		chkObjectsensitivenes = new CheckBox("Object Sensitiveness");
 		chkindirectflows = new CheckBox("Indirect Flows");
 		chkSystemOut = new CheckBox("System Out");
-
+		chkOmitIFC = new CheckBox("OmitIFC");
 		// IndexedContainer cmbocontainer = new IndexedContainer();
 		// cmbocontainer.addContainerProperty("name", String.class, null);
 
@@ -418,6 +425,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(txtAnalysisName);
 		fl.addComponent(cmbmode);
 		fl.addComponent(cmbStub);
+		fl.addComponent(cmbPruningPolicy);
 		fl.addComponent(txtFldEntryPoint);
 		fl.addComponent(gridClassPath);
 		fl.addComponent(gridThirdPartyLib);
@@ -436,16 +444,20 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(tblsourcensinks);
 		fl.addComponent(txtFldSnSFile);
 		fl.addComponent(uploadSnSfile);
-		// fl.addComponent(txterror);
-		fl.addComponent(chkMultithreaded);
-		fl.addComponent(chkObjectsensitivenes);
-		fl.addComponent(chkindirectflows);
-		fl.addComponent(chkcomputechops);
-		fl.addComponent(chkSystemOut);
+		// fl.addComponent(txterror);+
+		
+		GridLayout grid = new GridLayout(3,2);
+		grid.addComponent(chkMultithreaded, 0, 0);
+		grid.addComponent(chkObjectsensitivenes, 0, 1);
+		grid.addComponent(chkindirectflows, 1, 0);
+		grid.addComponent(chkcomputechops,1,1);
+		grid.addComponent(chkSystemOut,2,0);
+		grid.addComponent(chkOmitIFC, 2, 1);
 
 		// fl.setMargin(true);
 		fl.setSizeFull();
 		parent.addComponent(fl);
+		parent.addComponent(grid);
 
 		HorizontalLayout tmpParent = new HorizontalLayout();
 		btnsave.addStyleName("mybutton");
@@ -646,7 +658,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setSdgFile(txtSDGFile.getValue());
 		data.setCgFile(txtCGFile.getValue());
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.isEnabled()));
-		data.setPruningPolicy("");
+		data.setPruningPolicy(cmbPruningPolicy.getValue().toString());
 		data.setPointsto_policy(txtPointstoFallback.getValue());
 		data.setPointsto_fallback(txtPointstoFallback.getValue());
 		data.setPointsto_includeclasses(readDataFromTable(tblpointstoinclude));
@@ -659,7 +671,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setIgnoreIndirectFlows(String.valueOf(chkindirectflows.isEnabled()));
 		data.setComputeChops(String.valueOf(chkcomputechops.isEnabled()));
 		data.setSystemout(String.valueOf(chkSystemOut.isEnabled()));
-
+		data.setOmitIFC(String.valueOf(chkOmitIFC.isEnabled()));
 		List<AnalysisData.SourcesSinks> sourcesAndSinks = new LinkedList<AnalysisData.SourcesSinks>();
 		data.setSourcesSinks(sourcesAndSinks);
 
@@ -716,6 +728,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		else{
 			DocBuilder docBuilder = new DocBuilder();
 			docBuilder.generateAnalysisConfigFile(data, this.appName);
+			
 		}
 	        
 	}

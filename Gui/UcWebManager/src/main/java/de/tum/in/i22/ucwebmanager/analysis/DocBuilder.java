@@ -58,7 +58,7 @@ public class DocBuilder {
 	public void generateAnalysisConfigFile(AnalysisData data, String appName) {
 
 		File directory = new File(Configuration.WebAppRoot
-				+ "/apps/ws-flowAnaluser" + "/" + appName + "/"
+				+ "/apps/ws-flowAnalyser" + "/" + String.valueOf(appName.hashCode()) + "/"
 				+ data.getAnalysisName());
 		String strTableData;
 		List<String> listtabledata;

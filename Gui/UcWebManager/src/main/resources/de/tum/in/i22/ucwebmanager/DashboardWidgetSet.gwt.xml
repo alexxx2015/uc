@@ -4,7 +4,6 @@
 	<inherits name="com.vaadin.DefaultWidgetSet" />
 	
 	
-	
 	<!--  -->
 
 	<set-configuration-property name="devModeRedirectEnabled"
@@ -32,4 +31,8 @@
     
 
     <inherits name="de.tum.in.i22.ucwebmanager.MyAppWidgetset" />
+
+    
+
+    <inherits name="com.vaadin.addon.charts.Widgetset" ></inherits>
 </module>

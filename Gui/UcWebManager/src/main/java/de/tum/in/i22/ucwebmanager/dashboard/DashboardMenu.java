@@ -1,6 +1,9 @@
 package de.tum.in.i22.ucwebmanager.dashboard;
 
+import java.io.File;
+
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -12,6 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
@@ -72,7 +76,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<strong>Usage Control</strong> Dashboard",
+        Label logo = new Label("<strong>Usage Control</strong> UCWeb Manager Dashboard",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -146,10 +150,16 @@ public final class DashboardMenu extends CustomComponent {
     private Component buildMenuItems() {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
+        //FileResource resource = new FileResource(new File(
+        //       "./tum_logo.png"));
 
+        // Show the image in the application
+        //Image image = new Image("Image from file", resource);
         for (final DashboardViewType view : DashboardViewType.values()) {
             Component menuItemComponent = new ValoMenuItemButton(view);
+         // Image as a file resource
 
+      
 //            if (view == DashboardViewType.REPORTS) {
 //                // Add drop target to reports button
 //                DragAndDropWrapper reports = new DragAndDropWrapper(
@@ -193,6 +203,7 @@ public final class DashboardMenu extends CustomComponent {
 //            }
 
             menuItemsLayout.addComponent(menuItemComponent);
+            //menuItemsLayout.addComponent(image);
         }
         return menuItemsLayout;
 

@@ -9,6 +9,8 @@ public class WebServiceServlets {
     @WebServlet(urlPatterns = "/*", name = "UcWebManagerUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = UcWebManagerUI.class, productionMode = false)
     public static class UcWebManagerUIServlet extends VaadinServlet {
+    	//super.servletInitialized(); //always call at the beginning
+
     }
 
 }
