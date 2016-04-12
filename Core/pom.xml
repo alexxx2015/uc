@@ -18,5 +18,6 @@
 		<module>Pmp</module>
 		<module>Ptp</module>
 		<module>Dmp</module>
+		<module>Prp</module>
 	</modules>
 </project>
