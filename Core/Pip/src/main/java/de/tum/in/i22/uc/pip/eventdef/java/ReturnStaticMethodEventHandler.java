@@ -138,8 +138,8 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	}
 
 	// Clean up method parameters and local variables
-	cleanUpParamsAndLocals(pid, threadId, callerClass, null, calledMethod,
-		callerClassIsInstrumented, null, argsCount);
+//	cleanUpParamsAndLocals(pid, threadId, callerClass, null, calledMethod,
+//		callerClassIsInstrumented, null, argsCount);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }

@@ -5,10 +5,9 @@
 		<groupId>UsageControlSystem</groupId>
 		<artifactId>Core</artifactId>
 		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>UsageControlSystem</groupId>
 	<artifactId>Prp</artifactId>
-	<version>1.0</version>
 	<description>Policy Release Point, release data to uncontrolled ecosystems</description>
 
 	<dependencies>

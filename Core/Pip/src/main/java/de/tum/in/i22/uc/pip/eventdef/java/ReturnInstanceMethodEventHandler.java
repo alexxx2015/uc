@@ -141,8 +141,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	}
 
 	// Clean up method parameters and local variables
-	cleanUpParamsAndLocals(pid, threadId, callerObjectClass, callerObjectAddress, calledMethod,
-		callerObjectClassIsInstrumented, callerObjectContainer, argsCount);
+//	cleanUpParamsAndLocals(pid, threadId, callerObjectClass, callerObjectAddress, calledMethod,
+//		callerObjectClassIsInstrumented, callerObjectContainer, argsCount);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }

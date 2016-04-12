@@ -159,6 +159,7 @@ public class PipHandler extends PipProcessor {
 	    eventHandler.setDmp(getDmp());
 
 	    _logger.info("Executing PipHandler for " + event);
+//	    System.out.println("PIP: received "+event);//AF added
 	    status = eventHandler.performUpdate();
 
 	    /*
