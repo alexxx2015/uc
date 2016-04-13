@@ -157,9 +157,7 @@ public final class DashboardMenu extends CustomComponent {
         //Image image = new Image("Image from file", resource);
         for (final DashboardViewType view : DashboardViewType.values()) {
             Component menuItemComponent = new ValoMenuItemButton(view);
-         // Image as a file resource
-
-      
+//          Image as a file resource
 //            if (view == DashboardViewType.REPORTS) {
 //                // Add drop target to reports button
 //                DragAndDropWrapper reports = new DragAndDropWrapper(

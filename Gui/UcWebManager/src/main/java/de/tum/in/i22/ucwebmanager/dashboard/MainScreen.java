@@ -6,7 +6,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 
 import de.tum.in.i22.ucwebmanager.UcWebManagerNavigator;
-import de.tum.in.i22.ucwebmanager.view.StaticAnalysisView;
 
 /*
  * Dashboard MainView is a simple HorizontalLayout that wraps the menu on the
@@ -15,22 +14,25 @@ import de.tum.in.i22.ucwebmanager.view.StaticAnalysisView;
 @SuppressWarnings("serial")
 public class MainScreen extends HorizontalLayout {
 
-    public MainScreen() {
-    	setSizeUndefined();
-//    	setSizeFull();	
-        addStyleName("mainview");
-        
-//        Add legt dashboard menu bar
-        addComponent(new DashboardMenu());
+	public MainScreen() {
+		this.setSizeFull();
+		// this.setSizeUndefined();
+		addStyleName("mainview");
 
-//        Add central content box
-        ComponentContainer content = new CssLayout();
-        content.addStyleName("view-content");
-//        content.setSizeFull();
-        content.setSizeUndefined();
-        addComponent(content);
-        setExpandRatio(content, 1.0f);
+		// Add legt dashboard menu bar
+		DashboardMenu dbm = new DashboardMenu();
+		addComponent(dbm);
+		setExpandRatio(dbm, 1.0f);
 
-        new UcWebManagerNavigator(content);
-    }
+		// Add central content box
+		ComponentContainer content = new CssLayout();
+		// content.addStyleName("myborder");
+		content.addStyleName("view-content");
+		content.setSizeFull();
+//		 content.setSizeUndefined();
+		addComponent(content);
+		setExpandRatio(content, 4.0f);
+
+		new UcWebManagerNavigator(content);
+	}
 }

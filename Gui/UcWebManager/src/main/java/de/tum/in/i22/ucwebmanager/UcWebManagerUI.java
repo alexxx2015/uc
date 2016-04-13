@@ -2,20 +2,14 @@ package de.tum.in.i22.ucwebmanager;
 
 import java.util.Locale;
 
-import javax.servlet.annotation.WebServlet;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.tum.in.i22.ucwebmanager.dashboard.LoginScreen;
 import de.tum.in.i22.ucwebmanager.dashboard.MainScreen;
 
 @Theme("dashboard")
@@ -73,6 +67,7 @@ public final class UcWebManagerUI extends UI {
 		// getNavigator().navigateTo(getNavigator().getState());
 		// } else {
 		// setContent(new LoginView());
+		
 		setContent(new MainScreen());
 		addStyleName("loginview");
 		// }

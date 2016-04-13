@@ -31,8 +31,8 @@
     
 
     <inherits name="de.tum.in.i22.ucwebmanager.MyAppWidgetset" />
-
-    
-
+	
+    <!-- AF: as already discussed we cannot use vaadin charts because of the license!!
     <inherits name="com.vaadin.addon.charts.Widgetset" ></inherits>
+    -->
 </module>

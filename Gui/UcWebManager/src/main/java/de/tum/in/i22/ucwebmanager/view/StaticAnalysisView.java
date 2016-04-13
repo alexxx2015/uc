@@ -99,6 +99,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	StaticAnalyser analyser;
 
 	public StaticAnalysisView() {
+		this.addStyleName("myborder");
 		// try {
 		// InitialiseUIComponents();
 		// prop.load(inputStream);
