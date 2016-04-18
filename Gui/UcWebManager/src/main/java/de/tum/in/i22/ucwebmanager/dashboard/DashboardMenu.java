@@ -76,7 +76,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<strong>Usage Control</strong> UCWeb Manager Dashboard",
+        Label logo = new Label("<strong>Usage Control</strong>",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -234,7 +234,7 @@ public final class DashboardMenu extends CustomComponent {
     @Subscribe
     public void updateNotificationsCount(
             final NotificationsCountUpdatedEvent event) {
-        int unreadNotificationsCount = 3;//DashboardUI.getDataProvider()
+        int unreadNotificationsCount = 0;//DashboardUI.getDataProvider()
 //                .getUnreadNotificationsCount();
         notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
         notificationsBadge.setVisible(unreadNotificationsCount > 0);

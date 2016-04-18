@@ -36,10 +36,8 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -49,9 +47,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
@@ -99,7 +95,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	StaticAnalyser analyser;
 
 	public StaticAnalysisView() {
-		this.addStyleName("myborder");
+		//this.addStyleName("myborder");
 		// try {
 		// InitialiseUIComponents();
 		// prop.load(inputStream);

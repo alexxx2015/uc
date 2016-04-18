@@ -19,12 +19,24 @@ public class DataBase {
 		      						+ "id integer primary key autoincrement, "
 		      						+ "s_name string, i_hashcode integer, s_path string,"
 		      						+ "s_status string)");
-		      statement.executeUpdate("create table t_staticanalysis ("
+		      statement.executeUpdate("drop table if exists t_staticanalysis_config");
+		      statement.executeUpdate("create table t_staticanalysis_config ("
 		      						+ "id integer primary key autoincrement,"
 		      						+ "s_name string, s_path string,"
-		      						+ "i_type integer," 			//0: configuration, 1: report.
 		      						+ "i_app_id	integer,"
 		      						+ "FOREIGN KEY (i_app_id) REFERENCES t_app(id))");
+		      statement.executeUpdate("drop table if exists t_staticanalysis_report");
+		      statement.executeUpdate("create table t_staticanalysis_report ("
+						+ "id integer primary key autoincrement,"
+						+ "s_name string, s_path string,"
+						+ "i_config_id	integer,"
+						+ "FOREIGN KEY (i_config_id) REFERENCES t_staticanalysis_config(id))");
+		      statement.executeUpdate("drop table if exists t_instrumentation");
+		      statement.executeUpdate("CREATE TABLE t_instrumentation ("
+		    		  + "id interger primary key autoincrement,"
+		    		  + "s_name string,"
+		    		  + "i_report_id integer,"
+		    		  + "FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_report(id)");
 		}catch (SQLException e){
 			System.err.println(e.getMessage());
 		}

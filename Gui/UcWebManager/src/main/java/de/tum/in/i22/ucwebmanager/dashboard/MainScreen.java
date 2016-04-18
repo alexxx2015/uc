@@ -15,10 +15,10 @@ import de.tum.in.i22.ucwebmanager.UcWebManagerNavigator;
 public class MainScreen extends HorizontalLayout {
 
 	public MainScreen() {
-		this.setSizeFull();
-		// this.setSizeUndefined();
+		setSizeFull();
+		//setSizeUndefined();
 		addStyleName("mainview");
-
+		setHeight("100%");
 		// Add legt dashboard menu bar
 		DashboardMenu dbm = new DashboardMenu();
 		addComponent(dbm);

@@ -5,28 +5,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.List;
 
-import com.vaadin.data.Item;
+
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
@@ -34,15 +26,18 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.Configuration;
+import de.tum.in.i22.ucwebmanager.DB.App;
+import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 
 public class MainView extends VerticalLayout implements View {
-	String appName;
-	Table table;
+	
+	Grid grid = new Grid();
 	Upload upload;
 	File fileTmp;
+	App app;
+	String appName;
 	int hashCodeOfApp;
-
 	public MainView() {
 		Label lab = new Label("Main view");
 		lab.setSizeUndefined();
@@ -55,9 +50,9 @@ public class MainView extends VerticalLayout implements View {
 		Image image = new Image(null, res);
 		image.setHeight("50%");
 		image.setWidth("50%");
-		HorizontalLayout grid = new HorizontalLayout();
-		grid.addComponent(lab);
-		grid.addComponent(image);
+		HorizontalLayout horLayout = new HorizontalLayout();
+		horLayout.addComponent(lab);
+		horLayout.addComponent(image);
 		// Upload
 		Upload.Receiver receiver = createReceiver();
 		upload = new Upload("Upload your App", receiver);
@@ -73,12 +68,11 @@ public class MainView extends VerticalLayout implements View {
 			}
 		});
 		// Table
-		table = new Table("Overview");
-		table.setSizeFull();
-		fillTable(table);
-		addComponent(grid);
+		grid.setSizeFull();
+		fillGrid(grid);
+		addComponent(horLayout);
 		addComponent(upload);
-		addComponent(table);
+		addComponent(grid);
 		// addComponent(lab);
 		// addComponent(image);
 	}
@@ -90,9 +84,8 @@ public class MainView extends VerticalLayout implements View {
 	}
 
 	private void createFolderAndSaveApp(String fileName) throws IOException {
-		int hashCode = fileName.hashCode();
 		String path = Configuration.WebAppRoot + "/apps/"
-				+ String.valueOf(hashCode);
+				+ String.valueOf(hashCodeOfApp);
 		File dir = new File(path + "/code");
 		boolean success = dir.mkdirs();
 		if (success) {
@@ -104,12 +97,14 @@ public class MainView extends VerticalLayout implements View {
 				stream.flush();
 				stream.close();
 				fileTmp.delete();
-				saveToDB(fileName, hashCode, path, Status.NONE.getStage());
-				updateTable(table, fileName, hashCode, Status.NONE.getStage());
+				// create App
+				app = new App( fileName, hashCodeOfApp, dir.toString(), Status.NONE.getStage());
+				//saveToDB(fileName, hashCode, path, Status.NONE.getStage());
+				AppDAO.saveToDB(app);
+				updateTable(grid, app);
 				new Notification("Success!",
 						"<br/>File uploaded, Folder created, saved to DB!",
-						Notification.Type.WARNING_MESSAGE, true).show(Page
-						.getCurrent());
+						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -144,89 +139,29 @@ public class MainView extends VerticalLayout implements View {
 		return receiver;
 	}
 
-	private void fillTable(Table t) {
-		t.addContainerProperty("Name", String.class, null);
-		t.addContainerProperty("Hash Code", Integer.class, null);
-		t.addContainerProperty("Status", String.class, null);
-		ArrayList<String[]> allApp = new ArrayList<String[]>();
+	private void fillGrid(Grid g) {
+		g.setEditorEnabled(true);
+		g.setSelectionMode(SelectionMode.SINGLE);
+		g.addColumn("ID", Integer.class);
+		g.getColumn("ID").setMaximumWidth(50).setEditable(false);
+		g.addColumn("Name", String.class);
+		g.addColumn("Hash Code",Integer.class);
+		g.addColumn("Status",String.class);
+		g.getColumn("Status").setMaximumWidth(60);
+		List<App> allApp = null;
 		try {
-			allApp = getAllApp();
+			allApp = AppDAO.getAllApps();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		int i = 1;
-		for (String[] s : allApp) {
-			t.addItem(new Object[] { s[0], Integer.parseInt(s[1]), s[2] }, i++);
-
+		for (App a : allApp) {
+			g.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus());		
 		}
-
+		
 	}
 
-	private void updateTable(Table t, String name, int hashCode, String status) {
-		Object newItemId = table.addItem();
-		Item row1 = table.getItem(newItemId);
-		row1.getItemProperty("Name").setValue(name);
-		row1.getItemProperty("Hash Code").setValue(hashCode);
-		row1.getItemProperty("Status").setValue(status);
+	private void updateTable(Grid g,App app) {
+		g.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus());
 	}
 
-	private void saveToDB(String fileName, int hashCode, String path,
-			String status) throws ClassNotFoundException {
-		Class.forName("org.sqlite.JDBC");
-
-		Connection conn = null;
-		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
-			Statement statement = conn.createStatement();
-			String s = "insert into t_app (s_name,i_hashcode,s_path,s_status) values('"
-					+ fileName
-					+ "',"
-					+ String.valueOf(hashCode)
-					+ ",'"
-					+ path
-					+ "','" + status + "')";
-			statement.executeUpdate(s);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				// connection close failed.
-				System.err.println(e);
-			}
-		}
-	}
-
-	private ArrayList<String[]> getAllApp() throws ClassNotFoundException {
-		ArrayList<String[]> result = new ArrayList<String[]>();
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
-		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
-			Statement statement = conn.createStatement();
-			String s = "SELECT * FROM t_app";
-			ResultSet rs = statement.executeQuery(s);
-			while (rs.next()) {
-				String[] tmp = new String[3];
-				tmp[0] = rs.getString("s_name");
-				tmp[1] = String.valueOf(rs.getInt("i_hashcode"));
-				tmp[2] = rs.getString("s_status");
-				result.add(tmp);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				// connection close failed.
-				System.err.println(e);
-			}
-
-		}
-		return result;
-	}
 }
