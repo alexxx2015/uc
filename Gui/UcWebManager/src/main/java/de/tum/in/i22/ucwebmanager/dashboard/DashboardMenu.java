@@ -1,9 +1,6 @@
 package de.tum.in.i22.ucwebmanager.dashboard;
 
-import java.io.File;
-
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -15,7 +12,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
@@ -49,8 +45,9 @@ public final class DashboardMenu extends CustomComponent {
         setPrimaryStyleName("valo-menu");
         setId(ID);
         setSizeFull();
+        
 //        setSizeUndefined();
-
+//        setHeight("100%");
         // There's only one DashboardMenu per UI so this doesn't need to be
         // unregistered from the UI-scoped DashboardEventBus.
 //        DashboardEventBus.register(this);

@@ -16,9 +16,10 @@ public class MainScreen extends HorizontalLayout {
 
 	public MainScreen() {
 		setSizeFull();
-		//setSizeUndefined();
+//		setSizeUndefined();
 		addStyleName("mainview");
-		setHeight("100%");
+		setHeightUndefined();
+//		setHeight("100%");
 		// Add legt dashboard menu bar
 		DashboardMenu dbm = new DashboardMenu();
 		addComponent(dbm);
@@ -29,7 +30,8 @@ public class MainScreen extends HorizontalLayout {
 		// content.addStyleName("myborder");
 		content.addStyleName("view-content");
 		content.setSizeFull();
-//		 content.setSizeUndefined();
+//		content.setSizeUndefined();
+		content.setHeightUndefined();
 		addComponent(content);
 		setExpandRatio(content, 4.0f);
 

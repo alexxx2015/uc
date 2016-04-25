@@ -1,20 +1,15 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +24,6 @@ import org.xml.sax.SAXException;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -56,6 +50,8 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.Configuration;
+import de.tum.in.i22.ucwebmanager.DB.App;
+import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
 
@@ -66,6 +62,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	TextField txtAnalysisName;
 
 	String appName, staticAnalysisPath;
+	int appId;
+	App app;
 	String strBaseFolders;
 
 	// Properties prop = new Properties();
@@ -87,7 +85,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
-			txtLogFile, txtFldEntryPoint;
+			txtLogFile, txtFldEntryPoint,txtStatistics;
 	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
 	Upload uploadSDGFile, uploadCGFile;
 	Button btnsave, btnrun, btnselectsnsFile;
@@ -173,7 +171,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		txtFldEntryPoint = new TextField("Entry Point");
 		txtFldEntryPoint.setWidth("100%");
-
+		
+		txtStatistics = new TextField("Statistics");
+		txtStatistics.setWidth("100%");
+		
 		// Generate classpath table
 		gridClassPath = new Table("ClassPath");
 		gridClassPath.addContainerProperty("Classpath", TextField.class, null);
@@ -432,6 +433,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(uploadCGFile);
 
 		fl.addComponent(txtReportFile);
+		fl.addComponent(txtStatistics);
 		fl.addComponent(txtLogFile);
 		fl.addComponent(cmbPointstoPolicy);
 		fl.addComponent(txtPointstoFallback);
@@ -443,18 +445,24 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(uploadSnSfile);
 		// fl.addComponent(txterror);+
 		
-		GridLayout grid = new GridLayout(3,2);
-		grid.addComponent(chkMultithreaded, 0, 0);
-		grid.addComponent(chkObjectsensitivenes, 0, 1);
-		grid.addComponent(chkindirectflows, 1, 0);
-		grid.addComponent(chkcomputechops,1,1);
-		grid.addComponent(chkSystemOut,2,0);
-		grid.addComponent(chkOmitIFC, 2, 1);
+		fl.addComponent(chkMultithreaded);
+		fl.addComponent(chkObjectsensitivenes);
+		fl.addComponent(chkindirectflows);
+		fl.addComponent(chkcomputechops);
+		fl.addComponent(chkSystemOut);
+		fl.addComponent(chkOmitIFC);
+		
+//		GridLayout grid = new GridLayout(3,2);
+//		grid.addComponent(chkMultithreaded, 0, 0);
+//		grid.addComponent(chkObjectsensitivenes, 0, 1);
+//		grid.addComponent(chkindirectflows, 1, 0);
+//		grid.addComponent(chkcomputechops,1,1);
+//		grid.addComponent(chkSystemOut,2,0);
+//		grid.addComponent(chkOmitIFC, 2, 1);
 
 		// fl.setMargin(true);
 		fl.setSizeFull();
 		parent.addComponent(fl);
-		parent.addComponent(grid);
 
 		HorizontalLayout tmpParent = new HorizontalLayout();
 		btnsave.addStyleName("mybutton");
@@ -669,6 +677,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setComputeChops(String.valueOf(chkcomputechops.isEnabled()));
 		data.setSystemout(String.valueOf(chkSystemOut.isEnabled()));
 		data.setOmitIFC(String.valueOf(chkOmitIFC.isEnabled()));
+		data.setReportFile(txtReportFile.getValue());
+		data.setStatistics(txtStatistics.getValue());
 		List<AnalysisData.SourcesSinks> sourcesAndSinks = new LinkedList<AnalysisData.SourcesSinks>();
 		data.setSourcesSinks(sourcesAndSinks);
 
@@ -724,7 +734,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		else{
 			DocBuilder docBuilder = new DocBuilder();
-			docBuilder.generateAnalysisConfigFile(data, this.appName);
+			docBuilder.generateAnalysisConfigFile(data, app.getName(), app.getPath(), app.getId());
 			
 		}
 	        
@@ -770,31 +780,34 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
 			for (String msg : msgs) {
-				appName = msg;
-				System.out.println("enter view changeevent " + appName);
+				appId = Integer.parseInt(msg);
+				System.out.println("enter view changeevent " + appId);
+				try {
+					app = AppDAO.getAppById(appId);
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+				appName = app.getName();
 			}
 			txtAnalysisName.setValue(appName);
 			if (appName != "")
-				fillStaticAnalysisTextboxes(appName);
+				fillStaticAnalysisTextboxes(app.getPath());
 		}
 	}
 
-	private void fillStaticAnalysisTextboxes(String Appname) {
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
-				.newInstance();
+	private void fillStaticAnalysisTextboxes(String path) {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
-			File appFolder = new File(Configuration.WebAppRoot + strBaseFolders
-					+ Appname);
-			String applicationfolder = Configuration.WebAppRoot
-					+ strBaseFolders + Appname;
+			File appFolder = new File(path);
+			String applicationfolder = path;
 			String[] names = appFolder.list();
 			File[] folderlist = appFolder.listFiles();
 
 			List<String> listReportfiles = new ArrayList<>();
 			List<File> listReportfiles1 = new ArrayList<>();
-			if (Appname != null) {
+			if (path != null) {
 				for (File name : folderlist) {
 					if (name.isDirectory()) {
 						String temp = name.getName();
@@ -906,8 +919,13 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 							.getElementsByTagName("reportfile");
 					if (reportList != null) {
 						Element reportElement = (Element) reportList.item(0);
-						txtReportFile.setValue((reportElement
-								.getAttribute("value")));
+						txtReportFile.setValue(reportElement
+								.getAttribute("value"));
+					}
+					NodeList statisticsList = FileElement.getElementsByTagName("statistics");
+					if(statisticsList != null) {
+						Element statisticsElement = (Element) statisticsList.item(0);
+						txtStatistics.setValue(statisticsElement.getAttribute("value"));
 					}
 					NodeList chopsList = FileElement
 							.getElementsByTagName("computeChops");

@@ -10,12 +10,10 @@ import java.util.List;
 
 public class StaticAnalysisConfigDAO {
 
-	public static List<StaticAnalysisConfig> getAllConfigs() throws ClassNotFoundException {
+	public static List<StaticAnalysisConfig> getAllConfigs() throws ClassNotFoundException, SQLException {
 		List<StaticAnalysisConfig> configs = new ArrayList<StaticAnalysisConfig>();
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(StaticAnalysisConfigTable.GETALL);
 			while (rs.next()) {
@@ -40,14 +38,12 @@ public class StaticAnalysisConfigDAO {
 		return configs;
 	}
 
-	public static StaticAnalysisConfig getConfigByID(int id) throws ClassNotFoundException {
+	public static StaticAnalysisConfig getConfigByID(int id) throws ClassNotFoundException, SQLException {
 		StaticAnalysisConfig config = null;
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM " + StaticAnalysisConfigTable.TABLE + "WHERE "
+			ResultSet rs = statement.executeQuery("SELECT * FROM " + StaticAnalysisConfigTable.TABLE + " WHERE "
 					+ StaticAnalysisConfigTable.COLUMN_ID + " = " + String.valueOf(id));
 			if (rs.next()) {
 				config = new StaticAnalysisConfig(rs.getInt(StaticAnalysisConfigTable.COLUMN_ID),
@@ -71,11 +67,9 @@ public class StaticAnalysisConfigDAO {
 		return config;
 	}
 
-	public static void saveToDB(StaticAnalysisConfig config) throws ClassNotFoundException {
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+	public static void saveToDB(StaticAnalysisConfig config) throws ClassNotFoundException, SQLException {
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			String s = "INSERT INTO " + StaticAnalysisConfigTable.TABLE + "("
 					+ StaticAnalysisConfigTable.COLUMN_NAME + ","

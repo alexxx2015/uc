@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StaticAnalysisReportDAO {
-	public static List<StaticAnalysisReport> getAllReports() throws ClassNotFoundException {
+	public static List<StaticAnalysisReport> getAllReports() throws ClassNotFoundException, SQLException {
 		List<StaticAnalysisReport> reports = new ArrayList<StaticAnalysisReport>();
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(StaticAnalysisReportTable.GETALL);
 			while (rs.next()) {
@@ -39,14 +37,12 @@ public class StaticAnalysisReportDAO {
 		return reports;
 	}
 
-	public static StaticAnalysisReport getReportByID(int id) throws ClassNotFoundException {
+	public static StaticAnalysisReport getReportByID(int id) throws ClassNotFoundException, SQLException {
 		StaticAnalysisReport config = null;
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM " + StaticAnalysisReportTable.TABLE + "WHERE "
+			ResultSet rs = statement.executeQuery("SELECT * FROM " + StaticAnalysisReportTable.TABLE + " WHERE "
 					+ StaticAnalysisReportTable.COLUMN_ID + " = " + String.valueOf(id));
 			if (rs.next()) {
 				config = new StaticAnalysisReport(rs.getInt(StaticAnalysisReportTable.COLUMN_ID),
@@ -70,11 +66,9 @@ public class StaticAnalysisReportDAO {
 		return config;
 	}
 
-	public static void saveToDB(StaticAnalysisReport report) throws ClassNotFoundException {
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+	public static void saveToDB(StaticAnalysisReport report) throws ClassNotFoundException, SQLException {
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			String s = "INSERT INTO " + StaticAnalysisReportTable.TABLE + "("
 					+ StaticAnalysisReportTable.COLUMN_NAME + ","

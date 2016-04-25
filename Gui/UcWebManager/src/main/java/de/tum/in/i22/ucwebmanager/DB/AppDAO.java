@@ -12,12 +12,12 @@ public class AppDAO {
 	private String[] allColumns = {AppTable.COLUMN_ID,AppTable.COLUMN_NAME,AppTable.COLUMN_HASHCODE,AppTable.COLUMN_PATH,AppTable.COLUMN_STATUS};
 
 	
-	public static List<App> getAllApps() throws ClassNotFoundException{
+	public static List<App> getAllApps() throws ClassNotFoundException, SQLException{
 		List<App> apps = new ArrayList<App>();
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
+
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(AppTable.GETALL);
 			while (rs.next()){
@@ -42,17 +42,15 @@ public class AppDAO {
 	}
 		return apps;
 	}
-	public static App getAppById(int id) throws ClassNotFoundException{
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+	public static App getAppById(int id) throws ClassNotFoundException, SQLException{
+		Connection conn = DatabaseConnection.getConnection();
 		App app = null;
 		try{
 			
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			String s = "SELECT * FROM "
 					 + AppTable.TABLE_APP 
-					 + "WHERE"
+					 + " WHERE "
 					 + AppTable.COLUMN_ID
 					 + " = " + String.valueOf(id);
 			ResultSet rs = statement.executeQuery(s);
@@ -77,12 +75,10 @@ public class AppDAO {
 		return app;
 
 	}
-	public static void saveToDB(App app) throws ClassNotFoundException{
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+	public static void saveToDB(App app) throws ClassNotFoundException, SQLException{
+		Connection conn = DatabaseConnection.getConnection();
 		try{
-			
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
+
 			Statement statement = conn.createStatement();
 			String s = "INSERT INTO "+ AppTable.TABLE_APP+
 					"("+ AppTable.COLUMN_NAME+","

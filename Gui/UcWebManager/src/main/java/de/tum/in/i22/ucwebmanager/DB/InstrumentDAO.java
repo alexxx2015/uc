@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstrumentDAO {
-	public static List<Instrument> getAllInstruments() throws ClassNotFoundException {
+	public static List<Instrument> getAllInstruments() throws ClassNotFoundException, SQLException {
 		List<Instrument> instruments = new ArrayList<Instrument>();
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(InstrumentTable.GETALL);
 			while (rs.next()) {
@@ -39,14 +37,12 @@ public class InstrumentDAO {
 		return instruments;
 	}
 
-	public static Instrument getIntrumentByID(int id) throws ClassNotFoundException {
+	public static Instrument getIntrumentByID(int id) throws ClassNotFoundException, SQLException {
 		Instrument instrument = null;
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM " + InstrumentTable.TABLE + "WHERE "
+			ResultSet rs = statement.executeQuery("SELECT * FROM " + InstrumentTable.TABLE + " WHERE "
 					+ InstrumentTable.COLUMN_ID + " = " + String.valueOf(id));
 			if (rs.next()) {
 				instrument = new Instrument(rs.getInt(InstrumentTable.COLUMN_ID),
@@ -70,11 +66,9 @@ public class InstrumentDAO {
 		return instrument;
 	}
 
-	public static void saveToDB(Instrument instrument) throws ClassNotFoundException {
-		Class.forName("org.sqlite.JDBC");
-		Connection conn = null;
+	public static void saveToDB(Instrument instrument) throws ClassNotFoundException, SQLException {
+		Connection conn = DatabaseConnection.getConnection();
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
 			String s = "INSERT INTO " + InstrumentTable.TABLE + "("
 					+ InstrumentTable.COLUMN_NAME + ","

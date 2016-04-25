@@ -1,6 +1,20 @@
 package de.tum.in.i22.ucwebmanager.DB;
 
 public class App {
+	public enum Dir{
+		CODE	("code"),
+		REPORT  ("staticAnalysis/reports"),
+		CONFIG 	("staticAnalysis/configurations"),
+		INSTRUMENTATION ("instrumentations"),
+		RUNTIME ("runtime");
+		private String dir;
+		private Dir(String s){
+			dir = s;
+		}
+		public String getDir(){
+			return dir;
+		}
+	};
 	private int id, hashCode;
 	private String name, path, status;
 	public App(int id,String name, int hashCode, String path, String status){

@@ -32,11 +32,17 @@ public class DataBase {
 						+ "i_config_id	integer,"
 						+ "FOREIGN KEY (i_config_id) REFERENCES t_staticanalysis_config(id))");
 		      statement.executeUpdate("drop table if exists t_instrumentation");
+		      /**  CREATE TABLE t_instrumentation (
+		      id integer primary key autoincrement,
+		      s_name string,
+		      i_report_id integer,
+		      FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_report(id))"
+		      **/
 		      statement.executeUpdate("CREATE TABLE t_instrumentation ("
-		    		  + "id interger primary key autoincrement,"
+		    		  + "id integer primary key autoincrement,"
 		    		  + "s_name string,"
 		    		  + "i_report_id integer,"
-		    		  + "FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_report(id)");
+		    		  + "FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_report(id))");
 		}catch (SQLException e){
 			System.err.println(e.getMessage());
 		}
