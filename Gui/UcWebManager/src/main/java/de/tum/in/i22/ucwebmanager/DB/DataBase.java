@@ -17,18 +17,18 @@ public class DataBase {
 		      statement.executeUpdate("drop table if exists t_app");
 		      statement.executeUpdate("create table t_app ("
 		      						+ "id integer primary key autoincrement, "
-		      						+ "s_name string, i_hashcode integer, s_path string,"
+		      						+ "s_name string, i_hashcode integer,"
 		      						+ "s_status string)");
 		      statement.executeUpdate("drop table if exists t_staticanalysis_config");
 		      statement.executeUpdate("create table t_staticanalysis_config ("
 		      						+ "id integer primary key autoincrement,"
-		      						+ "s_name string, s_path string,"
+		      						+ "s_name string,"
 		      						+ "i_app_id	integer,"
 		      						+ "FOREIGN KEY (i_app_id) REFERENCES t_app(id))");
 		      statement.executeUpdate("drop table if exists t_staticanalysis_report");
 		      statement.executeUpdate("create table t_staticanalysis_report ("
 						+ "id integer primary key autoincrement,"
-						+ "s_name string, s_path string,"
+						+ "s_name string,"
 						+ "i_config_id	integer,"
 						+ "FOREIGN KEY (i_config_id) REFERENCES t_staticanalysis_config(id))");
 		      statement.executeUpdate("drop table if exists t_instrumentation");
