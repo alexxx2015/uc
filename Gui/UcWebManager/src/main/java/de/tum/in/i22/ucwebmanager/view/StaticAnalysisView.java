@@ -52,6 +52,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.tum.in.i22.ucwebmanager.Configuration;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
+import de.tum.in.i22.ucwebmanager.analysis.Analyser;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
 
@@ -450,15 +452,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(chkindirectflows);
 		fl.addComponent(chkcomputechops);
 		fl.addComponent(chkSystemOut);
-		fl.addComponent(chkOmitIFC);
-		
-//		GridLayout grid = new GridLayout(3,2);
-//		grid.addComponent(chkMultithreaded, 0, 0);
-//		grid.addComponent(chkObjectsensitivenes, 0, 1);
-//		grid.addComponent(chkindirectflows, 1, 0);
-//		grid.addComponent(chkcomputechops,1,1);
-//		grid.addComponent(chkSystemOut,2,0);
-//		grid.addComponent(chkOmitIFC, 2, 1);
+		fl.addComponent(chkOmitIFC);	
 
 		// fl.setMargin(true);
 		fl.setSizeFull();
@@ -475,7 +469,14 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				saveConfigurationxml("StaticAnalysis");
 			}
 		});
-
+		
+		btnrun.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				String xmlFile = saveConfigurationxml("StaticAnalysis");
+				Analyser.StaticAnalyser(app, xmlFile);
+			}
+		});
 		parent.setMargin(true);
 		addComponent(parent);
 	}
@@ -652,7 +653,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		return subWindow;
 	}
 
-	protected void saveConfigurationxml(String name) {
+	protected String saveConfigurationxml(String name) {
+		String xmlFile = "";
 		AnalysisData data = new AnalysisData();
 		data.setAnalysisName(txtAnalysisName.getValue());
 		data.setClasspath(readDataFromTable(gridClassPath));
@@ -734,9 +736,9 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		else{
 			DocBuilder docBuilder = new DocBuilder();
-			docBuilder.generateAnalysisConfigFile(data, app.getName(), app.getPath(), app.getId());
-			
+			xmlFile = docBuilder.generateAnalysisConfigFile(data, app);
 		}
+		return xmlFile;
 	        
 	}
 
@@ -780,18 +782,25 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
 			for (String msg : msgs) {
-				appId = Integer.parseInt(msg);
-				System.out.println("enter view changeevent " + appId);
+				appId = 0;
+				if (msg != null){
+					appId = Integer.parseInt(msg);
+					System.out.println("enter view changeevent " + appId);
+				
 				try {
 					app = AppDAO.getAppById(appId);
 				} catch (ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
 				}
-				appName = app.getName();
+				if (app!=null){
+					appName = app.getName();
+					txtAnalysisName.setValue(appName);
+				}
+				}
 			}
-			txtAnalysisName.setValue(appName);
-			if (appName != "")
-				fillStaticAnalysisTextboxes(app.getPath());
+			
+			if (app != null)
+				fillStaticAnalysisTextboxes(FileUtil.getPathHashCodeOfApp(app.getHashCode()));
 		}
 	}
 

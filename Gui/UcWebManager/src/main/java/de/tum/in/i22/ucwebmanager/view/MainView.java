@@ -1,6 +1,7 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,9 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
+import com.google.gwt.thirdparty.guava.common.io.Files;
 import com.vaadin.data.Item;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -32,6 +36,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.tum.in.i22.ucwebmanager.Configuration;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
@@ -48,8 +53,8 @@ public class MainView extends VerticalLayout implements View {
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
 		lab.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-		String basepath = VaadinService.getCurrent().getBaseDirectory()
-				.getAbsolutePath();
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	// .../src/main/webapp	
+		//System.out.println(basepath);
 		FileResource res = new FileResource(new File(basepath
 				+ "/img/tum_logo.png"));
 		Image image = new Image(null, res);
@@ -79,8 +84,6 @@ public class MainView extends VerticalLayout implements View {
 		addComponent(horLayout);
 		addComponent(upload);
 		addComponent(grid);
-		// addComponent(lab);
-		// addComponent(image);
 	}
 
 	@Override
@@ -90,34 +93,35 @@ public class MainView extends VerticalLayout implements View {
 	}
 
 	private void createFolderAndSaveApp(String fileName) throws IOException, SQLException {
-		String path = Configuration.WebAppRoot + "/apps/"+ String.valueOf(hashCodeOfApp)+"/";
-		File dirCode = new File(path + App.Dir.CODE.getDir());
-		File dirReport = new File(path + App.Dir.REPORT.getDir());
-		File dirConfig = new File(path + App.Dir.CONFIG.getDir());
-		File dirInstrusment = new File(path + App.Dir.INSTRUMENTATION.getDir());
-		File dirRuntime = new File(path + App.Dir.RUNTIME.getDir());
-		boolean success = dirCode.mkdirs()&& dirReport.mkdirs() && dirConfig.mkdirs()
+//		String path = Configuration.WebAppRoot + "/apps/"+ String.valueOf(hashCodeOfApp)+"/";
+		
+		String path = FileUtil.Dir.APPS.getDir()+ "/" + String.valueOf(hashCodeOfApp);
+		System.out.println(path);
+		File dirCode = new File(path + FileUtil.Dir.CODE.getDir());
+		File dirRun = new File(path +  FileUtil.Dir.RUN.getDir());
+		File dirConfig = new File(path + FileUtil.Dir.CONFIG.getDir());
+		File dirInstrusment = new File(path + FileUtil.Dir.INSTRUMENTATION.getDir());
+		File dirRuntime = new File(path + FileUtil.Dir.RUNTIME.getDir());
+		boolean success = dirCode.mkdirs()&& dirRun.mkdirs() && dirConfig.mkdirs()
 							&& dirInstrusment.mkdirs() && dirRuntime.mkdirs();
 		if (success) {
+			
 			File fileSave = new File(dirCode, fileName);
-			FileOutputStream stream;
-			try {
-				stream = new FileOutputStream(fileSave);
-				// ... write data to the stream ...
-				stream.flush();
-				stream.close();
-				fileTmp.delete();
+			Files.move(fileTmp, fileSave);
+			FileUtil.unzipFile(dirCode, fileName);
+			try {			
 				// create App
-				app = new App( fileName, hashCodeOfApp, path, Status.NONE.getStage());
+				app = new App( fileName, hashCodeOfApp, Status.NONE.getStage());
 				//saveToDB(fileName, hashCode, path, Status.NONE.getStage());
 				AppDAO.saveToDB(app);
+				// because the first time when app saved into db we dont have the id which is important for later use
+				app = AppDAO.getAppByHashCode(hashCodeOfApp);
 				updateTable(grid, app);
 				new Notification("Success!",
 						"<br/>File uploaded, Folder created, saved to DB!",
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
+			} 
+			catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -133,9 +137,9 @@ public class MainView extends VerticalLayout implements View {
 			public OutputStream receiveUpload(String filename, String mimeType) {
 				try {
 					appName = filename;
-					hashCodeOfApp = filename.hashCode();
 					fileTmp = new File(Configuration.WebAppRoot + "/apps/tmp/"
 							+ filename);
+					hashCodeOfApp = filename.hashCode();
 					fos = new FileOutputStream(fileTmp);
 				} catch (FileNotFoundException e) {
 

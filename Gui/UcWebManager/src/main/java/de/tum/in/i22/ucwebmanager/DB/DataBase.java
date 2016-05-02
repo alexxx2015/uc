@@ -13,7 +13,7 @@ public class DataBase {
 		try{
 			conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
 			Statement statement = conn.createStatement();
-		      //statement.setQueryTimeout(30);  // set timeout to 30 sec.	      
+		      statement.setQueryTimeout(30);  // set timeout to 30 sec.	      
 		      statement.executeUpdate("drop table if exists t_app");
 		      statement.executeUpdate("create table t_app ("
 		      						+ "id integer primary key autoincrement, "
@@ -25,8 +25,8 @@ public class DataBase {
 		      						+ "s_name string,"
 		      						+ "i_app_id	integer,"
 		      						+ "FOREIGN KEY (i_app_id) REFERENCES t_app(id))");
-		      statement.executeUpdate("drop table if exists t_staticanalysis_report");
-		      statement.executeUpdate("create table t_staticanalysis_report ("
+		      statement.executeUpdate("drop table if exists t_staticanalysis_run");
+		      statement.executeUpdate("create table t_staticanalysis_run ("
 						+ "id integer primary key autoincrement,"
 						+ "s_name string,"
 						+ "i_config_id	integer,"
@@ -42,7 +42,7 @@ public class DataBase {
 		    		  + "id integer primary key autoincrement,"
 		    		  + "s_name string,"
 		    		  + "i_report_id integer,"
-		    		  + "FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_report(id))");
+		    		  + "FOREIGN KEY (i_report_id) REFERENCES t_staticanalysis_run(id))");
 		}catch (SQLException e){
 			System.err.println(e.getMessage());
 		}

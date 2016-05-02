@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -24,6 +25,7 @@ import de.tum.in.i22.ucwebmanager.Configuration;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.StaticAnalysisConfig;
 import de.tum.in.i22.ucwebmanager.DB.StaticAnalysisConfigDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 
 public class DocBuilder {
 	public static final String TAG_ANALYSISES = "analysises";
@@ -62,18 +64,15 @@ public class DocBuilder {
 	public static final String ATTR_INCLUDESUBCLASSES = "includeSubClasses";
 	public static final String ATTR_INDIRECTCALLS = "indirectCalls";
 
-	public void generateAnalysisConfigFile(AnalysisData data, String appName, String path, int appID) {
+	public String generateAnalysisConfigFile(AnalysisData data, App app) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date date = new Date();
 		String stringDate = dateFormat.format(date);
-//		String path = Configuration.WebAppRoot + "/apps/";
-//		File directory = new File(Configuration.WebAppRoot
-//				+ "/apps/ws-flowAnalyser" + "/" + String.valueOf(appName.hashCode()) + "/"
-//				+ data.getAnalysisName());
-		File directory = new File(path + "staticAnalysis/configurations");
+		String pathConfigOfApp = FileUtil.getPathConfigOfApp(app.getHashCode());
+		File directory = new File(pathConfigOfApp);
 		String strTableData;
 		List<String> listtabledata;
-
+		String configName = "";
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -89,7 +88,7 @@ public class DocBuilder {
 
 			// set attribute to staff element
 			Attr attrname = doc.createAttribute(DocBuilder.ATTR_NAME);
-			attrname.setValue(path);	
+			attrname.setValue(pathConfigOfApp);	
 			analysis.setAttributeNode(attrname);
 
 			// mode elements
@@ -111,8 +110,9 @@ public class DocBuilder {
 				else
 					strTableData = strTableData + listtabledata.get(i);
 			}
+			// classpath
 			String strClasspath = strTableData;
-			String applicationname = path + App.Dir.CODE.getDir() + "/" + strClasspath;
+			String applicationname = FileUtil.getRelativePathCode(app.getHashCode()) + "/" + strClasspath;
 
 			Element classpath = doc.createElement(DocBuilder.TAG_CLASSPATH);
 
@@ -343,21 +343,22 @@ public class DocBuilder {
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
+			// add linebreak into xml file
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
-			String configName = stringDate+".config.xml";
-			String configDir = directory+System.getProperty("file.separator")+configName;
+			configName = stringDate + ".config.xml";
+			String configDir = directory + System.getProperty("file.separator") + configName;
 			File dest = new File(
 //					Configuration.WebAppRoot + System.getProperty("file.separator") + appName + System.getProperty("file.separator")+ data.getAnalysisName() + System.getProperty("file.separator")+appName + ".xml");
 					configDir);
 			StreamResult result = new StreamResult(dest);
 
 			transformer.transform(source, result);
-			StaticAnalysisConfig staticConfig = new StaticAnalysisConfig(configName, configDir, appID);
+			StaticAnalysisConfig staticConfig = new StaticAnalysisConfig(configName, app.getId());
 			try {
 				// save config file to database
 				StaticAnalysisConfigDAO.saveToDB(staticConfig);
 			} catch (ClassNotFoundException | SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("File saved! "+dest.getAbsolutePath());
@@ -367,5 +368,6 @@ public class DocBuilder {
 		} catch (TransformerException tfe) {
 			tfe.printStackTrace();
 		}
+		return configName;
 	}
 }

@@ -2,20 +2,18 @@ package de.tum.in.i22.ucwebmanager.DB;
 
 public class Instrument {
 	private int id, report_id;
-	private String name,path;
+	private String name;
 	
-	public Instrument(int id, String name, String path, int report_id) {
+	public Instrument(int id, String name,  int report_id) {
 		super();
 		this.id = id;
 		this.report_id = report_id;
 		this.name = name;
-		this.path = path;
 	}
-	public Instrument(String name, String path, int report_id) {
+	public Instrument(String name, int report_id) {
 		super();
 		this.report_id = report_id;
 		this.name = name;
-		this.path = path;
 	}
 	public int getId() {
 		return id;
@@ -34,12 +32,6 @@ public class Instrument {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
 	}
 	
 }

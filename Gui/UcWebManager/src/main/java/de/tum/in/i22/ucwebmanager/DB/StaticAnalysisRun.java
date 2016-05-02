@@ -1,23 +1,21 @@
 package de.tum.in.i22.ucwebmanager.DB;
 
-public class StaticAnalysisReport {
+public class StaticAnalysisRun {
 	private int id, config_id;
-	private String name,path;
+	private String name;
 	
 	
-	public StaticAnalysisReport(int id ,String name, String path, int app_id) {
+	public StaticAnalysisRun(int id ,String name, int app_id) {
 		super();
 		this.id = id;
 		this.config_id = app_id;
 		this.name = name;
-		this.path = path;
 	}
 	
-	public StaticAnalysisReport( String name, String path, int config_id) {
+	public StaticAnalysisRun( String name, int config_id) {
 		super();
 		this.config_id = config_id;
 		this.name = name;
-		this.path = path;
 	}
 
 	public int getId() {
@@ -40,12 +38,6 @@ public class StaticAnalysisReport {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
 	}
 	
 }

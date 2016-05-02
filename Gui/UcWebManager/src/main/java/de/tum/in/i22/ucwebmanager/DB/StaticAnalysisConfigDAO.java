@@ -19,7 +19,6 @@ public class StaticAnalysisConfigDAO {
 			while (rs.next()) {
 				StaticAnalysisConfig config = new StaticAnalysisConfig(rs.getInt(StaticAnalysisConfigTable.COLUMN_ID),
 						rs.getString(StaticAnalysisConfigTable.COLUMN_NAME),
-						rs.getString(StaticAnalysisConfigTable.COLUMN_PATH),
 						rs.getInt(StaticAnalysisConfigTable.COULMN_APP_ID));
 				configs.add(config);
 			}
@@ -48,7 +47,6 @@ public class StaticAnalysisConfigDAO {
 			if (rs.next()) {
 				config = new StaticAnalysisConfig(rs.getInt(StaticAnalysisConfigTable.COLUMN_ID),
 						rs.getString(StaticAnalysisConfigTable.COLUMN_NAME),
-						rs.getString(StaticAnalysisConfigTable.COLUMN_PATH),
 						rs.getInt(StaticAnalysisConfigTable.COULMN_APP_ID));
 
 			}
@@ -73,10 +71,8 @@ public class StaticAnalysisConfigDAO {
 			Statement statement = conn.createStatement();
 			String s = "INSERT INTO " + StaticAnalysisConfigTable.TABLE + "("
 					+ StaticAnalysisConfigTable.COLUMN_NAME + ","
-					+ StaticAnalysisConfigTable.COLUMN_PATH + ","
 					+ StaticAnalysisConfigTable.COULMN_APP_ID + ") VALUES('"
-					+ config.getName() + "','"
-					+ config.getPath() + "',"
+					+ config.getName() + "',"
 					+ String.valueOf(config.getApp_id()) + ")";
 			statement.executeUpdate(s);
 		} catch (SQLException e) {

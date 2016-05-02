@@ -8,18 +8,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstrumentDAO {
-	public static List<Instrument> getAllInstruments() throws ClassNotFoundException, SQLException {
-		List<Instrument> instruments = new ArrayList<Instrument>();
+public class StaticAnalysisRunDAO {
+	public static List<StaticAnalysisRun> getAllReports() throws ClassNotFoundException, SQLException {
+		List<StaticAnalysisRun> reports = new ArrayList<StaticAnalysisRun>();
 		Connection conn = DatabaseConnection.getConnection();
 		try {
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery(InstrumentTable.GETALL);
+			ResultSet rs = statement.executeQuery(StaticAnalysisRunTable.GETALL);
 			while (rs.next()) {
-				Instrument instrument = new Instrument(rs.getInt(InstrumentTable.COLUMN_ID),
-						rs.getString(InstrumentTable.COLUMN_NAME),
-						rs.getInt(InstrumentTable.COULMN_REPORT_ID));
-				instruments.add(instrument);
+				StaticAnalysisRun report = new StaticAnalysisRun(rs.getInt(StaticAnalysisRunTable.COLUMN_ID),
+						rs.getString(StaticAnalysisRunTable.COLUMN_NAME),
+						rs.getInt(StaticAnalysisRunTable.COULMN_CONFIG_ID));
+				reports.add(report);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -33,20 +33,20 @@ public class InstrumentDAO {
 				System.err.println(e);
 			}
 		}
-		return instruments;
+		return reports;
 	}
 
-	public static Instrument getIntrumentByID(int id) throws ClassNotFoundException, SQLException {
-		Instrument instrument = null;
+	public static StaticAnalysisRun getReportByID(int id) throws ClassNotFoundException, SQLException {
+		StaticAnalysisRun config = null;
 		Connection conn = DatabaseConnection.getConnection();
 		try {
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM " + InstrumentTable.TABLE + " WHERE "
-					+ InstrumentTable.COLUMN_ID + " = " + String.valueOf(id));
+			ResultSet rs = statement.executeQuery("SELECT * FROM " + StaticAnalysisRunTable.TABLE + " WHERE "
+					+ StaticAnalysisRunTable.COLUMN_ID + " = " + String.valueOf(id));
 			if (rs.next()) {
-				instrument = new Instrument(rs.getInt(InstrumentTable.COLUMN_ID),
-						rs.getString(InstrumentTable.COLUMN_NAME),
-						rs.getInt(InstrumentTable.COULMN_REPORT_ID));
+				config = new StaticAnalysisRun(rs.getInt(StaticAnalysisRunTable.COLUMN_ID),
+						rs.getString(StaticAnalysisRunTable.COLUMN_NAME),
+						rs.getInt(StaticAnalysisRunTable.COULMN_CONFIG_ID));
 
 			}
 		} catch (SQLException e) {
@@ -61,18 +61,18 @@ public class InstrumentDAO {
 				System.err.println(e);
 			}
 		}
-		return instrument;
+		return config;
 	}
 
-	public static void saveToDB(Instrument instrument) throws ClassNotFoundException, SQLException {
+	public static void saveToDB(StaticAnalysisRun report) throws ClassNotFoundException, SQLException {
 		Connection conn = DatabaseConnection.getConnection();
 		try {
 			Statement statement = conn.createStatement();
-			String s = "INSERT INTO " + InstrumentTable.TABLE + "("
-					+ InstrumentTable.COLUMN_NAME + ","
-					+ InstrumentTable.COULMN_REPORT_ID + ") VALUES('"
-					+ instrument.getName() + "','"
-					+ String.valueOf(instrument.getReport_id()) + ")";
+			String s = "INSERT INTO " + StaticAnalysisRunTable.TABLE + "("
+					+ StaticAnalysisRunTable.COLUMN_NAME + ","
+					+ StaticAnalysisRunTable.COULMN_CONFIG_ID + ") VALUES('"
+					+ report.getName() + "',"
+					+ String.valueOf(report.getConfig_id()) + ")";
 			statement.executeUpdate(s);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
