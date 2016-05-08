@@ -22,7 +22,7 @@ public class AppDAO {
 			while (rs.next()){
 				App app = new App(rs.getInt(AppTable.COLUMN_ID),
 								  rs.getString(AppTable.COLUMN_NAME),
-								  rs.getInt(AppTable.COLUMN_HASHCODE),
+								  rs.getString(AppTable.COLUMN_HASHCODE),
 								  rs.getString(AppTable.COLUMN_STATUS));
 				apps.add(app);
 			}
@@ -55,7 +55,7 @@ public class AppDAO {
 			if (rs.next()){
 				app = new App(rs.getInt(AppTable.COLUMN_ID),
 						  rs.getString(AppTable.COLUMN_NAME),
-						  rs.getInt(AppTable.COLUMN_HASHCODE),
+						  rs.getString(AppTable.COLUMN_HASHCODE),
 						  rs.getString(AppTable.COLUMN_STATUS));;
 			}
 		} catch (SQLException e) {
@@ -72,7 +72,7 @@ public class AppDAO {
 		return app;
 
 	}
-	public static App getAppByHashCode(int hashCode) throws ClassNotFoundException, SQLException{
+	public static App getAppByHashCode(String hashCode) throws ClassNotFoundException, SQLException{
 		Connection conn = DatabaseConnection.getConnection();
 		App app = null;
 		try{
@@ -82,12 +82,12 @@ public class AppDAO {
 					 + AppTable.TABLE_APP 
 					 + " WHERE "
 					 + AppTable.COLUMN_HASHCODE
-					 + " = " + String.valueOf(hashCode);
+					 + " = '" + hashCode + "'";
 			ResultSet rs = statement.executeQuery(s);
 			if (rs.next()){
 				app = new App(rs.getInt(AppTable.COLUMN_ID),
 						  rs.getString(AppTable.COLUMN_NAME),
-						  rs.getInt(AppTable.COLUMN_HASHCODE),
+						  rs.getString(AppTable.COLUMN_HASHCODE),
 						  rs.getString(AppTable.COLUMN_STATUS));;
 			}
 		} catch (SQLException e) {
@@ -112,8 +112,8 @@ public class AppDAO {
 					"("+ AppTable.COLUMN_NAME+","
 					   + AppTable.COLUMN_HASHCODE+","
 					   + AppTable.COLUMN_STATUS+") values('"
-					 + app.getName()+"',"
-					 + String.valueOf(app.getHashCode())+",'"
+					 + app.getName()+"', '"
+					 + app.getHashCode()+"' ,'"
 					 + app.getStatus()+"')";
 			statement.executeUpdate(s);
 		} catch (SQLException e) {

@@ -37,6 +37,7 @@ import de.tum.in.i22.ucwebmanager.Configuration;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
+import de.tum.in.i22.ucwebmanager.FileUtil.MD5Checksum;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
@@ -47,7 +48,7 @@ public class MainView extends VerticalLayout implements View {
 	File fileTmp;
 	App app;
 	String appName;
-	int hashCodeOfApp;
+	String hashCodeOfApp;
 	public MainView() throws SQLException {
 		Label lab = new Label("Main view");
 		lab.setSizeUndefined();
@@ -98,11 +99,11 @@ public class MainView extends VerticalLayout implements View {
 		String path = FileUtil.Dir.APPS.getDir()+ "/" + String.valueOf(hashCodeOfApp);
 		System.out.println(path);
 		File dirCode = new File(path + FileUtil.Dir.CODE.getDir());
-		File dirRun = new File(path +  FileUtil.Dir.RUN.getDir());
-		File dirConfig = new File(path + FileUtil.Dir.CONFIG.getDir());
+		File dirOutput = new File(path +  FileUtil.Dir.JOANAOUTPUT.getDir());
+		File dirConfig = new File(path + FileUtil.Dir.JOANACONFIG.getDir());
 		File dirInstrusment = new File(path + FileUtil.Dir.INSTRUMENTATION.getDir());
 		File dirRuntime = new File(path + FileUtil.Dir.RUNTIME.getDir());
-		boolean success = dirCode.mkdirs()&& dirRun.mkdirs() && dirConfig.mkdirs()
+		boolean success = dirCode.mkdirs()&& dirOutput.mkdirs() && dirConfig.mkdirs()
 							&& dirInstrusment.mkdirs() && dirRuntime.mkdirs();
 		if (success) {
 			
@@ -139,12 +140,17 @@ public class MainView extends VerticalLayout implements View {
 					appName = filename;
 					fileTmp = new File(Configuration.WebAppRoot + "/apps/tmp/"
 							+ filename);
-					hashCodeOfApp = filename.hashCode();
 					fos = new FileOutputStream(fileTmp);
 				} catch (FileNotFoundException e) {
 
 					e.printStackTrace();
 					return null;
+				}
+				try {
+					hashCodeOfApp = MD5Checksum.getMD5Checksum(fileTmp.toString());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				return fos;
 			}
@@ -160,7 +166,7 @@ public class MainView extends VerticalLayout implements View {
 		g.addColumn("ID", Integer.class);
 		g.getColumn("ID").setMaximumWidth(50).setEditable(false);
 		g.addColumn("Name", String.class);
-		g.addColumn("Hash Code",Integer.class);
+		g.addColumn("Hash Code",String.class);
 		g.addColumn("Status",String.class);
 		g.getColumn("Status").setMaximumWidth(60);
 		g.addColumn("Static Analysis", String.class).setRenderer(new ButtonRenderer(e->{

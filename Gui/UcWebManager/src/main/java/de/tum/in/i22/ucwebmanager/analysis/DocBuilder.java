@@ -68,7 +68,7 @@ public class DocBuilder {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date date = new Date();
 		String stringDate = dateFormat.format(date);
-		String pathConfigOfApp = FileUtil.getPathConfigOfApp(app.getHashCode());
+		String pathConfigOfApp = FileUtil.getPathConfig(app.getHashCode());
 		File directory = new File(pathConfigOfApp);
 		String strTableData;
 		List<String> listtabledata;

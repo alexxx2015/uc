@@ -800,7 +800,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			}
 			
 			if (app != null)
-				fillStaticAnalysisTextboxes(FileUtil.getPathHashCodeOfApp(app.getHashCode()));
+				fillStaticAnalysisTextboxes(FileUtil.getPathHashCode(app.getHashCode()));
 		}
 	}
 

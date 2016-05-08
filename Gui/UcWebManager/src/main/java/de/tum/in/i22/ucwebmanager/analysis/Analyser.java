@@ -15,7 +15,7 @@ public class Analyser {
 						".:"+FileUtil.getRelativePathCode(app.getHashCode())+
 						":../../../flowanalyzer",
 						"-jar flowanalyzer.jar",configFile);
-		pb.directory(new File(FileUtil.getPathRunOfApp(app.getHashCode())));
+		pb.directory(new File(FileUtil.getPathOutput(app.getHashCode())));
 		try {
 			Process process = pb.start();
 			//app.setStatus(Status.STATISTIC.getStage());

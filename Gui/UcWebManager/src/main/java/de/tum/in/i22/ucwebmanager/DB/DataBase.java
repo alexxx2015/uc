@@ -17,7 +17,7 @@ public class DataBase {
 		      statement.executeUpdate("drop table if exists t_app");
 		      statement.executeUpdate("create table t_app ("
 		      						+ "id integer primary key autoincrement, "
-		      						+ "s_name string, i_hashcode integer,"
+		      						+ "s_name string, i_hashcode string,"
 		      						+ "s_status string)");
 		      statement.executeUpdate("drop table if exists t_staticanalysis_config");
 		      statement.executeUpdate("create table t_staticanalysis_config ("
