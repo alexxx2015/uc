@@ -11,7 +11,7 @@ import de.tum.in.i22.ucwebmanager.Status.Status;
 
 public class Analyser {
 	public static void StaticAnalyser(App app, String configFile){
-		ProcessBuilder pb = new ProcessBuilder("jar", "-classpath",
+		ProcessBuilder pb = new ProcessBuilder("jav", "-jar", "-classpath",
 						".:"+FileUtil.getRelativePathCode(app.getHashCode())+
 						":../../../flowanalyzer",
 						"-jar flowanalyzer.jar",configFile);

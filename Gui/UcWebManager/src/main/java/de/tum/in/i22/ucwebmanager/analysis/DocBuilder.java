@@ -64,7 +64,8 @@ public class DocBuilder {
 	public static final String ATTR_INCLUDESUBCLASSES = "includeSubClasses";
 	public static final String ATTR_INDIRECTCALLS = "indirectCalls";
 
-	public String generateAnalysisConfigFile(AnalysisData data, App app) {
+	public String generateAnalysisConfigFile(AnalysisData data, App app, String analysisName) {
+//		String analysisName = "/Static_analysis";
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date date = new Date();
 		String stringDate = dateFormat.format(date);
@@ -88,7 +89,7 @@ public class DocBuilder {
 
 			// set attribute to staff element
 			Attr attrname = doc.createAttribute(DocBuilder.ATTR_NAME);
-			attrname.setValue(pathConfigOfApp);	
+			attrname.setValue(".."+FileUtil.Dir.JOANAOUTPUT.getDir()+"/"+analysisName);	
 			analysis.setAttributeNode(attrname);
 
 			// mode elements
@@ -112,7 +113,7 @@ public class DocBuilder {
 			}
 			// classpath
 			String strClasspath = strTableData;
-			String applicationname = FileUtil.getRelativePathCode(app.getHashCode()) + "/" + strClasspath;
+			String applicationname =   "./:" + strClasspath;
 
 			Element classpath = doc.createElement(DocBuilder.TAG_CLASSPATH);
 

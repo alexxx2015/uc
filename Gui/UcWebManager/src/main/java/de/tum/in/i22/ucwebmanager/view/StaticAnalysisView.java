@@ -666,7 +666,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setCgFile(txtCGFile.getValue());
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.isEnabled()));
 		data.setPruningPolicy(cmbPruningPolicy.getValue().toString());
-		data.setPointsto_policy(txtPointstoFallback.getValue());
+		data.setPointsto_policy(cmbPointstoPolicy.getValue().toString());
 		data.setPointsto_fallback(txtPointstoFallback.getValue());
 		data.setPointsto_includeclasses(readDataFromTable(tblpointstoinclude));
 		data.setPointsto_excludeclasses(readDataFromTable(tblpointstoexclude));
@@ -736,7 +736,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		else{
 			DocBuilder docBuilder = new DocBuilder();
-			xmlFile = docBuilder.generateAnalysisConfigFile(data, app);
+			xmlFile = docBuilder.generateAnalysisConfigFile(data, app, name);
 		}
 		return xmlFile;
 	        
@@ -750,7 +750,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			for (int i = 1; i <= newItemId; i++) {
 				Item row = tablename.getItem(i);
 				TextField temp = new TextField();
-				if (tablename.getCaption().toLowerCase().equals("classPath")) {
+				if (tablename.getCaption().toLowerCase().equals("classpath")) {
 					temp = (TextField) row.getItemProperty("Classpath")
 							.getValue();
 
