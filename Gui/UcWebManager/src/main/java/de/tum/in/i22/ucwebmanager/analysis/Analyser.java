@@ -11,11 +11,10 @@ import de.tum.in.i22.ucwebmanager.Status.Status;
 
 public class Analyser {
 	public static void StaticAnalyser(App app, String configFile){
-		ProcessBuilder pb = new ProcessBuilder("jav", "-jar", "-classpath",
-						".:"+FileUtil.getRelativePathCode(app.getHashCode())+
-						":../../../flowanalyzer",
-						"-jar flowanalyzer.jar",configFile);
-		pb.directory(new File(FileUtil.getPathOutput(app.getHashCode())));
+		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
+		String jonaconfig = ".."+FileUtil.Dir.JOANACONFIG.getDir()+"/"+configFile;
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", flowanalyser, jonaconfig);
+		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
 		try {
 			Process process = pb.start();
 			//app.setStatus(Status.STATISTIC.getStage());

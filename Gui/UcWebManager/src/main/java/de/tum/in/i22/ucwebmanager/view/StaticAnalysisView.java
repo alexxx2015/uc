@@ -681,6 +681,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setOmitIFC(String.valueOf(chkOmitIFC.isEnabled()));
 		data.setReportFile(txtReportFile.getValue());
 		data.setStatistics(txtStatistics.getValue());
+		data.setLogFile(txtLogFile.getValue());
 		List<AnalysisData.SourcesSinks> sourcesAndSinks = new LinkedList<AnalysisData.SourcesSinks>();
 		data.setSourcesSinks(sourcesAndSinks);
 
