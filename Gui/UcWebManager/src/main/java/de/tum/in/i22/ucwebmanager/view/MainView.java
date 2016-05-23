@@ -1,15 +1,14 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.plaf.synth.SynthSeparatorUI;
+import java.util.Map;
 
 import com.google.gwt.thirdparty.guava.common.io.Files;
 import com.vaadin.data.Item;
@@ -49,6 +48,7 @@ public class MainView extends VerticalLayout implements View {
 	App app;
 	String appName;
 	String hashCodeOfApp;
+	Map<Integer, String> map = new HashMap<Integer, String>();
 	public MainView() throws SQLException {
 		Label lab = new Label("Main view");
 		lab.setSizeUndefined();
@@ -82,6 +82,7 @@ public class MainView extends VerticalLayout implements View {
 		// Table
 		grid.setSizeFull();
 		fillGrid(grid);
+		gridClickListener(grid);
 		addComponent(horLayout);
 		addComponent(upload);
 		addComponent(grid);
@@ -89,7 +90,24 @@ public class MainView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
+
+		if (!event.getParameters().equals("")) {
+			// split at "/", add each part as a label
+			String[] msgs = event.getParameters().split("/");
+			int i = 0, appId = 0;
+			String inputStream = "";
+			for (String msg : msgs) {
+				if (i == 0) {
+					appId = Integer.parseInt(msg);
+					i ++;
+				}	
+				if (i == 1) {
+					inputStream = inputStream.concat(msg);
+				}
+			}
+			System.out.println(inputStream);
+			map.put(appId, inputStream);
+		}
 
 	}
 
@@ -109,6 +127,7 @@ public class MainView extends VerticalLayout implements View {
 			
 			File fileSave = new File(dirCode, fileName);
 			Files.move(fileTmp, fileSave);
+			fileTmp.delete();
 			FileUtil.unzipFile(dirCode, fileName);
 			try {			
 				// create App
@@ -173,8 +192,9 @@ public class MainView extends VerticalLayout implements View {
 			Object selected =  e.getItemId(); // get the selected rows id
 			Item item = g.getContainerDataSource().getItem(selected);
 			String status = item.getItemProperty("Status").getValue().toString();
+			// Send a message to static analyser view with the id of app
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName()+
-						"/"+item.getItemProperty("ID").getValue().toString());
+						"/" + item.getItemProperty("ID").getValue().toString());
 			
 		}));
 		g.addColumn("Instrumentation", String.class).setRenderer(new ButtonRenderer(e->{
@@ -204,6 +224,7 @@ public class MainView extends VerticalLayout implements View {
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			}
 		}));
+		
 		List<App> allApp = null;
 		try {
 			allApp = AppDAO.getAllApps();
@@ -221,5 +242,18 @@ public class MainView extends VerticalLayout implements View {
 	private void updateTable(Grid g,App app) {
 		g.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go","Go","Go");
 	}
-
+	
+	private void gridClickListener(Grid g){
+		g.addSelectionListener(selectionEvent -> { // Java 8
+		    // Get selection from the selection model
+		    Object selected = ((SingleSelectionModel) g.getSelectionModel()).getSelectedRow();
+		    if (selected != null){
+		    	int appId =  (Integer) g.getContainerDataSource().getItem(selected).getItemProperty("ID").getValue();
+//		    	System.out.println(map.get(appId));
+		        Notification.show(map.get(appId));
+		    }
+		    else
+		        Notification.show("Nothing selected");
+		});
+	}
 }

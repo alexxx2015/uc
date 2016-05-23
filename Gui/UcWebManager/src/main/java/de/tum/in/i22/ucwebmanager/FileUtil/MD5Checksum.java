@@ -34,4 +34,14 @@ public static String getMD5Checksum(String filename) throws Exception {
    }
   return result;
 }
+public static void main(String[] args) {
+	try {
+		String s = getMD5Checksum("/home/dat/pdp/Gui/UcWebManager/src/main/webapp/apps/tmp/jzip/sourcesandsinks.xml");
+		System.out.println(s);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+}
 }

@@ -1,3 +1,4 @@
 /target/
 src/main/webapp/apps/*
 /UcWebManager.db/
+src/main/webapp/sourceandsinks/*

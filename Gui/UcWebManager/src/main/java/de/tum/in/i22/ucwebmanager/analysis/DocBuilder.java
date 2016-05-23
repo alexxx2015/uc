@@ -69,6 +69,8 @@ public class DocBuilder {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date date = new Date();
 		String stringDate = dateFormat.format(date);
+		File analysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()) + "/" + stringDate);
+		analysisOutput.mkdirs();
 		String pathConfigOfApp = FileUtil.getPathConfig(app.getHashCode());
 		File directory = new File(pathConfigOfApp);
 		String strTableData;
@@ -89,7 +91,7 @@ public class DocBuilder {
 
 			// set attribute to staff element
 			Attr attrname = doc.createAttribute(DocBuilder.ATTR_NAME);
-			attrname.setValue(".."+FileUtil.Dir.JOANAOUTPUT.getDir()+"/"+analysisName);	
+			attrname.setValue(".."+FileUtil.Dir.JOANAOUTPUT.getDir() + "/" + stringDate + "/" + analysisName);	
 			analysis.setAttributeNode(attrname);
 
 			// mode elements
@@ -113,8 +115,8 @@ public class DocBuilder {
 			}
 			// classpath
 			String strClasspath = strTableData;
-			String applicationname =   "./:" + strClasspath;
-
+//			String applicationname =   "./:" + strClasspath;
+			String applicationname = strClasspath;
 			Element classpath = doc.createElement(DocBuilder.TAG_CLASSPATH);
 
 			analysis.appendChild(classpath);
@@ -332,13 +334,15 @@ public class DocBuilder {
 
 				}
 			}
-			if (data.getSourcesSinksFiles().size() > 0) {
-				Element Fileelement = doc.createElement(DocBuilder.TAG_FILE);
-				sourcesandsinks.appendChild(Fileelement);
-				Attr attrFileSave = doc.createAttribute(DocBuilder.ATTR_VALUE);
-//				txtFldSnSFile.getValue().replace('\\', '/');
-				attrFileSave.setValue(data.getSourcesSinksFiles().get(0));
-				Fileelement.setAttributeNode(attrFileSave);
+			List<String> list = data.getSourcesSinksFiles();
+			if (list.size() > 0) {
+				for (String s : list){
+					Element Fileelement = doc.createElement(DocBuilder.TAG_FILE);
+					sourcesandsinks.appendChild(Fileelement);
+					Attr attrFileSave = doc.createAttribute(DocBuilder.ATTR_VALUE);
+					attrFileSave.setValue(s);
+					Fileelement.setAttributeNode(attrFileSave);
+				}
 			}
 
 			// write the content into xml file
