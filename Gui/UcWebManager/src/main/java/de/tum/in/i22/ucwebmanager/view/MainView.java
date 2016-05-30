@@ -252,7 +252,7 @@ public class MainView extends VerticalLayout implements View {
 		for (App a : allApp) {
 			grid.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus(),"Go", "", "Go", "", "Go");		
 		}
-		
+		grid.getContainerDataSource()
 	}
 
 	private void updateTable(App app) {
@@ -266,6 +266,8 @@ public class MainView extends VerticalLayout implements View {
 		SingleSelectionModel m  = (SingleSelectionModel) grid.getSelectionModel();
 	}
 	private void gridClickListener(){
+//		int size = grid.getContainerDataSource().size();
+//		for (int i = 0; i < size; )
 		grid.addSelectionListener(selectionEvent -> { // Java 8
 		    // Get selection from the selection model
 		    Object selected = ((SingleSelectionModel) grid.getSelectionModel()).getSelectedRow();
