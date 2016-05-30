@@ -6,17 +6,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.thirdparty.guava.common.io.Files;
+import com.vaadin.annotations.Push;
 import com.vaadin.data.Item;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Grid.SingleSelectionModel;
@@ -38,10 +44,10 @@ import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.MD5Checksum;
 import de.tum.in.i22.ucwebmanager.Status.Status;
+import de.tum.in.i22.ucwebmanager.analysis.Analyser;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
-
+@Push()
 public class MainView extends VerticalLayout implements View {
-	
 	Grid grid = new Grid();
 	Upload upload;
 	File fileTmp;
@@ -81,8 +87,8 @@ public class MainView extends VerticalLayout implements View {
 		});
 		// Table
 		grid.setSizeFull();
-		fillGrid(grid);
-		gridClickListener(grid);
+		fillGrid();
+		gridClickListener();
 		addComponent(horLayout);
 		addComponent(upload);
 		addComponent(grid);
@@ -94,19 +100,28 @@ public class MainView extends VerticalLayout implements View {
 		if (!event.getParameters().equals("")) {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
-			int i = 0, appId = 0;
-			String inputStream = "";
-			for (String msg : msgs) {
-				if (i == 0) {
-					appId = Integer.parseInt(msg);
-					i ++;
-				}	
-				if (i == 1) {
-					inputStream = inputStream.concat(msg);
+			
+			if (msgs[0].equals(DashboardViewType.STATANALYSIS.getViewName())) {
+				int appId = 0;
+				String configFile = "";
+				for (int i = 1; i < msgs.length; i++){
+					if (i == 1) {
+						appId = Integer.parseInt(msgs[i]);
+					}
+					else configFile = msgs[i];
+				}
+				// start static analysis, update start time
+				try {
+					App app = AppDAO.getAppById(appId);
+					Analyser analyser = new Analyser(app, configFile);
+					analyser.start();
+				} catch (ClassNotFoundException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			System.out.println(inputStream);
-			map.put(appId, inputStream);
+			// map.put(appId, inputStream);
+			
 		}
 
 	}
@@ -136,7 +151,7 @@ public class MainView extends VerticalLayout implements View {
 				AppDAO.saveToDB(app);
 				// because the first time when app saved into db we dont have the id which is important for later use
 				app = AppDAO.getAppByHashCode(hashCodeOfApp);
-				updateTable(grid, app);
+				updateTable(app);
 				new Notification("Success!",
 						"<br/>File uploaded, Folder created, saved to DB!",
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
@@ -178,28 +193,29 @@ public class MainView extends VerticalLayout implements View {
 		return receiver;
 	}
 
-	private void fillGrid(Grid g) throws SQLException {
-		g.setEditorEnabled(false);
-		g.setSelectionMode(SelectionMode.SINGLE);
+	private void fillGrid() throws SQLException {
+		grid.setEditorEnabled(false);
+		grid.setSelectionMode(SelectionMode.SINGLE);
 		SingleSelectionModel selection = (SingleSelectionModel) grid.getSelectionModel();
-		g.addColumn("ID", Integer.class);
-		g.getColumn("ID").setMaximumWidth(50).setEditable(false);
-		g.addColumn("Name", String.class);
-		g.addColumn("Hash Code",String.class);
-		g.addColumn("Status",String.class);
-		g.getColumn("Status").setMaximumWidth(60);
-		g.addColumn("Static Analysis", String.class).setRenderer(new ButtonRenderer(e->{
+		grid.addColumn("ID", Integer.class);
+		grid.getColumn("ID").setMaximumWidth(50).setEditable(false);
+		grid.addColumn("Name", String.class);
+		grid.addColumn("Hash Code",String.class);
+		grid.addColumn("Status",String.class);
+		grid.getColumn("Status").setMaximumWidth(60);
+		grid.addColumn("Static Analysis", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId(); // get the selected rows id
-			Item item = g.getContainerDataSource().getItem(selected);
+			Item item = grid.getContainerDataSource().getItem(selected);
 			String status = item.getItemProperty("Status").getValue().toString();
 			// Send a message to static analyser view with the id of app
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName()+
 						"/" + item.getItemProperty("ID").getValue().toString());
 			
 		}));
-		g.addColumn("Instrumentation", String.class).setRenderer(new ButtonRenderer(e->{
+		grid.addColumn("SA execute time", String.class);
+		grid.addColumn("Instrumentation", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId();
-			Item item = g.getContainerDataSource().getItem(selected);
+			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (!stat.equals(Status.NONE.getStage())){
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.INSTRUMENT.getViewName());
@@ -210,10 +226,10 @@ public class MainView extends VerticalLayout implements View {
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			}
 		}));
-		
-		g.addColumn("Run time", String.class).setRenderer(new ButtonRenderer(e->{
+		grid.addColumn("Execute time", String.class);
+		grid.addColumn("Run time", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId(); // get the selected rows id
-			Item item = g.getContainerDataSource().getItem(selected);
+			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (stat.equals(Status.INSTRUMENTATION.getStage())){
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName());
@@ -234,21 +250,27 @@ public class MainView extends VerticalLayout implements View {
 
 
 		for (App a : allApp) {
-			g.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus(),"Go","Go","Go");		
+			grid.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus(),"Go", "", "Go", "", "Go");		
 		}
 		
 	}
 
-	private void updateTable(Grid g,App app) {
-		g.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go","Go","Go");
+	private void updateTable(App app) {
+		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go", "", "Go", "", "Go");
 	}
-	
-	private void gridClickListener(Grid g){
-		g.addSelectionListener(selectionEvent -> { // Java 8
+	private void updateStartTimeTable(int appId){
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss");
+		Date date = new Date();
+		String stringDate = dateFormat.format(date);
+		System.out.println(stringDate);
+		SingleSelectionModel m  = (SingleSelectionModel) grid.getSelectionModel();
+	}
+	private void gridClickListener(){
+		grid.addSelectionListener(selectionEvent -> { // Java 8
 		    // Get selection from the selection model
-		    Object selected = ((SingleSelectionModel) g.getSelectionModel()).getSelectedRow();
+		    Object selected = ((SingleSelectionModel) grid.getSelectionModel()).getSelectedRow();
 		    if (selected != null){
-		    	int appId =  (Integer) g.getContainerDataSource().getItem(selected).getItemProperty("ID").getValue();
+		    	int appId =  (Integer) grid.getContainerDataSource().getItem(selected).getItemProperty("ID").getValue();
 //		    	System.out.println(map.get(appId));
 		        Notification.show(map.get(appId));
 		    }

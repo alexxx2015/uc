@@ -3,10 +3,7 @@ package de.tum.in.i22.ucwebmanager.analysis;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
@@ -17,34 +14,48 @@ import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
 public class Analyser extends Thread {
-	public static void StaticAnalyser(App app, String configFile) {
+	App app;
+	String configFile;
+	public Analyser(App app, String configFile) {
+		// TODO Auto-generated constructor stub
+		this.app = app;
+		this.configFile = configFile;
+	}
+	public void run() {
 		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
 		String jonaconfig = ".." + FileUtil.Dir.JOANACONFIG.getDir() + "/" + configFile;
-		ProcessBuilder pb = new ProcessBuilder("java", "-jar", flowanalyser, jonaconfig);
+		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
+		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
 		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
-		try {
-			Process process = pb.start();
-			String inputstream = getInputStream(process);
-			String errorStream = getErrorStream(process);
-			process.waitFor();
-			System.out.println(inputstream);
-			System.out.println(errorStream);
-//			if (errorStream.available() != 0){
-				System.out.println("Process ended!");
-				// app.setStatus(Status.STATISTIC.getStage());
-				// AppDAO.updateStatus(app);
-				// TODO send inputstream to Mainview depends on App's ID
+					try {
+						Process process = pb.start();
+						String inputstream = getInputStream(process);
+						String errorStream = getErrorStream(process);
+						process.waitFor();
+//						System.out.println(inputstream);
+//						System.out.println(errorStream);
+//						if (errorStream.available() != 0){
+						System.out.println("Process ended!");
+						// app.setStatus(Status.STATISTIC.getStage());
+						// AppDAO.updateStatus(app);
+						// TODO send inputstream to Mainview depends on App's ID
+//			 			}
+//						UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName() + "/" + String.valueOf(app.getId()) + "/" + inputstream);
+					} catch (IOException | InterruptedException e) {
+						String error = e.getMessage();
+						e.printStackTrace();
+						new Notification("ERROR!",
+								error,
+								Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
+					}
+					
 
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
-						+ "/" + String.valueOf(app.getId()) + "/" + inputstream);
+//				}
+//			};
+//		}
+//			catch (Exception ex) {
+//
 //			}
-		} catch (IOException | InterruptedException e) {
-			String error = e.getMessage();
-			e.printStackTrace();
-			new Notification("ERROR!",
-					error,
-					Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
-		}
 		
 	}
 	

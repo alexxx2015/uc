@@ -58,9 +58,9 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
-import de.tum.in.i22.ucwebmanager.analysis.Analyser;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
+import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
 public class StaticAnalysisView extends VerticalLayout implements View {
 	private UploadHandler uploadHandler = new UploadHandler(this);
@@ -494,7 +494,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				String xmlFile = saveConfigurationxml("StaticAnalysis");
-				Analyser.StaticAnalyser(app, xmlFile);
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
+						+ "/" + DashboardViewType.STATANALYSIS.getViewName()
+						+ "/" + String.valueOf(app.getId()) + "/" + xmlFile);
+				//Analyser.StaticAnalyser(app, xmlFile);
 			}
 		});
 		parent.setMargin(true);
