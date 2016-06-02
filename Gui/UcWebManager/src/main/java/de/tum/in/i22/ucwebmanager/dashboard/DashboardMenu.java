@@ -45,8 +45,9 @@ public final class DashboardMenu extends CustomComponent {
         setPrimaryStyleName("valo-menu");
         setId(ID);
         setSizeFull();
+        
 //        setSizeUndefined();
-
+//        setHeight("100%");
         // There's only one DashboardMenu per UI so this doesn't need to be
         // unregistered from the UI-scoped DashboardEventBus.
 //        DashboardEventBus.register(this);
@@ -72,7 +73,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<strong>Usage Control</strong> Dashboard",
+        Label logo = new Label("<strong>Usage Control</strong>",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -146,10 +147,14 @@ public final class DashboardMenu extends CustomComponent {
     private Component buildMenuItems() {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
+        //FileResource resource = new FileResource(new File(
+        //       "./tum_logo.png"));
 
+        // Show the image in the application
+        //Image image = new Image("Image from file", resource);
         for (final DashboardViewType view : DashboardViewType.values()) {
             Component menuItemComponent = new ValoMenuItemButton(view);
-
+//          Image as a file resource
 //            if (view == DashboardViewType.REPORTS) {
 //                // Add drop target to reports button
 //                DragAndDropWrapper reports = new DragAndDropWrapper(
@@ -193,6 +198,7 @@ public final class DashboardMenu extends CustomComponent {
 //            }
 
             menuItemsLayout.addComponent(menuItemComponent);
+            //menuItemsLayout.addComponent(image);
         }
         return menuItemsLayout;
 
@@ -225,7 +231,7 @@ public final class DashboardMenu extends CustomComponent {
     @Subscribe
     public void updateNotificationsCount(
             final NotificationsCountUpdatedEvent event) {
-        int unreadNotificationsCount = 3;//DashboardUI.getDataProvider()
+        int unreadNotificationsCount = 0;//DashboardUI.getDataProvider()
 //                .getUnreadNotificationsCount();
         notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
         notificationsBadge.setVisible(unreadNotificationsCount > 0);

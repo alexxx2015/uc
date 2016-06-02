@@ -4,17 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,47 +28,49 @@ import org.xml.sax.SAXException;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.tum.in.i22.ucwebmanager.Configuration;
+import de.tum.in.i22.ucwebmanager.DB.App;
+import de.tum.in.i22.ucwebmanager.DB.AppDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
+import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
 public class StaticAnalysisView extends VerticalLayout implements View {
 	private UploadHandler uploadHandler = new UploadHandler(this);
 
 	TextField txtFldSnSFile;
-	TextField txtAnalysisName;
+	TextField txtAnalysisName, txtAppName;
 
-	String appName, staticAnalysisPath;
+	String appName, staticAnalysisPath, sourceAndSinksFile;
+	int appId;
+	App app;
 	String strBaseFolders;
 
 	// Properties prop = new Properties();
@@ -88,17 +89,19 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			tblpointstoexclude, tblsourcensinks;
 
 	CheckBox chkMultithreaded, chkcomputechops, chkObjectsensitivenes,
-			chkindirectflows, chkSystemOut;
+			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
-			txtLogFile, txtFldEntryPoint;
-	ComboBox cmbmode, cmbStub, cmbPointstoPolicy;
+			txtLogFile, txtFldEntryPoint,txtStatistics;
+	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
 	Upload uploadSDGFile, uploadCGFile;
+	OptionGroup optSrcAndSinks;
 	Button btnsave, btnrun, btnselectsnsFile;
 
 	StaticAnalyser analyser;
 
 	public StaticAnalysisView() {
+		//this.addStyleName("myborder");
 		// try {
 		// InitialiseUIComponents();
 		// prop.load(inputStream);
@@ -123,8 +126,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		txtAnalysisName = new TextField("Analysis Name");
 		txtAnalysisName.setWidth("100%");
-		txtAnalysisName.setValue(appName);
-
+		
+		txtAppName = new TextField("App's Name");
+		txtAppName.setWidth("100%");
+		txtAppName.setValue(appName);
 		cmbmode = new ComboBox("Mode");
 		cmbmode.setWidth("100%");
 		cmbmode.setNullSelectionAllowed(false);
@@ -158,6 +163,13 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			}
 
 		});
+		
+		cmbPruningPolicy = new ComboBox("Pruning Policy");
+		cmbPruningPolicy.setWidth("100%");
+		cmbPruningPolicy.setNullSelectionAllowed(false);
+		cmbPruningPolicy.addItem("app");
+		cmbPruningPolicy.addItem("off");
+		cmbPruningPolicy.setValue("off");
 
 		cmbStub = new ComboBox("Stubs");
 		cmbStub.setWidth("100%");
@@ -169,7 +181,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		txtFldEntryPoint = new TextField("Entry Point");
 		txtFldEntryPoint.setWidth("100%");
-
+		
+		txtStatistics = new TextField("Statistics");
+		txtStatistics.setWidth("100%");
+		
 		// Generate classpath table
 		gridClassPath = new Table("ClassPath");
 		gridClassPath.addContainerProperty("Classpath", TextField.class, null);
@@ -390,8 +405,18 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		txtFldSnSFile = new TextField("Source and Sink File");
 		txtFldSnSFile.setWidth("100%");
-		Upload uploadSnSfile = new Upload("", uploadHandler);
-		uploadSnSfile.addSucceededListener(uploadHandler);
+		optSrcAndSinks = new OptionGroup("Source and Sink Files");
+		optSrcAndSinks.setMultiSelect(true);
+		fillOptionGroup(optSrcAndSinks);
+		// Source and Sinks Upload files
+		Upload.Receiver sAndSReceiver = createSourceAndSinksReceiver();
+		Upload uploadSnSfile = new Upload("", sAndSReceiver);
+		uploadSnSfile.addSucceededListener(new SucceededListener() {
+			@Override
+			public void uploadSucceeded(SucceededEvent event) {
+				optSrcAndSinks.addItem(sourceAndSinksFile);
+			}
+		});
 		uploadSnSfile.setWidth("100%");
 
 		chkMultithreaded = new CheckBox("Multithreaded");
@@ -399,7 +424,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		chkObjectsensitivenes = new CheckBox("Object Sensitiveness");
 		chkindirectflows = new CheckBox("Indirect Flows");
 		chkSystemOut = new CheckBox("System Out");
-
+		chkOmitIFC = new CheckBox("OmitIFC");
 		// IndexedContainer cmbocontainer = new IndexedContainer();
 		// cmbocontainer.addContainerProperty("name", String.class, null);
 
@@ -416,8 +441,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		FormLayout fl = new FormLayout();
 		fl.addComponent(txtAnalysisName);
+		fl.addComponent(txtAppName);
 		fl.addComponent(cmbmode);
 		fl.addComponent(cmbStub);
+		fl.addComponent(cmbPruningPolicy);
 		fl.addComponent(txtFldEntryPoint);
 		fl.addComponent(gridClassPath);
 		fl.addComponent(gridThirdPartyLib);
@@ -427,6 +454,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(uploadCGFile);
 
 		fl.addComponent(txtReportFile);
+		fl.addComponent(txtStatistics);
 		fl.addComponent(txtLogFile);
 		fl.addComponent(cmbPointstoPolicy);
 		fl.addComponent(txtPointstoFallback);
@@ -435,13 +463,16 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		fl.addComponent(tblsourcensinks);
 		fl.addComponent(txtFldSnSFile);
+		fl.addComponent(optSrcAndSinks);
 		fl.addComponent(uploadSnSfile);
-		// fl.addComponent(txterror);
+		// fl.addComponent(txterror);+
+		
 		fl.addComponent(chkMultithreaded);
 		fl.addComponent(chkObjectsensitivenes);
 		fl.addComponent(chkindirectflows);
 		fl.addComponent(chkcomputechops);
 		fl.addComponent(chkSystemOut);
+		fl.addComponent(chkOmitIFC);	
 
 		// fl.setMargin(true);
 		fl.setSizeFull();
@@ -458,7 +489,17 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				saveConfigurationxml("StaticAnalysis");
 			}
 		});
-
+		
+		btnrun.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				String xmlFile = saveConfigurationxml("StaticAnalysis");
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
+						+ "/" + DashboardViewType.STATANALYSIS.getViewName()
+						+ "/" + String.valueOf(app.getId()) + "/" + xmlFile);
+				//Analyser.StaticAnalyser(app, xmlFile);
+			}
+		});
 		parent.setMargin(true);
 		addComponent(parent);
 	}
@@ -635,7 +676,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		return subWindow;
 	}
 
-	protected void saveConfigurationxml(String name) {
+	protected String saveConfigurationxml(String name) {
+		String xmlFile = "";
 		AnalysisData data = new AnalysisData();
 		data.setAnalysisName(txtAnalysisName.getValue());
 		data.setClasspath(readDataFromTable(gridClassPath));
@@ -646,20 +688,22 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setSdgFile(txtSDGFile.getValue());
 		data.setCgFile(txtCGFile.getValue());
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.isEnabled()));
-		data.setPruningPolicy("");
-		data.setPointsto_policy(txtPointstoFallback.getValue());
+		data.setPruningPolicy(cmbPruningPolicy.getValue().toString());
+		data.setPointsto_policy(cmbPointstoPolicy.getValue().toString());
 		data.setPointsto_fallback(txtPointstoFallback.getValue());
 		data.setPointsto_includeclasses(readDataFromTable(tblpointstoinclude));
 		data.setPointsto_excludeclasses(readDataFromTable(tblpointstoexclude));
-		data.setSourcesSinksFiles(Arrays.asList(new String[] { txtFldSnSFile
-				.getValue() }));
-		data.setMultiThreaded(String.valueOf(chkMultithreaded.isEnabled()));
+		//data.setSourcesSinksFiles(Arrays.asList(new String[] { txtFldSnSFile.getValue() }));
+		data.setMultiThreaded(String.valueOf(chkMultithreaded.getValue()));
 		data.setObjectsensitivenes(String.valueOf(chkObjectsensitivenes
-				.isEnabled()));
+				.getValue()));
 		data.setIgnoreIndirectFlows(String.valueOf(chkindirectflows.isEnabled()));
 		data.setComputeChops(String.valueOf(chkcomputechops.isEnabled()));
-		data.setSystemout(String.valueOf(chkSystemOut.isEnabled()));
-
+		data.setSystemout(String.valueOf(chkSystemOut.getValue()));
+		data.setOmitIFC(String.valueOf(chkOmitIFC.getValue()));
+		data.setReportFile(txtReportFile.getValue());
+		data.setStatistics(txtStatistics.getValue());
+		data.setLogFile(txtLogFile.getValue());
 		List<AnalysisData.SourcesSinks> sourcesAndSinks = new LinkedList<AnalysisData.SourcesSinks>();
 		data.setSourcesSinks(sourcesAndSinks);
 
@@ -692,6 +736,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			sourceSink.setIndirectCalls(String.valueOf(chktemp.getValue()));
 		}
 
+		data.setSourcesSinksFiles(getSelectedSnSFiles());
+
 		
 		StringBuilder strError = new StringBuilder();
 		if ("".equals(data.getAnalysisName())){
@@ -715,11 +761,22 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		else{
 			DocBuilder docBuilder = new DocBuilder();
-			docBuilder.generateAnalysisConfigFile(data, this.appName);
+			xmlFile = docBuilder.generateAnalysisConfigFile(data, app, name);
 		}
+		return xmlFile;
 	        
 	}
-
+	private List<String> getSelectedSnSFiles(){
+		Collection<?> selectedItems = (Collection<?>) optSrcAndSinks.getValue();
+		Iterator<?> iterator = selectedItems.iterator();
+		String relativePath = "../../../sourceandsinks/";
+		List<String> snSList = new ArrayList<>();
+		while (iterator.hasNext()) {
+			snSList.add(relativePath + iterator.next());
+//		    System.out.println(iterator.next());                            
+		}
+		return snSList;
+	}
 	private List<String> readDataFromTable(Table tablename) {
 
 		List<String> strpaths = new ArrayList<>();
@@ -728,7 +785,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			for (int i = 1; i <= newItemId; i++) {
 				Item row = tablename.getItem(i);
 				TextField temp = new TextField();
-				if (tablename.getCaption().toLowerCase().equals("classPath")) {
+				if (tablename.getCaption().toLowerCase().equals("classpath")) {
 					temp = (TextField) row.getItemProperty("Classpath")
 							.getValue();
 
@@ -760,31 +817,41 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
 			for (String msg : msgs) {
-				appName = msg;
-				System.out.println("enter view changeevent " + appName);
+				appId = 0;
+				if (msg != null){
+					appId = Integer.parseInt(msg);
+					System.out.println("enter view changeevent " + appId);
+				
+				try {
+					app = AppDAO.getAppById(appId);
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+				if (app!=null){
+					appName = app.getName();
+					txtAppName.setValue(appName);
+				}
+				}
 			}
-			txtAnalysisName.setValue(appName);
-			if (appName != "")
-				fillStaticAnalysisTextboxes(appName);
+			
+			if (app != null)
+				fillStaticAnalysisTextboxes(FileUtil.getPathHashCode(app.getHashCode()));
 		}
 	}
 
-	private void fillStaticAnalysisTextboxes(String Appname) {
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
-				.newInstance();
+	private void fillStaticAnalysisTextboxes(String path) {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
-			File appFolder = new File(Configuration.WebAppRoot + strBaseFolders
-					+ Appname);
-			String applicationfolder = Configuration.WebAppRoot
-					+ strBaseFolders + Appname;
+			File appFolder = new File(path);
+			String applicationfolder = path;
 			String[] names = appFolder.list();
 			File[] folderlist = appFolder.listFiles();
 
 			List<String> listReportfiles = new ArrayList<>();
 			List<File> listReportfiles1 = new ArrayList<>();
-			if (Appname != null) {
+			if (path != null) {
 				for (File name : folderlist) {
 					if (name.isDirectory()) {
 						String temp = name.getName();
@@ -896,8 +963,13 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 							.getElementsByTagName("reportfile");
 					if (reportList != null) {
 						Element reportElement = (Element) reportList.item(0);
-						txtReportFile.setValue((reportElement
-								.getAttribute("value")));
+						txtReportFile.setValue(reportElement
+								.getAttribute("value"));
+					}
+					NodeList statisticsList = FileElement.getElementsByTagName("statistics");
+					if(statisticsList != null) {
+						Element statisticsElement = (Element) statisticsList.item(0);
+						txtStatistics.setValue(statisticsElement.getAttribute("value"));
 					}
 					NodeList chopsList = FileElement
 							.getElementsByTagName("computeChops");
@@ -931,6 +1003,31 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			System.out.println(e.getLocalizedMessage() + e.getMessage());
 		}
+	}
+	private void fillOptionGroup(OptionGroup optg) {
+		File f = new File(FileUtil.getPathSourceAndSinks());
+		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
+		for (String name : names) optg.addItem(name);
+	}
+	private Upload.Receiver createSourceAndSinksReceiver() {
+		Upload.Receiver receiver = new Upload.Receiver() {
+			FileOutputStream fos = null;
+
+			@Override
+			public OutputStream receiveUpload(String filename, String mimeType) {
+				try {
+					sourceAndSinksFile = filename;
+					File f = new File(FileUtil.Dir.SOURCEANDSINKS.getDir() + filename);
+					fos = new FileOutputStream(f);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				}
+				return fos;
+			}
+
+		};
+		return receiver;
 	}
 
 }

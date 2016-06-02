@@ -1,0 +1,207 @@
+------------------------------------------------------------------------------
+                                                       ##########   ##########
+   Welcome to the MAC Research Cluster                    ##   ##   ##  ##  ##
+              operated by                                 ##   ##   ##  ##  ##
+     Leibniz Supercomputing Centre                        ##   ##   ##  ##  ##
+                                                          ##   #######  ##  ##
+------------------------------------------------------------------------------
+
+This cluster offers several different platforms organized as partitions:
+
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+nvd          up   infinite      4   idle mac-nvd[01-04]
+ati          up   infinite      4   idle mac-ati[01-04]
+wsm          up   infinite      2   idle mac-wsm[01-02]
+snb          up   infinite     28   idle mac-snb[01-28]
+bdz          up   infinite     19   idle mac-bdz[01-19]
+
+NodeName=mac-nvd[01-04] Procs=32 Sockets=2 CoresPerSocket=8 ThreadsPerCore=2
+NodeName=mac-ati[01-04] Procs=32 Sockets=2 CoresPerSocket=8 ThreadsPerCore=2
+NodeName=mac-wsm[01-02] Procs=64 Sockets=4 CoresPerSocket=8 ThreadsPerCore=2
+NodeName=mac-snb[01-28] Procs=32 Sockets=2 CoresPerSocket=8 ThreadsPerCore=2
+NodeName=mac-bdz[01-19] Procs=64 Sockets=4 CoresPerSocket=16 ThreadsPerCore=1
+
+partition "nvd" features:
+  - 4 nodes: dual socket Intel SandyBridge-EP Xeon E5-2670, 128 GB RAM,
+    two NVIDIA M2090 GPUs and FDR infiniband
+    
+partition "ati" features:
+  - 4 nodes: dual socket Intel SandyBridge-EP Xeon E5-2670, 128 GB RAM,
+    two AMD FirePro W8000 GPUs and FDR infiniband
+
+partition "wsm" features:
+  - 2 nodes: quad socket Intel Westmere-EX Xeon E7-4830, 512 GB RAM and
+    FDR infiniband (QDR speed due to PCIe 2.0)
+  
+partition "snb" features:
+  - 28 nodes: dual socket Intel SandyBridge-EP Xeon E5-2670, 128 GB RAM
+    and QDR infiniband
+
+partition "bdz" features:
+  - 19 nodes: quad socket AMD Bulldozer Opteron 6274, 256 GB RAM
+    and QDR infiniband
+
+On Intel processors, Hyperthreading is enabled AND job allocation assumes 
+enabled HT!
+
+All nodes within a partition are directly connected 
+through one infiniband switch.
+
+There are no direct logins to compute nodes! You have to use interactive 
+batch shells or regular batch jobs. For instructions see below!
+
+
+General Instructions
+====================
+
+Please refer to: http://www.lrz.de/services/compute/linux-cluster/
+
+please add following line to your .bashrc in order to activate
+LRZ's module system for headless ssh logins (srun, MPI):
+
+source /etc/profile.d/modules.sh
+
+If you want to ssh your compute nodes during a job allocation you
+need to setup password-less ssh connections within the LRZ Linux
+cluster. For instruction please refer to:
+http://www.lrz.de/services/compute/ssh/#TOC6
+
+Please use the module system in order to load compilers and 
+standard tools like svn or git.
+
+The some applies for OpenCL by AMD and CUDA. For using OpenCL on
+the nvd partition a workaround, described below, is needed.
+
+Interactive Shells
+==================
+
+In order to alloc a subset of nodes within a partition, please use
+following command (example!):
+
+salloc --partition=snb --ntasks=24 --cpus-per-task=32
+
+In order to examine granted resources you may want to read
+following env. variables:
+
+$SLURM_CPUS_PER_TASK      $SLURM_JOB_NODELIST       $SLURM_NPROCS
+$SLURM_JOB_CPUS_PER_NODE  $SLURM_JOB_NUM_NODES      $SLURM_NTASKS
+$SLURM_JOBID              $SLURM_NNODES             $SLURM_SUBMIT_DIR
+$SLURM_JOB_ID             $SLURM_NODELIST           $SLURM_TASKS_PER_NODE
+
+You can assemble a host list by:
+
+scontrol show hostnames ${SLURM_JOB_NODELIST}
+
+In order to run your application please execute:
+
+srun ./a.out
+
+During a job allocation, users are allowed to ssh the corresponding job nodes!
+
+PLEASE NOTE: Automatic Intel MPI rank pinning is not available when using
+srun. If your application is sensitive to pinning, please have a have look
+on srun --cpu_bind option (man srun)!
+
+PLEASE NOTE: This cluster is operated with Intel Hyperthreading Technology being
+enabled. If you intend to use just physical cores for a pure MPI application,
+please make sure to specify --cpus-per-task=2. If you want to run
+hybrid (OMP + MPI) jobs please adjust --cpus-per-task accordingly!
+
+
+Batch Operation
+===============
+
+Besides interactive shells, we also support regular batch jobs as usage
+model.
+
+Please find an example below. This example starts a job with following
+settings:
+
+- using partition "snb"
+- allocates 8 nodes (as --cpus-per-task=32)
+- using Intel MPI with hydra scheduler
+     specifying number of threads
+
+------------------------------------------------------------------------------
+start SLURM job script
+------------------------------------------------------------------------------
+#!/bin/bash
+
+#SBATCH -o /home/hpc/<project>/<user>/myjob.%j.out
+#SBATCH -D /home/hpc/<project>/<user>
+#SBATCH -J myjob
+#SBATCH --get-user-env
+#SBATCH --partition=snb
+#SBATCH --ntasks=8
+#SBATCH --cpus-per-task=32
+#SBATCH --mail-type=end
+#SBATCH --mail-user=user@in.tum.de
+#SBATCH --export=NONE
+#SBATCH --time=01:30:00
+
+source /etc/profile.d/modules.sh
+
+mpiexec.hydra -genv OMP_NUM_THREADS 16 -ppn 1 -n 8 ./a.out
+------------------------------------------------------------------------------
+end SLURM job script
+------------------------------------------------------------------------------
+
+During a job allocation, users are allowed to ssh the corresponding job nodes!
+
+PLEASE NOTE: This cluster is operated with Intel Hyperthreading Technology being
+enabled. If you intend to use just physical cores for a pure MPI application,
+please make sure to specify --cpus-per-task=2. If you want to run
+hybrid (OMP + MPI) jobs please adjust --cpus-per-task accordingly!
+
+
+MPI Profiling
+=============
+
+Scalasca 1.4.3 was validated with Intel MPI, the Intel Compiler suite and 
+the GNU compiler suite on this cluster.
+
+Please download it from here:
+http://www.scalasca.org/software/scalasca-1.x/download.html
+and perform an installation into $HOME.
+
+You have to build scalasca on mac-login-amd (mac-login-intel has some software
+installed that confuses the configure script and therefore the wrong version
+of scalasca is built) by following commands:
+
+./configure --prefix=$HOME
+make
+make install
+
+Furthermore, you need to adjust your .bashrc in order to expand PATH and
+LD_LIBRARY_PATH to $HOME/bin and $HOME/lib $HOME/lib64
+
+ATTENTION: application tracing with compiler instrumentation is not
+possible due to the lack of a high-performance parallel file system.
+Therefore, please DO NOT run scalasca like this: 
+
+scalasca -analyze -t [your mpiexec.hydra call]
+
+unless you have instrumented the your code with
+
+scalasca -insturment -comp=none -mode=MPI (just during linking!!)
+
+
+Known Issues and News
+=====================
+
+- Due to the weird NVIDIA software stack, compiling for NVIDIA OpenCL is
+  currently not possible on the login nodes since they do not feature
+  NVIDIA GPUs. Please allocate an interactive job and compile against the
+  local installation in /usr/local/cuda! This does not apply for CUDA! 
+  Please use the module system for CUDA!
+
+- only the Intel toolchain is validated! This includes all Intel
+  compilers, Intel MPI, and using the GNU compilers with Intel MPI. 
+  Using other compilers (Open64, PGI, etc.) and other 
+  MPI implementations (OpenMPI, MVAPICH, etc.)
+  are not validated, but may work, however, there is no support converage!
+
+- Turbo mode is ENABLED on snb/ati/nvd-partition; 
+  use the --constraint=turbo_off option during jobs submission (salloc, sbatch) 
+  for running jobs on the snb/ati/nvd-partition with disabled Turbo! 
+  (e.g. in case of speed-up tests)

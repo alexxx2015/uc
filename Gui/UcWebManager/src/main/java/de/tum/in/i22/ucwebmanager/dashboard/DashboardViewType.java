@@ -13,8 +13,8 @@ import de.tum.in.i22.ucwebmanager.view.StaticAnalysisView;
 public enum DashboardViewType {
   MAIN("Home", MainView.class, FontAwesome.HOME, true),
   STATANALYSIS("Static Analysis", StaticAnalysisView.class, FontAwesome.ANDROID, true),
-  INSTRUMENT("Instrumentation", InstrumentationView.class, FontAwesome.LINKEDIN, true), RUNTIME(
-            "Runtime", RuntimeView.class, FontAwesome.BAR_CHART_O, false);//, TRANSACTIONS(
+  INSTRUMENT("Instrumentation", InstrumentationView.class, FontAwesome.LINKEDIN, true), 
+  RUNTIME("Runtime", RuntimeView.class, FontAwesome.BAR_CHART_O, false);//, TRANSACTIONS(
 //            "transactions", TransactionsView.class, FontAwesome.TABLE, false), REPORTS(
 //            "reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), SCHEDULE(
 //            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);

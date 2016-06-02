@@ -1,13 +1,16 @@
 package de.tum.in.i22.ucwebmanager.analysis;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -19,6 +22,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.tum.in.i22.ucwebmanager.Configuration;
+import de.tum.in.i22.ucwebmanager.DB.App;
+import de.tum.in.i22.ucwebmanager.DB.StaticAnalysisConfig;
+import de.tum.in.i22.ucwebmanager.DB.StaticAnalysisConfigDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 
 public class DocBuilder {
 	public static final String TAG_ANALYSISES = "analysises";
@@ -32,7 +39,9 @@ public class DocBuilder {
 	public static final String TAG_INCLUDECLASSES = "include-classes";
 	public static final String TAG_EXCLUDECLASSES = "exclude-classes";
 	public static final String TAG_IGNOREINDIRECTFLOWS = "ignoreIndirectFlows";
+	public static final String TAG_OMITIFC = "omitIFC";
 	public static final String TAG_MULTITHREADED = "multithreaded";
+	public static final String TAG_PRUNINGPOLICY = "pruningPolicy";
 	public static final String TAG_SDGFILE = "sdgfile";
 	public static final String TAG_CGFILE = "cgfile";
 	public static final String TAG_REPORTFILE = "reportfile";
@@ -55,17 +64,20 @@ public class DocBuilder {
 	public static final String ATTR_INCLUDESUBCLASSES = "includeSubClasses";
 	public static final String ATTR_INDIRECTCALLS = "indirectCalls";
 
-	public void generateAnalysisConfigFile(AnalysisData data, String appName) {
-
-		File directory = new File(Configuration.WebAppRoot
-				+ "/apps/ws-flowAnaluser" + "/" + appName + "/"
-				+ data.getAnalysisName());
+	public String generateAnalysisConfigFile(AnalysisData data, App app, String analysisName) {
+//		String analysisName = "/Static_analysis";
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		Date date = new Date();
+		String stringDate = dateFormat.format(date);
+		File analysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()) + "/" + stringDate);
+		analysisOutput.mkdirs();
+		String pathConfigOfApp = FileUtil.getPathConfig(app.getHashCode());
+		File directory = new File(pathConfigOfApp);
 		String strTableData;
 		List<String> listtabledata;
-
+		String configName = "";
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory
-					.newInstance();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			// root elements
@@ -79,8 +91,7 @@ public class DocBuilder {
 
 			// set attribute to staff element
 			Attr attrname = doc.createAttribute(DocBuilder.ATTR_NAME);
-			attrname.setValue(Configuration.getAppsRoot() + System.getProperty("file.separator")
-					+ appName + System.getProperty("file.separator") + data.getAnalysisName());	
+			attrname.setValue(".."+FileUtil.Dir.JOANAOUTPUT.getDir() + "/" + stringDate + "/" + analysisName);	
 			analysis.setAttributeNode(attrname);
 
 			// mode elements
@@ -102,11 +113,10 @@ public class DocBuilder {
 				else
 					strTableData = strTableData + listtabledata.get(i);
 			}
+			// classpath
 			String strClasspath = strTableData;
-			String applicationname = Configuration.getAppsRoot()
-					+ System.getProperty("file.separator") + appName + System.getProperty("file.separator")
-					+ "Source" + "/" + strClasspath;
-
+//			String applicationname =   "./:" + strClasspath;
+			String applicationname = strClasspath;
 			Element classpath = doc.createElement(DocBuilder.TAG_CLASSPATH);
 
 			analysis.appendChild(classpath);
@@ -190,13 +200,18 @@ public class DocBuilder {
 
 			Element ignoreIndirectFlows = doc
 					.createElement(DocBuilder.TAG_IGNOREINDIRECTFLOWS);
-
 			analysis.appendChild(ignoreIndirectFlows);
 			Attr attrignoreindirect = doc
 					.createAttribute(DocBuilder.ATTR_VALUE);
 			attrignoreindirect.setValue(data.getIgnoreIndirectFlows());
 			ignoreIndirectFlows.setAttributeNode(attrignoreindirect);
 
+			Element omitIFC = doc.createElement(DocBuilder.TAG_OMITIFC);
+			analysis.appendChild(omitIFC);
+			Attr attrOmitIFC = doc.createAttribute(DocBuilder.ATTR_VALUE);
+			attrOmitIFC.setValue(data.getOmitIFC());
+			omitIFC.setAttributeNode(attrOmitIFC);
+			
 			Element multithreaded = doc
 					.createElement(DocBuilder.TAG_MULTITHREADED);
 
@@ -204,7 +219,13 @@ public class DocBuilder {
 			Attr attrmultith = doc.createAttribute(DocBuilder.ATTR_VALUE);
 			attrmultith.setValue(data.getMultiThreaded());
 			multithreaded.setAttributeNode(attrmultith);
-
+			
+			Element pruningPolicy = doc.createElement(DocBuilder.TAG_PRUNINGPOLICY);
+			analysis.appendChild(pruningPolicy);
+			Attr attrPrunningPolicy = doc.createAttribute(DocBuilder.ATTR_VALUE);
+			attrPrunningPolicy.setValue(data.getPruningPolicy());
+			pruningPolicy.setAttributeNode(attrPrunningPolicy);
+			
 			Element sdgfile = doc.createElement(DocBuilder.TAG_SDGFILE);
 
 			analysis.appendChild(sdgfile);
@@ -219,7 +240,7 @@ public class DocBuilder {
 
 			cgfile.setAttributeNode(attrcgfile);
 
-			Element reportfile = doc.createElement(DocBuilder.TAG_REPORTFILE);
+			Element reportfile = doc.createElement(DocBuilder.TAG_REPORTFILE);	
 			Element logfile = doc.createElement(DocBuilder.TAG_LOGFILE);
 			analysis.appendChild(reportfile);
 			analysis.appendChild(logfile);
@@ -231,7 +252,13 @@ public class DocBuilder {
 			attrsdg.setValue(data.getSdgFile());
 			reportfile.setAttributeNode(attrreport);
 			logfile.setAttributeNode(attrlog);
-
+			
+			Element statistics = doc.createElement(DocBuilder.TAG_STATISTICS);
+			analysis.appendChild(statistics);
+			Attr attrStatistics = doc.createAttribute(DocBuilder.ATTR_VALUE);
+			attrStatistics.setValue(data.getStatistics());
+			statistics.setAttributeNode(attrStatistics);
+			
 			Element computeChops = doc.createElement(DocBuilder.TAG_COMPUTECHOPS);
 
 			analysis.appendChild(computeChops);
@@ -307,32 +334,45 @@ public class DocBuilder {
 
 				}
 			}
-			if (data.getSourcesSinksFiles().size() > 0) {
-				Element Fileelement = doc.createElement(DocBuilder.TAG_FILE);
-				sourcesandsinks.appendChild(Fileelement);
-				Attr attrFileSave = doc.createAttribute(DocBuilder.ATTR_VALUE);
-//				txtFldSnSFile.getValue().replace('\\', '/');
-				attrFileSave.setValue(data.getSourcesSinksFiles().get(0));
-				Fileelement.setAttributeNode(attrFileSave);
+			List<String> list = data.getSourcesSinksFiles();
+			if (list.size() > 0) {
+				for (String s : list){
+					Element Fileelement = doc.createElement(DocBuilder.TAG_FILE);
+					sourcesandsinks.appendChild(Fileelement);
+					Attr attrFileSave = doc.createAttribute(DocBuilder.ATTR_VALUE);
+					attrFileSave.setValue(s);
+					Fileelement.setAttributeNode(attrFileSave);
+				}
 			}
 
 			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory
-					.newInstance();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
+			// add linebreak into xml file
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
+			configName = stringDate + ".config.xml";
+			String configDir = directory + System.getProperty("file.separator") + configName;
 			File dest = new File(
-					Configuration.WebAppRoot + System.getProperty("file.separator") + appName + System.getProperty("file.separator")+ data.getAnalysisName() + System.getProperty("file.separator")+appName + ".xml");
+//					Configuration.WebAppRoot + System.getProperty("file.separator") + appName + System.getProperty("file.separator")+ data.getAnalysisName() + System.getProperty("file.separator")+appName + ".xml");
+					configDir);
 			StreamResult result = new StreamResult(dest);
 
 			transformer.transform(source, result);
-
+			StaticAnalysisConfig staticConfig = new StaticAnalysisConfig(configName, app.getId());
+			try {
+				// save config file to database
+				StaticAnalysisConfigDAO.saveToDB(staticConfig);
+			} catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
+			}
 			System.out.println("File saved! "+dest.getAbsolutePath());
-
+			
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		} catch (TransformerException tfe) {
 			tfe.printStackTrace();
 		}
+		return configName;
 	}
 }

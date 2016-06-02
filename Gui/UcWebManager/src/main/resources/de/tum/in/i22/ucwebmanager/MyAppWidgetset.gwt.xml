@@ -7,4 +7,6 @@
     
 
     <inherits name="de.tum.in.i22.ucwebmanager.DashboardWidgetSet" />
+
+    
 </module>
