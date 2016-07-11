@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -88,6 +89,18 @@ class MyProcessor extends AbstractRequestHandler {
 	@Override
 	public Map<String, Set<Map<String, String>>> filterModel(
 			Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deployReleaseMechanism(ByteBuffer mechanism) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ByteBuffer getMechanism(String mechanismName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
