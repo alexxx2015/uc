@@ -7,6 +7,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
@@ -15,6 +18,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -27,22 +31,26 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
+import de.tum.in.i22.ucwebmanager.DB.AppDAO;
+import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 
 public class InstrumentationView extends VerticalLayout implements View{
 	App app;
 	File file;
 	String appName;
-	private Upload upload;
+	private int appId;
 	private TextArea textArea;
 	private final Table blackbox, whitebox;
 	private Button btnrun;
 	private TextField txtSrcFolder, txtDestFolder;
-	
+	private ComboBox cmbReportFile;
 	public InstrumentationView() {
 		Label lab = new Label("Instrumentation");
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
 		lab.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+		//Combobox
+		cmbReportFile = new ComboBox("Select Report File");
 //		blackbox = new TableGrid("Black Box", "blackbox");
 //		whitebox = new TableGrid("White box", "whitebox");
 		blackbox = new Table("Black Box");
@@ -112,47 +120,19 @@ public class InstrumentationView extends VerticalLayout implements View{
 		textArea.setVisible(false);
 		txtSrcFolder = new TextField("Source Folder");
 		txtSrcFolder.setWidth("100%");
+//		txtSrcFolder.setReadOnly(true);
+		
 		txtDestFolder = new TextField("Destination Folder");
 		txtDestFolder.setWidth("100%");
+//		txtDestFolder.setReadOnly(true);
+		
 		btnrun = new Button("Run");
-		Upload.Receiver receiver = new Upload.Receiver() {
-			FileOutputStream fos = null;
-			@Override
-			public OutputStream receiveUpload(String filename, String mimeType) {
-				// TODO Auto-generated method stub
-				
-				try {
-					file = new File("/home/dat/tmp/" + filename);
-					fos = new FileOutputStream(file);
-				} catch (FileNotFoundException e) {
-					
-					e.printStackTrace();
-					return null;
-				}
-				//textArea.setValue(readXmlFile(file));
-				return fos;
-			}
-			
-		};
-		upload = new Upload("Upload your xml file",receiver);
-		upload.setWidth("100%");
-		upload.addSucceededListener(new SucceededListener() {
-			
-			@Override
-			public void uploadSucceeded(SucceededEvent event) {
-				// TODO Auto-generated method stub
-				textArea.setVisible(true);
-				textArea.setValue(readXmlFile(file));
-			}
-
-			
-		});
 		VerticalLayout parent = new VerticalLayout();
 		parent.addComponent(lab);
 		
 		FormLayout fl = new FormLayout();
 		
-		fl.addComponent(upload);
+		fl.addComponent(cmbReportFile);
 		fl.addComponent(textArea);
 		fl.setSizeFull();
 		fl.addComponent(textArea);
@@ -170,6 +150,29 @@ public class InstrumentationView extends VerticalLayout implements View{
 	@Override
 	public void enter(ViewChangeEvent event) {
 		// TODO Auto-generated method stub
+		if (event.getParameters() != null) {
+			// split at "/", add each part as a label
+			String[] msgs = event.getParameters().split("/");
+			for (String msg : msgs) {
+				appId = 0;
+				if (msg != null) {
+					appId = Integer.parseInt(msg);
+					System.out.println("enter Instrumentation view " + appId);
+
+					try {
+						app = AppDAO.getAppById(appId);
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
+					if (app != null) {
+						appName = app.getName();
+						fillComboBox(app);
+						fillSrcAndDest(app);
+					}
+
+				}
+			}
+		}
 	}
 	 private String readXmlFile(File file){
 			String xml = "";
@@ -185,6 +188,22 @@ public class InstrumentationView extends VerticalLayout implements View{
 			}
 			return xml;
 		}
+	 private void fillComboBox(App app){
+		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
+		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
+		 for (String name : names) cmbReportFile.addItem(name);
+	 }
+	 private void fillSrcAndDest(App app){
+		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
+		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
+		 this.txtSrcFolder.setReadOnly(false);
+		 this.txtSrcFolder.setValue(txtDestFolder);
+		 this.txtSrcFolder.setReadOnly(true);
+		 this.txtDestFolder.setReadOnly(false);
+		 this.txtDestFolder.setValue(txtSrcFolder);
+		 this.txtDestFolder.setReadOnly(true);
+		 
+	 }
 //	 private void initTable(Table table, String name, String property){
 //		 table = new Table("ClassPath");
 //			table.addContainerProperty("Classpath", TextField.class, null);
