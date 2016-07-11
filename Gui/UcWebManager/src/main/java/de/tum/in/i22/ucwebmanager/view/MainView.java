@@ -23,6 +23,7 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Grid.SingleSelectionModel;
@@ -208,7 +209,7 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String status = item.getItemProperty("Status").getValue().toString();
 			// Send a message to static analyser view with the id of app
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName()+
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName() +
 						"/" + item.getItemProperty("ID").getValue().toString());
 			
 		}));
@@ -218,7 +219,8 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (!stat.equals(Status.NONE.getStage())){
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.INSTRUMENT.getViewName());
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.INSTRUMENT.getViewName() +
+						"/" + item.getItemProperty("ID").getValue().toString());
 			}
 			else {
 				new Notification("Error!",
@@ -240,7 +242,7 @@ public class MainView extends VerticalLayout implements View {
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			}
 		}));
-		
+		grid.sort("ID", SortDirection.ASCENDING);
 		List<App> allApp = null;
 		try {
 			allApp = AppDAO.getAllApps();
