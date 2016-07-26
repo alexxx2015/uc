@@ -256,7 +256,13 @@ public class MainView extends VerticalLayout implements View {
 		}
 //		grid.getContainerDataSource()
 	}
-
+	private void findRow(int id){
+		Iterator g = grid.iterator();
+		while (g.hasNext()) {
+			
+		}
+	}
+	
 	private void updateTable(App app) {
 		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go", "", "Go", "", "Go");
 	}

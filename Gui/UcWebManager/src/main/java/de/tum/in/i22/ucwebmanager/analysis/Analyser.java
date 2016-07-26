@@ -38,7 +38,7 @@ public class Analyser extends Thread {
 //						if (errorStream.available() != 0){
 						System.out.println("Process ended!");
 						app.setStatus(Status.STATICANALYSIS.getStage());
-						AppDAO.updateStatus(app);
+						AppDAO.updateStatus(app, Status.STATICANALYSIS.getStage());
 						// TODO send inputstream to Mainview depends on App's ID
 //			 			}
 //						UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName() + "/" + String.valueOf(app.getId()) + "/" + inputstream);

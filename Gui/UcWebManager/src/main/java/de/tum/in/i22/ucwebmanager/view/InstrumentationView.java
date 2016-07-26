@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.instrument.IllegalClassFormatException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,16 +29,17 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
-
+import edu.tum.uc.jvm.Instrumentor;
 public class InstrumentationView extends VerticalLayout implements View{
 	App app;
 	File file;
-	String appName;
+	String appName, arg0, arg1, arg2;
 	private int appId;
 	private TextArea textArea;
 	private final Table blackbox, whitebox;
@@ -127,6 +129,29 @@ public class InstrumentationView extends VerticalLayout implements View{
 //		txtDestFolder.setReadOnly(true);
 		
 		btnrun = new Button("Run");
+		btnrun.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+//				System.out.println(getReportFileFromComboBox());
+				try {
+					
+					arg0 = FileUtil.getPathCode(app.getHashCode());
+					String reportFolderName = (String) cmbReportFile.getValue();
+					arg1 = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + "/" + reportFolderName;
+					File f = new File(arg1);
+					f.mkdirs();
+					arg2 = getReportFileFromComboBox();
+					System.out.println(arg0);
+					System.out.println(arg1);
+					System.out.println(arg2);
+					Instrumentor.main(new String[]{arg0, arg1, arg2});
+				} catch (IOException | IllegalClassFormatException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
 		VerticalLayout parent = new VerticalLayout();
 		parent.addComponent(lab);
 		
@@ -155,7 +180,7 @@ public class InstrumentationView extends VerticalLayout implements View{
 			String[] msgs = event.getParameters().split("/");
 			for (String msg : msgs) {
 				appId = 0;
-				if (msg != null) {
+				if (msg != null && msg != "") {
 					appId = Integer.parseInt(msg);
 					System.out.println("enter Instrumentation view " + appId);
 
@@ -203,6 +228,10 @@ public class InstrumentationView extends VerticalLayout implements View{
 		 this.txtDestFolder.setValue(txtSrcFolder);
 		 this.txtDestFolder.setReadOnly(true);
 		 
+	 }
+	 private String getReportFileFromComboBox(){
+		 String reportFile = "/report.xml";
+		 return FileUtil.getPathOutput(app.getHashCode()) + "/" + cmbReportFile.getValue() + reportFile;
 	 }
 //	 private void initTable(Table table, String name, String property){
 //		 table = new Table("ClassPath");

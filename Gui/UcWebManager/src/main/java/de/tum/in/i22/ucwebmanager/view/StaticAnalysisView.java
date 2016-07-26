@@ -58,16 +58,18 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
+import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 
 public class StaticAnalysisView extends VerticalLayout implements View {
 	private UploadHandler uploadHandler = new UploadHandler(this);
-
-	TextField txtFldSnSFile;
+	
+	ComboBox cmbListApp;
 	TextField txtAnalysisName, txtAppName;
-
+	Window subWindow;
+	
 	String appName, staticAnalysisPath, sourceAndSinksFile;
 	int appId;
 	App app;
@@ -403,8 +405,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		uploadSDGFile.addSucceededListener(uploadHandler);
 		// uploadReportFile.addSucceededListener(this);
 
-		txtFldSnSFile = new TextField("Source and Sink File");
-		txtFldSnSFile.setWidth("100%");
 		optSrcAndSinks = new OptionGroup("Source and Sink Files");
 		optSrcAndSinks.setMultiSelect(true);
 		fillOptionGroup(optSrcAndSinks);
@@ -462,7 +462,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(tblpointstoexclude);
 
 		fl.addComponent(tblsourcensinks);
-		fl.addComponent(txtFldSnSFile);
 		fl.addComponent(optSrcAndSinks);
 		fl.addComponent(uploadSnSfile);
 		// fl.addComponent(txterror);+
@@ -473,7 +472,33 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(chkcomputechops);
 		fl.addComponent(chkSystemOut);
 		fl.addComponent(chkOmitIFC);	
-
+		
+		subWindow = new Window("No App selected, please choose an app!");
+        VerticalLayout subContent = new VerticalLayout();
+        subContent.setMargin(true);
+        subWindow.setContent(subContent);
+        cmbListApp = new ComboBox("List of avaialbe Apps");
+        Button btnSubWindowOK = new Button("OK");
+        btnSubWindowOK.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				String s = (String) cmbListApp.getValue();
+				String[] temp = s.split(" ");
+				try {
+					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
+					fillStaticAnalysisTextboxes(FileUtil.getPathConfig(app.getHashCode()));
+					subWindow.close();
+				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        // Put some components in it
+        subContent.addComponent(cmbListApp);
+        subContent.addComponent(btnSubWindowOK);
+        // Center it in the browser window
+        subWindow.center();
 		// fl.setMargin(true);
 		fl.setSizeFull();
 		parent.addComponent(fl);
@@ -486,18 +511,20 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		btnsave.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				saveConfigurationxml("StaticAnalysis");
+				saveConfigurationxml("");
 			}
 		});
 		
 		btnrun.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				String xmlFile = saveConfigurationxml("StaticAnalysis");
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
-						+ "/" + DashboardViewType.STATANALYSIS.getViewName()
-						+ "/" + String.valueOf(app.getId()) + "/" + xmlFile);
-				//Analyser.StaticAnalyser(app, xmlFile);
+				String xmlFile = saveConfigurationxml("");
+				if (xmlFile != "") {
+					UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
+							+ "/" + DashboardViewType.STATANALYSIS.getViewName()
+							+ "/" + String.valueOf(app.getId()) + "/" + xmlFile);
+					//Analyser.StaticAnalyser(app, xmlFile);
+				}
 			}
 		});
 		parent.setMargin(true);
@@ -744,11 +771,51 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			strError.append("Analysis name must be specified");
 			strError.append("<br/>");
 		}
+		if ("".equals(data.getMode())){
+			strError.append("Mode must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getStubs())){
+			strError.append("Stubs must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getPruningPolicy())){
+			strError.append("Prunning Policy must be specified");
+			strError.append("<br/>");
+		}
 		if("".equals(data.getEntrypoint())){
 			strError.append("Entrypoint must be specified");
 			strError.append("<br/>");
 		}
-		
+		if ("".equals(data.getSdgFile())){
+			strError.append("SDG file name must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getCgFile())){
+			strError.append("CgFile name must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getStatistics())){
+			strError.append("Statistics file name must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getReportFile()))
+		{
+			strError.append("Report file's name must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getLogFile())){
+			strError.append("Log file's name must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getPointsto_policy())){
+			strError.append("Points to Policy must be specified");
+			strError.append("<br/>");
+		}
+		if ("".equals(data.getPointsto_fallback())){
+			strError.append("Points to Fallback must be specified");
+			strError.append("<br/>");
+		}
 		if(!"".equals(strError.toString())){
 			Notification notification = new Notification(
 	                "Message Box");
@@ -813,7 +880,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		if (event.getParameters() != null) {
+		if (event.getParameters() != null && event.getParameters() != "") {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
 			for (String msg : msgs) {
@@ -827,58 +894,55 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				} catch (ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
 				}
-				if (app!=null){
-					appName = app.getName();
-					txtAppName.setValue(appName);
-				}
 				}
 			}
 			
 			if (app != null)
-				fillStaticAnalysisTextboxes(FileUtil.getPathHashCode(app.getHashCode()));
+				fillStaticAnalysisTextboxes(FileUtil.getPathConfig(app.getHashCode()));
+		}
+		else {
+			fillCmbListApp();
+			UI.getCurrent().addWindow(subWindow);
 		}
 	}
 
 	private void fillStaticAnalysisTextboxes(String path) {
+		txtAppName.setValue(app.getName());
+		txtAppName.setReadOnly(true);
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			File appFolder = new File(path);
-			String applicationfolder = path;
-			String[] names = appFolder.list();
-			File[] folderlist = appFolder.listFiles();
+			File[] fileslist = appFolder.listFiles();
 
-			List<String> listReportfiles = new ArrayList<>();
-			List<File> listReportfiles1 = new ArrayList<>();
+			List<File> listConfigfiles1 = new ArrayList<>();
 			if (path != null) {
-				for (File name : folderlist) {
-					if (name.isDirectory()) {
-						String temp = name.getName();
-						String temp1 = temp;
-						if (!(temp.equals("Source")))
-							listReportfiles1.add(name);
-
-					}
+				for (File name : fileslist) {
+//					if (name.isDirectory()) {
+//						String temp = name.getName();
+//						if (!(temp.equals("Source")))
+							listConfigfiles1.add(name);
+//					}
 				}
-				Collections.sort(listReportfiles1, new Comparator<File>() {
+				//latest file first
+				Collections.sort(listConfigfiles1, new Comparator<File>() {
 					public int compare(File f1, File f2) {
 						return Long.valueOf(f2.lastModified()).compareTo(
 								f1.lastModified());
 					}
 				});
 			}
-			String reportfilepath = listReportfiles1.get(0).getAbsolutePath()
-					+ "/StaticAnalysis.xml";
+			String configfilepath = listConfigfiles1.get(0).getAbsolutePath();
 
-			Document doc = docBuilder.parse(new File(reportfilepath));
+			Document doc = docBuilder.parse(new File(configfilepath));
 			doc.getDocumentElement().normalize();
 
 			NodeList listOffile = doc.getElementsByTagName("analysis");
 			Element AppNameElement = (Element) listOffile.item(0);
-
-			txtAnalysisName.setValue(AppNameElement.getAttribute("name"));
-			int totalFile = listOffile.getLength();
+			//get the last string seperated by "/"
+			String pathAsArrayString[] = AppNameElement.getAttribute("name").split("/");
+			txtAnalysisName.setValue(pathAsArrayString[pathAsArrayString.length - 1]);
 
 			for (int s = 0; s < listOffile.getLength(); s++) {
 
@@ -894,6 +958,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 					NodeList ClasspathlistList = FileElement
 							.getElementsByTagName("classpath");
+					gridClassPath.removeAllItems();
 					Element ClasspathElement = (Element) ClasspathlistList
 							.item(0);
 					TextField txt = new TextField("textfield");
@@ -911,6 +976,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 					TextField txttpl = new TextField("textfield");
 					txttpl.setValue(ThirdPartyLibElement.getAttribute("value"));
 					txttpl.setWidth(24.6f, ComboBox.UNITS_EM);
+					gridThirdPartyLib.removeAllItems();
 					Object newItemIdtpl = gridThirdPartyLib.addItem();
 					Item rowtpl = gridThirdPartyLib.getItem(newItemIdtpl);
 					rowtpl.getItemProperty("ThirdPartyLibrary")
@@ -978,6 +1044,21 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 						chkcomputechops.setValue((Boolean.valueOf(chopsElement
 								.getAttribute("value"))));
 					}
+					NodeList omitIFC = FileElement.getElementsByTagName("omitIFC");
+					if (omitIFC != null) {
+						Element omit = (Element) omitIFC.item(0);
+						chkOmitIFC.setValue((Boolean.valueOf(omit.getAttribute("value"))));
+					}
+					NodeList fallBackList = FileElement.getElementsByTagName("points-to");
+					if (fallBackList != null) {
+						Element fallBack = (Element) fallBackList.item(0);
+						txtPointstoFallback.setValue(fallBack.getAttribute("fallback"));
+					}
+					NodeList pointsToPolicy = FileElement.getElementsByTagName("points-to");
+					if (pointsToPolicy != null) {
+						Element ptPolicy = (Element) pointsToPolicy.item(0);
+						cmbPointstoPolicy.setValue(ptPolicy.getAttribute("policy"));
+					}
 					NodeList sysoutList = FileElement
 							.getElementsByTagName("systemout");
 					if (sysoutList != null) {
@@ -1008,6 +1089,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		File f = new File(FileUtil.getPathSourceAndSinks());
 		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
 		for (String name : names) optg.addItem(name);
+	}
+	private void fillCmbListApp(){
+		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage());
+		for (App app : apps){
+			cmbListApp.addItem(app.getId() + " " + app.getName());
+		}
 	}
 	private Upload.Receiver createSourceAndSinksReceiver() {
 		Upload.Receiver receiver = new Upload.Receiver() {
