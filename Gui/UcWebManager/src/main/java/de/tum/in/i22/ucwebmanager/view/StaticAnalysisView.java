@@ -94,7 +94,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
-			txtLogFile, txtFldEntryPoint,txtStatistics;
+			txtLogFile, txtFldEntryPoint,txtStatistics, txtFldSnSFile;
 	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
 	Upload uploadSDGFile, uploadCGFile;
 	OptionGroup optSrcAndSinks;

@@ -42,7 +42,7 @@ public class InstrumentationView extends VerticalLayout implements View{
 	String appName, arg0, arg1, arg2;
 	private int appId;
 	private TextArea textArea;
-	private final Table blackbox, whitebox;
+	private final Table blackList, whiteList;
 	private Button btnrun;
 	private TextField txtSrcFolder, txtDestFolder;
 	private ComboBox cmbReportFile;
@@ -55,20 +55,20 @@ public class InstrumentationView extends VerticalLayout implements View{
 		cmbReportFile = new ComboBox("Select Report File");
 //		blackbox = new TableGrid("Black Box", "blackbox");
 //		whitebox = new TableGrid("White box", "whitebox");
-		blackbox = new Table("Black Box");
-		blackbox.addContainerProperty("blackbox", TextField.class, null);
-		blackbox.setPageLength(5);
-		blackbox.setWidth("100%");
-		blackbox.addItemClickListener(new ItemClickListener() {
+		blackList = new Table("Black List");
+		blackList.addContainerProperty("blackbox", TextField.class, null);
+		blackList.setPageLength(5);
+		blackList.setWidth("100%");
+		blackList.addItemClickListener(new ItemClickListener() {
 			public void itemClick(ItemClickEvent event) {
 				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					blackbox.select(event.getItemId());
+					blackList.select(event.getItemId());
 				}
 			}
 
 		});
 
-		blackbox.addActionHandler(new Action.Handler() {
+		blackList.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -76,30 +76,30 @@ public class InstrumentationView extends VerticalLayout implements View{
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					Object newItemId = blackbox.addItem();
+					Object newItemId = blackList.addItem();
 					TextField t = new TextField();
 					t.setWidth("100%");
-					blackbox.getItem(newItemId)
+					blackList.getItem(newItemId)
 							.getItemProperty("blackbox").setValue(t);
 				} else if (action.getCaption() == "Delete") {
-					blackbox.removeItem(target);
+					blackList.removeItem(target);
 				}
 			}
 		});
-		whitebox = new Table("White box");
-		whitebox.addContainerProperty("whitebox", TextField.class, null);
-		whitebox.setPageLength(5);
-		whitebox.setWidth("100%");
-		whitebox.addItemClickListener(new ItemClickListener() {
+		whiteList = new Table("White List");
+		whiteList.addContainerProperty("whitebox", TextField.class, null);
+		whiteList.setPageLength(5);
+		whiteList.setWidth("100%");
+		whiteList.addItemClickListener(new ItemClickListener() {
 			public void itemClick(ItemClickEvent event) {
 				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					whitebox.select(event.getItemId());
+					whiteList.select(event.getItemId());
 				}
 			}
 
 		});
 
-		whitebox.addActionHandler(new Action.Handler() {
+		whiteList.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -107,13 +107,13 @@ public class InstrumentationView extends VerticalLayout implements View{
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					Object newItemId = whitebox.addItem();
+					Object newItemId = whiteList.addItem();
 					TextField t = new TextField();
 					t.setWidth("100%");
-					whitebox.getItem(newItemId)
+					whiteList.getItem(newItemId)
 							.getItemProperty("whitebox").setValue(t);
 				} else if (action.getCaption() == "Delete") {
-					whitebox.removeItem(target);
+					whiteList.removeItem(target);
 				}
 			}
 		});
@@ -161,8 +161,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 		fl.addComponent(textArea);
 		fl.setSizeFull();
 		fl.addComponent(textArea);
-		fl.addComponent(blackbox);
-		fl.addComponent(whitebox);
+		fl.addComponent(blackList);
+		fl.addComponent(whiteList);
 		fl.addComponent(txtSrcFolder);
 		fl.addComponent(txtDestFolder);
 		fl.addComponent(btnrun);

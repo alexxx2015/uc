@@ -7,13 +7,14 @@ import com.vaadin.server.VaadinService;
 
 public class FileUtil {
 	public enum Dir{
-		SOURCEANDSINKS	(VaadinService.getCurrent().getBaseDirectory().getPath()+"/sourceandsinks/"),
-		APPS			(VaadinService.getCurrent().getBaseDirectory().getPath()+"/apps"),
-		CODE			("/code"),
-		JOANACONFIG		("/joana-config"),
-		JOANAOUTPUT 	("/joana-output"),
-		INSTRUMENTATION ("/instrumentations"),
-		RUNTIME 		("/runtime");
+		SOURCEANDSINKS		(VaadinService.getCurrent().getBaseDirectory().getPath()+"/sourceandsinks/"),
+		BLACKANDWHITELIST	(VaadinService.getCurrent().getBaseDirectory().getPath()+"/whiteAndBlackList"),
+		APPS				(VaadinService.getCurrent().getBaseDirectory().getPath()+"/apps"),
+		CODE				("/code"),
+		JOANACONFIG			("/joana-config"),
+		JOANAOUTPUT 		("/joana-output"),
+		INSTRUMENTATION 	("/instrumentations"),
+		RUNTIME 			("/runtime");
 		private String dir;
 		private Dir(String s){
 			dir = s;
@@ -53,6 +54,9 @@ public class FileUtil {
 	}
 	public static String getPathSourceAndSinks(){
 		return Dir.SOURCEANDSINKS.getDir();
+	}
+	public static String getPathBlackAndWhiteList(){
+		return Dir.BLACKANDWHITELIST.getDir();
 	}
 	// Relative Path, using  VaadinService.getCurrent().getBaseDirectory().getPath() -> .../src/main/webapp
 	public static String getRelativePathHashCode(String hashCode){
