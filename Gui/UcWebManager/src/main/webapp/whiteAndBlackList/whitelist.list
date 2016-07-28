@@ -6,5 +6,4 @@ contains:eu.demirbas
 contains:jzip
 startswith:myTest
 startswith:restfb.test
-
 contains:test.Declassification

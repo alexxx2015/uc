@@ -1,13 +1,14 @@
 package de.tum.in.i22.ucwebmanager.FileUtil;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-public class CreateUcConfig {
+public class UcConfig {
 	public static final String pip_host = "PIP_HOST";
 	public static final String pip_port = "PIP_PORT";
 	public static final String pdp_host = "PDP_HOST";
@@ -36,7 +37,7 @@ public class CreateUcConfig {
 	public static final String timermethods = "TIMERMETHODS";
 	
 	Properties prop;
-	public CreateUcConfig() {
+	public UcConfig() {
 		this.prop = new Properties();
 	}
 	public void setPip_host(String s){
@@ -196,24 +197,7 @@ public class CreateUcConfig {
 	public String getTimermethods(String s){
 		return prop.getProperty(timermethods);
 	}
-	public void create(String name, String path){
-		OutputStream output = null;
-		try {
-			output = new FileOutputStream(path + "/" + name + ".config");
-			prop.store(output, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (output != null){
-				try {
-					output.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
+
 	public void load(String path){
 		InputStream input = null;
 		try {
@@ -229,6 +213,45 @@ public class CreateUcConfig {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	public void create(String report, String blackList, String whiteList){
+		setAnalysis_report(report);
+		setBlacklist(blackList);
+		setWhitelist(whiteList);
+		
+		setPip_host("localhost");
+		setPip_port("40011");
+		setPdp_host("localhost"); 
+		setPdp_port("40011");
+		setPmp_host("localhost");
+		setPmp_port("40012");
+		setMypep_host("localhost");
+		setMypep_port("9091");
+		
+		setInstrumented_class_path("");
+		setEnforcement("false");
+		setInstrumentation("true");
+		setStatistics("");
+		setTimer_t1("true");
+		setTimer_t2("true");
+		setTimer_t3("true");
+		setTimer_t4("true");
+		setTimer_t5("true");
+		setNetcom("false");
+		setUc_properties("");
+		setPdp_asyncom("false");
+		setUc4win_autostart("");
+		setIft("true");
+		
+		
+	}
+	public void save(String path){
+		try {
+			OutputStream output = new FileOutputStream(path);
+			prop.store(output, "");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	public static void main(String[] args) {
