@@ -37,7 +37,7 @@ public class BlackAndWhiteList {
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(path),"utf-8"))) {
 			
-			for (String s : content) bw.write(s);
+			for (String s : content) bw.write(s + System.getProperty("line.separator").toString());
 		    bw.close();
 		    }catch (IOException ex) {
 		    System.out.println(ex.toString());
