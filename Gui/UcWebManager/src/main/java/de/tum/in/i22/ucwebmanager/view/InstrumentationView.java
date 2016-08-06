@@ -1,5 +1,6 @@
 package de.tum.in.i22.ucwebmanager.view;
 
+import java.awt.Checkbox;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,6 +20,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
@@ -42,11 +44,156 @@ public class InstrumentationView extends VerticalLayout implements View{
 			blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
 	private int appId;
 	private TextArea textArea;
-	private final Table gridBlackList, gridWhiteList;
+	private Table gridBlackList, gridWhiteList;
 	private Button btnrun;
-	private TextField txtSrcFolder, txtDestFolder;
+	private TextField txtPipH, txtPipP, txtPdpP, txtPdpH, txtPmpH, txtPmpP,
+	txtMypmpP, txtMypmpH, txtIns_class_path, txtStatistics, txtUc_Prop,
+	txtUc_4win_autostart, txtTimermethods, txtSrcFolder, txtDestFolder;
+	private CheckBox chkEnforcement, chkInstrumentation, chkTimerT1, chkTimerT2, chkTimerT3, chkTimerT4, chkTimerT5,
+	chkNetcom, chkPdp_asyncom, chkIFT;
 	private ComboBox cmbReportFile;
+	
 	public InstrumentationView() {
+		init();
+	}
+	@Override
+	public void enter(ViewChangeEvent event) {
+		// TODO Auto-generated method stub
+		fillBlackAndWhiteList();
+		if (event.getParameters() != null) {
+			// split at "/", add each part as a label
+			String[] msgs = event.getParameters().split("/");
+			for (String msg : msgs) {
+				appId = 0;
+				if (msg != null && msg != "") {
+					appId = Integer.parseInt(msg);
+					System.out.println("enter Instrumentation view " + appId);
+
+					try {
+						app = AppDAO.getAppById(appId);
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
+					if (app != null) {
+						appName = app.getName();
+						fillComboBox(app);
+						fillSrcAndDest(app);
+					}
+
+				}
+			}
+		}
+	}
+	 private String readXmlFile(File file){
+			String xml = "";
+			try (BufferedReader br = new BufferedReader(new FileReader(file))){
+				String sCurrentLine;
+
+				while ((sCurrentLine = br.readLine()) != null) {
+					System.out.println(sCurrentLine);
+					xml = xml + "\n" + sCurrentLine;
+				} 
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+			return xml;
+		}
+	 private void fillComboBox(App app){
+		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
+		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
+		 for (String name : names) cmbReportFile.addItem(name);
+	 }
+	 private void fillSrcAndDest(App app){
+		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
+		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
+		 this.txtSrcFolder.setReadOnly(false);
+		 this.txtSrcFolder.setValue(txtDestFolder);
+		 this.txtSrcFolder.setReadOnly(true);
+		 this.txtDestFolder.setReadOnly(false);
+		 this.txtDestFolder.setValue(txtSrcFolder);
+		 this.txtDestFolder.setReadOnly(true);
+		 
+	 }
+
+	 private void fillBlackAndWhiteList(){
+		 List<String> blackList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + blackListName);
+		 List<String> whiteList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + whiteListName);
+		 fillTable(blackList, gridBlackList, "black list");
+		 fillTable(whiteList, gridWhiteList, "white list");
+	 }
+	 
+	 private void fillTable(List<String> list, Table t, String property){
+		 for (String s : list){
+			 TextField txt = new TextField("textfield");
+			 txt.setValue(s);
+			 txt.setWidth(24.6f, ComboBox.UNITS_EM);
+			 Object newItemId = t.addItem();
+			Item row = t.getItem(newItemId);
+			row.getItemProperty(property).setValue(txt);
+			t.addItem(new Object[] { txt }, newItemId);
+		 } 
+	 }
+	 private List<String> readDataFromTable(Table t, String property){
+		 List<String> list = new ArrayList<String>();
+		 int newItemId = t.size();
+		 for (int i = 1; i <= newItemId; i++) {
+				Item row = t.getItem(i);
+				TextField temp = new TextField();
+				temp = (TextField) row.getItemProperty(property).getValue();
+				list.add(temp.getValue());
+		 }
+		 return list;
+	 }
+	 private void init() {
+		txtPipH = new TextField("PIP_HOST", "localhost");
+		txtPipH.setWidth("100%");
+		txtPipP = new TextField("PIP_PORT", "40011");
+		txtPipP.setWidth("100%");
+		
+		txtPdpH = new TextField("PDP_HOST", "localhost");
+		txtPdpH.setWidth("100%");
+		txtPdpP = new TextField("PDP_PORT", "9090");
+		txtPdpP.setWidth("100%");
+		
+		txtPmpH = new TextField("PMP_HOST", "localhost");
+		txtPmpH.setWidth("100%");
+		txtPmpP = new TextField("PMP_PORT", "40012");
+		txtPmpP.setWidth("100%");
+		
+		txtMypmpH = new TextField("MYPEP_HOST", "localhost");
+		txtMypmpH.setWidth("100%");
+		txtMypmpP = new TextField("MYPEP_PORT", "9091");
+		txtMypmpP.setWidth("100%");
+		
+		txtIns_class_path = new TextField("INSTRUMENTED_CLASS_PATH");
+		txtIns_class_path.setWidth("100%");
+		
+		chkEnforcement = new CheckBox("ENFORCEMENT", false);
+		
+		chkInstrumentation = new CheckBox("INSTRUMENTATION", true);
+		
+		txtStatistics = new TextField("STATISTICS");
+		txtStatistics.setWidth("100%");
+		
+		chkTimerT1 = new CheckBox("TIMER_T1", false);
+		chkTimerT2 = new CheckBox("TIMER_T2", false);
+		chkTimerT3 = new CheckBox("TIMER_T3", false);
+		chkTimerT4 = new CheckBox("TIMER_T4", false);
+		chkTimerT5 = new CheckBox("TIMER_T5", false);
+		chkIFT = new CheckBox("IFT", true);
+		chkNetcom = new CheckBox("NETCOM", true);
+		
+		txtUc_Prop = new TextField("UC_PROPERTIES");
+		txtUc_Prop.setWidth("100%");
+		
+		chkPdp_asyncom = new CheckBox("PDP_ASYNCOM", false);
+		
+		txtUc_4win_autostart = new TextField("UC4WIN_AUTOSTART");
+		txtUc_4win_autostart.setWidth("100%");
+		
+		txtTimermethods = new TextField("TIMERMETHODS", "{\"methods\":[]}");
+		txtTimermethods.setWidth("100%");
+		
 		Label lab = new Label("Instrumentation");
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
@@ -138,9 +285,9 @@ public class InstrumentationView extends VerticalLayout implements View{
 					String hashCode = app.getHashCode();
 					arg0 = FileUtil.getPathCode(hashCode);
 					String reportFolder = (String) cmbReportFile.getValue();
-					String reportFile = FileUtil.getPathOutput(hashCode) + "/" + reportFolder + "/report.xml";
+					String reportFile = FileUtil.getPathOutput(hashCode) + File.separator + reportFolder + File.separator +"report.xml";
 					
-					arg1 = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + "/" + reportFolder;
+					arg1 = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + reportFolder;
 					File f = new File(arg1);
 					f.mkdirs();
 					
@@ -152,11 +299,10 @@ public class InstrumentationView extends VerticalLayout implements View{
 					List<String> wl = readDataFromTable(gridWhiteList, whiteL);
 					BlackAndWhiteList.saveAndWrite(wl, arg1 + whiteListName);
 					//create uc.config
-					UcConfig uc = new UcConfig();
-					uc.create(reportFile, arg1 + blackListName, arg1 + whiteListName);
-					uc.save(arg1 + "/uc.config");
+					UcConfig uc = createUcFile(reportFile, arg1 + blackListName, arg1 + whiteListName);
+					uc.save(arg1 + File.separator + "uc.config");
 					
-					arg2 = arg1 + "/uc.config";
+					arg2 = arg1 + File.separator + "uc.config";
 					System.out.println(arg0);
 					System.out.println(arg1);
 					System.out.println(arg2);
@@ -174,114 +320,82 @@ public class InstrumentationView extends VerticalLayout implements View{
 		
 		fl.addComponent(cmbReportFile);
 		fl.addComponent(textArea);
-		fl.setSizeFull();
-		fl.addComponent(textArea);
+//		fl.addComponent(textArea);
+		fl.addComponent(txtPipH);
+		fl.addComponent(txtPipP);
+		fl.addComponent(txtPdpH);
+		fl.addComponent(txtPdpP);
+		fl.addComponent(txtPmpH);
+		fl.addComponent(txtPmpP);
+		fl.addComponent(txtMypmpH);
+		fl.addComponent(txtMypmpP);
+		fl.addComponent(txtIns_class_path);
+		fl.addComponent(chkEnforcement);
 		fl.addComponent(gridBlackList);
 		fl.addComponent(gridWhiteList);
+		fl.addComponent(chkInstrumentation);
+		fl.addComponent(txtStatistics);
+		fl.addComponent(chkTimerT1);
+		fl.addComponent(chkTimerT2);
+		fl.addComponent(chkTimerT3);
+		fl.addComponent(chkTimerT4);
+		fl.addComponent(chkTimerT5);
+		fl.addComponent(chkIFT);
+		fl.addComponent(chkNetcom);
+		fl.addComponent(txtUc_Prop);
+		fl.addComponent(chkPdp_asyncom);
+		fl.addComponent(txtUc_4win_autostart);
+		fl.addComponent(txtTimermethods);
 		fl.addComponent(txtSrcFolder);
 		fl.addComponent(txtDestFolder);
 		fl.addComponent(btnrun);
-		
+		fl.setSizeFull();
 		parent.addComponent(fl);
 		
 		parent.setMargin(true);
 		addComponent(parent);
 	}
-	@Override
-	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
-		fillBlackAndWhiteList();
-		if (event.getParameters() != null) {
-			// split at "/", add each part as a label
-			String[] msgs = event.getParameters().split("/");
-			for (String msg : msgs) {
-				appId = 0;
-				if (msg != null && msg != "") {
-					appId = Integer.parseInt(msg);
-					System.out.println("enter Instrumentation view " + appId);
-
-					try {
-						app = AppDAO.getAppById(appId);
-					} catch (ClassNotFoundException | SQLException e) {
-						e.printStackTrace();
-					}
-					if (app != null) {
-						appName = app.getName();
-						fillComboBox(app);
-						fillSrcAndDest(app);
-					}
-
-				}
-			}
-		}
-	}
-	 private String readXmlFile(File file){
-			String xml = "";
-			try (BufferedReader br = new BufferedReader(new FileReader(file))){
-				String sCurrentLine;
-
-				while ((sCurrentLine = br.readLine()) != null) {
-					System.out.println(sCurrentLine);
-					xml = xml + "\n" + sCurrentLine;
-				} 
-			}catch (IOException e) {
-				e.printStackTrace();
-			}
-			return xml;
-		}
-	 private void fillComboBox(App app){
-		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
-		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
-		 for (String name : names) cmbReportFile.addItem(name);
-	 }
-	 private void fillSrcAndDest(App app){
-		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
-		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
-		 this.txtSrcFolder.setReadOnly(false);
-		 this.txtSrcFolder.setValue(txtDestFolder);
-		 this.txtSrcFolder.setReadOnly(true);
-		 this.txtDestFolder.setReadOnly(false);
-		 this.txtDestFolder.setValue(txtSrcFolder);
-		 this.txtDestFolder.setReadOnly(true);
+	 private UcConfig createUcFile(String reportFile, String blackList, String whiteList){
+		 UcConfig ucConfig = new UcConfig();
+		 ucConfig.setPip_host(txtPipH.getValue());
+		 ucConfig.setPip_port(txtPipP.getValue());
 		 
-	 }
-	 private String getReportFileFromComboBox(){
-		 String reportFile = "/report.xml";
-		 return FileUtil.getPathOutput(app.getHashCode()) + "/" + cmbReportFile.getValue() + reportFile;
-	 }
-	 private String generateUcConfigFile(){
+		 ucConfig.setPdp_host(txtPdpH.getValue());
+		 ucConfig.setPdp_port(txtPdpP.getValue());
 		 
+		 ucConfig.setPmp_host(txtPmpH.getValue());
+		 ucConfig.setPmp_port(txtPmpP.getValue());
 		 
-		 return null;
-	 }
-	 private void fillBlackAndWhiteList(){
-		 List<String> blackList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + blackListName);
-		 List<String> whiteList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + whiteListName);
-		 fillTable(blackList, gridBlackList, "black list");
-		 fillTable(whiteList, gridWhiteList, "white list");
-	 }
-	 
-	 private void fillTable(List<String> list, Table t, String property){
-		 for (String s : list){
-			 TextField txt = new TextField("textfield");
-			 txt.setValue(s);
-			 txt.setWidth(24.6f, ComboBox.UNITS_EM);
-			 Object newItemId = t.addItem();
-			Item row = t.getItem(newItemId);
-			row.getItemProperty(property).setValue(txt);
-			t.addItem(new Object[] { txt }, newItemId);
-		 } 
-	 }
-	 private List<String> readDataFromTable(Table t, String property){
-		 List<String> list = new ArrayList<String>();
-		 int newItemId = t.size();
-		 for (int i = 1; i <= newItemId; i++) {
-				Item row = t.getItem(i);
-				TextField temp = new TextField();
-				temp = (TextField) row.getItemProperty(property).getValue();
-				list.add(temp.getValue());
-		 }
-		 return list;
+		 ucConfig.setMypep_host(txtMypmpH.getValue());
+		 ucConfig.setMypep_port(txtMypmpP.getValue());
+		 
+		 ucConfig.setAnalysis_report(reportFile);
+		 
+		 ucConfig.setInstrumented_class_path(txtIns_class_path.getValue());
+		 
+		 ucConfig.setEnforcement(chkEnforcement.getValue().toString());
+		 
+		 ucConfig.setBlacklist(blackList);
+		 ucConfig.setWhitelist(whiteList);
+		 
+		 ucConfig.setInstrumentation(chkInstrumentation.getValue().toString());
+		 
+		 ucConfig.setStatistics(txtStatistics.getValue());
+		 
+		 ucConfig.setTimer_t1(chkTimerT1.getValue().toString());
+		 ucConfig.setTimer_t2(chkTimerT2.getValue().toString());
+		 ucConfig.setTimer_t3(chkTimerT3.getValue().toString());
+		 ucConfig.setTimer_t4(chkTimerT4.getValue().toString());
+		 ucConfig.setTimer_t5(chkTimerT5.getValue().toString());
+		 ucConfig.setIft(chkIFT.getValue().toString());
+		 
+		 ucConfig.setNetcom(chkNetcom.getValue().toString());
+		 ucConfig.setUc_properties(txtUc_Prop.getValue());
+		 ucConfig.setPdp_asyncom(chkPdp_asyncom.getValue().toString());
+		 ucConfig.setUc4win_autostart(txtUc_4win_autostart.getValue());
+		 ucConfig.setTimermethods(txtTimermethods.getValue());
+		 
+		 return ucConfig;
 	 }
 //	 private void initTable(Table table, String name, String property){
 //		 table = new Table("ClassPath");

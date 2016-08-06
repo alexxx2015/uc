@@ -215,37 +215,6 @@ public class UcConfig {
 			}
 		}
 	}
-	public void create(String report, String blackList, String whiteList){
-		setAnalysis_report(report);
-		setBlacklist(blackList);
-		setWhitelist(whiteList);
-		
-		setPip_host("localhost");
-		setPip_port("40011");
-		setPdp_host("localhost"); 
-		setPdp_port("40011");
-		setPmp_host("localhost");
-		setPmp_port("40012");
-		setMypep_host("localhost");
-		setMypep_port("9091");
-		
-		setInstrumented_class_path("");
-		setEnforcement("false");
-		setInstrumentation("true");
-		setStatistics("");
-		setTimer_t1("true");
-		setTimer_t2("true");
-		setTimer_t3("true");
-		setTimer_t4("true");
-		setTimer_t5("true");
-		setNetcom("false");
-		setUc_properties("");
-		setPdp_asyncom("false");
-		setUc4win_autostart("");
-		setIft("true");
-		
-		
-	}
 	public void save(String path){
 		try {
 			OutputStream output = new FileOutputStream(path);
