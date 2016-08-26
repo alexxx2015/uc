@@ -3,9 +3,6 @@
 <module>
 	<inherits name="com.vaadin.DefaultWidgetSet" />
 	
-	
-	<!--  -->
-
 	<set-configuration-property name="devModeRedirectEnabled"
 		value="true" />
 
@@ -35,4 +32,6 @@
     <!-- AF: as already discussed we cannot use vaadin charts because of the license!!
     <inherits name="com.vaadin.addon.charts.Widgetset" ></inherits>
     -->
+
+    <inherits name="ua.net.freecode.chart.widgetset.FreecodeWidgetset" />
 </module>

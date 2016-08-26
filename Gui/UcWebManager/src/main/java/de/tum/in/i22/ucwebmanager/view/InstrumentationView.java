@@ -58,7 +58,6 @@ public class InstrumentationView extends VerticalLayout implements View{
 	}
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
 		fillBlackAndWhiteList();
 		if (event.getParameters() != null) {
 			// split at "/", add each part as a label
@@ -303,9 +302,9 @@ public class InstrumentationView extends VerticalLayout implements View{
 					uc.save(arg1 + File.separator + "uc.config");
 					
 					arg2 = arg1 + File.separator + "uc.config";
-					System.out.println(arg0);
-					System.out.println(arg1);
-					System.out.println(arg2);
+//					System.out.println(arg0);
+//					System.out.println(arg1);
+//					System.out.println(arg2);
 					Instrumentor.main(new String[]{arg0, arg1, arg2});
 				} catch (IOException | IllegalClassFormatException e) {
 					e.printStackTrace();
@@ -320,7 +319,6 @@ public class InstrumentationView extends VerticalLayout implements View{
 		
 		fl.addComponent(cmbReportFile);
 		fl.addComponent(textArea);
-//		fl.addComponent(textArea);
 		fl.addComponent(txtPipH);
 		fl.addComponent(txtPipP);
 		fl.addComponent(txtPdpH);

@@ -19,9 +19,14 @@
 
 	<repositories>
 		<repository>
+			<id>vaadin-d3-wrapper</id>
+			<url>file://${basedir}/lib</url>
+		</repository>
+		<repository>
 			<id>vaadin-addons</id>
 			<url>http://maven.vaadin.com/vaadin-addons</url>
 		</repository>
+		
 		<repository>
 			<id>vaadin-snapshots</id>
 			<url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
@@ -131,6 +136,16 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+		<groupId>com.vaadin</groupId>
+			<artifactId>fchart</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+		<groupId>com.vaadin</groupId>
+			<artifactId>fchart-src</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
