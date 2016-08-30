@@ -40,6 +40,30 @@ public class AppDAO {
 	}
 		return apps;
 	}
+	public static List<App> getAppByStatus(String status){
+		List<App> apps = new ArrayList<App>();
+		String s = "SELECT * FROM "
+				 + AppTable.TABLE_APP 
+				 + " WHERE "
+				 + AppTable.COLUMN_STATUS
+				 + " ='" + status + "'";
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery(s);
+			while (rs.next()){
+				App app = new App(rs.getInt(AppTable.COLUMN_ID),
+								  rs.getString(AppTable.COLUMN_NAME),
+								  rs.getString(AppTable.COLUMN_HASHCODE),
+								  rs.getString(AppTable.COLUMN_STATUS));
+				apps.add(app);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return  apps;
+	}
 	public static App getAppById(int id) throws ClassNotFoundException, SQLException{
 		Connection conn = DatabaseConnection.getConnection();
 		App app = null;
@@ -129,13 +153,13 @@ public class AppDAO {
 	}
 	}
 	
-	public static void updateStatus(App app)throws ClassNotFoundException, SQLException{
+	public static void updateStatus(App app, String status)throws ClassNotFoundException, SQLException{
 		Connection conn = DatabaseConnection.getConnection();
 		try{
 
 			Statement statement = conn.createStatement();
 			String s = "UPDATE "+ AppTable.TABLE_APP 
-					+ " SET " + AppTable.COLUMN_STATUS + "= '" + app.getStatus() 
+					+ " SET " + AppTable.COLUMN_STATUS + "= '" + status 
 					+ "' WHERE " + AppTable.COLUMN_ID + " = " + String.valueOf(app.getId());
 			statement.executeUpdate(s);
 		} catch (SQLException e) {

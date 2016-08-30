@@ -1,0 +1,9 @@
+contains:org.owasp
+contains:test.TestProgram10
+contains:test.DataMover
+contains:HelloWorld
+contains:eu.demirbas
+contains:jzip
+startswith:myTest
+startswith:restfb.test
+contains:test.Declassification

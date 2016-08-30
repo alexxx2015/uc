@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,12 +18,14 @@ import java.util.Map;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 import com.vaadin.annotations.Push;
 import com.vaadin.data.Item;
+import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Grid.SingleSelectionModel;
@@ -30,6 +33,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.SucceededEvent;
@@ -46,6 +50,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.MD5Checksum;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.analysis.Analyser;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
+
 @Push()
 public class MainView extends VerticalLayout implements View {
 	Grid grid = new Grid();
@@ -55,7 +60,9 @@ public class MainView extends VerticalLayout implements View {
 	String appName;
 	String hashCodeOfApp;
 	Map<Integer, String> map = new HashMap<Integer, String>();
+    final List<Integer> coords = new ArrayList<>();
 	public MainView() throws SQLException {
+
 		Label lab = new Label("Main view");
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
@@ -93,7 +100,12 @@ public class MainView extends VerticalLayout implements View {
 		addComponent(upload);
 		addComponent(grid);
 	}
-
+	 private void configureIntegerField(final TextField integerField) {
+	        integerField.setConverter(Integer.class);
+	        integerField.addValidator(new IntegerRangeValidator("only integer, 0-500", 0, 500));
+	        integerField.setRequired(true);
+	        integerField.setImmediate(true);
+	    }
 	@Override
 	public void enter(ViewChangeEvent event) {
 
@@ -208,7 +220,7 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String status = item.getItemProperty("Status").getValue().toString();
 			// Send a message to static analyser view with the id of app
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName()+
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.STATANALYSIS.getViewName() +
 						"/" + item.getItemProperty("ID").getValue().toString());
 			
 		}));
@@ -218,7 +230,8 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (!stat.equals(Status.NONE.getStage())){
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.INSTRUMENT.getViewName());
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.INSTRUMENT.getViewName() +
+						"/" + item.getItemProperty("ID").getValue().toString());
 			}
 			else {
 				new Notification("Error!",
@@ -240,7 +253,7 @@ public class MainView extends VerticalLayout implements View {
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			}
 		}));
-		
+		grid.sort("ID", SortDirection.ASCENDING);
 		List<App> allApp = null;
 		try {
 			allApp = AppDAO.getAllApps();
@@ -254,7 +267,13 @@ public class MainView extends VerticalLayout implements View {
 		}
 //		grid.getContainerDataSource()
 	}
-
+	private void findRow(int id){
+		Iterator g = grid.iterator();
+		while (g.hasNext()) {
+			
+		}
+	}
+	
 	private void updateTable(App app) {
 		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go", "", "Go", "", "Go");
 	}
