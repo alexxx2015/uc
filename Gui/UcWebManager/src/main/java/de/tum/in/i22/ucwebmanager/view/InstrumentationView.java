@@ -393,6 +393,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 		 ucConfig.setUc4win_autostart(txtUc_4win_autostart.getValue());
 		 ucConfig.setTimermethods(txtTimermethods.getValue());
 		 
+		 //set appId in uc.config, the hasCode is used
+		 ucConfig.setAppId(this.app.getHashCode());
 		 return ucConfig;
 	 }
 //	 private void initTable(Table table, String name, String property){

@@ -35,6 +35,7 @@ public class UcConfig {
 	public static final String uc4win_autostart = "UC4WIN_AUTOSTART";
 	public static final String ift = "IFT";
 	public static final String timermethods = "TIMERMETHODS";
+	public static final String appid = "APPID";
 	
 	Properties prop;
 	public UcConfig() {
@@ -197,7 +198,12 @@ public class UcConfig {
 	public String getTimermethods(String s){
 		return prop.getProperty(timermethods);
 	}
-
+	public void setAppId(String s){
+		prop.setProperty(appid, s);
+	}
+	public String getAppId(){
+		return prop.getProperty(appid);
+	}
 	public void load(String path){
 		InputStream input = null;
 		try {
@@ -223,10 +229,4 @@ public class UcConfig {
 			e.printStackTrace();
 		}
 	}
-	public static void main(String[] args) {
-
-	}
-
-	
-	
 }
