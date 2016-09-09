@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
-
+	
 //CallMethodEventHandler
 public class SourceEventHandler extends JavaEventHandler {
 
@@ -42,6 +42,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		CallChopNodeLabel chopLabel = null;
 		String sourceParam = null;
 		String sourceId = null;
+		String methodLabel = null;//SAP database security label
 
 		try {
 			threadId = getParameterValue("threadId");
@@ -70,6 +71,10 @@ public class SourceEventHandler extends JavaEventHandler {
 			methodArgValuesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgValues"));
 			methodArgValues = new String[methodArgValuesJSON.size()];
 			methodArgValuesJSON.toArray(methodArgValues);
+			
+			methodLabel = getParameterValue("methodLabel");//SAP database security label
+			
+			System.out.println("SOURCEEVENTHANDLER| ML: "+methodLabel+", src: "+sourceId);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -128,7 +133,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		}
 //		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
 //		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,parentMethod,calleeObjectClass, calleeObjectAddress, calleeMethod,calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:	calleeObjectContainer
-
+		
 		return _messageFactory.createStatus(EStatus.OKAY);
 		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}

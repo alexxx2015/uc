@@ -26,6 +26,8 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	String[] methodArgTypes = null;
 	String[] methodArgAddresses = null;
 	CallChopNodeLabel chopLabel = null;
+	
+	String methodLabel = null;//SAP database security label
 
 	try {
 	    threadId = getParameterValue("threadId");
@@ -43,6 +45,9 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	    methodArgAddresses = new String[methodArgAddressesJSON.size()];
 	    methodArgAddressesJSON.toArray(methodArgAddresses);
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
+	    
+	    methodLabel = getParameterValue("methodLabel");//SAP database security label
+		System.out.println("CSEventHandler| ML: "+methodLabel+", chopLabel: "+chopLabel);
 	} catch (ParseException | ParameterNotFoundException | ClassCastException e) {
 	    _logger.error(e.getMessage());
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
