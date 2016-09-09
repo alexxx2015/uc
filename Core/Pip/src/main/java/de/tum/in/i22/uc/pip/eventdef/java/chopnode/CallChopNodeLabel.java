@@ -14,6 +14,10 @@ public class CallChopNodeLabel {
 	private String label;
 
 	public CallChopNodeLabel(String labelString) {
+		this.label = labelString;
+		if ("".equals(labelString))
+			return;
+		
 		// compute start and end of parameter brackets
 		int start = labelString.indexOf("(");
 		int end = labelString.lastIndexOf(")");
