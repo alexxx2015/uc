@@ -24,8 +24,8 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String calleeObjectAddress = null;
-	String calleeObjectClass = null;
+	String callerObjectAddress = null;
+	String callerObjectClass = null;
 	String calledMethod = null;
 	boolean calleeObjectClassIsInstrumented = false;
 	String[] methodArgTypes = null;
@@ -38,8 +38,8 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    calleeObjectAddress = getParameterValue("callerObjectAddress");
-	    calleeObjectClass = getParameterValue("callerObjectClass");
+	    callerObjectAddress = getParameterValue("callerObjectAddress");
+	    callerObjectClass = getParameterValue("callerObjectClass");
 	    calledMethod = getParameterValue("calledMethod");
 	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
 	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
@@ -53,31 +53,40 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    _logger.error(e.getMessage());
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
-
+	
+	long start = System.nanoTime();
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
-
+	long stop = System.nanoTime()-start;
+	System.out.println("---CallInstanceMethod.addAddressToNamesAndContainer: "+stop);
+	
 	boolean isConstructor = calledMethod.startsWith("<init>");
 	if (isConstructor) {
 	    // add the threadId to the identifier to know which thread has
 	    // called the constructor
 	    // enables to get the correct instance when the constructor has
 	    // returned
-	    calleeObjectAddress = threadId + NOADDRESS;
+	    callerObjectAddress = threadId + NOADDRESS;
 	}
 
 	// if caller object class is a system class, get its container to add
 	// method parameters to it
-	IContainer calleeObjectContainer = null;
-	IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
-	calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass, calleeObjectAddress);
+	IContainer callerObjectContainer = null;
+	IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
+	start = System.nanoTime();
+	callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObjectClass, callerObjectAddress);
+	stop = System.nanoTime()-start;
+	System.out.println("---CallInstanceMethod.addContainerIfNotExists: "+stop);
 
-	IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+	IName callerObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, chopLabel.getCallee());
-	_informationFlowModel.addName(calleeObjectVarName, calleeObjectContainer, false);
+	_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
 
+	start = System.nanoTime();
 	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
-		calleeObjectClass, calleeObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
-			: calleeObjectContainer);
+		callerObjectClass, callerObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
+			: callerObjectContainer);
+	stop = System.nanoTime()-start;
+	System.out.println("---CallInstanceMethod.insertArguments: "+stop);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
