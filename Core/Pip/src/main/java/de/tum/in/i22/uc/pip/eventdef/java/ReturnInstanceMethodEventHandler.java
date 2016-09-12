@@ -27,7 +27,7 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	protected IStatus update() {
 //    	if(true)
 //    		return _messageFactory.createStatus(EStatus.OKAY);
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 		String threadId = null;
 		String pid = null;
 		String parentObjectAddress = null;
@@ -151,8 +151,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 			}
 		}
 		
-		long stop = System.nanoTime() - start;
-		System.out.println("--- ReturnInstanceMethod-total: "+calledMethod+"| "+stop);
+//		long stop = System.nanoTime() - start;
+//		System.out.println("--- ReturnInstanceMethod-total: "+calledMethod+"| "+stop);
 
 		// Clean up method parameters and local variables
 		// cleanUpParamsAndLocals(pid, threadId, callerObjectClass,

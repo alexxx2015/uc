@@ -19,7 +19,7 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 
     @Override
     protected IStatus update() {
-    	long start = System.nanoTime();
+//    	long start = System.nanoTime();
 	String threadId = null;
 	String pid = null;
 	String parentObjectAddress = null;
@@ -89,8 +89,8 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 //	stop = System.nanoTime()-start;
 //	System.out.println("---CallInstanceMethod.insertArguments: "+stop);
 
-	long stop = System.nanoTime() -start;
-	System.out.println("--- CallInstanceMethod-total: "+calledMethod+"| "+stop);
+//	long stop = System.nanoTime() -start;
+//	System.out.println("--- CallInstanceMethod-total: "+calledMethod+"| "+stop);
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
 }
