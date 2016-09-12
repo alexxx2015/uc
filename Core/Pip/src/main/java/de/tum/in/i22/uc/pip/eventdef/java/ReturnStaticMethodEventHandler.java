@@ -27,7 +27,8 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected IStatus update() {
-
+    	if(true)
+    		return _messageFactory.createStatus(EStatus.OKAY);
 	String threadId = null;
 	String pid = null;
 	String parentObjectAddress = null;

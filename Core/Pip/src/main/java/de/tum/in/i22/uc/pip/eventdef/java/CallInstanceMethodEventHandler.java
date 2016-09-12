@@ -19,6 +19,7 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 
     @Override
     protected IStatus update() {
+    	long start = System.nanoTime();
 	String threadId = null;
 	String pid = null;
 	String parentObjectAddress = null;
@@ -54,10 +55,10 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
 	
-	long start = System.nanoTime();
+//	long start = System.nanoTime();
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
-	long stop = System.nanoTime()-start;
-	System.out.println("---CallInstanceMethod.addAddressToNamesAndContainer: "+stop);
+//	long stop = System.nanoTime()-start;
+//	System.out.println("---CallInstanceMethod.addAddressToNamesAndContainer: "+stop);
 	
 	boolean isConstructor = calledMethod.startsWith("<init>");
 	if (isConstructor) {
@@ -72,22 +73,24 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	// method parameters to it
 	IContainer callerObjectContainer = null;
 	IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
-	start = System.nanoTime();
+//	start = System.nanoTime();
 	callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObjectClass, callerObjectAddress);
-	stop = System.nanoTime()-start;
-	System.out.println("---CallInstanceMethod.addContainerIfNotExists: "+stop);
+//	stop = System.nanoTime()-start;
+//	System.out.println("---CallInstanceMethod.addContainerIfNotExists: "+stop);
 
 	IName callerObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, chopLabel.getCallee());
 	_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
 
-	start = System.nanoTime();
+//	start = System.nanoTime();
 	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
 		callerObjectClass, callerObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
 			: callerObjectContainer);
-	stop = System.nanoTime()-start;
-	System.out.println("---CallInstanceMethod.insertArguments: "+stop);
+//	stop = System.nanoTime()-start;
+//	System.out.println("---CallInstanceMethod.insertArguments: "+stop);
 
+	long stop = System.nanoTime() -start;
+	System.out.println("--- CallInstanceMethod-total: "+calledMethod+"| "+stop);
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
 }

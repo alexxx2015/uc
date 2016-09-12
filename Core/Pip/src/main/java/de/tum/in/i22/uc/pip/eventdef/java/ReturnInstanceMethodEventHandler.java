@@ -25,7 +25,9 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected IStatus update() {
-
+//    	if(true)
+//    		return _messageFactory.createStatus(EStatus.OKAY);
+		long start = System.nanoTime();
 		String threadId = null;
 		String pid = null;
 		String parentObjectAddress = null;
@@ -61,16 +63,16 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 		}
 
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 		addAddressToNamesAndContainerIfNeeded(threadId, pid, callerObjectClass, callerObjectAddress, calledMethod);
-		long stop = System.nanoTime() - start;
-		System.out.println("--- ReturnInstanceMethod.addAddressToNamesAndContainer: " + stop);
+//		long stop = System.nanoTime() - start;
+//		System.out.println("--- ReturnInstanceMethod.addAddressToNamesAndContainer: " + stop);
 
 		IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
 		IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
 
 		// Put data items corresponding to sources into parameters
-		start = System.nanoTime();
+//		start = System.nanoTime();
 		for (Entry<String, Map<String, String>> sourceMapping : sourcesMap.entrySet()) {
 			String param = sourceMapping.getKey();
 			if (param.startsWith("p")) {
@@ -84,8 +86,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 				}
 			}
 		}
-		stop = System.nanoTime() - start;
-		System.out.println("--- ReturnInstanceMethod.putDataItemsToParams: " + stop);
+//		stop = System.nanoTime() - start;
+//		System.out.println("--- ReturnInstanceMethod.putDataItemsToParams: " + stop);
 
 		// add source data to whole object if available
 		if (sourcesMap.containsKey(OBJ)) {
@@ -100,7 +102,7 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 			IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 					parentMethod, leftSide);
 			if (callerObjectClassIsInstrumented) {
-				start = System.nanoTime();
+//				start = System.nanoTime();
 				// For instrumented classes, assign the retContainer (if
 				// exists!) of the called method to the left side (or copy data
 				// if it is value type)
@@ -124,12 +126,12 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 						_informationFlowModel.copyData(retContainer, leftSideContainer);
 					}
 				} // no retContainer -> no information flow
-				stop = System.nanoTime() - start;
-				System.out.println("--- ReturnInstanceMethod.CallerObjectClassIsInstrumented: "+stop);
+//				stop = System.nanoTime() - start;
+//				System.out.println("--- ReturnInstanceMethod.CallerObjectClassIsInstrumented: "+stop);
 			} else {
 				// For not instrumented classes, copy all (transitively) data
 				// from the caller object to the left side container
-				start = System.nanoTime();
+//				start = System.nanoTime();
 				IContainer leftSideContainer = addContainerIfNotExists(leftSideName, returnValueClass,
 						returnValueAddress);
 				if (isValidAddress(returnValueAddress))
@@ -144,10 +146,13 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 							Long.valueOf(sourcesMap.get(RET).get("timeStamp")));
 					_informationFlowModel.addData(sourceData, leftSideContainer);
 				}
-				stop = System.nanoTime() - start;
-				System.out.println("--- ReturnInstanceMethod.NoCallerObjectClassIsInstrumented: "+stop);
+//				stop = System.nanoTime() - start;
+//				System.out.println("--- ReturnInstanceMethod.NoCallerObjectClassIsInstrumented: "+stop);
 			}
 		}
+		
+		long stop = System.nanoTime() - start;
+		System.out.println("--- ReturnInstanceMethod-total: "+calledMethod+"| "+stop);
 
 		// Clean up method parameters and local variables
 		// cleanUpParamsAndLocals(pid, threadId, callerObjectClass,
