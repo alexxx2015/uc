@@ -16,7 +16,7 @@ import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
-
+	
 //CallMethodEventHandler
 public class SourceEventHandler extends JavaEventHandler {
 
@@ -42,6 +42,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		CallChopNodeLabel chopLabel = null;
 		String sourceParam = null;
 		String sourceId = null;
+		String methodLabel = null;//SAP database security label
 
 		try {
 			threadId = getParameterValue("threadId");
@@ -70,6 +71,9 @@ public class SourceEventHandler extends JavaEventHandler {
 			methodArgValuesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgValues"));
 			methodArgValues = new String[methodArgValuesJSON.size()];
 			methodArgValuesJSON.toArray(methodArgValues);
+			
+			methodLabel = getParameterValue("methodLabel");//SAP database security label
+			
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -94,13 +98,14 @@ public class SourceEventHandler extends JavaEventHandler {
 //		_informationFlowModel.addName(calleeObjectVarName,
 //				calleeObjectContainer, false);
 
-
+//		create basic naming identifier and source container
 		IName sourceNamingIdentifier = new BasicJavaName(sourceId);
 		IContainer sourceContainer = _informationFlowModel.getContainer(sourceNamingIdentifier);
 		if(sourceContainer == null){
 			sourceContainer = new SinkSourceContainer(pid,threadId,sourceId,sourceObjectAddress);
 			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
 		}
+//		create source data and map data to container
 		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
 		_informationFlowModel.addData(sourceData, sourceContainer);
 		
@@ -129,6 +134,7 @@ public class SourceEventHandler extends JavaEventHandler {
 //		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
 //		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,parentMethod,calleeObjectClass, calleeObjectAddress, calleeMethod,calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:	calleeObjectContainer
 
+//		System.out.println("SOURCEEVENTHANDLER| src: "+sourceId+", "+sourceObjectVarName.toString());
 		return _messageFactory.createStatus(EStatus.OKAY);
 		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}

@@ -19,19 +19,20 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 
     @Override
     protected IStatus update() {
-//    	long start = System.nanoTime();
 	String threadId = null;
 	String pid = null;
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String callerObjectAddress = null;
-	String callerObjectClass = null;
+	String calleeObjectAddress = null;
+	String calleeObjectClass = null;
 	String calledMethod = null;
 	boolean calleeObjectClassIsInstrumented = false;
 	String[] methodArgTypes = null;
 	String[] methodArgAddresses = null;
 	CallChopNodeLabel chopLabel = null;
+	
+	String methodLabel = null;//SAP database security label
 
 	try {
 	    threadId = getParameterValue("threadId");
@@ -39,10 +40,10 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    callerObjectAddress = getParameterValue("callerObjectAddress");
-	    callerObjectClass = getParameterValue("callerObjectClass");
+	    calleeObjectAddress = getParameterValue("calleeObjectAddress");
+	    calleeObjectClass = getParameterValue("calleeObjectClass");
 	    calledMethod = getParameterValue("calledMethod");
-	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
+	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("calleeObjectIsInstrumented"));
 	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 	    methodArgTypes = new String[methodArgTypesJSON.size()];
 	    methodArgTypesJSON.toArray(methodArgTypes);
@@ -50,47 +51,39 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    methodArgAddresses = new String[methodArgAddressesJSON.size()];
 	    methodArgAddressesJSON.toArray(methodArgAddresses);
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
+	    
+//	    methodLabel = getParameterValue("methodLabel");//SAP database security label
+//		System.out.println("CIEventHandler| ML: "+methodLabel+", chopLabel: "+chopLabel);
 	} catch (ParseException | ParameterNotFoundException | ClassCastException e) {
 	    _logger.error(e.getMessage());
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
 	
-//	long start = System.nanoTime();
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
-//	long stop = System.nanoTime()-start;
-//	System.out.println("---CallInstanceMethod.addAddressToNamesAndContainer: "+stop);
-	
+
 	boolean isConstructor = calledMethod.startsWith("<init>");
 	if (isConstructor) {
 	    // add the threadId to the identifier to know which thread has
 	    // called the constructor
 	    // enables to get the correct instance when the constructor has
 	    // returned
-	    callerObjectAddress = threadId + NOADDRESS;
+	    calleeObjectAddress = threadId + NOADDRESS;
 	}
 
 	// if caller object class is a system class, get its container to add
 	// method parameters to it
-	IContainer callerObjectContainer = null;
-	IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
-//	start = System.nanoTime();
-	callerObjectContainer = addContainerIfNotExists(callerObjectName, callerObjectClass, callerObjectAddress);
-//	stop = System.nanoTime()-start;
-//	System.out.println("---CallInstanceMethod.addContainerIfNotExists: "+stop);
+	IContainer calleeObjectContainer = null;
+	IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
+	calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass, calleeObjectAddress);
 
-	IName callerObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+	IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, chopLabel.getCallee());
-	_informationFlowModel.addName(callerObjectVarName, callerObjectContainer, false);
+	_informationFlowModel.addName(calleeObjectVarName, calleeObjectContainer, false);
 
-//	start = System.nanoTime();
 	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
-		callerObjectClass, callerObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
-			: callerObjectContainer);
-//	stop = System.nanoTime()-start;
-//	System.out.println("---CallInstanceMethod.insertArguments: "+stop);
+		calleeObjectClass, calleeObjectAddress, calledMethod, calleeObjectClassIsInstrumented ? null
+			: calleeObjectContainer);
 
-//	long stop = System.nanoTime() -start;
-//	System.out.println("--- CallInstanceMethod-total: "+calledMethod+"| "+stop);
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
 }

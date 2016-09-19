@@ -27,18 +27,17 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected IStatus update() {
-    	if(true)
-    		return _messageFactory.createStatus(EStatus.OKAY);
+
 	String threadId = null;
 	String pid = null;
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String callerClass = null;
+	String calleeClass = null;
 	String calledMethod = null;
 	String returnValueClass = null;
 	String returnValueAddress = null;
-	Boolean callerClassIsInstrumented = false;
+	Boolean calleeClassIsInstrumented = false;
 	int argsCount = -1;
 	Map<String, Map<String, String>> sourcesMap = null;
 	CallChopNodeLabel chopLabel = null;
@@ -49,11 +48,11 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    callerClass = getParameterValue("callerClass");
+	    calleeClass = getParameterValue("calleeClass");
 	    calledMethod = getParameterValue("calledMethod");
 	    returnValueClass = getParameterValue("returnValueClass");
 	    returnValueAddress = getParameterValue("returnValueAddress");
-	    callerClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerClassIsInstrumented"));
+	    calleeClassIsInstrumented = Boolean.parseBoolean(getParameterValue("calleeClassIsInstrumented"));
 	    argsCount = Integer.parseInt(getParameterValue("argsCount"));
 	    sourcesMap = (JSONObject) new JSONParser().parse(getParameterValue("sourcesMap"));
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
@@ -66,7 +65,7 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	for (Entry<String, Map<String, String>> sourceMapping : sourcesMap.entrySet()) {
 	    String param = sourceMapping.getKey();
 	    if (param.startsWith("p")) {
-		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass, null, calledMethod, param);
+		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, calleeClass, null, calledMethod, param);
 		IContainer paramContainer = _informationFlowModel.getContainer(paramName);
 		if (paramContainer != null && paramContainer instanceof ReferenceContainer) {
 		    IData sourceData = new SourceData(sourceMapping.getValue().get("sourceId"),
@@ -81,11 +80,11 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	if (leftSide != null) {
 	    IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		    parentMethod, leftSide);
-	    if (callerClassIsInstrumented) {
+	    if (calleeClassIsInstrumented) {
 		// For instrumented classes, assign the retContainer (if
 		// exists!) of the called method to the left side (or copy data
 		// if it is value type)
-		IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass,
+		IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, calleeClass,
 			null, calledMethod, RET);
 		IContainer retContainer = _informationFlowModel.getContainer(retVarName);
 		if (retContainer != null) {
@@ -123,7 +122,7 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 		// argContainer is reference type -> copy data transitively
 		// argContainer is value type -> only copy data
 		for (int i = 0; i < argsCount; i++) {
-		    IName argName = JavaNameFactory.createLocalVarName(pid, threadId, callerClass,
+		    IName argName = JavaNameFactory.createLocalVarName(pid, threadId, calleeClass,
 				null, calledMethod, "p" + (i + 1));
 		    IContainer argContainer = _informationFlowModel.getContainer(argName);
 		    if (argContainer != null) {
@@ -139,8 +138,8 @@ public class ReturnStaticMethodEventHandler extends ReturnMethodEventHandler {
 	}
 
 	// Clean up method parameters and local variables
-//	cleanUpParamsAndLocals(pid, threadId, callerClass, null, calledMethod,
-//		callerClassIsInstrumented, null, argsCount);
+	cleanUpParamsAndLocals(pid, threadId, calleeClass, null, calledMethod,
+		calleeClassIsInstrumented, null, argsCount);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
