@@ -77,7 +77,7 @@ public class SinkEventHandler extends JavaEventHandler {
 			methodArgValuesJSON.toArray(methodArgValues);
 			
 			methodLabel = getParameterValue("methodLabel");//SAP database security label
-			System.out.println("SINKEVENTHANDLER| ML: "+methodLabel+", src: "+sinkId);
+//			System.out.println("SINKEVENTHANDLER| ML: "+methodLabel+", src: "+sinkId);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());

@@ -31,12 +31,12 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String callerObjectAddress = null;
-	String callerObjectClass = null;
+	String calleeObjectAddress = null;
+	String calleeObjectClass = null;
 	String calledMethod = null;
 	String returnValueClass = null;
 	String returnValueAddress = null;
-	Boolean callerObjectClassIsInstrumented = false;
+	Boolean calleeObjectClassIsInstrumented = false;
 	int argsCount = -1;
 	Map<String, Map<String, String>> sourcesMap = null;
 	CallChopNodeLabel chopLabel = null;
@@ -47,12 +47,12 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    callerObjectAddress = getParameterValue("callerObjectAddress");
-	    callerObjectClass = getParameterValue("callerObjectClass");
+	    calleeObjectAddress = getParameterValue("calleeObjectAddress");
+	    calleeObjectClass = getParameterValue("calleeObjectClass");
 	    calledMethod = getParameterValue("calledMethod");
 	    returnValueClass = getParameterValue("returnValueClass");
 	    returnValueAddress = getParameterValue("returnValueAddress");
-	    callerObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
+	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("calleeObjectIsInstrumented"));
 	    argsCount = Integer.parseInt(getParameterValue("argsCount"));
 	    sourcesMap = (JSONObject) new JSONParser().parse(getParameterValue("sourcesMap"));
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
@@ -61,17 +61,17 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
 
-	addAddressToNamesAndContainerIfNeeded(threadId, pid, callerObjectClass, callerObjectAddress, calledMethod);
+	addAddressToNamesAndContainerIfNeeded(threadId, pid, calleeObjectClass, calleeObjectAddress, calledMethod);
 
-	IName callerObjectName = new ObjectName(pid, callerObjectClass, callerObjectAddress);
+	IName callerObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
 	IContainer callerObjectContainer = _informationFlowModel.getContainer(callerObjectName);
 
 	// Put data items corresponding to sources into parameters
 	for (Entry<String, Map<String, String>> sourceMapping : sourcesMap.entrySet()) {
 	    String param = sourceMapping.getKey();
 	    if (param.startsWith("p")) {
-		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, callerObjectClass,
-			callerObjectAddress, calledMethod, param);
+		IName paramName = JavaNameFactory.createLocalVarName(pid, threadId, calleeObjectClass,
+			calleeObjectAddress, calledMethod, param);
 		IContainer paramContainer = _informationFlowModel.getContainer(paramName);
 		if (paramContainer != null && paramContainer instanceof ReferenceContainer) {
 		    IData sourceData = new SourceData(sourceMapping.getValue().get("sourceId"),
@@ -93,12 +93,12 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	if (leftSide != null) {
 	    IName leftSideName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		    parentMethod, leftSide);
-	    if (callerObjectClassIsInstrumented) {
+	    if (calleeObjectClassIsInstrumented) {
 		// For instrumented classes, assign the retContainer (if
 		// exists!) of the called method to the left side (or copy data
 		// if it is value type)
-		IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, callerObjectClass,
-			callerObjectAddress, calledMethod, RET);
+		IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, calleeObjectClass,
+			calleeObjectAddress, calledMethod, RET);
 		IContainer retContainer = _informationFlowModel.getContainer(retVarName);
 		if (retContainer != null) {
 		    // add source data to return value if available
@@ -137,8 +137,8 @@ public class ReturnInstanceMethodEventHandler extends ReturnMethodEventHandler {
 	}
 
 	// Clean up method parameters and local variables
-	cleanUpParamsAndLocals(pid, threadId, callerObjectClass, callerObjectAddress, calledMethod,
-		callerObjectClassIsInstrumented, callerObjectContainer, argsCount);
+	cleanUpParamsAndLocals(pid, threadId, calleeObjectClass, calleeObjectAddress, calledMethod,
+		calleeObjectClassIsInstrumented, callerObjectContainer, argsCount);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }

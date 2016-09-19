@@ -11,13 +11,13 @@ public class ReturnMainMethodEventHandler extends ReturnMethodEventHandler {
 
 	String threadId = null;
 	String pid = null;
-	String callerClass = null;
+	String calleeClass = null;
 	String calledMethod = null;
 
 	try {
 	    threadId = getParameterValue("threadId");
 	    pid = getParameterValue("processId");
-	    callerClass = getParameterValue("callerClass");
+	    calleeClass = getParameterValue("calleeClass");
 	    calledMethod = getParameterValue("calledMethod");
 	} catch (ParameterNotFoundException | ClassCastException e) {
 	    _logger.error(e.getMessage());
@@ -25,7 +25,7 @@ public class ReturnMainMethodEventHandler extends ReturnMethodEventHandler {
 	}
 
 	// Clean up method parameters and local variables
-	cleanUpParamsAndLocals(pid, threadId, callerClass, null, calledMethod, true, null, 1);
+	cleanUpParamsAndLocals(pid, threadId, calleeClass, null, calledMethod, true, null, 1);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }
