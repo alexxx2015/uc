@@ -17,7 +17,8 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	    .force("charge", d3.forceManyBody())
 	    .force("center", d3.forceCenter(width / 2, height / 2));
 	
-	d3.json("http://localhost:8080/apps/miserables.json", function(error, graph) {
+	var drawFromJSON = function(file){
+	d3.json(file, function(error, graph) {
 	  if (error) throw error;
 	
 	  var link = svg.append("g")
@@ -62,6 +63,7 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	  }
 	  svg.selectAll("line").attr("stroke","#999").attr("stroke-opacity", 0.6);
 	});
+	}
 	
 	function dragstarted(d) {
 	  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -78,6 +80,12 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	  if (!d3.event.active) simulation.alphaTarget(0);
 	  d.fx = null;
 	  d.fy = null;
+	}
+//	drawFromJSON("http://localhost:8080/apps/miserables.json");
+	
+	this.onStateChange = function() {
+		var json = this.getState().json;
+		drawFromJSON(json);
 	}
 	
 }
