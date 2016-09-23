@@ -40,10 +40,10 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    calleeObjectAddress = getParameterValue("callerObjectAddress");
-	    calleeObjectClass = getParameterValue("callerObjectClass");
+	    calleeObjectAddress = getParameterValue("calleeObjectAddress");
+	    calleeObjectClass = getParameterValue("calleeObjectClass");
 	    calledMethod = getParameterValue("calledMethod");
-	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("callerObjectIsInstrumented"));
+	    calleeObjectClassIsInstrumented = Boolean.parseBoolean(getParameterValue("calleeObjectIsInstrumented"));
 	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 	    methodArgTypes = new String[methodArgTypesJSON.size()];
 	    methodArgTypesJSON.toArray(methodArgTypes);
@@ -52,13 +52,13 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 	    methodArgAddressesJSON.toArray(methodArgAddresses);
 	    chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 	    
-	    methodLabel = getParameterValue("methodLabel");//SAP database security label
-		System.out.println("CIEventHandler| ML: "+methodLabel+", chopLabel: "+chopLabel);
+//	    methodLabel = getParameterValue("methodLabel");//SAP database security label
+//		System.out.println("CIEventHandler| ML: "+methodLabel+", chopLabel: "+chopLabel);
 	} catch (ParseException | ParameterNotFoundException | ClassCastException e) {
 	    _logger.error(e.getMessage());
 	    return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
 	}
-
+	
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
 	boolean isConstructor = calledMethod.startsWith("<init>");

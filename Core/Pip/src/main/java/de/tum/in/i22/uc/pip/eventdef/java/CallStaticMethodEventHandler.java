@@ -21,7 +21,7 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	String parentObjectAddress = null;
 	String parentClass = null;
 	String parentMethod = null;
-	String callerClass = null;
+	String calleeClass = null;
 	String calledMethod = null;
 	String[] methodArgTypes = null;
 	String[] methodArgAddresses = null;
@@ -35,7 +35,7 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	    parentObjectAddress = getParameterValue("parentObjectAddress");
 	    parentClass = getParameterValue("parentClass");
 	    parentMethod = getParameterValue("parentMethod");
-	    callerClass = getParameterValue("callerClass");
+	    calleeClass = getParameterValue("calleeClass");
 	    calledMethod = getParameterValue("calledMethod");
 
 	    JSONArray methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
@@ -56,7 +56,7 @@ public class CallStaticMethodEventHandler extends CallMethodEventHandler {
 	addAddressToNamesAndContainerIfNeeded(threadId, pid, parentClass, parentObjectAddress, parentMethod);
 
 	insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress, parentMethod,
-		callerClass, null, calledMethod, null);
+		calleeClass, null, calledMethod, null);
 
 	return _messageFactory.createStatus(EStatus.OKAY);
     }

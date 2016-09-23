@@ -74,7 +74,6 @@ public class SourceEventHandler extends JavaEventHandler {
 			
 			methodLabel = getParameterValue("methodLabel");//SAP database security label
 			
-			System.out.println("SOURCEEVENTHANDLER| ML: "+methodLabel+", src: "+sourceId);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(
@@ -99,13 +98,14 @@ public class SourceEventHandler extends JavaEventHandler {
 //		_informationFlowModel.addName(calleeObjectVarName,
 //				calleeObjectContainer, false);
 
-
+//		create basic naming identifier and source container
 		IName sourceNamingIdentifier = new BasicJavaName(sourceId);
 		IContainer sourceContainer = _informationFlowModel.getContainer(sourceNamingIdentifier);
 		if(sourceContainer == null){
 			sourceContainer = new SinkSourceContainer(pid,threadId,sourceId,sourceObjectAddress);
 			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
 		}
+//		create source data and map data to container
 		IData sourceData = new SourceData(sourceId,System.currentTimeMillis());
 		_informationFlowModel.addData(sourceData, sourceContainer);
 		
@@ -133,7 +133,8 @@ public class SourceEventHandler extends JavaEventHandler {
 		}
 //		_informationFlowModel.addAlias(sourceContainer, calleeObjectContainer);
 //		insertArguments(chopLabel.getArgs(), methodArgTypes, methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,parentMethod,calleeObjectClass, calleeObjectAddress, calleeMethod,calleeObjectContainer);//calleeObjectClassIsInstrumented ? null:	calleeObjectContainer
-		
+
+//		System.out.println("SOURCEEVENTHANDLER| src: "+sourceId+", "+sourceObjectVarName.toString());
 		return _messageFactory.createStatus(EStatus.OKAY);
 		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}
