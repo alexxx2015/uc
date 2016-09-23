@@ -2,9 +2,6 @@
  * 
  */
 window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
-//	var svgtemp = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-//	svgtemp.setAttribute('width', '960');
-//	svgtemp.setAttribute('height', '600');
 	d3.select("tbody").append("svg").attr("width", 960).attr("height", 600);
 	
 	var svg = d3.select("svg"),
@@ -81,7 +78,6 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	  d.fx = null;
 	  d.fy = null;
 	}
-//	drawFromJSON("http://localhost:8080/apps/miserables.json");
 	
 	this.onStateChange = function() {
 		var json = this.getState().json;

@@ -2,6 +2,7 @@ package de.tum.in.i22.ucwebmanager.view;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -17,7 +18,8 @@ public class RuntimeView extends VerticalLayout implements View{
 		
 		FormLayout fl = new FormLayout();
 		fl.setSizeFull();
-		runtimeDiagram.drawFromJSON("http://localhost:8080/apps/miserables.json");
+		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
+		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		fl.addComponent(runtimeDiagram);
 		
 		parent.addComponent(fl);		

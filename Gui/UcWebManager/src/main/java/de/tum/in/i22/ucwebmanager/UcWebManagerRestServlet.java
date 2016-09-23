@@ -35,7 +35,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 
 	private String pathSeparator = File.separator;// System.getProperty("file.separator");
 	private String path;
-	private String graphFile = pathSeparator + "graph.txt";
+//	private String graphFile = pathSeparator + "graph.txt";
+	private String graphFile = pathSeparator + "graph.json";
 	private String runtimePath = File.separator + "runtime";
 	private ServletConfig config;
 
@@ -91,6 +92,7 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 
 //				Add received links and nodes and dump data to file
 				JSONObject msgCnt = (JSONObject) parser.parse(msg);
+				//TODO all to 1 object
 				if(msgCnt.containsKey(JSONMsg.LINKS.toString()))
 					cntLinks.add(msgCnt.get(JSONMsg.LINKS.toString()));
 				if(msgCnt.containsKey(JSONMsg.NODES.toString()))
@@ -99,7 +101,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				cnt.put(JSONMsg.LINKS.toString(), cntLinks.toString());
 				cnt.put(JSONMsg.NODES.toString(), cntNodes.toString());
 				FileWriter fw = new FileWriter(runtimeGraph);
-				fw.write(cnt.toString());
+//				fw.write(cnt.toString());
+				fw.write(cnt.toJSONString());
 				fw.flush();
 				fw.close();
 			} catch (ParseException e) {
@@ -108,7 +111,25 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			}
 		}
 	}
-
+//	public static void main(String[] args) {
+//		JSONParser parser = new JSONParser();
+//		String msg;
+//		JSONArray cntLinks = new JSONArray();
+//		JSONObject msgCnt = (JSONObject) parser.parse(msg);
+//		//TODO all to 1 object
+//		if(msgCnt.containsKey(JSONMsg.LINKS.toString()))
+//			cntLinks.add(msgCnt.get(JSONMsg.LINKS.toString()));
+//		if(msgCnt.containsKey(JSONMsg.NODES.toString()))
+//			cntNodes.add(msgCnt.get(JSONMsg.NODES.toString()));
+//		
+//		cnt.put(JSONMsg.LINKS.toString(), cntLinks.toString());
+//		cnt.put(JSONMsg.NODES.toString(), cntNodes.toString());
+//		FileWriter fw = new FileWriter(runtimeGraph);
+////		fw.write(cnt.toString());
+//		fw.write(cnt.toJSONString());
+//		fw.flush();
+//		fw.close();
+//	}
 	private String readFile(File file) throws IOException {
 		StringBuilder _return = new StringBuilder();
 		BufferedReader br = new BufferedReader(new FileReader(file));
