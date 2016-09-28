@@ -317,10 +317,14 @@ public class InstrumentationView extends VerticalLayout implements View{
 					uc.save(arg1 + File.separator + "uc.config");
 					
 					arg2 = arg1 + File.separator + "uc.config";
-//					System.out.println(arg0);
-//					System.out.println(arg1);
-//					System.out.println(arg2);
+
 					Instrumentor.main(new String[]{arg0, arg1, arg2});
+					try {
+						AppDAO.updateStatus(app, Status.INSTRUMENTATION.getStage());
+					} catch (ClassNotFoundException | SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} catch (IOException | IllegalClassFormatException e) {
 					e.printStackTrace();
 				}
