@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,15 +29,20 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 	private enum REQPARAM {
 		APPID, MSG
 	}
-
-	public static enum JSONMsg {
-		NODES, LINKS, FQNAME, OFFSET, OPCODE, MISC, SOURCE, TARGET
+	public static String NODES = "NODES";
+	public static String LINKS = "LINKS";
+	public static enum JSONMsgNODES {
+		 FQNAME, OFFSET, OPCODE, MISC
+	}
+	
+	public static enum JSONMsgLINKS {
+		SOURCE, TARGET
 	}
 
 	private String pathSeparator = File.separator;// System.getProperty("file.separator");
 	private String path;
-//	private String graphFile = pathSeparator + "graph.txt";
-	private String graphFile = pathSeparator + "graph.json";
+	private String graphFileTxt = pathSeparator + "graph.txt";
+//	private String graphFileJSON = pathSeparator + "graph.json";
 	private String runtimePath = File.separator + "runtime";
 	private ServletConfig config;
 
@@ -65,7 +71,7 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				JSONParser parser = new JSONParser();
 				JSONObject cnt = new JSONObject();
 				myPath += pathSeparator + appid;
-				File runtimeGraph = new File(myPath + runtimePath + graphFile);
+				File runtimeGraph = new File(myPath + runtimePath + graphFileTxt);
 				if (!runtimeGraph.exists()) {
 					runtimeGraph.getParentFile().mkdirs();
 					runtimeGraph.createNewFile();
@@ -73,63 +79,71 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 					try {
 						cnt = (JSONObject) parser.parse(new FileReader(runtimeGraph));
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 
 				JSONArray cntLinks = new JSONArray();
-				if (cnt.containsKey(JSONMsg.LINKS.toString())){
-					String o = (String)cnt.get(JSONMsg.LINKS.toString());
+				if (cnt.containsKey(LINKS)){
+					String o = (String)cnt.get(LINKS);
 					cntLinks = (JSONArray) parser.parse(o);
 				}
 				
 				JSONArray cntNodes = new JSONArray();
-				if (cnt.containsKey(JSONMsg.NODES.toString())){
-					String o = (String)cnt.get(JSONMsg.NODES.toString());
+				if (cnt.containsKey(NODES)){
+					String o = (String)cnt.get(NODES);
 					cntNodes = (JSONArray) parser.parse(o);
 				}
 
 //				Add received links and nodes and dump data to file
 				JSONObject msgCnt = (JSONObject) parser.parse(msg);
-				//TODO all to 1 object
-				if(msgCnt.containsKey(JSONMsg.LINKS.toString()))
-					cntLinks.add(msgCnt.get(JSONMsg.LINKS.toString()));
-				if(msgCnt.containsKey(JSONMsg.NODES.toString()))
-					cntNodes.add(msgCnt.get(JSONMsg.NODES.toString()));
+				if(msgCnt.containsKey(NODES)){
+					JSONArray nodes = (JSONArray) msgCnt.get(NODES);
+					Iterator<JSONArray> iterator = nodes.iterator();
+					while (iterator.hasNext()){
+						JSONObject tempObj = new JSONObject();
+						JSONArray j = iterator.next();
+						Iterator<JSONObject> iter2 = j.iterator();
+						while (iter2.hasNext()){
+							JSONObject json2 = iter2.next();
+							
+							for (Iterator iter3 = json2.keySet().iterator();iter3.hasNext();){
+								String key = (String) iter3.next();
+								tempObj.put(key, json2.get(key).toString());
+							}
+						}
+						cntNodes.add(tempObj);
+					}
+				}		
+				if(msgCnt.containsKey(LINKS)){
+					JSONArray links = (JSONArray) msgCnt.get(LINKS);
+					Iterator<JSONObject> iter = links.iterator();
+					while (iter.hasNext()){
+						JSONObject tempObj = new JSONObject();
+						JSONObject link = iter.next();
+						for (Iterator iter3 = link.keySet().iterator(); iter3.hasNext();){
+							String key = (String) iter3.next();
+							tempObj.put(key, link.get(key).toString());
+						}
+						cntLinks.add(tempObj);
+					}
+				}
+//					cntLinks.add(msgCnt.get(LINKS));
 				
-				cnt.put(JSONMsg.LINKS.toString(), cntLinks.toString());
-				cnt.put(JSONMsg.NODES.toString(), cntNodes.toString());
+				cnt.put(LINKS, cntLinks.toString());
+				cnt.put(NODES, cntNodes.toString());
 				FileWriter fw = new FileWriter(runtimeGraph);
-//				fw.write(cnt.toString());
 				fw.write(cnt.toJSONString());
 				fw.flush();
 				fw.close();
+				//Create .json file from the txt file
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-//	public static void main(String[] args) {
-//		JSONParser parser = new JSONParser();
-//		String msg;
-//		JSONArray cntLinks = new JSONArray();
-//		JSONObject msgCnt = (JSONObject) parser.parse(msg);
-//		//TODO all to 1 object
-//		if(msgCnt.containsKey(JSONMsg.LINKS.toString()))
-//			cntLinks.add(msgCnt.get(JSONMsg.LINKS.toString()));
-//		if(msgCnt.containsKey(JSONMsg.NODES.toString()))
-//			cntNodes.add(msgCnt.get(JSONMsg.NODES.toString()));
-//		
-//		cnt.put(JSONMsg.LINKS.toString(), cntLinks.toString());
-//		cnt.put(JSONMsg.NODES.toString(), cntNodes.toString());
-//		FileWriter fw = new FileWriter(runtimeGraph);
-////		fw.write(cnt.toString());
-//		fw.write(cnt.toJSONString());
-//		fw.flush();
-//		fw.close();
-//	}
+
 	private String readFile(File file) throws IOException {
 		StringBuilder _return = new StringBuilder();
 		BufferedReader br = new BufferedReader(new FileReader(file));

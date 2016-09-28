@@ -27,7 +27,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
@@ -35,10 +37,13 @@ import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.BlackAndWhiteList;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.UcConfig;
+import de.tum.in.i22.ucwebmanager.Status.Status;
 import edu.tum.uc.jvm.Instrumentor;
 public class InstrumentationView extends VerticalLayout implements View{
 	App app;
 	File file;
+	Window subWindow;
+	ComboBox cmbListApp;
 	String appName, arg0, arg1, arg2;
 	String blackL = "black list", whiteL = "white list",
 			blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
@@ -80,7 +85,17 @@ public class InstrumentationView extends VerticalLayout implements View{
 					}
 
 				}
+				else {
+					fillCmbListApp();
+					UI.getCurrent().addWindow(subWindow);
+				}
 			}
+		}
+	}
+	private void fillCmbListApp(){
+		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage(), Status.INSTRUMENTATION.getStage());
+		for (App app : apps){
+			cmbListApp.addItem(app.getId() + " " + app.getName());
 		}
 	}
 	 private String readXmlFile(File file){
@@ -352,6 +367,32 @@ public class InstrumentationView extends VerticalLayout implements View{
 		
 		parent.setMargin(true);
 		addComponent(parent);
+		subWindow = new Window("No App selected, please choose an app!");
+        VerticalLayout subContent = new VerticalLayout();
+        subContent.setMargin(true);
+        subWindow.setContent(subContent);
+        cmbListApp = new ComboBox("List of avaialbe Apps");
+        Button btnSubWindowOK = new Button("OK");
+        btnSubWindowOK.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				String s = (String) cmbListApp.getValue();
+				String[] temp = s.split(" ");
+				try {
+					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
+					//TODO: fill all boxes
+					subWindow.close();
+				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        // Put some components in it
+        subContent.addComponent(cmbListApp);
+        subContent.addComponent(btnSubWindowOK);
+        // Center it in the browser window
+        subWindow.center();
 	}
 	 private UcConfig createUcFile(String reportFile, String blackList, String whiteList){
 		 UcConfig ucConfig = new UcConfig();

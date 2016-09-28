@@ -40,13 +40,18 @@ public class AppDAO {
 	}
 		return apps;
 	}
-	public static List<App> getAppByStatus(String status){
+	public static List<App> getAppByStatus(String... status){
+		String appStatus = "";
+		if (status.length == 1) appStatus = AppTable.COLUMN_STATUS + "='" + status[0] + "'";
+		else for (int i = 0; i < status.length; i++){
+			appStatus = AppTable.COLUMN_STATUS + "='" + status[i] + "'";
+			if (i < status.length -1) appStatus += " OR ";
+		}
 		List<App> apps = new ArrayList<App>();
 		String s = "SELECT * FROM "
 				 + AppTable.TABLE_APP 
 				 + " WHERE "
-				 + AppTable.COLUMN_STATUS
-				 + " ='" + status + "'";
+				 + appStatus;
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			Statement statement = conn.createStatement();
