@@ -10,9 +10,9 @@ public class StaticFieldName extends JavaName {
 		super(staticFieldName);
 		
 		String[] comps = staticFieldName.split("\\" + DLM);
-		pid = comps[0];
-		className = comps[1];
-		fieldName = comps[2];
+		pid = comps[0].trim();
+		className = comps[1].trim();
+		fieldName = comps[2].trim();
 	}
 	
 	public StaticFieldName(String pid, String className, String fieldName) {

@@ -17,16 +17,16 @@ public class SourceSinkName extends JavaName {
 		super(methodVarName);
 		
 		String[] comps = methodVarName.split("\\" + DLM);
-		pid = comps[0];
-		threadId = comps[1];
-		parentClass = comps[2];
-		parentMethod = comps[3];
-		varName = comps[4];
-		sourceObjectAddress = comps[5];
+		pid = comps[0].trim();
+		threadId = comps[1].trim();
+		parentClass = comps[2].trim();
+		parentMethod = comps[3].trim();
+		varName = comps[4].trim();
+		sourceObjectAddress = comps[5].trim();
 	}
 
 	public SourceSinkName(String pid, String threadId, String parentClass, String parentMethod, String varName, String objectAddress) {
-		this(pid + DLM + threadId + DLM + parentClass + DLM + parentMethod + DLM + varName+ DLM +objectAddress);
+		this(pid + DLM + threadId + DLM + parentClass+ DLM +objectAddress + DLM + parentMethod + DLM + varName);
 	}
 
 	public String getPid() {

@@ -12,11 +12,16 @@ public class CallChopNodeLabel {
 	private String callee;
 
 	private String label;
+	private String sourceId;
 
 	public CallChopNodeLabel(String labelString) {
 		this.label = labelString;
 		if ("".equals(labelString))
 			return;
+		
+		String[] c = labelString.split("\\|");
+		if(c.length >= 1) labelString = c[0];
+		if(c.length >= 2) sourceId = c[1];
 		
 		// compute start and end of parameter brackets
 		int start = labelString.indexOf("(");
@@ -27,7 +32,7 @@ public class CallChopNodeLabel {
 		String[] leftAndRight = leftAndMethod.split("=");
 		String methodCall = "";
 		if (leftAndRight.length == 2) {
-			leftSide = leftAndRight[0];
+			leftSide = leftAndRight[0].trim();
 			methodCall = leftAndRight[1];
 		} else if (leftAndRight.length == 1) {
 			methodCall = leftAndRight[0];
@@ -35,7 +40,7 @@ public class CallChopNodeLabel {
 		if (!"".equals(methodCall)) {
 			leftAndRight = methodCall.split("\\.");
 			if (leftAndRight.length == 2) {
-				callee = leftAndRight[0];
+				callee = leftAndRight[0].trim();
 				methodName = leftAndRight[1];
 			} else if (leftAndRight.length == 1) {
 				methodName = leftAndRight[0];
@@ -60,6 +65,8 @@ public class CallChopNodeLabel {
 			splits.add(p.substring(start, end).trim());
 		}
 		args = splits.toArray(new String[] {});
+		
+		this.methodName = this.methodName.trim();
 	}
 
 //	old constructor parser

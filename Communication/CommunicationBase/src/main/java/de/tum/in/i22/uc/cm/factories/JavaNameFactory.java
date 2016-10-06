@@ -19,6 +19,18 @@ public class JavaNameFactory {
 			return new InstanceMethodVariableName(pid, threadId, className, objectAddress, methodName, varName);
 		}
 	}
+	
+	public static JavaName createLocalVarName(String pid, String threadId, String className, String objectAddress,
+			String methodName, String varName, String sinkSourceId, SourceSinkName.Type type) {
+		JavaName _return = createLocalVarName(pid, threadId, className, objectAddress, methodName, varName);
+		if(_return instanceof StaticMethodVariableName){
+			((StaticMethodVariableName)_return).setSourceSinkId(sinkSourceId, type);
+		}
+		else if(_return instanceof InstanceMethodVariableName){
+			((InstanceMethodVariableName)_return).setSourceSinkId(sinkSourceId, type);
+		}
+		return _return;
+	}
 
 	public static JavaName createFieldName(String pid, String className, String objectAddress, String fieldName) {
 		if (objectAddress == null || objectAddress.equals(Settings.getInstance().getJavaNull())) {
@@ -28,8 +40,8 @@ public class JavaNameFactory {
 		}
 	}
 
-	public static JavaName createSourceName(String pid, String threadId, String parentClass,
-			String parentMethod, String varName, String sinkSourceId,String sourceObjectAddress) {
+	public static JavaName createSourceName(String pid, String threadId, String parentClass, String sourceObjectAddress,
+			String parentMethod, String varName, String sinkSourceId) {
 		SourceSinkName _return = new SourceSinkName(pid, threadId, parentClass, parentMethod, varName, sourceObjectAddress);
 		_return.setSourceSinkId(sinkSourceId, SourceSinkName.Type.SOURCE);
 		return _return;

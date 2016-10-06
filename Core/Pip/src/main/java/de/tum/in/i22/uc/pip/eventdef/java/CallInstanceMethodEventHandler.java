@@ -72,9 +72,8 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 
 	// if caller object class is a system class, get its container to add
 	// method parameters to it
-	IContainer calleeObjectContainer = null;
 	IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
-	calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass, calleeObjectAddress);
+	IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass, calleeObjectAddress);
 
 	IName calleeObjectVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 		parentMethod, chopLabel.getCallee());

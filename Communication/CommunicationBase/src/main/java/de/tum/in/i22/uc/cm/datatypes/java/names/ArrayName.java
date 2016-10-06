@@ -10,9 +10,9 @@ public class ArrayName extends ReferenceName {
 		super(objectName);
 		
 		String[] comps = objectName.split("\\" + DLM);
-		pid = comps[0];
-		type = comps[1];
-		address = comps[2];
+		pid = comps[0].trim();
+		type = comps[1].trim();
+		address = comps[2].trim();
 	}
 	
 	public ArrayName(String pid, String type, String address) {

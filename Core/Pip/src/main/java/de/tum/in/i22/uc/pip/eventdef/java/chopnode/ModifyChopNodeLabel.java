@@ -12,10 +12,16 @@ public class ModifyChopNodeLabel {
 	private String fieldOwner;
 	private String fieldName;
 	
+	private String sourceId;
+	
 	public ModifyChopNodeLabel(String labelString) {
 		// Form 1: v2[v3] = v0
 		// Form 2: v2.fieldName = v0
 		// Form 3: package.class.fieldName = v0
+		
+		String[] c = labelString.split("\\|");
+		if(c.length >= 1) labelString = c[0];
+		if(c.length >= 2) sourceId = c[1];
 		
 		String[] leftAndRight = labelString.split(" = ");
 		String leftSide;

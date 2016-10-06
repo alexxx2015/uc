@@ -10,6 +10,7 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IData;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IName;
 import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.containers.ReferenceContainer;
+import de.tum.in.i22.uc.cm.datatypes.java.containers.SinkSourceContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.names.InstanceMethodVariableName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.StaticMethodVariableName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
@@ -74,7 +75,7 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
 	if (localVarContainer != null) {
 	    // reference type -> remove name
 	    // value type -> remove whole container
-	    if (localVarContainer instanceof ReferenceContainer) {
+	    if (localVarContainer instanceof ReferenceContainer || localVarContainer instanceof SinkSourceContainer) {
 		// no need to copy data because this container will not be
 		// destroyed (all object containers are kept alive by global
 		// name)

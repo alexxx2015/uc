@@ -11,10 +11,10 @@ public class InstanceFieldName extends JavaName {
 		super(instanceFieldName);
 		
 		String[] comps = instanceFieldName.split("\\" + DLM);
-		pid = comps[0];
-		className = comps[1];
-		objectAddress = comps[2];
-		fieldName = comps[3];
+		pid = comps[0].trim();
+		className = comps[1].trim();
+		objectAddress = comps[2].trim();
+		fieldName = comps[3].trim();
 	}
 	
 	public InstanceFieldName(String pid, String className, String objectAddress, String fieldName) {

@@ -54,8 +54,8 @@ public class SinkEventHandler extends JavaEventHandler {
 			parentObjectAddress = getParameterValue("parentObjectAddress");
 			parentClass = getParameterValue("parentClass");
 			parentMethod = getParameterValue("parentMethod");
-			calleeObjectAddress = getParameterValue("calledObjectAddress");
-			calleeObjectClass = getParameterValue("calledObjectClass");
+			calleeObjectAddress = getParameterValue("calleeObjectAddress");
+			calleeObjectClass = getParameterValue("calleeObjectClass");
 			calleeMethod = getParameterValue("calledMethod");
 			contextInformation = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
 			chopLabelStr = getParameterValue("chopLabel");
@@ -102,8 +102,10 @@ public class SinkEventHandler extends JavaEventHandler {
 		if(sinkContainer == null){
 			sinkContainer = new SinkSourceContainer(pid,threadId,sinkId,calleeObjectAddress);			
 			_informationFlowModel.addName(sinkVarName, sinkContainer, false);
+			IName sinkNamingIdentifier = new BasicJavaName(sinkId);//pid,threadId,
+			_informationFlowModel.addName(sinkNamingIdentifier, sinkContainer);
 		}
-		
+
 		//Copy all data items from the source container to the sink container
 		Collection<IName> _names = _informationFlowModel.getAllNames();
 		Iterator<IName> _namesIt = _names.iterator();

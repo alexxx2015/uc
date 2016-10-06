@@ -12,10 +12,16 @@ public class ReferenceChopNodeLabel {
 	private String fieldOwner;
 	private String fieldName;
 	
+	private String sourceId;
+	
 	public ReferenceChopNodeLabel(String labelString) {
 		// Form 1: v0 = v2[v3]
 		// Form 2: v0 = v2.fieldName
 		// Form 3: v0 = package.class.fieldName
+		
+		String[] c = labelString.split("\\|");
+		if(c.length >= 1) labelString = c[0];
+		if(c.length >= 2) sourceId = c[1];
 		
 		String[] leftAndRight = labelString.split(" = ");
 		String rightSide;

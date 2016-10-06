@@ -5,11 +5,16 @@ public class AssignChopNodeLabel {
 	private String leftSide;
 	private String operation;
 	private String[] operands;
+	private String sourceId;
 
 	public AssignChopNodeLabel(String labelString) {
 		// Form 1: v1 = v2 op v3
 		// Form 2: v1 = op v2
 		// Form 3: v1 = -(v2)
+		
+		String[] c = labelString.split("\\|");
+		if(c.length >= 1) labelString = c[0];
+		if(c.length >= 2) sourceId = c[1];
 		
 		String[] leftAndRight = labelString.split(" = ");
 		String rightSide;

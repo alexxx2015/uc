@@ -11,10 +11,10 @@ public class ArrayElementName extends JavaName {
 		super(objectName);
 		
 		String[] comps = objectName.split("\\" + DLM);
-		pid = comps[0];
-		type = comps[1];
-		address = comps[2];
-		index = Integer.valueOf(comps[3]);
+		pid = comps[0].trim();
+		type = comps[1].trim();
+		address = comps[2].trim();
+		index = Integer.valueOf(comps[3].trim());
 	}
 	
 	public ArrayElementName(String pid, String type, String address, int index) {

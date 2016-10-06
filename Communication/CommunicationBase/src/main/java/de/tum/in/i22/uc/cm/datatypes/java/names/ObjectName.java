@@ -10,9 +10,9 @@ public class ObjectName extends ReferenceName {
 		super(objectName);
 		
 		String[] comps = objectName.split("\\" + DLM);
-		pid = comps[0];
-		className = comps[1];
-		address = comps[2];
+		pid = comps[0].trim();
+		className = comps[1].trim();
+		address = comps[2].trim();
 	}
 	
 	public ObjectName(String pid, String className, String address) {

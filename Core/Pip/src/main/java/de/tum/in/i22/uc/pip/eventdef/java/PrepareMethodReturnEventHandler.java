@@ -41,6 +41,9 @@ public class PrepareMethodReturnEventHandler extends JavaEventHandler {
 	String var = chopLabel.getArgument();
 	IName varName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, var);
 	IContainer varContainer = addContainerIfNotExists(varName, returnValueClass, returnValueAddress);
+	
+	IName varNameLoc = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, returnValueAddress, parentMethod, var);
+	_informationFlowModel.addName(varNameLoc, varContainer);
 
 	// ret var name of the method
 	IName retVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, RET);

@@ -42,7 +42,6 @@ import de.tum.in.i22.uc.pdp.core.AuthorizationAction.Authorization;
 import de.tum.in.i22.uc.pdp.core.exceptions.InvalidPolicyException;
 import de.tum.in.i22.uc.pdp.xsd.PolicyType;
 
-
 /**
  *
  * @author Florian Kelbert et al.
@@ -61,7 +60,7 @@ public class PolicyDecisionPoint implements Observer {
 	private final Unmarshaller _unmarshaller;
 
 	private final CompletionService<?> _csOperators;
-	private final CompletionService<Pair<Mechanism,Boolean>> _csMechanisms;
+	private final CompletionService<Pair<Mechanism, Boolean>> _csMechanisms;
 
 	private final MechanismFactory _mechanismFactory;
 
@@ -112,12 +111,10 @@ public class PolicyDecisionPoint implements Observer {
 		return deployXML(is);
 	}
 
-
 	/**
-	 * Transforms the provided {@link InputStream} into
-	 * a {@link PolicyType} and returns the corresponding
-	 * result. If the provided stream can not be transformed,
-	 * null is returned.
+	 * Transforms the provided {@link InputStream} into a {@link PolicyType} and
+	 * returns the corresponding result. If the provided stream can not be
+	 * transformed, null is returned.
 	 *
 	 * @param is
 	 * @return
@@ -141,15 +138,14 @@ public class PolicyDecisionPoint implements Observer {
 		return policy;
 	}
 
-
 	/**
-	 * Deploys the policy provided as an {@link InputStream}.
-	 * The provided stream is expected to be
-	 * transformable into a {@link PolicyType}. If deployment
-	 * is successful, true is returned. If an error occurs,
-	 * false is returned.
+	 * Deploys the policy provided as an {@link InputStream}. The provided
+	 * stream is expected to be transformable into a {@link PolicyType}. If
+	 * deployment is successful, true is returned. If an error occurs, false is
+	 * returned.
 	 *
-	 * @param is the input stream to be deployed.
+	 * @param is
+	 *            the input stream to be deployed.
 	 * @return true, if deployment was successful. False, if an error occurred.
 	 */
 	private boolean deployXML(InputStream is) {
@@ -161,7 +157,7 @@ public class PolicyDecisionPoint implements Observer {
 
 		_logger.debug("Deploying policy {}.", policy.getName());
 
-		Collection <Mechanism> newMechanisms;
+		Collection<Mechanism> newMechanisms;
 		try {
 			newMechanisms = _mechanismFactory.createMechanisms(policy);
 		} catch (InvalidPolicyException e) {
@@ -170,8 +166,8 @@ public class PolicyDecisionPoint implements Observer {
 		}
 
 		/*
-		 * TODO: Parallelize.
-		 * However: Need to make MechanismManager thread-safe!
+		 * TODO: Parallelize. However: Need to make MechanismManager
+		 * thread-safe!
 		 */
 		newMechanisms.forEach(m -> _mechanismManager.deploy(m));
 
@@ -207,8 +203,10 @@ public class PolicyDecisionPoint implements Observer {
 	/**
 	 * Update all specified {@link AtomicOperator}s with the specified event.
 	 *
-	 * @param operators the operators to be updated
-	 * @param event the event
+	 * @param operators
+	 *            the operators to be updated
+	 * @param event
+	 *            the event
 	 */
 	private void updateAll(Collection<AtomicOperator> operators, IEvent event) {
 		/*
@@ -220,7 +218,6 @@ public class PolicyDecisionPoint implements Observer {
 		Threading.waitFor(operators.size(), _csOperators);
 	}
 
-
 	public IResponse notifyEvent(IEvent event) {
 		return notifyEvent(event, true);
 	}
@@ -228,8 +225,10 @@ public class PolicyDecisionPoint implements Observer {
 	/**
 	 * Notifies an event to this {@link PolicyDecisionPoint}.
 	 *
-	 * @param event the event to notify
-	 * @param syncCall whether the original call was synchronous or asynchronous
+	 * @param event
+	 *            the event to notify
+	 * @param syncCall
+	 *            whether the original call was synchronous or asynchronous
 	 * @return
 	 */
 	public synchronized IResponse notifyEvent(IEvent event, boolean syncCall) {
@@ -237,11 +236,10 @@ public class PolicyDecisionPoint implements Observer {
 
 		if (!syncCall && !event.isActual()) {
 			/*
-			 * The notified event is desired and it was
-			 * notified asynchronously. In this case there
-			 * is nothing to do, because the event is actually
-			 * not happening and the caller is not interested
-			 * in an evaluation result.
+			 * The notified event is desired and it was notified asynchronously.
+			 * In this case there is nothing to do, because the event is
+			 * actually not happening and the caller is not interested in an
+			 * evaluation result.
 			 */
 			return new ResponseBasic(new StatusBasic(EStatus.ALLOW));
 		}
@@ -252,15 +250,19 @@ public class PolicyDecisionPoint implements Observer {
 		Decision decision = new Decision(new AuthorizationAction("default", Authorization.ALLOW), _pxpManager);
 
 		/*
-		 * Retrieve all relevant Mechanisms to evaluate. This is done in a new Thread.
+		 * Retrieve all relevant Mechanisms to evaluate. This is done in a new
+		 * Thread.
 		 */
-		Future<Collection<Mechanism>> futureMechanisms = Threading.instance().submit(() -> _observerManager.getMechanisms(event.getName()));
+		Future<Collection<Mechanism>> futureMechanisms = Threading.instance()
+				.submit(() -> _observerManager.getMechanisms(event.getName()));
 		Collection<Mechanism> mechanisms;
 
 		/*
-		 * Retrieve all relevant Operators that need to be updated. This is done in a new Thread.
+		 * Retrieve all relevant Operators that need to be updated. This is done
+		 * in a new Thread.
 		 */
-		Future<Collection<AtomicOperator>> futureOperators = Threading.instance().submit(() -> _observerManager.getAtomicOperators(event.getName()));
+		Future<Collection<AtomicOperator>> futureOperators = Threading.instance()
+				.submit(() -> _observerManager.getAtomicOperators(event.getName()));
 
 		if (event.isActual()) {
 			/*
@@ -268,111 +270,102 @@ public class PolicyDecisionPoint implements Observer {
 			 */
 
 			/*
-			 * First thing to do is to update the PIP with the event,
-			 * such that it updates its state accordingly.
+			 * First thing to do is to update the PIP with the event, such that
+			 * it updates its state accordingly.
 			 */
 			_pip.update(event);
 
 			/*
-			 * Wait for the relevant-Operators-thread to finish. Once
-			 * the Operators are retrieved, update them.
+			 * Wait for the relevant-Operators-thread to finish. Once the
+			 * Operators are retrieved, update them.
 			 */
 			updateAll(Threading.resultOf(futureOperators), event);
 
 			/*
-			 * Notify the event to all Mechanisms,
-			 * effectively evaluating their condition.
-			 * This is done while simulating, because
-			 * this is not the end of a timestep. Rather,
-			 * we 'simulate' the end of a timestep in
+			 * Notify the event to all Mechanisms, effectively evaluating their
+			 * condition. This is done while simulating, because this is not the
+			 * end of a timestep. Rather, we 'simulate' the end of a timestep in
 			 * order to get an evaluation result.
 			 *
-			 * However, we only need to perform this evaluation
-			 * if the event has been notified synchronously.
-			 * If the event was notified asynchronously, the
-			 * caller is not interested in a decision anyway.
+			 * However, we only need to perform this evaluation if the event has
+			 * been notified synchronously. If the event was notified
+			 * asynchronously, the caller is not interested in a decision
+			 * anyway.
 			 */
 			if (syncCall) {
 				mechanisms = Threading.resultOf(futureMechanisms);
 
 				/*
-				 * Do the actual start/stop of simulation and notification
-				 * to Mechanism. Start a new Thread for each Mechanism.
+				 * Do the actual start/stop of simulation and notification to
+				 * Mechanism. Start a new Thread for each Mechanism.
 				 */
 				mechanisms.forEach(m -> _csMechanisms.submit(() -> {
 					m.startSimulation();
 					boolean result = m.notifyEvent(event);
 					m.stopSimulation();
-					return Pair.of(m,result);
+					return Pair.of(m, result);
 				}));
 
 				/*
-				 * Wait for all the threads to be done and accumulate
-				 * the decision.
+				 * Wait for all the threads to be done and accumulate the
+				 * decision.
 				 */
 				mechanisms.forEach(m -> {
-					Pair<Mechanism,Boolean> res = Threading.takeResult(_csMechanisms);
+					Pair<Mechanism, Boolean> res = Threading.takeResult(_csMechanisms);
 					if (res.getRight()) {
 						decision.processMechanism(res.getLeft());
 					}
 				});
 			}
-		}
-		else if (syncCall) {
+		} else if (syncCall) {
 			/*
-			 * This is a desired event and it was
-			 * notified synchronously. In this case
-			 * the event is only simulated and the
-			 * caller is actually interested in an
-			 * evaluation result.
+			 * This is a desired event and it was notified synchronously. In
+			 * this case the event is only simulated and the caller is actually
+			 * interested in an evaluation result.
 			 */
 
 			/*
-			 * The first thing to do is to start the
-			 * simulation of the PIP and the Mechanisms.
-			 * This is done in parallel.
+			 * The first thing to do is to start the simulation of the PIP and
+			 * the Mechanisms. This is done in parallel.
 			 */
 			_csMechanisms.submit(() -> _pip.startSimulation(), null);
 			mechanisms = Threading.resultOf(futureMechanisms);
 
 			/*
-			 * We are processing desired events at this point.
-			 * Therefore start simulation only for those mechanisms
-			 * for which the trigger event actually matches.
+			 * We are processing desired events at this point. Therefore start
+			 * simulation only for those mechanisms for which the trigger event
+			 * actually matches.
 			 */
 			mechanisms.forEach(m -> {
 				if (m.triggerEventMatches(event)) {
 					_csMechanisms.submit(() -> m.startSimulation(), null);
-				}
-				else {
-					_csMechanisms.submit(() -> { return; }, null);
+				} else {
+					_csMechanisms.submit(() -> {
+						return;
+					}, null);
 				}
 			});
 			Threading.waitFor(mechanisms.size() + 1, _csMechanisms);
 
 			/*
-			 * Then, notify the event to the PIP and to all
-			 * observers that registered for it (just as above
-			 * for the actual events). Since we started
-			 * simulation before, this will be undone later.
+			 * Then, notify the event to the PIP and to all observers that
+			 * registered for it (just as above for the actual events). Since we
+			 * started simulation before, this will be undone later.
 			 *
-			 * Different from the case above, where the
-			 * DistributionManager takes care about changed
-			 * operators, they are ignored here, because the
-			 * event is actually not happening.
+			 * Different from the case above, where the DistributionManager
+			 * takes care about changed operators, they are ignored here,
+			 * because the event is actually not happening.
 			 */
 			_pip.update(event);
 			updateAll(Threading.resultOf(futureOperators), event);
 
 			/*
-			 * Notify the event to all Mechanisms,
-			 * effectively simulating the end of a timestep.
-			 * After getting the evaluation result, stop
-			 * the simulation.
+			 * Notify the event to all Mechanisms, effectively simulating the
+			 * end of a timestep. After getting the evaluation result, stop the
+			 * simulation.
 			 *
-			 * However, only notify to those mechanisms
-			 * for which the trigger event matches, saving
-			 * some evaluation cost.
+			 * However, only notify to those mechanisms for which the trigger
+			 * event matches, saving some evaluation cost.
 			 */
 			mechanisms.forEach(m -> _csMechanisms.submit(() -> {
 				boolean result = false;
@@ -381,17 +374,23 @@ public class PolicyDecisionPoint implements Observer {
 					result = m.notifyEvent(event);
 					m.stopSimulation();
 				}
-				return Pair.of(m,result);
+				return Pair.of(m, result);
 			}));
 
-			_pip.stopSimulation();
+			// Stopping pip simulation here leads to some concurrency issues,
+			// where the policy evaluation (line 381) happens on an unsimulated
+			// state. Therefore, simulation stop moved to line 391
+			// _pip.stopSimulation();
 
 			mechanisms.forEach(m -> {
-				Pair<Mechanism,Boolean> res = Threading.takeResult(_csMechanisms);
+				Pair<Mechanism, Boolean> res = Threading.takeResult(_csMechanisms);
 				if (res.getRight()) {
 					decision.processMechanism(res.getLeft());
 				}
 			});
+			
+			Threading.waitFor(mechanisms.size(), _csMechanisms);
+			_pip.stopSimulation();
 		}
 
 		return decision.toResponse();
@@ -422,8 +421,7 @@ public class PolicyDecisionPoint implements Observer {
 		if (o instanceof IOperator) {
 			if ((arg instanceof IEvent) && ((IEvent) arg).isActual()) {
 				_dmp.notify((IOperator) o, false);
-			}
-			else if (arg == Mechanism.END_OF_TIMESTEP) {
+			} else if (arg == Mechanism.END_OF_TIMESTEP) {
 				_dmp.notify((IOperator) o, true);
 			}
 		}
