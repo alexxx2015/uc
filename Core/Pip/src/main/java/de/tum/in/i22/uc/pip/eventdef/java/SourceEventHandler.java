@@ -63,11 +63,9 @@ public class SourceEventHandler extends JavaEventHandler {
 			sourceParam = getParameterValue("sourceParam");
 			sourceId = getParameterValue("sourceId");
 			contextInfo = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
-			restInfo = (JSONObject) new JSONParser().parse(getParameterValue("restInfo"));
-			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));// e.g.
-																				// v23
-																				// =
-																				// v8.readLine()
+			restInfo = (JSONObject) new JSONParser().parse(getParameterValue("restInfo"));// e.g.
+			// v23 = v8.readLine()
+			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 
 			methodArgTypesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgTypes"));
 			methodArgTypes = new String[methodArgTypesJSON.size()];

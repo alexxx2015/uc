@@ -370,7 +370,8 @@ public class SceneGenerator {
 							.getPolicy();
 					String mechanism = tv.getSelectionModel().getSelectedItem()
 							.getMechanism();
-					controller.revokeMechanism(policy, mechanism);
+//					controller.revokeMechanism(policy, mechanism);
+					controller.revokeMechanismPmp(policy, mechanism);
 					updateDeployedPolicies(controller.listMechanisms());
 				}
 			}

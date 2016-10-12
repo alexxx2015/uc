@@ -377,19 +377,14 @@ public class PolicyDecisionPoint implements Observer {
 				return Pair.of(m, result);
 			}));
 
-//			Threading.waitFor(mechanisms.size(), _csMechanisms);
-			
-			// Stopping pip simulation here leads to some concurrency issues,
-			// where the policy evaluation (line 381) happens on an unsimulated
-			// state. Therefore, simulation stop moved to line 391
-//			 _pip.stopSimulation();
+			 _pip.stopSimulation();
 
 			mechanisms.forEach(m -> {
 				Pair<Mechanism, Boolean> res = Threading.takeResult(_csMechanisms);
 				if (res.getRight()) {
 					decision.processMechanism(res.getLeft());
 				}
-				 _pip.stopSimulation();
+//				 _pip.stopSimulation();
 			});
 			
 		}

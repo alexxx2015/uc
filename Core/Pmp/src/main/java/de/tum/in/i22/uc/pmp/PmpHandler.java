@@ -326,7 +326,10 @@ public class PmpHandler extends PmpProcessor {
 
 	@Override
 	public IStatus revokeMechanismPmp(String policyName, String mechName) {
-		return getPdp().revokeMechanism(policyName, mechName);
+		IStatus _return = getPdp().revokeMechanism(policyName, mechName);
+		if(!this._policymanager.removePolicy(policyName) || !_return.isStatus(EStatus.OKAY))
+			_return = new StatusBasic(EStatus.ERROR, "revokeMechanism failed");
+		return _return;
 	}
 
 	@Override

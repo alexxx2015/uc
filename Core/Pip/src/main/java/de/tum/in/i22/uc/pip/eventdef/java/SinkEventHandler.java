@@ -137,7 +137,7 @@ public class SinkEventHandler extends JavaEventHandler {
 					_informationFlowModel.addName(covn, sinkContainer);
 				else
 					_informationFlowModel.addData(_informationFlowModel.getData(covn), c);
-			} 
+			}
 		}
 
 		return _messageFactory.createStatus(EStatus.OKAY);
