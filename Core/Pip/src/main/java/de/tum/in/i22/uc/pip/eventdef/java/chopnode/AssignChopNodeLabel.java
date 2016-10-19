@@ -38,8 +38,17 @@ public class AssignChopNodeLabel {
 				operation = rightSide.substring(0, 1);
 				operands = new String[] { rightSide.substring(2, rightSide.length()-1) };
 			} else {
+				if(rightSide.toLowerCase().startsWith("checkcast")){
+					String[] s = rightSide.split(" ");
+					if(s.length >= 1)
+						operation = s[0];
+					if(s.length >= 2)
+						operands = new String[]{s[1]};
+				}
+				else{
 				operation = rightSide.substring(0, rightSide.length() - operand.length() - 1);
 				operands = new String[] { operand };
+				}
 			}
 		}
 		

@@ -36,8 +36,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		String calleeMethod = null;
 		String sourceObjectAddress = null;
 		String sourceObjectClass = null;
-		JSONObject contextInfo = null;
-		JSONObject restInfo = null;
+		JSONObject ctxInfo = null;
 		JSONArray methodArgTypesJSON;
 		JSONArray methodArgValuesJSON;
 		JSONArray methodArgAddressesJSON;
@@ -62,8 +61,7 @@ public class SourceEventHandler extends JavaEventHandler {
 			sourceObjectClass = getParameterValue("sourceObjectClass");
 			sourceParam = getParameterValue("sourceParam");
 			sourceId = getParameterValue("sourceId");
-			contextInfo = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
-			restInfo = (JSONObject) new JSONParser().parse(getParameterValue("restInfo"));// e.g.
+			ctxInfo = (JSONObject) new JSONParser().parse(getParameterValue("ctxInfo"));
 			// v23 = v8.readLine()
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
 
@@ -97,8 +95,8 @@ public class SourceEventHandler extends JavaEventHandler {
 		// calleeObjectContainer, false);
 
 		IName restSourceName = null;
-		if (restInfo != null && restInfo.containsKey("url-query")) {
-			String urlQuery = (String) restInfo.get("url-query");
+		if (ctxInfo != null && ctxInfo.containsKey("url-query")) {
+			String urlQuery = (String) ctxInfo.get("url-query");
 			String uniqueId = "", owner = "";
 			String[] parts = urlQuery.split("&");
 			for (String s : parts) {
@@ -136,11 +134,11 @@ public class SourceEventHandler extends JavaEventHandler {
 		// IContainer sourceContainer =
 		// _informationFlowModel.getContainer(sourceNamingIdentifier);
 		// create basic naming identifier and source container
-		if (restInfo != null) {
-			Set<String> sSet = restInfo.entrySet();
+		if (ctxInfo != null) {
+			Set<String> sSet = ctxInfo.entrySet();
 			final IContainer cont = sourceContainer;
 			BiConsumer<String, String> biConsumer = (key, value) -> ((SinkSourceContainer) cont).addCtxInfo(key, value);
-			restInfo.forEach(biConsumer);
+			ctxInfo.forEach(biConsumer);
 		}
 
 		// if caller object class is a system class, get its container to add
@@ -168,9 +166,9 @@ public class SourceEventHandler extends JavaEventHandler {
 		_informationFlowModel.addName(sourceVarParentObject, sourceContainer);
 
 		// add an alias relation
-		IName sourceVarObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, sourceObjectAddress,
-				parentMethod, sourceParam, sourceId);
-		_informationFlowModel.addName(sourceVarObject, sourceContainer);
+//		IName sourceVarObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, sourceObjectAddress,
+//				parentMethod, sourceParam, sourceId);
+//		_informationFlowModel.addName(sourceVarObject, sourceContainer);
 
 		// JavaNameFactory.createLocalVarName(pid, threadId, parentClass,
 		// parentObjectAddress, parentMethod, var);

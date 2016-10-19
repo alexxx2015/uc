@@ -187,7 +187,7 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 	}
 
 	/**
-	 * Replaces all occurences of an uninitialized object identifier in names
+	 * Replaces all occurrences of an uninitialized object identifier in names
 	 * (and containers) for an object whose constructor was called but has not
 	 * returned yet. This method is called in every event handler and ensures
 	 * that the model objects and names containing the object reference added by
