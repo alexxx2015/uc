@@ -153,7 +153,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		// create source data and map data to container
 		IData sourceData = new SourceData(sourceId, System.currentTimeMillis());
 		_informationFlowModel.addData(sourceData, sourceContainer);
-
+		
 		if (sourceParam.toLowerCase().equals("ret") && !"".equals(chopLabel.getLeftSide())) {
 			sourceParam = chopLabel.getLeftSide();
 		} else if ((Integer.valueOf(sourceParam) > 0) && (chopLabel.getArgs() != null)
