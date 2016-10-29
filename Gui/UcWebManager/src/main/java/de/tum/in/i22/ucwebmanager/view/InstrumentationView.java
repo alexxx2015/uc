@@ -39,7 +39,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.UcConfig;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import edu.tum.uc.jvm.Instrumentor;
-public class InstrumentationView extends VerticalLayout implements View{
+public class InstrumentationView extends VerticalLayout implements View {
 	App app;
 	File file;
 	Window subWindow;
@@ -87,7 +87,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 				}
 				else {
 					fillCmbListApp();
-					UI.getCurrent().addWindow(subWindow);
+					if (!subWindow.isAttached())
+						UI.getCurrent().addWindow(subWindow);
 				}
 			}
 		}
@@ -372,6 +373,7 @@ public class InstrumentationView extends VerticalLayout implements View{
 		parent.setMargin(true);
 		addComponent(parent);
 		subWindow = new Window("No App selected, please choose an app!");
+		subWindow.setModal(true);
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
         subWindow.setContent(subContent);

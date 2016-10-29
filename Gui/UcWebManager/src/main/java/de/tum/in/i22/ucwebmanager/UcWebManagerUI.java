@@ -2,15 +2,19 @@ package de.tum.in.i22.ucwebmanager;
 
 import java.util.Locale;
 
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.dashboard.MainScreen;
+import de.tum.in.i22.ucwebmanager.event.DashboardEvent.CloseOpenWindowsEvent;
+import de.tum.in.i22.ucwebmanager.event.DashboardEventBus;
 
 @Theme("dashboard")
 //@Theme("mytheme")
@@ -27,14 +31,13 @@ public final class UcWebManagerUI extends UI {
 	 * actually accessed.
 	 */
 	// private final DataProvider dataProvider = new DummyDataProvider();
-	// private final DashboardEventBus dashboardEventbus = new
-	// DashboardEventBus();
+	//private final DashboardEventBus dashboardEventbus = new DashboardEventBus();
 
 	@Override
 	protected void init(final VaadinRequest request) {
 		setLocale(Locale.GERMAN);
 
-		// DashboardEventBus.register(this);
+		//DashboardEventBus.register(this);
 		Responsive.makeResponsive(this);
 		addStyleName(ValoTheme.UI_WITH_MENU);
 
@@ -90,12 +93,12 @@ public final class UcWebManagerUI extends UI {
 	// Page.getCurrent().reload();
 	// }
 	//
-	// @Subscribe
-	// public void closeOpenWindows(final CloseOpenWindowsEvent event) {
-	// for (Window window : getWindows()) {
-	// window.close();
-	// }
-	// }
+	//	 @Subscribe
+	//	 public void closeOpenWindows(final CloseOpenWindowsEvent event) {
+	//		 for (Window window : getWindows()) {
+	//			 window.close();
+	//		 }
+	//	 }
 
 	/**
 	 * @return An instance for accessing the (dummy) services layer.
@@ -104,7 +107,7 @@ public final class UcWebManagerUI extends UI {
 	// return ((UcWebManagerServlet) getCurrent()).dataProvider;
 	// }
 	//
-	// public static DashboardEventBus getDashboardEventbus() {
-	// return ((UcWebManagerServlet) getCurrent()).dashboardEventbus;
-	// }
+//	 public static DashboardEventBus getDashboardEventbus() {
+//		 return ((UcWebManagerUI) getCurrent()).dashboardEventbus;
+//	 }
 }

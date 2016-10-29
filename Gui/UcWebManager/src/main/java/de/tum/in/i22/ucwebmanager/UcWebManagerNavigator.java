@@ -13,6 +13,7 @@ import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.BrowserResizeEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.CloseOpenWindowsEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.PostViewChangeEvent;
+import de.tum.in.i22.ucwebmanager.view.ViewWithWindows;
 import de.tum.in.i22.ucwebmanager.event.DashboardEventBus;
 
 @SuppressWarnings("serial")
@@ -52,6 +53,17 @@ public class UcWebManagerNavigator extends Navigator {
             public boolean beforeViewChange(final ViewChangeEvent event) {
                 // Since there's no conditions in switching between the views
                 // we can always return true.
+            	
+//            	if (event!=null && ViewWithWindows.class.isInstance(event.getOldView())) {
+//            		ViewWithWindows oldView = (ViewWithWindows) event.getOldView();
+//            		if (oldView.hasAttachedWindows()) {
+//            			oldView.closeWindows();
+//            			
+//            		}
+//            	}
+                
+
+            	
                 return true;
             }
 

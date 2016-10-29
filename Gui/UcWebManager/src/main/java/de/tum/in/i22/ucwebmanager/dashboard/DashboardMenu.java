@@ -50,7 +50,7 @@ public final class DashboardMenu extends CustomComponent {
 //        setHeight("100%");
         // There's only one DashboardMenu per UI so this doesn't need to be
         // unregistered from the UI-scoped DashboardEventBus.
-//        DashboardEventBus.register(this);
+        DashboardEventBus.register(this);
 
         setCompositionRoot(buildContent());
     }
@@ -272,12 +272,12 @@ public final class DashboardMenu extends CustomComponent {
 
         }
 
-        @Subscribe
-        public void postViewChange(final PostViewChangeEvent event) {
-            removeStyleName(STYLE_SELECTED);
+//        @Subscribe
+//        public void postViewChange(final PostViewChangeEvent event) {
+//            removeStyleName(STYLE_SELECTED);
 //            if (event.getView() == view) {
-                addStyleName(STYLE_SELECTED);
+//                addStyleName(STYLE_SELECTED);
 //            }
-        }
+//        }
     }
 }

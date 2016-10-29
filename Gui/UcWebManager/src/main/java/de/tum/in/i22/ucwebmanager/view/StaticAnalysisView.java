@@ -476,6 +476,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		subWindow = new Window("No App selected, please choose an app!");
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
+        subWindow.setModal(true);
         subWindow.setContent(subContent);
         cmbListApp = new ComboBox("List of avaialbe Apps");
         Button btnSubWindowOK = new Button("OK");
@@ -902,7 +903,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		else {
 			fillCmbListApp();
-			UI.getCurrent().addWindow(subWindow);
+			if (!subWindow.isAttached())
+				UI.getCurrent().addWindow(subWindow);
 		}
 	}
 
@@ -1116,5 +1118,5 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		};
 		return receiver;
 	}
-
+	
 }
