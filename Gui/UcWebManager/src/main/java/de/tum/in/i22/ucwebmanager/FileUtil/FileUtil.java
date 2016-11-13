@@ -1,7 +1,11 @@
 package de.tum.in.i22.ucwebmanager.FileUtil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.vaadin.server.VaadinService;
 
@@ -80,5 +84,45 @@ public class FileUtil {
 		return s;
 	}
 	
+	public static List<File> getFiles(List<String> directories, String extension) {
+		List<File> list = new ArrayList<File>();
+		
+		for (String strDir : directories) {
+			File dir = new File(strDir);
+			File[] files = dir.listFiles(pathname -> pathname.isFile() && 
+										 ("".equals(extension) || pathname.getName().endsWith(extension) ));
+			
+			for (File f:files)
+				list.add(f);
+		}
+		return list;
+	}
+	
+	//Return all the absolute paths of the subdirectories of the path indicated
+	public static List<String> getSubDirectories(String path) {
+		List<String> list = new ArrayList<String>();
+		
+		FileFilter onlyDirectories = new FileFilter() {
+
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory() && !pathname.getName().matches("__MACOSX");
+			}
+			
+		};
+		
+		//Add the current directory
+		list.add(path);
+		
+		//Add all the subdirectories
+		File currentDirectory = new File(path);
+		File[] subDirectories = currentDirectory.listFiles(onlyDirectories);
+		for (File f : subDirectories) {
+			Collection<String> subCollection = getSubDirectories(f.toString());
+			list.addAll(subCollection);
+		}
+		
+		return list;
+	}
 	
 }

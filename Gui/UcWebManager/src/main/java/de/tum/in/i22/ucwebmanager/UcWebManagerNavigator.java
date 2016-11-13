@@ -13,7 +13,6 @@ import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.BrowserResizeEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.CloseOpenWindowsEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.PostViewChangeEvent;
-import de.tum.in.i22.ucwebmanager.view.ViewWithWindows;
 import de.tum.in.i22.ucwebmanager.event.DashboardEventBus;
 
 @SuppressWarnings("serial")

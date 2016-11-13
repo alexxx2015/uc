@@ -73,8 +73,6 @@ public class DocBuilder {
 		analysisOutput.mkdirs();
 		String pathConfigOfApp = FileUtil.getPathConfig(app.getHashCode());
 		File directory = new File(pathConfigOfApp);
-		String strTableData;
-		List<String> listtabledata;
 		String configName = "";
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -103,27 +101,27 @@ public class DocBuilder {
 			attrvalue.setValue(data.getMode());
 			mode.setAttributeNode(attrvalue);
 
-			listtabledata = data.getClasspath();
-			strTableData = "";
+			List<String> listtabledata = data.getClasspath();
+			String strClassPath = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				if (i != 0)
-					strTableData = strTableData
+					strClassPath = strClassPath
 							+ Configuration.LOCAL_FILE_SEPARATOR
 							+ listtabledata.get(i);
 				else
-					strTableData = strTableData + listtabledata.get(i);
+					strClassPath = strClassPath + listtabledata.get(i);
 			}
 			// classpath
-			String strClasspath = strTableData;
+//			String strClasspath = strTableData;
 //			String applicationname =   "./:" + strClasspath;
-			String applicationname = strClasspath;
+//			String applicationname = strClasspath;
 			Element classpath = doc.createElement(DocBuilder.TAG_CLASSPATH);
 
 			analysis.appendChild(classpath);
 
 			Attr attrvaluepath = doc.createAttribute(DocBuilder.ATTR_VALUE);
 
-			attrvaluepath.setValue(applicationname);
+			attrvaluepath.setValue(strClassPath);
 			classpath.setAttributeNode(attrvaluepath);
 			// temp
 			// thirdpartylib elements
@@ -134,15 +132,14 @@ public class DocBuilder {
 
 			Attr attrvaluetpl = doc.createAttribute(DocBuilder.ATTR_VALUE);
 			listtabledata = data.getThirdPartyLibs();
-			strTableData = "";
+			String strThirdPartyLibrary = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				if (i != 0)
-					strTableData = strTableData + "::" + listtabledata.get(i);
+					strThirdPartyLibrary = strThirdPartyLibrary + "::" + listtabledata.get(i);
 				else
-					strTableData = strTableData + listtabledata.get(i);
+					strThirdPartyLibrary = strThirdPartyLibrary + listtabledata.get(i);
 			}
-			String tblvalue = "";
-			attrvaluetpl.setValue(tblvalue);
+			attrvaluetpl.setValue(strThirdPartyLibrary);
 			thirdPartyLibs.setAttributeNode(attrvaluetpl);
 
 			// stubs elements
@@ -173,7 +170,7 @@ public class DocBuilder {
 			pointsto.setAttributeNode(attrfallback);
 			// read data from points to include and exclude
 			listtabledata = data.getPointsto_includeclasses();
-			strTableData = "";
+			strClassPath = "";
 
 			for (int i = 0; i < listtabledata.size(); i++) {
 				Element includeclass = doc
@@ -186,7 +183,7 @@ public class DocBuilder {
 			}
 
 			listtabledata = data.getPointsto_excludeclasses();
-			strTableData = "";
+			strClassPath = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				Element excludeclass = doc
 						.createElement(DocBuilder.TAG_EXCLUDECLASSES);

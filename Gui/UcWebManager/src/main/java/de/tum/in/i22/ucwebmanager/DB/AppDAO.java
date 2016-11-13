@@ -1,6 +1,7 @@
 package de.tum.in.i22.ucwebmanager.DB;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -144,7 +145,25 @@ public class AppDAO {
 					 + app.getName()+"', '"
 					 + app.getHashCode()+"' ,'"
 					 + app.getStatus()+"')";
-			statement.executeUpdate(s);
+			
+			conn.setAutoCommit(false); // Starts transaction.
+			PreparedStatement preparedStatement = conn.prepareStatement(s);
+
+			preparedStatement.executeUpdate();
+			statement = conn.createStatement();
+			ResultSet generatedKeys = statement.executeQuery("SELECT last_insert_rowid()");
+			int appID=-1;
+			if (generatedKeys.next()) {
+			    appID = generatedKeys.getInt(1);
+			}
+			else {
+				throw new SQLException("Row not inserted!");
+			}
+			app.setId(appID);
+			conn.commit(); // Commits transaction.
+			preparedStatement.close();
+			
+			//System.out.println("App ID: " + appID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

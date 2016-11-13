@@ -1,10 +1,14 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +29,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.common.io.Files;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.sqlcontainer.query.QueryDelegate;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -36,6 +42,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -87,20 +94,31 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	Object selecteditemidsns;
 	OutputStream output = null;
 
-	Table gridClassPath, gridThirdPartyLib, tblpointstoinclude,
-			tblpointstoexclude, tblsourcensinks;
+	Table  gridThirdPartyLib, tblpointstoinclude,
+		  tblpointstoexclude, tblsourcensinks, tblClassPath;
 
 	CheckBox chkMultithreaded, chkcomputechops, chkObjectsensitivenes,
 			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
 			txtLogFile, txtFldEntryPoint,txtStatistics, txtFldSnSFile;
-	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
+	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy, cmbEntryPoint;
 	Upload uploadSDGFile, uploadCGFile;
 	OptionGroup optSrcAndSinks;
-	Button btnsave, btnrun, btnselectsnsFile;
+	Button btnsave, btnrun, btnselectsnsFile, btnTest;
 
-	StaticAnalyser analyser;
+	private static final String CLASSPATH_PROPERTY_ID = "ClassPath";
+	private static final String THIRD_PARTY_LIBRARY_PROPERTY_ID = "ThirdPartyLibrary";
+	
+	private static final String DEFAULT_SDG_FILE = "sdg.file";
+	private static final String DEFAULT_CDG_FILE = "cdg.file";
+	private static final String DEFAULT_REPORT_FILE = "report.xml";
+	private static final String DEFAULT_STATISTICS_FILE = "statistics.file";
+	private static final String DEFAULT_LOG_FILE = "log.file";
+	
+	private static final String CURRENT_FOLDER = "./";
+	
+	List<String> subDirectoriesOfCode;
 
 	public StaticAnalysisView() {
 		//this.addStyleName("myborder");
@@ -166,13 +184,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		});
 		
-		cmbPruningPolicy = new ComboBox("Pruning Policy");
-		cmbPruningPolicy.setWidth("100%");
-		cmbPruningPolicy.setNullSelectionAllowed(false);
-		cmbPruningPolicy.addItem("app");
-		cmbPruningPolicy.addItem("off");
-		cmbPruningPolicy.setValue("off");
-
 		cmbStub = new ComboBox("Stubs");
 		cmbStub.setWidth("100%");
 		cmbStub.setNullSelectionAllowed(false);
@@ -180,28 +191,34 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		cmbStub.addItem("JRE_15");
 		cmbStub.addItem("NO_STUBS");
 		cmbStub.setValue("NO_STUBS");
+		
+		cmbPruningPolicy = new ComboBox("Pruning Policy");
+		cmbPruningPolicy.setWidth("100%");
+		cmbPruningPolicy.setNullSelectionAllowed(false);
+		cmbPruningPolicy.addItem("app");
+		cmbPruningPolicy.addItem("off");
+		cmbPruningPolicy.setValue("off");
 
 		txtFldEntryPoint = new TextField("Entry Point");
 		txtFldEntryPoint.setWidth("100%");
 		
-		txtStatistics = new TextField("Statistics");
-		txtStatistics.setWidth("100%");
 		
-		// Generate classpath table
-		gridClassPath = new Table("ClassPath");
-		gridClassPath.addContainerProperty("Classpath", TextField.class, null);
-		gridClassPath.setPageLength(5);
-		gridClassPath.setWidth("100%");
-		gridClassPath.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					gridClassPath.select(event.getItemId());
-				}
-			}
-
-		});
-
-		gridClassPath.addActionHandler(new Action.Handler() {
+		cmbEntryPoint = new ComboBox("New Entry Point");
+		cmbEntryPoint.setWidth("70%");
+		cmbEntryPoint.setNullSelectionAllowed(false);
+		
+		btnTest = new Button("Test");
+		btnTest.setWidth("30%");
+		btnTest.addClickListener(click -> testFunction());
+		
+		//Generate class table
+		tblClassPath = new Table("NewClassPath");
+		tblClassPath.addContainerProperty(CLASSPATH_PROPERTY_ID, ComboBox.class, "");
+		Property prop = tblClassPath.getPropertyDataSource();
+		if (prop!=null) System.out.println(prop.getValue().toString());
+		tblClassPath.setPageLength(3);
+		tblClassPath.setWidth("100%");
+		tblClassPath.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -209,37 +226,66 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					Object newItemId = gridClassPath.addItem();
-					TextField t = new TextField();
-					t.setWidth("100%");
-					gridClassPath.getItem(newItemId)
-							.getItemProperty("Classpath").setValue(t);
+					ComboBox cmbSubDirectories = addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID,
+												 subDirectoriesOfCode,"");
+					cmbSubDirectories.focus();
 				} else if (action.getCaption() == "Delete") {
-					gridClassPath.removeItem(target);
+					tblClassPath.removeItem(target);
 				}
 			}
 		});
+		
+		// Generate classpath table
+//		gridClassPath = new Table("ClassPath");
+//		
+//		gridClassPath.addContainerProperty(CLASSPATH_PROPERTY_ID, TextField.class, null);
+//		gridClassPath.getPropertyDataSource();
+//		gridClassPath.setPageLength(5);
+//		gridClassPath.setWidth("100%");
+//		gridClassPath.addItemClickListener(new ItemClickListener() {
+//			public void itemClick(ItemClickEvent event) {
+//				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+//					gridClassPath.select(event.getItemId());
+//				}
+//			}
+//
+//		});
+
+//		gridClassPath.addActionHandler(new Action.Handler() {
+//			public Action[] getActions(Object target, Object sender) {
+//				return new Action[] { new Action("New"), new Action("Delete") };
+//			}
+//
+//			@Override
+//			public void handleAction(Action action, Object sender, Object target) {
+//				if (action.getCaption() == "New") {
+//					addTextFieldToTable(gridClassPath, CLASSPATH_PROPERTY_ID,"").focus();
+//				} else if (action.getCaption() == "Delete") {
+//					gridClassPath.removeItem(target);
+//				}
+//			}
+//		});
 
 		// Generate third party library table
 		gridThirdPartyLib = new Table("Third Party Library");
 		gridThirdPartyLib.setWidth("100%");
-		gridThirdPartyLib.addContainerProperty("ThirdPartyLibrary",
+		gridThirdPartyLib.addContainerProperty(THIRD_PARTY_LIBRARY_PROPERTY_ID,
 				TextField.class, null);
 		gridThirdPartyLib.setPageLength(5);
-		gridThirdPartyLib.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					Object newItemId = gridThirdPartyLib.getValue();
-					newItemId = event.getItemId();
-					TextField txt = (TextField) gridThirdPartyLib
-							.getItem(newItemId)
-							.getItemProperty("ThirdPartyLibrary").getValue();
-
-					txt.setEnabled(true);
-				}
-			}
-
-		});
+//		gridThirdPartyLib.addItemClickListener(new ItemClickListener() {
+//			public void itemClick(ItemClickEvent event) {
+//				if (event.isDoubleClick()) {
+//					Object newItemId = gridThirdPartyLib.getValue();
+//					newItemId = event.getItemId();
+//					TextField txt = (TextField) gridThirdPartyLib
+//							.getItem(newItemId)
+//							.getItemProperty("ThirdPartyLibrary").getValue();
+//
+//					txt.setEnabled(true);
+//				}
+//			}
+//
+//		});
 		gridThirdPartyLib.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
@@ -248,11 +294,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					TextField txt = new TextField();
-					txt.setWidth("100%");
-					Object newItemId = gridThirdPartyLib.addItem();
-					gridThirdPartyLib.getItem(newItemId)
-							.getItemProperty("ThirdPartyLibrary").setValue(txt);
+					addTextFieldToTable(gridThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID, "").focus();
 				} else if (action.getCaption() == "Delete") {
 					gridThirdPartyLib.removeItem(target);
 				}
@@ -262,15 +304,23 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		txtSDGFile = new TextField("SDGFile");
 		txtSDGFile.setWidth("100%");
+		txtSDGFile.setValue(DEFAULT_SDG_FILE);
 
 		txtCGFile = new TextField("CGFile");
 		txtCGFile.setWidth("100%");
+		txtCGFile.setValue(DEFAULT_CDG_FILE);
 
 		txtReportFile = new TextField("Report File");
 		txtReportFile.setWidth("100%");
+		txtReportFile.setValue(DEFAULT_REPORT_FILE);
 
+		txtStatistics = new TextField("Statistics");
+		txtStatistics.setWidth("100%");
+		txtStatistics.setValue(DEFAULT_STATISTICS_FILE);
+		
 		txtLogFile = new TextField("Log File");
 		txtLogFile.setWidth("100%");
+		txtLogFile.setValue(DEFAULT_LOG_FILE);
 
 		cmbPointstoPolicy = new ComboBox("Points To Policy");
 		cmbPointstoPolicy.setWidth("100%");
@@ -367,12 +417,18 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		tblsourcensinks.addContainerProperty("Indirect Calls", CheckBox.class,
 				null);
 		tblsourcensinks.setPageLength(5);
-		tblsourcensinks.setColumnWidth("Types", 130);
-		tblsourcensinks.setColumnWidth("Include SubClasses", 130);
-		tblsourcensinks.setColumnWidth("Classes", 190);
-		tblsourcensinks.setColumnWidth("Selector", 190);
-		tblsourcensinks.setColumnWidth("Param", 190);
-		tblsourcensinks.setColumnWidth("Indirect Calls", 130);
+//		tblsourcensinks.setColumnWidth("Types", 130);
+//		tblsourcensinks.setColumnWidth("Include SubClasses", 130);
+//		tblsourcensinks.setColumnWidth("Classes", 190);
+//		tblsourcensinks.setColumnWidth("Selector", 190);
+//		tblsourcensinks.setColumnWidth("Param", 190);
+//		tblsourcensinks.setColumnWidth("Indirect Calls", 130);
+		tblsourcensinks.setColumnWidth("Types", -1);
+		tblsourcensinks.setColumnWidth("Include SubClasses", -1);
+		tblsourcensinks.setColumnWidth("Classes", -1);
+		tblsourcensinks.setColumnWidth("Selector", -1);
+		tblsourcensinks.setColumnWidth("Param", -1);
+		tblsourcensinks.setColumnWidth("Indirect Calls", -1);
 		// context menu for table sourcensinks
 		tblsourcensinks.addItemClickListener(new ItemClickListener() {
 			public void itemClick(ItemClickEvent event) {
@@ -438,6 +494,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		titleLabel.addStyleName(ValoTheme.LABEL_H1);
 		titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
 		parent.addComponent(titleLabel);
+		
+		HorizontalLayout tempHL = new HorizontalLayout();
+		tempHL.addComponent(cmbEntryPoint);
+		tempHL.addComponent(btnTest);
 
 		FormLayout fl = new FormLayout();
 		fl.addComponent(txtAnalysisName);
@@ -446,7 +506,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(cmbStub);
 		fl.addComponent(cmbPruningPolicy);
 		fl.addComponent(txtFldEntryPoint);
-		fl.addComponent(gridClassPath);
+		fl.addComponent(tempHL);
+		fl.addComponent(tblClassPath);
 		fl.addComponent(gridThirdPartyLib);
 		fl.addComponent(txtSDGFile);
 		fl.addComponent(uploadSDGFile);
@@ -478,7 +539,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
         subContent.setMargin(true);
         subWindow.setModal(true);
         subWindow.setContent(subContent);
-        cmbListApp = new ComboBox("List of avaialbe Apps");
+        cmbListApp = new ComboBox("List of available Apps");
         Button btnSubWindowOK = new Button("OK");
         btnSubWindowOK.addClickListener(new Button.ClickListener() {
 			
@@ -488,6 +549,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
+					subDirectoriesOfCode = initializeSubDirectoriesOfCode();
 					fillStaticAnalysisTextboxes(FileUtil.getPathConfig(app.getHashCode()));
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
@@ -708,8 +770,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		String xmlFile = "";
 		AnalysisData data = new AnalysisData();
 		data.setAnalysisName(txtAnalysisName.getValue());
-		data.setClasspath(readDataFromTable(gridClassPath));
-		data.setThirdPartyLibs(readDataFromTable(gridThirdPartyLib));
+		data.setClasspath(readDataFromTable(tblClassPath, CLASSPATH_PROPERTY_ID));
+		data.setThirdPartyLibs(readDataFromTable(gridThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID));
 		data.setStubs(cmbStub.getValue().toString());
 		data.setEntrypoint(txtFldEntryPoint.getValue());
 		data.setMode(cmbmode.getValue().toString());
@@ -845,8 +907,22 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		return snSList;
 	}
-	private List<String> readDataFromTable(Table tablename) {
+	
+	private List<String> readDataFromTable(Table table, String propertyID) {
+		List<String> strRows = new ArrayList<String>();
+		
+		for (Object itemID : table.getContainerDataSource().getItemIds()) {
+			AbstractField field = (AbstractField) table.getItem(itemID).getItemProperty(propertyID).getValue();
 
+			if (!"".equals(field.getValue().toString()))
+				strRows.add(field.getValue().toString());
+		}
+		
+		return strRows;
+	}
+	
+	private List<String> readDataFromTable(Table tablename) {
+		
 		List<String> strpaths = new ArrayList<>();
 		int newItemId = tablename.size();
 		try {
@@ -854,12 +930,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				Item row = tablename.getItem(i);
 				TextField temp = new TextField();
 				if (tablename.getCaption().toLowerCase().equals("classpath")) {
-					temp = (TextField) row.getItemProperty("Classpath")
+					temp = (TextField) row.getItemProperty(CLASSPATH_PROPERTY_ID)
 							.getValue();
 
 				} else if (tablename.getCaption().toLowerCase()
 						.equals("third party library"))
-					temp = (TextField) row.getItemProperty("ThirdPartyLibrary")
+					temp = (TextField) row.getItemProperty(THIRD_PARTY_LIBRARY_PROPERTY_ID)
 							.getValue();
 				else if (tablename.getCaption().toLowerCase()
 						.equals("points to include"))
@@ -887,14 +963,16 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			for (String msg : msgs) {
 				appId = 0;
 				if (msg != null){
-					appId = Integer.parseInt(msg);
-					System.out.println("enter view changeevent " + appId);
-				
-				try {
-					app = AppDAO.getAppById(appId);
-				} catch (ClassNotFoundException | SQLException e) {
-					e.printStackTrace();
-				}
+						appId = Integer.parseInt(msg);
+						System.out.println("enter view changeevent " + appId);
+					
+					try {
+						app = AppDAO.getAppById(appId);
+						subDirectoriesOfCode = initializeSubDirectoriesOfCode();
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			
@@ -908,6 +986,31 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 	}
 
+	private static ComboBox addComboBoxToTable(Table table, String propertyName, 
+											   Collection<String> elements, String selectedValue) {
+		Object newItemId = table.addItem();
+		ComboBox c = new ComboBox();
+		c.setWidth("100%");
+		if (elements!= null)
+			for (String s:elements)
+				c.addItem(s);
+		if (!"".equals(selectedValue))
+			c.setValue(selectedValue);
+		//c.setNullSelectionAllowed(false);
+		table.getItem(newItemId).getItemProperty(propertyName).setValue(c);
+		return c;
+	}
+	
+	private static TextField addTextFieldToTable(Table table, String propertyName, String newText) {
+		Object newItemId = table.addItem();
+		TextField t = new TextField();
+		t.setWidth("100%");
+		t.setValue(newText);
+		table.getItem(newItemId).getItemProperty(propertyName).setValue(t);
+		return t;
+	}
+	
+	//TODO Review completely this method
 	private void fillStaticAnalysisTextboxes(String path) {
 		txtAppName.setValue(app.getName());
 		txtAppName.setReadOnly(true);
@@ -921,12 +1024,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			List<File> listConfigfiles1 = new ArrayList<>();
 			if (path != null) {
 				for (File name : fileslist) {
-//					if (name.isDirectory()) {
-//						String temp = name.getName();
-//						if (!(temp.equals("Source")))
 							listConfigfiles1.add(name);
-//					}
 				}
+				if (listConfigfiles1.isEmpty())
+					return;
+				
 				//latest file first
 				Collections.sort(listConfigfiles1, new Comparator<File>() {
 					public int compare(File f1, File f2) {
@@ -960,31 +1062,40 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 					NodeList ClasspathlistList = FileElement
 							.getElementsByTagName("classpath");
-					gridClassPath.removeAllItems();
 					Element ClasspathElement = (Element) ClasspathlistList
 							.item(0);
-					TextField txt = new TextField("textfield");
-					txt.setValue(ClasspathElement.getAttribute("value"));
-					txt.setWidth(24.6f, ComboBox.UNITS_EM);
-					Object newItemId = gridClassPath.addItem();
-					Item row = gridClassPath.getItem(newItemId);
-					row.getItemProperty("Classpath").setValue(txt);
-					gridClassPath.addItem(new Object[] { txt }, newItemId);
+					tblClassPath.removeAllItems();
+//					TextField txt = new TextField("textfield");
+					if (!"".equals(ClasspathElement.getAttribute("value"))) {
+						ComboBox c = addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID, 
+								subDirectoriesOfCode, ClasspathElement.getAttribute("value"));
+					}
+
+//					txt.setValue(strClassPathElement);
+//					txt.setWidth(24.6f, ComboBox.UNITS_EM);
+//					Object newItemId = gridClassPath.addItem();
+//					Item row = gridClassPath.getItem(newItemId);
+//					row.getItemProperty(CLASSPATH_PROPERTY_ID).setValue(txt);
+//					gridClassPath.addItem(new Object[] { txt }, newItemId);
 
 					NodeList ThirdPartyLibList = FileElement
 							.getElementsByTagName("thirdPartyLibs");
 					Element ThirdPartyLibElement = (Element) ThirdPartyLibList
 							.item(0);
-					TextField txttpl = new TextField("textfield");
-					txttpl.setValue(ThirdPartyLibElement.getAttribute("value"));
-					txttpl.setWidth(24.6f, ComboBox.UNITS_EM);
 					gridThirdPartyLib.removeAllItems();
-					Object newItemIdtpl = gridThirdPartyLib.addItem();
-					Item rowtpl = gridThirdPartyLib.getItem(newItemIdtpl);
-					rowtpl.getItemProperty("ThirdPartyLibrary")
-							.setValue(txttpl);
-					gridThirdPartyLib.addItem(new Object[] { txttpl },
-							newItemIdtpl);
+					if (!"".equals(ThirdPartyLibElement.getAttribute("value")))
+						addTextFieldToTable(gridThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID,
+											ThirdPartyLibElement.getAttribute("value"));
+//					TextField txttpl = new TextField("textfield");
+//					txttpl.setValue(ThirdPartyLibElement.getAttribute("value"));
+//					txttpl.setWidth(24.6f, ComboBox.UNITS_EM);
+//					gridThirdPartyLib.removeAllItems();
+//					Object newItemIdtpl = gridThirdPartyLib.addItem();
+//					Item rowtpl = gridThirdPartyLib.getItem(newItemIdtpl);
+//					rowtpl.getItemProperty(THIRD_PARTY_LIBRARY_PROPERTY_ID)
+//							.setValue(txttpl);
+//					gridThirdPartyLib.addItem(new Object[] { txttpl },
+//							newItemIdtpl);
 
 					NodeList StubList = FileElement
 							.getElementsByTagName("stubs");
@@ -1117,6 +1228,58 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		};
 		return receiver;
+	}
+	
+	private List<String> initializeSubDirectoriesOfCode () {
+		String initialPath = FileUtil.getPathCode(app.getHashCode());
+		List <String> subDirectories= new ArrayList<String>();
+		List <String> absPathSubDir = FileUtil.getSubDirectories(initialPath);
+		//The first element in the getSubDirectories (corresponding to the folder "code")
+		//always exists
+		subDirectories.add(CURRENT_FOLDER);
+		for (int i=1; i<absPathSubDir.size(); i++)
+			subDirectories.add(absPathSubDir.get(i).replaceAll(initialPath+File.separator,CURRENT_FOLDER));
+		
+		return subDirectories;
+	}
+	
+	private void testFunction() {
+		List<File> classFiles;
+		try {
+			
+			String pathCode = FileUtil.getPathCode(app.getHashCode());
+			classFiles = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), txtFldEntryPoint.getValue() );
+
+			for (File f: classFiles) {
+				System.out.println(f.getParent());
+				System.out.println(f.getPath());
+			}
+				
+			
+			//For this example I'll only use the first file
+			
+			try {
+
+			    // Create a new class loader with the directory
+			    //ClassLoader cl = new URLClassLoader(new URL[] {classFiles.get(0).toURI().toURL()});
+
+			    // Load in the class; MyClass.class should be located in
+			    // the directory file:/c:/myclasses/com/mycompany
+			    //Class cls = cl.loadClass("com.mycompany.MyClass");
+				
+				ClassLoader cl = new URLClassLoader(new URL[] {classFiles.get(0).getParentFile().toURI().toURL()});
+				Class cls = cl.loadClass("JZip");
+				
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 }

@@ -24,6 +24,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -86,7 +87,12 @@ public class MainView extends VerticalLayout implements View {
 			@Override
 			public void uploadSucceeded(SucceededEvent event) {
 				try {
-					createFolderAndSaveApp(appName);
+					if (!isAppAlreadyExisting(hashCodeOfApp))
+						createFolderAndSaveApp(appName);
+					else {
+						showNotification("App already uploaded!");
+						fileTmp.delete();
+					}
 				} catch (IOException | SQLException e) {
 					e.printStackTrace();
 				}
@@ -127,6 +133,7 @@ public class MainView extends VerticalLayout implements View {
 					App app = AppDAO.getAppById(appId);
 					Analyser analyser = new Analyser(app, configFile);
 					analyser.start();
+					updateRow(app);
 				} catch (ClassNotFoundException | SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -136,6 +143,22 @@ public class MainView extends VerticalLayout implements View {
 			
 		}
 
+	}
+	
+	private boolean isAppAlreadyExisting(String appHashcode) {
+		String appFolderPath = FileUtil.Dir.APPS.getDir()+ "/" + String.valueOf(appHashcode);
+		File appDir = new File(appFolderPath);
+		return appDir.exists();
+	}
+	
+	private void showNotification(String message) {
+		Notification notification = new Notification("Message box");
+		notification.setDescription(message);
+        notification.setHtmlContentAllowed(true);
+        notification.setStyleName("tray dark small closable login-help");
+        notification.setPosition(Position.BOTTOM_RIGHT);
+        notification.setDelayMsec(5000);
+        notification.show(Page.getCurrent());
 	}
 
 	private void createFolderAndSaveApp(String fileName) throws IOException, SQLException {
@@ -161,8 +184,6 @@ public class MainView extends VerticalLayout implements View {
 				app = new App( fileName, hashCodeOfApp, Status.NONE.getStage());
 				//saveToDB(fileName, hashCode, path, Status.NONE.getStage());
 				AppDAO.saveToDB(app);
-				// because the first time when app saved into db we dont have the id which is important for later use
-				app = AppDAO.getAppByHashCode(hashCodeOfApp);
 				updateTable(app);
 				new Notification("Success!",
 						"<br/>File uploaded, Folder created, saved to DB!",
@@ -263,20 +284,28 @@ public class MainView extends VerticalLayout implements View {
 
 
 		for (App a : allApp) {
-			grid.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus(),"Go", "", "Go", "", "Go");		
+			grid.addRow(a.getId(),a.getName(), a.getHashCode(), a.getStatus(),"Go", "", "Go", "", "Go");
 		}
 //		grid.getContainerDataSource()
 	}
-	private void findRow(int id){
-		Iterator g = grid.iterator();
-		while (g.hasNext()) {
-			
+	private Item findRow(int id){
+		for (Object rowID : grid.getContainerDataSource().getItemIds()) {
+			Item item = grid.getContainerDataSource().getItem(rowID);
+			if (id == Integer.parseInt(item.getItemProperty("ID").getValue().toString()))
+				return item;
 		}
+		return null;
 	}
 	
 	private void updateTable(App app) {
 		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(),"Go", "", "Go", "", "Go");
 	}
+	
+	private void updateRow (App app) {
+		Item row = findRow(app.getId());
+		row.getItemProperty("Status").setValue(app.getStatus());
+	}
+	
 	private void updateStartTimeTable(int appId){
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss");
 		Date date = new Date();
