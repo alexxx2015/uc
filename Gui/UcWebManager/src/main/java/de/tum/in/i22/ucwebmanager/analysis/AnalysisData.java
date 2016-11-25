@@ -9,10 +9,10 @@ public class AnalysisData {
 	private List<String> thirdPartyLibs;
 	private String stubs;
 	private String entrypoint;
-	private String pointsto_policy;
-	private String pointsto_fallback;
-	private List<String> pointsto_includeclasses;
-	private List<String> pointsto_excludeclasses;
+	private String pointsToPolicy;
+	private String pointsToFallback;
+	private List<String> pointsToIncludeClasses;
+	private List<String> pointsToExcludeClasses;
 	private String ignoreIndirectFlows;
 	private String multiThreaded;
 	private String sdgFile;
@@ -21,10 +21,10 @@ public class AnalysisData {
 	private String pruningPolicy;
 	private String omitIFC;
 	private String reportFile;
-	private String statistics;
-	private String systemout;
+	private String statisticsFile;
+	private String systemOut;
 	private String computeChops;
-	private String objectsensitivenes;
+	private String objectSensitiveness;
 	private List<SourcesSinks> sourcesSinks;
 	private List<String> sourcesSinksFiles;
 	
@@ -102,50 +102,50 @@ public class AnalysisData {
 
 
 
-	public String getPointsto_policy() {
-		return pointsto_policy;
+	public String getPointsToPolicy() {
+		return pointsToPolicy;
 	}
 
 
 
-	public void setPointsto_policy(String pointsto_policy) {
-		this.pointsto_policy = pointsto_policy;
+	public void setPointsToPolicy(String pointsToPolicy) {
+		this.pointsToPolicy = pointsToPolicy;
 	}
 
 
 
-	public String getPointsto_fallback() {
-		return pointsto_fallback;
+	public String getPointsToFallback() {
+		return pointsToFallback;
 	}
 
 
 
-	public void setPointsto_fallback(String pointsto_fallback) {
-		this.pointsto_fallback = pointsto_fallback;
+	public void setPointsToFallback(String pointsToFallback) {
+		this.pointsToFallback = pointsToFallback;
 	}
 
 
 
-	public List<String> getPointsto_includeclasses() {
-		return pointsto_includeclasses;
+	public List<String> getPointsToIncludeclasses() {
+		return pointsToIncludeClasses;
 	}
 
 
 
-	public void setPointsto_includeclasses(List<String> pointsto_includeclasses) {
-		this.pointsto_includeclasses = pointsto_includeclasses;
+	public void setPointsToIncludeClasses(List<String> pointsToIncludeClasses) {
+		this.pointsToIncludeClasses = pointsToIncludeClasses;
 	}
 
 
 
-	public List<String> getPointsto_excludeclasses() {
-		return pointsto_excludeclasses;
+	public List<String> getPointsToExcludeClasses() {
+		return pointsToExcludeClasses;
 	}
 
 
 
-	public void setPointsto_excludeclasses(List<String> pointsto_excludeclasses) {
-		this.pointsto_excludeclasses = pointsto_excludeclasses;
+	public void setPointsToExcludeClasses(List<String> pointsToExcludeClasses) {
+		this.pointsToExcludeClasses = pointsToExcludeClasses;
 	}
 
 
@@ -246,26 +246,26 @@ public class AnalysisData {
 
 
 
-	public String getStatistics() {
-		return statistics;
+	public String getStatisticsFile() {
+		return statisticsFile;
 	}
 
 
 
-	public void setStatistics(String statistics) {
-		this.statistics = statistics;
+	public void setStatisticsFile(String statistics) {
+		this.statisticsFile = statistics;
 	}
 
 
 
-	public String getSystemout() {
-		return systemout;
+	public String getSystemOut() {
+		return systemOut;
 	}
 
 
 
-	public void setSystemout(String systemout) {
-		this.systemout = systemout;
+	public void setSystemOut(String systemOut) {
+		this.systemOut = systemOut;
 	}
 
 
@@ -282,14 +282,14 @@ public class AnalysisData {
 
 
 
-	public String getObjectsensitivenes() {
-		return objectsensitivenes;
+	public String getObjectSensitiveness() {
+		return objectSensitiveness;
 	}
 
 
 
-	public void setObjectsensitivenes(String objectsensitivenes) {
-		this.objectsensitivenes = objectsensitivenes;
+	public void setObjectSensitiveness(String objectSensitiveness) {
+		this.objectSensitiveness = objectSensitiveness;
 	}
 
 

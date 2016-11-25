@@ -1,9 +1,13 @@
 package de.tum.in.i22.ucwebmanager.analysis;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +24,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.tum.in.i22.ucwebmanager.Configuration;
 import de.tum.in.i22.ucwebmanager.DB.App;
@@ -105,11 +112,9 @@ public class DocBuilder {
 			String strClassPath = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				if (i != 0)
-					strClassPath = strClassPath
-							+ Configuration.LOCAL_FILE_SEPARATOR
-							+ listtabledata.get(i);
+					strClassPath += Configuration.LOCAL_FILE_SEPARATOR + listtabledata.get(i);
 				else
-					strClassPath = strClassPath + listtabledata.get(i);
+					strClassPath += listtabledata.get(i);
 			}
 			// classpath
 //			String strClasspath = strTableData;
@@ -135,9 +140,9 @@ public class DocBuilder {
 			String strThirdPartyLibrary = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				if (i != 0)
-					strThirdPartyLibrary = strThirdPartyLibrary + "::" + listtabledata.get(i);
+					strThirdPartyLibrary += Configuration.LOCAL_FILE_SEPARATOR + listtabledata.get(i);
 				else
-					strThirdPartyLibrary = strThirdPartyLibrary + listtabledata.get(i);
+					strThirdPartyLibrary += listtabledata.get(i);
 			}
 			attrvaluetpl.setValue(strThirdPartyLibrary);
 			thirdPartyLibs.setAttributeNode(attrvaluetpl);
@@ -163,13 +168,13 @@ public class DocBuilder {
 			analysis.appendChild(pointsto);
 			Attr attrpolicy = doc.createAttribute(DocBuilder.ATTR_POLICY);
 
-			attrpolicy.setValue(data.getPointsto_policy());
+			attrpolicy.setValue(data.getPointsToPolicy());
 			pointsto.setAttributeNode(attrpolicy);
 			Attr attrfallback = doc.createAttribute(DocBuilder.ATTR_FALLBACK);
-			attrfallback.setValue(data.getPointsto_fallback());
+			attrfallback.setValue(data.getPointsToFallback());
 			pointsto.setAttributeNode(attrfallback);
 			// read data from points to include and exclude
-			listtabledata = data.getPointsto_includeclasses();
+			listtabledata = data.getPointsToIncludeclasses();
 			strClassPath = "";
 
 			for (int i = 0; i < listtabledata.size(); i++) {
@@ -182,7 +187,7 @@ public class DocBuilder {
 				includeclass.setAttributeNode(attriincludeclass);
 			}
 
-			listtabledata = data.getPointsto_excludeclasses();
+			listtabledata = data.getPointsToExcludeClasses();
 			strClassPath = "";
 			for (int i = 0; i < listtabledata.size(); i++) {
 				Element excludeclass = doc
@@ -253,7 +258,7 @@ public class DocBuilder {
 			Element statistics = doc.createElement(DocBuilder.TAG_STATISTICS);
 			analysis.appendChild(statistics);
 			Attr attrStatistics = doc.createAttribute(DocBuilder.ATTR_VALUE);
-			attrStatistics.setValue(data.getStatistics());
+			attrStatistics.setValue(data.getStatisticsFile());
 			statistics.setAttributeNode(attrStatistics);
 			
 			Element computeChops = doc.createElement(DocBuilder.TAG_COMPUTECHOPS);
@@ -267,7 +272,7 @@ public class DocBuilder {
 
 			analysis.appendChild(systemout);
 			Attr attrsystemout = doc.createAttribute(DocBuilder.ATTR_VALUE);
-			attrsystemout.setValue(data.getSystemout());
+			attrsystemout.setValue(data.getSystemOut());
 			systemout.setAttributeNode(attrsystemout);
 
 			Element objectsensitivenes = doc
@@ -275,7 +280,7 @@ public class DocBuilder {
 
 			analysis.appendChild(objectsensitivenes);
 			Attr attrsensitive = doc.createAttribute(DocBuilder.ATTR_VALUE);
-			attrsensitive.setValue(data.getObjectsensitivenes());
+			attrsensitive.setValue(data.getObjectSensitiveness());
 			objectsensitivenes.setAttributeNode(attrsensitive);
 
 			Element sourcesandsinks = doc.createElement(DocBuilder.TAG_SOURCESANDSINKS);
@@ -371,5 +376,207 @@ public class DocBuilder {
 			tfe.printStackTrace();
 		}
 		return configName;
+	}
+	
+public static AnalysisData readConfigFromFile(String configFolderPath, String reportFileName) {
+		
+		if ("".equals(configFolderPath)) return null;
+		
+		AnalysisData data=null;
+		
+		try {
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			File configFile;
+			if (!"".equals(reportFileName))
+				configFile = new File(configFolderPath+File.separator+reportFileName);
+			else {
+				//Open last modified config file
+				File configFolder = new File(configFolderPath);
+				List<File> configFilesList = Arrays.asList(configFolder.listFiles());
+				if (configFilesList.isEmpty())
+					return null;
+				
+				//Latest file first
+				Collections.sort(configFilesList, 
+						(f1,f2) -> new Long(f2.lastModified()).compareTo(f1.lastModified()));
+				
+				configFile = configFilesList.get(0);
+				
+			}
+			
+			Document doc = docBuilder.parse(configFile);
+			doc.getDocumentElement().normalize();
+
+			data = new AnalysisData();
+			
+			//Only one ANALYSIS_TAG per report
+			if (doc.getElementsByTagName(TAG_ANALYSIS).item(0).getNodeType() == Node.ELEMENT_NODE) {
+				Element analysisElement = (Element) doc.getElementsByTagName(TAG_ANALYSIS).item(0);
+				
+				//get the last string separated by "/"
+				String pathAsArrayString[] = analysisElement.getAttribute(ATTR_NAME).split(File.separator);
+				data.setAnalysisName(pathAsArrayString[pathAsArrayString.length - 1]);
+				
+				Element mode = (Element) analysisElement.getElementsByTagName(TAG_MODE).item(0);
+				data.setMode(mode.getAttribute(ATTR_VALUE));
+				
+				//Read classPath tag
+				Element classPath = (Element) analysisElement.getElementsByTagName(TAG_CLASSPATH).item(0);
+				List<String> classPathsList = new ArrayList<String>();
+				if (classPath!=null)
+					for (String s : classPath.getAttribute(ATTR_VALUE).split(Configuration.LOCAL_FILE_SEPARATOR))
+						classPathsList.add(s);
+				data.setClasspath(classPathsList);
+				
+				//Read thirdPartyLibraries tag
+				Element thirdPartyLibraries = (Element) analysisElement.getElementsByTagName(TAG_THIRDPARTYLIBS).item(0);
+				List<String> thirdPartyLibrariesList = new ArrayList<String>();
+				if (thirdPartyLibraries!=null)
+					for (String s : thirdPartyLibraries.getAttribute(ATTR_VALUE).split(Configuration.LOCAL_FILE_SEPARATOR))
+						thirdPartyLibrariesList.add(s);
+				data.setThirdPartyLibs(thirdPartyLibrariesList);
+				
+				//Read stubs
+				Element stubs = (Element) analysisElement.getElementsByTagName(TAG_STUBS).item(0);
+				if (stubs!=null)
+					data.setStubs(stubs.getAttribute(ATTR_VALUE));
+				
+				//Read entry point tag
+				Element entryPoint = (Element) analysisElement.getElementsByTagName(TAG_ENTRYPOINT).item(0);
+				if (entryPoint!=null)
+					data.setEntrypoint(entryPoint.getAttribute(ATTR_VALUE));
+				
+				//Read pruning policy
+				Element pruningPolicy = (Element) analysisElement.getElementsByTagName(TAG_PRUNINGPOLICY).item(0);
+				if (pruningPolicy!=null)
+					data.setPruningPolicy(pruningPolicy.getAttribute(ATTR_VALUE));
+				
+				//Read sdg file tag
+				Element sdgFile = (Element) analysisElement.getElementsByTagName(TAG_SDGFILE).item(0);
+				if (sdgFile!=null)
+					data.setSdgFile(sdgFile.getAttribute(ATTR_VALUE));
+				
+				//Read cg file tag
+				Element cgFile = (Element) analysisElement.getElementsByTagName(TAG_CGFILE).item(0);
+				if (cgFile!=null)
+					data.setCgFile(cgFile.getAttribute(ATTR_VALUE));
+				
+				//Read report file tag
+				Element reportFile = (Element) analysisElement.getElementsByTagName(TAG_REPORTFILE).item(0);
+				if (reportFile!=null)
+					data.setReportFile(reportFile.getAttribute(ATTR_VALUE));
+				
+				//Read statistics file tag
+				Element statisticsFile = (Element) analysisElement.getElementsByTagName(TAG_STATISTICS).item(0);
+				if (statisticsFile!=null)
+					data.setStatisticsFile(statisticsFile.getAttribute(ATTR_VALUE));
+				
+				//Read log file tag
+				Element logFile = (Element) analysisElement.getElementsByTagName(TAG_LOGFILE).item(0);
+				if (logFile!=null)
+					data.setLogFile(logFile.getAttribute(ATTR_VALUE));
+				
+				//Read points to policy and fallback, include and exclude classes
+				Element pointsTo = (Element) analysisElement.getElementsByTagName(TAG_POINTSTO).item(0);
+				List<String> pointsToIncludeList = new ArrayList<String>();
+				List<String> pointsToExcludeList = new ArrayList<String>();
+				if (pointsTo!=null) {
+					data.setPointsToPolicy(pointsTo.getAttribute(ATTR_POLICY));
+					data.setPointsToFallback(pointsTo.getAttribute(ATTR_FALLBACK));
+					
+					//Read include classes as subchilds of points-to
+					NodeList includeClasses = pointsTo.getElementsByTagName(TAG_INCLUDECLASSES);
+					for (int i=0; i<includeClasses.getLength(); i++) {
+						Element includeClass = (Element) includeClasses.item(i);
+						pointsToIncludeList.add(includeClass.getAttribute(ATTR_VALUE));
+					}
+					
+					//Read exclude classes as subchilds of points-to
+					NodeList excludeClasses = pointsTo.getElementsByTagName(TAG_EXCLUDECLASSES);
+					for (int i=0; i<excludeClasses.getLength(); i++) {
+						Element excludeClass = (Element) excludeClasses.item(i);
+						pointsToExcludeList.add(excludeClass.getAttribute(ATTR_VALUE));
+					}
+				}
+				data.setPointsToIncludeClasses(pointsToIncludeList);
+				data.setPointsToExcludeClasses(pointsToExcludeList);
+		
+				//Read sources and sinks
+				Element sourcesAndSinks = (Element) analysisElement.getElementsByTagName(TAG_SOURCESANDSINKS).item(0);
+				List<AnalysisData.SourcesSinks> listDataSourcesAndSinks = new ArrayList<AnalysisData.SourcesSinks>();
+				List<String> sourcesAndSinksFiles = new ArrayList<String>();
+				if (sourcesAndSinks!=null) {
+					NodeList sources = sourcesAndSinks.getElementsByTagName(TAG_SOURCE);
+					for (int i=0; i<sources.getLength(); i++) {
+						Element sourceElement = (Element) sources.item(i);
+						AnalysisData.SourcesSinks source = data.new SourcesSinks();
+						source.setType(AnalysisData.TYPES.SOURCE);
+						source.setClazz(sourceElement.getAttribute(ATTR_CLASS));
+						source.setSelector(sourceElement.getAttribute(ATTR_SELECTOR));
+						source.setParams(sourceElement.getAttribute(ATTR_PARAMS));
+						source.setIncludeSubClasses(sourceElement.getAttribute(ATTR_INCLUDESUBCLASSES));
+						source.setIndirectCalls(sourceElement.getAttribute(ATTR_INDIRECTCALLS));
+						
+					}
+					NodeList sinks = sourcesAndSinks.getElementsByTagName(TAG_SINK);
+					for (int i=0; i<sinks.getLength(); i++) {
+						Element sinkElement = (Element) sinks.item(i);
+						AnalysisData.SourcesSinks sink = data.new SourcesSinks();
+						sink.setType(AnalysisData.TYPES.SINK);
+						sink.setClazz(sinkElement.getAttribute(ATTR_CLASS));
+						sink.setSelector(sinkElement.getAttribute(ATTR_SELECTOR));
+						sink.setParams(sinkElement.getAttribute(ATTR_PARAMS));
+						sink.setIncludeSubClasses(sinkElement.getAttribute(ATTR_INCLUDESUBCLASSES));
+						sink.setIndirectCalls(sinkElement.getAttribute(ATTR_INDIRECTCALLS));
+					}
+					NodeList files = sourcesAndSinks.getElementsByTagName(TAG_FILE);
+					for (int i=0; i<files.getLength(); i++) {
+						Element file = (Element) files.item(i);
+						sourcesAndSinksFiles.add(file.getAttribute(ATTR_VALUE));
+					}
+				}
+				data.setSourcesSinks(listDataSourcesAndSinks);
+				data.setSourcesSinksFiles(sourcesAndSinksFiles);
+				
+				//Read flags
+				Element multiThreaded = (Element) analysisElement.getElementsByTagName(TAG_MULTITHREADED).item(0);
+				if (multiThreaded!=null)
+					data.setMultiThreaded(multiThreaded.getAttribute(ATTR_VALUE));
+				
+				Element objectSens = (Element) analysisElement.getElementsByTagName(TAG_OBJECTSENSITIVENES).item(0);
+				if (objectSens!=null)
+					data.setObjectSensitiveness(objectSens.getAttribute(ATTR_VALUE));
+				
+				Element ignoreIndirectFlows = (Element) analysisElement.getElementsByTagName(TAG_IGNOREINDIRECTFLOWS).item(0);
+				if (ignoreIndirectFlows!=null)
+					data.setIgnoreIndirectFlows(ignoreIndirectFlows.getAttribute(ATTR_VALUE));
+				
+				Element computeChops = (Element) analysisElement.getElementsByTagName(TAG_COMPUTECHOPS).item(0);
+				if (computeChops!=null)
+					data.setComputeChops(computeChops.getAttribute(ATTR_VALUE));
+				
+				Element systemOut = (Element) analysisElement.getElementsByTagName(TAG_SYSTEMOUT).item(0);
+				if (systemOut!=null)
+					data.setSystemOut(systemOut.getAttribute(ATTR_VALUE));
+				
+				Element omitIFC = (Element) analysisElement.getElementsByTagName(TAG_OMITIFC).item(0);
+				if (omitIFC!=null)
+					data.setOmitIFC(omitIFC.getAttribute(ATTR_VALUE));
+			
+			
+			}
+	
+			
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return data;
+		
 	}
 }

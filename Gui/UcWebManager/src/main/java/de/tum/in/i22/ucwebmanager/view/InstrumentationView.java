@@ -119,13 +119,19 @@ public class InstrumentationView extends VerticalLayout implements View {
 		 for (String name : names) cmbReportFile.addItem(name);
 	 }
 	 private void fillSrcAndDest(App app){
-		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
-		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
-		 this.txtSrcFolder.setReadOnly(false);
-		 this.txtSrcFolder.setValue(txtDestFolder);
+//		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
+//		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
+//		 this.txtSrcFolder.setReadOnly(false);
+//		 this.txtSrcFolder.setValue(txtDestFolder);
+//		 this.txtSrcFolder.setReadOnly(true);
+//		 this.txtDestFolder.setReadOnly(false);
+//		 this.txtDestFolder.setValue(txtSrcFolder);
+//		 this.txtDestFolder.setReadOnly(true);
+		 String srcFolder = FileUtil.getPathCode(app.getHashCode());
+		 String destFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
+		 this.txtSrcFolder.setValue(srcFolder);
 		 this.txtSrcFolder.setReadOnly(true);
-		 this.txtDestFolder.setReadOnly(false);
-		 this.txtDestFolder.setValue(txtSrcFolder);
+		 this.txtDestFolder.setValue(destFolder);
 		 this.txtDestFolder.setReadOnly(true);
 		 
 	 }

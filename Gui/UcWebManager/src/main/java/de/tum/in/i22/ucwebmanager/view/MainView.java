@@ -133,6 +133,8 @@ public class MainView extends VerticalLayout implements View {
 					App app = AppDAO.getAppById(appId);
 					Analyser analyser = new Analyser(app, configFile);
 					analyser.start();
+					app.setStatus(Status.STATICANALYSIS.getStage());
+					AppDAO.updateStatus(app, Status.STATICANALYSIS.getStage());
 					updateRow(app);
 				} catch (ClassNotFoundException | SQLException e) {
 					// TODO Auto-generated catch block
