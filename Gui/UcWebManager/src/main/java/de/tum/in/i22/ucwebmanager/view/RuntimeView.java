@@ -1,5 +1,6 @@
 package de.tum.in.i22.ucwebmanager.view;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class RuntimeView extends VerticalLayout implements View{
 		FormLayout fl = new FormLayout();
 		fl.setSizeFull();
 		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
-		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
+		//runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		fl.addComponent(runtimeDiagram);
 		
 		parent.addComponent(fl);		
@@ -91,6 +92,13 @@ public class RuntimeView extends VerticalLayout implements View{
 			
 			if (app != null){
 				//TODO show graph from app
+				
+//				String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
+//				System.out.println(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
+//				runtimeDiagram.drawFromJSON(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
+				String url = FileUtil.getUrlGraphFile(app.getHashCode());
+				System.out.println(url);
+				runtimeDiagram.drawFromJSON(url);
 			}
 		}
 //		else {

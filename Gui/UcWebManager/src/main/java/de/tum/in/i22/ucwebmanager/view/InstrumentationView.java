@@ -168,12 +168,14 @@ public class InstrumentationView extends VerticalLayout implements View {
 	 private void init() {
 		txtPipH = new TextField("PIP_HOST", "localhost");
 		txtPipH.setWidth("100%");
-		txtPipP = new TextField("PIP_PORT", "40011");
+		//txtPipP = new TextField("PIP_PORT", "40011");
+		txtPipP = new TextField("PIP_PORT", "21002");
 		txtPipP.setWidth("100%");
 		
 		txtPdpH = new TextField("PDP_HOST", "localhost");
 		txtPdpH.setWidth("100%");
-		txtPdpP = new TextField("PDP_PORT", "9090");
+		//txtPdpP = new TextField("PDP_PORT", "9090");
+		txtPdpP = new TextField("PDP_PORT", "21003");
 		txtPdpP.setWidth("100%");
 		
 		txtPmpH = new TextField("PMP_HOST", "localhost");
@@ -205,7 +207,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 		chkNetcom = new CheckBox("NETCOM", true);
 		chkLogChopNodes = new CheckBox("LOGCHOPNODES", true);
 		
-		txtUcWebMgmUrl = new TextField("UC_WEBMGM_URL");
+		txtUcWebMgmUrl = new TextField("UC_WEBMGM_URL", "http://localhost:8080/rest");
 		txtUcWebMgmUrl.setWidth("100%");
 		
 		txtUc_Prop = new TextField("UC_PROPERTIES");

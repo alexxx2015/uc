@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinServlet;
 
 public class FileUtil {
 	public enum Dir{
@@ -27,6 +28,8 @@ public class FileUtil {
 			return dir;
 		}
 	};
+	public static final String GRAPHFILE="graph.json";
+	
 	public static void unzipFile(File path,String fileName){
 		ProcessBuilder pb = new ProcessBuilder("jar", "xf",fileName);
 		pb.directory(path);
@@ -56,6 +59,10 @@ public class FileUtil {
 		String s = getPathHashCode(hashCode) + Dir.JOANAOUTPUT.getDir();
 		return s;
 	}
+	public static String getPathRuntime(String hashCode) {
+		String s = getPathHashCode(hashCode) + Dir.RUNTIME.getDir();
+		return s;
+	}
 	public static String getPathSourceAndSinks(){
 		return Dir.SOURCEANDSINKS.getDir();
 	}
@@ -81,6 +88,21 @@ public class FileUtil {
 	}
 	public static String getRelativePathIntrumentation(String hashCode){
 		String s = getRelativePathHashCode(hashCode) + Dir.INSTRUMENTATION.getDir();
+		return s;
+	}
+	public static String getRelativePathRuntime(String hashCode){
+		String s = getRelativePathHashCode(hashCode) + Dir.RUNTIME.getDir();
+		return s;
+	}
+	
+	public static String getPathGraphFile(String hashCode) {
+		String s = getPathRuntime(hashCode) + File.separator + GRAPHFILE;
+		return s;
+	}
+	public static String getUrlGraphFile(String hashCode) {
+		String s = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL") +
+				   File.separator + "apps" + File.separator + hashCode + Dir.RUNTIME.getDir() +
+				   File.separator + GRAPHFILE;
 		return s;
 	}
 	

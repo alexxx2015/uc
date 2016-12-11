@@ -97,7 +97,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
-			txtLogFile, txtFldEntryPoint,txtStatistics, txtFldSnSFile;
+			txtLogFile,txtStatistics, txtFldSnSFile;
+	//TextField txtFldEntryPoint;
 	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy, cmbEntryPoint, cmbClassFiles;
 	Upload uploadSDGFile, uploadCGFile;
 	OptionGroup optSrcAndSinks;
@@ -201,21 +202,21 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		cmbPruningPolicy.addItem("off");
 		cmbPruningPolicy.setValue("off");
 
-		txtFldEntryPoint = new TextField("Entry Point");
-		txtFldEntryPoint.setWidth("100%");
+		//txtFldEntryPoint = new TextField("Entry Point");
+		//txtFldEntryPoint.setWidth("100%");
 		
 		cmbClassFiles = new ComboBox("Class Files");
 		cmbClassFiles.setWidth("100%");
 		cmbClassFiles.addValueChangeListener(event -> fillComboBoxEntryPoint(Integer.parseInt(
 				cmbClassFiles.getValue().toString().split(INDEX_CLASS_FILE_SEPARATOR)[0])));
-		cmbEntryPoint = new ComboBox("New Entry Point");
-		cmbEntryPoint.setWidth("70%");
-		cmbEntryPoint.setNullSelectionAllowed(false);
-
-		
+		cmbEntryPoint = new ComboBox("Entry Point");
+		cmbEntryPoint.setWidth("100%");
+		cmbEntryPoint.setNullSelectionAllowed(true);
+		cmbEntryPoint.setTextInputAllowed(true);
+		cmbEntryPoint.setNewItemsAllowed(true);
 		
 		//Generate class table
-		tblClassPath = new Table("NewClassPath");
+		tblClassPath = new Table("ClassPath");
 		tblClassPath.addContainerProperty(CLASSPATH_PROPERTY_ID, ComboBox.class, "");
 		Property prop = tblClassPath.getPropertyDataSource();
 		if (prop!=null) System.out.println(prop.getValue().toString());
@@ -329,7 +330,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 				}
 			}
 		});
-		//NEW CODE
+		//NEW CODE - END
 		//-----------------------
 
 		txtSDGFile = new TextField("SDGFile");
@@ -499,7 +500,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		titleLabel.addStyleName(ValoTheme.LABEL_H1);
 		titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
 		parent.addComponent(titleLabel);
-		
 
 		FormLayout fl = new FormLayout();
 		fl.addComponent(txtAnalysisName);
@@ -509,7 +509,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(cmbPruningPolicy);
 		fl.addComponent(cmbClassFiles);
 		fl.addComponent(cmbEntryPoint);
-		fl.addComponent(txtFldEntryPoint);
+		//fl.addComponent(txtFldEntryPoint);
 		fl.addComponent(tblClassPath);
 		fl.addComponent(tblThirdPartyLib);
 		fl.addComponent(txtSDGFile);
@@ -549,6 +549,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				String s = (String) cmbListApp.getValue();
+				if (s==null) return;
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
@@ -778,7 +779,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setClasspath(readDataFromTable(tblClassPath, CLASSPATH_PROPERTY_ID));
 		data.setThirdPartyLibs(readDataFromTable(tblThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID));
 		data.setStubs(cmbStub.getValue().toString());
-		data.setEntrypoint(txtFldEntryPoint.getValue());
+		data.setEntrypoint(cmbEntryPoint.getValue().toString());
 		data.setMode(cmbmode.getValue().toString());
 		data.setSdgFile(txtSDGFile.getValue());
 		data.setCgFile(txtCGFile.getValue());
@@ -1002,7 +1003,9 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		cmbmode.setValue(data.getMode());
 		cmbStub.setValue(data.getStubs());
 		cmbPruningPolicy.setValue(data.getPruningPolicy());
-		txtFldEntryPoint.setValue(data.getEntrypoint());
+		if (!cmbEntryPoint.containsId(data.getEntrypoint()))
+				cmbEntryPoint.addItem(data.getEntrypoint());
+		cmbEntryPoint.setValue(data.getEntrypoint());
 		
 		tblClassPath.removeAllItems();
 		for (String classpath : data.getClasspath())
@@ -1051,7 +1054,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		for (String name : names) optg.addItem(name);
 	}
 	private void fillCmbListApp(){
-		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage());
+		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage(), Status.INSTRUMENTATION.getStage());
 		for (App app : apps){
 			cmbListApp.addItem(app.getId() + " " + app.getName());
 		}
@@ -1140,8 +1143,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	private void fillComboBoxClassFiles() {
 		String pathCode = FileUtil.getPathCode(app.getHashCode());
 		this.classFilesInCode = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );	
-		for (int i=0; i<this.classFilesInCode.size(); i++)
-			cmbClassFiles.addItem(i+INDEX_CLASS_FILE_SEPARATOR+classFilesInCode.get(i).getPath());
+		for (int i=0; i<this.classFilesInCode.size(); i++) {
+			String relativePath = classFilesInCode.get(i).getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER);
+			cmbClassFiles.addItem(i+INDEX_CLASS_FILE_SEPARATOR+relativePath);
+		}
+			
 	}
 	
 	

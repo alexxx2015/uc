@@ -268,7 +268,10 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (stat.equals(Status.INSTRUMENTATION.getStage())){
-				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName());
+				//New code
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
+						"/" + item.getItemProperty("ID").getValue().toString());
+				//UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName());
 			}
 			else {
 				new Notification("Error!",
