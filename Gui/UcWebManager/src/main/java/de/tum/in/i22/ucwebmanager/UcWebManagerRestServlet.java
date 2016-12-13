@@ -124,10 +124,10 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 							
 						}
 						// ----------- NEW CODE ----------------
-						JSONObject newObj = insertNodeID(tempObj);
+						//JSONObject newObj = insertNodeID(tempObj);
 						// -------------------------------------
-						if (!cntNodes.contains(newObj))
-							cntNodes.add(newObj);
+						if (!cntNodes.contains(tempObj))
+							cntNodes.add(tempObj);
 						else
 							System.out.println("Nodes List already contains this node");
 					}
@@ -142,10 +142,10 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 							String key = (String) iter3.next();
 							tempObj.put(key.toLowerCase(), link.get(key).toString());
 						}
-						if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
+						//if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
 							cntLinks.add(tempObj);
-						else
-							System.out.println("Links List already contains this link");
+						//else
+						//	System.out.println("Links List already contains this link");
 						
 					}
 				}

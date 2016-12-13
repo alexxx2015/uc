@@ -13,4 +13,19 @@ public class RuntimeDiagramState extends JavaScriptComponentState {
 		this.json = json;
 	}
 	
+	private boolean visLabels;
+
+	public boolean isVisLabels() {
+		return visLabels;
+	}
+
+	public void setVisLabels(boolean visLabels) {
+		this.visLabels = visLabels;
+	}
+	
+	public void setParameters(String json, boolean visLabels) {
+		this.json=json;
+		this.visLabels = visLabels;
+	}
+	
 }

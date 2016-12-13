@@ -14,6 +14,8 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	    .force("charge", d3.forceManyBody())
 	    .force("center", d3.forceCenter(width / 2, height / 2));
 	
+	var oldVisLabels=true;
+	
 	var drawFromJSON = function(file){
 	d3.json(file, function(error, graph) {
 	  if (error) throw error;
@@ -36,6 +38,20 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	          .on("start", dragstarted)
 	          .on("drag", dragged)
 	          .on("end", dragended));
+	  
+	  //if (visLabels) {
+		  var labels = svg.append("g")
+	      .attr("class", "label1")
+	    .selectAll("text")
+	    .data(graph.nodes)
+	    .enter().append("text")
+	      .attr("dx", 6)
+	      .attr("dy", ".31em")
+			  .style("font-size",9)
+		  .text("lab");
+	  //}
+
+
 	
 	  node.append("title")
 	      .text(function(d) { return d.id; });
@@ -57,6 +73,12 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	    node
 	        .attr("cx", function(d) { return d.x; })
 	        .attr("cy", function(d) { return d.y; });
+	    
+	    //if (visLabels) {
+		labels
+	        .attr("x", function(d) { return d.x; })
+	        .attr("y", function(d) { return d.y; }); 
+	    //}
 	  }
 	  svg.selectAll("line").attr("stroke","#999").attr("stroke-opacity", 0.6);
 	});
@@ -79,9 +101,30 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	  d.fy = null;
 	}
 	
+	var oldJson = "";
 	this.onStateChange = function() {
 		var json = this.getState().json;
-		drawFromJSON(json);
+		var visLabels = this.getState().visLabels;
+		if (oldJson!=json) {
+			drawFromJSON(json);
+		}
+		oldJson=json;
+		
+		if (visLabels!=oldVisLabels) {
+			showHideElement("label1", visLabels);
+		}
+		oldVisLabels=visLabels;
+			
 	}
+	
+	var showHideElement = function(className, visible) {
+		if (visible) {
+			d3.selectAll("." + className).style("visibility", "visible")
+		}
+		else {
+			d3.selectAll("." + className).style("visibility", "hidden")
+		}
+	}
+
 	
 }

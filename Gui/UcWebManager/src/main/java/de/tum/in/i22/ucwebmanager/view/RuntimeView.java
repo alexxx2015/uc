@@ -10,11 +10,13 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
@@ -36,7 +38,22 @@ public class RuntimeView extends VerticalLayout implements View{
 		
 		FormLayout fl = new FormLayout();
 		fl.setSizeFull();
+		
+		// ------ NEW CODE -------
+		HorizontalLayout hl = new HorizontalLayout();
+		CheckBox chkLabel1 = new CheckBox("Label1");
+		CheckBox chkLabel2 = new CheckBox("Label2");
+		chkLabel1.setValue(true);
+		chkLabel1.addValueChangeListener(event -> 
+				runtimeDiagram.setLabelVisibility(Boolean.parseBoolean(event.getProperty().getValue().toString())));
+		hl.addComponent(chkLabel1);
+		hl.addComponent(chkLabel2);
+		hl.setMargin(true);
+		parent.addComponent(hl);
+		
+		// ------ NEW CODE -------
 		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
+		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json",true);
 		//runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		fl.addComponent(runtimeDiagram);
 		
@@ -98,7 +115,9 @@ public class RuntimeView extends VerticalLayout implements View{
 //				runtimeDiagram.drawFromJSON(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
 				String url = FileUtil.getUrlGraphFile(app.getHashCode());
 				System.out.println(url);
-				runtimeDiagram.drawFromJSON(url);
+				runtimeDiagram.drawFromJSON(url,true);
+				//runtimeDiagram.drawFromJSON(url);
+				
 			}
 		}
 //		else {
