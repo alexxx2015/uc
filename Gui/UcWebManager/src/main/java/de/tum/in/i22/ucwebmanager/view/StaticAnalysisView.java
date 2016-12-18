@@ -231,11 +231,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
 					List<String> elements = new ArrayList<String>();
-					if (subDirectoriesOfCode!=null && app!=null && classFilesInCode!=null) {
+					if (subDirectoriesOfCode!=null && app!=null && jarFilesInCode!=null) {
 						elements.addAll(subDirectoriesOfCode);
 						String root = FileUtil.getPathCode(app.getHashCode());
-						for (File f: classFilesInCode)
-							elements.add(f.getPath().replaceAll(root+File.separator, CURRENT_FOLDER));
+						for (String s: jarFilesInCode)
+							elements.add(s);
 					}
 
 					ComboBox cmbSubDirectories = addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID,
@@ -1008,9 +1008,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		cmbEntryPoint.setValue(data.getEntrypoint());
 		
 		tblClassPath.removeAllItems();
+		List<String> lstElements = new ArrayList<String>();
+		lstElements.addAll(subDirectoriesOfCode);
+		lstElements.addAll(jarFilesInCode);
 		for (String classpath : data.getClasspath())
 			addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID,
-							   subDirectoriesOfCode, classpath);
+							   lstElements, classpath);
 
 		tblThirdPartyLib.removeAllItems();
 		for (String thirdPartyLib : data.getThirdPartyLibs())

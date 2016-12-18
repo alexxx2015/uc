@@ -37,26 +37,35 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	          .on("start", dragstarted)
 	          .on("drag", dragged)
 	          .on("end", dragended));
+	 
+	  var labels = svg.append("g")
+		 .attr("class", "id")
+		.selectAll("text")
+		.data(graph.nodes)
+		.enter().append("text")
+		  .attr("dx", 6)
+		  .attr("dy", ".31em")
+		  .attr("font-size","10")
+		  .text(function(d) {return d.id;});
 	  
-	  var keys = getFields(graph.nodes);
-	  console.log(keys);
-	  
-	  var arrLabels = new Array();
-	  
-	  for (i=0; i<keys.length; i++) {
-			
-		  var labels = svg.append("g")
-				 .attr("class", keys[i])
-				.selectAll("text")
-				.data(graph.nodes)
-				.enter().append("text")
-				  .attr("dx", 6)
-				  .attr("dy", ".31em")
-				  .attr("font-size","10")
-				  .text(function(d) {return d[keys[i]];});
-		  
-		  arrLabels.push(labels);
-		}
+//	  var keys = getFields(graph.nodes);
+//	  
+//	  var arrLabels = new Array();
+//	  
+//	  for (i=0; i<keys.length; i++) {
+//			
+//		  var labels = svg.append("g")
+//				 .attr("class", keys[i])
+//				.selectAll("text")
+//				.data(graph.nodes)
+//				.enter().append("text")
+//				  .attr("dx", 6)
+//				  .attr("dy", ".31em")
+//				  .attr("font-size","10")
+//				  .text(function(d) {return d[keys[i]];});
+//		  
+//		  arrLabels.push(labels);
+//		}
 
 	
 	  node.append("title")
@@ -80,12 +89,15 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	        .attr("cx", function(d) { return d.x; })
 	        .attr("cy", function(d) { return d.y; });
 	    
+	    labels
+			.attr("x", function(d) { return d.x; })
+			.attr("y", function(d) { return d.y; });  
 	    
-        for (i=0; i<arrLabels.length; i++) {
-			arrLabels[i]
-				.attr("x", function(d) { return d.x; })
-				.attr("y", function(d) { return d.y+10*(i-arrLabels.length/2); });  
-		}
+//        for (i=0; i<arrLabels.length; i++) {
+//			arrLabels[i]
+//				.attr("x", function(d) { return d.x; })
+//				.attr("y", function(d) { return d.y+12*i; });  
+//		}
 	  }
 	  
       
@@ -120,21 +132,32 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 		var json = this.getState().json;
 		var labelsMap = this.getState().labelsMap;
 		
-		
 		if (oldLabels.length === labelsMap.length) {
-			for (field in oldLabels) {
-				if (oldLabels[field] != labelsMap[field]) {
-					oldLabels[field] = labelsMap[field];
-					showHideElement(field, labelsMap[field]);
-				}
+			if (oldLabels["id"] != labelsMap["id"]) {
+				oldLabels["id"] = labelsMap["id"];
+				showHideElement("id", labelsMap["id"])
 			}
 		}
 		else {
 			oldLabels = labelsMap;
-			for (field in labelsMap) {
-				showHideElement(field, labelsMap[field]);
-			}
+			showHideElement("id", labelsMap["id"])
 		}
+//		
+//		if (oldLabels.length === labelsMap.length) {
+//			for (field in oldLabels) {
+//				if (oldLabels[field] != labelsMap[field]) {
+//					oldLabels[field] = labelsMap[field];
+//					showHideElement(field, labelsMap[field]);
+//				}
+//			}
+//		}
+//		else {
+//			oldLabels = labelsMap;
+//			for (field in oldLabels) {
+//				oldLabels[field] = labelsMap[field];
+//				showHideElement(field, labelsMap[field]);
+//			}
+//		}
 		
 //		if (visLabels!=oldVisLabels) {
 //			showHideElement("label1", visLabels);
@@ -160,7 +183,6 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 		var entry = nodes[0];
    	  	var fields = new Array();
    	  	for (name in entry) {
-   	  		console.log(name);
    	  		if (entry.hasOwnProperty(name)) {
    	  			fields.push(name);
    	  		}

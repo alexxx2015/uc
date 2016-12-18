@@ -2,6 +2,7 @@ package de.tum.in.i22.ucwebmanager;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +23,8 @@ import org.json.simple.parser.ParseException;
 
 import com.vaadin.server.VaadinServlet;
 
+import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
+
 @WebServlet(urlPatterns = "/rest/*", name = "UcWebManagerRestServlet", asyncSupported = true)
 // @VaadinServletConfiguration(ui = UcWebManagerRestUI.class, productionMode =
 // false)
@@ -29,8 +32,10 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 	private enum REQPARAM {
 		APPID, MSG
 	}
-	public static String NODES = "NODES";
-	public static String LINKS = "LINKS";
+
+	public static String MSGNODES = "NODES";
+	public static String MSGLINKS = "LINKS";
+	
 	public static enum JSONMsgNODES {
 		 FQNAME, OFFSET, OPCODE, MISC
 	}
@@ -86,12 +91,12 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				//---------- NEW CODE
 				
 				JSONArray cntLinks = new JSONArray();
-				if (cnt.containsKey(LINKS.toLowerCase()))
-					cntLinks = (JSONArray) cnt.get(LINKS.toLowerCase());
+				if (cnt.containsKey(JSONUtil.LINKS))
+					cntLinks = (JSONArray) cnt.get(JSONUtil.LINKS);
 				
 				JSONArray cntNodes = new JSONArray();
-				if (cnt.containsKey(NODES.toLowerCase()))
-					cntNodes = (JSONArray) cnt.get(NODES.toLowerCase());
+				if (cnt.containsKey(JSONUtil.NODES))
+					cntNodes = (JSONArray) cnt.get(JSONUtil.NODES);
 				//----------
 //				JSONArray cntLinks = new JSONArray();
 //				if (cnt.containsKey(LINKS)){
@@ -107,8 +112,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 
 //				Add received links and nodes and dump data to file
 				JSONObject msgCnt = (JSONObject) parser.parse(msg);
-				if(msgCnt.containsKey(NODES)){
-					JSONArray nodes = (JSONArray) msgCnt.get(NODES);
+				if(msgCnt.containsKey(MSGNODES)){
+					JSONArray nodes = (JSONArray) msgCnt.get(MSGNODES);
 					Iterator<JSONArray> iterator = nodes.iterator();
 					while (iterator.hasNext()){
 						JSONObject tempObj = new JSONObject();
@@ -119,21 +124,21 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 							
 							for (Iterator iter3 = json2.keySet().iterator();iter3.hasNext();){
 								String key = (String) iter3.next();
-								tempObj.put(key.toLowerCase(), json2.get(key).toString());
+								tempObj.put(key, json2.get(key).toString());
 							}
 							
 						}
 						// ----------- NEW CODE ----------------
-						//JSONObject newObj = insertNodeID(tempObj);
+						insertNodeID2(tempObj);
 						// -------------------------------------
 						if (!cntNodes.contains(tempObj))
 							cntNodes.add(tempObj);
 						else
-							System.out.println("Nodes List already contains this node");
+							System.out.println("Nodes list already contains node " + tempObj.get("id"));
 					}
 				}		
-				if(msgCnt.containsKey(LINKS)){
-					JSONArray links = (JSONArray) msgCnt.get(LINKS);
+				if(msgCnt.containsKey(MSGLINKS)){
+					JSONArray links = (JSONArray) msgCnt.get(MSGLINKS);
 					Iterator<JSONObject> iter = links.iterator();
 					while (iter.hasNext()){
 						JSONObject tempObj = new JSONObject();
@@ -142,10 +147,9 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 							String key = (String) iter3.next();
 							tempObj.put(key.toLowerCase(), link.get(key).toString());
 						}
-						//if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
+						
+						if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
 							cntLinks.add(tempObj);
-						//else
-						//	System.out.println("Links List already contains this link");
 						
 					}
 				}
@@ -154,8 +158,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 //				cnt.put(LINKS, cntLinks.toString());
 //				cnt.put(NODES, cntNodes.toString());
 				// -------------- NEW CODE -----------------------
-				cnt.put(LINKS.toLowerCase(), cntLinks);
-				cnt.put(NODES.toLowerCase(), cntNodes);
+				cnt.put(JSONUtil.LINKS.toLowerCase(), cntLinks);
+				cnt.put(JSONUtil.NODES.toLowerCase(), cntNodes);
 				// -------------- NEW CODE -----------------------
 				FileWriter fw = new FileWriter(runtimeGraph);
 				fw.write(cnt.toJSONString());
@@ -169,19 +173,27 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 		}
 	}
 	
-	private static JSONObject insertNodeID(JSONObject node) {
-		String opcode = (String) node.get("opcode");
-		String offset = (String) node.get("offset");
-		String fqname = (String) node.get("fqname");
+//	private static JSONObject insertNodeID(JSONObject node) {
+//		String opcode = (String) node.get(JSONMsgNODES.OPCODE);
+//		String offset = (String) node.get(JSONMsgNODES.OFFSET);
+//		String fqname = (String) node.get(JSONMsgNODES.FQNAME);
+//		
+//		JSONObject newObj = new JSONObject();
+//		newObj.put("id", opcode+":"+fqname+"."+offset);
+//		return newObj;
+//	}
+	
+	private static void insertNodeID2(JSONObject node) {
+		String opcode = (String) node.get(JSONMsgNODES.OPCODE.toString());
+		String offset = (String) node.get(JSONMsgNODES.OFFSET.toString());
+		String fqname = (String) node.get(JSONMsgNODES.FQNAME.toString());
 		
-		JSONObject newObj = new JSONObject();
-		newObj.put("id", opcode+":"+fqname+"."+offset);
-		return newObj;
+		node.put("id", opcode+":"+fqname+"."+offset);
 	}
 	
 	private static boolean isLinkValid(JSONObject link, JSONArray nodes) {
-		String source = (String) link.get("source");
-		String target = (String) link.get("target");
+		String source = (String) link.get(JSONMsgLINKS.SOURCE.toString().toLowerCase());
+		String target = (String) link.get(JSONMsgLINKS.TARGET.toString().toLowerCase());
 		boolean srcFnd=false; boolean trgFnd=false;
 		
 		for (Iterator iter = nodes.iterator(); iter.hasNext() && (!srcFnd || !trgFnd);) {
@@ -190,10 +202,13 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			if (!srcFnd) srcFnd= id.equals(source);
 			if (!trgFnd) trgFnd= id.equals(target);
 		}
-		if (srcFnd && trgFnd) System.out.println("valid");
-		else System.out.println("not valid");
+		if (srcFnd && trgFnd) System.out.println("Link valid: " + source + " -> " 
+							  + target);
+		else System.out.println("Link not valid: "+ source + " -> " 
+				  				+ target);
 		return srcFnd && trgFnd;
 	}
+	
 
 	private String readFile(File file) throws IOException {
 		StringBuilder _return = new StringBuilder();
@@ -203,4 +218,6 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			_return.append(line);
 		return _return.toString();
 	}
+	
+
 }

@@ -1,9 +1,13 @@
 package de.tum.in.i22.ucwebmanager.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.vaadin.shared.ui.JavaScriptComponentState;
 
 public class RuntimeDiagramState extends JavaScriptComponentState {
 	private String json;
+	private Map<String, Boolean> labelsMap = new HashMap<String, Boolean>();
 
 	public String getJson() {
 		return json;
@@ -12,20 +16,18 @@ public class RuntimeDiagramState extends JavaScriptComponentState {
 	public void setJson(String json) {
 		this.json = json;
 	}
-	
-	private boolean visLabels;
 
-	public boolean isVisLabels() {
-		return visLabels;
-	}
-
-	public void setVisLabels(boolean visLabels) {
-		this.visLabels = visLabels;
+	public Map<String, Boolean> getLabelsMap() {
+		return labelsMap;
 	}
 	
-	public void setParameters(String json, boolean visLabels) {
-		this.json=json;
-		this.visLabels = visLabels;
+	public void setLabelsMap(Map<String, Boolean> labelsMap) {
+		this.labelsMap = labelsMap;
 	}
+
+	public void setLabelVisibility(String label, boolean visible) {
+		labelsMap.put(label, visible);
+	}
+	
 	
 }

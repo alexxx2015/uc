@@ -84,7 +84,7 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
         for (i=0; i<arrLabels.length; i++) {
 			arrLabels[i]
 				.attr("x", function(d) { return d.x; })
-				.attr("y", function(d) { return d.y+10*(i-arrLabels.length/2); });  
+				.attr("y", function(d) { return d.y+12*i; });  
 		}
 	  }
 	  

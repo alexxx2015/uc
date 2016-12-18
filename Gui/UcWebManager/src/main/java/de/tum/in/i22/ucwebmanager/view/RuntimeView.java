@@ -1,8 +1,21 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -21,6 +34,7 @@ import com.vaadin.ui.CheckBox;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
+import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 public class RuntimeView extends VerticalLayout implements View{
 
@@ -29,6 +43,8 @@ public class RuntimeView extends VerticalLayout implements View{
 	ComboBox cmbListApp;
 	private App app;
 	private int appId;
+	private HorizontalLayout checkboxesContainer;
+	
 	public RuntimeView() {
 		Label lab = new Label("Runtime view");
 		addComponent(lab);
@@ -39,21 +55,27 @@ public class RuntimeView extends VerticalLayout implements View{
 		FormLayout fl = new FormLayout();
 		fl.setSizeFull();
 		
-		// ------ NEW CODE -------
-		HorizontalLayout hl = new HorizontalLayout();
-		CheckBox chkLabel1 = new CheckBox("Label1");
-		CheckBox chkLabel2 = new CheckBox("Label2");
-		chkLabel1.setValue(true);
-		chkLabel1.addValueChangeListener(event -> 
-				runtimeDiagram.setLabelVisibility(Boolean.parseBoolean(event.getProperty().getValue().toString())));
-		hl.addComponent(chkLabel1);
-		hl.addComponent(chkLabel2);
-		hl.setMargin(true);
-		parent.addComponent(hl);
+//		// ------ NEW CODE -------
+//		HorizontalLayout hl = new HorizontalLayout();
+//		CheckBox chkLabel1 = new CheckBox("Label1");
+//		CheckBox chkLabel2 = new CheckBox("Label2");
+//		chkLabel1.setValue(true);
+//		chkLabel1.addValueChangeListener(event -> 
+//				runtimeDiagram.setLabelVisibility(Boolean.parseBoolean(event.getProperty().getValue().toString())));
+//		hl.addComponent(chkLabel1);
+//		hl.addComponent(chkLabel2);
+//		hl.setMargin(true);
+//		parent.addComponent(hl);
+//		
+//		// ------ NEW CODE -------
 		
 		// ------ NEW CODE -------
+		checkboxesContainer = new HorizontalLayout();
+		parent.addComponent(checkboxesContainer);
+		// ------ NEW CODE -------
+		
 		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
-		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json",true);
+		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		//runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		fl.addComponent(runtimeDiagram);
 		
@@ -115,7 +137,12 @@ public class RuntimeView extends VerticalLayout implements View{
 //				runtimeDiagram.drawFromJSON(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
 				String url = FileUtil.getUrlGraphFile(app.getHashCode());
 				System.out.println(url);
-				runtimeDiagram.drawFromJSON(url,true);
+				Map<String, Boolean> labelsMap = new HashMap<String, Boolean>();
+				for (String field: readFieldsFromJSONFile(FileUtil.getPathGraphFile(app.getHashCode())))
+					labelsMap.put(field, true);
+				fillCheckBoxList(labelsMap.keySet(), true);
+				runtimeDiagram.setLabelsMap(labelsMap);
+				runtimeDiagram.drawFromJSON(url);
 				//runtimeDiagram.drawFromJSON(url);
 				
 			}
@@ -129,6 +156,49 @@ public class RuntimeView extends VerticalLayout implements View{
 		List<App> apps = AppDAO.getAppByStatus(Status.INSTRUMENTATION.getStage());
 		for (App app : apps){
 			cmbListApp.addItem(app.getId() + " " + app.getName());
+		}
+	}
+	
+	private static List<String> readFieldsFromJSONFile(String url) {
+		List<String> lstFields = new ArrayList<String>();
+		
+		JSONParser parser = new JSONParser();
+		JSONObject cnt = new JSONObject();
+		
+		try {
+			cnt = (JSONObject) parser.parse(new FileReader(url));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (cnt.containsKey(JSONUtil.NODES)) {
+			JSONArray cntNodes = (JSONArray) cnt.get(JSONUtil.NODES);
+			if (cntNodes.size()>0) {
+				JSONObject json = (JSONObject) cntNodes.get(0);
+				for (Iterator iter = json.keySet().iterator(); iter.hasNext();) {
+					String key = (String) iter.next();
+					lstFields.add(key);
+				}
+					
+			}
+		
+		}
+		
+		return lstFields;
+			
+	}
+	
+	private void fillCheckBoxList (Set<String> fields, boolean defaultValue) {
+		for (String field : fields) {
+			CheckBox chkField = new CheckBox(field, defaultValue);
+			chkField.addValueChangeListener(event -> 
+			   runtimeDiagram.setLabelVisibility(chkField.getCaption(), 
+					   Boolean.parseBoolean(event.getProperty().getValue().toString())));
+			checkboxesContainer.addComponent(chkField);
 		}
 	}
 }
