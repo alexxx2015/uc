@@ -19,6 +19,27 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	d3.json(file, function(error, graph) {
 	  if (error) throw error;
 	
+	  var keys = getFields(graph.nodes);
+	  //console.log(keys);
+	  
+	  var arrLabels = new Array();
+	
+	  for (i=0; i<keys.length; i++) {
+			
+		  var labels = svg.append("g")
+				 .attr("class", keys[i])
+				.selectAll("text")
+				.data(graph.nodes)
+				.enter().append("text")
+				  .attr("dx", 6)
+				  .attr("dy", ".31em")
+				  .attr("font-size","10")
+				  .text(function(d) {return d[keys[i]];});
+		  
+		  arrLabels.push(labels);
+	  }
+	  
+	  
 	  var link = svg.append("g")
 	      .attr("class", "links")
 	    .selectAll("line")
@@ -37,26 +58,6 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	          .on("start", dragstarted)
 	          .on("drag", dragged)
 	          .on("end", dragended));
-	  
-	  var keys = getFields(graph.nodes);
-	  console.log(keys);
-	  
-	  var arrLabels = new Array();
-	  
-	  for (i=0; i<keys.length; i++) {
-			
-		  var labels = svg.append("g")
-				 .attr("class", keys[i])
-				.selectAll("text")
-				.data(graph.nodes)
-				.enter().append("text")
-				  .attr("dx", 6)
-				  .attr("dy", ".31em")
-				  .attr("font-size","10")
-				  .text(function(d) {return d[keys[i]];});
-		  
-		  arrLabels.push(labels);
-		}
 
 	
 	  node.append("title")
@@ -110,8 +111,9 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	
 	function dragended(d) {
 	  if (!d3.event.active) simulation.alphaTarget(0);
-	  d.fx = null;
-	  d.fy = null;
+	  //Uncomment to reset the position of a node to its initial position
+	  //d.fx = null;
+	  //d.fy = null;
 	}
 	
 	var oldJson = "";

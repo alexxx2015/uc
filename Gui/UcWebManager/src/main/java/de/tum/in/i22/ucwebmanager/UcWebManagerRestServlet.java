@@ -129,7 +129,7 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 							
 						}
 						// ----------- NEW CODE ----------------
-						insertNodeID2(tempObj);
+						//insertNodeID2(tempObj);
 						// -------------------------------------
 						if (!cntNodes.contains(tempObj))
 							cntNodes.add(tempObj);
@@ -172,16 +172,6 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			}
 		}
 	}
-	
-//	private static JSONObject insertNodeID(JSONObject node) {
-//		String opcode = (String) node.get(JSONMsgNODES.OPCODE);
-//		String offset = (String) node.get(JSONMsgNODES.OFFSET);
-//		String fqname = (String) node.get(JSONMsgNODES.FQNAME);
-//		
-//		JSONObject newObj = new JSONObject();
-//		newObj.put("id", opcode+":"+fqname+"."+offset);
-//		return newObj;
-//	}
 	
 	private static void insertNodeID2(JSONObject node) {
 		String opcode = (String) node.get(JSONMsgNODES.OPCODE.toString());

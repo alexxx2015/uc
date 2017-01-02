@@ -19,7 +19,9 @@ public class FileUtil {
 		JOANACONFIG			(File.separator + "joana-config"),
 		JOANAOUTPUT 		(File.separator + "joana-output"),
 		INSTRUMENTATION 	(File.separator + "instrumentations"),
-		RUNTIME 			(File.separator + "runtime");
+		RUNTIME 			(File.separator + "runtime"),
+		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcat.txt");
+		
 		private String dir;
 		private Dir(String s){
 			dir = s;
@@ -29,6 +31,7 @@ public class FileUtil {
 		}
 	};
 	public static final String GRAPHFILE="graph.json";
+	
 	
 	public static void unzipFile(File path,String fileName){
 		ProcessBuilder pb = new ProcessBuilder("jar", "xf",fileName);
@@ -69,6 +72,10 @@ public class FileUtil {
 	public static String getPathBlackAndWhiteList(){
 		return Dir.BLACKANDWHITELIST.getDir();
 	}
+	public static String getPathTomcatConfFile() {
+		return Dir.TOMCATCONF.getDir();
+	}
+	
 	// Relative Path, using  VaadinService.getCurrent().getBaseDirectory().getPath() -> .../src/main/webapp
 	public static String getRelativePathHashCode(String hashCode){
 		String s = "." + File.separator + "apps" + File.separator + hashCode;
