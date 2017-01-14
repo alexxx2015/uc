@@ -12,12 +12,13 @@ public class AppDAO {
 	private String[] allColumns = {AppTable.COLUMN_ID,AppTable.COLUMN_NAME,AppTable.COLUMN_HASHCODE,AppTable.COLUMN_STATUS};
 
 	
-	public static List<App> getAllApps() throws ClassNotFoundException, SQLException{
+	public static List<App> getAllApps() {
 		List<App> apps = new ArrayList<App>();
 
-		Connection conn = DatabaseConnection.getConnection();
+		Connection conn = null;
 		try {
-
+			conn = DatabaseConnection.getConnection();
+			
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(AppTable.GETALL);
 			while (rs.next()){
@@ -27,7 +28,7 @@ public class AppDAO {
 								  rs.getString(AppTable.COLUMN_STATUS));
 				apps.add(app);
 			}
-		} catch (SQLException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {

@@ -222,19 +222,6 @@ public class MainView extends VerticalLayout implements View {
 					e.printStackTrace();
 					return null;
 				}
-//				try {
-//					hashCodeOfApp = MD5Checksum.getMD5Checksum(fileTmp.toString());
-//					System.out.println(MD5Checksum.getMD5Checksum(fileTmp.toString()));
-//					System.out.println(MD5Checksum.getMD5Checksum("/Users/cataldocalo/git/pdp/Gui/UcWebManager/src/main/webapp/apps/miserables.json"));
-//					System.out.println(MD5Checksum.getMD5Checksum("/Users/cataldocalo/Downloads/DisplayAllHeaders.war"));
-//					System.out.println(MD5Checksum.getMD5Checksum("/Users/cataldocalo/Downloads/Prova.war"));
-//					System.out.println(MD5Checksum.getMD5Checksum("/Users/cataldocalo/git/pdp/Gui/UcWebManager/src/main/webapp/apps/tmp/Prova.war"));
-//					System.out.println(hashCodeOfApp);
-//					
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 				return fos;
 			}
 
@@ -252,39 +239,39 @@ public class MainView extends VerticalLayout implements View {
 		grid.addColumn("Hash Code",String.class);
 		grid.addColumn("Status",String.class);
 		grid.getColumn("Status").setMaximumWidth(60);
-		grid.addColumn("Deploy", String.class).setRenderer(new ButtonRenderer(e->{
-			Object selected = e.getItemId();
-			Item item = grid.getContainerDataSource().getItem(selected);
-			int appId = (Integer) item.getItemProperty("ID").getValue();
-			
-			try {
-				App app = AppDAO.getAppById(appId);
-				DeployManager dp = new DeployManager();
-				String path = FileUtil.getPathCode(app.getHashCode())+File.separator+app.getName();
-				String contextName = FilenameUtils.getBaseName(app.getName());
-				String response = dp.deploy(contextName, path);
-				Notification.show(response);
-			} catch (ClassNotFoundException | SQLException | IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-		}));
-		grid.addColumn("Undeploy", String.class).setRenderer(new ButtonRenderer(e->{
-			Object selected = e.getItemId();
-			Item item = grid.getContainerDataSource().getItem(selected);
-			int appId = (Integer) item.getItemProperty("ID").getValue();
-			
-			try {
-				App app = AppDAO.getAppById(appId);
-				DeployManager dp = new DeployManager();
-				String contextName = FilenameUtils.getBaseName(app.getName());
-				String response = dp.undeploy(contextName);
-				Notification.show(response);
-			} catch (ClassNotFoundException | SQLException | IOException e1) {
-				e1.printStackTrace();
-			}
-		}));
+//		grid.addColumn("Deploy", String.class).setRenderer(new ButtonRenderer(e->{
+//			Object selected = e.getItemId();
+//			Item item = grid.getContainerDataSource().getItem(selected);
+//			int appId = (Integer) item.getItemProperty("ID").getValue();
+//			
+//			try {
+//				App app = AppDAO.getAppById(appId);
+//				DeployManager dp = new DeployManager();
+//				String path = FileUtil.getPathCode(app.getHashCode())+File.separator+app.getName();
+//				String contextName = FilenameUtils.getBaseName(app.getName());
+//				String response = dp.deploy(contextName, path);
+//				Notification.show(response);
+//			} catch (ClassNotFoundException | SQLException | IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//			
+//		}));
+//		grid.addColumn("Undeploy", String.class).setRenderer(new ButtonRenderer(e->{
+//			Object selected = e.getItemId();
+//			Item item = grid.getContainerDataSource().getItem(selected);
+//			int appId = (Integer) item.getItemProperty("ID").getValue();
+//			
+//			try {
+//				App app = AppDAO.getAppById(appId);
+//				DeployManager dp = new DeployManager();
+//				String contextName = FilenameUtils.getBaseName(app.getName());
+//				String response = dp.undeploy(contextName);
+//				Notification.show(response);
+//			} catch (ClassNotFoundException | SQLException | IOException e1) {
+//				e1.printStackTrace();
+//			}
+//		}));
 		grid.addColumn("Static Analysis", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId(); // get the selected rows id
 			Item item = grid.getContainerDataSource().getItem(selected);
@@ -310,6 +297,12 @@ public class MainView extends VerticalLayout implements View {
 			}
 		}));
 		grid.addColumn("Execute time", String.class);
+		grid.addColumn("Deployment", String.class).setRenderer(new ButtonRenderer(e->{
+			Object selected =  e.getItemId();
+			Item item = grid.getContainerDataSource().getItem(selected);
+			UI.getCurrent().getNavigator().navigateTo(DashboardViewType.DEPLOYMENT.getViewName() +
+					"/" + item.getItemProperty("ID").getValue().toString());
+		}));
 		grid.addColumn("Run time", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId(); // get the selected rows id
 			Item item = grid.getContainerDataSource().getItem(selected);
@@ -327,14 +320,7 @@ public class MainView extends VerticalLayout implements View {
 			}
 		}));
 		grid.sort("ID", SortDirection.ASCENDING);
-		List<App> allApp = null;
-		try {
-			allApp = AppDAO.getAllApps();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-
-
+		List<App> allApp = AppDAO.getAllApps();
 		for (App a : allApp) {
 			updateTable(a);
 		}
@@ -349,8 +335,12 @@ public class MainView extends VerticalLayout implements View {
 		return null;
 	}
 	
+//	private void updateTable(App app) {
+//		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "Go", "Go", "", "Go", "", "Go");
+//	}
+
 	private void updateTable(App app) {
-		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "Go", "Go", "", "Go", "", "Go");
+		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "", "Go", "", "Go", "Go");
 	}
 	
 	private void updateStatus (App app) {

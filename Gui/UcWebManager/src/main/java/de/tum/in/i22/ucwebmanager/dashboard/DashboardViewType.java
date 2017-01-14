@@ -4,6 +4,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 
+import de.tum.in.i22.ucwebmanager.view.DeploymentView;
 import de.tum.in.i22.ucwebmanager.view.InstrumentationView;
 import de.tum.in.i22.ucwebmanager.view.MainView;
 import de.tum.in.i22.ucwebmanager.view.RuntimeView;
@@ -13,7 +14,8 @@ import de.tum.in.i22.ucwebmanager.view.StaticAnalysisView;
 public enum DashboardViewType {
   MAIN("Home", MainView.class, FontAwesome.HOME, true),
   STATANALYSIS("Static Analysis", StaticAnalysisView.class, FontAwesome.ANDROID, true),
-  INSTRUMENT("Instrumentation", InstrumentationView.class, FontAwesome.LINKEDIN, true), 
+  INSTRUMENT("Instrumentation", InstrumentationView.class, FontAwesome.LINKEDIN, true),
+  DEPLOYMENT("Deployment", DeploymentView.class, FontAwesome.DOWNLOAD, true),
   RUNTIME("Runtime", RuntimeView.class, FontAwesome.BAR_CHART_O, false);//, TRANSACTIONS(
 //            "transactions", TransactionsView.class, FontAwesome.TABLE, false), REPORTS(
 //            "reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), SCHEDULE(

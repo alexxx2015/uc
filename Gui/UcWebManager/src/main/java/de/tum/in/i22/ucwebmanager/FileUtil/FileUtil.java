@@ -20,7 +20,7 @@ public class FileUtil {
 		JOANAOUTPUT 		(File.separator + "joana-output"),
 		INSTRUMENTATION 	(File.separator + "instrumentations"),
 		RUNTIME 			(File.separator + "runtime"),
-		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcat.txt");
+		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcatConf");
 		
 		private String dir;
 		private Dir(String s){
@@ -31,7 +31,7 @@ public class FileUtil {
 		}
 	};
 	public static final String GRAPHFILE="graph.json";
-	
+	public static final String TOMCAT_DEFAULT_FILE = "default.file";
 	
 	public static void unzipFile(File path,String fileName){
 		ProcessBuilder pb = new ProcessBuilder("jar", "xf",fileName);
@@ -72,8 +72,11 @@ public class FileUtil {
 	public static String getPathBlackAndWhiteList(){
 		return Dir.BLACKANDWHITELIST.getDir();
 	}
-	public static String getPathTomcatConfFile() {
+	public static String getPathTomcatConfigurations() {
 		return Dir.TOMCATCONF.getDir();
+	}
+	public static String getPathTomcatConfFile() {
+		return Dir.TOMCATCONF.getDir() + File.separator + TOMCAT_DEFAULT_FILE;
 	}
 	
 	// Relative Path, using  VaadinService.getCurrent().getBaseDirectory().getPath() -> .../src/main/webapp
