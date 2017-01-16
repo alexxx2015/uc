@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.http.client.ClientProtocolException;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -160,24 +161,7 @@ public class DeploymentView extends VerticalLayout implements View {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				try {
-//					DeployManager dp = new DeployManager();
-//					String path = FileUtil.getPathCode(app.getHashCode())+File.separator+app.getName();
-//					String reportName = "";
-//					if (!"".equals(cmbReportFile.getValue()))
-//						reportName = "_" + cmbReportFile.getValue();
-//					String contextName = FilenameUtils.getBaseName(app.getName() + reportName);
-//					String response = dp.deploy(contextName, path);
-//					Notification.show(response);
-					
-					DeployManager dp = new DeployManager();
-					String path = FileUtil.getPathCode(app.getHashCode())+File.separator+app.getName();
-					String contextName = FilenameUtils.getBaseName(app.getName());
-					String response = dp.deploy(contextName, path);
-					Notification.show(response);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				deploy();
 			}
 		});
 		
@@ -187,21 +171,7 @@ public class DeploymentView extends VerticalLayout implements View {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				try {
-//					DeployManager dp = new DeployManager();
-//					String reportName = "";
-//					if (!"".equals(cmbReportFile.getValue()))
-//						reportName = "_" + cmbReportFile.getValue();
-//					String contextName = FilenameUtils.getBaseName(app.getName() + reportName);
-//					String response = dp.undeploy(contextName);
-//					Notification.show(response);
-					DeployManager dp = new DeployManager();
-					String contextName = FilenameUtils.getBaseName(app.getName());
-					String response = dp.undeploy(contextName);
-					Notification.show(response);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				undeploy();
 			}
 		});
 		
@@ -229,11 +199,8 @@ public class DeploymentView extends VerticalLayout implements View {
 		txtHost.setValue(conf.getHost());
 		txtPort.setValue(conf.getPort());
 	}
-
-	protected void saveTomcatConfiguration() {
-		String name = txtConfName.getValue();
-		if ("".equals(name))
-			name = FileUtil.TOMCAT_DEFAULT_FILE;
+	
+	private TomcatConfig readTomcatConfigFromFields() {
 		
 		TomcatConfig data = new TomcatConfig();
 		data.setUsername(txtUsername.getValue());
@@ -258,7 +225,11 @@ public class DeploymentView extends VerticalLayout implements View {
 			strError.append("Port must be specified");
 			strError.append("<br/>");
 		}
+		
 		if(!"".equals(strError.toString())){
+			//If there is an error return null
+			data=null;
+			
 			Notification notification = new Notification(
 	                "Message Box");
 	        notification.setDescription(strError.toString());
@@ -268,7 +239,55 @@ public class DeploymentView extends VerticalLayout implements View {
 	        notification.setDelayMsec(5000);
 	        notification.show(Page.getCurrent());
 		}
-		else{
+		
+		return data;
+	}
+	
+	private void deploy() {
+		TomcatConfig configurationData = readTomcatConfigFromFields();
+		if (configurationData==null) return;
+		
+		DeployManager dp = new DeployManager(configurationData);
+		String reportName = ""+cmbReportFile.getValue();
+		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + reportName;
+		String warName = FilenameUtils.getBaseName(app.getName()) + ".war";
+		String warPath = dp.packageWar(warName, webappPath);
+		String contextName = FilenameUtils.getBaseName(app.getName()) + "_" + reportName;
+		
+		String response="";
+		try {
+			response = dp.deploy(contextName, warPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		Notification.show(response);
+	}
+	
+	private void undeploy() {
+		TomcatConfig configurationData = readTomcatConfigFromFields();
+		if (configurationData==null) return;
+		
+		DeployManager dp = new DeployManager(configurationData);
+		String reportName = "" + cmbReportFile.getValue();
+		String contextName = FilenameUtils.getBaseName(app.getName()) + "_" + reportName;
+		String response="";
+		try {
+			response = dp.undeploy(contextName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Notification.show(response);
+	}
+
+	private void saveTomcatConfiguration() {
+
+		TomcatConfig data = readTomcatConfigFromFields();
+		
+		if (data!=null) {
+			String name = txtConfName.getValue();
+			if ("".equals(name))
+				name = FileUtil.TOMCAT_DEFAULT_FILE;
+			
 			String filepath = FileUtil.getPathTomcatConfigurations() + File.separator + name;
 			data.save(filepath);
 		}

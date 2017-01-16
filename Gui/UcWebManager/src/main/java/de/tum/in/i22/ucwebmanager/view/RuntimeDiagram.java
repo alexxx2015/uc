@@ -24,7 +24,6 @@ public void setLabelVisibility(String field, boolean visible) {
 	
 }
 
-
 @Override
 public RuntimeDiagramState getState() {
 	return (RuntimeDiagramState) super.getState();

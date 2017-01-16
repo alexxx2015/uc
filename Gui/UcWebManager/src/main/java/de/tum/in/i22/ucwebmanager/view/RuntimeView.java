@@ -22,6 +22,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -36,9 +37,10 @@ import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
 import de.tum.in.i22.ucwebmanager.Status.Status;
+import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 public class RuntimeView extends VerticalLayout implements View{
 
-	final RuntimeDiagram runtimeDiagram = new RuntimeDiagram();
+	RuntimeDiagram runtimeDiagram = new RuntimeDiagram();
 	Window subWindow;
 	ComboBox cmbListApp;
 	private App app;
@@ -70,7 +72,22 @@ public class RuntimeView extends VerticalLayout implements View{
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				
+				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
+						"/" + app.getId() + "?restartApplication");
+//				if (app!=null) {
+//					String filepath = FileUtil.getPathGraphFile(app.getHashCode());
+//					File file = new File(filepath);
+//					File fileTMP = new File(file.getParent()+File.separator+"tmp");
+//					file.renameTo(fileTMP);
+//					File graph2 = new File(file.getParent()+File.separator+"graph2.json");
+//					graph2.renameTo(new File(filepath));
+//					fileTMP.renameTo(new File(file.getParent()+File.separator+"graph2.json"));
+//				}
+
+//				if (app!=null) {
+//					String url = FileUtil.getUrlGraphFile(app.getHashCode());
+//					runtimeDiagram.drawFromJSON(url);
+//				}
 			}
 		});
 		
@@ -117,7 +134,8 @@ public class RuntimeView extends VerticalLayout implements View{
 			for (String msg : msgs) {
 				appId = 0;
 				if (msg != null){
-					appId = Integer.parseInt(msg);
+					String msg2 = msg.replaceAll("\\?restartApplication", "");
+					appId = Integer.parseInt(msg2);
 					System.out.println("enter view changeevent " + appId);
 				
 				try {
@@ -129,7 +147,6 @@ public class RuntimeView extends VerticalLayout implements View{
 			}
 			
 			if (app != null){
-				//TODO show graph from app
 				
 //				String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
 //				System.out.println(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");

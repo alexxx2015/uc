@@ -32,38 +32,39 @@ public class DeployManager{
     private final String host;
     private final String port;
     
-    public DeployManager() {
-    	
-		TomcatConfig tc = new TomcatConfig();
-		
-    	File file = new File (FileUtil.getPathTomcatConfFile());
-    	if (!file.exists()) {
-    		tc.setUsername("tomcat");
-    		tc.setPassword("pass");
-    		tc.setHost("localhost");
-    		tc.setPort("8181");
-    		tc.save(file.getPath());
-    	} 
-    	else {
-    		tc.load(file.getPath());
-    	}
-    	this.host = tc.getHost();	
-    	this.port = tc.getPort();
-    	
-        this.credsProvider.setCredentials(AuthScope.ANY,
-        						new UsernamePasswordCredentials(tc.getUsername(), tc.getPassword()));
-
-    }
+//    public DeployManager() {
+//    	
+//		TomcatConfig tc = new TomcatConfig();
+//		
+//    	File file = new File (FileUtil.getPathTomcatConfFile());
+//    	if (!file.exists()) {
+//    		tc.setUsername("tomcat");
+//    		tc.setPassword("pass");
+//    		tc.setHost("localhost");
+//    		tc.setPort("8181");
+//    		tc.save(file.getPath());
+//    	} 
+//    	else {
+//    		tc.load(file.getPath());
+//    	}
+//    	this.host = tc.getHost();	
+//    	this.port = tc.getPort();
+//    	
+//        this.credsProvider.setCredentials(AuthScope.ANY,
+//        						new UsernamePasswordCredentials(tc.getUsername(), tc.getPassword()));
+//
+//    }
     
-    public DeployManager(String host, String port) {
+    public DeployManager(TomcatConfig configuration) {
     	
         /*
          * warning only ever AuthScope.ANY while debugging
          * with these settings the tomcat username and pw are added to EVERY request
          */
-        this.credsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials("tomcat", "pass"));
-        this.host=host;
-        this.port=port;
+        this.credsProvider.setCredentials(AuthScope.ANY, 
+        				new UsernamePasswordCredentials(configuration.getUsername(), configuration.getPassword()));
+        this.host=configuration.getHost();
+        this.port=configuration.getPort();
     	
     }
 
@@ -96,7 +97,36 @@ public class DeployManager{
         String response = executeRequest (req, credsProvider);
         return response;
     } 
+    
+    public String packageWar(String warName, String webappPath) {
+    	WarPackager wp = new WarPackager(warName, webappPath);
+    	wp.start();
+    	return webappPath + File.separator + warName;
+    }
 
+    private class WarPackager extends Thread {
+    	
+    	private String warName;
+    	private String webappPath;
+    	
+    	public WarPackager(String warName, String webappPath) {
+    		this.warName = warName;
+    		this.webappPath=webappPath;
+    	}
+    	
+    	public void run() {
+    		//command = jar -cvf mypackage.war -C path .
+    		ProcessBuilder pb = new ProcessBuilder("jar", "-cvf", webappPath+File.separator+warName, "-C", webappPath, ".");
+    		try {
+    			Process process = pb.start();
+    			process.waitFor();
+    			System.out.println("War packaged!");
+    		}
+    		catch (InterruptedException | IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
 //    private static void deploy() throws ClientProtocolException, IOException {
 //    	
 //        String url = "http://localhost:8080/manager/text/deploy?path=/deployMe&update=true";

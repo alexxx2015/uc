@@ -7,7 +7,7 @@ import com.vaadin.server.VaadinServlet;
 
 public class WebServiceServlets {
 	@WebServlet(urlPatterns = {"/main/*","/VAADIN/*"}, name = "UcWebManagerUIServlet", asyncSupported = true)
-	@VaadinServletConfiguration(ui = UcWebManagerUI.class, productionMode = false)
+	@VaadinServletConfiguration(ui = UcWebManagerUI.class, productionMode = false, resourceCacheTime = 0)
 	public static class UcWebManagerUIServlet extends VaadinServlet {
 		// super.servletInitialized(); //always call at the beginning
 

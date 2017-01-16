@@ -16,7 +16,7 @@ public class RuntimeDiagramState extends JavaScriptComponentState {
 	public void setJson(String json) {
 		this.json = json;
 	}
-
+	
 	public Map<String, Boolean> getLabelsMap() {
 		return labelsMap;
 	}

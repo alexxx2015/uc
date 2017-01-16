@@ -122,7 +122,6 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 		var json = this.getState().json;
 		var labelsMap = this.getState().labelsMap;
 		
-		
 		if (oldLabels.length === labelsMap.length) {
 			for (field in oldLabels) {
 				if (oldLabels[field] != labelsMap[field]) {
@@ -137,16 +136,12 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 				showHideElement(field, labelsMap[field]);
 			}
 		}
-		
-//		if (visLabels!=oldVisLabels) {
-//			showHideElement("label1", visLabels);
-//		}
-//		oldVisLabels=visLabels;
 			
 		if (oldJson!=json) {
 			drawFromJSON(json);
 		}
 		oldJson=json;
+		
 	}
 	
 	function showHideElement (className, visible) {
