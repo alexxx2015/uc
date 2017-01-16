@@ -9,12 +9,27 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 public class TomcatConfig {
+	
+	public static final String USERNAME = "USERNAME";
+	public static final String PASSWORD = "PASSWORD";
 	public static final String HOST = "HOST";
 	public static final String PORT = "PORT";
 	
 	Properties prop;
 	public TomcatConfig() {
 		this.prop = new Properties();
+	}
+	public void setUsername(String username) {
+		prop.setProperty(USERNAME, username);
+	}
+	public String getUsername() {
+		return prop.getProperty(USERNAME);
+	}
+	public void setPassword(String password) {
+		prop.setProperty(PASSWORD, password);
+	}
+	public String getPassword() {
+		return prop.getProperty(PASSWORD);
 	}
 	public void setHost(String host){
 		prop.setProperty(HOST, host);
@@ -29,11 +44,11 @@ public class TomcatConfig {
 		return prop.getProperty(PORT);
 	}
 
-	public void load(String path){
+	public void load(String filepath){
 		
 		InputStream input = null;
 		try {
-			input = new FileInputStream(path);
+			input = new FileInputStream(filepath);
 			prop.load(input);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,9 +62,9 @@ public class TomcatConfig {
 			}
 		}
 	}
-	public void save(String path){
+	public void save(String filepath){
 		try {
-			OutputStream output = new FileOutputStream(path);
+			OutputStream output = new FileOutputStream(filepath);
 			prop.store(output, "");
 		} catch (IOException e) {
 			e.printStackTrace();

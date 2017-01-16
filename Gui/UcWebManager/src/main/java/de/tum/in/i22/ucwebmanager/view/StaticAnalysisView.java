@@ -929,7 +929,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		for (Object itemID : table.getContainerDataSource().getItemIds()) {
 			AbstractField field = (AbstractField) table.getItem(itemID).getItemProperty(propertyID).getValue();
 
-			if (!"".equals(field.getValue().toString()))
+			if (field.getValue()!=null && !"".equals(field.getValue().toString()))
 				strRows.add(field.getValue().toString());
 		}
 		
@@ -996,10 +996,13 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	}
 	
 	private void fillStaticAnalysisFields(String configPath) {
+		txtAppName.setReadOnly(false);
 		txtAppName.setValue(app.getName());
 		txtAppName.setReadOnly(true);
 		AnalysisData data = DocBuilder.readConfigFromFile(configPath, "");
 
+		if (data==null) return;
+		
 		cmbmode.setValue(data.getMode());
 		cmbStub.setValue(data.getStubs());
 		cmbPruningPolicy.setValue(data.getPruningPolicy());

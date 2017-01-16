@@ -119,14 +119,6 @@ public class InstrumentationView extends VerticalLayout implements View {
 		 for (String name : names) cmbReportFile.addItem(name);
 	 }
 	 private void fillSrcAndDest(App app){
-//		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
-//		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
-//		 this.txtSrcFolder.setReadOnly(false);
-//		 this.txtSrcFolder.setValue(txtDestFolder);
-//		 this.txtSrcFolder.setReadOnly(true);
-//		 this.txtDestFolder.setReadOnly(false);
-//		 this.txtDestFolder.setValue(txtSrcFolder);
-//		 this.txtDestFolder.setReadOnly(true);
 		 String srcFolder = FileUtil.getPathCode(app.getHashCode());
 		 String destFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
 		 this.txtSrcFolder.setValue(srcFolder);
@@ -401,7 +393,6 @@ public class InstrumentationView extends VerticalLayout implements View {
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
-					//TODO: fill all boxes
 					fillCmbReportFile(app);
 					fillSrcAndDest(app);
 					subWindow.close();

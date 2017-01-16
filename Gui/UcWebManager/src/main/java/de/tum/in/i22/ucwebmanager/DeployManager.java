@@ -38,6 +38,8 @@ public class DeployManager{
 		
     	File file = new File (FileUtil.getPathTomcatConfFile());
     	if (!file.exists()) {
+    		tc.setUsername("tomcat");
+    		tc.setPassword("pass");
     		tc.setHost("localhost");
     		tc.setPort("8181");
     		tc.save(file.getPath());
@@ -48,7 +50,8 @@ public class DeployManager{
     	this.host = tc.getHost();	
     	this.port = tc.getPort();
     	
-        this.credsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials("tomcat", "pass"));
+        this.credsProvider.setCredentials(AuthScope.ANY,
+        						new UsernamePasswordCredentials(tc.getUsername(), tc.getPassword()));
 
     }
     

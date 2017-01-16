@@ -45,6 +45,8 @@ public class RuntimeView extends VerticalLayout implements View{
 	private int appId;
 	private HorizontalLayout checkboxesContainer;
 	
+	private Button btnRefresh;
+	
 	public RuntimeView() {
 		Label lab = new Label("Runtime view");
 		addComponent(lab);
@@ -55,30 +57,27 @@ public class RuntimeView extends VerticalLayout implements View{
 		FormLayout fl = new FormLayout();
 		fl.setSizeFull();
 		
-//		// ------ NEW CODE -------
-//		HorizontalLayout hl = new HorizontalLayout();
-//		CheckBox chkLabel1 = new CheckBox("Label1");
-//		CheckBox chkLabel2 = new CheckBox("Label2");
-//		chkLabel1.setValue(true);
-//		chkLabel1.addValueChangeListener(event -> 
-//				runtimeDiagram.setLabelVisibility(Boolean.parseBoolean(event.getProperty().getValue().toString())));
-//		hl.addComponent(chkLabel1);
-//		hl.addComponent(chkLabel2);
-//		hl.setMargin(true);
-//		parent.addComponent(hl);
-//		
-//		// ------ NEW CODE -------
-		
-		// ------ NEW CODE -------
 		checkboxesContainer = new HorizontalLayout();
 		parent.addComponent(checkboxesContainer);
-		// ------ NEW CODE -------
 		
 		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
 		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		//runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
-		fl.addComponent(runtimeDiagram);
 		
+        btnRefresh = new Button("Refresh");
+        btnRefresh.addStyleName("mybutton");
+        btnRefresh.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				
+			}
+		});
+		
+        parent.addComponent(btnRefresh);
+      
+        fl.addComponent(runtimeDiagram);
+        
 		parent.addComponent(fl);		
 		parent.setMargin(true);
 		addComponent(parent);
@@ -86,7 +85,8 @@ public class RuntimeView extends VerticalLayout implements View{
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
         subWindow.setContent(subContent);
-        cmbListApp = new ComboBox("List of avaialbe Apps");
+        subWindow.setModal(true);
+        cmbListApp = new ComboBox("List of available Apps");
         Button btnSubWindowOK = new Button("OK");
         btnSubWindowOK.addClickListener(new Button.ClickListener() {
 			
@@ -96,7 +96,6 @@ public class RuntimeView extends VerticalLayout implements View{
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
-					//TODO: fill all boxes
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
@@ -147,10 +146,10 @@ public class RuntimeView extends VerticalLayout implements View{
 				
 			}
 		}
-//		else {
-//			fillCmbListApp();
-//			UI.getCurrent().addWindow(subWindow);
-//		}
+		else {
+			fillCmbListApp();
+			UI.getCurrent().addWindow(subWindow);
+		}
 	}
 	private void fillCmbListApp(){
 		List<App> apps = AppDAO.getAppByStatus(Status.INSTRUMENTATION.getStage());
