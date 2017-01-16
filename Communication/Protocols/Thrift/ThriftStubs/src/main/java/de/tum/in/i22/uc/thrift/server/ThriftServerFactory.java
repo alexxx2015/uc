@@ -75,6 +75,12 @@ public class ThriftServerFactory {
 		return createThriftServer(port,
 				new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(handler)));
 	}
+	
+	public static IThriftServer createPmpArmeriaThriftServer(int port, IAny2Pmp handler){
+//		TProcessor processor = new TAny2Pmp.Processor<TAny2PmpThriftServer>(new TAny2PmpThriftServer(handler));
+		ThriftWebServer _return = new ThriftWebServer(port, new TAny2PmpThriftServer(handler));
+		return _return;
+	}
 
 
 	/**
