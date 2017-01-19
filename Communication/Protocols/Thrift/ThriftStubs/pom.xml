@@ -12,6 +12,13 @@
 	<artifactId>ThriftStubs</artifactId>
 	<packaging>jar</packaging>
 
+	<properties>
+
+
+		<!-- ARMERIA SERVER -->
+		<armeria.version>0.34.1</armeria.version>
+	</properties>
+
 	<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
 		* -->
 	<build>
@@ -46,15 +53,15 @@
 					</execution>
 
 					<execution>
-						<!-- Change the source code such that all logging methods will not be executed.
-							This is done _before_ compilation phase. -->
+						<!-- Change the source code such that all logging methods will not 
+							be executed. This is done _before_ compilation phase. -->
 						<id>do-nologging</id>
 						<phase>process-sources</phase>
 					</execution>
 
-					<!-- Undo changes to the source code for disabling logging.
-						This is done _after_ compilation phase and _before_ test-compilation phase.
-						THUS: Logging is _NOT_ disabled for test classes. -->
+					<!-- Undo changes to the source code for disabling logging. This is 
+						done _after_ compilation phase and _before_ test-compilation phase. THUS: 
+						Logging is _NOT_ disabled for test classes. -->
 					<execution>
 						<id>undo-nologging</id>
 						<phase>process-classes</phase>
@@ -65,7 +72,8 @@
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -110,6 +118,48 @@
 			<groupId>UsageControlSystem</groupId>
 			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<!-- ARMERIA SERVER: convert HTTP request to Thrift request within the 
+			PMP -->
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-jetty</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-kafka</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-logback</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-retrofit2</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-tomcat</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-zipkin</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-zookeeper</artifactId>
+			<version>${armeria.version}</version>
 		</dependency>
 	</dependencies>
 </project>

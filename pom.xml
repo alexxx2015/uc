@@ -26,9 +26,6 @@
 		<nologging.code>if \(\/\*nologging\*\/false\/\*nologging\*\/\)</nologging.code>
 		<nologging.enable></nologging.enable>
 		<nologging.files>${basedir}/**/**.java</nologging.files>
-		
-		<!-- ARMERIA SERVER -->
-		<armeria.version>0.34.1</armeria.version>
 	</properties>
 
 	<profiles>
@@ -155,48 +152,7 @@
 			<version>1.1.1</version>
 		</dependency>
 
-		<!-- ARMERIA SERVER: convert HTTP request to Thrift request within the 
-			PMP -->
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-jetty</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-kafka</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-logback</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-retrofit2</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-tomcat</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-zipkin</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linecorp.armeria</groupId>
-			<artifactId>armeria-zookeeper</artifactId>
-			<version>${armeria.version}</version>
-		</dependency>
+		
 	</dependencies>
 
 	<build>

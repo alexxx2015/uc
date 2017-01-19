@@ -12,18 +12,19 @@ public class ThriftWebServer implements IThriftServer {
 	private boolean isStarted = false;
 
 	public ThriftWebServer(int port, ThriftServerHandler handler) {
-		String url = "/pmp";// Settings.getInstance().get
+		String url = "/pmp";
+//		Settings.getInstance().getpmpweb
 
 		ServerBuilder sb = new ServerBuilder();
 		sb.port(port, SessionProtocol.HTTP);
 
 		CorsServiceBuilder csb = CorsServiceBuilder.forOrigin("*");
 		csb.allowRequestMethods(com.linecorp.armeria.common.http.HttpMethod.POST)
-//				.allowRequestHeaders("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+				.allowRequestHeaders("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 		;
 
 		THttpService service = THttpService.of(handler, SerializationFormat.THRIFT_JSON);
-//		service.decorate(csb.newDecorator());
+		service.decorate(csb.newDecorator());
 
 		this.server = sb.serviceAt(url, service).build();
 	}
