@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.client.ClientProtocolException;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
@@ -51,7 +53,8 @@ public class DeploymentView extends VerticalLayout implements View {
 	private static final String DEFAULT_USERNAME = "tomcat";
 	private static final String DEFAULT_HOST = "localhost";
 	private static final String DEFAULT_PORT = "8181";
-
+	
+	private static final String UC_JAVA_PEP_LIBRARY_NAME = "uc-java-pep-0.0.1-SNAPSHOT-jar-with-dependencies.jar";
 	
 	public DeploymentView() {
 		//Set the UI with its components
@@ -247,6 +250,9 @@ public class DeploymentView extends VerticalLayout implements View {
 		TomcatConfig configurationData = readTomcatConfigFromFields();
 		if (configurationData==null) return;
 		
+		joinCodeWithInstrumentedClasses();
+		addUcJavaPepLibraryToInstrumentedCode();
+		
 		DeployManager dp = new DeployManager(configurationData);
 		String reportName = ""+cmbReportFile.getValue();
 		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + reportName;
@@ -257,10 +263,47 @@ public class DeploymentView extends VerticalLayout implements View {
 		String response="";
 		try {
 			response = dp.deploy(contextName, warPath);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
+		System.out.println(response);
 		Notification.show(response);
+	}
+	
+	private void joinCodeWithInstrumentedClasses() {
+		
+		String codePath = FileUtil.getPathCode(app.getHashCode());
+		String instrumentedCodePath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + cmbReportFile.getValue();
+		try {
+			FileUtils.copyDirectory(new File(codePath), new File(instrumentedCodePath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	private void addUcJavaPepLibraryToInstrumentedCode() {
+		
+		String libFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
+						   	   cmbReportFile.getValue() + File.separator + "WEB-INF" + File.separator +
+						       "lib";
+		File libFolder = new File(libFolderPath);
+		if (!libFolder.exists())
+			libFolder.mkdirs();
+		
+		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator +
+				"lib" + File.separator + UC_JAVA_PEP_LIBRARY_NAME;
+		File ucjavapepLib = new File(ucjavapepLibPath);
+		
+		try {
+			FileUtils.copyFileToDirectory(ucjavapepLib, libFolder);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void undeploy() {
@@ -276,6 +319,7 @@ public class DeploymentView extends VerticalLayout implements View {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println(response);
 		Notification.show(response);
 	}
 
@@ -354,6 +398,7 @@ public class DeploymentView extends VerticalLayout implements View {
 	}
 	
 	 private void fillCmbReportFile(App app){
+		 cmbReportFile.removeAllItems();
 		 File instrumentedCodeFolder = new File(FileUtil.getPathInstrumentationOfApp(app.getHashCode()));
 		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(instrumentedCodeFolder.list()));
 		 for (String name : names) cmbReportFile.addItem(name);
