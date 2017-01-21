@@ -114,6 +114,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 			return xml;
 		}
 	 private void fillCmbReportFile(App app){
+		 cmbReportFile.removeAllItems();
 		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
 		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
 		 for (String name : names) cmbReportFile.addItem(name);
