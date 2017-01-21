@@ -277,7 +277,18 @@ public class DeploymentView extends VerticalLayout implements View {
 		String codePath = FileUtil.getPathCode(app.getHashCode());
 		String instrumentedCodePath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + cmbReportFile.getValue();
 		try {
-			FileUtils.copyDirectory(new File(codePath), new File(instrumentedCodePath));
+			// Files of the source overwrite files with the same name in the destDir
+			// --> Backup of the instrumented classes
+			File instrumentedCode = new File(instrumentedCodePath);
+			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
+			instrumentedCode.renameTo(instrumentedCodeBackup);
+			// Copy original code into instrumentation subfolder
+			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
+			
+			// Substitute original class files with instrumented ones
+			FileUtils.copyDirectory(instrumentedCodeBackup, instrumentedCode);
+			
+			instrumentedCodeBackup.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
