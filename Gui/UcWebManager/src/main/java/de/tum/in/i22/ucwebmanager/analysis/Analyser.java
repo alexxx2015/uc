@@ -34,7 +34,7 @@ public class Analyser extends Thread {
 						String errorStream = getErrorStream(process);
 						process.waitFor();
 //						System.out.println(inputstream);
-//						System.out.println(errorStream);
+						System.out.println(errorStream);
 //						if (errorStream.available() != 0){
 						System.out.println("Process ended!");
 						// TODO send inputstream to Mainview depends on App's ID
