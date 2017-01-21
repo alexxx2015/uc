@@ -9,6 +9,8 @@
 	<source class="Ljava/io/Reader" selector="read([C)I" params="1"/>
 	<source class="Ljava/io/Reader" selector="read([CII)I" params="1"/>
 	<source class="Ljava/io/BufferedReader" selector="readLine()Ljava/lang/String;" params="ret"/>
+	<source class="Ljavax/servlet/http/HttpServletRequest" selector="getParameter(Ljava/lang/String;)Ljava/lang/String;" params="ret"/>
+	<source class="Lorg/apache/catalina/connector/RequestFacade" selector="getParameter(Ljava/lang/String;)Ljava/lang/String;" params="ret"/>
 	<sink class="Ljava/io/OutputStream" selector="write(I)V" params="1"/>
 	<sink class="Ljava/io/OutputStream" selector="write([B)V" params="1"/>
 	<sink class="Ljava/io/OutputStream" selector="write([BII)V" params="1"/>
@@ -19,4 +21,6 @@
 	<sink class="Ljava/io/Writer" selector="write([CII)V" params="1"/>
 	<sink class="Ljava/io/Writer" selector="write(Ljava/lang/String;)V" params="1"/>
 	<sink class="Ljava/io/Writer" selector="write(Ljava/lang/String;II)V" params="1"/>
+	<!--<sink class="Lorg/apache/catalina/connector/ResponseFacade" selector="getParameter(Ljava/lang/String;)Ljava/lang/String;" params="ret"/> -->
+
 </sourcesandsinks>
