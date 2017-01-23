@@ -5,6 +5,7 @@ import com.linecorp.armeria.common.SessionProtocol;
 import com.linecorp.armeria.server.Server;
 import com.linecorp.armeria.server.ServerBuilder;
 import com.linecorp.armeria.server.http.cors.CorsServiceBuilder;
+import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.thrift.THttpService;
 
 public class ThriftWebServer implements IThriftServer {
@@ -17,15 +18,19 @@ public class ThriftWebServer implements IThriftServer {
 		ServerBuilder sb = new ServerBuilder();
 		sb.port(port, SessionProtocol.HTTP);
 
-		CorsServiceBuilder csb = CorsServiceBuilder.forOrigin("*");
-		csb.allowRequestMethods(com.linecorp.armeria.common.http.HttpMethod.POST)
-//				.allowRequestHeaders("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
-		;
+//		CorsServiceBuilder csb = CorsServiceBuilder.forAnyOrigin();
+//		csb.allowRequestMethods(com.linecorp.armeria.common.http.HttpMethod.POST)
+////				.allowRequestHeaders("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+//
+//                .allowNullOrigin();
 
-		THttpService service = THttpService.of(handler, SerializationFormat.THRIFT_JSON);
-//		service.decorate(csb.newDecorator());
+//		THttpService service = THttpService.of(handler, SerializationFormat.THRIFT_JSON).decorate(LoggingService::new);
+//		service.decorate(new CorsServiceBuilder.forAnyOrigin());
 
-		this.server = sb.serviceAt(url, service).build();
+		this.server = sb.serviceAt(url,  THttpService.of(handler, SerializationFormat.THRIFT_JSON).decorate(CorsServiceBuilder.forOrigin("*")
+                .allowRequestMethods(com.linecorp.armeria.common.http.HttpMethod.POST)
+                .allowRequestHeaders("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+                .newDecorator())).build();
 	}
 
 	@Override
