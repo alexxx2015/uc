@@ -52,6 +52,17 @@ public class UcWebManagerNavigator extends Navigator {
             public boolean beforeViewChange(final ViewChangeEvent event) {
                 // Since there's no conditions in switching between the views
                 // we can always return true.
+            	
+//            	if (event!=null && ViewWithWindows.class.isInstance(event.getOldView())) {
+//            		ViewWithWindows oldView = (ViewWithWindows) event.getOldView();
+//            		if (oldView.hasAttachedWindows()) {
+//            			oldView.closeWindows();
+//            			
+//            		}
+//            	}
+                
+
+            	
                 return true;
             }
 

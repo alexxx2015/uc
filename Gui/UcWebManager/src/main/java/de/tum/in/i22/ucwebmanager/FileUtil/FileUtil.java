@@ -1,9 +1,14 @@
 package de.tum.in.i22.ucwebmanager.FileUtil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinServlet;
 
 public class FileUtil {
 	public enum Dir{
@@ -14,7 +19,9 @@ public class FileUtil {
 		JOANACONFIG			(File.separator + "joana-config"),
 		JOANAOUTPUT 		(File.separator + "joana-output"),
 		INSTRUMENTATION 	(File.separator + "instrumentations"),
-		RUNTIME 			(File.separator + "runtime");
+		RUNTIME 			(File.separator + "runtime"),
+		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcatConf");
+		
 		private String dir;
 		private Dir(String s){
 			dir = s;
@@ -23,6 +30,9 @@ public class FileUtil {
 			return dir;
 		}
 	};
+	public static final String GRAPHFILE="graph.json";
+	public static final String TOMCAT_DEFAULT_FILE = "default.file";
+	
 	public static void unzipFile(File path,String fileName){
 		ProcessBuilder pb = new ProcessBuilder("jar", "xf",fileName);
 		pb.directory(path);
@@ -52,12 +62,23 @@ public class FileUtil {
 		String s = getPathHashCode(hashCode) + Dir.JOANAOUTPUT.getDir();
 		return s;
 	}
+	public static String getPathRuntime(String hashCode) {
+		String s = getPathHashCode(hashCode) + Dir.RUNTIME.getDir();
+		return s;
+	}
 	public static String getPathSourceAndSinks(){
 		return Dir.SOURCEANDSINKS.getDir();
 	}
 	public static String getPathBlackAndWhiteList(){
 		return Dir.BLACKANDWHITELIST.getDir();
 	}
+	public static String getPathTomcatConfigurations() {
+		return Dir.TOMCATCONF.getDir();
+	}
+	public static String getPathTomcatConfFile() {
+		return Dir.TOMCATCONF.getDir() + File.separator + TOMCAT_DEFAULT_FILE;
+	}
+	
 	// Relative Path, using  VaadinService.getCurrent().getBaseDirectory().getPath() -> .../src/main/webapp
 	public static String getRelativePathHashCode(String hashCode){
 		String s = "." + File.separator + "apps" + File.separator + hashCode;
@@ -79,6 +100,61 @@ public class FileUtil {
 		String s = getRelativePathHashCode(hashCode) + Dir.INSTRUMENTATION.getDir();
 		return s;
 	}
+	public static String getRelativePathRuntime(String hashCode){
+		String s = getRelativePathHashCode(hashCode) + Dir.RUNTIME.getDir();
+		return s;
+	}
 	
+	public static String getPathGraphFile(String hashCode) {
+		String s = getPathRuntime(hashCode) + File.separator + GRAPHFILE;
+		return s;
+	}
+	public static String getUrlGraphFile(String hashCode) {
+		String s = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL") +
+				   File.separator + "apps" + File.separator + hashCode + Dir.RUNTIME.getDir() +
+				   File.separator + GRAPHFILE;
+		return s;
+	}
+	
+	public static List<File> getFiles(List<String> directories, String extension) {
+		List<File> list = new ArrayList<File>();
+		
+		for (String strDir : directories) {
+			File dir = new File(strDir);
+			File[] files = dir.listFiles(pathname -> pathname.isFile() && 
+										 ("".equals(extension) || pathname.getName().endsWith(extension) ));
+			
+			for (File f:files)
+				list.add(f);
+		}
+		return list;
+	}
+	
+	//Return all the absolute paths of the subdirectories of the path indicated
+	public static List<String> getSubDirectories(String path) {
+		List<String> list = new ArrayList<String>();
+		
+		FileFilter onlyDirectories = new FileFilter() {
+
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory() && !pathname.getName().matches("__MACOSX");
+			}
+			
+		};
+		
+		//Add the current directory
+		list.add(path);
+		
+		//Add all the subdirectories
+		File currentDirectory = new File(path);
+		File[] subDirectories = currentDirectory.listFiles(onlyDirectories);
+		for (File f : subDirectories) {
+			Collection<String> subCollection = getSubDirectories(f.toString());
+			list.addAll(subCollection);
+		}
+		
+		return list;
+	}
 	
 }

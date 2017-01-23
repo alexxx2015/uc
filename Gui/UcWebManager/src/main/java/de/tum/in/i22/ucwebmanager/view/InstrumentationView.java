@@ -39,23 +39,23 @@ import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.UcConfig;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import edu.tum.uc.jvm.Instrumentor;
-public class InstrumentationView extends VerticalLayout implements View{
+public class InstrumentationView extends VerticalLayout implements View {
 	App app;
 	File file;
 	Window subWindow;
 	ComboBox cmbListApp;
 	String appName, arg0, arg1, arg2;
 	String blackL = "black list", whiteL = "white list",
-			blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
+		   blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
 	private int appId;
 	private TextArea textArea;
 	private Table gridBlackList, gridWhiteList;
 	private Button btnrun;
-	private TextField txtPipH, txtPipP, txtPdpP, txtPdpH, txtPmpH, txtPmpP,
-	txtMypmpP, txtMypmpH, txtIns_class_path, txtStatistics, txtUc_Prop,
-	txtUc_4win_autostart, txtTimermethods, txtSrcFolder, txtDestFolder;
+	private TextField txtPipH, txtPipP, txtPdpP, txtPdpH, txtPmpH, txtPmpP, txtUcWebMgmUrl,
+					  txtMypmpP, txtMypmpH, txtIns_class_path, txtStatistics, txtUc_Prop,
+					  txtUc_4win_autostart, txtTimermethods, txtSrcFolder, txtDestFolder;
 	private CheckBox chkEnforcement, chkInstrumentation, chkTimerT1, chkTimerT2, chkTimerT3, chkTimerT4, chkTimerT5,
-	chkNetcom, chkPdp_asyncom, chkIFT;
+					 chkNetcom, chkLogChopNodes, chkPdp_asyncom, chkIFT;
 	private ComboBox cmbReportFile;
 	
 	public InstrumentationView() {
@@ -80,14 +80,15 @@ public class InstrumentationView extends VerticalLayout implements View{
 					}
 					if (app != null) {
 						appName = app.getName();
-						fillComboBox(app);
+						fillCmbReportFile(app);
 						fillSrcAndDest(app);
 					}
 
 				}
 				else {
 					fillCmbListApp();
-					UI.getCurrent().addWindow(subWindow);
+					if (!subWindow.isAttached())
+						UI.getCurrent().addWindow(subWindow);
 				}
 			}
 		}
@@ -112,19 +113,17 @@ public class InstrumentationView extends VerticalLayout implements View{
 			}
 			return xml;
 		}
-	 private void fillComboBox(App app){
+	 private void fillCmbReportFile(App app){
 		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
 		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
 		 for (String name : names) cmbReportFile.addItem(name);
 	 }
 	 private void fillSrcAndDest(App app){
-		 String txtSrcFolder = FileUtil.getPathCode(app.getHashCode());
-		 String txtDestFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
-		 this.txtSrcFolder.setReadOnly(false);
-		 this.txtSrcFolder.setValue(txtDestFolder);
+		 String srcFolder = FileUtil.getPathCode(app.getHashCode());
+		 String destFolder = FileUtil.getPathInstrumentationOfApp(app.getHashCode());
+		 this.txtSrcFolder.setValue(srcFolder);
 		 this.txtSrcFolder.setReadOnly(true);
-		 this.txtDestFolder.setReadOnly(false);
-		 this.txtDestFolder.setValue(txtSrcFolder);
+		 this.txtDestFolder.setValue(destFolder);
 		 this.txtDestFolder.setReadOnly(true);
 		 
 	 }
@@ -161,12 +160,14 @@ public class InstrumentationView extends VerticalLayout implements View{
 	 private void init() {
 		txtPipH = new TextField("PIP_HOST", "localhost");
 		txtPipH.setWidth("100%");
-		txtPipP = new TextField("PIP_PORT", "40011");
+		//txtPipP = new TextField("PIP_PORT", "40011");
+		txtPipP = new TextField("PIP_PORT", "21002");
 		txtPipP.setWidth("100%");
 		
 		txtPdpH = new TextField("PDP_HOST", "localhost");
 		txtPdpH.setWidth("100%");
-		txtPdpP = new TextField("PDP_PORT", "9090");
+		//txtPdpP = new TextField("PDP_PORT", "9090");
+		txtPdpP = new TextField("PDP_PORT", "21003");
 		txtPdpP.setWidth("100%");
 		
 		txtPmpH = new TextField("PMP_HOST", "localhost");
@@ -196,6 +197,10 @@ public class InstrumentationView extends VerticalLayout implements View{
 		chkTimerT5 = new CheckBox("TIMER_T5", false);
 		chkIFT = new CheckBox("IFT", true);
 		chkNetcom = new CheckBox("NETCOM", true);
+		chkLogChopNodes = new CheckBox("LOGCHOPNODES", true);
+		
+		txtUcWebMgmUrl = new TextField("UC_WEBMGM_URL", "http://localhost:8080/rest");
+		txtUcWebMgmUrl.setWidth("100%");
 		
 		txtUc_Prop = new TextField("UC_PROPERTIES");
 		txtUc_Prop.setWidth("100%");
@@ -359,6 +364,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 		fl.addComponent(chkTimerT5);
 		fl.addComponent(chkIFT);
 		fl.addComponent(chkNetcom);
+		fl.addComponent(chkLogChopNodes);
+		fl.addComponent(txtUcWebMgmUrl);
 		fl.addComponent(txtUc_Prop);
 		fl.addComponent(chkPdp_asyncom);
 		fl.addComponent(txtUc_4win_autostart);
@@ -372,10 +379,11 @@ public class InstrumentationView extends VerticalLayout implements View{
 		parent.setMargin(true);
 		addComponent(parent);
 		subWindow = new Window("No App selected, please choose an app!");
+		subWindow.setModal(true);
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
         subWindow.setContent(subContent);
-        cmbListApp = new ComboBox("List of avaialbe Apps");
+        cmbListApp = new ComboBox("List of available Apps");
         Button btnSubWindowOK = new Button("OK");
         btnSubWindowOK.addClickListener(new Button.ClickListener() {
 			
@@ -385,7 +393,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
-					//TODO: fill all boxes
+					fillCmbReportFile(app);
+					fillSrcAndDest(app);
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
@@ -433,6 +442,8 @@ public class InstrumentationView extends VerticalLayout implements View{
 		 ucConfig.setIft(chkIFT.getValue().toString());
 		 
 		 ucConfig.setNetcom(chkNetcom.getValue().toString());
+		 ucConfig.setLogChopNodes(chkLogChopNodes.getValue().toString());
+		 ucConfig.setUcWebMgmUrl(txtUcWebMgmUrl.getValue().toString());
 		 ucConfig.setUc_properties(txtUc_Prop.getValue());
 		 ucConfig.setPdp_asyncom(chkPdp_asyncom.getValue().toString());
 		 ucConfig.setUc4win_autostart(txtUc_4win_autostart.getValue());

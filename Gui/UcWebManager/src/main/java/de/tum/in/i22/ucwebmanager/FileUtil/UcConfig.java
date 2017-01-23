@@ -30,6 +30,8 @@ public class UcConfig {
 	public static final String timer_t4 = "TIMER_T4";
 	public static final String timer_t5 = "TIMER_T5";
 	public static final String netcom = "NETCOM";
+	public static final String log_chop_nodes = "LOGCHOPNODES";
+	public static final String uc_wb_mgm_url = "UCWEBMGMURL";
 	public static final String uc_properties = "UC_PROPERTIES";
 	public static final String pdp_asyncom = "PDP_ASYNCOM";
 	public static final String uc4win_autostart = "UC4WIN_AUTOSTART";
@@ -167,6 +169,18 @@ public class UcConfig {
 	}
 	public String getNetcom(){
 		return prop.getProperty(netcom);
+	}
+	public void setLogChopNodes(String s) {
+		prop.setProperty(log_chop_nodes, s);
+	}
+	public String getLogChopNodes() {
+		return prop.getProperty(log_chop_nodes);
+	}
+	public void setUcWebMgmUrl(String s) {
+		prop.setProperty(uc_wb_mgm_url, s);
+	}
+	public String getUcWebMgmUrl() {
+		return prop.getProperty(uc_wb_mgm_url);
 	}
 	public void setUc_properties(String s){
 		prop.setProperty(uc_properties, s);

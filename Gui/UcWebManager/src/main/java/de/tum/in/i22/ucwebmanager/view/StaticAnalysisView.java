@@ -1,9 +1,11 @@
 package de.tum.in.i22.ucwebmanager.view;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.vaadin.data.Container.ItemSetChangeEvent;
+import com.vaadin.data.Container.ItemSetChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -36,6 +40,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -62,6 +67,9 @@ import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.analysis.AnalysisData;
 import de.tum.in.i22.ucwebmanager.analysis.DocBuilder;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
 
 public class StaticAnalysisView extends VerticalLayout implements View {
 	private UploadHandler uploadHandler = new UploadHandler(this);
@@ -75,11 +83,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	App app;
 	String strBaseFolders;
 
-	// Properties prop = new Properties();
-	// String propFileName = "Config.properties";
-	// InputStream inputStream =
-	// getClass().getClassLoader().getResourceAsStream(
-	// propFileName);
 	// create global variables
 	String classpath, thirdpartylib, stubs, temppath;
 	String sdgvalue, cgvalue;
@@ -87,20 +90,38 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	Object selecteditemidsns;
 	OutputStream output = null;
 
-	Table gridClassPath, gridThirdPartyLib, tblpointstoinclude,
-			tblpointstoexclude, tblsourcensinks;
+	Table  tblThirdPartyLib, tblPointsToInclude,
+		   tblPointsToExclude, tblsourcensinks, tblClassPath;
 
 	CheckBox chkMultithreaded, chkcomputechops, chkObjectsensitivenes,
 			chkindirectflows, chkSystemOut,chkOmitIFC;
 
 	TextField txtSDGFile, txtCGFile, txtReportFile, txtPointstoFallback,
-			txtLogFile, txtFldEntryPoint,txtStatistics, txtFldSnSFile;
-	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy;
+			txtLogFile,txtStatistics, txtFldSnSFile;
+	//TextField txtFldEntryPoint;
+	ComboBox cmbmode, cmbStub, cmbPointstoPolicy,cmbPruningPolicy, cmbEntryPoint, cmbClassFiles;
 	Upload uploadSDGFile, uploadCGFile;
 	OptionGroup optSrcAndSinks;
 	Button btnsave, btnrun, btnselectsnsFile;
 
-	StaticAnalyser analyser;
+	private static final String CLASSPATH_PROPERTY_ID = "ClassPath";
+	private static final String THIRD_PARTY_LIBRARY_PROPERTY_ID = "ThirdPartyLibrary";
+	private static final String POINTS_TO_INCLUDE_PROPERTY_ID = "Points To Include";
+	private static final String POINTS_TO_EXCLUDE_PROPERTY_ID = "Points To Exclude";
+	
+	private static final String DEFAULT_SDG_FILE = "sdg.file";
+	private static final String DEFAULT_CDG_FILE = "cdg.file";
+	private static final String DEFAULT_REPORT_FILE = "report.xml";
+	private static final String DEFAULT_STATISTICS_FILE = "statistics.file";
+	private static final String DEFAULT_LOG_FILE = "log.file";
+	
+	private static final String CURRENT_FOLDER = "./";
+	private static final String INDEX_CLASS_FILE_SEPARATOR = ": ";
+	
+	private List<String> absPathSubDirOfCode;
+	private List<String> subDirectoriesOfCode;
+	private List<String> jarFilesInCode;
+	private List<File> classFilesInCode;
 
 	public StaticAnalysisView() {
 		//this.addStyleName("myborder");
@@ -166,13 +187,6 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		});
 		
-		cmbPruningPolicy = new ComboBox("Pruning Policy");
-		cmbPruningPolicy.setWidth("100%");
-		cmbPruningPolicy.setNullSelectionAllowed(false);
-		cmbPruningPolicy.addItem("app");
-		cmbPruningPolicy.addItem("off");
-		cmbPruningPolicy.setValue("off");
-
 		cmbStub = new ComboBox("Stubs");
 		cmbStub.setWidth("100%");
 		cmbStub.setNullSelectionAllowed(false);
@@ -180,67 +194,127 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		cmbStub.addItem("JRE_15");
 		cmbStub.addItem("NO_STUBS");
 		cmbStub.setValue("NO_STUBS");
-
-		txtFldEntryPoint = new TextField("Entry Point");
-		txtFldEntryPoint.setWidth("100%");
 		
-		txtStatistics = new TextField("Statistics");
-		txtStatistics.setWidth("100%");
+		cmbPruningPolicy = new ComboBox("Pruning Policy");
+		cmbPruningPolicy.setWidth("100%");
+		cmbPruningPolicy.setNullSelectionAllowed(false);
+		cmbPruningPolicy.addItem("app");
+		cmbPruningPolicy.addItem("off");
+		cmbPruningPolicy.setValue("off");
+
+		//txtFldEntryPoint = new TextField("Entry Point");
+		//txtFldEntryPoint.setWidth("100%");
+		
+		cmbClassFiles = new ComboBox("Class Files");
+		cmbClassFiles.setWidth("100%");
+		cmbClassFiles.addValueChangeListener(event -> fillComboBoxEntryPoint(Integer.parseInt(
+				cmbClassFiles.getValue().toString().split(INDEX_CLASS_FILE_SEPARATOR)[0])));
+		cmbEntryPoint = new ComboBox("Entry Point");
+		cmbEntryPoint.setWidth("100%");
+		cmbEntryPoint.setNullSelectionAllowed(true);
+		cmbEntryPoint.setTextInputAllowed(true);
+		cmbEntryPoint.setNewItemsAllowed(true);
+		
+		//Generate class table
+		tblClassPath = new Table("ClassPath");
+		tblClassPath.addContainerProperty(CLASSPATH_PROPERTY_ID, ComboBox.class, "");
+		Property prop = tblClassPath.getPropertyDataSource();
+		if (prop!=null) System.out.println(prop.getValue().toString());
+		tblClassPath.setPageLength(3);
+		tblClassPath.setWidth("100%");
+		tblClassPath.addActionHandler(new Action.Handler() {
+			public Action[] getActions(Object target, Object sender) {
+				return new Action[] { new Action("New"), new Action("Delete") };
+			}
+
+			@Override
+			public void handleAction(Action action, Object sender, Object target) {
+				if (action.getCaption() == "New") {
+					List<String> elements = new ArrayList<String>();
+					if (subDirectoriesOfCode!=null && app!=null && jarFilesInCode!=null) {
+						elements.addAll(subDirectoriesOfCode);
+						String root = FileUtil.getPathCode(app.getHashCode());
+						for (String s: jarFilesInCode)
+							elements.add(s);
+					}
+
+					ComboBox cmbSubDirectories = addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID,
+												 					elements,"");
+					cmbSubDirectories.focus();
+				} else if (action.getCaption() == "Delete") {
+					tblClassPath.removeItem(target);
+				}
+			}
+		});
 		
 		// Generate classpath table
-		gridClassPath = new Table("ClassPath");
-		gridClassPath.addContainerProperty("Classpath", TextField.class, null);
-		gridClassPath.setPageLength(5);
-		gridClassPath.setWidth("100%");
-		gridClassPath.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					gridClassPath.select(event.getItemId());
-				}
-			}
+//		gridClassPath = new Table("ClassPath");
+//		
+//		gridClassPath.addContainerProperty(CLASSPATH_PROPERTY_ID, TextField.class, null);
+//		gridClassPath.getPropertyDataSource();
+//		gridClassPath.setPageLength(5);
+//		gridClassPath.setWidth("100%");
+//		gridClassPath.addItemClickListener(new ItemClickListener() {
+//			public void itemClick(ItemClickEvent event) {
+//				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+//					gridClassPath.select(event.getItemId());
+//				}
+//			}
+//
+//		});
 
-		});
+//		gridClassPath.addActionHandler(new Action.Handler() {
+//			public Action[] getActions(Object target, Object sender) {
+//				return new Action[] { new Action("New"), new Action("Delete") };
+//			}
+//
+//			@Override
+//			public void handleAction(Action action, Object sender, Object target) {
+//				if (action.getCaption() == "New") {
+//					addTextFieldToTable(gridClassPath, CLASSPATH_PROPERTY_ID,"").focus();
+//				} else if (action.getCaption() == "Delete") {
+//					gridClassPath.removeItem(target);
+//				}
+//			}
+//		});
 
-		gridClassPath.addActionHandler(new Action.Handler() {
-			public Action[] getActions(Object target, Object sender) {
-				return new Action[] { new Action("New"), new Action("Delete") };
-			}
-
-			@Override
-			public void handleAction(Action action, Object sender, Object target) {
-				if (action.getCaption() == "New") {
-					Object newItemId = gridClassPath.addItem();
-					TextField t = new TextField();
-					t.setWidth("100%");
-					gridClassPath.getItem(newItemId)
-							.getItemProperty("Classpath").setValue(t);
-				} else if (action.getCaption() == "Delete") {
-					gridClassPath.removeItem(target);
-				}
-			}
-		});
-
+		//OLD CODE
+		//-----------------------
 		// Generate third party library table
-		gridThirdPartyLib = new Table("Third Party Library");
-		gridThirdPartyLib.setWidth("100%");
-		gridThirdPartyLib.addContainerProperty("ThirdPartyLibrary",
-				TextField.class, null);
-		gridThirdPartyLib.setPageLength(5);
-		gridThirdPartyLib.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					Object newItemId = gridThirdPartyLib.getValue();
-					newItemId = event.getItemId();
-					TextField txt = (TextField) gridThirdPartyLib
-							.getItem(newItemId)
-							.getItemProperty("ThirdPartyLibrary").getValue();
+//		gridThirdPartyLib = new Table("Third Party Library");
+//		gridThirdPartyLib.setWidth("100%");
+//		gridThirdPartyLib.addContainerProperty(THIRD_PARTY_LIBRARY_PROPERTY_ID,
+//				TextField.class, null);
+//		gridThirdPartyLib.setPageLength(5);
+//		gridThirdPartyLib.addActionHandler(new Action.Handler() {
+//			public Action[] getActions(Object target, Object sender) {
+//				return new Action[] { new Action("New"), new Action("Delete") };
+//			}
+//
+//			@Override
+//			public void handleAction(Action action, Object sender, Object target) {
+//				if (action.getCaption() == "New") {
+//					addTextFieldToTable(gridThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID, "").focus();
+//				} else if (action.getCaption() == "Delete") {
+//					gridThirdPartyLib.removeItem(target);
+//				}
+//
+//			}
+//		});
+		//OLD CODE
+		//-----------------------
+		
+		//NEW CODE
+		//-----------------------
+		
+		
+		tblThirdPartyLib = new Table("Third Party Library");
+		tblThirdPartyLib.setWidth("100%");
+		tblThirdPartyLib.addContainerProperty(THIRD_PARTY_LIBRARY_PROPERTY_ID,
+											   ComboBox.class, null);
+		tblThirdPartyLib.setPageLength(5);
 
-					txt.setEnabled(true);
-				}
-			}
-
-		});
-		gridThirdPartyLib.addActionHandler(new Action.Handler() {
+		tblThirdPartyLib.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -248,29 +322,36 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					TextField txt = new TextField();
-					txt.setWidth("100%");
-					Object newItemId = gridThirdPartyLib.addItem();
-					gridThirdPartyLib.getItem(newItemId)
-							.getItemProperty("ThirdPartyLibrary").setValue(txt);
+					ComboBox cmbJarFiles = addComboBoxToTable(tblThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID,
+												 			  jarFilesInCode,"");
+					cmbJarFiles.focus();
 				} else if (action.getCaption() == "Delete") {
-					gridThirdPartyLib.removeItem(target);
+					tblThirdPartyLib.removeItem(target);
 				}
-
 			}
 		});
+		//NEW CODE - END
+		//-----------------------
 
 		txtSDGFile = new TextField("SDGFile");
 		txtSDGFile.setWidth("100%");
+		txtSDGFile.setValue(DEFAULT_SDG_FILE);
 
 		txtCGFile = new TextField("CGFile");
 		txtCGFile.setWidth("100%");
+		txtCGFile.setValue(DEFAULT_CDG_FILE);
 
 		txtReportFile = new TextField("Report File");
 		txtReportFile.setWidth("100%");
+		txtReportFile.setValue(DEFAULT_REPORT_FILE);
 
+		txtStatistics = new TextField("Statistics");
+		txtStatistics.setWidth("100%");
+		txtStatistics.setValue(DEFAULT_STATISTICS_FILE);
+		
 		txtLogFile = new TextField("Log File");
 		txtLogFile.setWidth("100%");
+		txtLogFile.setValue(DEFAULT_LOG_FILE);
 
 		cmbPointstoPolicy = new ComboBox("Points To Policy");
 		cmbPointstoPolicy.setWidth("100%");
@@ -290,19 +371,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		txtPointstoFallback.setWidth("100%");
 
 		// Generate points-to include table
-		tblpointstoinclude = new Table("Points To Include");
-		tblpointstoinclude.setWidth("100%");
-		tblpointstoinclude.addContainerProperty("Points To Include",
+		tblPointsToInclude = new Table("Points To Include");
+		tblPointsToInclude.setWidth("100%");
+		tblPointsToInclude.addContainerProperty("Points To Include",
 				TextField.class, null);
-		tblpointstoinclude.setPageLength(5);
-		tblpointstoinclude.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					tblpointstoinclude.select(event.getItemId());
-				}
-			}
-		});
-		tblpointstoinclude.addActionHandler(new Action.Handler() {
+		tblPointsToInclude.setPageLength(5);
+		tblPointsToInclude.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -310,32 +384,22 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					TextField txt = new TextField();
-					txt.setWidth("100%");
-					Object newItemId = tblpointstoinclude.addItem();
-					tblpointstoinclude.getItem(newItemId)
-							.getItemProperty("Points To Include").setValue(txt);
+					TextField txtPointToInclude = addTextFieldToTable(tblPointsToInclude, 
+												  POINTS_TO_INCLUDE_PROPERTY_ID, "");
+					txtPointToInclude.focus();
 				} else if (action.getCaption() == "Delete") {
-					tblpointstoinclude.removeItem(target);
+					tblPointsToInclude.removeItem(target);
 				}
 			}
 		});
 
 		// genrate points-to exclude table
-		tblpointstoexclude = new Table("Points To Exclude");
-		tblpointstoexclude.setWidth("100%");
-		tblpointstoexclude.addContainerProperty("Points To Exclude",
+		tblPointsToExclude = new Table("Points To Exclude");
+		tblPointsToExclude.setWidth("100%");
+		tblPointsToExclude.addContainerProperty("Points To Exclude",
 				TextField.class, null);
-		tblpointstoexclude.setPageLength(5);
-		tblpointstoexclude.addItemClickListener(new ItemClickListener() {
-			public void itemClick(ItemClickEvent event) {
-				if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-					tblpointstoexclude.select(event.getItemId());
-				}
-			}
-
-		});
-		tblpointstoexclude.addActionHandler(new Action.Handler() {
+		tblPointsToExclude.setPageLength(5);
+		tblPointsToExclude.addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { new Action("New"), new Action("Delete") };
 			}
@@ -343,13 +407,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (action.getCaption() == "New") {
-					TextField txt = new TextField("textfield");
-					txt.setWidth("100%");
-					Object newItemId = tblpointstoexclude.addItem();
-					tblpointstoexclude.getItem(newItemId)
-							.getItemProperty("Points To Exclude").setValue(txt);
+					TextField txtPointToExclude = addTextFieldToTable(tblPointsToExclude,
+												  POINTS_TO_EXCLUDE_PROPERTY_ID,"");
+					txtPointToExclude.focus();
 				} else if (action.getCaption() == "Delete") {
-					tblpointstoexclude.removeItem(target);
+					tblPointsToExclude.removeItem(target);
 				}
 
 			}
@@ -367,12 +429,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		tblsourcensinks.addContainerProperty("Indirect Calls", CheckBox.class,
 				null);
 		tblsourcensinks.setPageLength(5);
-		tblsourcensinks.setColumnWidth("Types", 130);
-		tblsourcensinks.setColumnWidth("Include SubClasses", 130);
-		tblsourcensinks.setColumnWidth("Classes", 190);
-		tblsourcensinks.setColumnWidth("Selector", 190);
-		tblsourcensinks.setColumnWidth("Param", 190);
-		tblsourcensinks.setColumnWidth("Indirect Calls", 130);
+		tblsourcensinks.setColumnWidth("Types", -1);
+		tblsourcensinks.setColumnWidth("Include SubClasses", -1);
+		tblsourcensinks.setColumnWidth("Classes", -1);
+		tblsourcensinks.setColumnWidth("Selector", -1);
+		tblsourcensinks.setColumnWidth("Param", -1);
+		tblsourcensinks.setColumnWidth("Indirect Calls", -1);
 		// context menu for table sourcensinks
 		tblsourcensinks.addItemClickListener(new ItemClickListener() {
 			public void itemClick(ItemClickEvent event) {
@@ -407,7 +469,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		optSrcAndSinks = new OptionGroup("Source and Sink Files");
 		optSrcAndSinks.setMultiSelect(true);
-		fillOptionGroup(optSrcAndSinks);
+		fillOptionGroupSourceAndSinks(optSrcAndSinks);
 		// Source and Sinks Upload files
 		Upload.Receiver sAndSReceiver = createSourceAndSinksReceiver();
 		Upload uploadSnSfile = new Upload("", sAndSReceiver);
@@ -445,9 +507,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(cmbmode);
 		fl.addComponent(cmbStub);
 		fl.addComponent(cmbPruningPolicy);
-		fl.addComponent(txtFldEntryPoint);
-		fl.addComponent(gridClassPath);
-		fl.addComponent(gridThirdPartyLib);
+		fl.addComponent(cmbClassFiles);
+		fl.addComponent(cmbEntryPoint);
+		//fl.addComponent(txtFldEntryPoint);
+		fl.addComponent(tblClassPath);
+		fl.addComponent(tblThirdPartyLib);
 		fl.addComponent(txtSDGFile);
 		fl.addComponent(uploadSDGFile);
 		fl.addComponent(txtCGFile);
@@ -458,8 +522,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		fl.addComponent(txtLogFile);
 		fl.addComponent(cmbPointstoPolicy);
 		fl.addComponent(txtPointstoFallback);
-		fl.addComponent(tblpointstoinclude);
-		fl.addComponent(tblpointstoexclude);
+		fl.addComponent(tblPointsToInclude);
+		fl.addComponent(tblPointsToExclude);
 
 		fl.addComponent(tblsourcensinks);
 		fl.addComponent(optSrcAndSinks);
@@ -476,18 +540,23 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		subWindow = new Window("No App selected, please choose an app!");
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
+        subWindow.setModal(true);
         subWindow.setContent(subContent);
-        cmbListApp = new ComboBox("List of avaialbe Apps");
+        cmbListApp = new ComboBox("List of available Apps");
         Button btnSubWindowOK = new Button("OK");
         btnSubWindowOK.addClickListener(new Button.ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
 				String s = (String) cmbListApp.getValue();
+				if (s==null) return;
 				String[] temp = s.split(" ");
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
-					fillStaticAnalysisTextboxes(FileUtil.getPathConfig(app.getHashCode()));
+					initializeSubDirectoriesOfCode();
+					initializeJarFilesInCode();
+					fillComboBoxClassFiles();
+					fillStaticAnalysisFields(FileUtil.getPathConfig(app.getHashCode()));
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
@@ -707,29 +776,29 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		String xmlFile = "";
 		AnalysisData data = new AnalysisData();
 		data.setAnalysisName(txtAnalysisName.getValue());
-		data.setClasspath(readDataFromTable(gridClassPath));
-		data.setThirdPartyLibs(readDataFromTable(gridThirdPartyLib));
+		data.setClasspath(readDataFromTable(tblClassPath, CLASSPATH_PROPERTY_ID));
+		data.setThirdPartyLibs(readDataFromTable(tblThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID));
 		data.setStubs(cmbStub.getValue().toString());
-		data.setEntrypoint(txtFldEntryPoint.getValue());
+		data.setEntrypoint(cmbEntryPoint.getValue().toString());
 		data.setMode(cmbmode.getValue().toString());
 		data.setSdgFile(txtSDGFile.getValue());
 		data.setCgFile(txtCGFile.getValue());
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.isEnabled()));
 		data.setPruningPolicy(cmbPruningPolicy.getValue().toString());
-		data.setPointsto_policy(cmbPointstoPolicy.getValue().toString());
-		data.setPointsto_fallback(txtPointstoFallback.getValue());
-		data.setPointsto_includeclasses(readDataFromTable(tblpointstoinclude));
-		data.setPointsto_excludeclasses(readDataFromTable(tblpointstoexclude));
+		data.setPointsToPolicy(cmbPointstoPolicy.getValue().toString());
+		data.setPointsToFallback(txtPointstoFallback.getValue());
+		data.setPointsToIncludeClasses(readDataFromTable(tblPointsToInclude, POINTS_TO_INCLUDE_PROPERTY_ID));
+		data.setPointsToExcludeClasses(readDataFromTable(tblPointsToExclude, POINTS_TO_EXCLUDE_PROPERTY_ID));
 		//data.setSourcesSinksFiles(Arrays.asList(new String[] { txtFldSnSFile.getValue() }));
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.getValue()));
-		data.setObjectsensitivenes(String.valueOf(chkObjectsensitivenes
+		data.setObjectSensitiveness(String.valueOf(chkObjectsensitivenes
 				.getValue()));
 		data.setIgnoreIndirectFlows(String.valueOf(chkindirectflows.isEnabled()));
 		data.setComputeChops(String.valueOf(chkcomputechops.isEnabled()));
-		data.setSystemout(String.valueOf(chkSystemOut.getValue()));
+		data.setSystemOut(String.valueOf(chkSystemOut.getValue()));
 		data.setOmitIFC(String.valueOf(chkOmitIFC.getValue()));
 		data.setReportFile(txtReportFile.getValue());
-		data.setStatistics(txtStatistics.getValue());
+		data.setStatisticsFile(txtStatistics.getValue());
 		data.setLogFile(txtLogFile.getValue());
 		List<AnalysisData.SourcesSinks> sourcesAndSinks = new LinkedList<AnalysisData.SourcesSinks>();
 		data.setSourcesSinks(sourcesAndSinks);
@@ -795,7 +864,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			strError.append("CgFile name must be specified");
 			strError.append("<br/>");
 		}
-		if ("".equals(data.getStatistics())){
+		if ("".equals(data.getStatisticsFile())){
 			strError.append("Statistics file name must be specified");
 			strError.append("<br/>");
 		}
@@ -808,11 +877,11 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			strError.append("Log file's name must be specified");
 			strError.append("<br/>");
 		}
-		if ("".equals(data.getPointsto_policy())){
+		if ("".equals(data.getPointsToPolicy())){
 			strError.append("Points to Policy must be specified");
 			strError.append("<br/>");
 		}
-		if ("".equals(data.getPointsto_fallback())){
+		if ("".equals(data.getPointsToFallback())){
 			strError.append("Points to Fallback must be specified");
 			strError.append("<br/>");
 		}
@@ -844,39 +913,29 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		}
 		return snSList;
 	}
-	private List<String> readDataFromTable(Table tablename) {
-
-		List<String> strpaths = new ArrayList<>();
-		int newItemId = tablename.size();
-		try {
-			for (int i = 1; i <= newItemId; i++) {
-				Item row = tablename.getItem(i);
-				TextField temp = new TextField();
-				if (tablename.getCaption().toLowerCase().equals("classpath")) {
-					temp = (TextField) row.getItemProperty("Classpath")
-							.getValue();
-
-				} else if (tablename.getCaption().toLowerCase()
-						.equals("third party library"))
-					temp = (TextField) row.getItemProperty("ThirdPartyLibrary")
-							.getValue();
-				else if (tablename.getCaption().toLowerCase()
-						.equals("points to include"))
-					temp = (TextField) row.getItemProperty("Points To Include")
-							.getValue();
-				else if (tablename.getCaption().toLowerCase()
-						.equals("points to exclude"))
-					temp = (TextField) row.getItemProperty("Points To Exclude")
-							.getValue();
-
-				strpaths.add(temp.getValue());
-			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+	
+	private void setSourceAndSinksFiles(List<String> absoluteFilePaths) {
+		List<String> filesCollection = new ArrayList<String>();
+		for (String file : absoluteFilePaths) {
+			filesCollection.add(file.replaceAll("../../../sourceandsinks/", ""));
 		}
-		return strpaths;
-
+			
+		optSrcAndSinks.setValue(filesCollection);
 	}
+	
+	private List<String> readDataFromTable(Table table, String propertyID) {
+		List<String> strRows = new ArrayList<String>();
+		
+		for (Object itemID : table.getContainerDataSource().getItemIds()) {
+			AbstractField field = (AbstractField) table.getItem(itemID).getItemProperty(propertyID).getValue();
+
+			if (field.getValue()!=null && !"".equals(field.getValue().toString()))
+				strRows.add(field.getValue().toString());
+		}
+		
+		return strRows;
+	}
+	
 
 	@Override
 	public void enter(ViewChangeEvent event) {
@@ -886,212 +945,122 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 			for (String msg : msgs) {
 				appId = 0;
 				if (msg != null){
-					appId = Integer.parseInt(msg);
-					System.out.println("enter view changeevent " + appId);
-				
-				try {
-					app = AppDAO.getAppById(appId);
-				} catch (ClassNotFoundException | SQLException e) {
-					e.printStackTrace();
-				}
+						appId = Integer.parseInt(msg);
+						System.out.println("enter view changeevent " + appId);
+					
+					try {
+						app = AppDAO.getAppById(appId);
+						initializeSubDirectoriesOfCode();
+						initializeJarFilesInCode();
+						fillComboBoxClassFiles();
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			
 			if (app != null)
-				fillStaticAnalysisTextboxes(FileUtil.getPathConfig(app.getHashCode()));
+				fillStaticAnalysisFields(FileUtil.getPathConfig(app.getHashCode()));
+			
 		}
 		else {
 			fillCmbListApp();
-			UI.getCurrent().addWindow(subWindow);
+			if (!subWindow.isAttached())
+				UI.getCurrent().addWindow(subWindow);
 		}
 	}
-
-	private void fillStaticAnalysisTextboxes(String path) {
+	
+	private static ComboBox addComboBoxToTable(Table table, String propertyName, 
+											   Collection<String> elements, String selectedValue) {
+		Object newItemId = table.addItem();
+		ComboBox c = new ComboBox();
+		c.setWidth("100%");
+		if (elements!= null)
+			for (String s:elements)
+				c.addItem(s);
+		if (!"".equals(selectedValue))
+			c.setValue(selectedValue);
+		//c.setNullSelectionAllowed(false);
+		table.getItem(newItemId).getItemProperty(propertyName).setValue(c);
+		return c;
+	}
+	
+	private static TextField addTextFieldToTable(Table table, String propertyName, String newText) {
+		Object newItemId = table.addItem();
+		TextField t = new TextField();
+		t.setWidth("100%");
+		t.setValue(newText);
+		table.getItem(newItemId).getItemProperty(propertyName).setValue(t);
+		return t;
+	}
+	
+	private void fillStaticAnalysisFields(String configPath) {
+		txtAppName.setReadOnly(false);
 		txtAppName.setValue(app.getName());
 		txtAppName.setReadOnly(true);
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder;
-		try {
-			docBuilder = docBuilderFactory.newDocumentBuilder();
-			File appFolder = new File(path);
-			File[] fileslist = appFolder.listFiles();
+		AnalysisData data = DocBuilder.readConfigFromFile(configPath, "");
 
-			List<File> listConfigfiles1 = new ArrayList<>();
-			if (path != null) {
-				for (File name : fileslist) {
-//					if (name.isDirectory()) {
-//						String temp = name.getName();
-//						if (!(temp.equals("Source")))
-							listConfigfiles1.add(name);
-//					}
-				}
-				//latest file first
-				Collections.sort(listConfigfiles1, new Comparator<File>() {
-					public int compare(File f1, File f2) {
-						return Long.valueOf(f2.lastModified()).compareTo(
-								f1.lastModified());
-					}
-				});
-			}
-			String configfilepath = listConfigfiles1.get(0).getAbsolutePath();
+		if (data==null) return;
+		
+		cmbmode.setValue(data.getMode());
+		cmbStub.setValue(data.getStubs());
+		cmbPruningPolicy.setValue(data.getPruningPolicy());
+		if (!cmbEntryPoint.containsId(data.getEntrypoint()))
+				cmbEntryPoint.addItem(data.getEntrypoint());
+		cmbEntryPoint.setValue(data.getEntrypoint());
+		
+		tblClassPath.removeAllItems();
+		List<String> lstElements = new ArrayList<String>();
+		lstElements.addAll(subDirectoriesOfCode);
+		lstElements.addAll(jarFilesInCode);
+		for (String classpath : data.getClasspath())
+			addComboBoxToTable(tblClassPath, CLASSPATH_PROPERTY_ID,
+							   lstElements, classpath);
 
-			Document doc = docBuilder.parse(new File(configfilepath));
-			doc.getDocumentElement().normalize();
+		tblThirdPartyLib.removeAllItems();
+		for (String thirdPartyLib : data.getThirdPartyLibs())
+			addComboBoxToTable(tblThirdPartyLib, THIRD_PARTY_LIBRARY_PROPERTY_ID,
+							   jarFilesInCode, thirdPartyLib);
+	
+		
+		txtSDGFile.setValue(data.getSdgFile());
+		txtCGFile.setValue(data.getCgFile());
+		txtReportFile.setValue(data.getReportFile());
+		txtStatistics.setValue(data.getStatisticsFile());
+		txtLogFile.setValue(data.getLogFile());
+		cmbPointstoPolicy.setValue(data.getPointsToPolicy());
+		txtPointstoFallback.setValue(data.getPointsToFallback());
+		
+		tblPointsToInclude.removeAllItems();
+		for (String pointToInclude : data.getPointsToIncludeclasses())
+			addTextFieldToTable(tblPointsToInclude, POINTS_TO_INCLUDE_PROPERTY_ID,
+								pointToInclude);
 
-			NodeList listOffile = doc.getElementsByTagName("analysis");
-			Element AppNameElement = (Element) listOffile.item(0);
-			//get the last string seperated by "/"
-			String pathAsArrayString[] = AppNameElement.getAttribute("name").split("/");
-			txtAnalysisName.setValue(pathAsArrayString[pathAsArrayString.length - 1]);
+		tblPointsToExclude.removeAllItems();
+		for (String pointToExclude : data.getPointsToExcludeClasses())
+			addTextFieldToTable(tblPointsToExclude, POINTS_TO_EXCLUDE_PROPERTY_ID,
+								pointToExclude);
+		
+		setSourceAndSinksFiles(data.getSourcesSinksFiles());
+		
+		chkMultithreaded.setValue(Boolean.valueOf(data.getMultiThreaded()));
+		chkObjectsensitivenes.setValue(Boolean.valueOf(data.getObjectSensitiveness()));
+		chkindirectflows.setValue(Boolean.valueOf(data.getIgnoreIndirectFlows()));
+		chkcomputechops.setValue(Boolean.valueOf(data.getComputeChops()));
+		chkSystemOut.setValue(Boolean.valueOf(data.getSystemOut()));
+		chkOmitIFC.setValue((Boolean.valueOf(data.getOmitIFC())));		
 
-			for (int s = 0; s < listOffile.getLength(); s++) {
-
-				Node FileNode = listOffile.item(s);
-				if (FileNode.getNodeType() == Node.ELEMENT_NODE) {
-
-					Element FileElement = (Element) FileNode;
-
-					NodeList NameList = FileElement
-							.getElementsByTagName("mode");
-					Element NameElement = (Element) NameList.item(0);
-					cmbmode.setValue(NameElement.getAttribute("value"));
-
-					NodeList ClasspathlistList = FileElement
-							.getElementsByTagName("classpath");
-					gridClassPath.removeAllItems();
-					Element ClasspathElement = (Element) ClasspathlistList
-							.item(0);
-					TextField txt = new TextField("textfield");
-					txt.setValue(ClasspathElement.getAttribute("value"));
-					txt.setWidth(24.6f, ComboBox.UNITS_EM);
-					Object newItemId = gridClassPath.addItem();
-					Item row = gridClassPath.getItem(newItemId);
-					row.getItemProperty("Classpath").setValue(txt);
-					gridClassPath.addItem(new Object[] { txt }, newItemId);
-
-					NodeList ThirdPartyLibList = FileElement
-							.getElementsByTagName("thirdPartyLibs");
-					Element ThirdPartyLibElement = (Element) ThirdPartyLibList
-							.item(0);
-					TextField txttpl = new TextField("textfield");
-					txttpl.setValue(ThirdPartyLibElement.getAttribute("value"));
-					txttpl.setWidth(24.6f, ComboBox.UNITS_EM);
-					gridThirdPartyLib.removeAllItems();
-					Object newItemIdtpl = gridThirdPartyLib.addItem();
-					Item rowtpl = gridThirdPartyLib.getItem(newItemIdtpl);
-					rowtpl.getItemProperty("ThirdPartyLibrary")
-							.setValue(txttpl);
-					gridThirdPartyLib.addItem(new Object[] { txttpl },
-							newItemIdtpl);
-
-					NodeList StubList = FileElement
-							.getElementsByTagName("stubs");
-					if (StubList != null) {
-						Element StubElement = (Element) StubList.item(0);
-						cmbStub.setValue(StubElement.getAttribute("value"));
-					}
-					NodeList EntryPointList = FileElement
-							.getElementsByTagName("entrypoint");
-					if (EntryPointList != null) {
-						Element EntryPointElement = (Element) EntryPointList
-								.item(0);
-						txtFldEntryPoint.setValue((EntryPointElement
-								.getAttribute("value")));
-					}
-
-					NodeList IndirectList = FileElement
-							.getElementsByTagName("ignoreIndirectFlows");
-					if (IndirectList != null) {
-						Element IndirectElement = (Element) IndirectList
-								.item(0);
-						chkindirectflows
-								.setValue(Boolean.valueOf(IndirectElement
-										.getAttribute("value")));
-					}
-
-					NodeList sdgList = FileElement
-							.getElementsByTagName("sdgfile");
-
-					Element sdgElement = (Element) sdgList.item(0);
-					txtSDGFile.setValue((sdgElement.getAttribute("value")));
-					NodeList logList = FileElement
-							.getElementsByTagName("logFile");
-					if (logList != null) {
-						Element logElement = (Element) logList.item(0);
-						txtLogFile.setValue((logElement.getAttribute("value")));
-						NodeList cgfileList = FileElement
-								.getElementsByTagName("cgfile");
-						Element cgfileElement = (Element) cgfileList.item(0);
-						txtCGFile
-								.setValue((cgfileElement.getAttribute("value")));
-					}
-					NodeList reportList = FileElement
-							.getElementsByTagName("reportfile");
-					if (reportList != null) {
-						Element reportElement = (Element) reportList.item(0);
-						txtReportFile.setValue(reportElement
-								.getAttribute("value"));
-					}
-					NodeList statisticsList = FileElement.getElementsByTagName("statistics");
-					if(statisticsList != null) {
-						Element statisticsElement = (Element) statisticsList.item(0);
-						txtStatistics.setValue(statisticsElement.getAttribute("value"));
-					}
-					NodeList chopsList = FileElement
-							.getElementsByTagName("computeChops");
-					if (chopsList != null) {
-						Element chopsElement = (Element) chopsList.item(0);
-						chkcomputechops.setValue((Boolean.valueOf(chopsElement
-								.getAttribute("value"))));
-					}
-					NodeList omitIFC = FileElement.getElementsByTagName("omitIFC");
-					if (omitIFC != null) {
-						Element omit = (Element) omitIFC.item(0);
-						chkOmitIFC.setValue((Boolean.valueOf(omit.getAttribute("value"))));
-					}
-					NodeList fallBackList = FileElement.getElementsByTagName("points-to");
-					if (fallBackList != null) {
-						Element fallBack = (Element) fallBackList.item(0);
-						txtPointstoFallback.setValue(fallBack.getAttribute("fallback"));
-					}
-					NodeList pointsToPolicy = FileElement.getElementsByTagName("points-to");
-					if (pointsToPolicy != null) {
-						Element ptPolicy = (Element) pointsToPolicy.item(0);
-						cmbPointstoPolicy.setValue(ptPolicy.getAttribute("policy"));
-					}
-					NodeList sysoutList = FileElement
-							.getElementsByTagName("systemout");
-					if (sysoutList != null) {
-						Element sysoutElement = (Element) sysoutList.item(0);
-						chkSystemOut.setValue(Boolean.valueOf(sysoutElement
-								.getAttribute("value")));
-					}
-
-					NodeList sensitivenessList = FileElement
-							.getElementsByTagName("objectsensitivenes");
-					if (sensitivenessList != null) {
-						Element sensitivenessElement = (Element) sensitivenessList
-								.item(0);
-						chkObjectsensitivenes.setValue((Boolean
-								.valueOf(sensitivenessElement
-										.getAttribute("value"))));
-					}
-
-				}
-
-			}
-
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			System.out.println(e.getLocalizedMessage() + e.getMessage());
-		}
 	}
-	private void fillOptionGroup(OptionGroup optg) {
+	
+
+	private void fillOptionGroupSourceAndSinks(OptionGroup optg) {
 		File f = new File(FileUtil.getPathSourceAndSinks());
 		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
 		for (String name : names) optg.addItem(name);
 	}
 	private void fillCmbListApp(){
-		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage());
+		List<App> apps = AppDAO.getAppByStatus(Status.STATICANALYSIS.getStage(), Status.INSTRUMENTATION.getStage());
 		for (App app : apps){
 			cmbListApp.addItem(app.getId() + " " + app.getName());
 		}
@@ -1116,5 +1085,76 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		};
 		return receiver;
 	}
+	
+	private void initializeSubDirectoriesOfCode () {
+		String initialPath = FileUtil.getPathCode(app.getHashCode());
+		List <String> absPathSubDir = FileUtil.getSubDirectories(initialPath);
+		//The first element in the getSubDirectories (corresponding to the folder "code")
+		//always exists
+		this.absPathSubDirOfCode = new ArrayList<String>();
+		this.subDirectoriesOfCode = new ArrayList<String>();
+		
+		this.absPathSubDirOfCode.add(initialPath);
+		this.subDirectoriesOfCode.add(CURRENT_FOLDER);
+		for (int i=1; i<absPathSubDir.size(); i++) {
+			this.subDirectoriesOfCode.add(absPathSubDir.get(i).replaceAll(initialPath+File.separator,CURRENT_FOLDER));
+			this.absPathSubDirOfCode.add(absPathSubDir.get(i));
+		}		
+		
+	}
+	
+	private void initializeJarFilesInCode () {
 
+		String pathCode = FileUtil.getPathCode(app.getHashCode());
+		List<File> jarFilesInCode = FileUtil.getFiles(this.absPathSubDirOfCode, ".jar");
+		this.jarFilesInCode = new ArrayList<String>();
+		for (File f: jarFilesInCode)
+			this.jarFilesInCode.add(f.getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER));
+	
+	}
+	
+	private void fillComboBoxEntryPoint(int classFileIndex) {
+		File classFile = classFilesInCode.get(classFileIndex);
+		CtClass myclass;
+		
+		try {
+			InputStream stream = new FileInputStream(classFile);
+			
+			ClassPool cp = new ClassPool();
+			try {
+				
+				myclass = cp.makeClass(stream);
+				
+				cmbEntryPoint.removeAllItems();
+				for (CtMethod m: myclass.getMethods()) {
+					StringBuilder mySignature = new StringBuilder();
+					mySignature.append(m.getLongName().substring(0, m.getLongName().indexOf("(")));
+					mySignature.append(m.getSignature());
+					cmbEntryPoint.addItem(mySignature.toString());
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	
+	}
+	
+	private void fillComboBoxClassFiles() {
+		String pathCode = FileUtil.getPathCode(app.getHashCode());
+		this.classFilesInCode = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );	
+		for (int i=0; i<this.classFilesInCode.size(); i++) {
+			String relativePath = classFilesInCode.get(i).getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER);
+			cmbClassFiles.addItem(i+INDEX_CLASS_FILE_SEPARATOR+relativePath);
+		}
+			
+	}
+	
+	
 }

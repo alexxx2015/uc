@@ -2,6 +2,7 @@ package de.tum.in.i22.ucwebmanager;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +23,8 @@ import org.json.simple.parser.ParseException;
 
 import com.vaadin.server.VaadinServlet;
 
+import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
+
 @WebServlet(urlPatterns = "/rest/*", name = "UcWebManagerRestServlet", asyncSupported = true)
 // @VaadinServletConfiguration(ui = UcWebManagerRestUI.class, productionMode =
 // false)
@@ -29,8 +32,10 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 	private enum REQPARAM {
 		APPID, MSG
 	}
-	public static String NODES = "NODES";
-	public static String LINKS = "LINKS";
+
+	public static String MSGNODES = "NODES";
+	public static String MSGLINKS = "LINKS";
+	
 	public static enum JSONMsgNODES {
 		 FQNAME, OFFSET, OPCODE, MISC
 	}
@@ -41,8 +46,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 
 	private String pathSeparator = File.separator;// System.getProperty("file.separator");
 	private String path;
-	private String graphFileTxt = pathSeparator + "graph.txt";
-//	private String graphFileJSON = pathSeparator + "graph.json";
+//	private String graphFileTxt = pathSeparator + "graph.txt";
+	private String graphFileJSON = pathSeparator + "graph.json";
 	private String runtimePath = File.separator + "runtime";
 	private ServletConfig config;
 
@@ -71,7 +76,7 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				JSONParser parser = new JSONParser();
 				JSONObject cnt = new JSONObject();
 				myPath += pathSeparator + appid;
-				File runtimeGraph = new File(myPath + runtimePath + graphFileTxt);
+				File runtimeGraph = new File(myPath + runtimePath + graphFileJSON);
 				if (!runtimeGraph.exists()) {
 					runtimeGraph.getParentFile().mkdirs();
 					runtimeGraph.createNewFile();
@@ -83,22 +88,32 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 					}
 				}
 
+				//---------- NEW CODE
+				
 				JSONArray cntLinks = new JSONArray();
-				if (cnt.containsKey(LINKS)){
-					String o = (String)cnt.get(LINKS);
-					cntLinks = (JSONArray) parser.parse(o);
-				}
+				if (cnt.containsKey(JSONUtil.LINKS))
+					cntLinks = (JSONArray) cnt.get(JSONUtil.LINKS);
 				
 				JSONArray cntNodes = new JSONArray();
-				if (cnt.containsKey(NODES)){
-					String o = (String)cnt.get(NODES);
-					cntNodes = (JSONArray) parser.parse(o);
-				}
+				if (cnt.containsKey(JSONUtil.NODES))
+					cntNodes = (JSONArray) cnt.get(JSONUtil.NODES);
+				//----------
+//				JSONArray cntLinks = new JSONArray();
+//				if (cnt.containsKey(LINKS)){
+//					String o = (String)cnt.get(LINKS);
+//					cntLinks = (JSONArray) parser.parse(o);
+//				}
+				
+//				JSONArray cntNodes = new JSONArray();
+//				if (cnt.containsKey(NODES)){
+//					String o = (String)cnt.get(NODES);
+//					cntNodes = (JSONArray) parser.parse(o);
+//				}
 
 //				Add received links and nodes and dump data to file
 				JSONObject msgCnt = (JSONObject) parser.parse(msg);
-				if(msgCnt.containsKey(NODES)){
-					JSONArray nodes = (JSONArray) msgCnt.get(NODES);
+				if(msgCnt.containsKey(MSGNODES)){
+					JSONArray nodes = (JSONArray) msgCnt.get(MSGNODES);
 					Iterator<JSONArray> iterator = nodes.iterator();
 					while (iterator.hasNext()){
 						JSONObject tempObj = new JSONObject();
@@ -111,27 +126,41 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 								String key = (String) iter3.next();
 								tempObj.put(key, json2.get(key).toString());
 							}
+							
 						}
-						cntNodes.add(tempObj);
+						// ----------- NEW CODE ----------------
+						//insertNodeID2(tempObj);
+						// -------------------------------------
+						if (!cntNodes.contains(tempObj))
+							cntNodes.add(tempObj);
+						else
+							System.out.println("Nodes list already contains node " + tempObj.get("id"));
 					}
 				}		
-				if(msgCnt.containsKey(LINKS)){
-					JSONArray links = (JSONArray) msgCnt.get(LINKS);
+				if(msgCnt.containsKey(MSGLINKS)){
+					JSONArray links = (JSONArray) msgCnt.get(MSGLINKS);
 					Iterator<JSONObject> iter = links.iterator();
 					while (iter.hasNext()){
 						JSONObject tempObj = new JSONObject();
 						JSONObject link = iter.next();
 						for (Iterator iter3 = link.keySet().iterator(); iter3.hasNext();){
 							String key = (String) iter3.next();
-							tempObj.put(key, link.get(key).toString());
+							tempObj.put(key.toLowerCase(), link.get(key).toString());
 						}
-						cntLinks.add(tempObj);
+						
+						if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
+							cntLinks.add(tempObj);
+						
 					}
 				}
 //					cntLinks.add(msgCnt.get(LINKS));
 				
-				cnt.put(LINKS, cntLinks.toString());
-				cnt.put(NODES, cntNodes.toString());
+//				cnt.put(LINKS, cntLinks.toString());
+//				cnt.put(NODES, cntNodes.toString());
+				// -------------- NEW CODE -----------------------
+				cnt.put(JSONUtil.LINKS.toLowerCase(), cntLinks);
+				cnt.put(JSONUtil.NODES.toLowerCase(), cntNodes);
+				// -------------- NEW CODE -----------------------
 				FileWriter fw = new FileWriter(runtimeGraph);
 				fw.write(cnt.toJSONString());
 				fw.flush();
@@ -143,6 +172,33 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			}
 		}
 	}
+	
+	private static void insertNodeID2(JSONObject node) {
+		String opcode = (String) node.get(JSONMsgNODES.OPCODE.toString());
+		String offset = (String) node.get(JSONMsgNODES.OFFSET.toString());
+		String fqname = (String) node.get(JSONMsgNODES.FQNAME.toString());
+		
+		node.put("id", opcode+":"+fqname+"."+offset);
+	}
+	
+	private static boolean isLinkValid(JSONObject link, JSONArray nodes) {
+		String source = (String) link.get(JSONMsgLINKS.SOURCE.toString().toLowerCase());
+		String target = (String) link.get(JSONMsgLINKS.TARGET.toString().toLowerCase());
+		boolean srcFnd=false; boolean trgFnd=false;
+		
+		for (Iterator iter = nodes.iterator(); iter.hasNext() && (!srcFnd || !trgFnd);) {
+			JSONObject node = (JSONObject) iter.next();
+			String id = (String)node.get("id");
+			if (!srcFnd) srcFnd= id.equals(source);
+			if (!trgFnd) trgFnd= id.equals(target);
+		}
+		if (srcFnd && trgFnd) System.out.println("Link valid: " + source + " -> " 
+							  + target);
+		else System.out.println("Link not valid: "+ source + " -> " 
+				  				+ target);
+		return srcFnd && trgFnd;
+	}
+	
 
 	private String readFile(File file) throws IOException {
 		StringBuilder _return = new StringBuilder();
@@ -152,4 +208,6 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 			_return.append(line);
 		return _return.toString();
 	}
+	
+
 }
