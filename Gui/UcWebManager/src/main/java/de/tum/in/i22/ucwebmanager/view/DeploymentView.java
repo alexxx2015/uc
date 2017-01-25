@@ -288,7 +288,7 @@ public class DeploymentView extends VerticalLayout implements View {
 			// Substitute original class files with instrumented ones
 			FileUtils.copyDirectory(instrumentedCodeBackup, instrumentedCode);
 			
-			instrumentedCodeBackup.delete();
+			FileUtils.deleteDirectory(instrumentedCodeBackup);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
