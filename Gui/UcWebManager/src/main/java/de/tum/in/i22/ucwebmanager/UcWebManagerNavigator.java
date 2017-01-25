@@ -13,6 +13,7 @@ import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.BrowserResizeEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.CloseOpenWindowsEvent;
 import de.tum.in.i22.ucwebmanager.event.DashboardEvent.PostViewChangeEvent;
+import de.tum.in.i22.ucwebmanager.view.RuntimeView;
 import de.tum.in.i22.ucwebmanager.event.DashboardEventBus;
 
 @SuppressWarnings("serial")
@@ -24,6 +25,8 @@ public class UcWebManagerNavigator extends Navigator {
 
     private static final DashboardViewType ERROR_VIEW = DashboardViewType.MAIN;
     private ViewProvider errorViewProvider;
+    
+//    private View currentView;
 
     public UcWebManagerNavigator(final ComponentContainer container) {
         super(UI.getCurrent(), container);
@@ -53,6 +56,10 @@ public class UcWebManagerNavigator extends Navigator {
                 // Since there's no conditions in switching between the views
                 // we can always return true.
             	
+            	if (event!=null && RuntimeView.class.isInstance(event.getOldView())) {
+            		RuntimeView rv = (RuntimeView) event.getOldView();
+            		rv.stopTimer();
+            	}
 //            	if (event!=null && ViewWithWindows.class.isInstance(event.getOldView())) {
 //            		ViewWithWindows oldView = (ViewWithWindows) event.getOldView();
 //            		if (oldView.hasAttachedWindows()) {
@@ -68,6 +75,7 @@ public class UcWebManagerNavigator extends Navigator {
 
             @Override
             public void afterViewChange(final ViewChangeEvent event) {
+//            	currentView = event.getNewView();
                 DashboardViewType view = DashboardViewType.getByViewName(event
                         .getViewName());
                 // Appropriate events get fired after the view is changed.
@@ -133,4 +141,8 @@ public class UcWebManagerNavigator extends Navigator {
             }
         });
     }
+    
+//    public View getCurrentView() {
+//    	return this.currentView;
+//    }
 }
