@@ -6,10 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Iterator;
 
 import org.json.simple.JSONArray;
@@ -17,12 +20,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -38,6 +41,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
+
 public class RuntimeView extends VerticalLayout implements View{
 
 	RuntimeDiagram runtimeDiagram = new RuntimeDiagram();
@@ -48,6 +52,10 @@ public class RuntimeView extends VerticalLayout implements View{
 	private HorizontalLayout checkboxesContainer;
 	
 	private Button btnRefresh;
+	
+	private long TIMER_DELAY = 15*1000;
+	private Timer timer;
+	private long prevTimeModified=0;
 	
 	public RuntimeView() {
 		Label lab = new Label("Runtime view");
@@ -73,7 +81,7 @@ public class RuntimeView extends VerticalLayout implements View{
 			@Override
 			public void buttonClick(ClickEvent event) {
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
-						"/" + app.getId() + "?restartApplication");
+						"/" + app.getId() + "?update");
 //				if (app!=null) {
 //					String filepath = FileUtil.getPathGraphFile(app.getHashCode());
 //					File file = new File(filepath);
@@ -131,26 +139,27 @@ public class RuntimeView extends VerticalLayout implements View{
 		if (event.getParameters() != null && event.getParameters() != "") {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
+			boolean update=false;
 			for (String msg : msgs) {
 				appId = 0;
 				if (msg != null){
-					String msg2 = msg.replaceAll("\\?restartApplication", "");
-					appId = Integer.parseInt(msg2);
+					// Refresh of the page requested from the timer
+					if (msg.contains("?update")) {
+						msg = msg.replaceAll("\\?update", "");
+						update=true;
+					}
+					appId = Integer.parseInt(msg);
 					System.out.println("enter view changeevent " + appId);
 				
-				try {
-					app = AppDAO.getAppById(appId);
-				} catch (ClassNotFoundException | SQLException e) {
-					e.printStackTrace();
-				}
+					try {
+						app = AppDAO.getAppById(appId);
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			
-			if (app != null){
-				
-//				String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
-//				System.out.println(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
-//				runtimeDiagram.drawFromJSON(url + "/apps/" + app.getHashCode() + "/runtime/graph.json");
+			if (app != null){;
 				String url = FileUtil.getUrlGraphFile(app.getHashCode());
 				System.out.println(url);
 				Map<String, Boolean> labelsMap = new HashMap<String, Boolean>();
@@ -158,9 +167,11 @@ public class RuntimeView extends VerticalLayout implements View{
 					labelsMap.put(field, true);
 				fillCheckBoxList(labelsMap.keySet(), true);
 				runtimeDiagram.setLabelsMap(labelsMap);
-				runtimeDiagram.drawFromJSON(url);
-				//runtimeDiagram.drawFromJSON(url);
+				//Add date to avoid cache for json file
+				runtimeDiagram.drawFromJSON(url+"?v="+(new Date()).getTime());
 				
+				if (!update)
+					startTimer();
 			}
 		}
 		else {
@@ -216,5 +227,44 @@ public class RuntimeView extends VerticalLayout implements View{
 					   Boolean.parseBoolean(event.getProperty().getValue().toString())));
 			checkboxesContainer.addComponent(chkField);
 		}
+	}
+	
+	
+	private void startTimer() {
+		stopTimer();
+		String graphPath = FileUtil.getPathGraphFile(app.getHashCode());
+		File graph = new File(graphPath);
+		prevTimeModified = graph.lastModified();
+	
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask(){
+
+			@Override
+			public void run() {
+				String graphPath = FileUtil.getPathGraphFile(app.getHashCode());
+				File graph = new File(graphPath);
+				if (prevTimeModified < graph.lastModified()) {
+					prevTimeModified = graph.lastModified();
+					// Refresh page will reload the diagram
+					System.out.println("Refresh runtime view");
+					
+					UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
+							"/" + app.getId() + "?update");
+					UI.getCurrent().push();
+					
+				}
+			}
+			
+		}, TIMER_DELAY, TIMER_DELAY);
+	}
+	
+	public void stopTimer() {
+		if (timer!=null) timer.cancel();
+	}
+	
+	public void updatePage() {
+		UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
+				"/" + app.getId() + "?update");
+		UI.getCurrent().push();
 	}
 }
