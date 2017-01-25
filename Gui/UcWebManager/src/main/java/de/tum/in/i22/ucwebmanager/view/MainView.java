@@ -148,6 +148,18 @@ public class MainView extends VerticalLayout implements View {
 					e.printStackTrace();
 				}
 			}
+			else if (msgs[0].equals(DashboardViewType.INSTRUMENT.getViewName())) {
+				int appId = Integer.parseInt(msgs[1]);
+				
+				try {
+					App app = AppDAO.getAppById(appId);
+					app.setStatus(Status.INSTRUMENTATION.getStage());
+					AppDAO.updateStatus(app, Status.INSTRUMENTATION.getStage());
+					updateStatus(app);
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
 			// map.put(appId, inputStream);
 			
 		}
@@ -346,6 +358,9 @@ public class MainView extends VerticalLayout implements View {
 	private void updateStatus (App app) {
 		Item row = findRow(app.getId());
 		row.getItemProperty("Status").setValue(app.getStatus());
+		//Because of a bug, the grid is not automatically refreshed
+		//Call clearSortOrder is a workaround
+		grid.clearSortOrder();
 	}
 	
 	private void updateStartTimeTable(int appId){

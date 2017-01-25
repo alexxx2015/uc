@@ -38,6 +38,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.BlackAndWhiteList;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.UcConfig;
 import de.tum.in.i22.ucwebmanager.Status.Status;
+import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 import edu.tum.uc.jvm.Instrumentor;
 public class InstrumentationView extends VerticalLayout implements View {
 	App app;
@@ -325,12 +326,11 @@ public class InstrumentationView extends VerticalLayout implements View {
 					arg2 = arg1 + File.separator + "uc.config";
 
 					Instrumentor.main(new String[]{arg0, arg1, arg2});
-					try {
-						AppDAO.updateStatus(app, Status.INSTRUMENTATION.getStage());
-					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
+					UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
+							+ "/" + DashboardViewType.INSTRUMENT.getViewName()
+							+ "/" + String.valueOf(app.getId()));
+					
 				} catch (IOException | IllegalClassFormatException e) {
 					e.printStackTrace();
 				}
