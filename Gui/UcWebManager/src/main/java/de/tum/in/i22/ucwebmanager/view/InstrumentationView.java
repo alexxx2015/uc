@@ -64,6 +64,8 @@ public class InstrumentationView extends VerticalLayout implements View {
 	}
 	@Override
 	public void enter(ViewChangeEvent event) {
+		gridBlackList.removeAllItems();
+		gridWhiteList.removeAllItems();
 		fillBlackAndWhiteList();
 		if (event.getParameters() != null) {
 			// split at "/", add each part as a label
@@ -82,6 +84,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 					if (app != null) {
 						appName = app.getName();
 						fillCmbReportFile(app);
+						addClassesToWhiteList(app);
 						fillSrcAndDest(app);
 					}
 
@@ -395,6 +398,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
 					fillCmbReportFile(app);
+					addClassesToWhiteList(app);
 					fillSrcAndDest(app);
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
@@ -454,6 +458,17 @@ public class InstrumentationView extends VerticalLayout implements View {
 		 ucConfig.setAppId(this.app.getHashCode());
 		 return ucConfig;
 	 }
+	 
+	 private void addClassesToWhiteList(App app) {
+		String pathCode = FileUtil.getPathCode(app.getHashCode());
+		List<File> classFiles = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );	
+		List<String> strContainClassFiles = new ArrayList<String>();
+		for (File f : classFiles) {
+			strContainClassFiles.add("contains:"+f.getName().replaceAll(".class", ""));
+		}
+		fillTable(strContainClassFiles, gridWhiteList, "white list");
+	 }
+	 
 //	 private void initTable(Table table, String name, String property){
 //		 table = new Table("ClassPath");
 //			table.addContainerProperty("Classpath", TextField.class, null);
