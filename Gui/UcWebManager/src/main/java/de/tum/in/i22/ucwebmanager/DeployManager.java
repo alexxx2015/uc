@@ -72,7 +72,9 @@ public class DeployManager{
 
     	
     	final String url = "http://"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
-		HttpGet request = new HttpGet(url);
+//    	final String url = "http://"+username+":"+password+"@"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
+
+    	HttpGet request = new HttpGet(url);
 		String response = executeRequest (request, credsProvider);
         return response;
     }
