@@ -108,6 +108,21 @@
 		</pluginManagement>
 	</build>
 
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Compiler options -->
+		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- Dependency versions -->
+		<armeria.version>0.34.1</armeria.version>
+		<logback.version>1.1.7</logback.version>
+		<slf4j.version>1.7.21</slf4j.version>
+	</properties>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>UsageControlSystem</groupId>
@@ -119,8 +134,7 @@
 			<artifactId>CommunicationBase</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<!-- ARMERIA SERVER: convert HTTP request to Thrift request within the 
-			PMP -->
+
 		<dependency>
 			<groupId>com.linecorp.armeria</groupId>
 			<artifactId>armeria</artifactId>
@@ -161,5 +175,19 @@
 			<artifactId>armeria-zookeeper</artifactId>
 			<version>${armeria.version}</version>
 		</dependency>
+<<<<<<< HEAD
+=======
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--Armeria end-->
+
+>>>>>>> 88bd010e57ed4c7d9dfd9926ec15091063ed3cdf
 	</dependencies>
 </project>

@@ -38,6 +38,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.BlackAndWhiteList;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.UcConfig;
 import de.tum.in.i22.ucwebmanager.Status.Status;
+import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
 import edu.tum.uc.jvm.Instrumentor;
 public class InstrumentationView extends VerticalLayout implements View {
 	App app;
@@ -63,6 +64,8 @@ public class InstrumentationView extends VerticalLayout implements View {
 	}
 	@Override
 	public void enter(ViewChangeEvent event) {
+		gridBlackList.removeAllItems();
+		gridWhiteList.removeAllItems();
 		fillBlackAndWhiteList();
 		if (event.getParameters() != null) {
 			// split at "/", add each part as a label
@@ -81,6 +84,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 					if (app != null) {
 						appName = app.getName();
 						fillCmbReportFile(app);
+						addClassesToWhiteList(app);
 						fillSrcAndDest(app);
 					}
 
@@ -114,6 +118,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 			return xml;
 		}
 	 private void fillCmbReportFile(App app){
+		 cmbReportFile.removeAllItems();
 		 File staticAnalysisOutput = new File(FileUtil.getPathOutput(app.getHashCode()));
 		 ArrayList<String> names = new ArrayList<String>(Arrays.asList(staticAnalysisOutput.list()));
 		 for (String name : names) cmbReportFile.addItem(name);
@@ -324,12 +329,11 @@ public class InstrumentationView extends VerticalLayout implements View {
 					arg2 = arg1 + File.separator + "uc.config";
 
 					Instrumentor.main(new String[]{arg0, arg1, arg2});
-					try {
-						AppDAO.updateStatus(app, Status.INSTRUMENTATION.getStage());
-					} catch (ClassNotFoundException | SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
+					UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
+							+ "/" + DashboardViewType.INSTRUMENT.getViewName()
+							+ "/" + String.valueOf(app.getId()));
+					
 				} catch (IOException | IllegalClassFormatException e) {
 					e.printStackTrace();
 				}
@@ -394,6 +398,7 @@ public class InstrumentationView extends VerticalLayout implements View {
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
 					fillCmbReportFile(app);
+					addClassesToWhiteList(app);
 					fillSrcAndDest(app);
 					subWindow.close();
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
@@ -453,6 +458,17 @@ public class InstrumentationView extends VerticalLayout implements View {
 		 ucConfig.setAppId(this.app.getHashCode());
 		 return ucConfig;
 	 }
+	 
+	 private void addClassesToWhiteList(App app) {
+		String pathCode = FileUtil.getPathCode(app.getHashCode());
+		List<File> classFiles = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );	
+		List<String> strContainClassFiles = new ArrayList<String>();
+		for (File f : classFiles) {
+			strContainClassFiles.add("contains:"+f.getName().replaceAll(".class", ""));
+		}
+		fillTable(strContainClassFiles, gridWhiteList, "white list");
+	 }
+	 
 //	 private void initTable(Table table, String name, String property){
 //		 table = new Table("ClassPath");
 //			table.addContainerProperty("Classpath", TextField.class, null);

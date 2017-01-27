@@ -793,8 +793,8 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		data.setMultiThreaded(String.valueOf(chkMultithreaded.getValue()));
 		data.setObjectSensitiveness(String.valueOf(chkObjectsensitivenes
 				.getValue()));
-		data.setIgnoreIndirectFlows(String.valueOf(chkindirectflows.isEnabled()));
-		data.setComputeChops(String.valueOf(chkcomputechops.isEnabled()));
+		data.setIgnoreIndirectFlows(String.valueOf(chkindirectflows.getValue()));
+		data.setComputeChops(String.valueOf(chkcomputechops.getValue()));
 		data.setSystemOut(String.valueOf(chkSystemOut.getValue()));
 		data.setOmitIFC(String.valueOf(chkOmitIFC.getValue()));
 		data.setReportFile(txtReportFile.getValue());
@@ -836,10 +836,10 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 
 		
 		StringBuilder strError = new StringBuilder();
-		if ("".equals(data.getAnalysisName())){
-			strError.append("Analysis name must be specified");
-			strError.append("<br/>");
-		}
+//		if ("".equals(data.getAnalysisName())){
+//			strError.append("Analysis name must be specified");
+//			strError.append("<br/>");
+//		}
 		if ("".equals(data.getMode())){
 			strError.append("Mode must be specified");
 			strError.append("<br/>");

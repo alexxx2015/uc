@@ -23,7 +23,8 @@ public class Analyser extends Thread {
 		this.configFile = configFile;
 	}
 	public void run() {
-		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
+//		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
+		String flowanalyser = "../../../lib/flowanalyzer.jar";
 		String jonaconfig = ".." + FileUtil.Dir.JOANACONFIG.getDir() + "/" + configFile;
 		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
 		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
@@ -34,7 +35,7 @@ public class Analyser extends Thread {
 						String errorStream = getErrorStream(process);
 						process.waitFor();
 //						System.out.println(inputstream);
-//						System.out.println(errorStream);
+						System.out.println(errorStream);
 //						if (errorStream.available() != 0){
 						System.out.println("Process ended!");
 						// TODO send inputstream to Mainview depends on App's ID

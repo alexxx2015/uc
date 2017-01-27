@@ -12,6 +12,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -19,6 +20,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
@@ -31,95 +33,102 @@ public class DeployManager{
     private CredentialsProvider credsProvider = new BasicCredentialsProvider();
     private final String host;
     private final String port;
+//    private final String username;
+//    private final String password;
     
-    public DeployManager() {
-    	
-		TomcatConfig tc = new TomcatConfig();
-		
-    	File file = new File (FileUtil.getPathTomcatConfFile());
-    	if (!file.exists()) {
-    		tc.setUsername("tomcat");
-    		tc.setPassword("pass");
-    		tc.setHost("localhost");
-    		tc.setPort("8181");
-    		tc.save(file.getPath());
-    	} 
-    	else {
-    		tc.load(file.getPath());
-    	}
-    	this.host = tc.getHost();	
-    	this.port = tc.getPort();
-    	
-        this.credsProvider.setCredentials(AuthScope.ANY,
-        						new UsernamePasswordCredentials(tc.getUsername(), tc.getPassword()));
-
-    }
-    
-    public DeployManager(String host, String port) {
+    public DeployManager(TomcatConfig configuration) {
     	
         /*
          * warning only ever AuthScope.ANY while debugging
          * with these settings the tomcat username and pw are added to EVERY request
          */
-        this.credsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials("tomcat", "pass"));
-        this.host=host;
-        this.port=port;
+        this.credsProvider.setCredentials(AuthScope.ANY, 
+        				new UsernamePasswordCredentials(configuration.getUsername(), configuration.getPassword()));
+//        this.username=configuration.getUsername();
+//        this.password=configuration.getPassword();
+        this.host=configuration.getHost();
+        this.port=configuration.getPort();
     	
     }
 
-	//private final String urlCorretto = "http://localhost:8181/manager/text/deploy?path=/Prova&war=file:/Users/cataldocalo/Downloads/Prova.war";
-
+    
     public String deploy(String contextName, String warUrl) throws ClientProtocolException, IOException {
     	
-        String url = "http://"+host+":"+port+
-        			 "/manager/text/deploy?path=/"+contextName+"&update=true";
-        
-        File file = new File(warUrl);
-        //File file = new File ("/Users/cataldocalo/Downloads/Prova.war") ;
 
-        HttpPut req = new HttpPut(url) ;
-        MultipartEntityBuilder meb = MultipartEntityBuilder.create();
-        meb.addTextBody("fileDescription", "war file to deploy");
-        //"application/octect-stream"
-        meb.addBinaryBody("attachment", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
-
-        req.setEntity(meb.build()) ;
-        String response = executeRequest (req, credsProvider);
-
-        return response;
-    }
-
-    public String undeploy(String contextName) throws ClientProtocolException, IOException{
-        //String url = "http://localhost:8181/manager/text/undeploy?path=/Prova";
-    	String url = "http://"+host+":"+port+"/manager/text/undeploy?path=/"+contextName;
-        HttpGet req = new HttpGet(url) ;
-        String response = executeRequest (req, credsProvider);
-        return response;
-    } 
-
-//    private static void deploy() throws ClientProtocolException, IOException {
-//    	
-//        String url = "http://localhost:8080/manager/text/deploy?path=/deployMe&update=true";
-//        File file = new File ("deployMe.war") ;
-//
+        // This method does not work for large war files! 
+        // Use the file:{} method in a get request
+    	
+//        String url = "http://"+host+":"+port+
+//   			 "/manager/text/deploy?path=/"+contextName+"&update=true";
+//        File file = new File(warUrl);
 //        HttpPut req = new HttpPut(url) ;
 //        MultipartEntityBuilder meb = MultipartEntityBuilder.create();
 //        meb.addTextBody("fileDescription", "war file to deploy");
 //        //"application/octect-stream"
 //        meb.addBinaryBody("attachment", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
-//
+//        //meb.addBinaryBody("attachment", file, ContentType.DEFAULT_BINARY, file.getName());
 //        req.setEntity(meb.build()) ;
 //        String response = executeRequest (req, credsProvider);
-//
-//        System.out.println("Response : "+response);
-//    }
-//
-//    public static void undeploy() throws ClientProtocolException, IOException{
-//        String url = "http://localhost:8080/manager/text/undeploy?path=/deployMe";
-//        HttpGet req = new HttpGet(url) ;
-//        String response = executeRequest (req, credsProvider);
-//        System.out.println("Response : "+response);
-//    } 
+
+    	
+    	final String url = "http://"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
+//    	final String url = "http://"+username+":"+password+"@"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
+
+    	HttpGet request = new HttpGet(url);
+		String response = executeRequest (request, credsProvider);
+        return response;
+    }
+    
+    
+    public String undeploy(String contextName) throws ClientProtocolException, IOException{
+    	final String url = "http://"+host+":"+port+"/manager/text/undeploy?path=/"+contextName;
+        HttpGet req = new HttpGet(url) ;
+        String response = executeRequest (req, credsProvider);
+        return response;
+    } 
+    
+    public String packageWar(String warName, String webappPath) {
+    	WarPackager wp = new WarPackager(warName, webappPath);
+    	wp.start();
+    	try {
+			wp.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	return webappPath + File.separator + warName;
+    }
+
+    
+    
+    private class WarPackager extends Thread {
+    	
+    	private String warName;
+    	private String webappPath;
+    	
+    	public WarPackager(String warName, String webappPath) {
+    		this.warName = warName;
+    		this.webappPath=webappPath;
+    	}
+    	
+    	public void run() {
+    		
+    		//If the file.war already exists the packaging fails
+    		File warFile = new File(webappPath+File.separator+warName);
+    		if (warFile.exists())
+    			warFile.delete();
+    		
+    		//command = jar -cvf mypackage.war -C path .
+    		ProcessBuilder pb = new ProcessBuilder("jar", "-cvf", webappPath+File.separator+warName, "-C", webappPath, ".");
+    		try {
+    			Process process = pb.start();
+    			process.waitFor();
+    			System.out.println("War packaged!");
+    		}
+    		catch (InterruptedException | IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
 
     private static String executeRequest(HttpRequestBase requestBase, CredentialsProvider credsProvider) throws ClientProtocolException, IOException {
         CloseableHttpClient client = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
