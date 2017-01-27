@@ -7,13 +7,15 @@ import com.linecorp.armeria.server.ServerBuilder;
 import com.linecorp.armeria.server.http.cors.CorsServiceBuilder;
 import com.linecorp.armeria.server.thrift.THttpService;
 
+import de.tum.in.i22.uc.cm.settings.Settings;
+
 public class ThriftWebServer implements IThriftServer {
 	private Server server = null;
 	private boolean isStarted = false;
 
 	public ThriftWebServer(int port, ThriftServerHandler handler) {
 		String url = "/pmp";
-//		Settings.getInstance().getpmpweb
+//		Settings.getInstance();
 
 		ServerBuilder sb = new ServerBuilder();
 		sb.port(port, SessionProtocol.HTTP);
