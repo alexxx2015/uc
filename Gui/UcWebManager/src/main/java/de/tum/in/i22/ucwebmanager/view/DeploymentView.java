@@ -30,12 +30,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.tum.in.i22.ucwebmanager.DeployManager;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.TomcatConfig;
 import de.tum.in.i22.ucwebmanager.Status.Status;
+import de.tum.in.i22.ucwebmanager.deploy.DeployManager;
 
 public class DeploymentView extends VerticalLayout implements View {
 
@@ -53,8 +53,6 @@ public class DeploymentView extends VerticalLayout implements View {
 	private static final String DEFAULT_USERNAME = "tomcat";
 	private static final String DEFAULT_HOST = "localhost";
 	private static final String DEFAULT_PORT = "8181";
-	
-	private static final String UC_JAVA_PEP_LIBRARY_NAME = "uc-java-pep-0.0.1-SNAPSHOT-jar-with-dependencies.jar";
 	
 	public DeploymentView() {
 		//Set the UI with its components
@@ -248,73 +246,25 @@ public class DeploymentView extends VerticalLayout implements View {
 	
 	private void deploy() {
 		TomcatConfig configurationData = readTomcatConfigFromFields();
-		if (configurationData==null) return;
+		if (configurationData==null) {
+			Notification.show("Error during the reading from fields!");
+			return;
+		}
 		
-		joinCodeWithInstrumentedClasses();
-		addUcJavaPepLibraryToInstrumentedCode();
 		
 		DeployManager dp = new DeployManager(configurationData);
-		String reportName = ""+cmbReportFile.getValue();
-		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + reportName;
-		String warName = FilenameUtils.getBaseName(app.getName()) + ".war";
-		String warPath = dp.packageWar(warName, webappPath);
-		String contextName = FilenameUtils.getBaseName(app.getName()) + "_" + reportName;
-		
 		String response="";
+		
 		try {
-			response = dp.deploy(contextName, warPath);
+			response=dp.deploy(app, cmbReportFile.getValue().toString());
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		System.out.println(response);
 		Notification.show(response);
-	}
-	
-	private void joinCodeWithInstrumentedClasses() {
-		
-		String codePath = FileUtil.getPathCode(app.getHashCode());
-		String instrumentedCodePath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + cmbReportFile.getValue();
-		try {
-			// Files of the source overwrite files with the same name in the destDir
-			// --> Backup of the instrumented classes
-			File instrumentedCode = new File(instrumentedCodePath);
-			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
-			instrumentedCode.renameTo(instrumentedCodeBackup);
-			// Copy original code into instrumentation subfolder
-			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
-			
-			// Substitute original class files with instrumented ones
-			FileUtils.copyDirectory(instrumentedCodeBackup, instrumentedCode);
-			
-			FileUtils.deleteDirectory(instrumentedCodeBackup);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
-	private void addUcJavaPepLibraryToInstrumentedCode() {
-		
-		String libFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
-						   	   cmbReportFile.getValue() + File.separator + "WEB-INF" + File.separator +
-						       "lib";
-		File libFolder = new File(libFolderPath);
-		if (!libFolder.exists())
-			libFolder.mkdirs();
-		
-		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator +
-				"lib" + File.separator + UC_JAVA_PEP_LIBRARY_NAME;
-		File ucjavapepLib = new File(ucjavapepLibPath);
-		
-		try {
-			FileUtils.copyFileToDirectory(ucjavapepLib, libFolder);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 	}
 	
 	private void undeploy() {
