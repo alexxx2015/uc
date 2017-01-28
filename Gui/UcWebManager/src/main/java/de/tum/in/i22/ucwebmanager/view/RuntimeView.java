@@ -33,6 +33,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.CheckBox;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
@@ -49,6 +50,7 @@ public class RuntimeView extends VerticalLayout implements View{
 	ComboBox cmbListApp;
 	private App app;
 	private int appId;
+	private Label lblApp;
 	private HorizontalLayout checkboxesContainer;
 	
 	private Button btnRefresh;
@@ -58,54 +60,49 @@ public class RuntimeView extends VerticalLayout implements View{
 	private long prevTimeModified=0;
 	
 	public RuntimeView() {
-		Label lab = new Label("Runtime view");
-		addComponent(lab);
+		Label labTitle = new Label("Runtime view");
+		labTitle.setSizeUndefined();
+		labTitle.addStyleName(ValoTheme.LABEL_H1);
+		labTitle.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//		addComponent(labTitle);
 		
 		VerticalLayout parent = new VerticalLayout();
-		parent.addComponent(lab);
+		parent.addComponent(labTitle);
+		
+		lblApp = new Label();
 		
 		FormLayout fl = new FormLayout();
-		fl.setSizeFull();
 		
+		Label labFields = new Label("Fields:");
 		checkboxesContainer = new HorizontalLayout();
+		parent.addComponent(labFields);
 		parent.addComponent(checkboxesContainer);
 		
-		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
-		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
-		//runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
+//		String url = VaadinServlet.getCurrent().getServletContext().getInitParameter("WebURL");
+//		runtimeDiagram.drawFromJSON(url + "/apps/miserables.json");
 		
         btnRefresh = new Button("Refresh");
         btnRefresh.addStyleName("mybutton");
+        btnRefresh.setVisible(false);
         btnRefresh.addClickListener(new Button.ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
 						"/" + app.getId() + "?update");
-//				if (app!=null) {
-//					String filepath = FileUtil.getPathGraphFile(app.getHashCode());
-//					File file = new File(filepath);
-//					File fileTMP = new File(file.getParent()+File.separator+"tmp");
-//					file.renameTo(fileTMP);
-//					File graph2 = new File(file.getParent()+File.separator+"graph2.json");
-//					graph2.renameTo(new File(filepath));
-//					fileTMP.renameTo(new File(file.getParent()+File.separator+"graph2.json"));
-//				}
-
-//				if (app!=null) {
-//					String url = FileUtil.getUrlGraphFile(app.getHashCode());
-//					runtimeDiagram.drawFromJSON(url);
-//				}
 			}
 		});
 		
         parent.addComponent(btnRefresh);
-      
         fl.addComponent(runtimeDiagram);
+        parent.addComponent(fl);
         
-		parent.addComponent(fl);		
+        parent.setSizeFull();
+        parent.setSpacing(true);		
 		parent.setMargin(true);
 		addComponent(parent);
+		
+		
 		subWindow = new Window("No App selected, please choose an app!");
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
@@ -122,6 +119,7 @@ public class RuntimeView extends VerticalLayout implements View{
 				try {
 					app = AppDAO.getAppById(Integer.parseInt(temp[0]));
 					subWindow.close();
+					drawRuntimeGraph(false);
 				} catch (NumberFormatException | ClassNotFoundException | SQLException e) {
 					e.printStackTrace();
 				}
@@ -139,14 +137,14 @@ public class RuntimeView extends VerticalLayout implements View{
 		if (event.getParameters() != null && event.getParameters() != "") {
 			// split at "/", add each part as a label
 			String[] msgs = event.getParameters().split("/");
-			boolean update=false;
+			boolean requestOfUpdate=false;
 			for (String msg : msgs) {
 				appId = 0;
 				if (msg != null){
 					// Refresh of the page requested from the timer
 					if (msg.contains("?update")) {
 						msg = msg.replaceAll("\\?update", "");
-						update=true;
+						requestOfUpdate=true;
 					}
 					appId = Integer.parseInt(msg);
 					System.out.println("enter view changeevent " + appId);
@@ -159,19 +157,8 @@ public class RuntimeView extends VerticalLayout implements View{
 				}
 			}
 			
-			if (app != null){;
-				String url = FileUtil.getUrlGraphFile(app.getHashCode());
-				System.out.println(url);
-				Map<String, Boolean> labelsMap = new HashMap<String, Boolean>();
-				for (String field: readFieldsFromJSONFile(FileUtil.getPathGraphFile(app.getHashCode())))
-					labelsMap.put(field, true);
-				fillCheckBoxList(labelsMap.keySet(), true);
-				runtimeDiagram.setLabelsMap(labelsMap);
-				//Add date to avoid cache for json file
-				runtimeDiagram.drawFromJSON(url+"?v="+(new Date()).getTime());
-				
-				if (!update)
-					startTimer();
+			if (app != null){
+				drawRuntimeGraph(requestOfUpdate);
 			}
 		}
 		else {
@@ -179,6 +166,31 @@ public class RuntimeView extends VerticalLayout implements View{
 			UI.getCurrent().addWindow(subWindow);
 		}
 	}
+	
+	private void drawRuntimeGraph(boolean requestOfUpdate) {
+		btnRefresh.setVisible(true);
+		lblApp.setValue("App selected: "+ app.getName());
+		
+		String url = FileUtil.getUrlGraphFile(app.getHashCode());
+		System.out.println("Drawing: "+url);
+		
+		//Add checkboxes to show/hide fields of the nodes
+		Map<String, Boolean> labelsMap = new HashMap<String, Boolean>();
+		for (String field: readFieldsFromJSONFile(FileUtil.getPathGraphFile(app.getHashCode())))
+			labelsMap.put(field, true);
+		fillCheckBoxList(labelsMap.keySet(), true);
+		runtimeDiagram.setLabelsMap(labelsMap);
+		
+		
+		//Add date to avoid cache for json file
+		runtimeDiagram.drawFromJSON(url+"?v="+(new Date()).getTime());
+		
+		if (!requestOfUpdate) {
+			startRefresherTimer();
+		}
+			
+	}
+	
 	private void fillCmbListApp(){
 		List<App> apps = AppDAO.getAppByStatus(Status.INSTRUMENTATION.getStage());
 		for (App app : apps){
@@ -230,7 +242,7 @@ public class RuntimeView extends VerticalLayout implements View{
 	}
 	
 	
-	private void startTimer() {
+	private void startRefresherTimer() {
 		stopTimer();
 		String graphPath = FileUtil.getPathGraphFile(app.getHashCode());
 		File graph = new File(graphPath);
