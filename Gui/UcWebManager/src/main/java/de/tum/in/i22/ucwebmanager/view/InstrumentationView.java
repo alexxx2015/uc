@@ -18,6 +18,7 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.MouseEventDetails;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -46,8 +47,9 @@ public class InstrumentationView extends VerticalLayout implements View {
 	Window subWindow;
 	ComboBox cmbListApp;
 	String appName, arg0, arg1, arg2;
-	String blackL = "black list", whiteL = "white list",
-		   blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
+	private static final String BLACK_LIST_PROPERTY = "black list";
+	private static final String WHITE_LIST_PROPERTY = "white list";
+	String blackListName = "/blacklist.list", whiteListName = "/whitelist.list";
 	private int appId;
 	private TextArea textArea;
 	private Table gridBlackList, gridWhiteList;
@@ -136,32 +138,33 @@ public class InstrumentationView extends VerticalLayout implements View {
 	 private void fillBlackAndWhiteList(){
 		 List<String> blackList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + blackListName);
 		 List<String> whiteList = BlackAndWhiteList.read(FileUtil.getPathBlackAndWhiteList() + whiteListName);
-		 fillTable(blackList, gridBlackList, "black list");
-		 fillTable(whiteList, gridWhiteList, "white list");
+		 fillTable(blackList, gridBlackList, BLACK_LIST_PROPERTY);
+		 fillTable(whiteList, gridWhiteList, WHITE_LIST_PROPERTY);
 	 }
 	 
-	 private void fillTable(List<String> list, Table t, String property){
+	 private void fillTable(List<String> list, Table table, String property){
 		 for (String s : list){
-			 TextField txt = new TextField("textfield");
-			 txt.setValue(s);
-			 txt.setWidth(24.6f, ComboBox.UNITS_EM);
-			 Object newItemId = t.addItem();
-			Item row = t.getItem(newItemId);
-			row.getItemProperty(property).setValue(txt);
-			t.addItem(new Object[] { txt }, newItemId);
+			Object newItemId = table.addItem();
+			TextField txtField = new TextField();
+			txtField.setWidth("100%");
+			txtField.setValue(s);
+			table.getItem(newItemId).getItemProperty(property).setValue(txtField);
 		 } 
 	 }
-	 private List<String> readDataFromTable(Table t, String property){
-		 List<String> list = new ArrayList<String>();
-		 int newItemId = t.size();
-		 for (int i = 1; i <= newItemId; i++) {
-				Item row = t.getItem(i);
-				TextField temp = new TextField();
-				temp = (TextField) row.getItemProperty(property).getValue();
-				list.add(temp.getValue());
-		 }
-		 return list;
-	 }
+	 
+	private List<String> readDataFromTable(Table table, String propertyID) {
+		List<String> strRows = new ArrayList<String>();
+		
+		for (Object itemID : table.getContainerDataSource().getItemIds()) {
+			AbstractField field = (AbstractField) table.getItem(itemID).getItemProperty(propertyID).getValue();
+
+			if (field.getValue()!=null && !"".equals(field.getValue().toString()))
+				strRows.add(field.getValue().toString());
+		}
+		
+		return strRows;
+	}
+	 
 	 private void init() {
 		txtPipH = new TextField("PIP_HOST", "localhost");
 		txtPipH.setWidth("100%");
@@ -316,11 +319,11 @@ public class InstrumentationView extends VerticalLayout implements View {
 					f.mkdirs();
 					
 					// create blacklist.list
-					List<String> bl = readDataFromTable(gridBlackList, blackL);
+					List<String> bl = readDataFromTable(gridBlackList, BLACK_LIST_PROPERTY);
 					BlackAndWhiteList.saveAndWrite(bl, arg1 + blackListName);
 					
 					//create whitelist.list
-					List<String> wl = readDataFromTable(gridWhiteList, whiteL);
+					List<String> wl = readDataFromTable(gridWhiteList, WHITE_LIST_PROPERTY);
 					BlackAndWhiteList.saveAndWrite(wl, arg1 + whiteListName);
 					//create uc.config
 					UcConfig uc = createUcFile(reportFile, arg1 + blackListName, arg1 + whiteListName);
