@@ -31,9 +31,12 @@ import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.TomcatConfig;
 
-public class DeployManager{
+/**
+ * A simple manager to deploy/undeploy an instrumented java web application
+ * on/from a running instance of Tomcat server
+ */
 
-	//Deploy a java web application on a running Tomcat server
+public class DeployManager{
 	
     private CredentialsProvider credsProvider = new BasicCredentialsProvider();
     private final String host;
@@ -63,7 +66,7 @@ public class DeployManager{
 		joinCodeWithInstrumentedClasses(app, report);
 		addUcJavaPepLibraryToInstrumentedCode(app, report);
 		removeUnnecessaryLibraries(app, report);
-		moveUcConfigIntoRightFolder(app, report);
+		moveUcConfigToClassPath(app, report);
 		
 		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + report;
 		String warName = FilenameUtils.getBaseName(app.getName()) + ".war";
@@ -144,7 +147,7 @@ public class DeployManager{
         return res;
     }
     
-	private void moveUcConfigIntoRightFolder(App app, String report) {
+	private void moveUcConfigToClassPath(App app, String report) {
 		
 		String ucConfigPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
 			   	   			  report + File.separator + "uc.config";
@@ -165,10 +168,12 @@ public class DeployManager{
 	}
 	
 	private void removeUnnecessaryLibraries(App app, String report) {
-		//These libraries are only necessary for the static analysis
+		
 		String libFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
 						   	   report + File.separator + "WEB-INF" + File.separator +
 						       "lib";
+		
+		//These libraries are only necessary for the static analysis
 		File catalinaLib = new File(libFolderPath+File.separator+"catalina.jar");
 		File servletLib = new File(libFolderPath+File.separator+"servlet-api.jar");
 		
