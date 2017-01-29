@@ -25,6 +25,12 @@ import com.vaadin.server.VaadinServlet;
 
 import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
 
+/**
+ * Servlet responsible of transforming a message in a JSON graph
+ * readable from UcWebManager
+ */
+
+
 @WebServlet(urlPatterns = "/rest/*", name = "UcWebManagerRestServlet", asyncSupported = true)
 // @VaadinServletConfiguration(ui = UcWebManagerRestUI.class, productionMode =
 // false)
@@ -76,6 +82,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				JSONParser parser = new JSONParser();
 				JSONObject cnt = new JSONObject();
 				myPath += pathSeparator + appid;
+				
+				// Reading existing graph
 				File runtimeGraph = new File(myPath + runtimePath + graphFileJSON);
 				if (!runtimeGraph.exists()) {
 					runtimeGraph.getParentFile().mkdirs();
@@ -139,10 +147,11 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 					}
 				}
 
+				// Write links and nodes in the JSON object
 				cnt.put(JSONUtil.LINKS, cntLinks);
 				cnt.put(JSONUtil.NODES, cntNodes);
 
-				
+				// Dump JSON object to a file
 				FileWriter fw = new FileWriter(runtimeGraph);
 				fw.write(cnt.toJSONString());
 				fw.flush();
@@ -163,6 +172,8 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 		node.put("id", opcode+":"+fqname+"."+offset);
 	}
 	
+	
+	// Check if the source and the target nodes exist in the nodes' list
 	private static boolean isLinkValid(JSONObject link, JSONArray nodes) {
 		String source = (String) link.get(JSONMsgLINKS.SOURCE.toString().toLowerCase());
 		String target = (String) link.get(JSONMsgLINKS.TARGET.toString().toLowerCase());
