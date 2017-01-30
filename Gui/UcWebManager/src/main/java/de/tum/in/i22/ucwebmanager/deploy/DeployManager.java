@@ -1,4 +1,4 @@
-package de.tum.in.i22.ucwebmanager;
+package de.tum.in.i22.ucwebmanager.deploy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -23,18 +25,26 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
+import com.vaadin.server.VaadinService;
+
+import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
 import de.tum.in.i22.ucwebmanager.FileUtil.TomcatConfig;
 
-public class DeployManager{
+/**
+ * A simple manager to deploy/undeploy an instrumented java web application
+ * on/from a running instance of Tomcat server
+ */
 
-	//Deploy a java web application on a running Tomcat server
+public class DeployManager{
 	
     private CredentialsProvider credsProvider = new BasicCredentialsProvider();
     private final String host;
     private final String port;
 //    private final String username;
 //    private final String password;
+    
+	private static final String UC_JAVA_PEP_LIBRARY_NAME = "uc-java-pep-0.0.1-SNAPSHOT-jar-with-dependencies.jar";
     
     public DeployManager(TomcatConfig configuration) {
     	
@@ -51,6 +61,21 @@ public class DeployManager{
     	
     }
 
+    
+    public String deploy(App app, String report) throws ClientProtocolException, IOException {
+		joinCodeWithInstrumentedClasses(app, report);
+		addUcJavaPepLibraryToInstrumentedCode(app, report);
+		removeUnnecessaryLibraries(app, report);
+		moveUcConfigToClassPath(app, report);
+		
+		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + report;
+		String warName = FilenameUtils.getBaseName(app.getName()) + ".war";
+		String warPath = packageWar(warName, webappPath);
+		String contextName = FilenameUtils.getBaseName(app.getName()) + "_" + report;
+		
+		return deploy(contextName, warPath);
+		
+    }
     
     public String deploy(String contextName, String warUrl) throws ClientProtocolException, IOException {
     	
@@ -98,37 +123,6 @@ public class DeployManager{
     	return webappPath + File.separator + warName;
     }
 
-    
-    
-    private class WarPackager extends Thread {
-    	
-    	private String warName;
-    	private String webappPath;
-    	
-    	public WarPackager(String warName, String webappPath) {
-    		this.warName = warName;
-    		this.webappPath=webappPath;
-    	}
-    	
-    	public void run() {
-    		
-    		//If the file.war already exists the packaging fails
-    		File warFile = new File(webappPath+File.separator+warName);
-    		if (warFile.exists())
-    			warFile.delete();
-    		
-    		//command = jar -cvf mypackage.war -C path .
-    		ProcessBuilder pb = new ProcessBuilder("jar", "-cvf", webappPath+File.separator+warName, "-C", webappPath, ".");
-    		try {
-    			Process process = pb.start();
-    			process.waitFor();
-    			System.out.println("War packaged!");
-    		}
-    		catch (InterruptedException | IOException e) {
-				e.printStackTrace();
-			}
-    	}
-    }
 
     private static String executeRequest(HttpRequestBase requestBase, CredentialsProvider credsProvider) throws ClientProtocolException, IOException {
         CloseableHttpClient client = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
@@ -148,6 +142,89 @@ public class DeployManager{
         br.close() ;
         res = sb.toString();
 
+        client.close();
+        
         return res;
     }
+    
+	private void moveUcConfigToClassPath(App app, String report) {
+		
+		String ucConfigPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
+			   	   			  report + File.separator + "uc.config";
+		
+		File ucConfig = new File(ucConfigPath);
+		if (ucConfig.exists()) {
+			String classesFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
+								   	   report + File.separator + "WEB-INF" + File.separator +
+								       "classes";
+			
+			File classesFolder = new File(classesFolderPath);
+			try {
+				FileUtils.moveFileToDirectory(ucConfig, classesFolder, false);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void removeUnnecessaryLibraries(App app, String report) {
+		
+		String libFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
+						   	   report + File.separator + "WEB-INF" + File.separator +
+						       "lib";
+		
+		//These libraries are only necessary for the static analysis
+		File catalinaLib = new File(libFolderPath+File.separator+"catalina.jar");
+		File servletLib = new File(libFolderPath+File.separator+"servlet-api.jar");
+		
+		if (catalinaLib.exists())
+			catalinaLib.delete();
+		if (servletLib.exists())
+			servletLib.delete();
+	}
+	
+	private void joinCodeWithInstrumentedClasses(App app, String report) {
+		
+		String codePath = FileUtil.getPathCode(app.getHashCode());
+		String instrumentedCodePath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + report;
+		try {
+			// Files of the source overwrite files with the same name in the destDir
+			// --> Backup of the instrumented classes
+			File instrumentedCode = new File(instrumentedCodePath);
+			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
+			instrumentedCode.renameTo(instrumentedCodeBackup);
+			// Copy original code into instrumentation subfolder
+			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
+			
+			// Substitute original class files with instrumented ones
+			FileUtils.copyDirectory(instrumentedCodeBackup, instrumentedCode);
+			
+			FileUtils.deleteDirectory(instrumentedCodeBackup);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	private void addUcJavaPepLibraryToInstrumentedCode(App app, String report) {
+		
+		String libFolderPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + 
+						   	   report + File.separator + "WEB-INF" + File.separator +
+						       "lib";
+		File libFolder = new File(libFolderPath);
+		if (!libFolder.exists())
+			libFolder.mkdirs();
+		
+		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator +
+								  "lib" + File.separator + UC_JAVA_PEP_LIBRARY_NAME;
+		File ucjavapepLib = new File(ucjavapepLibPath);
+		
+		try {
+			FileUtils.copyFileToDirectory(ucjavapepLib, libFolder);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 }
