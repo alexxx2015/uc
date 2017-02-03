@@ -38,6 +38,7 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.AbstractField;
@@ -1111,6 +1112,12 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		for (File f: jarFilesInCode)
 			this.jarFilesInCode.add(f.getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER));
 	
+		// Add shared library folder
+		List<String> sharedLibFolder = new ArrayList<String>();
+		sharedLibFolder.add(FileUtil.getPathLibShared());
+		List<File> sharedLibraries = FileUtil.getFiles(sharedLibFolder, ".jar");
+		for (File f : sharedLibraries)
+			this.jarFilesInCode.add(f.getPath().replaceAll(VaadinService.getCurrent().getBaseDirectory().getPath(), ".."+File.separator+".."+File.separator+".."));
 	}
 	
 	private void fillComboBoxEntryPoint(int classFileIndex) {
