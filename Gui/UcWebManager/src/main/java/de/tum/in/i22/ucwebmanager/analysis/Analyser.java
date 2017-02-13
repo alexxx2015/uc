@@ -43,7 +43,7 @@ public class Analyser extends Thread {
 //						UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName() + "/" + String.valueOf(app.getId()) + "/" + inputstream);
 					} catch (IOException | InterruptedException e) {
 						String error = e.getMessage();
-						e.printStackTrace();
+						e.printStackTrace();	
 						new Notification("ERROR!",
 								error,
 								Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());

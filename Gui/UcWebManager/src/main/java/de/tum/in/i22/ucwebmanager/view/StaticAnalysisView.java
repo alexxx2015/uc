@@ -1155,7 +1155,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	
 	private void fillComboBoxClassFiles() {
 		String pathCode = FileUtil.getPathCode(app.getHashCode());
-		this.classFilesInCode = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );	
+		this.classFilesInCode = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );
 		for (int i=0; i<this.classFilesInCode.size(); i++) {
 			String relativePath = classFilesInCode.get(i).getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER);
 			cmbClassFiles.addItem(i+INDEX_CLASS_FILE_SEPARATOR+relativePath);
