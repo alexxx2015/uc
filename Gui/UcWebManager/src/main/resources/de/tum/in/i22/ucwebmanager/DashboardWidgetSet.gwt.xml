@@ -33,5 +33,5 @@
     <inherits name="com.vaadin.addon.charts.Widgetset" ></inherits>
     -->
 
-    <inherits name="ua.net.freecode.chart.widgetset.FreecodeWidgetset" />
+    
 </module>

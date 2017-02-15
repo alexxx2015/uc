@@ -2,10 +2,12 @@ package de.tum.in.i22.ucwebmanager;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,6 +23,14 @@ import org.json.simple.parser.ParseException;
 
 import com.vaadin.server.VaadinServlet;
 
+import de.tum.in.i22.ucwebmanager.JSON.JSONUtil;
+
+/**
+ * Servlet responsible of transforming a message in a JSON graph
+ * readable from UcWebManager
+ */
+
+
 @WebServlet(urlPatterns = "/rest/*", name = "UcWebManagerRestServlet", asyncSupported = true)
 // @VaadinServletConfiguration(ui = UcWebManagerRestUI.class, productionMode =
 // false)
@@ -29,13 +39,21 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 		APPID, MSG
 	}
 
-	public static enum JSONMsg {
-		NODES, LINKS, FQNAME, OFFSET, OPCODE, MISC, SOURCE, TARGET
+	public static String MSGNODES = "NODES";
+	public static String MSGLINKS = "LINKS";
+	
+	public static enum JSONMsgNODES {
+		 FQNAME, OFFSET, OPCODE, MISC
+	}
+	
+	public static enum JSONMsgLINKS {
+		SOURCE, TARGET
 	}
 
 	private String pathSeparator = File.separator;// System.getProperty("file.separator");
 	private String path;
-	private String graphFile = pathSeparator + "graph.txt";
+//	private String graphFileTxt = pathSeparator + "graph.txt";
+	private String graphFileJSON = pathSeparator + "graph.json";
 	private String runtimePath = File.separator + "runtime";
 	private ServletConfig config;
 
@@ -64,7 +82,9 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 				JSONParser parser = new JSONParser();
 				JSONObject cnt = new JSONObject();
 				myPath += pathSeparator + appid;
-				File runtimeGraph = new File(myPath + runtimePath + graphFile);
+				
+				// Reading existing graph
+				File runtimeGraph = new File(myPath + runtimePath + graphFileJSON);
 				if (!runtimeGraph.exists()) {
 					runtimeGraph.getParentFile().mkdirs();
 					runtimeGraph.createNewFile();
@@ -72,49 +92,105 @@ public class UcWebManagerRestServlet extends VaadinServlet {
 					try {
 						cnt = (JSONObject) parser.parse(new FileReader(runtimeGraph));
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 
+				
 				JSONArray cntLinks = new JSONArray();
-				if (cnt.containsKey(JSONMsg.LINKS.toString())){
-					String o = (String)cnt.get(JSONMsg.LINKS.toString());
-					cntLinks = (JSONArray) parser.parse(o);
-				}
+				if (cnt.containsKey(JSONUtil.LINKS))
+					cntLinks = (JSONArray) cnt.get(JSONUtil.LINKS);
 				
 				JSONArray cntNodes = new JSONArray();
-				if (cnt.containsKey(JSONMsg.NODES.toString())){
-					String o = (String)cnt.get(JSONMsg.NODES.toString());
-					cntNodes = (JSONArray) parser.parse(o);
-				}
+				if (cnt.containsKey(JSONUtil.NODES))
+					cntNodes = (JSONArray) cnt.get(JSONUtil.NODES);
 
 //				Add received links and nodes and dump data to file
 				JSONObject msgCnt = (JSONObject) parser.parse(msg);
-				if(msgCnt.containsKey(JSONMsg.LINKS.toString()))
-					cntLinks.add(msgCnt.get(JSONMsg.LINKS.toString()));
-				if(msgCnt.containsKey(JSONMsg.NODES.toString()))
-					cntNodes.add(msgCnt.get(JSONMsg.NODES.toString()));
-				
-				cnt.put(JSONMsg.LINKS.toString(), cntLinks.toString());
-				cnt.put(JSONMsg.NODES.toString(), cntNodes.toString());
+				if(msgCnt.containsKey(MSGNODES)){
+					JSONArray nodes = (JSONArray) msgCnt.get(MSGNODES);
+					Iterator<JSONArray> iterator = nodes.iterator();
+					while (iterator.hasNext()){
+						JSONObject tempObj = new JSONObject();
+						JSONArray j = iterator.next();
+						Iterator<JSONObject> iter2 = j.iterator();
+						while (iter2.hasNext()){
+							JSONObject json2 = iter2.next();
+							
+							for (Iterator iter3 = json2.keySet().iterator();iter3.hasNext();){
+								String key = (String) iter3.next();
+								tempObj.put(key, json2.get(key).toString());
+							}
+							
+						}
+
+						if (!cntNodes.contains(tempObj))
+							cntNodes.add(tempObj);
+						else
+							System.out.println("Nodes list already contains node " + tempObj.get("id"));
+					}
+				}		
+				if(msgCnt.containsKey(MSGLINKS)){
+					JSONArray links = (JSONArray) msgCnt.get(MSGLINKS);
+					Iterator<JSONObject> iter = links.iterator();
+					while (iter.hasNext()){
+						JSONObject tempObj = new JSONObject();
+						JSONObject link = iter.next();
+						for (Iterator iter3 = link.keySet().iterator(); iter3.hasNext();){
+							String key = (String) iter3.next();
+							tempObj.put(key.toLowerCase(), link.get(key).toString());
+						}
+						
+						if (!cntLinks.contains(tempObj) && isLinkValid(tempObj, cntNodes))
+							cntLinks.add(tempObj);
+						
+					}
+				}
+
+				// Write links and nodes in the JSON object
+				cnt.put(JSONUtil.LINKS, cntLinks);
+				cnt.put(JSONUtil.NODES, cntNodes);
+
+				// Dump JSON object to a file
 				FileWriter fw = new FileWriter(runtimeGraph);
-				fw.write(cnt.toString());
+				fw.write(cnt.toJSONString());
 				fw.flush();
 				fw.close();
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-
-	private String readFile(File file) throws IOException {
-		StringBuilder _return = new StringBuilder();
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line;
-		while ((line = br.readLine()) != null)
-			_return.append(line);
-		return _return.toString();
+	
+	// This method is not needed anymore since the ID is
+	// inserted by uc-java-pep library now
+	private static void insertNodeID(JSONObject node) {
+		String opcode = (String) node.get(JSONMsgNODES.OPCODE.toString());
+		String offset = (String) node.get(JSONMsgNODES.OFFSET.toString());
+		String fqname = (String) node.get(JSONMsgNODES.FQNAME.toString());
+		
+		node.put("id", opcode+":"+fqname+"."+offset);
 	}
+	
+	
+	// Check if the source and the target nodes exist in the nodes' list
+	private static boolean isLinkValid(JSONObject link, JSONArray nodes) {
+		String source = (String) link.get(JSONMsgLINKS.SOURCE.toString().toLowerCase());
+		String target = (String) link.get(JSONMsgLINKS.TARGET.toString().toLowerCase());
+		boolean srcFnd=false; boolean trgFnd=false;
+		
+		for (Iterator iter = nodes.iterator(); iter.hasNext() && (!srcFnd || !trgFnd);) {
+			JSONObject node = (JSONObject) iter.next();
+			String id = (String)node.get("id");
+			if (!srcFnd) srcFnd= id.equals(source);
+			if (!trgFnd) trgFnd= id.equals(target);
+		}
+		if (srcFnd && trgFnd) 
+			System.out.println("Link valid: " + source + " -> " + target);
+		else 
+			System.out.println("Link not valid: "+ source + " -> " + target);
+		return srcFnd && trgFnd;
+	}
+	
+
 }

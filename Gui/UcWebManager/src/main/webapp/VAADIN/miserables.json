@@ -1,0 +1,22 @@
+{
+  "nodes": [
+    {"id": "Myriel", "group": 1},
+    {"id": "Toussaint", "group": 5},
+    {"id": "Child1", "group": 10},
+    {"id": "Child2", "group": 10},
+    {"id": "Brujon", "group": 4},
+    {"id": "Mme.Hucheloup", "group": 8}
+  ],
+  "links": [
+    {"source": "Napoleon", "target": "Myriel", "value": 1},
+    {"source": "Mlle.Baptistine", "target": "Myriel", "value": 8},
+    {"source": "Mme.Magloire", "target": "Myriel", "value": 10},
+    {"source": "Mme.Magloire", "target": "Mlle.Baptistine", "value": 6},
+    {"source": "CountessdeLo", "target": "Myriel", "value": 1},
+    {"source": "Geborand", "target": "Myriel", "value": 1},
+    {"source": "Champtercier", "target": "Myriel", "value": 1},
+    {"source": "Cravatte", "target": "Myriel", "value": 1},
+    {"source": "Count", "target": "Myriel", "value": 2},
+    {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
+  ]
+}

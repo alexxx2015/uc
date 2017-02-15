@@ -8,7 +8,16 @@ public class DatabaseConnection {
 
 	public static Connection getConnection() throws ClassNotFoundException, SQLException{
 		Class.forName("org.sqlite.JDBC");
-		Connection conn = DriverManager.getConnection("jdbc:sqlite:UcWebManager.db");
+		Connection conn = null;
+		conn = DriverManager.getConnection("jdbc:sqlite:"+DatabaseConnection.class.getResource("/").getPath()+"UcWebManager.db");
+//		try {
+//			Context ctx = new InitialContext();
+//			DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/sqlite");
+//			conn = ds.getConnection();
+//		} catch (NamingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return conn;
 	}
 }

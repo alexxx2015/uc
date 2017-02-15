@@ -4,6 +4,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 
+import de.tum.in.i22.ucwebmanager.UcWebManagerUI;
+
 /**
  * A simple wrapper for Guava event bus. Defines static convenience methods for
  * relevant actions.
@@ -13,15 +15,15 @@ public class DashboardEventBus implements SubscriberExceptionHandler {
     private final EventBus eventBus = new EventBus(this);
 
     public static void post(final Object event) {
-//        DashboardUI.getDashboardEventbus().eventBus.post(event);
+        //UcWebManagerUI.getDashboardEventbus().eventBus.post(event);
     }
 
     public static void register(final Object object) {
-//        DashboardUI.getDashboardEventbus().eventBus.register(object);
+    	//UcWebManagerUI.getDashboardEventbus().eventBus.register(object);
     }
 
     public static void unregister(final Object object) {
-//        DashboardUI.getDashboardEventbus().eventBus.unregister(object);
+    	//UcWebManagerUI.getDashboardEventbus().eventBus.unregister(object);
     }
 
     @Override

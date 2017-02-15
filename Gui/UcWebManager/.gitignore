@@ -1,3 +1,5 @@
 /target/
 src/main/webapp/apps/*
 /UcWebManager.db/
+.DS_Store
+._*

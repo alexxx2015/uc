@@ -137,16 +137,6 @@
 
 	<dependencies>
 		<dependency>
-		<groupId>com.vaadin</groupId>
-			<artifactId>fchart</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-		<groupId>com.vaadin</groupId>
-			<artifactId>fchart-src</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
@@ -223,6 +213,25 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/lib/uc-java-pep-0.0.1-SNAPSHOT-jar-with-dependencies.jar</systemPath>
+		</dependency>
+		<dependency>
+   			<groupId>org.javassist</groupId>
+   			<artifactId>javassist</artifactId>
+   			<version>3.18.1-GA</version>
+   		</dependency>
+   		
+   		<!--
+   		<dependency>
+	    	<groupId>org.apache.httpcomponents</groupId>
+	    	<artifactId>httpclient</artifactId>
+	    	<version>4.3</version>
+		</dependency>
+   		-->
+   		
+   		<dependency>
+	    	<groupId>org.apache.httpcomponents</groupId>
+	    	<artifactId>httpmime</artifactId>
+	    	<version>4.3</version>
 		</dependency>
 	</dependencies>
 
@@ -362,4 +371,5 @@
 
 	</build>
 
+	<packaging>war</packaging>
 </project>
