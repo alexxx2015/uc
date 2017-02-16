@@ -218,7 +218,7 @@ public class DeployManager{
 		if (!libFolder.exists())
 			libFolder.mkdirs();
 		
-		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator +
+		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "WEB-INF"+ File.separator+
 								  "lib" + File.separator + UC_JAVA_PEP_LIBRARY_NAME;
 		File ucjavapepLib = new File(ucjavapepLibPath);
 		
