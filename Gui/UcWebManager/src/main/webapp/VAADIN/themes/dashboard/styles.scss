@@ -5,3 +5,7 @@
   // Output the actual theme selectors
   @include dashboard;
 }
+
+.myCustomUpload .v-button {
+   @include valo-button-style($unit-size: $v-unit-size--tiny, $bevel: null, $shadow: null, $background-color: null, $font-size: $v-font-size--tiny, $font-weight: null);
+}

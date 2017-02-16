@@ -46,7 +46,6 @@ import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.tum.in.i22.ucwebmanager.Configuration;
-import de.tum.in.i22.ucwebmanager.DeployManager;
 import de.tum.in.i22.ucwebmanager.DB.App;
 import de.tum.in.i22.ucwebmanager.DB.AppDAO;
 import de.tum.in.i22.ucwebmanager.FileUtil.FileUtil;
@@ -54,6 +53,7 @@ import de.tum.in.i22.ucwebmanager.FileUtil.MD5Checksum;
 import de.tum.in.i22.ucwebmanager.Status.Status;
 import de.tum.in.i22.ucwebmanager.analysis.Analyser;
 import de.tum.in.i22.ucwebmanager.dashboard.DashboardViewType;
+import de.tum.in.i22.ucwebmanager.deploy.DeployManager;
 
 @Push()
 public class MainView extends VerticalLayout implements View {
@@ -65,26 +65,28 @@ public class MainView extends VerticalLayout implements View {
 	String hashCodeOfApp;
 	Map<Integer, String> map = new HashMap<Integer, String>();
     final List<Integer> coords = new ArrayList<>();
-	public MainView() throws SQLException {
+	public MainView() {
 
 		Label lab = new Label("Main view");
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
-		lab.addStyleName(ValoTheme.LABEL_NO_MARGIN);
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	// .../src/main/webapp	
 		//System.out.println(basepath);
 		FileResource res = new FileResource(new File(basepath
 				+ "/img/tum_logo.png"));
 		Image image = new Image(null, res);
-		image.setHeight("50%");
-		image.setWidth("50%");
+		image.setHeight("100%");
+		image.setWidth("100%");
+		
 		
 		HorizontalLayout horLayout = new HorizontalLayout();
+		//horLayout.setMargin(true);
 		horLayout.addComponent(lab);
 		horLayout.addComponent(image);
 		// Upload
 		Upload.Receiver receiver = createReceiver();
 		upload = new Upload("Upload your App", receiver);
+		upload.addStyleName("myCustomUpload");
 		upload.addSucceededListener(new SucceededListener() {
 
 			@Override
@@ -113,12 +115,14 @@ public class MainView extends VerticalLayout implements View {
 		addComponent(upload);
 		addComponent(grid);
 	}
-	 private void configureIntegerField(final TextField integerField) {
-	        integerField.setConverter(Integer.class);
-	        integerField.addValidator(new IntegerRangeValidator("only integer, 0-500", 0, 500));
-	        integerField.setRequired(true);
-	        integerField.setImmediate(true);
-	    }
+	
+	private void configureIntegerField(final TextField integerField) {
+        integerField.setConverter(Integer.class);
+        integerField.addValidator(new IntegerRangeValidator("only integer, 0-500", 0, 500));
+        integerField.setRequired(true);
+        integerField.setImmediate(true);
+    }
+	
 	@Override
 	public void enter(ViewChangeEvent event) {
 
@@ -140,11 +144,24 @@ public class MainView extends VerticalLayout implements View {
 					App app = AppDAO.getAppById(appId);
 					Analyser analyser = new Analyser(app, configFile);
 					analyser.start();
-					app.setStatus(Status.STATICANALYSIS.getStage());
-					AppDAO.updateStatus(app, Status.STATICANALYSIS.getStage());
+					if (!app.getStatus().equals(Status.INSTRUMENTATION)) {
+						app.setStatus(Status.STATICANALYSIS.getStage());
+						AppDAO.updateStatus(app, Status.STATICANALYSIS.getStage());
+						updateStatus(app);
+					}
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else if (msgs[0].equals(DashboardViewType.INSTRUMENT.getViewName())) {
+				int appId = Integer.parseInt(msgs[1]);
+				
+				try {
+					App app = AppDAO.getAppById(appId);
+					app.setStatus(Status.INSTRUMENTATION.getStage());
+					AppDAO.updateStatus(app, Status.INSTRUMENTATION.getStage());
 					updateStatus(app);
 				} catch (ClassNotFoundException | SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -229,7 +246,7 @@ public class MainView extends VerticalLayout implements View {
 		return receiver;
 	}
 
-	private void fillGrid() throws SQLException {
+	private void fillGrid() {
 		grid.setEditorEnabled(false);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		SingleSelectionModel selection = (SingleSelectionModel) grid.getSelectionModel();
@@ -239,39 +256,6 @@ public class MainView extends VerticalLayout implements View {
 		grid.addColumn("Hash Code",String.class);
 		grid.addColumn("Status",String.class);
 		grid.getColumn("Status").setMaximumWidth(60);
-//		grid.addColumn("Deploy", String.class).setRenderer(new ButtonRenderer(e->{
-//			Object selected = e.getItemId();
-//			Item item = grid.getContainerDataSource().getItem(selected);
-//			int appId = (Integer) item.getItemProperty("ID").getValue();
-//			
-//			try {
-//				App app = AppDAO.getAppById(appId);
-//				DeployManager dp = new DeployManager();
-//				String path = FileUtil.getPathCode(app.getHashCode())+File.separator+app.getName();
-//				String contextName = FilenameUtils.getBaseName(app.getName());
-//				String response = dp.deploy(contextName, path);
-//				Notification.show(response);
-//			} catch (ClassNotFoundException | SQLException | IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			
-//		}));
-//		grid.addColumn("Undeploy", String.class).setRenderer(new ButtonRenderer(e->{
-//			Object selected = e.getItemId();
-//			Item item = grid.getContainerDataSource().getItem(selected);
-//			int appId = (Integer) item.getItemProperty("ID").getValue();
-//			
-//			try {
-//				App app = AppDAO.getAppById(appId);
-//				DeployManager dp = new DeployManager();
-//				String contextName = FilenameUtils.getBaseName(app.getName());
-//				String response = dp.undeploy(contextName);
-//				Notification.show(response);
-//			} catch (ClassNotFoundException | SQLException | IOException e1) {
-//				e1.printStackTrace();
-//			}
-//		}));
 		grid.addColumn("Static Analysis", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId(); // get the selected rows id
 			Item item = grid.getContainerDataSource().getItem(selected);
@@ -308,10 +292,8 @@ public class MainView extends VerticalLayout implements View {
 			Item item = grid.getContainerDataSource().getItem(selected);
 			String stat = item.getItemProperty("Status").getValue().toString();
 			if (stat.equals(Status.INSTRUMENTATION.getStage())){
-				//New code
 				UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName() +
 						"/" + item.getItemProperty("ID").getValue().toString());
-				//UI.getCurrent().getNavigator().navigateTo(DashboardViewType.RUNTIME.getViewName());
 			}
 			else {
 				new Notification("Error!",
@@ -334,10 +316,6 @@ public class MainView extends VerticalLayout implements View {
 		}
 		return null;
 	}
-	
-//	private void updateTable(App app) {
-//		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "Go", "Go", "", "Go", "", "Go");
-//	}
 
 	private void updateTable(App app) {
 		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "", "Go", "", "Go", "Go");
@@ -346,6 +324,9 @@ public class MainView extends VerticalLayout implements View {
 	private void updateStatus (App app) {
 		Item row = findRow(app.getId());
 		row.getItemProperty("Status").setValue(app.getStatus());
+		//Because of a bug, the grid is not automatically refreshed
+		//Call clearSortOrder is a workaround
+		grid.clearSortOrder();
 	}
 	
 	private void updateStartTimeTable(int appId){

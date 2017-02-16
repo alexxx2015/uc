@@ -20,7 +20,8 @@ public class FileUtil {
 		JOANAOUTPUT 		(File.separator + "joana-output"),
 		INSTRUMENTATION 	(File.separator + "instrumentations"),
 		RUNTIME 			(File.separator + "runtime"),
-		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcatConf");
+		TOMCATCONF			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "tomcatConf"),
+		LIBSHARED			(VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "libshared");
 		
 		private String dir;
 		private Dir(String s){
@@ -77,6 +78,9 @@ public class FileUtil {
 	}
 	public static String getPathTomcatConfFile() {
 		return Dir.TOMCATCONF.getDir() + File.separator + TOMCAT_DEFAULT_FILE;
+	}
+	public static String getPathLibShared() {
+		return Dir.LIBSHARED.getDir();
 	}
 	
 	// Relative Path, using  VaadinService.getCurrent().getBaseDirectory().getPath() -> .../src/main/webapp

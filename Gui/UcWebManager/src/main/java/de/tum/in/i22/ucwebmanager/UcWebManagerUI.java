@@ -3,6 +3,7 @@ package de.tum.in.i22.ucwebmanager;
 import java.util.Locale;
 
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
@@ -21,6 +22,7 @@ import de.tum.in.i22.ucwebmanager.event.DashboardEventBus;
 @Widgetset("de.tum.in.i22.ucwebmanager.DashboardWidgetSet")
 @Title("Usage Control Dashboard")
 @SuppressWarnings("serial")
+@Push
 public final class UcWebManagerUI extends UI {
 
 

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Notification;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
@@ -23,9 +24,13 @@ public class Analyser extends Thread {
 		this.configFile = configFile;
 	}
 	public void run() {
-		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
+//		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
+		String flowanalyser = "../../../lib/flowanalyzer.jar";
 		String jonaconfig = ".." + FileUtil.Dir.JOANACONFIG.getDir() + "/" + configFile;
 		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
+		String p = VaadinServlet.getCurrent().getServletContext().getInitParameter("java-xmx");
+		if(!"".equals(p.trim()))
+			xmx = "-Xmx"+p;
 		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
 		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
 					try {
@@ -34,7 +39,7 @@ public class Analyser extends Thread {
 						String errorStream = getErrorStream(process);
 						process.waitFor();
 //						System.out.println(inputstream);
-//						System.out.println(errorStream);
+						System.out.println(errorStream);
 //						if (errorStream.available() != 0){
 						System.out.println("Process ended!");
 						// TODO send inputstream to Mainview depends on App's ID
@@ -42,7 +47,7 @@ public class Analyser extends Thread {
 //						UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName() + "/" + String.valueOf(app.getId()) + "/" + inputstream);
 					} catch (IOException | InterruptedException e) {
 						String error = e.getMessage();
-						e.printStackTrace();
+						e.printStackTrace();	
 						new Notification("ERROR!",
 								error,
 								Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
