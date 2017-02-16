@@ -330,7 +330,6 @@ public class InstrumentationView extends VerticalLayout implements View {
 					uc.save(arg1 + File.separator + "uc.config");
 					
 					arg2 = arg1 + File.separator + "uc.config";
-
 					Instrumentor.main(new String[]{arg0, arg1, arg2});
 					
 					UI.getCurrent().getNavigator().navigateTo(DashboardViewType.MAIN.getViewName()
