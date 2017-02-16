@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -15,15 +17,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
 import com.vaadin.server.VaadinService;
@@ -194,7 +191,8 @@ public class DeployManager{
 			// --> Backup of the instrumented classes
 			File instrumentedCode = new File(instrumentedCodePath);
 			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
-			instrumentedCode.renameTo(instrumentedCodeBackup);
+//			instrumentedCode.renameTo(instrumentedCodeBackup);
+			Files.move(instrumentedCode.toPath(), instrumentedCodeBackup.toPath(), StandardCopyOption.ATOMIC_MOVE);
 			// Copy original code into instrumentation subfolder
 			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
 			
