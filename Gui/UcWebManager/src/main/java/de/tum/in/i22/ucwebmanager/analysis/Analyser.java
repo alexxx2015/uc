@@ -30,7 +30,7 @@ public class Analyser extends Thread {
 		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
 		String p = VaadinServlet.getCurrent().getServletContext().getInitParameter("java-xmx");
 		if(!"".equals(p.trim()))
-			xmx = p;
+			xmx = "-Xmx"+p;
 		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
 		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
 					try {
