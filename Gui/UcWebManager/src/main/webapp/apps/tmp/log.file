@@ -1,0 +1,39 @@
+Configuration: class edu.kit.joana.flowanalyzer.AnalysisXMLReader$TestRunData:
+mode = BUILD
+name = ../joana-output/20160530105425/StaticAnalysis
+classpath = ./
+thirdPartyLibs = 
+stubs = JRE_15
+entryPoint = jzip.JZip.main([Ljava/lang/String;)V
+sdgFile = sdg.file
+cgFile = cg.file
+multiThreaded = true
+pointsTo = OBJECT_SENSITIVE
+pruningPolicy = com.ibm.wala.ipa.callgraph.pruned.DoNotPrune@27fa135a
+ptsFallBack = 1
+ptsToInclusionPatterns = []
+ptsToExclusionPatterns = []
+fieldPropagation = OBJ_GRAPH_NO_MERGE_AT_ALL
+ignoreIndirectFlows = true
+omitIFC = true
+oca = full object-creation context analysis
+reportFile = report.xml
+statsFile = sta.file
+computeChops = true
+parallelChops = false
+systemOut = true
+timeline = edu.kit.joana.flowanalyzer.Timeline@46f7f36a
+stats = edu.kit.joana.flowanalyzer.Statistics@421faab1
+logFile = log.file
+logOut = java.io.PrintStream@2b71fc7e
+cgCache = edu.kit.joana.flowanalyzer.MyObjSensReportTestRuns$CGCache@5ce65a89
+
+enriching sources and sinks with implementations in subclasses...
+done.
+Saturating sources...
+done.
+Saturating sinks...
+done.
+TIME needed: 22881 ms
+Exporting Report to disk...
+done.
