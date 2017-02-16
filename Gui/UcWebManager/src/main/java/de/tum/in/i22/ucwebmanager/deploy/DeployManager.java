@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -41,6 +42,7 @@ public class DeployManager{
     private CredentialsProvider credsProvider = new BasicCredentialsProvider();
     private final String host;
     private final String port;
+    public final String UTF8="UTF-8";
 //    private final String username;
 //    private final String password;
     
@@ -96,7 +98,7 @@ public class DeployManager{
 //        String response = executeRequest (req, credsProvider);
 
     	
-    	final String url = "http://"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
+    	final String url = "http://"+URLEncoder.encode(host,UTF8)+":"+URLEncoder.encode(port,UTF8)+"/manager/text/deploy?path=/"+URLEncoder.encode(contextName,UTF8)+"&war=file:"+URLEncoder.encode(warUrl,UTF8)+"&update=true";
 //    	final String url = "http://"+username+":"+password+"@"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
 
     	HttpGet request = new HttpGet(url);
@@ -106,7 +108,7 @@ public class DeployManager{
     
     
     public String undeploy(String contextName) throws ClientProtocolException, IOException{
-    	final String url = "http://"+host+":"+port+"/manager/text/undeploy?path=/"+contextName;
+    	final String url = "http://"+URLEncoder.encode(host,UTF8)+":"+URLEncoder.encode(port,UTF8)+"/manager/text/undeploy?path=/"+URLEncoder.encode(contextName,UTF8);
         HttpGet req = new HttpGet(url) ;
         String response = executeRequest (req, credsProvider);
         return response;
