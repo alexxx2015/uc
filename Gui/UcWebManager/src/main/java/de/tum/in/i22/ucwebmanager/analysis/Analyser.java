@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Notification;
 
 import de.tum.in.i22.ucwebmanager.DB.App;
@@ -27,6 +28,9 @@ public class Analyser extends Thread {
 		String flowanalyser = "../../../lib/flowanalyzer.jar";
 		String jonaconfig = ".." + FileUtil.Dir.JOANACONFIG.getDir() + "/" + configFile;
 		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
+		String p = VaadinServlet.getCurrent().getServletContext().getInitParameter("java-xmx");
+		if(!"".equals(p.trim()))
+			xmx = p;
 		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
 		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
 					try {
