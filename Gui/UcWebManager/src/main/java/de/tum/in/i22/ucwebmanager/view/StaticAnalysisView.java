@@ -918,7 +918,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 	private void setSourceAndSinksFiles(List<String> absoluteFilePaths) {
 		List<String> filesCollection = new ArrayList<String>();
 		for (String file : absoluteFilePaths) {
-			filesCollection.add(file.replaceAll("../../../sourceandsinks/", ""));
+			filesCollection.add(file.replace("../../../sourceandsinks/", ""));
 		}
 			
 		optSrcAndSinks.setValue(filesCollection);
@@ -1098,7 +1098,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		this.absPathSubDirOfCode.add(initialPath);
 		this.subDirectoriesOfCode.add(CURRENT_FOLDER);
 		for (int i=1; i<absPathSubDir.size(); i++) {
-			this.subDirectoriesOfCode.add(absPathSubDir.get(i).replaceAll(initialPath+File.separator,CURRENT_FOLDER));
+			this.subDirectoriesOfCode.add(absPathSubDir.get(i).replace(initialPath+File.separator,CURRENT_FOLDER));
 			this.absPathSubDirOfCode.add(absPathSubDir.get(i));
 		}		
 		
@@ -1110,14 +1110,14 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		List<File> jarFilesInCode = FileUtil.getFiles(this.absPathSubDirOfCode, ".jar");
 		this.jarFilesInCode = new ArrayList<String>();
 		for (File f: jarFilesInCode)
-			this.jarFilesInCode.add(f.getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER));
+			this.jarFilesInCode.add(f.getPath().replace(pathCode+File.separator, CURRENT_FOLDER));
 	
 		// Add shared library folder
 		List<String> sharedLibFolder = new ArrayList<String>();
 		sharedLibFolder.add(FileUtil.getPathLibShared());
 		List<File> sharedLibraries = FileUtil.getFiles(sharedLibFolder, ".jar");
 		for (File f : sharedLibraries)
-			this.jarFilesInCode.add(f.getPath().replaceAll(VaadinService.getCurrent().getBaseDirectory().getPath(), ".."+File.separator+".."+File.separator+".."));
+			this.jarFilesInCode.add(f.getPath().replace(VaadinService.getCurrent().getBaseDirectory().getPath(), ".."+File.separator+".."+File.separator+".."));
 	}
 	
 	private void fillComboBoxEntryPoint(int classFileIndex) {
@@ -1157,7 +1157,7 @@ public class StaticAnalysisView extends VerticalLayout implements View {
 		String pathCode = FileUtil.getPathCode(app.getHashCode());
 		this.classFilesInCode = FileUtil.getFiles(FileUtil.getSubDirectories(pathCode), ".class" );
 		for (int i=0; i<this.classFilesInCode.size(); i++) {
-			String relativePath = classFilesInCode.get(i).getPath().replaceAll(pathCode+File.separator, CURRENT_FOLDER);
+			String relativePath = classFilesInCode.get(i).getPath().replace(pathCode+File.separator, CURRENT_FOLDER);
 			cmbClassFiles.addItem(i+INDEX_CLASS_FILE_SEPARATOR+relativePath);
 		}
 			
