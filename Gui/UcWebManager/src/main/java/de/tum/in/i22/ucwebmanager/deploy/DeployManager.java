@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -14,15 +17,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
 import com.vaadin.server.VaadinService;
@@ -41,6 +39,7 @@ public class DeployManager{
     private CredentialsProvider credsProvider = new BasicCredentialsProvider();
     private final String host;
     private final String port;
+    public final String UTF8="UTF-8";
 //    private final String username;
 //    private final String password;
     
@@ -96,7 +95,7 @@ public class DeployManager{
 //        String response = executeRequest (req, credsProvider);
 
     	
-    	final String url = "http://"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
+    	final String url = "http://"+URLEncoder.encode(host,UTF8)+":"+URLEncoder.encode(port,UTF8)+"/manager/text/deploy?path=/"+URLEncoder.encode(contextName,UTF8)+"&war=file:"+URLEncoder.encode(warUrl,UTF8)+"&update=true";
 //    	final String url = "http://"+username+":"+password+"@"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
 
     	HttpGet request = new HttpGet(url);
@@ -106,7 +105,7 @@ public class DeployManager{
     
     
     public String undeploy(String contextName) throws ClientProtocolException, IOException{
-    	final String url = "http://"+host+":"+port+"/manager/text/undeploy?path=/"+contextName;
+    	final String url = "http://"+URLEncoder.encode(host,UTF8)+":"+URLEncoder.encode(port,UTF8)+"/manager/text/undeploy?path=/"+URLEncoder.encode(contextName,UTF8);
         HttpGet req = new HttpGet(url) ;
         String response = executeRequest (req, credsProvider);
         return response;
@@ -192,7 +191,8 @@ public class DeployManager{
 			// --> Backup of the instrumented classes
 			File instrumentedCode = new File(instrumentedCodePath);
 			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
-			instrumentedCode.renameTo(instrumentedCodeBackup);
+//			instrumentedCode.renameTo(instrumentedCodeBackup);
+			Files.move(instrumentedCode.toPath(), instrumentedCodeBackup.toPath(), StandardCopyOption.ATOMIC_MOVE);
 			// Copy original code into instrumentation subfolder
 			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
 			
@@ -216,7 +216,7 @@ public class DeployManager{
 		if (!libFolder.exists())
 			libFolder.mkdirs();
 		
-		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator +
+		String ucjavapepLibPath = VaadinService.getCurrent().getBaseDirectory().getPath() + File.separator + "WEB-INF"+ File.separator+
 								  "lib" + File.separator + UC_JAVA_PEP_LIBRARY_NAME;
 		File ucjavapepLib = new File(ucjavapepLibPath);
 		
