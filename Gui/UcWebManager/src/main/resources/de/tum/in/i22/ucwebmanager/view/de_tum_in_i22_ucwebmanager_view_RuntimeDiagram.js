@@ -53,7 +53,7 @@ window.de_tum_in_i22_ucwebmanager_view_RuntimeDiagram = function() {
 	    .data(graph.nodes)
 	    .enter().append("circle")
 	      .attr("r", 5)
-	      .attr("fill", function(d) { return color(d.group); })
+	      .attr("fill", function(d) { if(d.id.search("START") == -1) return color(d.group); else return "green";})
 	      .call(d3.drag()
 	          .on("start", dragstarted)
 	          .on("drag", dragged)
