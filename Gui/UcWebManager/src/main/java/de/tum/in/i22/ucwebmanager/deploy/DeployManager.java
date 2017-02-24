@@ -192,7 +192,7 @@ public class DeployManager{
 			File instrumentedCode = new File(instrumentedCodePath);
 			File instrumentedCodeBackup = new File(instrumentedCodePath+"_BACKUP");
 //			instrumentedCode.renameTo(instrumentedCodeBackup);
-			Files.move(instrumentedCode.toPath(), instrumentedCodeBackup.toPath(), StandardCopyOption.ATOMIC_MOVE);
+			Files.move(instrumentedCode.toPath(), instrumentedCodeBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			// Copy original code into instrumentation subfolder
 			FileUtils.copyDirectory(new File(codePath), instrumentedCode);
 			
