@@ -1,6 +1,6 @@
 #
-#Thu Jan 12 22:08:26 CET 2017
+#Fri Feb 24 09:05:38 CET 2017
 HOST=localhost
-PORT=8181
+PORT=9090
 USERNAME=tomcat
-PASSWORD=pass
+PASSWORD=tomcat
