@@ -1,0 +1,1004 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mapping analysistime="443279">
+  <sources>
+    <source>
+      <id>Source0</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:11</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.RequestFacade.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>org.apache.catalina.connector.Request.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>org.apache.catalina.core.ApplicationHttpRequest.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>javax.servlet.ServletRequestWrapper.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+      </possible-signatures>
+      <return/>
+      <context/>
+    </source>
+    <source>
+      <id>Source1</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:23</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.RequestFacade.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>org.apache.catalina.connector.Request.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>org.apache.catalina.core.ApplicationHttpRequest.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+        <signature>javax.servlet.ServletRequestWrapper.getParameter(Ljava/lang/String;)Ljava/lang/String;</signature>
+      </possible-signatures>
+      <return/>
+      <context/>
+    </source>
+    <source>
+      <id>Source2</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:38</location>
+      <possible-signatures>
+        <signature>java.net.Socket.connect(Ljava/net/SocketAddress;I)V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </source>
+    <source>
+      <id>Source3</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:38</location>
+      <possible-signatures>
+        <signature>java.net.Socket.connect(Ljava/net/SocketAddress;I)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </source>
+  </sources>
+  <sinks>
+    <sink>
+      <id>Sink0</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:60</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.CoyoteWriter.print(Ljava/lang/String;)V</signature>
+        <signature>java.io.PrintWriter.print(Ljava/lang/String;)V</signature>
+        <signature>org.apache.catalina.filters.ExpiresFilter$XPrintWriter.print(Ljava/lang/String;)V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink1</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:60</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.CoyoteWriter.print(Ljava/lang/String;)V</signature>
+        <signature>java.io.PrintWriter.print(Ljava/lang/String;)V</signature>
+        <signature>org.apache.catalina.filters.ExpiresFilter$XPrintWriter.print(Ljava/lang/String;)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink2</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:81</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.CoyoteWriter.print(Ljava/lang/String;)V</signature>
+        <signature>java.io.PrintWriter.print(Ljava/lang/String;)V</signature>
+        <signature>org.apache.catalina.filters.ExpiresFilter$XPrintWriter.print(Ljava/lang/String;)V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink3</id>
+      <location>de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V:81</location>
+      <possible-signatures>
+        <signature>org.apache.catalina.connector.CoyoteWriter.print(Ljava/lang/String;)V</signature>
+        <signature>java.io.PrintWriter.print(Ljava/lang/String;)V</signature>
+        <signature>org.apache.catalina.filters.ExpiresFilter$XPrintWriter.print(Ljava/lang/String;)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink4</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:19</location>
+      <possible-signatures>
+        <signature>java.net.InetSocketAddress.&lt;init&gt;(Ljava/lang/String;I)V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink5</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:19</location>
+      <possible-signatures>
+        <signature>java.net.InetSocketAddress.&lt;init&gt;(Ljava/lang/String;I)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink6</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:19</location>
+      <possible-signatures>
+        <signature>java.net.InetSocketAddress.&lt;init&gt;(Ljava/lang/String;I)V</signature>
+      </possible-signatures>
+      <param index="2"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink7</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:28</location>
+      <possible-signatures>
+        <signature>java.net.Socket.&lt;init&gt;()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink8</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:38</location>
+      <possible-signatures>
+        <signature>java.net.Socket.connect(Ljava/net/SocketAddress;I)V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink9</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:38</location>
+      <possible-signatures>
+        <signature>java.net.Socket.connect(Ljava/net/SocketAddress;I)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink10</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:38</location>
+      <possible-signatures>
+        <signature>java.net.Socket.connect(Ljava/net/SocketAddress;I)V</signature>
+      </possible-signatures>
+      <param index="2"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink11</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:42</location>
+      <possible-signatures>
+        <signature>java.net.Socket.getOutputStream()Ljava/io/OutputStream;</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink12</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:103</location>
+      <possible-signatures>
+        <signature>java.io.Writer.write(Ljava/lang/String;)V</signature>
+      </possible-signatures>
+      <param index="1"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink13</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:108</location>
+      <possible-signatures>
+        <signature>java.io.BufferedWriter.flush()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink14</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:118</location>
+      <possible-signatures>
+        <signature>java.lang.Throwable.printStackTrace()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink15</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:136</location>
+      <possible-signatures>
+        <signature>java.lang.Throwable.printStackTrace()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink16</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:159</location>
+      <possible-signatures>
+        <signature>java.lang.Throwable.printStackTrace()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+    <sink>
+      <id>Sink17</id>
+      <location>de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V:180</location>
+      <possible-signatures>
+        <signature>java.lang.Throwable.printStackTrace()V</signature>
+      </possible-signatures>
+      <param index="0"/>
+      <context/>
+    </sink>
+  </sinks>
+  <creation-sites/>
+  <flows>
+    <sink id="Sink0">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="53" label="v29 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="60" label="v29.print(#(Correct))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="53" label="v29 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="60" label="v29.print(#(Correct))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+    </sink>
+    <sink id="Sink1">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="53" label="v29 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="60" label="v29.print(#(Correct))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="53" label="v29 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="60" label="v29.print(#(Correct))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+    </sink>
+    <sink id="Sink2">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="74" label="v25 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="81" label="v25.print(#(Wrong credentials))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="74" label="v25 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="81" label="v25.print(#(Wrong credentials))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+    </sink>
+    <sink id="Sink3">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="74" label="v25 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="81" label="v25.print(#(Wrong credentials))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="74" label="v25 = p2.getWriter()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="81" label="v25.print(#(Wrong credentials))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="(undefined)" operation="reference" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="(undefined)" operation="call" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="9" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="javax.servlet.ServletResponseWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 36" local2Vn="5:1" operation="IF" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.io.PrintWriter" local2Vn="5:1" operation="declaration" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="this.writer = v10" local2Vn="5:1" operation="modify" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="36" label="v12 = this.writer" local2Vn="5:1" operation="reference" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="39" label="return v12" local2Vn="5:1" operation="compound" ownerMethod="javax.servlet.http.NoBodyResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="50" label="v12 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="53" label="if (v12 != #(null)) goto 72" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="57" label="v14 = new org.apache.catalina.connector.CoyoteWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="68" label="this.writer = v14" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="72" label="v17 = this.writer" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="75" label="return v17" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.connector.Response.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.response" local2Vn="5:1" operation="reference" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getWriter()" local2Vn="5:1" operation="call" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="24" label="return v5" local2Vn="5:1" operation="compound" ownerMethod="org.apache.catalina.connector.ResponseFacade.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="4" label="if (v3 != #(null)) goto 32" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v5 = new org.apache.catalina.filters.ExpiresFilter$XPrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="28" label="this.printWriter = v5" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="32" label="v11 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="35" label="return v11" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.filters.ExpiresFilter$XHttpServletResponse.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="8" label="v7 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="11" label="if (v7 != #(null)) goto 49" local2Vn="(undefined)" operation="IF" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="23" label="v11 = new java.io.PrintWriter" local2Vn="(undefined)" operation="declaration" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="45" label="this.printWriter = v11" local2Vn="(undefined)" operation="modify" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="49" label="v18 = this.printWriter" local2Vn="(undefined)" operation="reference" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+        <chopNode byteCodeIndex="52" label="return v18" local2Vn="(undefined)" operation="compound" ownerMethod="org.apache.catalina.ssi.ResponseIncludeWrapper.getWriter()Ljava/io/PrintWriter;"/>
+      </chop>
+    </sink>
+    <sink id="Sink4">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink5">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink6">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="19" label="v8.&lt;init&gt;(#(localhost), #(22222))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink7">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="28" label="v10.&lt;init&gt;()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="28" label="v10.&lt;init&gt;()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink8">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink9">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="11" label="v8 = new java.net.InetSocketAddress" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink10"/>
+    <sink id="Sink11">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="42" label="v15 = v10.getOutputStream()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="24" label="v10 = new java.net.Socket" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="42" label="v15 = v10.getOutputStream()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source2"/>
+      <chop>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="42" label="v15 = v10.getOutputStream()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink12">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="58" label="v18 = new java.io.BufferedWriter" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="69" label="v20 = new java.lang.StringBuilder" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="74" label="v22 = valueOf(p1)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="77" label="v20.&lt;init&gt;(v22)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="82" label="v26 = v20.append(#( - ))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="86" label="v28 = v26.append(p2)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="91" label="v31 = v28.append(#(&#10;))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="94" label="v33 = v31.toString()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="103" label="v18.write(v33)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="1" label="this.&lt;init&gt;()" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="6" label="v5 = new []" local2Vn="(undefined)" operation="declaration" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="8" label="this.value = v5" local2Vn="(undefined)" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="1" label="if (p1 != #(null)) goto 10" local2Vn="6:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="5" label="v17 = this.appendNull()" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="10" label="v6 = p1.length()" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="16" label="v7 = this.count" local2Vn="6:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="20" label="v8 = v7 + v6" local2Vn="6:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="21" label="this.ensureCapacityInternal(v8)" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="40" label="v14 = this.count" local2Vn="6:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="44" label="v15 = v14 + v6" local2Vn="6:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="45" label="this.count = v15" local2Vn="6:2" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.count" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="8" label="v5 = v3 + #(4)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="9" label="this.ensureCapacityInternal(v5)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="call" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="19" label="v9 = v3 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="27" label="v11 = v9 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="35" label="v13 = v11 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="43" label="v15 = v13 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="51" label="this.count = v15" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="2" label="v4 = this.value" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="5" label="v5 = v4.length" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="6" label="v6 = p1 - v5" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="7" label="if (v6 &lt;= #(0)) goto 15" local2Vn="(undefined)" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="12" label="this.expandCapacity(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="1" label="v4 = this.value" local2Vn="8:2,2:2,12:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="4" label="v5 = v4.length" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="6" label="v7 = v5 * #(2)" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="8" label="v8 = v7 + #(2)" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="12" label="v9 = v8 - p1" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="13" label="if (v9 &gt;= #(0)) goto 19" local2Vn="8:2,2:2,12:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="19" label="if (v11 &gt;= #(0)) goto 39" local2Vn="8:2,2:2,12:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="43" label="v16 = copyOf(v14, v13)" local2Vn="8:2,2:2,12:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="46" label="this.value = v16" local2Vn="8:2,2:2,12:2" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="2" label="v5 = p1.length()" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="7" label="v7 = v5 + #(16)" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="8" label="this.&lt;init&gt;(v7)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="13" label="v10 = this.append(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="2" label="v5 = this.append(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;"/>
+        <chopNode byteCodeIndex="7" label="return this" local2Vn="(undefined)" operation="compound" ownerMethod="java.lang.StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;"/>
+        <chopNode byteCodeIndex="0" label="v3 = new java.lang.String" local2Vn="(undefined)" operation="declaration" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="5" label="v4 = this.value" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="10" label="v6 = this.count" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="13" label="v3.&lt;init&gt;(v4, #(0), v6)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="16" label="return v3" local2Vn="(undefined)" operation="compound" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="1" label="v4 = new []" local2Vn="4:2" operation="declaration" ownerMethod="java.util.Arrays.copyOf([CI)[C"/>
+        <chopNode byteCodeIndex="18" label="return v4" local2Vn="4:2" operation="compound" ownerMethod="java.util.Arrays.copyOf([CI)[C"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="58" label="v18 = new java.io.BufferedWriter" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="69" label="v20 = new java.lang.StringBuilder" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="74" label="v22 = valueOf(p1)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="77" label="v20.&lt;init&gt;(v22)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="82" label="v26 = v20.append(#( - ))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="86" label="v28 = v26.append(p2)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="91" label="v31 = v28.append(#(&#10;))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="94" label="v33 = v31.toString()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="103" label="v18.write(v33)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="1" label="this.&lt;init&gt;()" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="6" label="v5 = new []" local2Vn="(undefined)" operation="declaration" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="8" label="this.value = v5" local2Vn="(undefined)" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.&lt;init&gt;(I)V"/>
+        <chopNode byteCodeIndex="1" label="if (p1 != #(null)) goto 10" local2Vn="6:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="5" label="v17 = this.appendNull()" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="10" label="v6 = p1.length()" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="16" label="v7 = this.count" local2Vn="6:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="20" label="v8 = v7 + v6" local2Vn="6:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="21" label="this.ensureCapacityInternal(v8)" local2Vn="6:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="40" label="v14 = this.count" local2Vn="6:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="44" label="v15 = v14 + v6" local2Vn="6:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="45" label="this.count = v15" local2Vn="6:2" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.count" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="8" label="v5 = v3 + #(4)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="9" label="this.ensureCapacityInternal(v5)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="call" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="19" label="v9 = v3 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="27" label="v11 = v9 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="35" label="v13 = v11 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="43" label="v15 = v13 + #(1)" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="51" label="this.count = v15" local2Vn="3:1,7:2,9:1,11:1,13:1,15:1" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.appendNull()Ljava/lang/AbstractStringBuilder;"/>
+        <chopNode byteCodeIndex="2" label="v4 = this.value" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="5" label="v5 = v4.length" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="6" label="v6 = p1 - v5" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="7" label="if (v6 &lt;= #(0)) goto 15" local2Vn="(undefined)" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="12" label="this.expandCapacity(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.AbstractStringBuilder.ensureCapacityInternal(I)V"/>
+        <chopNode byteCodeIndex="1" label="v4 = this.value" local2Vn="8:2,2:2,12:2" operation="reference" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="4" label="v5 = v4.length" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="6" label="v7 = v5 * #(2)" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="8" label="v8 = v7 + #(2)" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="12" label="v9 = v8 - p1" local2Vn="8:2,2:2,12:2" operation="assign" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="13" label="if (v9 &gt;= #(0)) goto 19" local2Vn="8:2,2:2,12:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="19" label="if (v11 &gt;= #(0)) goto 39" local2Vn="8:2,2:2,12:2" operation="IF" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="43" label="v16 = copyOf(v14, v13)" local2Vn="8:2,2:2,12:2" operation="call" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="46" label="this.value = v16" local2Vn="8:2,2:2,12:2" operation="modify" ownerMethod="java.lang.AbstractStringBuilder.expandCapacity(I)V"/>
+        <chopNode byteCodeIndex="2" label="v5 = p1.length()" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="7" label="v7 = v5 + #(16)" local2Vn="(undefined)" operation="assign" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="8" label="this.&lt;init&gt;(v7)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="13" label="v10 = this.append(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.&lt;init&gt;(Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="2" label="v5 = this.append(p1)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;"/>
+        <chopNode byteCodeIndex="7" label="return this" local2Vn="(undefined)" operation="compound" ownerMethod="java.lang.StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;"/>
+        <chopNode byteCodeIndex="0" label="v3 = new java.lang.String" local2Vn="(undefined)" operation="declaration" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="5" label="v4 = this.value" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="10" label="v6 = this.count" local2Vn="(undefined)" operation="reference" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="13" label="v3.&lt;init&gt;(v4, #(0), v6)" local2Vn="(undefined)" operation="call" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="16" label="return v3" local2Vn="(undefined)" operation="compound" ownerMethod="java.lang.StringBuilder.toString()Ljava/lang/String;"/>
+        <chopNode byteCodeIndex="1" label="v4 = new []" local2Vn="4:2" operation="declaration" ownerMethod="java.util.Arrays.copyOf([CI)[C"/>
+        <chopNode byteCodeIndex="18" label="return v4" local2Vn="4:2" operation="compound" ownerMethod="java.util.Arrays.copyOf([CI)[C"/>
+      </chop>
+    </sink>
+    <sink id="Sink13">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="58" label="v18 = new java.io.BufferedWriter" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="108" label="v18.flush()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="58" label="v18 = new java.io.BufferedWriter" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="declaration" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="108" label="v18.flush()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source2"/>
+      <chop>
+        <chopNode byteCodeIndex="38" label="v10.connect(v8, #(2000))" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="42" label="v15 = v10.getOutputStream()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="53" label="v16.&lt;init&gt;(v15)" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="108" label="v18.flush()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="12" label="v8 = forOutputStreamWriter(p1, this, v6)" local2Vn="(undefined)" operation="call" ownerMethod="java.io.OutputStreamWriter.&lt;init&gt;(Ljava/io/OutputStream;)V"/>
+        <chopNode byteCodeIndex="15" label="this.se = v8" local2Vn="(undefined)" operation="modify" ownerMethod="java.io.OutputStreamWriter.&lt;init&gt;(Ljava/io/OutputStream;)V"/>
+        <chopNode byteCodeIndex="42" label="v8 = this.socketOutputStream" local2Vn="3:1,19:2" operation="reference" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="45" label="if (v8 != #(null)) goto 61" local2Vn="3:1,19:2" operation="IF" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="49" label="v10 = new java.net.SocketOutputStream" local2Vn="3:1,19:2" operation="declaration" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="57" label="this.socketOutputStream = v10" local2Vn="3:1,19:2" operation="modify" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="71" label="v12 = this.socketOutputStream" local2Vn="3:1,19:2" operation="reference" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="74" label="return v12" local2Vn="3:1,19:2" operation="compound" ownerMethod="java.net.AbstractPlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="1" label="v3 = this.impl" local2Vn="(undefined)" operation="reference" ownerMethod="java.net.PlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="4" label="v5 = v3.getOutputStream()" local2Vn="(undefined)" operation="call" ownerMethod="java.net.PlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="7" label="return v5" local2Vn="(undefined)" operation="compound" ownerMethod="java.net.PlainSocketImpl.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="7" label="v6 = v4.getOutputStream()" local2Vn="(undefined)" operation="call" ownerMethod="java.net.Socket$3.run()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="10" label="return v6" local2Vn="(undefined)" operation="compound" ownerMethod="java.net.Socket$3.run()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="1" label="v4 = this.run()" local2Vn="(undefined)" operation="call" ownerMethod="java.net.Socket$3.run()Ljava/lang/Object;"/>
+        <chopNode byteCodeIndex="4" label="return v4" local2Vn="(undefined)" operation="compound" ownerMethod="java.net.Socket$3.run()Ljava/lang/Object;"/>
+        <chopNode byteCodeIndex="63" label="v14 = doPrivileged(v11)" local2Vn="1:1,10:2,19:2,15:3" operation="call" ownerMethod="java.net.Socket.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="66" label="v19 = CHECKCAST v14" local2Vn="1:1,10:2,19:2,15:3" operation="assign" ownerMethod="java.net.Socket.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="83" label="return v19" local2Vn="1:1,10:2,19:2,15:3" operation="compound" ownerMethod="java.net.Socket.getOutputStream()Ljava/io/OutputStream;"/>
+        <chopNode byteCodeIndex="-1" label="v3 = p1.run()" local2Vn="(undefined)" operation="call" ownerMethod="java.security.AccessController.doPrivileged(Ljava/security/PrivilegedExceptionAction;)Ljava/lang/Object;"/>
+      </chop>
+    </sink>
+    <sink id="Sink14">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v36 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="118" label="v36.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v36 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="118" label="v36.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink15">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v46 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="136" label="v46.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v46 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="136" label="v46.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink16">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v43 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="159" label="v43.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v43 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="159" label="v43.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+    <sink id="Sink17">
+      <source id="Source0"/>
+      <chop>
+        <chopNode byteCodeIndex="11" label="v9 = p1.getParameter(#(uname))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="16" label="v11 = v9.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="36" label="v19 = #(myuser).equals(v11)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="39" label="if (v19 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v49 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="180" label="v49.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+      <source id="Source1"/>
+      <chop>
+        <chopNode byteCodeIndex="23" label="v14 = p1.getParameter(#(psw))" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="28" label="v16 = v14.toString()" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="46" label="v23 = #(mypass).equals(v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="49" label="if (v23 == #(0)) goto 74" local2Vn="11:3,16:4" operation="IF" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="67" label="this.sendToServer(v11, v16)" local2Vn="11:3,16:4" operation="call" ownerMethod="de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V"/>
+        <chopNode byteCodeIndex="0" label="v49 = catch &lt;exc&gt;" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="assign" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+        <chopNode byteCodeIndex="180" label="v49.printStackTrace()" local2Vn="5:3,6:4,7:5,8:6,10:3,15:7,16:8,18:9,33:10,36:4,46:12,39:11,43:12,49:12" operation="call" ownerMethod="de.tum.example.MyNewServlet.sendToServer(Ljava/lang/String;Ljava/lang/String;)V"/>
+      </chop>
+    </sink>
+  </flows>
+</mapping>

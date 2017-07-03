@@ -1,0 +1,50 @@
+Configuration: class edu.kit.joana.flowanalyzer.AnalysisXMLReader$TestRunData:
+mode = BUILD
+name = ..\joana-output/20170216162842/
+classpath = ./WEB-INF\classes
+thirdPartyLibs = ..\..\..\libshared\catalina.jar;..\..\..\libshared\servlet-api.jar
+stubs = NONE
+entryPoint = de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V
+sdgFile = sdg.file
+cgFile = cdg.file
+multiThreaded = false
+pointsTo = OBJECT_SENSITIVE
+pruningPolicy = com.ibm.wala.ipa.callgraph.pruned.DoNotPrune@68de145
+ptsFallBack = 1
+ptsToInclusionPatterns = []
+ptsToExclusionPatterns = []
+fieldPropagation = OBJ_GRAPH_NO_MERGE_AT_ALL
+ignoreIndirectFlows = false
+omitIFC = false
+oca = no object-creation context analysis
+reportFile = report.xml
+exception = null
+statsFile = statistics.file
+computeChops = true
+parallelChops = false
+systemOut = false
+timeline = edu.kit.joana.flowanalyzer.Timeline@27fa135a
+stats = edu.kit.joana.flowanalyzer.Statistics@46f7f36a
+logFile = log.file
+logOut = java.io.PrintStream@421faab1
+cgCache = edu.kit.joana.flowanalyzer.MyObjSensReportTestRuns$CGCache@2b71fc7e
+
+Setting up analysis scope... done.
+Creating class hierarchy... (12254 classes) done.
+Setting up entrypoint de.tum.example.MyNewServlet.doGet(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V... done.
+Building system dependence graph... 
+	callgraph: 5133 nodes and 10231 edges
+	intraproc: calls.mergeable..clinit.statics.heap(if,adj,df,reg).misc.killdef.convert.summary..
+done.
+Time needed: 142305ms - Memory: 5899M used.
+Dumping call graph...
+done.
+enriching sources and sinks with implementations in subclasses...
+done.
+Saturating sources...
+done.
+Saturating sinks...
+done.
+TIME needed: 443279 ms
+Exporting Report to disk...
+done.
