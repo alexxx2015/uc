@@ -16,7 +16,9 @@ import de.tum.in.i22.uc.cm.datatypes.interfaces.IStatus;
 import de.tum.in.i22.uc.cm.datatypes.java.containers.SinkSourceContainer;
 import de.tum.in.i22.uc.cm.datatypes.java.data.SourceData;
 import de.tum.in.i22.uc.cm.datatypes.java.names.BasicJavaName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.JavaName;
 import de.tum.in.i22.uc.cm.datatypes.java.names.ObjectName;
+import de.tum.in.i22.uc.cm.datatypes.java.names.SourceSinkName;
 import de.tum.in.i22.uc.cm.factories.JavaNameFactory;
 import de.tum.in.i22.uc.pip.eventdef.ParameterNotFoundException;
 import de.tum.in.i22.uc.pip.eventdef.java.chopnode.CallChopNodeLabel;
@@ -161,8 +163,8 @@ public class SourceEventHandler extends JavaEventHandler {
 			sourceParam = chopLabel.getArgs()[Integer.valueOf(sourceParam) - 1];
 		}
 
-		IName sourceVarParentObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, parentObjectAddress,
-				parentMethod, sourceParam, sourceId);
+//		IName sourceVarParentObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId);
+		IName sourceVarParentObject = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId, SourceSinkName.Type.SOURCE);
 		_informationFlowModel.addName(sourceVarParentObject, sourceContainer);
 
 		// add an alias relation

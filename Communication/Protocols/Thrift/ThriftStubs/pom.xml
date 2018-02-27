@@ -20,12 +20,10 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- Dependency versions -->
-		<armeria.version>0.34.1</armeria.version>
+		<!-- ARMERIA SERVER -->
+		<armeria.version>0.56.0</armeria.version>
 		<logback.version>1.1.7</logback.version>
 		<slf4j.version>1.7.21</slf4j.version>
-
-		<!-- ARMERIA SERVER -->
-		<armeria.version>0.34.1</armeria.version>
 	</properties>
 
 	<!-- * * DO NOT ADD EXTERNAL DEPENDENCIES HERE, BUT IN THE PARENT PROJECT. 
@@ -137,6 +135,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.linecorp.armeria</groupId>
+			<artifactId>armeria-thrift</artifactId>
+			<version>${armeria.version}</version>
+		</dependency>
+		<!--<dependency>
+			<groupId>com.linecorp.armeria</groupId>
 			<artifactId>armeria-jetty</artifactId>
 			<version>${armeria.version}</version>
 		</dependency>
@@ -170,15 +173,10 @@
 			<artifactId>armeria-zookeeper</artifactId>
 			<version>${armeria.version}</version>
 		</dependency>
+		-->
 
-		<!-- Logging 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>runtime</scope>
-		</dependency>
--->
-		<!--Armeria end-->
+		<!-- Logging <dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-classic</artifactId> 
+			<version>${logback.version}</version> <scope>runtime</scope> </dependency> -->
+		<!--Armeria end -->
 	</dependencies>
 </project>

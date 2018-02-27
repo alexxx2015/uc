@@ -32,7 +32,7 @@ public class SinkEventHandler extends JavaEventHandler {
 		String parentMethod = null;
 		String calleeObjectAddress = null;
 		String calleeObjectClass = null;
-		String calleeMethod = null;
+		String calledMethod = null;
 		JSONObject contextInformation = null;
 		CallChopNodeLabel chopLabel = null;
 		String chopLabelStr;
@@ -56,7 +56,7 @@ public class SinkEventHandler extends JavaEventHandler {
 			parentMethod = getParameterValue("parentMethod");
 			calleeObjectAddress = getParameterValue("calleeObjectAddress");
 			calleeObjectClass = getParameterValue("calleeObjectClass");
-			calleeMethod = getParameterValue("calledMethod");
+			calledMethod = getParameterValue("calledMethod");
 			contextInformation = (JSONObject) new JSONParser().parse(getParameterValue("contextInformation"));
 			chopLabelStr = getParameterValue("chopLabel");
 			chopLabel = new CallChopNodeLabel(getParameterValue("chopLabel"));
@@ -96,8 +96,13 @@ public class SinkEventHandler extends JavaEventHandler {
 				&& (chopLabel.getArgs().length > 0)) {
 			sinkParam = chopLabel.getArgs()[Integer.valueOf(sinkParam) - 1];
 		}
+//		IName sourceNamingIdentifier = new BasicJavaName(pid, threadId, sourceId);
+
 		
-		IName sinkVarName = JavaNameFactory.createSinkName(pid, threadId, parentClass, parentMethod, chopLabel.getCallee(), sinkId, calleeObjectAddress);		
+//		IName sinkVarName = JavaNameFactory.createSinkName(pid, threadId, parentClass, parentMethod, sinkParam, sinkId, calleeObjectAddress);//chopLabel.getCallee()		
+		final IName sinkVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
+				parentMethod, sinkParam);
+		
 		IContainer sinkContainer = _informationFlowModel.getContainer(sinkVarName);
 		if(sinkContainer == null){
 			sinkContainer = new SinkSourceContainer(pid,threadId,sinkId,calleeObjectAddress);			
@@ -105,7 +110,13 @@ public class SinkEventHandler extends JavaEventHandler {
 			IName sinkNamingIdentifier = new BasicJavaName(sinkId);//pid,threadId,
 			_informationFlowModel.addName(sinkNamingIdentifier, sinkContainer);
 		}
+		
+//		Copy all data a sink depends into 
+		_informationFlowModel.getAliasesTo(sinkContainer).forEach(e -> {_informationFlowModel.addName(sinkVarName, e);});
 
+		IName sinkNamingIdentifier = new BasicJavaName(pid, threadId, sinkId);
+		_informationFlowModel.addName(sinkNamingIdentifier, sinkContainer);
+		
 		//Copy all data items from the source container to the sink container
 		Collection<IName> _names = _informationFlowModel.getAllNames();
 		Iterator<IName> _namesIt = _names.iterator();
@@ -126,7 +137,7 @@ public class SinkEventHandler extends JavaEventHandler {
 			for(SourceSinkName s : sourceSinkName)
 				_informationFlowModel.copyData(s, sinkVarName);
 			
-			if (calleeMethod.toLowerCase().equals("put") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
+			if (calledMethod.toLowerCase().equals("put") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
 					|| calleeObjectClass.toLowerCase().equals("java.util.map"))) {
 				String key = methodArgValues[0];
 				String value = methodArgValues[1];

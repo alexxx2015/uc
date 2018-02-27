@@ -158,11 +158,11 @@ public class Controller extends RequestHandler {
 			}
 			
 //			AF-added
-			IThriftServer _pmpWebServer = ThriftServerFactory
-					.createPmpArmeriaThriftServer(Settings.getInstance().getPmpWebListenerPort(), requestHandler);
-			if(_pmpWebServer != null){
-				new Thread(_pmpWebServer).start();
-			}
+//			IThriftServer _pmpWebServer = ThriftServerFactory
+//					.createPmpArmeriaThriftServer(Settings.getInstance().getPmpWebListenerPort(), requestHandler);
+//			if(_pmpWebServer != null){
+//				new Thread(_pmpWebServer).start();
+//			}
 		}
 
 		if (Settings.getInstance().isAnyListenerEnabled()) {

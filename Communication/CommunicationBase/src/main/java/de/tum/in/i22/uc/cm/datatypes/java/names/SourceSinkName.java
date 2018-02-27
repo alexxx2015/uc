@@ -37,7 +37,7 @@ public class SourceSinkName extends JavaName {
 		return threadId;
 	}
 
-	public String getClassName() {
+	public String getParentClassName() {
 		return parentClass;
 	}
 

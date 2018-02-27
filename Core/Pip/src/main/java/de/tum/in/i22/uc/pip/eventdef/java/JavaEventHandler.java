@@ -216,10 +216,13 @@ public abstract class JavaEventHandler extends AbstractScopeEventHandler {
 				IContainer newObjectContainer = addContainerIfNotExists(newObjectName, className, objectAddress);
 				_informationFlowModel.addData(_informationFlowModel.getData(oldObjectContainer), newObjectContainer);
 				for (IContainer aliasFrom : _informationFlowModel.getAliasesFrom(oldObjectContainer)) {
+					_informationFlowModel.removeAlias(aliasFrom, oldObjectContainer);
 					_informationFlowModel.addAlias(aliasFrom, newObjectContainer);
 				}
 				for (IContainer aliasTo : _informationFlowModel.getAliasesTo(oldObjectContainer)) {
-					_informationFlowModel.addAlias(newObjectContainer, aliasTo);
+//					_informationFlowModel.addAlias(newObjectContainer, aliasTo);
+					_informationFlowModel.removeAlias(aliasTo, oldObjectContainer);
+					_informationFlowModel.addAlias(aliasTo, newObjectContainer);
 				}
 				for (IName oldName : _informationFlowModel.getAllNames(oldObjectContainer)) {
 					_informationFlowModel.addName(oldName, newObjectContainer, false);

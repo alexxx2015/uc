@@ -72,7 +72,8 @@ public class EventBasic implements IEvent, Serializable {
 
 	@Override
 	public Map<String, String> getParameters() {
-		return Collections.unmodifiableMap(_parameters);
+//		return Collections.unmodifiableMap(_parameters);
+		return _parameters;
 	}
 
 	@Override
