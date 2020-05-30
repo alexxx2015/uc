@@ -87,7 +87,7 @@ public class CallInstanceMethodEventHandler extends CallMethodEventHandler {
 				calleeObjectClassIsInstrumented ? null : calleeObjectContainer);
 		
 		//process method return values
-//		if(!"".equals(chopLabel.getLeftSide())){
+//		if(!"".equals(chopLabel.getLeftSide().trim())){
 //			IName returnVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, chopLabel.getLeftSide());
 //			_informationFlowModel.addName(returnVarName, calleeObjectContainer);
 //		}

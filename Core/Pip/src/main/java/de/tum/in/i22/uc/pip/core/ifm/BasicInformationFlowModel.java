@@ -304,6 +304,23 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 
 
 	@Override
+	public Set<IContainer> getAliasTransitiveClosureInverse(IContainer container) {
+		// TODO Auto-generated method stub
+		Set<IContainer> result = new HashSet<>();
+		getAliasTransitiveClosureInverse(container, result);
+		result.remove(container);
+		return result;
+	}
+
+	private void getAliasTransitiveClosureInverse(IContainer container, Set<IContainer> visitedContainers){
+		for(IContainer id : getAliasesTo(container)){
+			if(visitedContainers.add(id)){
+				getAliasTransitiveClosureInverse(id, visitedContainers);
+			}
+		}
+	}
+
+	@Override
 	public Set<IContainer> getAliasTransitiveClosure(IContainer container) {
 		Set<IContainer> result = new HashSet<>();
 		getAliasTransitiveClosure(container, result);
@@ -809,7 +826,19 @@ public final class BasicInformationFlowModel extends InformationFlowModel implem
 			}
 
 			for (Entry<IName, IContainer> entry : entryset) {
+				//fetch all direct data sets
 				Set<IData> ds = _containerToDataMap.get(entry.getValue());
+				
+				//fetch all transitive data sets
+				Set<IContainer> is = getAliasTransitiveClosureInverse(entry.getValue());
+				for(IContainer ic : is){
+					if(!_containerToDataMap.containsKey(ic)) continue;
+					if(ds == null)
+						ds = _containerToDataMap.get(ic);
+					else
+						ds.addAll(_containerToDataMap.get(ic));
+				}
+				
 				if (ds != null && ds.size() != 0 || showFullIFM) {
 					sb.append("    "
 							+ String.format("%1$" + nameLength + "s", entry

@@ -28,6 +28,8 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -67,7 +69,7 @@ public class MainView extends VerticalLayout implements View {
     final List<Integer> coords = new ArrayList<>();
 	public MainView() {
 
-		Label lab = new Label("Main view");
+		Label lab = new Label(" ");//Main view
 		lab.setSizeUndefined();
 		lab.addStyleName(ValoTheme.LABEL_H1);
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();	// .../src/main/webapp	
@@ -75,18 +77,18 @@ public class MainView extends VerticalLayout implements View {
 		FileResource res = new FileResource(new File(basepath
 				+ "/img/tum_logo.png"));
 		Image image = new Image(null, res);
-		image.setHeight("100%");
-		image.setWidth("100%");
+		image.setHeight("3em");
+//		image.setWidth("100%");
 		
 		
 		HorizontalLayout horLayout = new HorizontalLayout();
+		horLayout.setWidth("100%");
 		//horLayout.setMargin(true);
-		horLayout.addComponent(lab);
-		horLayout.addComponent(image);
+		
 		// Upload
 		Upload.Receiver receiver = createReceiver();
-		upload = new Upload("Upload your App", receiver);
-		upload.addStyleName("myCustomUpload");
+		upload = new Upload("App-Upload", receiver);
+		//upload.addStyleName("myCustomUpload");
 		upload.addSucceededListener(new SucceededListener() {
 
 			@Override
@@ -107,12 +109,20 @@ public class MainView extends VerticalLayout implements View {
 				}
 			}
 		});
+		horLayout.addComponent(upload);
+		
+//		horLayout.addComponent(lab);
+		HorizontalLayout imgV = new HorizontalLayout();
+		imgV.setMargin(true);
+		imgV.addComponent(image);
+//		horLayout.addComponent(imgV);
+//		horLayout.setComponentAlignment(imgV, Alignment.MIDDLE_RIGHT);
 		// Table
 		grid.setSizeFull();
 		fillGrid();
 		gridClickListener();
 		addComponent(horLayout);
-		addComponent(upload);
+		//addComponent(upload);
 		addComponent(grid);
 	}
 	
@@ -265,7 +275,7 @@ public class MainView extends VerticalLayout implements View {
 						"/" + item.getItemProperty("ID").getValue().toString());
 			
 		}));
-		grid.addColumn("SA execute time", String.class);
+		//grid.addColumn("SA execute time", String.class);
 		grid.addColumn("Instrumentation", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId();
 			Item item = grid.getContainerDataSource().getItem(selected);
@@ -280,7 +290,7 @@ public class MainView extends VerticalLayout implements View {
 						Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
 			}
 		}));
-		grid.addColumn("Execute time", String.class);
+		//grid.addColumn("Execute time", String.class);
 		grid.addColumn("Deployment", String.class).setRenderer(new ButtonRenderer(e->{
 			Object selected =  e.getItemId();
 			Item item = grid.getContainerDataSource().getItem(selected);
@@ -318,7 +328,8 @@ public class MainView extends VerticalLayout implements View {
 	}
 
 	private void updateTable(App app) {
-		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "", "Go", "", "Go", "Go");
+//		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "", "Go", "", "Go", "Go");
+		grid.addRow(app.getId(),app.getName(), app.getHashCode(), app.getStatus(), "Go", "Go", "Go", "Go");
 	}
 	
 	private void updateStatus (App app) {

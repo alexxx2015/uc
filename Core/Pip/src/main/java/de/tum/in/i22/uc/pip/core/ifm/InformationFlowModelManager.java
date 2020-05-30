@@ -462,4 +462,9 @@ public final class InformationFlowModelManager implements IAnyInformationFlowMod
 		return ext == null ? Collections.emptySet() : ((ScopeInformationFlowModel) ext).getAllOpenedScopes();
 	}
 
+	@Override
+	public Set<IContainer> getAliasTransitiveClosureInverse(IContainer container) {
+		return _basicIfModel.getAliasTransitiveClosureInverse(container);
+	}
+
 }

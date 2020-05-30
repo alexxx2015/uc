@@ -27,6 +27,8 @@ public abstract class ReturnMethodEventHandler extends JavaEventHandler {
     // of caller object is not instrumented
     protected void cleanUpParamsAndLocals(String pid, String threadId, String callerClass, String callerObjectAddress,
 	    String calledMethod, boolean classIsInstrumented, IContainer callerObjectContainer, int argsCount) {
+    	if(true)
+    		return;
 	if (classIsInstrumented) {
 	    Set<IName> namesToCleanUp = new HashSet<IName>();
 	    for (IName name : _informationFlowModel.getAllNames()) {

@@ -70,6 +70,7 @@ public class DeployManager{
 		String webappPath = FileUtil.getPathInstrumentationOfApp(app.getHashCode()) + File.separator + report;
 		String warName = FilenameUtils.getBaseName(app.getName()) + ".war";
 		String warPath = packageWar(warName, webappPath);
+		System.out.println("Created warPath: "+warPath);
 		String contextName = FilenameUtils.getBaseName(app.getName()) + "_" + report;
 		
 		return deploy(contextName, warPath);
@@ -97,7 +98,7 @@ public class DeployManager{
     	
     	final String url = "http://"+URLEncoder.encode(host,UTF8)+":"+URLEncoder.encode(port,UTF8)+"/manager/text/deploy?path=/"+URLEncoder.encode(contextName,UTF8)+"&war=file:"+URLEncoder.encode(warUrl,UTF8)+"&update=true";
 //    	final String url = "http://"+username+":"+password+"@"+host+":"+port+"/manager/text/deploy?path=/"+contextName+"&war=file:"+warUrl+"&update=true";
-
+    	System.out.println("Send war to "+url);
     	HttpGet request = new HttpGet(url);
 		String response = executeRequest (request, credsProvider);
         return response;

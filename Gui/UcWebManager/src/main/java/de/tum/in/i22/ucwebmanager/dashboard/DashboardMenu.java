@@ -73,7 +73,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<strong>Usage Control</strong>",
+        Label logo = new Label("<strong>Dashboard HDFT++</strong>",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -87,8 +87,8 @@ public final class DashboardMenu extends CustomComponent {
 //                User.class.getName());
     	User user = new User();
         user.setRole("admin");
-        user.setFirstName("Alexander");
-        user.setLastName("Fromm");
+        user.setFirstName("TUM");
+        user.setLastName("");
         user.setEmail(user.getFirstName().toLowerCase() + "."
                 + user.getLastName().toLowerCase() + "@"
                 + "www.com");
@@ -101,8 +101,10 @@ public final class DashboardMenu extends CustomComponent {
         final MenuBar settings = new MenuBar();
         settings.addStyleName("user-menu");
         final User user = getCurrentUser();
+//        settingsItem = settings.addItem("", new ThemeResource(
+//                "img/profile-pic-300px.jpg"), null);
         settingsItem = settings.addItem("", new ThemeResource(
-                "img/profile-pic-300px.jpg"), null);
+                "img/tum_logo.png"), null);
         updateUserName(null);
         settingsItem.addItem("Edit Profile", new Command() {
             @Override

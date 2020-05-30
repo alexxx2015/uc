@@ -123,6 +123,14 @@ public interface IBasicInformationFlowModel extends IInformationFlowModel {
 	 *         container.
 	 */
 	Set<IContainer> getAliasesTo(IContainer container);
+	
+	/**
+	 * Return the non-reflexive inverse transitive alias closure of the specified container. 
+	 * The resulting set will NOT contain the specified container.
+	 * @param container
+	 * @return
+	 */
+	Set<IContainer> getAliasTransitiveClosureInverse(IContainer container);
 
 	/**
 	 * Returns the non-reflexive transitive alias closure of the specified

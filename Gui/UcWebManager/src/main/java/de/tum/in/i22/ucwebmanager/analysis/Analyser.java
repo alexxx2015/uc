@@ -27,11 +27,11 @@ public class Analyser extends Thread {
 //		String flowanalyser = "../../../lib/flowanalyzer-optimized.jar";
 		String flowanalyser = "../../../lib/flowanalyzer.jar";
 		String jonaconfig = ".." + FileUtil.Dir.JOANACONFIG.getDir() + "/" + configFile;
-		String xmx = "-Xmx5G"; // maximum memory allocation pool for JVM
+		String jvmArgs = "-Xmx5G"; // maximum memory allocation pool for JVM
 		String p = VaadinServlet.getCurrent().getServletContext().getInitParameter("java-xmx");
 		if(!"".equals(p.trim()))
-			xmx = "-Xmx"+p;
-		ProcessBuilder pb = new ProcessBuilder("java", xmx, "-jar", flowanalyser, jonaconfig);
+			jvmArgs = "-Xmx"+p;
+		ProcessBuilder pb = new ProcessBuilder("java", jvmArgs, "-Dioflowanalyser.nopdgdump", "-jar", flowanalyser, jonaconfig);
 		pb.directory(new File(FileUtil.getPathCode(app.getHashCode())));
 					try {
 						Process process = pb.start();

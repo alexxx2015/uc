@@ -45,8 +45,9 @@ public class SinkEventHandler extends JavaEventHandler {
 		String sinkParam = null;
 		String sinkId = null;
 		JSONArray dependsOnSources = null;
-		
-		String methodLabel = null;//SAP database security label
+		boolean ift = true;
+
+		String methodLabel = null;// SAP database security label
 
 		try {
 			threadId = getParameterValue("threadId");
@@ -75,9 +76,12 @@ public class SinkEventHandler extends JavaEventHandler {
 			methodArgValuesJSON = (JSONArray) new JSONParser().parse(getParameterValue("methodArgValues"));
 			methodArgValues = new String[methodArgValuesJSON.size()];
 			methodArgValuesJSON.toArray(methodArgValues);
-			
-			methodLabel = getParameterValue("methodLabel");//SAP database security label
-//			System.out.println("SINKEVENTHANDLER| ML: "+methodLabel+", src: "+sinkId);
+
+			methodLabel = getParameterValue("methodLabel");// SAP database
+															// security label
+			ift = Boolean.parseBoolean(getParameterValue("IFT").toLowerCase().trim());
+			// System.out.println("SINKEVENTHANDLER| ML: "+methodLabel+", src:
+			// "+sinkId);
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
 			return _messageFactory.createStatus(EStatus.ERROR_EVENT_PARAMETER_MISSING, e.getMessage());
@@ -87,77 +91,101 @@ public class SinkEventHandler extends JavaEventHandler {
 		}
 
 		String sinkAddress = "";
-		if ((Integer.parseInt(sinkParam) > 0) && (methodArgAddresses.length  >= Integer.parseInt(sinkParam))){
-			sinkAddress = methodArgAddresses[Integer.parseInt(sinkParam)-1];
-		}		
+		if ((Integer.parseInt(sinkParam) > 0) && (methodArgAddresses.length >= Integer.parseInt(sinkParam))) {
+			sinkAddress = methodArgAddresses[Integer.parseInt(sinkParam) - 1];
+		}
 		if (sinkParam.toLowerCase().equals("ret")) {
 			sinkParam = chopLabel.getLeftSide();
 		} else if ((Integer.valueOf(sinkParam) > 0) && (chopLabel.getArgs() != null)
 				&& (chopLabel.getArgs().length > 0)) {
 			sinkParam = chopLabel.getArgs()[Integer.valueOf(sinkParam) - 1];
 		}
-//		IName sourceNamingIdentifier = new BasicJavaName(pid, threadId, sourceId);
+		// IName sourceNamingIdentifier = new BasicJavaName(pid, threadId,
+		// sourceId);
 
-		
-//		IName sinkVarName = JavaNameFactory.createSinkName(pid, threadId, parentClass, parentMethod, sinkParam, sinkId, calleeObjectAddress);//chopLabel.getCallee()		
+		// IName sinkVarName = JavaNameFactory.createSinkName(pid, threadId,
+		// parentClass, parentMethod, sinkParam, sinkId,
+		// calleeObjectAddress);//chopLabel.getCallee()
 		final IName sinkVarName = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress,
 				parentMethod, sinkParam);
-		
+
 		IContainer sinkContainer = _informationFlowModel.getContainer(sinkVarName);
-		if(sinkContainer == null){
-			sinkContainer = new SinkSourceContainer(pid,threadId,sinkId,calleeObjectAddress);			
+		if (sinkContainer == null) {
+			sinkContainer = new SinkSourceContainer(pid, threadId, sinkId, calleeObjectAddress);
 			_informationFlowModel.addName(sinkVarName, sinkContainer, false);
-			IName sinkNamingIdentifier = new BasicJavaName(sinkId);//pid,threadId,
+			IName sinkNamingIdentifier = new BasicJavaName(sinkId);// pid,threadId,
 			_informationFlowModel.addName(sinkNamingIdentifier, sinkContainer);
 		}
-		
-//		Copy all data a sink depends into 
-		_informationFlowModel.getAliasesTo(sinkContainer).forEach(e -> {_informationFlowModel.addName(sinkVarName, e);});
+
+		// Copy all data items a sink depends into sink variable
+		_informationFlowModel.getAliasesTo(sinkContainer).forEach(e -> {
+			_informationFlowModel.addName(sinkVarName, e);
+		});
 
 		IName sinkNamingIdentifier = new BasicJavaName(pid, threadId, sinkId);
 		_informationFlowModel.addName(sinkNamingIdentifier, sinkContainer);
-		
-		//Copy all data items from the source container to the sink container
-		Collection<IName> _names = _informationFlowModel.getAllNames();
-		Iterator<IName> _namesIt = _names.iterator();
-		List<SourceSinkName> sourceSinkName = new LinkedList<SourceSinkName>();
-		while (_namesIt.hasNext()) {
-			IName _next = _namesIt.next();
-			if (_next instanceof SourceSinkName) {
-				SourceSinkName s = (SourceSinkName) _next;
-				for (int i = 0; i < dependsOnSources.size(); i++) {
-					if (s.getSourceSinkId().equals(dependsOnSources.get(i).toString())) {
-						sourceSinkName.add(s);
+		if (contextInformation != null) {
+			if (contextInformation.containsKey("port") && contextInformation.containsKey("ipAddress")) {
+				String hexIp = contextInformation.get("ipAddress").toString();
+				String ip = Integer.parseInt(hexIp.substring(0, 2), 16) + "."
+						+ Integer.parseInt(hexIp.substring(2, 4), 16) + "."
+						+ Integer.parseInt(hexIp.substring(4, 6), 16) + "."
+						+ Integer.parseInt(hexIp.substring(6, 8), 16);
+				String netId = ip+ ":" + contextInformation.get("port");
+//				IName netNamingIdentifier = new BasicJavaName(pid, threadId, parentClass, parentMethod, calleeObjectAddress, netId);
+				IName netNamingIdentifier = new BasicJavaName("NET:"+netId);
+				_informationFlowModel.addName(netNamingIdentifier, sinkContainer);
+			}
+		}
+
+		if (!ift) {
+			// Copy all data items from the source container to the sink
+			// container
+			Collection<IName> _names = _informationFlowModel.getAllNames();
+			Iterator<IName> _namesIt = _names.iterator();
+			List<SourceSinkName> sourceSinkName = new LinkedList<SourceSinkName>();
+			while (_namesIt.hasNext()) {
+				IName _next = _namesIt.next();
+				if (_next instanceof SourceSinkName) {
+					SourceSinkName s = (SourceSinkName) _next;
+					for (int i = 0; i < dependsOnSources.size(); i++) {
+						if (s.getSourceSinkId().equals(dependsOnSources.get(i).toString())) {
+							sourceSinkName.add(s);
+						}
 					}
+				}
+			}
+
+			if (sourceSinkName.size() > 0) {
+				for (SourceSinkName s : sourceSinkName)
+					_informationFlowModel.copyData(s, sinkVarName);
+
+				if (calledMethod.toLowerCase().equals("put")
+						&& (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
+								|| calleeObjectClass.toLowerCase().equals("java.util.map"))) {
+					String key = methodArgValues[0];
+					String value = methodArgValues[1];
+
+					IName covn = new BasicJavaName(pid, calleeObjectAddress, calleeObjectClass, key);
+					IContainer c = _informationFlowModel.getContainer(covn);
+					if (c == null)
+						_informationFlowModel.addName(covn, sinkContainer);
+					else
+						_informationFlowModel.addData(_informationFlowModel.getData(covn), c);
 				}
 			}
 		}
 
-		if (sourceSinkName.size() > 0) {
-			for(SourceSinkName s : sourceSinkName)
-				_informationFlowModel.copyData(s, sinkVarName);
-			
-			if (calledMethod.toLowerCase().equals("put") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
-					|| calleeObjectClass.toLowerCase().equals("java.util.map"))) {
-				String key = methodArgValues[0];
-				String value = methodArgValues[1];
-
-				IName covn = new BasicJavaName(pid, calleeObjectAddress, calleeObjectClass, key);
-				IContainer c = _informationFlowModel.getContainer(covn);
-				if(c == null)
-					_informationFlowModel.addName(covn, sinkContainer);
-				else
-					_informationFlowModel.addData(_informationFlowModel.getData(covn), c);
-			}
-		}
-
 		return _messageFactory.createStatus(EStatus.OKAY);
-//		return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
+		// return new JavaPipStatus(EStatus.OKAY, srcName, scopeData);
 	}
 }
-//IContainer sinkContainer = addContainerIfNotExists(sinkVarName, calleeObjectClass, calleeObjectAddress);
-//IName calleeObjectName = new ObjectName(pid, calleeObjectClass, calleeObjectAddress);
-//IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName, calleeObjectClass,calleeObjectAddress);
+// IContainer sinkContainer = addContainerIfNotExists(sinkVarName,
+// calleeObjectClass, calleeObjectAddress);
+// IName calleeObjectName = new ObjectName(pid, calleeObjectClass,
+// calleeObjectAddress);
+// IContainer calleeObjectContainer = addContainerIfNotExists(calleeObjectName,
+// calleeObjectClass,calleeObjectAddress);
 // insertArguments(chopLabel.getArgs(), methodArgTypes,
 // methodArgAddresses, pid, threadId, parentClass, parentObjectAddress,
 // parentMethod,

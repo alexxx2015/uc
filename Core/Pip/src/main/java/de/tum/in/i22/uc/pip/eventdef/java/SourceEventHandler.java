@@ -49,6 +49,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		String sourceParam = null;
 		String sourceId = null;
 		String methodLabel = null;// SAP database security label
+		boolean ift = false;
 
 		try {
 			threadId = getParameterValue("threadId");
@@ -60,6 +61,7 @@ public class SourceEventHandler extends JavaEventHandler {
 			calleeObjectClass = getParameterValue("calleeObjectClass");
 			calleeMethod = getParameterValue("calleeMethod");
 			sourceObjectAddress = getParameterValue("sourceObjectAddress");
+			if("null".equals(sourceObjectAddress.toLowerCase().trim())) sourceObjectAddress = null;
 			sourceObjectClass = getParameterValue("sourceObjectClass");
 			sourceParam = getParameterValue("sourceParam");
 			sourceId = getParameterValue("sourceId");
@@ -81,6 +83,7 @@ public class SourceEventHandler extends JavaEventHandler {
 
 			methodLabel = getParameterValue("methodLabel");// SAP database
 															// security label
+			ift = Boolean.parseBoolean(getParameterValue("IFT").toLowerCase().trim());
 
 		} catch (ParameterNotFoundException | ClassCastException e) {
 			_logger.error(e.getMessage());
@@ -96,7 +99,9 @@ public class SourceEventHandler extends JavaEventHandler {
 		// _informationFlowModel.addName(calleeObjectVarName,
 		// calleeObjectContainer, false);
 
+		IContainer sourceContainer = null;
 		IName restSourceName = null;
+//		Fetch REST-URL
 		if (ctxInfo != null && ctxInfo.containsKey("url-query")) {
 			String urlQuery = (String) ctxInfo.get("url-query");
 			String uniqueId = "", owner = "";
@@ -114,24 +119,46 @@ public class SourceEventHandler extends JavaEventHandler {
 				uniqueId = "47";// TODO: just for trying
 				restSourceName = new BasicJavaName(owner + "_" + uniqueId);
 			}
+			if (restSourceName != null && _informationFlowModel.getContainer(restSourceName)!= null && sourceObjectAddress != null) {
+				sourceContainer = new SinkSourceContainer(pid, threadId, sourceId, sourceObjectAddress);
+				_informationFlowModel.addData(_informationFlowModel.getData(restSourceName), sourceContainer);
+				_informationFlowModel.removeName(restSourceName);
+				_informationFlowModel.addName(restSourceName, sourceContainer);	
+			}
 		}
-		IContainer sourceContainer = null;
-		if (restSourceName != null && _informationFlowModel.getContainer(restSourceName)!= null) {
+		
+//		Fetch File Path
+		if (ctxInfo != null && ctxInfo.containsKey("path") && sourceObjectAddress != null) {
+			IName pathSourceName = new BasicJavaName(String.valueOf(ctxInfo.get("path")));
 			sourceContainer = new SinkSourceContainer(pid, threadId, sourceId, sourceObjectAddress);
-			_informationFlowModel.addData(_informationFlowModel.getData(restSourceName), sourceContainer);
-			_informationFlowModel.removeName(restSourceName);
-			_informationFlowModel.addName(restSourceName, sourceContainer);
-			
+			_informationFlowModel.addData(_informationFlowModel.getData(pathSourceName), sourceContainer);
+			_informationFlowModel.removeName(pathSourceName);
+			_informationFlowModel.addName(pathSourceName, sourceContainer);	
 		}
+		
 		if (sourceContainer == null) {
 			sourceContainer = new SinkSourceContainer(pid, threadId, sourceId, sourceObjectAddress);
 			if (restSourceName != null)
 				_informationFlowModel.addName(restSourceName, sourceContainer);
 		}
+		//Shrift
+		if(!ift){
+			IName sourceNamingIdentifier = new BasicJavaName(pid, threadId, sourceId);
+			if (_informationFlowModel.getContainer(sourceNamingIdentifier) == null)
+				_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
 
-		IName sourceNamingIdentifier = new BasicJavaName(pid, threadId, sourceId);
-		if (_informationFlowModel.getContainer(sourceNamingIdentifier) == null)
-			_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);
+			IName sourceVarParentObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId);
+			_informationFlowModel.addName(sourceVarParentObject, sourceContainer);
+		}
+		//hdft
+		else{
+			if(!"".equals(sourceId) && sourceObjectAddress != null){
+				IName sourceIdName = new BasicJavaName(pid,sourceId);
+				Set<IData> srcData = _informationFlowModel.getData(sourceIdName);
+				if(srcData != null) srcData.forEach(s->_informationFlowModel.remove(s));
+				_informationFlowModel.addName(sourceIdName, sourceContainer);
+			}
+		}
 
 		// IContainer sourceContainer =
 		// _informationFlowModel.getContainer(sourceNamingIdentifier);
@@ -153,8 +180,10 @@ public class SourceEventHandler extends JavaEventHandler {
 		// calleeObjectClass, calleeObjectAddress);
 
 		// create source data and map data to container
-		IData sourceData = new SourceData(sourceId, System.currentTimeMillis());
-		_informationFlowModel.addData(sourceData, sourceContainer);
+		if(_informationFlowModel.getData(sourceContainer) == null || _informationFlowModel.getData(sourceContainer).size()==0){
+			IData sourceData = new SourceData(sourceId, System.currentTimeMillis());
+			_informationFlowModel.addData(sourceData, sourceContainer);
+		}
 
 		if (sourceParam.toLowerCase().equals("ret") && !"".equals(chopLabel.getLeftSide())) {
 			sourceParam = chopLabel.getLeftSide();
@@ -162,10 +191,9 @@ public class SourceEventHandler extends JavaEventHandler {
 				&& (chopLabel.getArgs().length > 0)) {
 			sourceParam = chopLabel.getArgs()[Integer.valueOf(sourceParam) - 1];
 		}
-
-//		IName sourceVarParentObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId);
-		IName sourceVarParentObject = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId, SourceSinkName.Type.SOURCE);
-		_informationFlowModel.addName(sourceVarParentObject, sourceContainer);
+		
+		IName sourceVar = JavaNameFactory.createLocalVarName(pid, threadId, parentClass, parentObjectAddress, parentMethod, sourceParam, sourceId, SourceSinkName.Type.SOURCE);
+		_informationFlowModel.addName(sourceVar, sourceContainer);
 
 		// add an alias relation
 //		IName sourceVarObject = JavaNameFactory.createSourceName(pid, threadId, parentClass, sourceObjectAddress,
@@ -183,7 +211,7 @@ public class SourceEventHandler extends JavaEventHandler {
 		if (calleeMethod.toLowerCase().equals("get") && (calleeObjectClass.toLowerCase().equals("java.util.hashmap")
 				|| calleeObjectClass.toLowerCase().equals("java.util.map"))) {
 			String key = methodArgValues[0];
-			sourceNamingIdentifier = new BasicJavaName(pid, calleeObjectAddress, calleeObjectClass, key);
+			IName sourceNamingIdentifier = new BasicJavaName(pid, calleeObjectAddress, calleeObjectClass, key);
 			IContainer c = _informationFlowModel.getContainer(sourceNamingIdentifier);
 			if (c == null) {
 				_informationFlowModel.addName(sourceNamingIdentifier, sourceContainer);

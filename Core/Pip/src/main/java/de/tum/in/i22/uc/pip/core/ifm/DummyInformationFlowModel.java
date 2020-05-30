@@ -382,4 +382,10 @@ public class DummyInformationFlowModel extends InformationFlowModelExtension imp
 		_logger.error("Method getAllOpenedScopes() not implemented.");
 		return null;
 	}
+
+	@Override
+	public Set<IContainer> getAliasTransitiveClosureInverse(IContainer container) {
+		_logger.error("Method getAliasTransitiveClosureInverse() not implemented.");
+		return null;
+	}
 }

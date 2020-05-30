@@ -160,6 +160,7 @@ public class PipHandler extends PipProcessor {
 
 	    _logger.info("Executing PipHandler for " + event);
 	    status = eventHandler.performUpdate();
+	    
 
 	    /*
 	     * The returned status will tell us whether we have to do some more work, namely remote data flow tracking
